@@ -1,0 +1,81 @@
+{
+  "name": "@awaketab/wake",
+  "version": "1.0.0",
+  "description": "Screen Wake Lock with an honest state machine and a tiny video fallback. Maintained replacement for NoSleep.js.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./react": {
+      "types": "./dist/adapters/react.d.ts",
+      "import": "./dist/adapters/react.js"
+    },
+    "./preact": {
+      "types": "./dist/adapters/preact.d.ts",
+      "import": "./dist/adapters/preact.js"
+    },
+    "./vue": {
+      "types": "./dist/adapters/vue.d.ts",
+      "import": "./dist/adapters/vue.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "wake lock",
+    "screen wake lock",
+    "nosleep",
+    "keep awake",
+    "prevent sleep",
+    "wakelock"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/awaketab/awaketab",
+    "directory": "packages/wake"
+  },
+  "homepage": "https://awaketab.com/library",
+  "peerDependencies": {
+    "preact": ">=10",
+    "react": ">=17",
+    "vue": ">=3"
+  },
+  "peerDependenciesMeta": {
+    "preact": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "size": "size-limit"
+  },
+  "devDependencies": {
+    "tsup": "latest",
+    "typescript": "^5.9"
+  },
+  "size-limit": [
+    {
+      "name": "@awaketab/wake core",
+      "path": "dist/index.js",
+      "limit": "2 KB"
+    }
+  ]
+}

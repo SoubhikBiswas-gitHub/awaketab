@@ -1,0 +1,49 @@
+{
+  "name": "awaketab",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22 <23",
+    "pnpm": ">=9 <10"
+  },
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm -r build",
+    "test": "pnpm test:unit && pnpm test:functions",
+    "test:unit": "vitest run --config vitest.config.ts",
+    "test:functions": "vitest run --config vitest.functions.config.ts",
+    "test:e2e": "playwright test",
+    "test:seo": "vitest run --config vitest.seo.config.ts",
+    "lint": "eslint . && stylelint \"apps/web/src/**/*.css\"",
+    "typecheck": "pnpm -r typecheck",
+    "size": "pnpm -r --if-present size",
+    "keys:dev": "node apps/web/scripts/keys-dev.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "latest",
+    "@changesets/cli": "latest",
+    "@eslint/js": "latest",
+    "@lhci/cli": "latest",
+    "@playwright/test": "latest",
+    "@size-limit/file": "latest",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "latest",
+    "astro-eslint-parser": "latest",
+    "eslint": "latest",
+    "eslint-plugin-astro": "latest",
+    "globals": "latest",
+    "happy-dom": "latest",
+    "prettier": "latest",
+    "prettier-plugin-astro": "latest",
+    "size-limit": "latest",
+    "stylelint": "^16.26.1",
+    "stylelint-config-standard": "^39.0.0",
+    "stylelint-use-logical-spec": "latest",
+    "tsx": "latest",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "latest",
+    "vitest": "latest"
+  }
+}
