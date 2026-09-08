@@ -18,8 +18,8 @@
     "size": "size-limit"
   },
   "devDependencies": {
-    "tsup": "latest",
-    "typescript": "^5.9"
+    "tsup": "8.5.1",
+    "typescript": "5.9.3"
   },
   "size-limit": [
     {

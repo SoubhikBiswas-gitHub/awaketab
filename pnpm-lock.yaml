@@ -9,113 +9,113 @@ importers:
   .:
     devDependencies:
       '@axe-core/playwright':
-        specifier: latest
+        specifier: 4.13.0
         version: 4.13.0(playwright-core@1.63.0)
       '@changesets/cli':
-        specifier: latest
+        specifier: 3.0.2
         version: 3.0.2
       '@eslint/js':
-        specifier: latest
+        specifier: 10.0.1
         version: 10.0.1(eslint@10.10.0(jiti@2.7.0))
       '@lhci/cli':
-        specifier: latest
+        specifier: 0.15.1
         version: 0.15.1
       '@playwright/test':
-        specifier: latest
+        specifier: 1.63.0
         version: 1.63.0
       '@size-limit/file':
-        specifier: latest
+        specifier: 13.0.3
         version: 13.0.3(size-limit@13.0.3)
       '@tailwindcss/vite':
-        specifier: ^4.0.0
-        version: 4.3.3(vite@6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))
+        specifier: 4.3.3
+        version: 4.3.3(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))
       '@types/node':
-        specifier: latest
-        version: 26.5.0
+        specifier: 22.20.1
+        version: 22.20.1
       astro-eslint-parser:
-        specifier: latest
+        specifier: 3.1.0
         version: 3.1.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)
       eslint:
-        specifier: latest
+        specifier: 10.10.0
         version: 10.10.0(jiti@2.7.0)
       eslint-plugin-astro:
-        specifier: latest
+        specifier: 3.1.0
         version: 3.1.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@typescript-eslint/parser@8.70.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.10.0(jiti@2.7.0))(typescript-eslint@8.70.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))
       globals:
-        specifier: latest
+        specifier: 17.12.0
         version: 17.12.0
       happy-dom:
-        specifier: latest
+        specifier: 20.14.0
         version: 20.14.0
       prettier:
-        specifier: latest
+        specifier: 3.9.6
         version: 3.9.6
       prettier-plugin-astro:
-        specifier: latest
+        specifier: 0.14.1
         version: 0.14.1
       size-limit:
-        specifier: latest
+        specifier: 13.0.3
         version: 13.0.3
       stylelint:
-        specifier: ^16.26.1
+        specifier: 16.26.1
         version: 16.26.1(typescript@5.9.3)
       stylelint-config-standard:
-        specifier: ^39.0.0
+        specifier: 39.0.1
         version: 39.0.1(stylelint@16.26.1(typescript@5.9.3))
       stylelint-use-logical-spec:
-        specifier: latest
+        specifier: 5.0.1
         version: 5.0.1(stylelint@16.26.1(typescript@5.9.3))
       tsx:
-        specifier: latest
+        specifier: 4.23.13
         version: 4.23.13
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
       typescript-eslint:
-        specifier: latest
+        specifier: 8.70.0
         version: 8.70.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3)
       vitest:
-        specifier: latest
-        version: 5.0.0(@types/node@26.5.0)(happy-dom@20.14.0)(vite@6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))
+        specifier: 5.0.0
+        version: 5.0.0(@types/node@22.20.1)(happy-dom@20.14.0)(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))
 
   apps/extension:
     devDependencies:
       typescript:
-        specifier: ^5.9
+        specifier: 5.9.3
         version: 5.9.3
       wxt:
-        specifier: latest
+        specifier: 0.21.4
         version: 0.21.4(esbuild@0.28.2)(eslint@10.10.0(jiti@2.7.0))(rollup@4.63.1)(typescript@5.9.3)(vite@6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))
 
   apps/web:
     dependencies:
       '@tailwindcss/vite':
-        specifier: ^4.0.0
+        specifier: 4.3.3
         version: 4.3.3(vite@6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))
       astro:
-        specifier: ^5.0.0
+        specifier: 5.18.2
         version: 5.18.2(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.63.1)(tsx@4.23.13)(typescript@5.9.3)(yaml@2.9.0)
       tailwindcss:
-        specifier: ^4.0.0
+        specifier: 4.3.3
         version: 4.3.3
     devDependencies:
       '@astrojs/check':
-        specifier: ^0.9.10
+        specifier: 0.9.10
         version: 0.9.10(prettier-plugin-astro@0.14.1)(prettier@3.9.6)(typescript@5.9.3)
       '@cloudflare/workers-types':
-        specifier: latest
+        specifier: 5.20260908.1
         version: 5.20260908.1
       typescript:
-        specifier: ^5.9
+        specifier: 5.9.3
         version: 5.9.3
 
   packages/core:
     devDependencies:
       tsup:
-        specifier: latest
+        specifier: 8.5.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.13)(typescript@5.9.3)(yaml@2.9.0)
       typescript:
-        specifier: ^5.9
+        specifier: 5.9.3
         version: 5.9.3
 
   packages/wake:
@@ -131,10 +131,10 @@ importers:
         version: 3.5.42(typescript@5.9.3)
     devDependencies:
       tsup:
-        specifier: latest
+        specifier: 8.5.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.28)(tsx@4.23.13)(typescript@5.9.3)(yaml@2.9.0)
       typescript:
-        specifier: ^5.9
+        specifier: 5.9.3
         version: 5.9.3
 
 packages:
@@ -1517,6 +1517,9 @@ packages:
 
   '@types/nlcst@2.0.3':
     resolution: {integrity: sha512-vSYNSDe6Ix3q+6Z7ri9lyWqgGhJTmzRjZRqyq15N0Z/1/UnVsno9G/N40NBijoYx2seFDIl0+B2mgAb9mezUCA==}
+
+  '@types/node@22.20.1':
+    resolution: {integrity: sha512-EANqOCF9QFyra+4pfxUcX9STKJpCLjMbObVzljIJomAWSnuSIEAvyzEU53GaajbXJEgdh0iEcPL+DGvpUd4k1Q==}
 
   '@types/node@26.5.0':
     resolution: {integrity: sha512-dVSGpriSoCgz8WnDNTuSSuSv1PC/ALXihO4ulRZt7Md8k9mlbdin3lGOcDE8SnWOgf513ByWlXd7BK4azmyg/A==}
@@ -4375,6 +4378,9 @@ packages:
   uncrypto@0.1.3:
     resolution: {integrity: sha512-Ql87qFHB3s/De2ClA9e0gsnS6zXG27SkTiSJwjCc9MebbfapQfuPzumMIUMi38ezPZVNFcHI9sUIepeQfw8J8Q==}
 
+  undici-types@6.21.0:
+    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
+
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
@@ -6097,6 +6103,13 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.3.3
       '@tailwindcss/oxide-win32-x64-msvc': 4.3.3
 
+  '@tailwindcss/vite@4.3.3(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))':
+    dependencies:
+      '@tailwindcss/node': 4.3.3
+      '@tailwindcss/oxide': 4.3.3
+      tailwindcss: 4.3.3
+      vite: 6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0)
+
   '@tailwindcss/vite@4.3.3(vite@6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))':
     dependencies:
       '@tailwindcss/node': 4.3.3
@@ -6152,9 +6165,14 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
+  '@types/node@22.20.1':
+    dependencies:
+      undici-types: 6.21.0
+
   '@types/node@26.5.0':
     dependencies:
       undici-types: 8.9.0
+    optional: true
 
   '@types/unist@3.0.3': {}
 
@@ -6162,11 +6180,11 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 26.5.0
+      '@types/node': 22.20.1
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 26.5.0
+      '@types/node': 22.20.1
     optional: true
 
   '@typescript-eslint/eslint-plugin@8.70.0(@typescript-eslint/parser@8.70.0(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3))(eslint@10.10.0(jiti@2.7.0))(typescript@5.9.3)':
@@ -6262,14 +6280,14 @@ snapshots:
 
   '@ungap/structured-clone@1.4.0': {}
 
-  '@vitest/mocker@5.0.0(vite@6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))':
+  '@vitest/mocker@5.0.0(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/spy': 5.0.0
       estree-walker: 3.0.3
       magic-string: 1.2.3
     optionalDependencies:
-      vite: 6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0)
+      vite: 6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0)
 
   '@vitest/spy@5.0.0': {}
 
@@ -6702,7 +6720,7 @@ snapshots:
 
   buffer-image-size@0.6.4:
     dependencies:
-      '@types/node': 26.5.0
+      '@types/node': 22.20.1
 
   bundle-require@5.1.0(esbuild@0.27.7):
     dependencies:
@@ -6788,7 +6806,7 @@ snapshots:
 
   chrome-launcher@0.13.4:
     dependencies:
-      '@types/node': 26.5.0
+      '@types/node': 22.20.1
       escape-string-regexp: 1.0.5
       is-wsl: 2.2.0
       lighthouse-logger: 1.2.0
@@ -6799,7 +6817,7 @@ snapshots:
 
   chrome-launcher@1.2.1:
     dependencies:
-      '@types/node': 26.5.0
+      '@types/node': 22.20.1
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 2.0.2
@@ -7624,7 +7642,7 @@ snapshots:
 
   happy-dom@20.14.0:
     dependencies:
-      '@types/node': 26.5.0
+      '@types/node': 22.20.1
       '@types/whatwg-mimetype': 3.0.2
       '@types/ws': 8.18.1
       buffer-image-size: 0.6.4
@@ -9238,7 +9256,7 @@ snapshots:
 
   speedline-core@1.4.3:
     dependencies:
-      '@types/node': 26.5.0
+      '@types/node': 22.20.1
       image-ssim: 0.2.0
       jpeg-js: 0.4.4
 
@@ -9606,7 +9624,10 @@ snapshots:
 
   uncrypto@0.1.3: {}
 
-  undici-types@8.9.0: {}
+  undici-types@6.21.0: {}
+
+  undici-types@8.9.0:
+    optional: true
 
   undici@8.10.2: {}
 
@@ -9753,6 +9774,22 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
+  vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0):
+    dependencies:
+      esbuild: 0.25.12
+      fdir: 6.5.0(picomatch@4.0.7)
+      picomatch: 4.0.7
+      postcss: 8.5.28
+      rollup: 4.63.1
+      tinyglobby: 0.2.17
+    optionalDependencies:
+      '@types/node': 22.20.1
+      fsevents: 2.3.3
+      jiti: 2.7.0
+      lightningcss: 1.32.0
+      tsx: 4.23.13
+      yaml: 2.9.0
+
   vite@6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0):
     dependencies:
       esbuild: 0.25.12
@@ -9773,10 +9810,10 @@ snapshots:
     optionalDependencies:
       vite: 6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0)
 
-  vitest@5.0.0(@types/node@26.5.0)(happy-dom@20.14.0)(vite@6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0)):
+  vitest@5.0.0(@types/node@22.20.1)(happy-dom@20.14.0)(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0)):
     dependencies:
       '@types/chai': 5.2.3
-      '@vitest/mocker': 5.0.0(vite@6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))
+      '@vitest/mocker': 5.0.0(vite@6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0))
       chai: 6.2.2
       es-module-lexer: 2.3.2
       expect-type: 1.4.0
@@ -9787,10 +9824,10 @@ snapshots:
       tinybench: 6.1.4
       tinyexec: 1.3.0
       tinyglobby: 0.2.17
-      vite: 6.4.3(@types/node@26.5.0)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0)
+      vite: 6.4.3(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.13)(yaml@2.9.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 26.5.0
+      '@types/node': 22.20.1
       happy-dom: 20.14.0
     transitivePeerDependencies:
       - msw

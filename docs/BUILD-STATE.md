@@ -9,6 +9,7 @@ Current milestone: M0 — foundation.
 - Tailwind CSS v4 token foundation using the `--at-*` namespace and logical CSS properties.
 - Generated Cloudflare `_headers` and `_redirects`, canonical robots and sitemap stubs, and `/api/health`.
 - Linting, formatting, unit/function/SEO testing, Playwright, axe, size budgets, Lighthouse assertions, Changesets, and GitHub workflows.
+- Toolchain pinned to Node 22 LTS, pnpm 9.15.9, Ubuntu 24.04 LTS runners, Astro 5, Tailwind 4, and exact package versions (no `latest` tags).
 
 ## Proposed identifiers
 
