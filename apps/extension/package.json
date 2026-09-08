@@ -1,0 +1,16 @@
+{
+  "name": "extension",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "build": "node scripts/icons.mjs && wxt build",
+    "zip": "node scripts/icons.mjs && wxt zip",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.9",
+    "wxt": "latest"
+  }
+}

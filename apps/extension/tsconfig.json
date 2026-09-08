@@ -1,0 +1,7 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["DOM", "ES2023"]
+  },
+  "include": ["entrypoints", "wxt.config.ts", ".wxt/wxt.d.ts"]
+}
