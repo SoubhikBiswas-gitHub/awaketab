@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">AwakeTab</title>
+  <desc id="description">The tab that keeps your screen awake.</desc>
+  <rect width="1200" height="630" fill="#fffaf2"/>
+  <circle cx="600" cy="210" r="76" fill="none" stroke="#f1d8b7" stroke-width="16"/>
+  <circle cx="600" cy="134" r="12" fill="#b86e00"/>
+  <text x="600" y="360" fill="#241b10" font-family="system-ui, sans-serif" font-size="82" font-weight="700" text-anchor="middle">AwakeTab</text>
+  <text x="600" y="438" fill="#2b3a67" font-family="system-ui, sans-serif" font-size="34" text-anchor="middle">The tab that keeps your screen awake.</text>
+</svg>

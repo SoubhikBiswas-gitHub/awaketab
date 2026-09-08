@@ -1,0 +1,58 @@
+---
+import '../styles/holding.css';
+import '../styles/tokens.css';
+
+const site = 'https://awaketab.com';
+const title = 'Keep Your Screen Awake — AwakeTab';
+const description =
+  'AwakeTab is the tab that keeps your screen awake. A focused browser utility is coming soon.';
+const schemas = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'AwakeTab',
+    url: site,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'AwakeTab',
+    url: site,
+    logo: `${site}/og/awaketab-placeholder.svg`,
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content="#B86E00" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={site} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="AwakeTab" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={site} />
+    <meta property="og:image" content={`${site}/og/awaketab-placeholder.svg`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${site}/og/awaketab-placeholder.svg`} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schemas)} />
+  </head>
+  <body>
+    <main>
+      <div class="brand" aria-hidden="true">
+        <span class="ring"></span>
+      </div>
+      <p class="eyebrow">AwakeTab</p>
+      <h1>The tab that keeps your screen awake.</h1>
+      <p class="status">Coming soon.</p>
+    </main>
+  </body>
+</html>
