@@ -1,0 +1,460 @@
+# 04 · Engine specification
+
+Status: v1.0 · 2026-09-07 · Owner: Soubhik
+
+**Purpose.** This is the implementable specification of the two engine layers: the **lock layer** `@awaketab/wake` (seven states, one transition table, video fallback, retry policy, reason/advice codes) and the **session layer** `@awaketab/core` (sessions, plans, the wall-clock tick, pause/resume, end-of-session pipeline, battery monitor, persistence, stats, multi-tab protocol, capability probe). Every state name, status, plan type and storage key is as in `00-conventions.md` §5–§6. Codes introduced here that are not yet in the conventions are marked **PROPOSED — add to 00-conventions.md**. The rule the whole engine serves: *the pill never lies* — UI state is derived only from the promise results and browser events, never from intent.
+
+**Related docs.** `00-conventions.md` · `03-architecture.md` (where the engine sits) · `08-data-storage.md` (schemas for `at.v1.session`, `at.v1.stats`, `at.v1.license`) · `12-library-spec.md` (packaging of `@awaketab/wake`) · `13-testing-strategy.md`.
+
+---
+
+## Part A · Lock layer — `@awaketab/wake`
+
+### 1. Platform facts the design relies on
+
+Verified in the blueprint and re-verified per release on `/support-matrix`:
+
+- `navigator.wakeLock.request('screen')` exists in Chrome/Edge ≥ 84, Firefox ≥ 126, Safari ≥ 16.4, iOS Home-Screen web apps ≥ 18.4. The interface is `[SecureContext]`, so on `http://` (other than `localhost`) `navigator.wakeLock` is `undefined`.
+- The browser releases the lock when the document becomes hidden (tab switch, minimise, device lock). The `WakeLockSentinel` fires a `release` event; `sentinel.released` becomes `true`. The page must request again on `visibilitychange` to visible.
+- The request rejects with `NotAllowedError` when the document is hidden, when Permissions-Policy `screen-wake-lock` denies the document (typical in an iframe without `allow="screen-wake-lock"`), or when the platform refuses (battery saver, OS policy).
+- The video fallback needs a user gesture because of autoplay policy; a muted `playsinline` video that is visibly rendered (1 × 1 px, not `display:none`) keeps the screen on in browsers that predate the API.
+- iOS Low Power Mode is not detectable; it forces a 30 s Auto-Lock regardless of the wake lock.
+
+### 2. States (exactly seven)
+
+`idle` · `requesting` · `held` · `lost` · `denied` · `unsupported` · `fallback` — meanings and pill copy in `00-conventions.md` §5.1. Only `held` and `fallback` may show a running timer. Two internal fields accompany the state and are exposed read-only: `mode: 'native' | 'video' | null` (which mechanism the last successful acquisition used) and `attempt: number` (retry counter).
+
+```
+                 request()                     resolved
+   idle ──────────────────────► requesting ──────────────► held ◄──────────────┐
+    ▲   API absent│               │  ▲      NotAllowedError   │ release event     │ visible +
+    │             ▼               │  │           ▼            ▼ (hidden/OS)       │ reacquire
+    │        unsupported          │  │        denied ◄──── lost ──────────────────┘
+    │   tap + fallback:'video'│   │  │  retry timer│   ▲      ▲
+    │             ▼           └───┘  └─────────────┘   │      │ hidden (pause video)
+    │         requesting ──play() ok──► fallback ──────┘      │
+    │              │ play() rejects      │                    │
+    │              ▼                     └────────────────────┘
+    │         unsupported (advice gesture_required)
+    └── release() from any state; destroy() from any state
+```
+
+### 3. Reason and advice codes
+
+```ts
+// PROPOSED — add to 00-conventions.md §5.1a
+export type LockState = 'idle' | 'requesting' | 'held' | 'lost' | 'denied' | 'unsupported' | 'fallback';
+
+/** Why a transition happened. Carried on every `change` event. */
+export type LockReason =
+  | 'request'            // request() called
+  | 'acquired'           // native promise resolved
+  | 'fallback_started'   // video play() resolved
+  | 'released_hidden'    // sentinel release while document hidden
+  | 'released_visible'   // sentinel release while visible (fullscreen transition, OS)
+  | 'visible'            // visibilitychange → visible triggered a re-request
+  | 'hidden'             // visibilitychange → hidden paused the fallback video
+  | 'fullscreen'         // fullscreenchange triggered a re-request
+  | 'retry'              // backoff timer fired
+  | 'denied'             // NotAllowedError (see DeniedReason)
+  | 'error'              // unexpected rejection
+  | 'no_api'             // navigator.wakeLock absent
+  | 'gesture_required'   // video play() rejected with NotAllowedError
+  | 'release'            // release() called
+  | 'destroy';
+
+/** Classification of a NotAllowedError. */
+export type DeniedReason = 'hidden' | 'policy' | 'battery_platform' | 'insecure_context' | 'unknown';
+
+/** What the UI should tell the user to do. Null when nothing is wrong. */
+export type Advice =
+  | 'battery_saver'        // Chromium/Android/Windows: energy saver or battery saver is on
+  | 'tab_hidden'           // bring the tab back to the front
+  | 'ios_low_power'        // iOS: Low Power Mode forces 30 s Auto-Lock
+  | 'insecure_context'     // page is served over http
+  | 'unsupported_browser'  // browser too old / no API and no fallback possible
+  | 'iframe_policy'        // embedded without allow="screen-wake-lock"
+  | 'gesture_required';    // tap to start the video fallback
+```
+
+Classification of a `NotAllowedError`, in order:
+
+```ts
+function classifyDenial(doc: Document, isIOS: boolean): { reason: DeniedReason; advice: Advice } {
+  if (doc.visibilityState === 'hidden') return { reason: 'hidden', advice: 'tab_hidden' };
+  const pp = (doc as any).permissionsPolicy ?? (doc as any).featurePolicy;
+  if (pp && typeof pp.allowsFeature === 'function' && !pp.allowsFeature('screen-wake-lock')) {
+    return { reason: 'policy', advice: 'iframe_policy' };
+  }
+  if (!pp && window !== window.top) return { reason: 'policy', advice: 'iframe_policy' }; // Safari: no policy API, assume the iframe case
+  if (!window.isSecureContext) return { reason: 'insecure_context', advice: 'insecure_context' };
+  return { reason: 'battery_platform', advice: isIOS ? 'ios_low_power' : 'battery_saver' };
+}
+```
+
+`unsupported` carries advice `insecure_context` when `!isSecureContext`, otherwise `unsupported_browser`; once the fallback is available it carries `gesture_required` until the user taps.
+
+### 4. Transition table
+
+Guards reference `vis` (`document.visibilityState`), `fb` (`options.fallback === 'video'`), `reacq` (`options.reacquireOnVisible`, default `true`), `n` (`attempt`), `N` (`retry.attempts`, default 3). Every transition emits `change { from, to, reason, advice }` unless marked *silent*.
+
+| # | From | Event | Guard | To | Side effects |
+|---|---|---|---|---|---|
+| 1 | `idle` | `request()` | `'wakeLock' in navigator` | `requesting` | `attempt = 0`; call `navigator.wakeLock.request('screen')`; set `pending` flag |
+| 2 | `idle` | `request()` | API absent | `unsupported` | advice = `insecure_context` if `!isSecureContext` else (`fb` ? `gesture_required` : `unsupported_browser`); emit `error` if not `fb` |
+| 3 | `requesting` | native promise resolves | not cancelled | `held` | store sentinel; `sentinel.addEventListener('release', onRelease)`; `mode = 'native'`; `attempt = 0`; advice = null |
+| 4 | `requesting` | native promise resolves | cancelled (release() during flight) | `idle` | `await sentinel.release()`; drop sentinel (*silent* beyond the earlier `release` change) |
+| 5 | `requesting` | rejects `NotAllowedError` | — | `denied` | `{reason, advice} = classifyDenial()`; if reason ∈ {`battery_platform`,`unknown`} and `vis==='visible'` and `n < N` → schedule retry in `min(baseMs·2^n, maxMs)` (defaults 1 s, 2 s, 4 s); if `hidden` → wait for `visibilitychange`; if `policy`/`insecure_context` → no timer; emit `error` |
+| 6 | `requesting` | rejects other error | — | `denied` | reason `unknown`, advice `battery_saver`/`ios_low_power`; same retry rule; emit `error` |
+| 7 | `requesting` (video) | `video.play()` resolves | — | `fallback` | `mode = 'video'`; start 20 s nudge timer; advice = null |
+| 8 | `requesting` (video) | `play()` rejects `NotAllowedError` | — | `unsupported` | advice `gesture_required`; emit `error` |
+| 9 | `requesting` (video) | `play()` rejects other (`NotSupportedError`, `AbortError`) | — | `unsupported` | try the next source once (`webm` → `mp4`); if none left advice `unsupported_browser`; emit `error` |
+| 10 | `held` | sentinel `release` event | `vis === 'hidden'` | `lost` | sentinel = null; advice `tab_hidden`; reason `released_hidden` |
+| 11 | `held` | sentinel `release` event | `vis === 'visible'` | `lost` → immediately `requesting` | reason `released_visible`; loop guard: if ≥ 3 visible-releases within 10 s → go to `denied` (reason `battery_platform`) instead and apply the retry rule |
+| 12 | `held` | `release()` | — | `idle` | set `releasing`; `await sentinel.release()`; ignore the resulting `release` event; sentinel = null; `mode` kept |
+| 13 | `lost` | `visibilitychange` → visible | `reacq` | `requesting` | native: `request('screen')`; video: `video.play()`; reason `visible` |
+| 14 | `lost` | `visibilitychange` → visible | `!reacq` | `lost` | *silent*; caller must `request()` |
+| 15 | `lost` | `release()` | — | `idle` | clear timers; pause video if `mode === 'video'` |
+| 16 | `denied` | retry timer fires | `vis === 'visible'` | `requesting` | `attempt++`; reason `retry` |
+| 17 | `denied` | `visibilitychange` → visible | reason was `hidden` | `requesting` | `attempt = 0`; reason `visible` |
+| 18 | `denied` | `fullscreenchange` | any | `requesting` | one attempt, `attempt` unchanged; reason `fullscreen` |
+| 19 | `denied` | `request()` | — | `requesting` | `attempt = 0`; cancel retry timer (user action resets the policy) |
+| 20 | `denied` | `release()` | — | `idle` | cancel retry timer |
+| 21 | `unsupported` | `request()` | `fb` and video not yet created | `requesting` | create `<video>` (§5) synchronously inside the caller's gesture; `play()`; reason `request` |
+| 22 | `unsupported` | `request()` | `fb` and video exists | `requesting` | `play()` again |
+| 23 | `unsupported` | `request()` | `!fb` | `unsupported` | emit `error`; *silent* |
+| 24 | `fallback` | `visibilitychange` → hidden | — | `lost` | `video.pause()`; clear nudge timer; advice `tab_hidden`; reason `hidden` |
+| 25 | `fallback` | nudge timer (every 20 s) | `video.paused \|\| video.ended \|\| video.readyState < 2` | `fallback` (self) | `video.currentTime = 0; video.play()`; on `NotAllowedError` → `unsupported` (advice `gesture_required`); *silent* when successful |
+| 26 | `fallback` | `release()` | — | `idle` | `video.pause()`; clear timer; keep element for reuse |
+| 27 | `held` \| `fallback` | `fullscreenchange` | state unchanged after 250 ms | same | *silent* no-op — if the browser released, row 10/11 already fired |
+| 28 | any | `destroy()` | — | `idle` | release sentinel; pause and remove `<video>`; remove all listeners; clear timers; `emitter.clear()`; further calls resolve to `'idle'` |
+| 29 | any except `idle` | `pagehide` / `freeze` (Page Lifecycle) | — | as per rows 10/24 | The browser releases anyway; we just mirror it. On `resume` event treat as `visibilitychange` → visible |
+
+Row 5 is the retry policy in full: exponential backoff, at most `N = 3` attempts (1 s, 2 s, 4 s), only while visible and only for `battery_platform`/`unknown`; after the third failure the machine stays in `denied` with its advice and waits for one of: `request()` (user tap on the pill's "Try again"), `visibilitychange` → visible, `fullscreenchange`. `hidden` denials never retry on a timer (the visible event is the retry). `policy` and `insecure_context` never retry — nothing the user does in the tab can fix them.
+
+### 5. Video fallback details
+
+Created once, lazily, inside the user's gesture (row 21):
+
+```ts
+function createFallbackVideo(doc: Document, sources: { webm?: string; mp4?: string }): HTMLVideoElement {
+  const v = doc.createElement('video');
+  v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = false; v.preload = 'auto';
+  v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
+  v.setAttribute('aria-hidden', 'true'); v.title = 'AwakeTab keeps the screen awake';
+  v.disablePictureInPicture = true; (v as any).disableRemotePlayback = true;
+  // Must be rendered (not display:none) for the platform to count it as playing video.
+  v.style.cssText = 'position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:0.01;pointer-events:none;';
+  for (const [type, src] of [['video/webm', sources.webm], ['video/mp4', sources.mp4]] as const) {
+    if (!src) continue;
+    const s = doc.createElement('source'); s.type = type; s.src = src; v.appendChild(s);
+  }
+  doc.body.appendChild(v);
+  return v;
+}
+```
+
+- Sources default to inline `data:video/webm;base64,…` and `data:video/mp4;base64,…` 1-frame clips of ~1 s duration exported from `@awaketab/wake/video` (≤ 1.5 KB gz together). `options.videoSources` may replace them with URLs (`/fallback.webm`, `/fallback.mp4` in `public/`), which the site's service worker precaches.
+- `play()` is called synchronously in the gesture handler's call stack (no `await` before it); its promise is handled per rows 7–9.
+- Nudge: every 20 s (`setInterval`) check `paused || ended || readyState < 2` and re-`play()` from `currentTime = 0`. This is a watchdog for browsers that stall a looping tiny video, not a keep-alive by itself.
+- On hidden: pause (row 24) — saves the CPU that older fallbacks burned (25–30% reported for the Firefox video path). On visible: `play()` again; if the browser now demands a gesture we surface `gesture_required` honestly instead of pretending.
+- The element is removed only on `destroy()`.
+
+### 6. Public API of `@awaketab/wake`
+
+```ts
+export interface WakeLockSentinelLike {
+  readonly released: boolean;
+  release(): Promise<void>;
+  addEventListener(type: 'release', cb: () => void): void;
+  removeEventListener(type: 'release', cb: () => void): void;
+}
+export interface WakeLockLike { request(type: 'screen'): Promise<WakeLockSentinelLike>; }
+
+export interface RetryOptions { attempts?: number /* 3 */; baseMs?: number /* 1000 */; maxMs?: number /* 8000 */ }
+
+export interface WakeLockOptions {
+  fallback?: 'video' | 'none';                 // default 'video'
+  videoSources?: { webm?: string; mp4?: string };
+  reacquireOnVisible?: boolean;                // default true
+  retry?: RetryOptions;
+  debug?: boolean | ((msg: string, data?: unknown) => void);
+  /** Test/PiP hooks: inject the API and document to observe. */
+  wakeLock?: WakeLockLike | null;              // default navigator.wakeLock (null forces `unsupported`)
+  document?: Document;                          // default globalThis.document
+  isIOS?: boolean;                              // default: UA sniff for iPhone|iPad|iPod
+}
+
+export interface ChangeEvent { from: LockState; to: LockState; reason: LockReason; advice: Advice | null; deniedReason?: DeniedReason }
+export interface ErrorEvent  { error: unknown; state: LockState; advice: Advice | null }
+export interface WakeLockEvents extends Record<string, unknown> { change: ChangeEvent; error: ErrorEvent }
+
+export interface WakeLock {
+  readonly state: LockState;
+  readonly mode: 'native' | 'video' | null;
+  readonly advice: Advice | null;
+  readonly supported: boolean;                 // API present in this document (false during SSR)
+  /** Never rejects; resolves with the state reached: held | fallback | denied | unsupported | idle (if destroyed). */
+  request(): Promise<LockState>;
+  release(): Promise<void>;
+  on<K extends keyof WakeLockEvents>(type: K, cb: (ev: WakeLockEvents[K]) => void): () => void;
+  destroy(): void;
+}
+
+export function createWakeLock(options?: WakeLockOptions): WakeLock;
+export function createEmitter<E extends Record<string, unknown>>(): Emitter<E>;
+```
+
+Usage:
+
+```ts
+import { createWakeLock } from '@awaketab/wake';
+
+const lock = createWakeLock({ fallback: 'video' });
+lock.on('change', ({ to, advice }) => pill.render(to, advice));
+button.addEventListener('click', async () => {
+  const state = await lock.request();          // inside the gesture so the fallback can play
+  if (state === 'denied' || state === 'unsupported') showFix(lock.advice);
+});
+```
+
+Constraints: `createWakeLock()` touches no globals until `request()`/`on()` is first called, so it is SSR-safe; `request()` while `requesting` returns the in-flight promise; `release()` while `requesting` sets `cancelled` (row 4).
+
+---
+
+## Part B · Session layer — `@awaketab/core`
+
+### 7. Types
+
+```ts
+import type { LockState, Advice, WakeLock } from '@awaketab/wake';
+
+export type PlanType = 'indefinite' | 'duration' | 'until';
+export type Plan =
+  | { type: 'indefinite' }
+  | { type: 'duration'; ms: number }                       // 60_000 ≤ ms ≤ 7 days
+  | { type: 'until'; endsAt: number; wall: string };       // endsAt epoch ms (local clock); wall 'HH:MM' — PROPOSED field `wall`
+
+export type SessionStatus = 'inactive' | 'active' | 'paused' | 'completed' | 'aborted';
+export type EndReason = 'completed' | 'user' | 'lost_timeout' | 'denied' | 'battery' | 'error';
+export type PresetId = 'p15' | 'p30' | 'p45' | 'p60' | 'p120' | 'p240' | 'pinf' | 'custom' | 'until';
+export type AmbientMode = 'standard' | 'clock' | 'focus' | 'minimal' | 'night' | 'message' | 'cook';
+export type Theme = 'auto' | 'light' | 'dark' | 'oled';
+export type EndBehaviour = 'stop' | 'prompt_extend';
+
+export interface Session {
+  id: string;                 // crypto.randomUUID()
+  plan: Plan;
+  presetId: PresetId;
+  mode: AmbientMode;
+  startedAt: number;          // epoch ms
+  endsAt: number | null;      // null for indefinite; shifted on pause/resume for duration plans
+  status: SessionStatus;
+  pausedAt: number | null;
+  pausedMs: number;           // total paused time — PROPOSED field
+  endedAt: number | null;     // PROPOSED field
+  endReason: EndReason | null;// PROPOSED field
+  awakeSeconds: number;       // seconds spent in held|fallback, for stats — PROPOSED field
+}
+
+export const PRESET_MS: Record<Exclude<PresetId, 'pinf' | 'custom' | 'until'>, number> = {
+  p15: 15 * 60_000, p30: 30 * 60_000, p45: 45 * 60_000, p60: 60 * 60_000, p120: 120 * 60_000, p240: 240 * 60_000,
+};
+```
+
+Status lifecycle: `inactive` →(`start`) `active` ⇄(`pause`/`resume`) `paused`; `active|paused` →(`plan end`) `completed`; `active|paused` →(`stop`/`battery`/`denied`/`lost_timeout`/`error`) `aborted`. `completed` always has `endReason: 'completed'`; `aborted` has any other reason. A new `start()` replaces the session object (the previous one has already been folded into stats).
+
+### 8. Tick algorithm
+
+One `setTimeout` chain aligned to the wall clock; no `setInterval`, no accumulated deltas.
+
+```ts
+function scheduleTick(): void {
+  const now = opts.now();                               // Date.now() by default
+  timer = opts.setTimeout(tick, 1000 - (now % 1000));   // fire just after the next whole second
+}
+function tick(): void {
+  timer = null;
+  const now = opts.now();
+  if (session.status !== 'active') return;
+  if (session.plan.type === 'until') reconcileUntil(now);   // §8.1
+  if (session.endsAt !== null && now >= session.endsAt) { finish('completed', now); return; }
+  if (lock.state === 'held' || lock.state === 'fallback') {
+    session.awakeSeconds += 1;                             // credit only genuinely awake seconds
+    if (session.awakeSeconds % 60 === 0) stats.creditMinute(now);
+  }
+  if (lock.state === 'lost' && lostSince !== null && now - lostSince >= opts.lostTimeoutMs) { finish('lost_timeout', now); return; }
+  emit('tick', { now, remainingMs: session.endsAt === null ? null : Math.max(0, session.endsAt - now), elapsedMs: now - session.startedAt - session.pausedMs });
+  scheduleTick();
+}
+```
+
+Properties: a tick that fires late (throttled background tab, long task) computes remaining time from `endsAt - now`, so the display never drifts; catch-up is automatic because the next delay is recomputed from `now % 1000`. On `visibilitychange` → visible the engine cancels the pending timer and runs `tick()` immediately so the UI is correct on the first frame. Background timers in hidden tabs are throttled to ≥ 1 min by browsers — irrelevant here because the lock is `lost` while hidden and the end check runs on return; the end-of-session pipeline still fires late-but-correct.
+
+#### 8.1 `until` plans, DST and clock changes
+
+`Plan.until` stores both `endsAt` (absolute) and `wall` (`'HH:MM'` local). Creation: parse `HH:MM`, build `new Date()` set to today at that local time via `setHours(h, m, 0, 0)`; if `≤ now + 30 s` add one day. Because `endsAt` is absolute, a DST transition between now and the target is handled by the `Date` local-time computation at creation — "until 06:00" across a spring-forward night is a correct 06:00. `reconcileUntil(now)` guards the remaining cases: if `formatHHMM(new Date(endsAt))` no longer equals `wall` (time-zone change, manual clock adjustment, NTP correction > 60 s detected as `|now - lastTickAt| > 90_000` while visible), recompute `endsAt` from `wall` relative to `now` and emit `warning { code: 'clock_adjusted' }`. It runs on every tick and on `visibilitychange`. For `duration` plans, `endsAt` is never recomputed: a backwards clock jump extends the session by the jump, a forward jump past `endsAt` completes it on the next tick — both acceptable and rare.
+
+### 9. Pause and resume
+
+`pause()` (allowed in `active`): `status = 'paused'`, `pausedAt = now`, `lock.release()` — the screen may sleep while paused, that is the point — tick chain stopped, persist. `resume()` (allowed in `paused`): `pausedMs += now - pausedAt`; for `duration` plans `endsAt += now - pausedAt` (remaining time is preserved); for `until` plans `endsAt` is unchanged (the clock target is what matters — if it has passed, `resume()` finishes with `completed` immediately); `indefinite` unchanged; `status = 'active'`, `await lock.request()`, restart ticks, persist. Pause does not count toward `awakeSeconds`.
+
+### 10. End-of-session pipeline
+
+`finish(reason, now)` runs the same ordered steps for every end; steps 3–6 are skipped for `reason === 'user'`.
+
+1. `status = reason === 'completed' ? 'completed' : 'aborted'`; `endReason`, `endedAt` set; tick chain stopped; `lock.release()`.
+2. Persist `at.v1.session`; `stats.finalize(session)` (credit the partial minute if `awakeSeconds % 60 ≥ 30`; increment `sessions`); track `session_end { reason, durationMin }`.
+3. Chime (if `settings.sound.enabled`): the `AudioContext` was created and `resume()`d on the start gesture so it can play now without user interaction; a 600 ms two-tone chime from an oscillator (no audio file). Pro `sounds.custom` replaces it.
+4. Notification (if `settings.notifications` and permission `granted`): `registration.showNotification(t('end.title'), { body, tag: 'at-end', renotify: true, icon: '/icons/192.png' })` through the service worker so it works with the tab in the background. On iOS this is only possible in the installed Home-Screen app; the settings toggle is hidden when `caps.features.notifications === 'unavailable'`.
+5. Title flash: alternate `document.title` between the original and `t('end.titleFlash')` every 1 s until the document is visible *and* focused, then restore. Never `alert()`.
+6. Extend prompt: if `settings.endBehaviour === 'prompt_extend'` (default) show the `extend` overlay (+15 min, +30 min, +60 min, ∞) with a 60 s auto-dismiss; `extend(ms)` creates a new `duration` session with `presetId: 'custom'` and the same mode (or `indefinite` for ∞). If `stop`, show the summary toast only. For `battery` and `denied` the overlay shows the fix instead of the extend buttons.
+
+### 11. Battery monitor (Chromium only)
+
+Enabled when `'getBattery' in navigator` and `settings.battery.autoStop`. On start: `const b = await navigator.getBattery()`; subscribe to `levelchange` and `chargingchange`; evaluate on every event and on every 60th tick:
+
+- `level ≤ threshold + 0.05` and not charging → once per session emit `warning { code: 'battery_low', level }` (toast).
+- `level ≤ threshold` (default `0.15`) and not charging → `finish('battery')`.
+- Hysteresis: after an auto-stop, a new session can start; the monitor re-arms only when `charging` or `level ≥ threshold + 0.05`, otherwise it emits `warning { code: 'battery_low' }` at start and does not stop the session again within the same charge cycle (`lastBatteryStopAt` in memory).
+
+### 12. Persistence and resume
+
+Written to `at.v1.session` on every status change, on `extend`, and at most every 30 s while active (`awakeSeconds` heartbeat for stats accuracy; the tick itself never writes). On boot, `getResumable()` returns the stored session when all hold: `status ∈ {'active','paused'}`; and (`endsAt !== null && endsAt > now`) or (`plan.type === 'indefinite' && now - startedAt < 12 h`). Otherwise, if `status === 'active'` and `endsAt !== null && endsAt ≤ now` the session is marked `completed` silently (it ended while unloaded; minutes credited only up to the last heartbeat); if indefinite and older than 12 h it is marked `aborted` with `endReason: 'error'`. The UI shows the `resume` overlay (`resume_shown`); accept → `resumeSession()` (`resume_accepted`), which keeps `id`/`startedAt`, adds the unloaded gap to `pausedMs` for `duration` plans (shifting `endsAt` accordingly, so a reload is treated as a pause), and requests the lock; decline → `aborted` with `endReason: 'user'` and no chime.
+
+### 13. Stats
+
+`at.v1.stats = { days: Record<'YYYY-MM-DD', number>, totalMinutes, sessions, longestStreak }` (schema and retention in `08-data-storage.md`).
+
+```ts
+const dayKey = (ms: number) => new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(ms)); // local date, e.g. 2026-09-07
+```
+
+`creditMinute(now)` adds 1 to `days[dayKey(now)]` and `totalMinutes`, flushing to storage at most every 60 s. `finalize()` increments `sessions` when the session had ≥ 1 credited minute, prunes keys older than 365 days, and recomputes streaks: walk backwards from today; `currentStreak` counts consecutive days with `minutes ≥ 1` starting at today or, if today is empty, at yesterday; `longestStreak = max(longestStreak, currentStreak)`. `currentStreak` is derived on read, not stored. Free tier renders 7 days; `stats.history` unlocks the 365-day heatmap; `stats.export` the CSV — the data is stored for everyone so upgrading reveals history.
+
+### 14. Multi-tab protocol and single-active-lock election
+
+Channel: `new BroadcastChannel('awaketab')`. `tabId` is `crypto.randomUUID()` kept in `sessionStorage['at.tabId']` (survives reload, not tab duplication — a duplicated tab gets a new id because we also compare `performance.timeOrigin`).
+
+```ts
+// PROPOSED — add to 00-conventions.md §6a
+type TabMessage =
+  | { type: 'hello'; tabId: string; ts: number }
+  | { type: 'lock';  tabId: string; ts: number; state: LockState }
+  | { type: 'state'; tabId: string; ts: number; status: SessionStatus; lock: LockState; startedAt: number | null }
+  | { type: 'bye';   tabId: string; ts: number };
+```
+
+Rules:
+
+1. On boot post `hello`. Every peer replies with `state`. Peers are tracked in a map with a 10 s liveness timeout refreshed on any message; `peers` in the store is the map size.
+2. Before `start()`, if any peer reports `lock ∈ {'held','fallback'}`, the UI shows the `secondTab` overlay: "AwakeTab is already running in another tab" with *Use this tab* / *Keep the other*. In `/embed/*` and `autostart=1` the newest tab takes over without asking.
+3. Election — newest holder wins: whenever a tab transitions to `held`/`fallback` it posts `lock`. A tab that is itself `held`/`fallback` and receives `lock { state: held|fallback }` with `ts > ownAcquiredAt` releases its lock, sets its session to `paused` with a toast "Now running in the other tab", and does not re-request on `visibilitychange` until the user resumes. Because only a visible tab can hold a native lock, this mostly matters for stats double-counting and honest pills.
+4. `bye` on `pagehide` removes the peer immediately.
+
+### 15. Capability probe
+
+Synchronous, runs once at boot (< 1 ms), result cached in the store and re-used by the pill copy, settings visibility and analytics `ua` class.
+
+```ts
+export type BrowserFamily = 'chrome' | 'edge' | 'firefox' | 'safari' | 'samsung' | 'opera' | 'other';
+export type OSFamily = 'ios' | 'ipados' | 'android' | 'windows' | 'macos' | 'linux' | 'chromeos' | 'other';
+
+export interface Capabilities {
+  browser: { family: BrowserFamily; major: number | null; minor: number | null; source: 'ua-ch' | 'ua' };
+  os: { family: OSFamily };
+  isIOS: boolean;                 // iPhone/iPad/iPod, including iPadOS desktop UA (MacIntel + maxTouchPoints > 1)
+  isStandalone: boolean;          // matchMedia('(display-mode: standalone)') || navigator.standalone === true
+  isSecureContext: boolean;
+  isEmbedded: boolean;            // window !== window.top
+  wakeLock: 'native' | 'fallback' | 'none';   // feature detection first, matrix second
+  matrix: { nativeExpected: boolean; minVersion: string | null };   // from the support matrix, for advice copy
+  features: {
+    battery: boolean;                                      // 'getBattery' in navigator (Chromium only)
+    notifications: 'granted' | 'denied' | 'default' | 'unavailable';   // 'unavailable' on iOS when not standalone
+    documentPip: boolean;                                  // 'documentPictureInPicture' in window (Chromium only)
+    idleDetection: boolean;                                // 'IdleDetector' in window (Chromium only)
+    broadcastChannel: boolean;
+    serviceWorker: boolean;
+    webCrypto: boolean;                                    // crypto.subtle available (needed for licence verify)
+  };
+  advice: Advice | null;          // initial advice before any request: insecure_context | unsupported_browser | null
+}
+
+const NATIVE_MIN: Partial<Record<BrowserFamily, [major: number, minor: number]>> = { chrome: [84, 0], edge: [84, 0], firefox: [126, 0], safari: [16, 4], samsung: [14, 0], opera: [70, 0] };
+```
+
+Browser family comes from `navigator.userAgentData.brands` when present (pick, in order, `Microsoft Edge`, `Samsung Internet`, `Opera`, `Google Chrome`, `Chromium`; version from that brand), else from the UA string (`Edg/`, `SamsungBrowser/`, `OPR/`, `Firefox/`, `Chrome/`, `Version/… Safari/`). `wakeLock` is `'native'` if `'wakeLock' in navigator`, else `'fallback'` if a `<video>` can be created (`typeof HTMLVideoElement !== 'undefined'`), else `'none'`. The matrix does not override detection; it only produces copy such as "Safari 16.3 — update to 16.4 for native support". iOS Home-Screen apps below 18.4 are detected as `isIOS && isStandalone` with `os` version < 18.4 → `matrix.nativeExpected = false` and advice copy points to the browser tab instead.
+
+**iOS Low Power heuristic** (in `core`, because `wake` has no timeline): on iOS, if the document goes hidden without any user input in the preceding 25–40 s while `held`, twice within one session, emit `warning { code: 'ios_low_power' }`; the UI shows the Low Power Mode fix. This is a heuristic and the copy says "probably".
+
+### 16. Public API of `@awaketab/core`
+
+```ts
+export interface StorageAdapter { get<T>(key: string): T | null; set(key: string, value: unknown): void; remove(key: string): void; readonly persistent: boolean }
+
+export interface SessionOptions {
+  lock: WakeLock;
+  storage: StorageAdapter;                     // from createStorage() — see 08-data-storage.md
+  channel?: BroadcastChannel | null;           // null disables multi-tab logic
+  settings: () => Settings;                    // live getter so changes apply without restart
+  now?: () => number;                          // default Date.now
+  setTimeout?: typeof setTimeout; clearTimeout?: typeof clearTimeout;
+  lostTimeoutMs?: number;                      // default 6 h
+  notify?: (title: string, body: string) => Promise<void>;   // SW notification adapter (web) / chrome.notifications (extension)
+  track?: (event: string, params?: Record<string, string | number | boolean>) => void;
+}
+
+export interface SessionEvents extends Record<string, unknown> {
+  tick:    { now: number; remainingMs: number | null; elapsedMs: number };
+  status:  { from: SessionStatus; to: SessionStatus; reason: EndReason | null };
+  lock:    ChangeEvent;                        // re-emitted from @awaketab/wake
+  ended:   { session: Session; reason: EndReason };
+  warning: { code: 'battery_low' | 'second_tab' | 'clock_adjusted' | 'ios_low_power' | 'storage_memory'; level?: number };
+  peers:   { count: number };
+}
+
+export interface SessionEngine {
+  readonly session: Session | null;
+  readonly lockState: LockState;
+  start(plan: Plan, meta: { presetId: PresetId; mode: AmbientMode; source?: string }): Promise<LockState>;
+  pause(): void;
+  resume(): Promise<LockState>;
+  stop(): void;                                // endReason 'user'
+  extend(ms: number | 'indefinite'): Promise<LockState>;
+  getResumable(): Session | null;
+  resumeSession(): Promise<LockState>;         // accept the resume banner
+  discardResumable(): void;
+  on<K extends keyof SessionEvents>(type: K, cb: (ev: SessionEvents[K]) => void): () => void;
+  destroy(): void;
+}
+
+export function createSession(opts: SessionOptions): SessionEngine;
+export function planFromPreset(id: Exclude<PresetId, 'custom' | 'until'>): Plan;
+export function planUntil(wall: string, now?: number): Plan;               // 'HH:MM' → { type:'until', endsAt, wall }
+export function probeCapabilities(win?: Window & typeof globalThis): Capabilities;
+export { createStorage, migrate, readStats, exportStatsCsv, clearAllData } from './storage';
+export { verifyLicenseToken, type LicenseState } from './license';
+export { dayKey, computeStreaks } from './stats';
+```
+
+Usage (web island):
+
+```ts
+const lock = createWakeLock({ fallback: 'video' });
+const engine = createSession({ lock, storage, channel: new BroadcastChannel('awaketab'), settings: () => store.get().settings, notify: swNotify, track });
+engine.on('tick', ({ remainingMs }) => store.set({ now: Date.now() }));
+engine.on('lock', ({ to, advice, mode }) => store.set({ lock: { state: to, advice, mode } }));
+engine.on('ended', ({ reason }) => reason !== 'user' && store.set(s => ({ ui: { ...s.ui, overlay: 'extend' } })));
+startButton.onclick = () => engine.start(planFromPreset('p30'), { presetId: 'p30', mode: 'standard', source: 'button' });
+```
+
+Extension: the background service worker implements `WakeLock` over `chrome.power.requestKeepAwake('display')` / `releaseKeepAwake()` (always `held` after request; `unsupported` when `chrome.power` is absent) and passes it to `createSession()` with a `chrome.storage.local`-backed `StorageAdapter`, `channel: null`, and `notify` via `chrome.notifications`.
+
+### 17. Test hooks
+
+- `createWakeLock({ wakeLock: fake, document: fakeDoc })` — `@awaketab/wake/testing` exports `createFakeWakeLock()` returning `{ api: WakeLockLike; sentinels: FakeSentinel[]; rejectNextWith(err: Error): void; releaseAll(): void }` where `FakeSentinel.fireRelease()` simulates the browser releasing. `setVisibility(doc, 'hidden' | 'visible')` redefines `visibilityState` and dispatches `visibilitychange`. Passing `wakeLock: null` forces the `unsupported` path; a `HTMLVideoElement.prototype.play` stub (`vi.spyOn`) drives rows 7–9.
+- `createSession({ now, setTimeout, clearTimeout })` — inject a controllable clock, or use Vitest fake timers (`vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] })`) and `vi.setSystemTime()` to test DST/`until` reconciliation and the 12 h resume window.
+- `StorageAdapter` in-memory implementation is the same class used for the private-mode fallback, so storage tests need no jsdom `localStorage`.
+- `BroadcastChannel` is polyfilled in tests with an in-process implementation that delivers to all other instances synchronously; election tests create two engines on the same channel.
+- Every transition row in §4 has a Vitest case named `T<row>`; the e2e suite (Playwright, chromium/firefox/webkit) asserts the pill text after tab hide/show and after a forced `NotAllowedError` via `--disable-features=WakeLock` or CDP `Emulation.setIdleOverride`. See `13-testing-strategy.md`.

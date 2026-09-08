@@ -1,0 +1,346 @@
+# 00 · Conventions, glossary and canonical facts
+
+> **This file is the single source of truth for names, identifiers, states, keys, routes, plans and budgets.** Every other document in `docs/` must use these exact identifiers. If a detail here conflicts with another doc, this file wins and the other doc gets fixed. When a decision changes, change it here first.
+
+Status: v1.0 · 7 Sep 2026 · Owner: Soubhik · Derived from `awaketab-blueprint.md` (strategy) — see that document for the *why*; this set of docs is the *what* and *how*.
+
+---
+
+## 1. Product identity
+
+| Item | Value |
+|---|---|
+| Product name | **AwakeTab** (one word, capital A and T; never "Awake Tab" or "awaketab" in prose; `awaketab` in code/URLs) |
+| Tagline | "The tab that keeps your screen awake." |
+| Canonical domain | `https://awaketab.com` (redirect 301 from `awaketab.app`, `awaketab.page`, `awaketab.dev`, `www.awaketab.com`) |
+| Company/legal | Sole proprietorship of Soubhik (India) — confirm with CA; placeholder legal name `AwakeTab` |
+| GitHub org | `awaketab` — repo `awaketab/awaketab` (monorepo) |
+| npm scope | `@awaketab` — package `@awaketab/wake` |
+| Extension name | **AwakeTab for Chrome** (also published to Edge Add-ons as "AwakeTab") |
+| Embed product | **AwakeTab Embed** (first widget: Cook Mode) |
+| Business tier | **AwakeTab Business** (Embed licence, Kiosk licence) |
+| Paid tier | **AwakeTab Pro** |
+| Brand accent | Awake amber `#B86E00` (light UI) / `#FFB84D` (dark UI); night indigo `#2B3A67` / `#9DB0FF`; OLED black `#000000` |
+| Favicon / icon motif | The ring (progress ring with a glowing dot at 12 o'clock) |
+| Author page | `/about` — real name, testing setup, contact |
+
+Assumptions carried from the blueprint (not yet confirmed by Soubhik): name = AwakeTab; stack = Astro + Cloudflare; engine + library open source (MIT), site content proprietary; launch locales = 8 below; analytics = first-party beacon (no third-party script). Changing any of these means editing this file and grepping the docs.
+
+---
+
+## 2. Identifier schemes
+
+| Kind | Format | Example |
+|---|---|---|
+| Business requirement | `BR-##` | `BR-03` |
+| Functional requirement | `FR-<AREA>-##` | `FR-ENGINE-04`, `FR-TIMER-02`, `FR-PWA-01` |
+| Non-functional requirement | `NFR-<AREA>-##` | `NFR-PERF-01`, `NFR-A11Y-02` |
+| Architecture decision | `ADR-###` | `ADR-004` |
+| Epic | `E#` | `E3` |
+| Ticket | `E#-T##` | `E3-T04` |
+| Analytics event | `snake_case` | `session_start` |
+| Feature gate (Pro) | `dot.case` | `ambient.packs` |
+| Storage key | `at.v1.<name>` | `at.v1.settings` |
+| i18n key | `dot.case` grouped by screen | `tool.pill.held` |
+| Content slug | `kebab-case` | `keep-screen-on-while-cooking` |
+
+Areas for FR/NFR: `ENGINE`, `TIMER`, `UI`, `AMBIENT`, `STATS`, `PWA`, `PIP`, `I18N`, `SEO`, `CONTENT`, `PRO`, `ADS`, `EXT`, `EMBED`, `LIB`, `API`, `ANALYTICS`, `PERF`, `A11Y`, `SEC`, `PRIVACY`, `COMPAT`.
+
+Priority labels: `P0` (launch blocker), `P1` (launch), `P2` (post-launch, phase 3), `P3` (later).
+
+---
+
+## 3. Stack (canonical)
+
+| Layer | Choice | Notes |
+|---|---|---|
+| Site framework | **Astro 5**, static output, content collections (MDX), built-in i18n routing | One vanilla-TypeScript island for the tool; no React/Vue |
+| Language | TypeScript, `strict: true`, ESM | Node 22 LTS, pnpm 9 workspaces |
+| Styling | Tailwind CSS v4 with design tokens as CSS variables | System font stack (no web fonts on tool pages) |
+| PWA | `@vite-pwa/astro` (Workbox) | Precache app shell + tool pages; runtime cache for content pages |
+| Hosting | **Cloudflare Pages** (+ Pages Functions for `/api/*`) | Preview deploy per PR; `_headers` and `_redirects` files |
+| Serverless state | Cloudflare **KV** (licences, embed configs), **Workers Analytics Engine** (events) | No database, no accounts |
+| Payments | **Polar.sh** as merchant of record (checkout, licence keys, webhooks) | Alternative: Dodo Payments (UPI) — not in v1 |
+| Ads | Google AdSense → Journey by Mediavine → Raptive/Mediavine (content pages only) | Loader module only in content layout |
+| Analytics | First-party beacon `POST /api/e` → Analytics Engine; Google Search Console; CrUX | No cookies, no third-party analytics script |
+| Extension | **WXT** framework, Manifest V3, Chromium (`chrome.power`) | Firefox has no `power` API → not supported in v1 |
+| Library | `@awaketab/wake` — tsup build (ESM + CJS + d.ts), zero deps | Semantic versioning, changesets |
+| Testing | Vitest (unit), Playwright (e2e: chromium/firefox/webkit), axe-core, Lighthouse CI | See `13-testing-strategy.md` |
+| CI/CD | GitHub Actions → Cloudflare Pages Git integration | See `14-devops.md` |
+| OG images | Generated at build (satori + resvg) per page and locale | |
+| Errors | Console + first-party `client_error` event (sampled); no Sentry in v1 | |
+
+---
+
+## 4. Repository layout
+
+```
+awaketab/
+├─ apps/
+│  ├─ web/                 # Astro site, PWA, tool island, embed iframe app, PiP page, Pages Functions
+│  │  ├─ src/
+│  │  │  ├─ pages/         # routes (see §7)
+│  │  │  ├─ content/       # MDX collections: for/, on/, vs/, guides/, learn/ (per locale)
+│  │  │  ├─ components/    # Astro components (layouts, SEO head, ads slot, sponsor card)
+│  │  │  ├─ tool/          # the vanilla-TS island: ui/, ambient/, pip/, store.ts, main.ts
+│  │  │  ├─ i18n/          # ui strings: en.json, es.json, pt-br.json, de.json, fr.json, ja.json, zh.json, hi.json
+│  │  │  ├─ styles/        # tokens.css, base.css
+│  │  │  └─ lib/           # seo.ts (JSON-LD), og.ts, analytics.ts, ads.ts, license.ts
+│  │  ├─ functions/api/    # Cloudflare Pages Functions: e.ts, license/*.ts, webhooks/polar.ts, embed/config.ts, health.ts
+│  │  ├─ public/           # icons, manifest, robots.txt, ads.txt, fallback video, _headers, _redirects
+│  │  └─ astro.config.mjs
+│  └─ extension/           # WXT project (popup, options, background service worker)
+├─ packages/
+│  ├─ wake/                # @awaketab/wake — low-level Screen Wake Lock + fallback + status events
+│  └─ core/                # @awaketab/core — session engine, plans, stats, storage schema, licence token verification (framework-agnostic; shared by web + extension)
+├─ docs/                   # this documentation set
+├─ .github/workflows/      # ci.yml, lighthouse.yml, release.yml
+├─ pnpm-workspace.yaml · package.json · turbo.json (optional) · .cursorrules · CLAUDE.md
+```
+
+---
+
+## 5. Engine and session vocabulary
+
+### 5.1 Lock states (`@awaketab/wake`) — exactly seven
+
+| State | Meaning | Status pill (en) | Pill colour token |
+|---|---|---|---|
+| `idle` | No lock requested | "Ready" | neutral |
+| `requesting` | `navigator.wakeLock.request('screen')` in flight | "Starting…" | neutral |
+| `held` | Sentinel alive | "Screen awake" | accent (amber) |
+| `lost` | Sentinel released by the browser (tab hidden, OS) — will re-request on `visibilitychange` | "Paused — tab hidden" | warn |
+| `denied` | Request rejected (`NotAllowedError`: battery saver, policy, hidden doc) | "Blocked — here's the fix" | bad |
+| `unsupported` | `navigator.wakeLock` absent | "Tap to use the fallback" | neutral |
+| `fallback` | Hidden 1-frame video loop active (user gesture given) | "Awake via video fallback" | accent (muted) |
+
+Only `held` and `fallback` may show a running timer. Transitions are specified in `04-engine-spec.md`.
+
+### 5.2 Session (`@awaketab/core`)
+
+| Concept | Values |
+|---|---|
+| Session status | `inactive` · `active` · `paused` · `completed` · `aborted` |
+| Plan type | `indefinite` · `duration` (`ms`) · `until` (`endsAt` epoch ms, local clock) |
+| End reason | `completed` · `user` · `lost_timeout` · `denied` · `battery` · `error` |
+| Preset IDs | `p15` (15 min) · `p30` · `p45` · `p60` · `p120` · `p240` · `pinf` (∞) · `custom` · `until` |
+| Ambient modes | `standard` · `clock` · `focus` · `minimal` · `night` · `message` · `cook` |
+| Theme | `auto` · `light` · `dark` · `oled` |
+| End behaviour | `stop` · `prompt_extend` (default) |
+
+Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses `Date.now()` (never accumulated deltas); an `until` plan re-computes against local time on every tick and on `visibilitychange`.
+
+### 5.3 Keyboard shortcuts (web + PiP)
+
+`Space` toggle · `1`–`6` presets p15…p240 · `0` indefinite · `U` until… · `F` fullscreen · `D` cycle theme · `M` cycle ambient mode · `P` PiP · `Esc` stop/close · `?` shortcuts overlay.
+
+---
+
+## 6. Storage (localStorage, JSON, versioned)
+
+| Key | Contents | Notes |
+|---|---|---|
+| `at.v1.settings` | `Settings` object (theme, accent, defaultPreset, sound, notifications, endBehaviour, battery, ambient, locale, telemetry, keyboardHints) | Defaults applied on read; schema in `08-data-storage.md` |
+| `at.v1.session` | Current/last `Session` (id, plan, presetId, mode, startedAt, endsAt, status, pausedAt) | Enables resume banner after reload |
+| `at.v1.stats` | `{ days: { "YYYY-MM-DD": minutes }, totalMinutes, sessions, longestStreak }` | Day key = **local** date via `Intl.DateTimeFormat('en-CA')`; retained 365 days |
+| `at.v1.license` | `{ token, plan, exp, features[], lastValidatedAt, deviceId }` | Token = ES256 JWT signed by our Worker |
+| `at.v1.meta` | `{ installedAt, sessionCount, ratingPrompt: { shownAt, action }, lastSeenVersion }` | |
+| `at.v1.onboarding` | `{ dismissedTips: [] }` | |
+
+`BroadcastChannel('awaketab')` coordinates multiple tabs (second-tab warning, single active lock). Migrations: `migrate(fromVersion)` in `@awaketab/core/storage`; bump prefix to `at.v2.` only for breaking changes.
+
+---
+
+## 7. Routes (English at root; locales under `/{lang}/`)
+
+| Route | Purpose |
+|---|---|
+| `/` | The tool + full home content |
+| `/15m` `/30m` `/45m` `/1h` `/2h` `/4h` `/8h` | Preset deep links (indexable duration pages; canonical self) |
+| `/until/HH-MM` | Until-time deep link (noindex, canonical `/`) |
+| `/for/{slug}` | 18 scenario pages (tool embedded with scenario preset) |
+| `/on/{slug}` | 12 device/browser pages |
+| `/vs/{slug}` | 7 comparison pages |
+| `/guides/{slug}` | 8 OS how-to pages |
+| `/learn/{slug}` | 6 deep/dev pages |
+| `/pro` · `/pro/activate` · `/pro/manage` | Pricing, key entry, device list |
+| `/extension` · `/embed` · `/kiosk` · `/library` | Product landing pages |
+| `/embed/cook` | Iframe app for the Cook Mode widget (noindex) |
+| `/pip` | Document Picture-in-Picture content (noindex) |
+| `/about` · `/privacy` · `/terms` · `/changelog` · `/support-matrix` · `/how-we-tested` | Trust and freshness pages |
+| `/404` | Offers the tool |
+| `/api/*` | Pages Functions (see §9) |
+
+Query params (all optional): `autostart=1`, `mode=`, `msg=` (≤ 80 chars), `theme=`, `preset=`, `until=HH-MM`, `ref=` (attribution source; never stored beyond the event).
+
+Locales and folders: `en` (root), `es`, `pt-br`, `de`, `fr`, `ja`, `zh` (Simplified), `hi`. `x-default` → root. Phase 2 locales: `id`, `tr`, `ko`, `it`, `ru`, `vi`, `ar`.
+
+Content slugs (English canonical; translated slugs allowed per locale with hreflang linking):
+- `/for/`: cooking · presentations · downloads · ai-agents · dashboards · kiosk · sheet-music · reading · night-clock · baby-monitor · navigation · video-calls · live-streams · teleprompter · workouts · second-monitor · work-laptop · exams-proctoring
+- `/on/`: iphone-safari · ios-home-screen · ipad · android-chrome · samsung-internet · chromebook · windows-11 · windows-10 · macos · linux · firefox · edge
+- `/vs/`: caffeine · amphetamine · powertoys-awake · caffeinate-command · nosleep-page · nosleep-js · mouse-jigglers
+- `/guides/`: windows-11-screen-turns-off-after-1-minute · mac-prevent-sleep-lid-closed · iphone-auto-lock-never-greyed-out · chrome-energy-saver · android-screen-timeout-one-app · modern-standby · second-monitor-turns-off · lock-screen-vs-sleep
+- `/learn/`: screen-wake-lock-api-guide · nosleep-js-vs-wake-lock · does-a-wake-lock-keep-teams-green · low-power-mode-and-wake-locks · browser-support-matrix · how-we-tested
+
+---
+
+## 8. Plans, prices, gates
+
+### 8.1 Products (Polar.sh)
+
+| Plan ID | Name | Price | Term | Activations |
+|---|---|---|---|---|
+| `pro_yearly` | AwakeTab Pro (yearly) | $12 / year | 12 months + 7-day grace | 5 devices |
+| `pro_lifetime` | AwakeTab Pro (lifetime) | $29 one-time ($19 for the first 90 days after Pro launch) | perpetual; token re-validates every 90 days | 5 devices |
+| `biz_embed_site_yearly` | AwakeTab Embed licence | $29 / year per site (domain) | 12 months | 1 domain (+ staging subdomain) |
+| `biz_kiosk_site` | AwakeTab Kiosk licence | $19 one-time per site; `biz_kiosk_5` $49 for five | perpetual | per site |
+
+### 8.2 Feature gates (Pro unless stated)
+
+`ambient.packs` · `ambient.message` · `ambient.logo` · `schedules` · `sounds.custom` · `stats.history` (beyond 7 days) · `stats.export` · `pip.pro` (PiP with ambient modes) · `ext.autostart` · `ext.schedules` · `ads.free` · `embed.noattrib` (Business) · `kiosk.branding` (Business).
+
+Free always includes: the lock, every preset, custom duration, until-time, session restore, standard + clock + minimal ambient, one chime, notifications, 7-day stats, PiP basic, keyboard shortcuts, PWA, all languages.
+
+### 8.3 Monetization gates (from the blueprint)
+
+| Gate | Condition | Turns on |
+|---|---|---|
+| G0 | Launch (Tier 0 + 1 live) | Donate links (Buy Me a Coffee, GitHub Sponsors). No ads, no Pro |
+| G1 | 60 English pages indexed | AdSense on content pages; affiliate cards |
+| G2 | Tier 2 shipped | Pro via Polar; `ads.free` |
+| G3 | 1,000 Tier-1 sessions / 30 d and domain ≥ 4 months | Journey by Mediavine; network-managed in-view refresh, content pages only |
+| G4 | 25k pv/mo, ≥ 50% Tier-1, long-form majority | Raptive application (or stay Mediavine) |
+| G5 | 100k visits / mo | Sponsor card on awake screen; push Embed/Kiosk licences |
+
+Ad rules (non-negotiable): Google ads never on the awake screen, `/pip`, `/embed/*`, or in the extension; never auto-refresh under AdSense; ≤ 3 ads in view; ads-to-content ≤ 20%; ad scripts load after LCP; slots have fixed dimensions.
+
+---
+
+## 9. API surface (Cloudflare Pages Functions under `/api`)
+
+| Method · Path | Purpose | Auth |
+|---|---|---|
+| `POST /api/e` | Analytics events batch (≤ 20 events, ≤ 8 KB) | none; rate-limited by IP hash |
+| `POST /api/license/activate` | `{ key, deviceId, deviceLabel }` → `{ token, plan, features, exp, activations }` | licence key |
+| `POST /api/license/validate` | `{ token }` → fresh token or `{ revoked: true }` | token |
+| `POST /api/license/deactivate` | `{ token, deviceId }` | token |
+| `POST /api/webhooks/polar` | Polar events (`order.created`, `subscription.*`, `benefit_grant.*`) → KV | HMAC signature |
+| `GET /api/embed/config?domain=` | `{ licensed, attribution, theme, expiresAt }` for the widget | none (public, cached 5 min) |
+| `GET /api/health` | `{ ok, version }` | none |
+
+Token: JWT, `alg: ES256`, claims `{ sub, plan, features, dev, iat, exp, ver }`; public key shipped in `@awaketab/core`; verified offline in the browser and the extension.
+
+---
+
+## 10. Analytics events (first-party, no PII)
+
+`page_view` · `session_start {planType, presetId, mode, source}` · `session_end {reason, durationMin}` · `lock_state {from, to}` · `lock_denied {reason}` · `fallback_used` · `resume_shown` · `resume_accepted` · `pwa_install` · `pip_open` · `share_click` · `pro_view` · `pro_checkout_click {plan}` · `pro_activated {plan}` · `rating_prompt {action}` · `extension_click` · `ad_slot_loaded {page}` · `sponsor_view` · `sponsor_click` · `client_error {code}` (sampled 10%).
+
+Common fields: `ts`, `path` (no query string), `locale`, `ua` class (browser family + major, OS family), `viewport` class, `sid` (per-tab random session id, not persisted), `ver`. Never: IP (hashed only for rate limiting, not stored), user id, exact UA, referrer beyond origin.
+
+---
+
+## 11. Budgets and thresholds
+
+| Budget | Value |
+|---|---|
+| Tool pages JS (gz) | ≤ 40 KB total; ≤ 15 KB in the critical path |
+| Tool pages CSS (gz) | ≤ 20 KB, critical inlined |
+| Third-party requests on tool pages | 0 |
+| LCP (lab, mobile emulation) | ≤ 1.2 s; field p75 ≤ 2.0 s |
+| INP field p75 | ≤ 100 ms |
+| CLS | 0 (fixed slot sizes everywhere) |
+| Lighthouse (mobile) | Performance ≥ 95 · Accessibility 100 · Best Practices 100 · SEO 100 |
+| Content pages | Ads load after LCP; total JS ≤ 60 KB before ads |
+| Wake lock time-to-request | ≤ 300 ms after `DOMContentLoaded` when `autostart` conditions met |
+| Availability | 99.9% (static on Cloudflare); `/api/*` 99.5% |
+| Browser support | Chrome/Edge ≥ 84, Firefox ≥ 126, Safari ≥ 16.4, iOS Home-Screen app ≥ 18.4 (native); older → fallback; UI tested on last 2 versions |
+
+---
+
+## 12. Roadmap phases (canonical dates are relative to kickoff)
+
+| Phase | Window | Exit criterion |
+|---|---|---|
+| P0 Claim | Days 1–3 | Domains resolve to holding page with correct meta/OG/schema |
+| P1 Trust core + parity + home | Weeks 1–2 | CWV green, a11y 100, pill never lies |
+| P2 Content + launch | Weeks 3–5 | 60 EN URLs indexed; extension approved; AdSense approved (G1) |
+| P3 Engagement + authority | Weeks 6–9 | Library published; research live; Pro on sale (G2) |
+| P4 Compound | Ongoing | — |
+
+---
+
+## 13. Accepted proposals (v1.1 — consolidated from docs 02–09, 15)
+
+The identifiers below were proposed while writing the other documents and are now canonical. Docs that still say "PROPOSED" for any of these are to be read as accepted.
+
+### 13.1 Engine and session constants
+
+| Identifier | Value / meaning |
+|---|---|
+| `LOST_TIMEOUT_MS` | 6 h (21,600,000 ms). A session whose lock has been `lost` continuously for longer ends with reason `lost_timeout` and is not offered for resume. Finite plans end at `endsAt` if that comes first |
+| `CUSTOM_MAX_MS` | 7 days — upper bound for `custom` durations; zero/negative rejected inline |
+| `LockReason` | `request` · `acquired` · `fallback_started` · `released_hidden` · `released_platform` · `denied` · `unsupported` · `user_release` · `retry` · `destroyed` (see 04 §3) |
+| `AdviceCode` | `battery_saver` · `low_power_ios` · `hidden_document` · `permissions_policy` · `insecure_context` · `unsupported_browser` · `ios_safari_old` · `firefox_old` · `iframe_no_allow` — UI maps each to `tool.advice.<code>` |
+| `Plan.until.wall` | `'HH:MM'` string kept with `endsAt` so the UI can re-derive after clock changes |
+| `Session` extra fields | `pausedMs`, `endedAt`, `endReason`, `awakeSeconds` (seconds in `held` or `fallback`; feeds stats), `modeState` (per-mode data, e.g. `cookTimers[]`) |
+| `Settings` extra fields | `keyboardShortcuts: boolean` (enables single-key shortcuts; WCAG 2.1.4) distinct from `keyboardHints: boolean` (shows hints); `lastCustomMs`; `ambient.message` |
+| `TabMessage` | `{type:'hello'|'lock'|'state'|'bye', tabId, ts, …}` on `BroadcastChannel('awaketab')`; `tabId` in `sessionStorage['at.tabId']` |
+| CSS token namespace | `--at-*` (e.g. `--at-accent`, `--at-accent-text` `#8A5200` light for AA text) |
+| `/8h` route | Maps to a `custom` plan of 480 min; there is no `p480` chip |
+
+### 13.2 Routes and files
+
+| Identifier | Decision |
+|---|---|
+| Hub routes `/for`, `/on`, `/vs`, `/guides`, `/learn` | Exist as indexable hub pages (breadcrumb level 2) |
+| `/support-matrix`, `/how-we-tested` | 301 → `/learn/browser-support-matrix`, `/learn/how-we-tested` (one indexable URL per topic) |
+| `source=` query param | Same handling as `ref=` (PWA `start_url`, shortcuts) |
+| `logo=` query param (https URL) and `#lic=<token>` hash | Kiosk licence unlocks; hash verified offline, stored to `at.v1.license`, then stripped |
+| `/pro/activate?ext=1` | Hand-off from the extension |
+| `src/i18n/slugs.json` | Translated slug map keyed by collection + EN slug |
+| `src/data/support-matrix.json` | Single source for every browser/OS support claim (site, docs, tests) |
+| `data/ratings.json` | Build input for `aggregateRating` (≥ 25 real ratings); exported from KV by a scheduled Worker |
+| `functions/_lib/` | Shared function code (not a route) |
+| `/config/ads.json`, `/config/sponsor.json` | Remote flags, `Cache-Control: public, max-age=300` |
+| `docs/metrics/YYYY-MM.md` | Monthly KPI notes |
+| Frontmatter extra fields | `author`, `published`, `updated` |
+| Components | `ContentLayout.astro`, `AdSlot.astro`, `SponsorCard.astro`, `AffiliateCard.astro` |
+
+### 13.3 API, storage (server) and configuration
+
+| Identifier | Decision |
+|---|---|
+| `POST /api/rating` | `{ stars 1–5, text?, locale, ver }` → KV `rating:{id}`; feeds `data/ratings.json` |
+| Activate request/response | adds `checkoutId?`, `embed?: { domain }`; validate response includes `activations` |
+| API error codes | `invalid_key` · `activation_limit` · `revoked` · `refunded` · `polar_unavailable` · `rate_limited` · `bad_token` · `bad_request` |
+| KV keys | `lic:{keyHash}` · `cus:{customerId}` · `wh:{eventId}` (TTL 30 d) · `ord:{orderId}` · `embed:{domain}` · `rl:{route}:{ipHash}:{bucket}` (TTL 120 s) · `rating:{id}` |
+| Kiosk token expiry | `exp = now + 365 d`, re-validate every 30 d when online |
+| Secrets (Pages Functions) | `POLAR_ACCESS_TOKEN` · `POLAR_WEBHOOK_SECRET` · `POLAR_ORGANIZATION_ID` · `POLAR_BENEFIT_MAP` (JSON benefit-id → plan) · `LICENSE_SIGNING_KEY` (private JWK, ES256) · `LICENSE_SIGNING_VER` (integer `ver` claim) · `LICENSE_KEY_ENC_KEY` (32-byte base64, AES-GCM for raw key at rest) · `RATE_LIMIT_SALT` · `TURNSTILE_SECRET_KEY` (optional) |
+| Bindings | KV `LICENSES` · Analytics Engine `EVENTS` (dataset `awaketab_events`) |
+| Public build vars | `PUBLIC_SITE_URL` · `PUBLIC_ADS_ENABLED` (`'0'`/`'1'`) · `PUBLIC_SPONSOR_ENABLED` · `PUBLIC_POLAR_SERVER` (`production`/`sandbox`) |
+| Code constants | `LICENSE_PUBLIC_KEYS: Record<number, JsonWebKey>` (in `@awaketab/core`) · `PLAN_PRICES` · `PLAN_FEATURES` · `CHECKOUT_LINKS` · `PRO_LAUNCH_END` · `AD_UNITS` · `AD_CLIENT` |
+| Polar labels | benefits `lk_pro_yearly`, `lk_pro_lifetime`, `lk_embed`, `lk_kiosk_site`, `lk_kiosk_5`; discount `LAUNCH19` ($10 off `pro_lifetime`, 90 days); product `sponsor_month` |
+| CMP | Google-certified CMP (Funding Choices) on content pages only, EEA/UK/CH visitors; tool pages never load a CMP or set cookies |
+
+### 13.4 Analytics additions
+
+Events: `session_extend {addedMin}` · `affiliate_click {page, sku}` · `rating_submitted {stars}`. Fields: `sponsorId` on `sponsor_view`/`sponsor_click`; `client_error.code` ∈ `state_mismatch` · `bad_param` · `storage_unavailable` · `sw_update_failed` · `license_verify_failed`.
+
+### 13.5 i18n additions
+
+Groups `pro.*`, `sponsor.label`, `affiliate.disclosure`, `tool.advice.*`; keys `license.info.syncing`, `tool.pill.idle.deferred` ("Starts when you open this tab").
+
+### 13.6 Planning
+
+Risk IDs use `R-##` (see 15-implementation-plan.md).
+
+---
+
+## 14. Writing conventions for these docs
+
+- Requirements are testable sentences with "must/should/may"; every FR has at least one acceptance criterion in Given/When/Then form.
+- Refer to states, keys and routes in backticks exactly as written here.
+- Dates absolute (ISO) when they are facts; relative ("week 3") when they are plans.
+- Numbers from the blueprint's model are estimates; say so where they appear.
+- Each doc starts with: title, status line (version · date · owner), one-paragraph purpose, and "Related docs".

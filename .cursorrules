@@ -1,0 +1,23 @@
+# AwakeTab — Cursor rules
+You are working in the AwakeTab monorepo (Astro 5 site + vanilla-TS island, Cloudflare Pages Functions, @awaketab/wake and @awaketab/core packages, WXT extension). Read docs/00-conventions.md before anything else; it is the single source of truth for names, states, keys, routes, plans and budgets.
+
+Hard rules
+- Use identifiers from docs/00-conventions.md verbatim: lock states idle|requesting|held|lost|denied|unsupported|fallback; storage keys at.v1.*; routes; preset ids p15…pinf/custom/until; plan ids pro_yearly etc.; feature gates like ambient.packs; event names like session_start. If you need a new identifier, add a code comment `PROPOSED — add to 00-conventions.md` and list it in your final report. Never rename existing ones.
+- TypeScript strict everywhere. ESM. No `any` without a comment. No new runtime dependencies in apps/web/src/tool or packages/* without stating why in the report.
+- The tool island is vanilla TypeScript (no React/Vue/Preact). Content pages are Astro components.
+- Never call alert(), confirm() or prompt(). Use the Toast system.
+- Never show a running timer or "Screen awake" unless the lock state is held or fallback. The UI is a projection of engine state.
+- No third-party scripts, fonts or requests on tool routes (/, presets, /until/*, /pro*, /pip, /embed/*, trust pages). Ads code may only exist in ContentLayout.astro and lib/ads.ts, gated by PUBLIC_ADS_ENABLED, and never auto-refreshes.
+- All timing math uses Date.now(); never accumulate setInterval deltas. Stats day keys are LOCAL dates via Intl.DateTimeFormat('en-CA').
+- Accessibility: every control keyboard-operable, visible focus, aria-live for the pill, no colour-only state, 44px targets, prefers-reduced-motion respected.
+- Performance budgets (docs/00-conventions.md §11) are tests, not aspirations: keep the island's critical chunk ≤ 15 KB gz and total tool-page JS ≤ 40 KB gz.
+- Every FR you implement gets a test (Vitest unit/DOM, Miniflare for functions, Playwright e2e). Engine transitions get a T## test.
+- i18n: no hard-coded UI strings; use t('dot.case.key') with keys defined in src/i18n/en.json first.
+- Security: no eval, no innerHTML with user data, validate every query param against an allow-list, secrets only in Pages Functions.
+- Commits: Conventional Commits, one ticket per commit (feat(engine): E1-T03 …). Add a changeset for packages/* and a changelog fragment for user-visible site changes.
+
+Working style
+- Before coding an epic, produce a short plan: files to create/modify, risks, questions. Wait for approval.
+- Prefer small, reviewable diffs. Explain non-obvious decisions in code comments referencing the doc section (e.g. // see docs/04-engine-spec.md §4 T05).
+- When docs conflict, docs/00-conventions.md wins; flag the conflict.
+- Finish every task with: summary of changes, tests added and their results, any PROPOSED identifiers, anything left undone.
