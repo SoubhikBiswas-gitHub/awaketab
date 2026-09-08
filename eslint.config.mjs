@@ -5,7 +5,13 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/**', '**/.astro/**', '**/.wxt/**', '**/node_modules/**'],
+    ignores: [
+      '**/dist/**',
+      '**/.astro/**',
+      '**/.output/**',
+      '**/.wxt/**',
+      '**/node_modules/**',
+    ],
   },
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
@@ -24,7 +30,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.mjs'],
+    files: ['**/*.mjs', '**/*.config.ts', '**/wxt.config.ts'],
     ...tseslint.configs.disableTypeChecked,
   },
 );

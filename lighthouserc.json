@@ -1,7 +1,7 @@
 {
   "ci": {
     "collect": {
-      "startServerCommand": "pnpm --filter web preview --host 127.0.0.1",
+      "startServerCommand": "pnpm --filter web preview",
       "startServerReadyPattern": "Local",
       "url": ["http://127.0.0.1:4321/"],
       "numberOfRuns": 3,

@@ -18,8 +18,8 @@ export default defineConfig({
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command: 'pnpm --filter web preview --host 127.0.0.1',
-        port: 4321,
-        reuseExistingServer: !process.env.CI,
+        command: 'pnpm --filter web preview',
+        url: 'http://127.0.0.1:4321',
+        reuseExistingServer: false,
       },
 });
