@@ -1,3 +1,3 @@
 # @awaketab/core
 
-Private framework-agnostic shared package. Session and storage APIs will be introduced in a later milestone.
+Session engine, storage, stats, capability probe, multi-tab protocol, and licence verification for AwakeTab. Private to the monorepo. Depends on `@awaketab/wake`.

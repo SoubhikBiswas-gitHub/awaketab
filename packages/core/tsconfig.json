@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": true,
-    "lib": ["ES2023"],
+    "lib": ["DOM", "ES2023"],
+    "resolveJsonModule": true,
     "rootDir": "src"
   },
   "include": ["src"]

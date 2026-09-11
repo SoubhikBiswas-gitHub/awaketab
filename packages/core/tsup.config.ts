@@ -6,5 +6,5 @@ export default defineConfig({
   dts: true,
   minify: true,
   clean: true,
-  target: 'es2020',
+    external: ['@awaketab/wake'],
 });

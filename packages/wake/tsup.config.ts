@@ -2,17 +2,27 @@ import { defineConfig } from 'tsup';
 
 export default defineConfig([
   {
-    entry: [
-      'src/index.ts',
-      'src/adapters/react.ts',
-      'src/adapters/preact.ts',
-      'src/adapters/vue.ts',
-    ],
+    entry: { index: 'src/index.ts' },
     format: ['esm', 'cjs'],
     dts: true,
     minify: true,
     clean: true,
+    splitting: false,
     target: 'es2020',
+  },
+  {
+    entry: {
+      'adapters/react': 'src/adapters/react.ts',
+      'adapters/preact': 'src/adapters/preact.ts',
+      'adapters/vue': 'src/adapters/vue.ts',
+    },
+    format: ['esm', 'cjs'],
+    dts: false,
+    minify: true,
+    clean: false,
+    splitting: false,
+    target: 'es2020',
+    external: ['react', 'preact', 'preact/hooks', 'vue', '@awaketab/wake'],
   },
   {
     entry: { 'awaketab-wake.iife': 'src/index.ts' },

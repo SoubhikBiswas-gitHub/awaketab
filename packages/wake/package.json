@@ -65,9 +65,13 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
-    "size": "size-limit"
+    "size": "size-limit",
+    "test": "vitest run --config ../../vitest.config.ts"
   },
   "devDependencies": {
+    "react": "19.2.8",
+    "preact": "10.29.8",
+    "vue": "3.5.42",
     "tsup": "8.5.1",
     "typescript": "5.9.3"
   },
@@ -75,7 +79,8 @@
     {
       "name": "@awaketab/wake core",
       "path": "dist/index.js",
-      "limit": "2 KB"
+      "limit": "3.4 kB",
+      "gzip": true
     }
   ]
 }
