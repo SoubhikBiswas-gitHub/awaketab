@@ -1,0 +1,16 @@
+---
+import { getCollection } from 'astro:content';
+import ArticlePage from '../../components/ArticlePage.astro';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('for', ({ data }) => data.locale === 'en');
+  return pages.map((entry) => ({
+    params: { slug: entry.id.replace(/^en\//u, '') },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+---
+
+<ArticlePage kind="for" entry={entry} />
