@@ -1,0 +1,59 @@
+---
+import type { TLocale, ILocaleMeta } from '../i18n/locales';
+import { LOCALE_META } from '../i18n/locales';
+import type { TSchemaNode } from '../lib/seo';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  locale?: TLocale;
+  noindex?: boolean;
+  contentPage?: boolean;
+  ogImage?: string | undefined;
+  schema?: TSchemaNode | undefined;
+  alternates?: Array<{ locale: TLocale; href: string }> | undefined;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  locale = 'en',
+  noindex = false,
+  contentPage = false,
+  ogImage = '/og/home-en.png',
+  schema,
+  alternates = [{ locale, href: canonical }],
+} = Astro.props;
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const image = new URL(ogImage, `${site}/`).toString();
+const selfMeta: ILocaleMeta = LOCALE_META[locale];
+const uniqueAlternates = [...new Map(alternates.map((item) => [item.locale, item])).values()];
+const english = uniqueAlternates.find((item) => item.locale === 'en');
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="robots" content={noindex ? 'noindex, follow' : contentPage ? 'max-image-preview:large' : 'index, follow'} />
+<link rel="canonical" href={canonical} />
+{
+  !noindex && uniqueAlternates.map((item) => (
+    <link rel="alternate" hreflang={LOCALE_META[item.locale].hreflang} href={item.href} />
+  ))
+}
+{!noindex && <link rel="alternate" hreflang="x-default" href={english?.href ?? canonical} />}
+<meta property="og:type" content={contentPage ? 'article' : 'website'} />
+<meta property="og:site_name" content="AwakeTab" />
+<meta property="og:locale" content={selfMeta.htmlLang.replace('-', '_')} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={image} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+{schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}

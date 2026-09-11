@@ -1,0 +1,55 @@
+{
+  "id": "/pt-br/",
+  "name": "AwakeTab — A aba que mantém sua tela ligada.",
+  "short_name": "AwakeTab",
+  "description": "Mantenha sua tela ligada nesta aba do navegador com a API Wake Lock. Status honesto, tempos predefinidos e horário de término. Sem conta.",
+  "start_url": "/pt-br/?source=pwa",
+  "scope": "/pt-br/",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "30 minutes",
+      "url": "/pt-br/30m?autostart=1"
+    },
+    {
+      "name": "Until I stop",
+      "url": "/pt-br/?preset=pinf&autostart=1"
+    },
+    {
+      "name": "Clock",
+      "url": "/pt-br/?mode=clock"
+    }
+  ]
+}

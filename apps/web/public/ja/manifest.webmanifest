@@ -1,0 +1,55 @@
+{
+  "id": "/ja/",
+  "name": "AwakeTab — 画面をスリープさせないタブ。",
+  "short_name": "AwakeTab",
+  "description": "Wake Lock API でブラウザのタブから画面をスリープさせません。正確なステータス、プリセット、終了時刻の指定。アカウント不要。",
+  "start_url": "/ja/?source=pwa",
+  "scope": "/ja/",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "ja",
+  "dir": "ltr",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "30 minutes",
+      "url": "/ja/30m?autostart=1"
+    },
+    {
+      "name": "Until I stop",
+      "url": "/ja/?preset=pinf&autostart=1"
+    },
+    {
+      "name": "Clock",
+      "url": "/ja/?mode=clock"
+    }
+  ]
+}

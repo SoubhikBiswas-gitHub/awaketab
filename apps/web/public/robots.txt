@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /pip
+Disallow: /embed/
 
 Sitemap: https://awaketab.com/sitemap-index.xml

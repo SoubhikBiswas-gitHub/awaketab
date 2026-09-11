@@ -1,0 +1,63 @@
+{
+  "for": {
+    "cooking": { "es": "cocinar", "pt-br": "cozinhar", "de": "kochen", "fr": "cuisine", "ja": "ryouri", "zh": "pengren", "hi": "khana-banana" },
+    "presentations": { "es": "presentaciones", "pt-br": "apresentacoes", "de": "praesentationen", "fr": "presentations", "ja": "purezenteeshon", "zh": "yanjiang", "hi": "prastuti" },
+    "downloads": { "es": "descargas", "pt-br": "downloads", "de": "downloads", "fr": "telechargements", "ja": "daunroodo", "zh": "xiazai", "hi": "download" },
+    "ai-agents": { "es": "agentes-ia", "pt-br": "agentes-ia", "de": "ki-agenten", "fr": "agents-ia", "ja": "ai-ejento", "zh": "ai-daili", "hi": "ai-agent" },
+    "dashboards": { "es": "paneles", "pt-br": "paineis", "de": "dashboards", "fr": "tableaux-de-bord", "ja": "dasshuboodo", "zh": "yibiaoban", "hi": "dashboard" },
+    "kiosk": { "es": "kiosco", "pt-br": "totem", "de": "kiosk", "fr": "kiosque", "ja": "kiosuku", "zh": "zizhu", "hi": "kiosk" },
+    "sheet-music": { "es": "partituras", "pt-br": "partituras", "de": "noten", "fr": "partitions", "ja": "gakufu", "zh": "yuepu", "hi": "sangeet-lipi" },
+    "reading": { "es": "lectura", "pt-br": "leitura", "de": "lesen", "fr": "lecture", "ja": "dokusho", "zh": "yuedu", "hi": "padhna" },
+    "night-clock": { "es": "reloj-nocturno", "pt-br": "relogio-noturno", "de": "nachtuhr", "fr": "horloge-nuit", "ja": "yoru-tokei", "zh": "yejian-shizhong", "hi": "raat-ghadi" },
+    "baby-monitor": { "es": "monitor-bebe", "pt-br": "monitor-bebe", "de": "babyphone", "fr": "babyphone", "ja": "akachan-monitor", "zh": "yinger-jianshi", "hi": "shishu-monitor" },
+    "navigation": { "es": "navegacion", "pt-br": "navegacao", "de": "navigation", "fr": "navigation", "ja": "nabi", "zh": "daohang", "hi": "navigation" },
+    "video-calls": { "es": "videollamadas", "pt-br": "videochamadas", "de": "videoanrufe", "fr": "appels-video", "ja": "bideo-tsuuwa", "zh": "shipin-tonghua", "hi": "video-call" },
+    "live-streams": { "es": "directos", "pt-br": "transmissao-ao-vivo", "de": "livestreams", "fr": "directs", "ja": "raibu", "zh": "zhibo", "hi": "live-stream" },
+    "teleprompter": { "es": "teleprompter", "pt-br": "teleprompter", "de": "teleprompter", "fr": "teleprompteur", "ja": "terepuronputa", "zh": "ti-ci-qi", "hi": "teleprompter" },
+    "workouts": { "es": "entrenos", "pt-br": "treinos", "de": "workouts", "fr": "seances", "ja": "toreseningu", "zh": "duanlian", "hi": "vyayam" },
+    "second-monitor": { "es": "segundo-monitor", "pt-br": "segundo-monitor", "de": "zweitmonitor", "fr": "second-ecran", "ja": "sabu-monitor", "zh": "di-er-ping", "hi": "doosri-screen" },
+    "work-laptop": { "es": "portatil-trabajo", "pt-br": "notebook-trabalho", "de": "arbeitslaptop", "fr": "portable-travail", "ja": "shigoto-pc", "zh": "bangong-bijiben", "hi": "kaam-laptop" },
+    "exams-proctoring": { "es": "examenes", "pt-br": "provas", "de": "pruefungen", "fr": "examens", "ja": "shiken", "zh": "kaoshi", "hi": "pariksha" }
+  },
+  "on": {
+    "iphone-safari": { "es": "iphone-safari", "pt-br": "iphone-safari", "de": "iphone-safari", "fr": "iphone-safari", "ja": "iphone-safari", "zh": "iphone-safari", "hi": "iphone-safari" },
+    "ios-home-screen": { "es": "ios-pantalla-inicio", "pt-br": "ios-tela-inicial", "de": "ios-startbildschirm", "fr": "ios-ecran-accueil", "ja": "ios-home-gamen", "zh": "ios-zhuoye", "hi": "ios-home-screen" },
+    "ipad": { "es": "ipad", "pt-br": "ipad", "de": "ipad", "fr": "ipad", "ja": "ipad", "zh": "ipad", "hi": "ipad" },
+    "android-chrome": { "es": "android-chrome", "pt-br": "android-chrome", "de": "android-chrome", "fr": "android-chrome", "ja": "android-chrome", "zh": "android-chrome", "hi": "android-chrome" },
+    "samsung-internet": { "es": "samsung-internet", "pt-br": "samsung-internet", "de": "samsung-internet", "fr": "samsung-internet", "ja": "samsung-internet", "zh": "samsung-internet", "hi": "samsung-internet" },
+    "chromebook": { "es": "chromebook", "pt-br": "chromebook", "de": "chromebook", "fr": "chromebook", "ja": "chromebook", "zh": "chromebook", "hi": "chromebook" },
+    "windows-11": { "es": "windows-11", "pt-br": "windows-11", "de": "windows-11", "fr": "windows-11", "ja": "windows-11", "zh": "windows-11", "hi": "windows-11" },
+    "windows-10": { "es": "windows-10", "pt-br": "windows-10", "de": "windows-10", "fr": "windows-10", "ja": "windows-10", "zh": "windows-10", "hi": "windows-10" },
+    "macos": { "es": "macos", "pt-br": "macos", "de": "macos", "fr": "macos", "ja": "macos", "zh": "macos", "hi": "macos" },
+    "linux": { "es": "linux", "pt-br": "linux", "de": "linux", "fr": "linux", "ja": "linux", "zh": "linux", "hi": "linux" },
+    "firefox": { "es": "firefox", "pt-br": "firefox", "de": "firefox", "fr": "firefox", "ja": "firefox", "zh": "firefox", "hi": "firefox" },
+    "edge": { "es": "edge", "pt-br": "edge", "de": "edge", "fr": "edge", "ja": "edge", "zh": "edge", "hi": "edge" }
+  },
+  "vs": {
+    "caffeine": { "es": "caffeine", "pt-br": "caffeine", "de": "caffeine", "fr": "caffeine", "ja": "caffeine", "zh": "caffeine", "hi": "caffeine" },
+    "amphetamine": { "es": "amphetamine", "pt-br": "amphetamine", "de": "amphetamine", "fr": "amphetamine", "ja": "amphetamine", "zh": "amphetamine", "hi": "amphetamine" },
+    "powertoys-awake": { "es": "powertoys-awake", "pt-br": "powertoys-awake", "de": "powertoys-awake", "fr": "powertoys-awake", "ja": "powertoys-awake", "zh": "powertoys-awake", "hi": "powertoys-awake" },
+    "caffeinate-command": { "es": "comando-caffeinate", "pt-br": "comando-caffeinate", "de": "caffeinate-befehl", "fr": "commande-caffeinate", "ja": "caffeinate-meirei", "zh": "caffeinate-mingling", "hi": "caffeinate-command" },
+    "nosleep-page": { "es": "nosleep-page", "pt-br": "nosleep-page", "de": "nosleep-page", "fr": "nosleep-page", "ja": "nosleep-page", "zh": "nosleep-page", "hi": "nosleep-page" },
+    "nosleep-js": { "es": "nosleep-js", "pt-br": "nosleep-js", "de": "nosleep-js", "fr": "nosleep-js", "ja": "nosleep-js", "zh": "nosleep-js", "hi": "nosleep-js" },
+    "mouse-jigglers": { "es": "agitadores-raton", "pt-br": "mouse-jigglers", "de": "mauswackler", "fr": "bougeurs-souris", "ja": "mouse-jiggler", "zh": "shubiao-hudong", "hi": "mouse-jiggler" }
+  },
+  "guides": {
+    "windows-11-screen-turns-off-after-1-minute": { "es": "windows-11-pantalla-se-apaga-al-minuto", "pt-br": "windows-11-tela-desliga-apos-1-minuto", "de": "windows-11-bildschirm-nach-einer-minute-aus", "fr": "windows-11-ecran-s-eteint-apres-1-minute", "ja": "windows-11-1-fun-de-gamen-off", "zh": "windows-11-yi-fenzhong-hei-ping", "hi": "windows-11-ek-minute-baad-screen-band" },
+    "mac-prevent-sleep-lid-closed": { "es": "mac-evitar-suspension-tapa-cerrada", "pt-br": "mac-evitar-sono-tampa-fechada", "de": "mac-schlaf-bei-geschlossenem-deckel", "fr": "mac-empecher-veille-capot-ferme", "ja": "mac-futa-tojite-suimin-boshi", "zh": "mac-hegai-fangzhi-xiumian", "hi": "mac-dhakkan-band-sone-se-rokna" },
+    "iphone-auto-lock-never-greyed-out": { "es": "iphone-bloqueo-automatico-nunca-gris", "pt-br": "iphone-bloqueio-automatico-nunca-cinza", "de": "iphone-automatische-sperre-nie-ausgegraut", "fr": "iphone-verrouillage-auto-jamais-gris", "ja": "iphone-jido-rokku-never-grey", "zh": "iphone-zidong-suoding-yongbu-hui", "hi": "iphone-auto-lock-never-grey" },
+    "chrome-energy-saver": { "es": "chrome-ahorro-energia", "pt-br": "chrome-economia-energia", "de": "chrome-energiessparmodus", "fr": "chrome-economiseur-energie", "ja": "chrome-energy-saver", "zh": "chrome-jieneng", "hi": "chrome-energy-saver" },
+    "android-screen-timeout-one-app": { "es": "android-tiempo-pantalla-una-app", "pt-br": "android-tempo-tela-um-app", "de": "android-bildschirm-timeout-eine-app", "fr": "android-delai-ecran-une-app", "ja": "android-gamen-timeout-ichi-app", "zh": "android-pingmu-chaoshi-yi-yingyong", "hi": "android-screen-timeout-ek-app" },
+    "modern-standby": { "es": "modern-standby", "pt-br": "modern-standby", "de": "modern-standby", "fr": "modern-standby", "ja": "modern-standby", "zh": "modern-standby", "hi": "modern-standby" },
+    "second-monitor-turns-off": { "es": "segundo-monitor-se-apaga", "pt-br": "segundo-monitor-desliga", "de": "zweitmonitor-schaltet-ab", "fr": "second-ecran-s-eteint", "ja": "sabu-monitor-kieru", "zh": "di-er-ping-xizhen", "hi": "doosri-screen-band" },
+    "lock-screen-vs-sleep": { "es": "pantalla-bloqueo-vs-suspension", "pt-br": "tela-bloqueio-vs-sono", "de": "sperrbildschirm-vs-schlaf", "fr": "ecran-verrouillage-vs-veille", "ja": "lock-gamen-vs-suimin", "zh": "suoping-vs-xiumian", "hi": "lock-screen-vs-sleep" }
+  },
+  "learn": {
+    "screen-wake-lock-api-guide": { "es": "guia-api-wake-lock", "pt-br": "guia-api-wake-lock", "de": "wake-lock-api-anleitung", "fr": "guide-api-wake-lock", "ja": "wake-lock-api-gaido", "zh": "wake-lock-api-zhinan", "hi": "wake-lock-api-guide" },
+    "nosleep-js-vs-wake-lock": { "es": "nosleep-js-vs-wake-lock", "pt-br": "nosleep-js-vs-wake-lock", "de": "nosleep-js-vs-wake-lock", "fr": "nosleep-js-vs-wake-lock", "ja": "nosleep-js-vs-wake-lock", "zh": "nosleep-js-vs-wake-lock", "hi": "nosleep-js-vs-wake-lock" },
+    "does-a-wake-lock-keep-teams-green": { "es": "wake-lock-mantiene-teams-verde", "pt-br": "wake-lock-mantem-teams-verde", "de": "haelt-wake-lock-teams-gruen", "fr": "wake-lock-garde-teams-vert", "ja": "wake-lock-teams-midori", "zh": "wake-lock-nengfou-baochi-teams-zaixian", "hi": "wake-lock-teams-green" },
+    "low-power-mode-and-wake-locks": { "es": "modo-bajo-consumo-y-wake-locks", "pt-br": "modo-economia-e-wake-locks", "de": "stromsparmodus-und-wake-locks", "fr": "mode-economie-et-wake-locks", "ja": "low-power-mode-to-wake-lock", "zh": "dihao-moshi-yu-wake-lock", "hi": "low-power-mode-aur-wake-lock" },
+    "browser-support-matrix": { "es": "matriz-compatibilidad-navegadores", "pt-br": "matriz-suporte-navegadores", "de": "browser-support-matrix", "fr": "matrice-prise-en-charge", "ja": "browser-support-matrix", "zh": "liulanqi-zhichi-juzhen", "hi": "browser-support-matrix" },
+    "how-we-tested": { "es": "como-lo-probamos", "pt-br": "como-testamos", "de": "wie-wir-testen", "fr": "comment-nous-testons", "ja": "dou-tesuto-shita-ka", "zh": "women-ruhe-ceshi", "hi": "kaise-test-kiya" }
+  }
+}

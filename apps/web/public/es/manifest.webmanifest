@@ -1,0 +1,55 @@
+{
+  "id": "/es/",
+  "name": "AwakeTab — La pestaña que mantiene tu pantalla despierta.",
+  "short_name": "AwakeTab",
+  "description": "Mantén tu pantalla despierta en esta pestaña del navegador con la API Wake Lock. Estado honesto, duraciones predefinidas, hasta una hora. Sin cuenta.",
+  "start_url": "/es/?source=pwa",
+  "scope": "/es/",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "es",
+  "dir": "ltr",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "30 minutes",
+      "url": "/es/30m?autostart=1"
+    },
+    {
+      "name": "Until I stop",
+      "url": "/es/?preset=pinf&autostart=1"
+    },
+    {
+      "name": "Clock",
+      "url": "/es/?mode=clock"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "lastUpdated": "2026-09-09",
+  "browsers": [
+    {
+      "id": "chrome",
+      "name": "Chrome",
+      "minimumVersion": "84",
+      "mechanism": "native",
+      "platforms": ["Windows", "macOS", "Linux", "Android", "ChromeOS"],
+      "notes": "The tab must remain visible. Battery Saver may deny or release the lock."
+    },
+    {
+      "id": "edge",
+      "name": "Edge",
+      "minimumVersion": "84",
+      "mechanism": "native",
+      "platforms": ["Windows", "macOS"],
+      "notes": "The tab must remain visible. Efficiency mode may affect the lock."
+    },
+    {
+      "id": "firefox",
+      "name": "Firefox",
+      "minimumVersion": "126",
+      "mechanism": "native",
+      "platforms": ["Windows", "macOS", "Linux", "Android"],
+      "notes": "Earlier versions use the video fallback after a user gesture."
+    },
+    {
+      "id": "safari",
+      "name": "Safari",
+      "minimumVersion": "16.4",
+      "mechanism": "native",
+      "platforms": ["macOS", "iOS", "iPadOS"],
+      "notes": "Low Power Mode can prevent a wake lock. The tab must remain visible."
+    },
+    {
+      "id": "samsung",
+      "name": "Samsung Internet",
+      "minimumVersion": "14",
+      "mechanism": "native",
+      "platforms": ["Android"],
+      "notes": "Power-saving settings may deny or release the lock."
+    },
+    {
+      "id": "opera",
+      "name": "Opera",
+      "minimumVersion": "70",
+      "mechanism": "native",
+      "platforms": ["Windows", "macOS", "Linux", "Android"],
+      "notes": "Chromium-based support; the tab must remain visible."
+    }
+  ],
+  "contexts": [
+    {
+      "id": "ios-pwa",
+      "name": "iOS Home Screen app",
+      "minimumVersion": "18.4",
+      "mechanism": "native",
+      "notes": "Older versions should use AwakeTab in Safari."
+    },
+    {
+      "id": "fallback",
+      "name": "Video fallback",
+      "minimumVersion": null,
+      "mechanism": "fallback",
+      "notes": "Requires a user gesture and uses more power than a native wake lock."
+    }
+  ]
+}

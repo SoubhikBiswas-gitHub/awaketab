@@ -1,0 +1,55 @@
+{
+  "id": "/hi/",
+  "name": "AwakeTab — वह टैब जो आपकी स्क्रीन को ऑन रखता है।",
+  "short_name": "AwakeTab",
+  "description": "Wake Lock API की मदद से इसी ब्राउज़र टैब में अपनी स्क्रीन ऑन रखें। ईमानदार स्टेटस, प्रीसेट, तय समय तक। कोई अकाउंट नहीं।",
+  "start_url": "/hi/?source=pwa",
+  "scope": "/hi/",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "hi",
+  "dir": "ltr",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "30 minutes",
+      "url": "/hi/30m?autostart=1"
+    },
+    {
+      "name": "Until I stop",
+      "url": "/hi/?preset=pinf&autostart=1"
+    },
+    {
+      "name": "Clock",
+      "url": "/hi/?mode=clock"
+    }
+  ]
+}

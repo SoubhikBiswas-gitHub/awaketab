@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolIsland from '../components/ToolIsland.astro';
+import { t } from '../i18n/load';
+import { articleSchema } from '../lib/seo';
+import { cn } from 'cn';
+import { buttonVariants } from '@/components/ui/button';
+
+export function getStaticPaths() {
+  return ['15m', '30m', '45m', '1h', '2h', '4h', '8h'].map((preset) => ({ params: { preset } }));
+}
+
+const routes = {
+  '15m': { label: t('tool.preset.p15'), preset: 'p15', use: 'a short break, a recipe step or a focused reading block' },
+  '30m': { label: t('tool.preset.p30'), preset: 'p30', use: 'a meeting, focused work block or unattended download' },
+  '45m': { label: t('tool.preset.p45'), preset: 'p45', use: 'a class, presentation rehearsal or longer kitchen task' },
+  '1h': { label: t('tool.preset.p60'), preset: 'p60', use: 'an hour-long presentation, study session or monitored transfer' },
+  '2h': { label: t('tool.preset.p120'), preset: 'p120', use: 'a film, workshop, long download or dashboard session' },
+  '4h': { label: t('tool.preset.p240'), preset: 'p240', use: 'an extended event, monitoring window or reference display' },
+  '8h': { label: t('tool.preset.eightHour'), preset: 'custom', use: 'a workday display, kiosk trial or long-running local task' },
+} as const;
+
+const slug = Astro.params.preset as keyof typeof routes;
+const route = routes[slug];
+const label = route.label;
+const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://awaketab.com';
+const title = t('page.preset.title', { label });
+const description = t('page.preset.description', { label });
+const canonical = `${site}/${slug}`;
+// shadcn outline buttons at build time only (docs/03 ADR-013); 44 px targets (docs/00 §11).
+const related = cn(buttonVariants({ variant: 'outline' }), 'min-h-11 no-underline');
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogImage={`/og/${slug}-en.png`}
+  schema={articleSchema({
+    canonical,
+    title: title.replace(' — AwakeTab', ''),
+    description,
+    locale: 'en',
+    published: '2026-09-09',
+    breadcrumbs: [
+      { name: 'AwakeTab', url: site },
+      { name: label, url: canonical },
+    ],
+  })}
+>
+  <ToolIsland heading={title.replace(' — AwakeTab', '')} preset={route.preset}>
+    <section class="at-prose">
+      <p>
+        This page starts a {label} AwakeTab session for {route.use}. The timer uses wall-clock time from
+        <code>Date.now()</code>, so delayed browser ticks do not quietly extend the requested duration.
+        The highlighted preset shows the active plan, and choosing another preset replaces it.
+      </p>
+      <p>
+        Watch the live pill rather than the button you pressed. “Screen awake” appears only after the
+        browser confirms a native wake lock. “Awake via video fallback” appears only after the fallback is
+        actually playing. If the browser denies or releases the request, the pill changes and the running
+        timer is hidden or frozen instead of implying that protection continues.
+      </p>
+      <aside class="at-limit">
+        Keep this tab visible and the device open. A hidden tab, closed laptop lid, Low Power Mode, battery
+        saver or administrator policy may still let the display sleep. AwakeTab does not simulate input or
+        keep Teams and Slack presence indicators active.
+      </aside>
+      <nav aria-label="Related durations">
+        <a class={related} href="/15m">15 minutes</a>
+        <a class={related} href="/30m">30 minutes</a>
+        <a class={related} href="/1h">1 hour</a>
+        <a class={related} href="/">Custom or until-time session</a>
+      </nav>
+    </section>
+  </ToolIsland>
+</BaseLayout>

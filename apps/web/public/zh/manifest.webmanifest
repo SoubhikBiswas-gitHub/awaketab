@@ -1,0 +1,55 @@
+{
+  "id": "/zh/",
+  "name": "AwakeTab — 让屏幕保持常亮的标签页。",
+  "short_name": "AwakeTab",
+  "description": "在浏览器标签页里用 Wake Lock API 让屏幕保持常亮。状态真实、预设时长、定时至某一时刻。无需账号。",
+  "start_url": "/zh/?source=pwa",
+  "scope": "/zh/",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "zh-Hans",
+  "dir": "ltr",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "30 minutes",
+      "url": "/zh/30m?autostart=1"
+    },
+    {
+      "name": "Until I stop",
+      "url": "/zh/?preset=pinf&autostart=1"
+    },
+    {
+      "name": "Clock",
+      "url": "/zh/?mode=clock"
+    }
+  ]
+}

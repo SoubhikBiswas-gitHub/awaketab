@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolIsland from '../../components/ToolIsland.astro';
+import { t } from '../../i18n/load';
+
+export function getStaticPaths() {
+  const paths: { params: { time: string } }[] = [];
+  for (let h = 0; h < 24; h += 1) {
+    for (let m = 0; m < 60; m += 5) {
+      paths.push({
+        params: { time: `${String(h).padStart(2, '0')}-${String(m).padStart(2, '0')}` },
+      });
+    }
+  }
+  return paths;
+}
+
+const time = Astro.params.time ?? '00-00';
+const wall = time.replace('-', ':');
+const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://awaketab.com';
+---
+
+<BaseLayout
+  title={t('page.until.title', { time: wall })}
+  description={t('page.home.description')}
+  canonical={site}
+  noindex
+>
+  <ToolIsland heading={t('page.until.title', { time: wall })} />
+</BaseLayout>
