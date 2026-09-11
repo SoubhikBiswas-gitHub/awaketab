@@ -1,0 +1,9 @@
+{
+  "v": 1,
+  "days": { "2026-09-07": 30, "2026-09-08": 30 },
+  "totalMinutes": 60,
+  "sessions": 1,
+  "longestStreakDays": 2,
+  "currentStreakDays": 2,
+  "lastSessionAt": 1757269800000
+}

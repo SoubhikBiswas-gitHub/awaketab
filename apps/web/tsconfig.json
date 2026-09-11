@@ -3,8 +3,11 @@
   "compilerOptions": {
     "exactOptionalPropertyTypes": true,
     "noUncheckedIndexedAccess": true,
-    "types": ["@cloudflare/workers-types"]
+    "paths": {
+      "@awaketab/wake": ["../../packages/wake/src/index.ts"],
+      "@awaketab/core": ["../../packages/core/src/index.ts"]
+    }
   },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  "exclude": ["dist", "test", "functions"]
 }
