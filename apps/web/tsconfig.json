@@ -4,10 +4,28 @@
     "exactOptionalPropertyTypes": true,
     "noUncheckedIndexedAccess": true,
     "paths": {
-      "@awaketab/wake": ["../../packages/wake/src/index.ts"],
-      "@awaketab/core": ["../../packages/core/src/index.ts"]
-    }
+      "@/*": [
+        "./src/*"
+      ],
+      "@awaketab/wake": [
+        "../../packages/wake/src/index.ts"
+      ],
+      "@awaketab/core": [
+        "../../packages/core/src/index.ts"
+      ]
+    },
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "baseUrl": "."
   },
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "test", "functions"]
+  "include": [
+    ".astro/types.d.ts",
+    "**/*"
+  ],
+  "exclude": [
+    "dist",
+    "dist-*",
+    "test",
+    "functions"
+  ]
 }

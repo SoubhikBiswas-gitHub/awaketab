@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { t } from '../../i18n/load';
+import { articleSchema } from '../../lib/seo';
+// shadcn/ui renders at build time only (docs/03-architecture.md ADR-013): no client:* directives here.
+import { cn } from 'cn';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const canonical = `${site}/pro/manage`;
+
+const secondaryClass = cn(buttonVariants({ variant: 'outline' }), 'min-h-11');
+const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balance';
+---
+
+<BaseLayout
+  title={t('page.pro.manage.title')}
+  description={t('page.pro.manage.description')}
+  canonical={canonical}
+  noindex
+  ogImage="/og/pro-en.png"
+  schema={articleSchema({
+    canonical,
+    title: t('page.pro.manage.h1'),
+    description: t('page.pro.manage.description'),
+    locale: 'en',
+    published: '2026-09-09',
+    breadcrumbs: [
+      { name: 'AwakeTab', url: site },
+      { name: t('page.pro.h1'), url: `${site}/pro` },
+      { name: t('page.pro.manage.h1'), url: canonical },
+    ],
+  })}
+>
+  <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
+  <main class="mx-auto mt-8 max-w-[45rem] leading-normal" data-manage-root>
+    <h1 id="manage-title" class={headingClass}>{t('page.pro.manage.h1')}</h1>
+    <p class="mt-3 text-lg">{t('page.pro.manage.lead')}</p>
+
+    <Alert role="status" data-manage-empty="" hidden className="mt-6">
+      <AlertDescription>{t('page.pro.manage.empty')}</AlertDescription>
+    </Alert>
+
+    {/* manage-page.ts unhides this wrapper once the activation list has rows. */}
+    <div data-devices-wrap="" hidden class="mt-6">
+      <Table aria-labelledby="manage-title">
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t('page.pro.manage.col.device')}</TableHead>
+            <TableHead>{t('page.pro.manage.col.activated')}</TableHead>
+            <TableHead><span class="sr-only">{t('page.pro.manage.remove')}</span></TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody data-devices=""></TableBody>
+      </Table>
+    </div>
+
+    {/* Row prototype: manage-page.ts clones this per activation so the shadcn styling stays in Astro. */}
+    <template data-device-row>
+      <TableRow>
+        <TableCell data-device-label="" className="whitespace-normal font-medium"></TableCell>
+        <TableCell className="text-muted-foreground"><time data-device-at=""></time></TableCell>
+        <TableCell className="text-right">
+          <Button type="button" variant="destructive" size="sm" className="min-h-11" data-device-remove="">
+            {t('page.pro.manage.remove')}
+          </Button>
+        </TableCell>
+      </TableRow>
+    </template>
+
+    <Alert role="note" className="mt-8">
+      <AlertDescription>{t('page.pro.refund')}</AlertDescription>
+    </Alert>
+
+    <p class="mt-6"><a class={secondaryClass} href="/pro/activate">{t('pro.activate')}</a></p>
+  </main>
+  <script>
+    import { bootManagePage } from '../../lib/manage-page';
+    const root = document.querySelector<HTMLElement>('[data-manage-root]');
+    if (root) bootManagePage(root);
+  </script>
+</BaseLayout>

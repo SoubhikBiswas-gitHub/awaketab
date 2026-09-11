@@ -7,10 +7,12 @@ export default tseslint.config(
   {
     ignores: [
       '**/dist/**',
+      '**/dist-*/**',
       '**/.astro/**',
       '**/.output/**',
       '**/.wxt/**',
       '**/node_modules/**',
+      'apps/web/public/**',
     ],
   },
   eslint.configs.recommended,
@@ -27,10 +29,64 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-deprecated': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+      '@typescript-eslint/naming-convention': [
+        'error',
+        { selector: 'interface', format: ['PascalCase'], prefix: ['I'] },
+        { selector: 'typeAlias', format: ['PascalCase'], prefix: ['T'] },
+        // Astro derives Astro.props from a local `Props`; renaming it drops prop typing.
+        { selector: 'interface', filter: { regex: '^Props$', match: true }, format: null },
+        { selector: 'typeParameter', format: ['PascalCase'] },
+      ],
+      'no-restricted-globals': ['error', 'alert', 'confirm', 'prompt'],
+      'no-restricted-syntax': [
+        'error',
+        { selector: 'TSEnumDeclaration', message: 'Use string-literal unions or `as const` maps; enums emit runtime code.' },
+      ],
     },
+  },
+  {
+    files: [
+      'packages/**/test/**',
+      'packages/**/src/adapters/**',
+      'packages/**/*.d.ts',
+      'apps/web/test/**',
+      'apps/web/functions/**',
+      '**/*.astro',
+    ],
+    ...tseslint.configs.disableTypeChecked,
   },
   {
     files: ['**/*.mjs', '**/*.config.ts', '**/wxt.config.ts'],
     ...tseslint.configs.disableTypeChecked,
+  },
+  {
+    files: [
+      'apps/web/src/tool/**',
+      'apps/web/src/components/ToolIsland.astro',
+      'apps/web/src/layouts/BaseLayout.astro',
+      'apps/web/src/pages/index.astro',
+      'apps/web/src/pages/[preset].astro',
+      'apps/web/src/pages/until/**',
+      'apps/web/src/pages/pip.astro',
+      'apps/web/src/pages/404.astro',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/lib/ads', '**/ads'],
+              message: 'Ad code may only be imported from ContentLayout.astro.',
+            },
+          ],
+        },
+      ],
+    },
   },
 );

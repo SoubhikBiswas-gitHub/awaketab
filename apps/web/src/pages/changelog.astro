@@ -1,0 +1,90 @@
+---
+import { readdir, readFile } from 'node:fs/promises';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import { t } from '../i18n/load';
+import { articleSchema } from '../lib/seo';
+
+interface IChangeEntry {
+  title: string;
+  date: string;
+  paragraphs: string[];
+}
+
+const directory = new URL('../../../../changelog/', import.meta.url);
+const files = (await readdir(directory)).filter((file) => file.endsWith('.md')).sort().reverse();
+const entries: IChangeEntry[] = [];
+for (const file of files) {
+  const source = await readFile(new URL(file, directory), 'utf8');
+  const title = /^title:\s*(.+)$/mu.exec(source)?.[1]?.trim() ?? file.replace(/\.md$/u, '');
+  const date = /^date:\s*(.+)$/mu.exec(source)?.[1]?.trim() ?? '';
+  const body = source.replace(/^---[\s\S]*?---/u, '').trim();
+  entries.push({ title, date, paragraphs: body.split(/\n{2,}/u).map((paragraph) => paragraph.trim()) });
+}
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const canonical = `${site}/changelog`;
+const crumbLink = 'inline-flex min-h-11 items-center';
+---
+
+<BaseLayout
+  title={t('page.changelog.title')}
+  description={t('page.changelog.description')}
+  canonical={canonical}
+  ogImage="/og/changelog-en.png"
+  schema={articleSchema({
+    canonical,
+    title: t('page.changelog.h1'),
+    description: t('page.changelog.description'),
+    locale: 'en',
+    published: '2026-09-09',
+    breadcrumbs: [
+      { name: 'AwakeTab', url: site },
+      { name: t('page.changelog.h1'), url: canonical },
+    ],
+  })}
+>
+  <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
+  <main class="mx-auto mt-6 w-full max-w-[45rem] leading-relaxed">
+    <Breadcrumb aria-label="Breadcrumb">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{t('page.changelog.h1')}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+    <h1 class="mt-4 text-3xl font-semibold leading-tight tracking-tight">{t('page.changelog.h1')}</h1>
+    <ol class="mt-8 grid list-none gap-4 p-0">
+      {
+        entries.map((entry) => (
+          <li>
+            <Card className="gap-4 py-5">
+              <CardHeader className="px-5">
+                <h2 class="text-lg leading-snug font-semibold">{entry.title}</h2>
+                {entry.date && (
+                  <CardDescription>
+                    <time datetime={entry.date}>{entry.date}</time>
+                  </CardDescription>
+                )}
+              </CardHeader>
+              <CardContent className="space-y-3 px-5">
+                {entry.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+              </CardContent>
+            </Card>
+          </li>
+        ))
+      }
+    </ol>
+  </main>
+</BaseLayout>

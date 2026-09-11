@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { t } from '../../i18n/load';
+import { articleSchema } from '../../lib/seo';
+// shadcn/ui renders at build time only (docs/03-architecture.md ADR-013): no client:* directives here.
+import { cn } from 'cn';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableRow } from '@/components/ui/table';
+
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const canonical = `${site}/pro/activate`;
+
+// docs/09-monetization-impl.md §2.10 — API error code → copy shown on this page. The `data-err`
+// cell doubles as the copy source for activate-page.ts, so the copy exists exactly once in the DOM.
+const ERRORS: ReadonlyArray<readonly [code: string, key: string]> = [
+  ['invalid_key', 'license.error.invalid'],
+  ['activation_limit', 'license.error.limit'],
+  ['revoked', 'license.error.revoked'],
+  ['polar_unavailable', 'license.info.syncing'],
+  ['offline', 'license.error.offline'],
+  ['bad_token', 'license.error.token'],
+];
+
+const secondaryClass = cn(buttonVariants({ variant: 'outline' }), 'min-h-11');
+const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balance';
+---
+
+<BaseLayout
+  title={t('page.pro.activate.title')}
+  description={t('page.pro.activate.description')}
+  canonical={canonical}
+  noindex
+  ogImage="/og/pro-en.png"
+  schema={articleSchema({
+    canonical,
+    title: t('page.pro.activate.h1'),
+    description: t('page.pro.activate.description'),
+    locale: 'en',
+    published: '2026-09-09',
+    breadcrumbs: [
+      { name: 'AwakeTab', url: site },
+      { name: t('page.pro.h1'), url: `${site}/pro` },
+      { name: t('page.pro.activate.h1'), url: canonical },
+    ],
+  })}
+>
+  <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
+  <main class="mx-auto mt-8 max-w-[45rem] leading-normal" data-activate-root>
+    <h1 class={headingClass}>{t('page.pro.activate.h1')}</h1>
+    <p class="mt-3 text-lg">{t('page.pro.activate.lead')}</p>
+
+    <Card className="mt-6">
+      <CardContent>
+        <form data-activate class="grid gap-3">
+          <Label htmlFor="license-key">{t('pro.activate')}</Label>
+          <Input
+            id="license-key"
+            name="key"
+            autoComplete="off"
+            spellCheck={false}
+            minLength={20}
+            maxLength={80}
+            aria-describedby="activate-error"
+            className="min-h-11 font-mono"
+          />
+          <Button type="submit" className="min-h-11 sm:w-fit">{t('page.pro.activate.submit')}</Button>
+        </form>
+      </CardContent>
+    </Card>
+
+    <Alert variant="destructive" id="activate-error" data-activate-error="" hidden className="mt-4">
+      <AlertDescription data-activate-error-text=""></AlertDescription>
+    </Alert>
+
+    <section class="mt-8" aria-labelledby="activate-errors">
+      <Table>
+        <TableCaption id="activate-errors" className="caption-top mt-0 mb-3 text-left text-base font-semibold text-foreground">
+          {t('page.pro.activate.errors')}
+        </TableCaption>
+        <TableBody>
+          {ERRORS.map(([code, key]) => (
+            <TableRow>
+              <TableHead scope="row" className="font-mono text-xs">{code}</TableHead>
+              <TableCell data-err={key} className="whitespace-normal">{t(key)}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </section>
+
+    <Card data-ext-panel="" hidden className="mt-6">
+      <CardHeader>
+        <CardTitle>{t('pro.activated')}</CardTitle>
+        <CardDescription id="ext-copy">{t('page.pro.activate.ext')}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-wrap gap-2">
+        <Input data-ext-key="" readOnly aria-labelledby="ext-copy" className="min-h-11 min-w-48 flex-1 font-mono" />
+        <button class={cn(buttonVariants({ variant: 'outline' }), 'min-h-11')} type="button" data-ext-copy>
+          {t('tool.share.copy')}
+        </button>
+      </CardContent>
+    </Card>
+
+    <p class="mt-6"><a class={secondaryClass} href="/pro/manage">{t('settings.pro.manage')}</a></p>
+  </main>
+  <script>
+    import { bootActivatePage } from '../../lib/activate-page';
+    const root = document.querySelector<HTMLElement>('[data-activate-root]');
+    if (root) bootActivatePage(root);
+  </script>
+</BaseLayout>

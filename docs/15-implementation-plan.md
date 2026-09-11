@@ -64,7 +64,7 @@ Goal: framework-agnostic session logic shared by web, PiP, embed and extension.
 
 | ID | Ticket | Est | Deps | AC |
 |---|---|---|---|---|
-| E2-T01 | Domain types: `Session` (id, plan, presetId, mode, startedAt, endsAt, status, pausedAt), `Plan` (`indefinite`·`duration{ms}`·`until{endsAt}`), statuses, end reasons, preset table `p15`…`until`, `Settings` with defaults. | 2 | E1-T01 | Types compile in strict mode; preset table is the single source for minutes and labels. `FR-TIMER-*`. |
+| E2-T01 | Domain types: `ISession` (id, plan, presetId, mode, startedAt, endsAt, status, pausedAt), `TPlan` (`indefinite`·`duration{ms}`·`until{endsAt}`), statuses, end reasons, preset table `p15`…`until`, `ISettings` with defaults. | 2 | E1-T01 | Types compile in strict mode; preset table is the single source for minutes and labels. `FR-TIMER-*`. |
 | E2-T02 | Session engine: `start(plan)`, `stop()`, `extend(ms)`; ticks every 1000 ms aligned to the wall clock; all arithmetic via `Date.now()`; `until` re-derived on every tick and on `visibilitychange`; `endBehaviour` `stop`/`prompt_extend`. | 4 | E2-T01 | Fake-timer tests: 30-min plan completes at `startedAt + 30 min` regardless of throttled ticks; `until` across midnight and DST resolves correctly. `FR-TIMER-*`, `FR-ENGINE-*`. |
 | E2-T03 | Lock↔session coupling: lock `lost` → session `paused` (`pausedAt`); re-`held` → `active`; paused ≥ `LOST_TIMEOUT_MS` → end `lost_timeout`; `denied` mid-session → end `denied`; battery → `battery`; user → `user`; timer → `completed`. | 3 | E2-T02 | Every end reason reachable in tests; `endsAt` never shifted by pauses (wall clock is honest). `LOST_TIMEOUT_MS` = 6 h (`00-conventions.md` §13.1). |
 | E2-T04 | Storage: JSON in `at.v1.settings` · `at.v1.session` · `at.v1.stats` · `at.v1.license` · `at.v1.meta` · `at.v1.onboarding`; defaults on read; `migrate(fromVersion)`; corrupt JSON and quota errors tolerated. | 3 | E2-T01 | Reading a missing/garbage key yields defaults without throwing; migration test from a fixture. `FR-STATS-*`, `NFR-PRIVACY-*`. |
@@ -80,6 +80,8 @@ DoD: engine drives a headless session end-to-end in tests; storage keys and sche
 
 Goal: the vanilla-TS island at `apps/web/src/tool/` — the pill never lies, every Tier 1 control works with keyboard and screen reader, budgets hold.
 
+> Note (2026-09-11): the island is still vanilla TS, but its static markup and the rest of the site are styled with shadcn/ui components rendered at build time only — no `client:*`, React never ships (`03-architecture.md` ADR-013, `05-frontend-spec.md` §1.5).
+
 | ID | Ticket | Est | Deps | AC |
 |---|---|---|---|---|
 | E3-T01 | Bootstrap `tool/main.ts`: mount, hydrate from `at.v1.settings`/`at.v1.session`, autostart rules (`/`, duration deep links, `autostart=1`; never on content pages), wake request ≤ 300 ms after `DOMContentLoaded`. | 3 | E2-T04, E5-T01 | Lab trace shows request ≤ 300 ms; no autostart on `/for/*`. `NFR-PERF-*`. |
@@ -92,7 +94,7 @@ Goal: the vanilla-TS island at `apps/web/src/tool/` — the pill never lies, eve
 | E3-T08 | Toasts (never `alert()`): queue, dismiss, `aria-live`; messages for lost/denied/fallback/complete. | 2 | E3-T03 | Toast shown when the tab returns visible after `lost`; none block input. `FR-UI-*`. |
 | E3-T09 | Resume banner after reload from `at.v1.session`; `resume_shown`, `resume_accepted`. | 2 | E2-T04 | Reload during a 30-min plan offers resume with correct remaining time. `FR-ENGINE-*`. |
 | E3-T10 | Fallback consent and capability notice: `unsupported` → "Tap to use the fallback"; `denied` → "Blocked — here's the fix" with platform-specific steps from E2-T06. | 3 | E2-T06 | Fix text differs for iOS Low Power Mode, Chrome energy saver, policy block; `fallback_used`, `lock_denied {reason}` fire. `FR-COMPAT-*`. |
-| E3-T11 | Settings panel for every `Settings` field including `telemetry` and `keyboardHints`; writes `at.v1.settings`. | 3 | E2-T04 | Changing a setting applies immediately and survives reload. `FR-UI-*`, `NFR-PRIVACY-*`. |
+| E3-T11 | Settings panel for every `ISettings` field including `telemetry` and `keyboardHints`; writes `at.v1.settings`. | 3 | E2-T04 | Changing a setting applies immediately and survives reload. `FR-UI-*`, `NFR-PRIVACY-*`. |
 | E3-T12 | A11y and performance pass: axe 0 violations, focus order, contrast, Lighthouse ≥ 95/100/100/100 mobile, JS ≤ 40 KB gz (≤ 15 KB critical), CSS ≤ 20 KB, 0 third-party requests. | 4 | E3-T02..T11 | LHCI budgets pass on `/` and `/30m`; `webpagetest` shows 0 third-party hosts. `NFR-PERF-*`, `NFR-A11Y-*`. |
 | E3-T13 | Playwright e2e: pill truth matrix, deep links, keyboard, resume, themes, multi-tab notice. | 4 | E3-T12 | Suites green on three browsers; run time < 5 min. |
 

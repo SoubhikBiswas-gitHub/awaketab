@@ -2,7 +2,7 @@
 
 > **This file is the single source of truth for names, identifiers, states, keys, routes, plans and budgets.** Every other document in `docs/` must use these exact identifiers. If a detail here conflicts with another doc, this file wins and the other doc gets fixed. When a decision changes, change it here first.
 
-Status: v1.0 · 7 Sep 2026 · Owner: Soubhik · Derived from `awaketab-blueprint.md` (strategy) — see that document for the *why*; this set of docs is the *what* and *how*.
+Status: v1.2 · 11 Sep 2026 · Owner: Soubhik · Derived from `awaketab-blueprint.md` (strategy) — see that document for the *why*; this set of docs is the *what* and *how*.
 
 ---
 
@@ -43,6 +43,11 @@ Assumptions carried from the blueprint (not yet confirmed by Soubhik): name = Aw
 | Storage key | `at.v1.<name>` | `at.v1.settings` |
 | i18n key | `dot.case` grouped by screen | `tool.pill.held` |
 | Content slug | `kebab-case` | `keep-screen-on-while-cooking` |
+| TypeScript interface | `I` + `PascalCase` | `IWakeLockHandle`, `ISession` |
+| TypeScript type alias | `T` + `PascalCase` | `TLockState`, `TPresetId` |
+| Runtime constant map | `SCREAMING_SNAKE` + `as const` | `PRESET_MS`, `STORAGE_KEYS` |
+
+The `I`/`T` prefixes are enforced by `@typescript-eslint/naming-convention` and apply to every workspace, including the published `@awaketab/wake` and `@awaketab/core` type surfaces. Two exemptions: `Props` in `.astro` files (Astro derives `Astro.props` from that exact name) and `IEnv` in Pages Functions, which already complies. `enum` is banned by `no-restricted-syntax` — closed sets are string-literal unions (`TLockState`, `TEndReason`) or `as const` maps, because `enum` emits runtime JavaScript and the island is budgeted at 15 KB gz critical. Renaming a *type* never renames a *value*: the seven lock-state strings in §5.1, the storage keys in §6 and the preset ids stay byte-identical.
 
 Areas for FR/NFR: `ENGINE`, `TIMER`, `UI`, `AMBIENT`, `STATS`, `PWA`, `PIP`, `I18N`, `SEO`, `CONTENT`, `PRO`, `ADS`, `EXT`, `EMBED`, `LIB`, `API`, `ANALYTICS`, `PERF`, `A11Y`, `SEC`, `PRIVACY`, `COMPAT`.
 
@@ -54,9 +59,9 @@ Priority labels: `P0` (launch blocker), `P1` (launch), `P2` (post-launch, phase 
 
 | Layer | Choice | Notes |
 |---|---|---|
-| Site framework | **Astro 5**, static output, content collections (MDX), built-in i18n routing | One vanilla-TypeScript island for the tool; no React/Vue |
+| Site framework | **Astro 5**, static output, content collections (MDX), built-in i18n routing | One vanilla-TypeScript island for the tool; React is a build-time renderer only (`03-architecture.md` ADR-013), never shipped |
 | Language | TypeScript, `strict: true`, ESM | Node 22 LTS, pnpm 9 workspaces |
-| Styling | Tailwind CSS v4 with design tokens as CSS variables | System font stack (no web fonts on tool pages) |
+| Styling | Tailwind CSS v4 with design tokens as CSS variables; **shadcn/ui** components rendered at build time (no hydration) | System font stack (no web fonts on tool pages); shadcn's semantic variables alias the `--at-*` tokens (`05-frontend-spec.md` §1.5) |
 | PWA | `@vite-pwa/astro` (Workbox) | Precache app shell + tool pages; runtime cache for content pages |
 | Hosting | **Cloudflare Pages** (+ Pages Functions for `/api/*`) | Preview deploy per PR; `_headers` and `_redirects` files |
 | Serverless state | Cloudflare **KV** (licences, embed configs), **Workers Analytics Engine** (events) | No database, no accounts |
@@ -81,7 +86,7 @@ awaketab/
 │  │  ├─ src/
 │  │  │  ├─ pages/         # routes (see §7)
 │  │  │  ├─ content/       # MDX collections: for/, on/, vs/, guides/, learn/ (per locale)
-│  │  │  ├─ components/    # Astro components (layouts, SEO head, ads slot, sponsor card)
+│  │  │  ├─ components/    # Astro components (layouts, SEO head, ads slot, sponsor card); ui/ = shadcn/ui primitives, build-time only
 │  │  │  ├─ tool/          # the vanilla-TS island: ui/, ambient/, pip/, store.ts, main.ts
 │  │  │  ├─ i18n/          # ui strings: en.json, es.json, pt-br.json, de.json, fr.json, ja.json, zh.json, hi.json
 │  │  │  ├─ styles/        # tokens.css, base.css
@@ -140,8 +145,8 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 
 | Key | Contents | Notes |
 |---|---|---|
-| `at.v1.settings` | `Settings` object (theme, accent, defaultPreset, sound, notifications, endBehaviour, battery, ambient, locale, telemetry, keyboardHints) | Defaults applied on read; schema in `08-data-storage.md` |
-| `at.v1.session` | Current/last `Session` (id, plan, presetId, mode, startedAt, endsAt, status, pausedAt) | Enables resume banner after reload |
+| `at.v1.settings` | `ISettings` object (theme, accent, defaultPreset, sound, notifications, endBehaviour, battery, ambient, locale, telemetry, keyboardHints) | Defaults applied on read; schema in `08-data-storage.md` |
+| `at.v1.session` | Current/last `ISession` (id, plan, presetId, mode, startedAt, endsAt, status, pausedAt) | Enables resume banner after reload |
 | `at.v1.stats` | `{ days: { "YYYY-MM-DD": minutes }, totalMinutes, sessions, longestStreak }` | Day key = **local** date via `Intl.DateTimeFormat('en-CA')`; retained 365 days |
 | `at.v1.license` | `{ token, plan, exp, features[], lastValidatedAt, deviceId }` | Token = ES256 JWT signed by our Worker |
 | `at.v1.meta` | `{ installedAt, sessionCount, ratingPrompt: { shownAt, action }, lastSeenVersion }` | |
@@ -247,6 +252,7 @@ Common fields: `ts`, `path` (no query string), `locale`, `ua` class (browser fam
 | Tool pages JS (gz) | ≤ 40 KB total; ≤ 15 KB in the critical path |
 | Tool pages CSS (gz) | ≤ 20 KB, critical inlined |
 | Third-party requests on tool pages | 0 |
+| Hydrated framework islands on any page | 0 (`<astro-island>` in built HTML, or a React runtime chunk in `dist/_astro/`, fails the size gate) |
 | LCP (lab, mobile emulation) | ≤ 1.2 s; field p75 ≤ 2.0 s |
 | INP field p75 | ≤ 100 ms |
 | CLS | 0 (fixed slot sizes everywhere) |
@@ -280,12 +286,12 @@ The identifiers below were proposed while writing the other documents and are no
 |---|---|
 | `LOST_TIMEOUT_MS` | 6 h (21,600,000 ms). A session whose lock has been `lost` continuously for longer ends with reason `lost_timeout` and is not offered for resume. Finite plans end at `endsAt` if that comes first |
 | `CUSTOM_MAX_MS` | 7 days — upper bound for `custom` durations; zero/negative rejected inline |
-| `LockReason` | `request` · `acquired` · `fallback_started` · `released_hidden` · `released_platform` · `denied` · `unsupported` · `user_release` · `retry` · `destroyed` (see 04 §3) |
-| `AdviceCode` | `battery_saver` · `low_power_ios` · `hidden_document` · `permissions_policy` · `insecure_context` · `unsupported_browser` · `ios_safari_old` · `firefox_old` · `iframe_no_allow` — UI maps each to `tool.advice.<code>` |
+| `TLockReason` | `request` · `acquired` · `fallback_started` · `released_hidden` · `released_platform` · `denied` · `unsupported` · `user_release` · `retry` · `destroyed` (see 04 §3) |
+| `TAdviceCode` | `battery_saver` · `low_power_ios` · `hidden_document` · `permissions_policy` · `insecure_context` · `unsupported_browser` · `ios_safari_old` · `firefox_old` · `iframe_no_allow` — UI maps each to `tool.advice.<code>` |
 | `Plan.until.wall` | `'HH:MM'` string kept with `endsAt` so the UI can re-derive after clock changes |
-| `Session` extra fields | `pausedMs`, `endedAt`, `endReason`, `awakeSeconds` (seconds in `held` or `fallback`; feeds stats), `modeState` (per-mode data, e.g. `cookTimers[]`) |
-| `Settings` extra fields | `keyboardShortcuts: boolean` (enables single-key shortcuts; WCAG 2.1.4) distinct from `keyboardHints: boolean` (shows hints); `lastCustomMs`; `ambient.message` |
-| `TabMessage` | `{type:'hello'|'lock'|'state'|'bye', tabId, ts, …}` on `BroadcastChannel('awaketab')`; `tabId` in `sessionStorage['at.tabId']` |
+| `ISession` extra fields | `pausedMs`, `endedAt`, `endReason`, `awakeSeconds` (seconds in `held` or `fallback`; feeds stats), `modeState` (per-mode data, e.g. `cookTimers[]`) |
+| `ISettings` extra fields | `keyboardShortcuts: boolean` (enables single-key shortcuts; WCAG 2.1.4) distinct from `keyboardHints: boolean` (shows hints); `lastCustomMs`; `ambient.message` |
+| `TTabMessage` | `{type:'hello'|'lock'|'state'|'bye', tabId, ts, …}` on `BroadcastChannel('awaketab')`; `tabId` in `sessionStorage['at.tabId']` |
 | CSS token namespace | `--at-*` (e.g. `--at-accent`, `--at-accent-text` `#8A5200` light for AA text) |
 | `/8h` route | Maps to a `custom` plan of 480 min; there is no `p480` chip |
 
@@ -334,6 +340,21 @@ Groups `pro.*`, `sponsor.label`, `affiliate.disclosure`, `tool.advice.*`; keys `
 ### 13.6 Planning
 
 Risk IDs use `R-##` (see 15-implementation-plan.md).
+
+### 13.7 UI component layer (v1.2 — shadcn/ui, build time only)
+
+Accepted on 2026-09-11 (owner-directed; `03-architecture.md` ADR-013). Proposed in `05-frontend-spec.md` §15.
+
+| Identifier | Decision |
+|---|---|
+| `apps/web/src/components/ui/*.tsx` | shadcn/ui primitives (new-york style, neutral base, CSS variables): `button` · `badge` · `card` · `table` · `alert` · `separator` · `input` · `label` · `kbd` · `breadcrumb` · `toggle`. Add more with `pnpm dlx shadcn@4.21.0 add <name>` from `apps/web`. Rendered by Astro at build time only — no `client:*` directive anywhere; interactive primitives that need client JS (Dialog, Sheet, Tabs, Accordion, Tooltip, Select, DropdownMenu, …) are not used |
+| `@/*` path alias | `./src/*` in `apps/web/tsconfig.json`; `components.json` aliases `@/components`, `@/components/ui`, `@/lib`, `@/lib/utils`, `@/hooks` |
+| shadcn semantic variables | Aliases of `--at-*`, never new colours: `--background`→`--at-ground` · `--foreground`→`--at-ink` · `--card`/`--popover`→`--at-surface` · `--primary`→`--at-accent-text` · `--primary-foreground`→`--at-on-accent` · `--secondary`/`--muted`→`color-mix(in srgb, var(--at-ink) 6%, var(--at-surface))` · `--muted-foreground`→`--at-muted` · `--accent`→`color-mix(in srgb, var(--at-accent) 12%, var(--at-surface))` · `--destructive`→`--at-bad` · `--border`/`--input`→`--at-line` · `--ring`→`--at-focus` · `--radius`→`--at-r-md` · `--font-sans`→`--at-font`. Full table with radius scale in `05-frontend-spec.md` §1.5 |
+| `--success` · `--warning` · `--night` | Custom semantic variables (not in stock shadcn) → `--at-good` · `--at-warn` · `--at-night` |
+| `@custom-variant dark` | `[data-theme="dark"]`, `[data-theme="oled"]`, and `prefers-color-scheme: dark` when no `data-theme` is set |
+| `hydrated` · `reactChunks` | Fields in the `scripts/size.mjs` report; both must be `[]` (§11) |
+| `scripts/prune-unreferenced.mjs` · `scripts/locked.mjs` | Build steps in `apps/web`: prune deletes `dist/_astro/*.js` chunks nothing references (runs after `astro build`, before `sitemap.mjs`); `locked.mjs -- <cmd>` holds a `mkdir` lock at `apps/web/.build-lock` so concurrent builds do not race |
+| `AT_DIST` | Environment variable: alternate output directory (`apps/web/dist-*`, git-ignored) for `size.mjs`, `prune-unreferenced.mjs`, `sitemap.mjs` and the SEO tests |
 
 ---
 

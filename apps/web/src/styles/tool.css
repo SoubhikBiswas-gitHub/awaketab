@@ -1,0 +1,658 @@
+/*
+ * Tool-route stylesheet — docs/05-frontend-spec.md §1–§3, §13; docs/03-architecture.md ADR-013.
+ * Shared `.at-*` rules live in `@layer components` so shadcn/ui utility classes placed on the same
+ * element (cva helpers such as buttonVariants()) win the cascade. Bespoke pieces (ring, pill, timer)
+ * stay hand-written but read their colours from the shadcn semantic tokens bridged in tokens.css.
+ * Every class referenced by src/tool/** (JS-generated toast nodes, `is-*` state classes) is kept.
+ */
+
+/* stylelint-disable-next-line at-rule-no-unknown */
+@reference "./tokens.css";
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--at-font);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .sr-only {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@layer components {
+  /* Buttons — shadcn `outline` look at a 44 px target. Server-rendered controls use buttonVariants()
+     directly; this rule covers JS-generated nodes (src/tool/ui/toast.ts) and pages outside the island. */
+  .at-btn {
+    @apply inline-flex min-h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border bg-background px-4 py-2 text-sm font-medium whitespace-nowrap text-foreground shadow-xs transition-all outline-none hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 dark:border-input dark:bg-input/30 dark:hover:bg-input/50;
+  }
+
+  /* shadcn `ghost` + `icon-lg`, enlarged to 44 × 44 (docs/00 §11 a11y). */
+  .at-icon-btn {
+    @apply inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-sm font-medium text-foreground transition-all outline-none hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .at-chip {
+    @apply min-h-11 cursor-pointer;
+  }
+
+  .at-stop {
+    @apply min-h-11 cursor-pointer;
+  }
+
+  /* Card surface for the second-tab / language / resume banners (shadcn Card). */
+  .at-banner {
+    @apply grid gap-3 rounded-xl border bg-card p-4 text-sm text-card-foreground shadow-sm;
+  }
+
+  .at-banner p {
+    @apply m-0;
+  }
+
+  /* Capability notice — shadcn Alert surface (docs/05 §3.10). */
+  .at-notice {
+    @apply grid gap-2 rounded-lg border bg-card px-4 py-3 text-sm text-card-foreground;
+  }
+
+  .at-notice h2 {
+    @apply m-0 text-base font-semibold tracking-tight;
+  }
+
+  .at-notice p {
+    @apply m-0 text-muted-foreground;
+  }
+
+  .at-banner-actions,
+  .at-notice-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  /* Toasts are built in src/tool/ui/toast.ts with `at-toast at-toast--{kind}` (docs/05 §3.7). */
+  .at-toast {
+    @apply flex items-center gap-2 rounded-lg border bg-card p-3 text-sm text-card-foreground shadow-lg;
+
+    border-inline-start-width: 4px;
+  }
+
+  .at-toast p {
+    @apply m-0 flex-1;
+  }
+
+  .at-toast[role="alert"] {
+    border-inline-start-color: var(--destructive);
+  }
+
+  /* stylelint-disable-next-line selector-class-pattern */
+  .at-toast--success {
+    border-inline-start-color: var(--success);
+  }
+
+  /* stylelint-disable-next-line selector-class-pattern */
+  .at-toast--warn {
+    border-inline-start-color: var(--warning);
+  }
+
+  /* Form controls inside native <dialog> — shadcn Input / Label class strings. */
+  .at-input {
+    @apply h-11 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base text-foreground shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30;
+  }
+
+  .at-fields {
+    @apply grid gap-3;
+  }
+
+  .at-fields label {
+    @apply grid gap-1.5 text-sm font-medium;
+  }
+
+  .at-fields label:has(> input[type="checkbox"], > input[type="radio"]) {
+    @apply flex min-h-11 cursor-pointer items-center gap-2 font-normal;
+  }
+
+  .at-fields fieldset {
+    @apply m-0 grid gap-1 rounded-md border p-3;
+  }
+
+  .at-fields legend {
+    @apply px-1 text-sm font-medium;
+  }
+
+  .at-fields input:is([type="checkbox"], [type="radio"]) {
+    @apply size-4 shrink-0;
+
+    accent-color: var(--primary);
+  }
+
+  .at-fields input[type="range"] {
+    @apply w-full;
+
+    accent-color: var(--primary);
+  }
+
+  .at-fields p {
+    @apply m-0 text-sm text-muted-foreground;
+  }
+
+  .at-error {
+    @apply text-sm text-destructive;
+  }
+
+  .at-error:empty {
+    @apply hidden;
+  }
+
+  .at-pro-badge {
+    @apply self-center;
+  }
+
+  /* Honest-limit aside — shadcn Alert with a warning rail; also used by hub/article pages. */
+  .at-limit {
+    @apply my-6 grid w-full gap-1 rounded-lg border bg-card px-4 py-3 text-sm text-card-foreground;
+
+    border-inline-start: 4px solid var(--warning);
+  }
+
+  .at-limit ul {
+    @apply m-0 grid gap-3 pl-6;
+
+    list-style: disc;
+  }
+
+  .at-limit li {
+    @apply m-0;
+  }
+
+  .at-support-table {
+    @apply block w-full overflow-x-auto text-sm;
+
+    border-collapse: collapse;
+  }
+
+  .at-support-table th,
+  .at-support-table td {
+    @apply border-b px-3 py-2 text-left align-top;
+  }
+
+  .at-support-table th {
+    @apply font-medium text-foreground;
+  }
+
+  .at-footer {
+    @apply mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground;
+  }
+
+  .at-locales {
+    @apply flex flex-wrap gap-3;
+  }
+
+  .at-locales a {
+    @apply inline-flex min-h-11 items-center text-primary underline-offset-4 hover:underline;
+  }
+
+  .at-locales a[aria-current="page"] {
+    @apply font-bold text-foreground no-underline;
+  }
+}
+
+/*
+ * Colour never animates (deliberately unlayered so it beats shadcn's `transition-all` / `transition-colors`):
+ * a theme switch (D key, `data-theme`) must repaint text and backgrounds at once so contrast is always what the
+ * tokens promise — axe and screen-reader colour queries read computed values immediately. Shadows, transforms,
+ * opacity, borders and the ring's stroke-dashoffset still ease (docs/05 §1.4).
+ */
+*,
+*::before,
+*::after {
+  transition-property: border-color, box-shadow, opacity, transform, stroke-dashoffset, outline-color;
+}
+
+/* Layout, ring, pill, timer, dialogs and prose — also in `components` so utilities on the element win. */
+@layer components {
+  .at-skip {
+    position: absolute;
+    inset-block-start: var(--at-s-2);
+    inset-inline-start: var(--at-s-2);
+    z-index: 20;
+    padding-block: var(--at-s-2);
+    padding-inline: var(--at-s-4);
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-sm);
+    background: var(--card);
+    color: var(--card-foreground);
+    text-decoration: none;
+  }
+
+  .at-skip:not(:focus) {
+    clip-path: inset(50%);
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+  }
+
+  .at-shell {
+    max-inline-size: 60rem;
+    margin-inline: auto;
+    padding-inline: var(--at-s-4);
+    padding-block: var(--at-s-4) var(--at-s-12, 48px);
+  }
+
+  .at-header,
+  .at-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-block-size: 56px;
+    gap: var(--at-s-2);
+  }
+
+  /* Six 44 px controls do not fit beside the wordmark at 320 px; wrap rather than overflow the shell. */
+  .at-header {
+    flex-wrap: wrap;
+  }
+
+  .at-wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--at-s-2);
+    min-block-size: 44px;
+    color: inherit;
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .at-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--at-s-1);
+  }
+
+  .at-h1 {
+    margin-block: var(--at-s-4) var(--at-s-6);
+    font-size: var(--at-t-2xl);
+    font-weight: 600;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .at-tool {
+    display: grid;
+    justify-items: center;
+    gap: var(--at-s-4);
+  }
+
+  /* Ring — docs/05 §3.1. Geometry is fixed; only colours come from tokens. */
+  .at-ring {
+    inline-size: clamp(160px, 50vw, 192px);
+    block-size: auto;
+  }
+
+  .at-ring-track {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 8;
+  }
+
+  .at-ring-progress {
+    fill: none;
+    stroke: var(--at-accent);
+    stroke-width: 8;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 96px 96px;
+    transition: stroke-dashoffset 1s linear;
+  }
+
+  .at-ring-progress.is-lost {
+    stroke: var(--warning);
+  }
+
+  .at-ring-progress.is-fallback {
+    stroke-dasharray: 12 6;
+    opacity: 0.7;
+  }
+
+  .at-ring-track.is-denied {
+    stroke: var(--destructive);
+    stroke-dasharray: 4 6;
+    stroke-width: 8;
+  }
+
+  .at-ring-dot {
+    fill: var(--at-accent);
+    transform-origin: 96px 96px;
+  }
+
+  .at-ring-dot.is-pulse {
+    animation: at-pulse 2s ease-in-out infinite;
+  }
+
+  .at-ring-dot.is-orbit {
+    animation: at-orbit 1.2s linear infinite;
+  }
+
+  @keyframes at-pulse {
+    50% {
+      opacity: 0.55;
+    }
+  }
+
+  @keyframes at-orbit {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Status pill — docs/05 §3.2. State tints are color-mix 12 % by contract (docs/00 §5.1). */
+  .at-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--at-s-2);
+    min-inline-size: 44px;
+    min-block-size: 44px;
+    padding-inline: var(--at-s-4);
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-pill);
+    background: var(--card);
+    color: var(--card-foreground);
+    font: inherit;
+    font-size: var(--at-t-sm);
+    font-weight: 600;
+    cursor: default;
+  }
+
+  .at-pill:is([data-lock="denied"], [data-lock="unsupported"]) {
+    cursor: pointer;
+  }
+
+  .at-pill[data-lock="requesting"] {
+    color: var(--muted-foreground);
+  }
+
+  .at-pill[data-lock="held"] {
+    border-color: var(--at-accent);
+    background: color-mix(in srgb, var(--at-accent) 12%, var(--at-surface));
+  }
+
+  .at-pill[data-lock="lost"] {
+    border-color: var(--warning);
+    background: color-mix(in srgb, var(--at-warn) 12%, var(--at-surface));
+  }
+
+  .at-pill[data-lock="denied"] {
+    border-color: var(--destructive);
+    background: color-mix(in srgb, var(--at-bad) 12%, var(--at-surface));
+  }
+
+  .at-pill[data-lock="fallback"] {
+    border-color: color-mix(in srgb, var(--at-accent) 60%, transparent);
+    background: color-mix(in srgb, var(--at-accent) 8%, var(--at-surface));
+    color: var(--muted-foreground);
+  }
+
+  /* Timer — docs/05 §3.6. */
+  .at-timer {
+    text-align: center;
+  }
+
+  .at-timer-digits {
+    font-size: var(--at-t-timer);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .at-timer-digits.is-muted {
+    color: var(--muted-foreground);
+  }
+
+  .at-timer-caption {
+    margin-block-start: var(--at-s-2);
+    color: var(--muted-foreground);
+    font-size: var(--at-t-sm);
+  }
+
+  /* Preset chips — docs/05 §3.3: nothing is ever hidden at any width. */
+  .at-chips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+    gap: var(--at-s-2);
+    inline-size: min(100%, 36rem);
+  }
+
+  .at-stop,
+  .at-banner,
+  .at-notice {
+    inline-size: min(100%, 36rem);
+  }
+
+  .at-toasts {
+    position: fixed;
+    inset-inline: var(--at-s-4);
+    inset-block-end: var(--at-s-4);
+    display: grid;
+    gap: var(--at-s-2);
+    z-index: 30;
+  }
+
+  /* Native <dialog> styled like shadcn DialogContent; the island opens them with showModal(). */
+  dialog {
+    inline-size: calc(100% - 2rem);
+    max-inline-size: 24rem;
+    max-block-size: calc(100% - 2rem);
+    margin: auto; /* Tailwind preflight zeroes margins; native <dialog> centres through margin: auto */
+    padding: var(--at-s-6);
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-lg);
+    background: var(--card);
+    color: var(--card-foreground);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%);
+  }
+
+  dialog::backdrop {
+    background: rgb(0 0 0 / 50%);
+  }
+
+  dialog > h2 {
+    margin-block: 0 var(--at-s-4);
+    font-size: var(--at-t-lg);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  dialog > p {
+    margin-block: 0 var(--at-s-3);
+    color: var(--muted-foreground);
+    font-size: var(--at-t-sm);
+  }
+
+  /* Prose used by home, preset, pro and trust pages (Tailwind preflight zeroes margins, so restore them). */
+  .at-prose,
+  .at-article {
+    max-inline-size: 45rem;
+    margin-inline: auto;
+    margin-block-start: var(--at-s-8);
+    font-size: var(--at-t-md);
+    line-height: 1.5;
+  }
+
+  .at-prose {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 480px;
+  }
+
+  .at-prose h1,
+  .at-article h1 {
+    margin-block: 0 var(--at-s-4);
+    font-size: var(--at-t-2xl);
+    font-weight: 600;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .at-prose h2,
+  .at-article h2 {
+    margin-block: var(--at-s-8) var(--at-s-3);
+    font-size: var(--at-t-xl);
+    font-weight: 600;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .at-prose h3,
+  .at-article h3 {
+    margin-block: var(--at-s-6) var(--at-s-2);
+    font-size: var(--at-t-lg);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .at-prose p,
+  .at-article p {
+    margin-block: 0 var(--at-s-4);
+  }
+
+  .at-prose :is(ul, ol),
+  .at-article :is(ul, ol) {
+    margin-block: 0 var(--at-s-4);
+    padding-inline-start: var(--at-s-6);
+  }
+
+  .at-prose ul,
+  .at-article ul {
+    list-style: disc;
+  }
+
+  .at-prose ol,
+  .at-article ol {
+    list-style: decimal;
+  }
+
+  .at-prose li,
+  .at-article li {
+    margin-block: var(--at-s-2);
+  }
+
+  .at-prose a,
+  .at-article a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .at-prose nav,
+  .at-article nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--at-s-2);
+    margin-block-start: var(--at-s-6);
+  }
+
+  .at-prose nav a,
+  .at-article nav a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    padding-inline: var(--at-s-4);
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-sm);
+    background: var(--card);
+    color: var(--card-foreground);
+    font-size: var(--at-t-sm);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .at-prose nav a:hover,
+  .at-article nav a:hover {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .at-prose code,
+  .at-article code {
+    padding-inline: var(--at-s-1);
+    border-radius: 4px;
+    background: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.9em;
+  }
+
+  .at-tool-embed {
+    margin-block: var(--at-s-6);
+    padding: var(--at-s-4);
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-md);
+    background: var(--card);
+  }
+
+  .at-ad-slot {
+    min-block-size: 280px;
+  }
+
+  .at-ad-slot-rail {
+    min-block-size: 600px;
+  }
+
+  @media (width >= 768px) {
+    .at-toasts {
+      inset-inline: auto var(--at-s-6);
+      inline-size: 22rem;
+    }
+
+    .at-h1 {
+      font-size: var(--at-t-3xl);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      transition-duration: 1ms !important;
+    }
+
+    .at-ring-dot.is-pulse,
+    .at-ring-dot.is-orbit {
+      animation: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .at-ring-track,
+    .at-ring-progress {
+      stroke: CanvasText;
+    }
+
+    .at-pill,
+    .at-chip,
+    .at-btn,
+    .at-icon-btn,
+    .at-toast,
+    .at-banner,
+    .at-notice {
+      border: 1px solid CanvasText;
+    }
+  }
+}

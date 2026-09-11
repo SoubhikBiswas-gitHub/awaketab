@@ -1,8 +1,8 @@
 # 03 · Architecture
 
-Status: v1.0 · 2026-09-07 · Owner: Soubhik
+Status: v1.1 · 2026-09-11 · Owner: Soubhik
 
-**Purpose.** This document describes how AwakeTab is put together: the systems it talks to, the packages in the monorepo and what each owns, the runtime shape of the tool island, the build pipeline that turns MDX into ~60 × 8 static pages, the request flows for licences and analytics, the environments and their secrets, the security and performance models, and the twelve architecture decisions (ADR-001…ADR-012) that explain why it looks this way. It is written so that a solo developer can open Cursor and scaffold the repo from it without guessing. Identifiers follow `00-conventions.md` exactly; anything new is marked **PROPOSED — add to 00-conventions.md**.
+**Purpose.** This document describes how AwakeTab is put together: the systems it talks to, the packages in the monorepo and what each owns, the runtime shape of the tool island, the build pipeline that turns MDX into ~60 × 8 static pages, the request flows for licences and analytics, the environments and their secrets, the security and performance models, and the thirteen architecture decisions (ADR-001…ADR-013) that explain why it looks this way. It is written so that a solo developer can open Cursor and scaffold the repo from it without guessing. Identifiers follow `00-conventions.md` exactly; anything new is marked **PROPOSED — add to 00-conventions.md**.
 
 **Related docs.** `00-conventions.md` (canonical names; wins on conflict) · `04-engine-spec.md` (lock and session state machines) · `08-data-storage.md` (storage keys, KV, Analytics Engine schema) · `12-library-spec.md` (`@awaketab/wake` as a public package) · `13-testing-strategy.md` · `14-devops.md`.
 
@@ -107,8 +107,9 @@ The tree is fixed in `00-conventions.md` §4. Responsibilities per package:
 | Path | Owns | Must not |
 |---|---|---|
 | `packages/wake` (`@awaketab/wake`) | The seven lock states, `navigator.wakeLock` handling, `release`/`visibilitychange`/`fullscreenchange` wiring, retry/backoff, the hidden video fallback, `change`/`error` events, `createEmitter`. Published to npm (MIT). | Know about sessions, timers, storage, i18n, DOM beyond its own `<video>`. |
-| `packages/core` (`@awaketab/core`) | `Session`/`Plan` types, wall-clock tick, pause/resume, end-of-session pipeline hooks, battery monitor, stats accumulation, `at.v1.*` storage schema + `migrate()`, licence token verification (ES256), capability probe, `BroadcastChannel('awaketab')` protocol. Framework-agnostic; runs in a tab, a PiP window, an iframe, and an extension. | Render UI, load ads, call `/api/*` directly (it receives injected `fetch`-based adapters). |
+| `packages/core` (`@awaketab/core`) | `ISession`/`TPlan` types, wall-clock tick, pause/resume, end-of-session pipeline hooks, battery monitor, stats accumulation, `at.v1.*` storage schema + `migrate()`, licence token verification (ES256), capability probe, `BroadcastChannel('awaketab')` protocol. Framework-agnostic; runs in a tab, a PiP window, an iframe, and an extension. | Render UI, load ads, call `/api/*` directly (it receives injected `fetch`-based adapters). |
 | `apps/web/src/pages`, `src/content` | Routes (§7 of conventions), MDX collections `for/`, `on/`, `vs/`, `guides/`, `learn/` per locale, JSON-LD, hreflang. | Ship JS beyond the island and the content-page ads loader. |
+| `apps/web/src/components` | Astro layouts (`BaseLayout`, `ContentLayout`), `SeoHead`, `AdSlot`, `SponsorCard`, and `ui/` — the shadcn/ui primitives (`button`, `badge`, `card`, `table`, `alert`, `separator`, `input`, `label`, `kbd`, `breadcrumb`, `toggle`) that `.astro` files render at build time or borrow class helpers from (`buttonVariants()`, `badgeVariants()`, `toggleVariants()`). See ADR-013. | Hydrate them: no `client:*` directive anywhere; no interactive shadcn primitives (Dialog, Sheet, Tabs, Accordion, Tooltip, Select, DropdownMenu). |
 | `apps/web/src/tool` | The island: `store.ts` (state + actions), `main.ts` (boot), `ui/` (pill, ring, presets, overlays, toasts), `ambient/` (modes, burn-in guard), `pip/` (Document PiP + popup fallback). | Import React/Vue; exceed 40 KB gz total. |
 | `apps/web/src/lib` | `seo.ts` (JSON-LD builders), `og.ts` (satori templates), `analytics.ts` (beacon queue), `ads.ts` (post-LCP loader), `license.ts` (activation UI calls). | — |
 | `apps/web/functions/api` | Pages Functions: `e.ts`, `license/activate.ts`, `license/validate.ts`, `license/deactivate.ts`, `webhooks/polar.ts`, `embed/config.ts`, `health.ts`. | Set cookies; log IPs; hold state outside KV/AE. |
@@ -141,35 +142,35 @@ Data flows one way. UI never calls the engine directly; it dispatches an action.
 
 ```ts
 // apps/web/src/tool/store.ts
-import type { LockState, Advice } from '@awaketab/wake';
-import type { Session, Capabilities, LicenseState, AmbientMode, Theme } from '@awaketab/core';
+import type { TLockState, Advice } from '@awaketab/wake';
+import type { ISession, ICapabilities, ILicenseState, TAmbientMode, TTheme } from '@awaketab/core';
 
-export interface ToolState {
-  lock: { state: LockState; mode: 'native' | 'video' | null; advice: Advice | null };
-  session: Session | null;
+export interface IToolState {
+  lock: { state: TLockState; mode: 'native' | 'video' | null; advice: Advice | null };
+  session: ISession | null;
   now: number;                         // refreshed each engine tick; drives timer text and ring arc
   ui: {
-    theme: Theme;                      // 'auto' | 'light' | 'dark' | 'oled'
-    ambient: AmbientMode;              // 'standard' | 'clock' | ...
+    theme: TTheme;                      // 'auto' | 'light' | 'dark' | 'oled'
+    ambient: TAmbientMode;              // 'standard' | 'clock' | ...
     fullscreen: boolean;
     pipOpen: boolean;
     overlay: 'none' | 'shortcuts' | 'until' | 'custom' | 'extend' | 'resume' | 'secondTab';
     toast: { id: string; text: string; kind: 'info' | 'warn' | 'bad'; action?: { label: string; run: () => void } } | null;
   };
-  caps: Capabilities;
-  license: LicenseState;
+  caps: ICapabilities;
+  license: ILicenseState;
   peers: number;                       // other AwakeTab tabs seen on the BroadcastChannel
 }
 
-export interface Store {
-  get(): ToolState;
-  set(patch: Partial<ToolState> | ((s: ToolState) => Partial<ToolState>)): void;
-  subscribe(fn: (s: ToolState, prev: ToolState) => void): () => void;
+export interface IStore {
+  get(): IToolState;
+  set(patch: Partial<IToolState> | ((s: IToolState) => Partial<IToolState>)): void;
+  subscribe(fn: (s: IToolState, prev: IToolState) => void): () => void;
 }
 
-export function createStore(initial: ToolState): Store {
+export function createStore(initial: IToolState): IStore {
   let state = initial;
-  const subs = new Set<(s: ToolState, p: ToolState) => void>();
+  const subs = new Set<(s: IToolState, p: IToolState) => void>();
   let scheduled = false;
   let prev = state;
   return {
@@ -203,12 +204,12 @@ export function createStore(initial: ToolState): Store {
 `@awaketab/wake` exports a ~200-byte typed emitter used everywhere:
 
 ```ts
-export interface Emitter<E extends Record<string, unknown>> {
+export interface IEmitter<E extends Record<string, unknown>> {
   on<K extends keyof E>(type: K, fn: (ev: E[K]) => void): () => void;
   emit<K extends keyof E>(type: K, ev: E[K]): void;
   clear(): void;
 }
-export function createEmitter<E extends Record<string, unknown>>(): Emitter<E>;
+export function createEmitter<E extends Record<string, unknown>>(): IEmitter<E>;
 ```
 
 ### 4.4 Multi-tab coordination
@@ -238,6 +239,8 @@ flowchart LR
 ```
 
 Key settings in `astro.config.mjs`: `output: 'static'`; `i18n: { defaultLocale: 'en', locales: ['en','es','pt-br','de','fr','ja','zh','hi'], routing: { prefixDefaultLocale: false } }`; `build: { inlineStylesheets: 'always' }` for tool pages (Tailwind v4 tokens compile to < 20 KB gz, inlined); the ads loader and the island are the only `<script type="module">` tags. Content collections have a Zod schema per collection (`title`, `description`, `slug`, `preset`, `mode`, `lastVerified`, `faq[]`, `related[]`) so a broken frontmatter fails the build, not production. The OG integration runs in `astro:build:done`, renders one PNG per page and locale from a satori template (ring + title + "last verified"), and writes them to `dist/og/`. The PWA plugin runs last so its precache manifest includes the final hashed assets; content pages use a runtime `StaleWhileRevalidate` route, tool pages and the app shell are precached.
+
+**Build order and post-processing.** `pnpm -F web build` is a fixed sequence: `scripts/headers.mjs` → `scripts/icons.mjs` → `scripts/manifests.mjs` → `scripts/og.mts` → `astro build` → `scripts/prune-unreferenced.mjs` → `scripts/sitemap.mjs`. `@astrojs/react` is registered in `astro.config.mjs` so `.astro` files can render shadcn/ui components server-side (ADR-013); it is an SSR-only renderer here — nothing carries a `client:*` directive — but the integration still emits its ~224 KB client renderer into `dist/_astro/`, so `prune-unreferenced.mjs` deletes every `_astro/*.js` chunk that no HTML, JS, manifest or JSON file in `dist/` references, before the sitemap is written. `scripts/locked.mjs -- <cmd>` wraps a build in a `mkdir` lock at `apps/web/.build-lock` so concurrent `astro build` runs (parallel agents, one CI box) never race on `.astro/` or `public/`. `AT_DIST=<dir>` points `size.mjs`, `prune-unreferenced.mjs`, `sitemap.mjs` and the SEO tests at an alternate output directory (`apps/web/dist-*`, git-ignored) for verification builds that must not clobber `dist/`.
 
 ---
 
@@ -394,7 +397,7 @@ The budgets in `00-conventions.md` §11 are hit by construction, not by tuning a
 | Lazy: `ambient/` (≤ 5 KB), `pip/` (≤ 3 KB), stats heatmap (≤ 4 KB), licence UI (≤ 3 KB) | on demand | Dynamic `import()`; precached by the SW so offline still works |
 | **Tool page JS total** | **≤ 40 KB** | CI `size-limit` fails the build over budget |
 
-Other rules: critical CSS inlined (< 20 KB gz; Tailwind v4 emits only used utilities plus the token variables); system font stack (`system-ui, -apple-system, Segoe UI, Roboto, …`) so no font request or FOIT; i18n strings for the current locale are inlined in the HTML as a `<script type="application/json" id="at-i18n">` block (~2 KB) instead of a runtime loader; the island `<script type="module">` is deferred by nature and preloaded with `<link rel="modulepreload">`; images are inline SVG or one `srcset` per OG/hero; the ring animates with CSS `stroke-dashoffset` transitions, not JavaScript per frame; `content-visibility: auto` on long article sections; zero third-party requests on class (A) pages, verified by a Playwright test that fails on any request to a foreign origin.
+Other rules: critical CSS inlined (< 20 KB gz; Tailwind v4 emits only used utilities plus the token variables); system font stack (`system-ui, -apple-system, Segoe UI, Roboto, …`) so no font request or FOIT; i18n strings for the current locale are inlined in the HTML as a `<script type="application/json" id="at-i18n">` block (~2 KB) instead of a runtime loader; the island `<script type="module">` is deferred by nature and preloaded with `<link rel="modulepreload">`; images are inline SVG or one `srcset` per OG/hero; the ring animates with CSS `stroke-dashoffset` transitions, not JavaScript per frame; `content-visibility: auto` on long article sections; zero third-party requests on class (A) pages, verified by a Playwright test that fails on any request to a foreign origin; the shared UI chrome (buttons, badges, cards, tables, alerts, breadcrumbs) is shadcn/ui rendered at build time, so it costs CSS only — `scripts/size.mjs` fails the build if any HTML contains `<astro-island` or any `dist/_astro/*.js` is a React runtime chunk (ADR-013; measured after adoption: critical JS 14,876 B gz, total JS 30,428 B gz, inlined CSS ≈ 7.3 KB gz).
 
 **Ads loader (content pages only).** `lib/ads.ts` is emitted only when `PUBLIC_ADS_ENABLED='1'` and only in the content layout. It waits for the LCP entry via `PerformanceObserver({ type: 'largest-contentful-paint', buffered: true })`, then `requestIdleCallback(load, { timeout: 4000 })` (falling back to `setTimeout(load, 2500)` on Safari), then injects the network script. Slots are `<div>`s with fixed `min-height` per breakpoint so CLS stays 0. `ad_slot_loaded {page}` is tracked once per slot. Pro users (`ads.free` in `at.v1.license.features`) skip the loader entirely. Kill switch: a build var flips `ADS_ENABLED` to `'0'` and redeploys in under five minutes.
 
@@ -406,7 +409,7 @@ Format: Context · Decision · Alternatives · Consequences. Status of all twelv
 
 ### ADR-001 · Astro 5 over Next.js
 
-**Context.** ~60 English pages × 8 locales, each embedding one interactive tool; SEO and Core Web Vitals are the product's distribution channel; one developer. **Decision.** Astro 5, `output: 'static'`, content collections for MDX, built-in i18n routing, one island. **Alternatives.** Next.js App Router (static export possible but ships a React runtime on every page and fights the "zero JS unless asked" goal); Eleventy (excellent for static, weaker TypeScript/component story and no first-class island model); SvelteKit (good, but adds a framework runtime to the island). **Consequences.** Pages ship 0 KB framework JS; the island is a plain module; MDX with typed frontmatter fails the build on bad content. We give up React ecosystem components and must hand-roll the UI (ADR-002).
+**Context.** ~60 English pages × 8 locales, each embedding one interactive tool; SEO and Core Web Vitals are the product's distribution channel; one developer. **Decision.** Astro 5, `output: 'static'`, content collections for MDX, built-in i18n routing, one island. **Alternatives.** Next.js App Router (static export possible but ships a React runtime on every page and fights the "zero JS unless asked" goal); Eleventy (excellent for static, weaker TypeScript/component story and no first-class island model); SvelteKit (good, but adds a framework runtime to the island). **Consequences.** Pages ship 0 KB framework JS; the island is a plain module; MDX with typed frontmatter fails the build on bad content. We give up React ecosystem components *at runtime*: the island is hand-rolled (ADR-002), while the shared UI chrome comes from shadcn/ui rendered at build time with zero hydration (ADR-013).
 
 ### ADR-002 · Vanilla-TypeScript island over React
 
@@ -451,3 +454,7 @@ Format: Context · Decision · Alternatives · Consequences. Status of all twelv
 ### ADR-012 · Static pre-rendering of ~60 × 8 pages over runtime rendering
 
 **Context.** ~480 URLs plus preset pages; content changes weekly at most; CWV targets LCP ≤ 1.2 s lab. **Decision.** Build everything to static HTML at deploy time (Astro static output), OG images included; runtime code exists only under `/api/*`. **Alternatives.** SSR on Workers (per-request latency and cost, cache invalidation complexity for no benefit); ISR (not needed at this change rate); client-side rendering of content (invisible to crawlers without extra work, slower LCP). **Consequences.** Build time grows with pages (estimate 2–4 min for 480 pages + OG images; OG generation is cached by content hash); every deploy is atomic and previewable; `/until/HH-MM` is the one route that would be infinite, so it is a single static page that reads the time from `location.pathname` (canonical `/`, `noindex`).
+
+### ADR-013 · shadcn/ui as the component library, rendered at build time
+
+**Context.** By the end of M5 the site had ~70 routes of hand-written markup — header buttons, badges, cards, tables, alerts, form fields, breadcrumbs — each styled ad hoc against the `--at-*` tokens, and the tool, content, Pro and trust pages had drifted apart visually. ADR-001 gave up React ecosystem components to keep pages at 0 KB framework JS; ADR-002 keeps the island vanilla. The owner directed one component vocabulary across every surface without giving up either budget. **Decision.** shadcn/ui (new-york style, neutral base, CSS variables) installed via the official Astro path: `@astrojs/react` 4.4.2 with `react`/`react-dom` 19.3.0 as build-time renderers only, `class-variance-authority`, `cn`, `radix-ui` (Slot, Separator and Toggle primitives, used only at build time), `lucide-react`, `tw-animate-css`. Primitives live in `apps/web/src/components/ui/*.tsx` (`button`, `badge`, `card`, `table`, `alert`, `separator`, `input`, `label`, `kbd`, `breadcrumb`, `toggle`; add more with `pnpm dlx shadcn@4.21.0 add <name>` from `apps/web`); `components.json` points `tailwind.css` at `src/styles/tokens.css` and aliases `@/components`, `@/components/ui`, `@/lib`, `@/hooks` (`@/*` → `./src/*`, `jsx: react-jsx`). `.astro` files either render the components server-side (`<Card>`, `<Table>`, … with no `client:*` directive) or apply their cva helpers (`buttonVariants()`, `badgeVariants()`, `toggleVariants()`) to plain HTML in frontmatter; nodes the island creates at runtime (toasts) get the same look through `@apply` rules in `tool.css`. shadcn's semantic variables (`--background`, `--primary`, `--border`, …) alias the canonical `--at-*` tokens in `tokens.css` (`05-frontend-spec.md` §1.5), so the palette in `05` §1.1 is byte-identical and themes still switch on `data-theme`. **Zero hydration is a gate, not a convention**: `scripts/size.mjs` fails the build if any built HTML contains `<astro-island` or any `dist/_astro/*.js` matches a React runtime chunk name (`react.*`, `jsx-runtime.*`, `client.*`), and `scripts/prune-unreferenced.mjs` removes the ~224 KB client renderer that `@astrojs/react` emits regardless (§5). Interactive shadcn primitives that need client JS (Dialog, Sheet, Tabs, Accordion, Tooltip, Select, DropdownMenu, …) are not used; the island keeps native `<dialog>`, `<details>` and vanilla TS (ADR-002 stands), and those dialogs are styled to match shadcn's Dialog. **Alternatives.** Keep hand-rolling (the status quo — cheapest per component, but the drift *was* the problem and every new page paid the tax again); hydrate shadcn selectively with `client:visible` (React alone is ~45 KB gz, over the entire 40 KB tool-page budget on the first hydrated page); a CSS-only kit such as daisyUI or Pico (no React, but a second token system to reconcile with `--at-*` and no cva-style variant API to apply to the island's plain HTML); Web Components such as Shoelace/Web Awesome (runtime JS on every page and custom-element flash against the CLS = 0 rule); Preact-compat shadcn (smaller runtime, still hydration, still a second rendering paradigm beside the island). **Consequences.** One visual vocabulary across tool, content, Pro and trust pages with no change to behaviour, budgets or third-party requests; measured after adoption: critical JS 14,876 B gz (budget 15,360), total JS 30,428 B gz (budget 40,960), inlined CSS ≈ 7.3 KB gz (budget 20 KB), `hydrated: []`, `reactChunks: []`. Costs: React, Radix and a `.tsx` toolchain (`@types/react`, `jsx: react-jsx`) in a repo whose runtime is vanilla — `src/lib/og.ts` now casts the satori element to `ReactNode`; a build step that exists only to undo an integration side effect (`prune-unreferenced.mjs`); `stylelint.config.mjs` must ignore Tailwind's `@custom-variant`, `@slot`, `@apply`, `@utility`, `@variant`, `@source` and `@plugin` at-rules and `@apply` preludes; and a standing temptation the gate exists to resist — any future "just hydrate this one Dialog" is a revisit of ADR-002, not a component add.

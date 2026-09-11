@@ -1,0 +1,83 @@
+---
+import '../styles/tokens.css';
+import '../styles/tool.css';
+import SeoHead from '../components/SeoHead.astro';
+import LocaleNav from '../components/LocaleNav.astro';
+import { cn } from 'cn';
+import { Separator } from '@/components/ui/separator';
+import { buttonVariants } from '@/components/ui/button';
+import { localeFromPath, localePath, LOCALE_META, type TLocale } from '../i18n/locales';
+import type { TSchemaNode } from '../lib/seo';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  noindex?: boolean;
+  contentPage?: boolean;
+  locale?: TLocale;
+  ogImage?: string | undefined;
+  schema?: TSchemaNode | undefined;
+  alternates?: Array<{ locale: TLocale; href: string }> | undefined;
+  footer?: { privacy: string; terms: string; changelog: string; donate: string };
+}
+
+const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://awaketab.com';
+const {
+  title,
+  description,
+  canonical = `${site}${Astro.url.pathname === '/' ? '' : Astro.url.pathname.replace(/\/$/u, '')}`,
+  noindex = false,
+  contentPage = false,
+  locale = localeFromPath(Astro.url.pathname),
+  ogImage,
+  schema,
+  alternates,
+  footer = { privacy: 'Privacy', terms: 'Terms', changelog: 'Changelog', donate: 'Buy me a coffee' },
+} = Astro.props;
+const localeMeta = LOCALE_META[locale];
+// Ghost, not link: the footer is utility navigation, not a call to action, so it takes
+// .at-footer's muted-foreground colour instead of the page's one accent (docs/03 ADR-013).
+// min-h-11 keeps the 44 px target (docs/00 §11).
+const footerLink = cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'min-h-11 px-2 -mx-2');
+---
+
+<!doctype html>
+<html lang={localeMeta.htmlLang} dir={localeMeta.htmlLang === 'ar' ? 'rtl' : 'ltr'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF7F2" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#14161C" />
+    <meta name="theme-color" content="#FAF7F2" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href={localePath(locale, '/manifest.webmanifest')} />
+    <meta name="apple-mobile-web-app-title" content="AwakeTab" />
+    <SeoHead
+      title={title}
+      description={description}
+      canonical={canonical}
+      noindex={noindex}
+      contentPage={contentPage}
+      locale={locale}
+      ogImage={ogImage}
+      schema={schema}
+      alternates={alternates}
+    />
+    <script is:inline src="/theme-boot.js"></script>
+  </head>
+  <body>
+    <div class="at-shell">
+      <slot />
+      <Separator className="mt-8 bg-border" />
+      <footer class="at-footer">
+        <a class={footerLink} href="/privacy">{footer.privacy}</a>
+        <a class={footerLink} href="/terms">{footer.terms}</a>
+        <a class={footerLink} href="/changelog">{footer.changelog}</a>
+        <a class={footerLink} href="https://buymeacoffee.com/awaketab" rel="noopener" target="_blank">{footer.donate}</a>
+        <LocaleNav locale={locale} />
+      </footer>
+    </div>
+  </body>
+</html>

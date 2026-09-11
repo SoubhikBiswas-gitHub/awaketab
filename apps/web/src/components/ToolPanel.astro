@@ -1,0 +1,240 @@
+---
+import { cn } from 'cn';
+import { catalogFor, createT } from '../i18n/load';
+import type { TLocale } from '../i18n/locales';
+import { buttonVariants } from '@/components/ui/button';
+import { Kbd } from '@/components/ui/kbd';
+import { toggleVariants } from '@/components/ui/toggle';
+
+interface Props {
+  locale?: TLocale;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = createT(locale);
+const catalogJson = JSON.stringify(catalogFor(locale)).replaceAll('<', '\\u003c');
+const chips = [
+  ['p15', t('tool.preset.p15')],
+  ['p30', t('tool.preset.p30')],
+  ['p45', t('tool.preset.p45')],
+  ['p60', t('tool.preset.p60')],
+  ['p120', t('tool.preset.p120')],
+  ['p240', t('tool.preset.p240')],
+] as const;
+
+// shadcn/ui at build time only (docs/03 ADR-013): cva class strings on native elements; the vanilla island
+// (src/tool/**) keeps driving state through data-* hooks, `hidden` and `aria-pressed`. Every control is ≥ 44 px.
+const btnPrimary = cn(buttonVariants(), 'min-h-11 cursor-pointer');
+const btnOutline = cn(buttonVariants({ variant: 'outline' }), 'min-h-11 cursor-pointer');
+const btnDanger = cn(btnOutline, 'text-destructive hover:text-destructive');
+const btnLink = cn(buttonVariants({ variant: 'link' }), 'min-h-11 px-2');
+const inlineLink = buttonVariants({ variant: 'link', size: 'sm' });
+// shadcn Toggle keys its pressed look on data-[state=on]; the island toggles aria-pressed instead.
+const chip = cn(
+  toggleVariants({ variant: 'outline', size: 'lg' }),
+  'at-chip min-h-11 cursor-pointer text-center leading-tight whitespace-normal wrap-anywhere hyphens-auto aria-pressed:border-primary aria-pressed:bg-accent aria-pressed:font-semibold aria-pressed:text-accent-foreground',
+);
+const shortcuts = [
+  ['Space', t('tool.shortcuts.space')],
+  ['1–6', t('tool.shortcuts.presets')],
+  ['0', t('tool.shortcuts.pinf')],
+  ['U', t('tool.shortcuts.until')],
+  ['F', t('tool.shortcuts.fullscreen')],
+  ['D', t('tool.shortcuts.theme')],
+  ['M', t('tool.shortcuts.mode')],
+  ['P', t('tool.shortcuts.pip')],
+  ['Esc', t('tool.shortcuts.esc')],
+  ['?', t('tool.shortcuts.help')],
+] as const;
+---
+
+<!-- The island root `#awaketab-tool` (with its data-* params) is rendered by ToolIsland.astro so that the
+     header controls main.ts binds through root.querySelector() are inside it; this is the panel body. -->
+<div class="at-tool" data-panel>
+  <script is:inline type="application/json" data-i18n-catalog set:html={catalogJson}></script>
+  <div data-pip-slot>
+    <svg
+      class="at-ring"
+      data-ring
+      viewBox="0 0 192 192"
+      width="192"
+      height="192"
+      role="img"
+      aria-label={t('tool.ring.label', { status: t('tool.pill.idle') })}
+    >
+      <circle class="at-ring-track" data-ring-track cx="96" cy="96" r="88"></circle>
+      <circle class="at-ring-progress" data-ring-progress cx="96" cy="96" r="88"></circle>
+      <circle class="at-ring-dot" data-ring-dot cx="96" cy="8" r="5"></circle>
+    </svg>
+    <button class="at-pill" type="button" data-pill aria-live="polite" aria-atomic="true">
+      <output data-pill-text>{t('tool.pill.idle')}</output>
+      <span data-pill-extra hidden></span>
+    </button>
+    <div class="at-timer" data-timer role="timer" aria-live="off">
+      <div class="at-timer-digits is-muted" data-timer-digits>--:--:--</div>
+      <div class="at-timer-caption" data-timer-caption></div>
+      <div class="sr-only" data-timer-live aria-live="polite"></div>
+    </div>
+  </div>
+  <div class="at-banner" data-second-tab hidden>
+    <p>{t('tool.secondTab.title')}</p>
+    <div class="at-banner-actions">
+      <button class={btnPrimary} type="button" data-tab-use>{t('tool.secondTab.useThis')}</button>
+      <button class={btnOutline} type="button" data-tab-keep>{t('tool.secondTab.keepOther')}</button>
+    </div>
+  </div>
+  <div class="at-banner" data-lang-suggest hidden>
+    <p data-lang-suggest-text></p>
+    <div class="at-banner-actions">
+      <a class={btnPrimary} data-lang-suggest-accept href="/">{t('i18n.suggest.accept')}</a>
+      <button class={btnOutline} type="button" data-lang-suggest-dismiss>{t('i18n.suggest.dismiss')}</button>
+    </div>
+  </div>
+  <div class="at-banner" data-resume hidden>
+    <p data-resume-title>{t('tool.resume.title', { time: '' })}</p>
+    <div class="at-banner-actions">
+      <button class={btnPrimary} type="button" data-resume-accept>{t('tool.resume.accept')}</button>
+      <button class={btnOutline} type="button" data-resume-dismiss>{t('tool.resume.dismiss')}</button>
+    </div>
+  </div>
+  <div class="at-notice" data-notice hidden>
+    <h2 data-notice-title></h2>
+    <p data-notice-body></p>
+    <div class="at-notice-actions">
+      <button class={btnPrimary} type="button" data-notice-retry>{t('tool.advice.retry')}</button>
+      <button class={btnOutline} type="button" data-notice-fallback>{t('tool.fallback.consent.accept')}</button>
+      <a class={btnLink} data-notice-learn href="/learn">{t('tool.advice.learn')}</a>
+    </div>
+  </div>
+  <div class="at-chips" data-chips role="group" aria-label={t('tool.presets')}>
+    {
+      chips.map(([id, label]) => (
+        <button class={chip} type="button" data-preset={id} aria-pressed="false">
+          {label}
+        </button>
+      ))
+    }
+    <button class={chip} type="button" data-preset="pinf" aria-pressed="false">
+      {t('tool.preset.pinf')}
+      <span class="sr-only">{t('tool.preset.pinf.sr')}</span>
+    </button>
+    <button class={chip} type="button" data-preset="custom" aria-pressed="false">{t('tool.preset.custom')}</button>
+    <button class={chip} type="button" data-preset="until" aria-pressed="false">{t('tool.preset.until')}</button>
+  </div>
+  <button class:list={['at-stop', btnDanger]} type="button" data-stop hidden>{t('tool.ring.stop')}</button>
+  <section class="at-toasts" data-toasts aria-label={t('tool.notifications')}></section>
+
+  <dialog data-dialog="custom" aria-labelledby="custom-title">
+    <h2 id="custom-title">{t('tool.custom.title')}</h2>
+    <form class="at-fields" method="dialog">
+      <label>{t('tool.custom.days')} <input class="at-input" name="days" type="number" inputmode="numeric" min="0" max="7" value="0" /></label>
+      <label>{t('tool.custom.hours')} <input class="at-input" name="hours" type="number" inputmode="numeric" min="0" max="23" value="0" /></label>
+      <label>{t('tool.custom.minutes')} <input class="at-input" name="minutes" type="number" inputmode="numeric" min="0" max="59" value="30" /></label>
+      <p data-custom-summary></p>
+      <p class="at-error" data-custom-error></p>
+      <div class="at-banner-actions">
+        <button class={btnPrimary} type="button" data-custom-start>{t('tool.custom.start')}</button>
+        <button class={btnOutline} type="button" data-custom-cancel>{t('tool.custom.cancel')}</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog data-dialog="until" aria-labelledby="until-title">
+    <h2 id="until-title">{t('tool.until.title')}</h2>
+    <form class="at-fields" method="dialog">
+      <label>{t('tool.until.title')} <input class="at-input" name="until" type="time" /></label>
+      <p data-until-summary></p>
+      <div class="at-banner-actions">
+        <button class={btnPrimary} type="button" data-until-start>{t('tool.until.start')}</button>
+        <button class={btnOutline} type="button" data-until-cancel>{t('tool.until.cancel')}</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog data-dialog="settings" aria-labelledby="settings-title">
+    <h2 id="settings-title">{t('settings.title')}</h2>
+    <form class="at-fields">
+      <fieldset>
+        <legend>{t('settings.theme')}</legend>
+        <label><input type="radio" name="theme" value="auto" checked /> {t('settings.theme.auto')}</label>
+        <label><input type="radio" name="theme" value="light" /> {t('settings.theme.light')}</label>
+        <label><input type="radio" name="theme" value="dark" /> {t('settings.theme.dark')}</label>
+        <label><input type="radio" name="theme" value="oled" /> {t('settings.theme.oled')}</label>
+      </fieldset>
+      <label>{t('settings.defaultPreset')}
+        <select class="at-input" name="defaultPreset">
+          <option value="p15">{t('tool.preset.p15')}</option>
+          <option value="p30">{t('tool.preset.p30')}</option>
+          <option value="p45">{t('tool.preset.p45')}</option>
+          <option value="p60">{t('tool.preset.p60')}</option>
+          <option value="p120">{t('tool.preset.p120')}</option>
+          <option value="p240">{t('tool.preset.p240')}</option>
+          <option value="pinf">{t('tool.preset.pinf.sr')}</option>
+        </select>
+      </label>
+      <label>{t('settings.sound')}
+        <select class="at-input" name="sound">
+          <option value="chime">{t('settings.sound.chime')}</option>
+          <option value="none">{t('settings.sound.none')}</option>
+        </select>
+      </label>
+      <label><input type="checkbox" name="notifications" /> {t('settings.notifications')}</label>
+      <fieldset>
+        <legend>{t('settings.endBehaviour')}</legend>
+        <label><input type="radio" name="endBehaviour" value="prompt_extend" checked /> {t('settings.endBehaviour.prompt_extend')}</label>
+        <label><input type="radio" name="endBehaviour" value="stop" /> {t('settings.endBehaviour.stop')}</label>
+      </fieldset>
+      <div class="at-fields" data-battery-fields>
+        <label><input type="checkbox" name="batteryAuto" /> {t('settings.battery.autoStop')}</label>
+        <label>{t('settings.battery.threshold', { percent: 15 })}
+          <input type="range" name="batteryThreshold" min="5" max="30" value="15" />
+        </label>
+      </div>
+      <label><input type="checkbox" name="telemetry" checked /> {t('settings.telemetry')}</label>
+      <p>{t('settings.telemetry.help')}</p>
+      <label><input type="checkbox" name="keyboardShortcuts" checked /> {t('settings.shortcuts')}</label>
+      <label><input type="checkbox" name="keyboardHints" checked /> {t('settings.hints')}</label>
+      <p><a class={inlineLink} href="/pro">{t('settings.pro')}</a> · <a class={inlineLink} href="/pro/manage">{t('settings.pro.manage')}</a> · <button class={btnOutline} type="button" data-open-pro>{t('pro.see')}</button></p>
+      <div class="at-banner-actions">
+        <button class={btnOutline} type="button" data-settings-close>{t('settings.close')}</button>
+        <button class={btnDanger} type="button" data-settings-reset>{t('settings.reset')}</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog data-dialog="shortcuts" aria-labelledby="shortcuts-title">
+    <h2 id="shortcuts-title">{t('tool.shortcuts.title')}</h2>
+    <dl class="m-0 mb-4 grid gap-2">
+      {
+        shortcuts.map(([key, label]) => (
+          <div class="flex items-center gap-3">
+            <dt class="min-w-12"><Kbd className="h-6 min-w-6 px-1.5 text-sm text-foreground">{key}</Kbd></dt>
+            <dd class="m-0 text-sm text-muted-foreground">{label}</dd>
+          </div>
+        ))
+      }
+    </dl>
+    <button class={btnOutline} type="button" data-shortcuts-close>{t('settings.close')}</button>
+  </dialog>
+  <dialog data-dialog="share" aria-labelledby="share-title">
+    <h2 id="share-title">{t('tool.share.title')}</h2>
+    <div class="at-banner-actions">
+      <input class="at-input flex-1" data-share-url readonly aria-labelledby="share-title" />
+      <button class={btnPrimary} type="button" data-share-copy>{t('tool.share.copy')}</button>
+    </div>
+  </dialog>
+  <dialog data-dialog="extend" aria-labelledby="extend-title">
+    <h2 id="extend-title">{t('tool.extend.title')}</h2>
+    <p data-extend-auto></p>
+    <div class="at-banner-actions">
+      <button class={btnOutline} type="button" data-extend-15>{t('tool.extend.add15')}</button>
+      <button class={btnOutline} type="button" data-extend-30>{t('tool.extend.add30')}</button>
+      <button class={btnOutline} type="button" data-extend-60>{t('tool.extend.add60')}</button>
+      <button class={btnDanger} type="button" data-extend-stop>{t('tool.extend.stop')}</button>
+    </div>
+  </dialog>
+  <dialog data-dialog="pro" aria-labelledby="pro-sheet-title">
+    <h2 id="pro-sheet-title">{t('pro.title')}</h2>
+    <p>{t('pro.card')}</p>
+    <p><a class={inlineLink} href="/pro">{t('pro.cta')}</a> · <a class={inlineLink} href="/pro/activate">{t('pro.activate')}</a></p>
+    <button class={btnOutline} type="button" data-pro-close>{t('settings.close')}</button>
+  </dialog>
+  <noscript><p>{t('tool.noscript')}</p></noscript>
+</div>

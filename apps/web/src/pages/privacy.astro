@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { Separator } from '@/components/ui/separator';
+import { t } from '../i18n/load';
+import { articleSchema } from '../lib/seo';
+
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const canonical = `${site}/privacy`;
+const crumbLink = 'inline-flex min-h-11 items-center';
+const code = 'rounded-sm bg-muted px-1.5 py-0.5 text-[0.9em]';
+---
+
+<BaseLayout
+  title={t('page.privacy.title')}
+  description={t('page.privacy.description')}
+  canonical={canonical}
+  ogImage="/og/privacy-en.png"
+  schema={articleSchema({
+    canonical,
+    title: t('page.privacy.h1'),
+    description: t('page.privacy.description'),
+    locale: 'en',
+    published: '2026-09-09',
+    breadcrumbs: [
+      { name: 'AwakeTab', url: site },
+      { name: t('page.privacy.h1'), url: canonical },
+    ],
+  })}
+>
+  <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
+  <main class="mx-auto mt-6 w-full max-w-[45rem] leading-relaxed">
+    <Breadcrumb aria-label="Breadcrumb">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{t('page.privacy.h1')}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+    <section class="mt-4 space-y-4">
+      <h1 class="text-3xl font-semibold leading-tight tracking-tight">{t('page.privacy.h1')}</h1>
+      <p><strong class="font-semibold">Effective September 9, 2026.</strong> AwakeTab requires no account and sets no cookies.</p>
+    </section>
+    <Separator className="my-8" />
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold tracking-tight">Data stored in your browser</h2>
+      <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-[auto_1fr]">
+        <dt><code class={code}>at.v1.settings</code></dt><dd>Theme, accent, default duration, sound, notifications, end behavior, battery, ambient, language, telemetry and keyboard preferences.</dd>
+        <dt><code class={code}>at.v1.session</code></dt><dd>The current or last session so a reload can offer to resume it.</dd>
+        <dt><code class={code}>at.v1.stats</code></dt><dd>Local-date minute totals, session count and streak data retained for up to 365 days.</dd>
+        <dt><code class={code}>at.v1.license</code></dt><dd>An offline-verifiable Pro token, plan, features, validation time and random device identifier.</dd>
+        <dt><code class={code}>at.v1.meta</code></dt><dd>Install date, completed-session count, rating-prompt choice and last seen version.</dd>
+        <dt><code class={code}>at.v1.onboarding</code></dt><dd>Dismissed tips, including language suggestions.</dd>
+      </dl>
+      <p>
+        This data stays in browser storage unless a feature explicitly contacts the first-party API. You can
+        clear it from Settings or your browser. <code class={code}>BroadcastChannel('awaketab')</code> coordinates open
+        tabs without sending that state to a server.
+      </p>
+    </section>
+    <Separator className="my-8" />
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold tracking-tight">Optional first-party telemetry</h2>
+      <p>
+        When telemetry is enabled, AwakeTab may send: <code class={code}>page_view</code>, <code class={code}>session_start</code>,
+        <code class={code}>session_end</code>, <code class={code}>lock_state</code>, <code class={code}>lock_denied</code>,
+        <code class={code}>fallback_used</code>, <code class={code}>resume_shown</code>, <code class={code}>resume_accepted</code>,
+        <code class={code}>pwa_install</code>, <code class={code}>pip_open</code>, <code class={code}>share_click</code>,
+        <code class={code}>pro_view</code>, <code class={code}>pro_checkout_click</code>, <code class={code}>pro_activated</code>,
+        <code class={code}>rating_prompt</code>, <code class={code}>extension_click</code>, <code class={code}>ad_slot_loaded</code>,
+        <code class={code}>sponsor_view</code>, <code class={code}>sponsor_click</code> and sampled <code class={code}>client_error</code> events.
+      </p>
+      <p>
+        Common fields are timestamp, path without query parameters, locale, coarse browser/OS and viewport
+        classes, application version and a random per-tab session id held only in memory. AwakeTab does not
+        collect a user id, exact user agent, fingerprint, full referrer or persistent analytics identifier.
+      </p>
+    </section>
+    <Separator className="my-8" />
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold tracking-tight">Network and payment data</h2>
+      <p>
+        API rate limiting uses a salted hash of the source IP transiently; neither the IP nor its hash is
+        stored as analytics. Pro purchases are processed by Polar, whose checkout privacy terms apply.
+        Licence endpoints receive only the licence key or token, a random device id and a user-visible device
+        label. Content-page advertising remains disabled until its documented launch gate; ads never appear
+        on the awake screen, floating timer, embeds or extension.
+      </p>
+    </section>
+  </main>
+</BaseLayout>

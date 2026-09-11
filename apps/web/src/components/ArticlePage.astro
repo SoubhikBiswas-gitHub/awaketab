@@ -1,0 +1,169 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import ContentLayout from '../layouts/ContentLayout.astro';
+import ToolIsland from './ToolIsland.astro';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { buttonVariants } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { cn } from 'cn';
+import { t } from '../i18n/load';
+import { articleSchema } from '../lib/seo';
+
+type TKind = 'for' | 'on' | 'vs' | 'guides' | 'learn';
+
+interface Props {
+  kind: TKind;
+  entry: CollectionEntry<TKind>;
+}
+
+const PRESET_HREF = {
+  p15: '/15m',
+  p30: '/30m',
+  p45: '/45m',
+  p60: '/1h',
+  p120: '/2h',
+  p240: '/4h',
+  pinf: '/',
+  custom: '/8h',
+  until: '/',
+} as const;
+
+const { kind, entry } = Astro.props;
+const data = entry.data;
+const { Content } = await render(entry);
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const slug = entry.id.replace(/^en\//u, '');
+const canonical = `${site}/${kind}/${slug}`;
+const hubH1 = t(`page.hub.${kind}.h1`);
+const published = data.published.toISOString().slice(0, 10);
+const verified = data.lastVerified
+  ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeZone: 'UTC' }).format(data.lastVerified)
+  : null;
+const stale =
+  data.lastVerified !== undefined && Date.now() - data.lastVerified.getTime() > 180 * 86_400_000;
+const startHref = PRESET_HREF[data.preset];
+
+// 44 px targets throughout; related links may wrap because slugs become multi-word labels.
+// Ghost (not link) keeps these as secondary chips, not accent-coloured competitors to the page's
+// one primary action; it also lets the `.at-prose nav a` chip rule in tool.css take effect.
+const crumbLink = 'inline-flex min-h-11 items-center';
+const relatedLink = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11 px-4 text-start whitespace-normal');
+---
+
+<ContentLayout
+  title={data.title}
+  description={data.description}
+  canonical={canonical}
+  ogImage={`/og/${kind}-en.png`}
+  schema={articleSchema({
+    canonical,
+    title: data.h1,
+    description: data.description,
+    locale: 'en',
+    published,
+    ...(data.updated ? { updated: data.updated.toISOString().slice(0, 10) } : {}),
+    breadcrumbs: [
+      { name: 'AwakeTab', url: site },
+      { name: hubH1, url: `${site}/${kind}` },
+      { name: data.h1, url: canonical },
+    ],
+  })}
+>
+  <header slot="header" class="at-page-header">
+    <a class="at-wordmark" href="/">AwakeTab</a>
+  </header>
+  <Breadcrumb aria-label="Breadcrumb">
+    <BreadcrumbList>
+      <BreadcrumbItem>
+        <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbLink className={crumbLink} href={`/${kind}`}>{hubH1}</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbPage>{data.h1}</BreadcrumbPage>
+      </BreadcrumbItem>
+    </BreadcrumbList>
+  </Breadcrumb>
+  <header class="mt-4">
+    <h1 class="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">{data.h1}</h1>
+    {
+      (verified || stale) && (
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+          {verified && (
+            <Badge variant="outline" className="whitespace-normal">
+              {t('content.verified', { date: verified })}
+            </Badge>
+          )}
+          {stale && (
+            <Badge variant="outline" className="border-warning whitespace-normal text-warning">
+              {t('content.stale')}
+            </Badge>
+          )}
+        </div>
+      )
+    }
+  </header>
+  <Alert role="note" className="mt-6 border-l-4 border-l-warning">
+    <AlertDescription className="text-foreground">{data.honestLimit}</AlertDescription>
+  </Alert>
+  <Card className="my-6 gap-0 py-0">
+    <ToolIsland embed heading={data.h1} autostart="0" preset={data.preset} mode={data.mode} />
+  </Card>
+  <div class="at-prose">
+    <Content />
+    <section aria-labelledby="faq" class="mt-8">
+      <h2 id="faq">{t('content.faq')}</h2>
+      <div class="grid gap-3">
+        {
+          data.faq.map((item) => (
+            <details class="rounded-lg border bg-card text-card-foreground shadow-sm">
+              <summary class="min-h-11 cursor-pointer px-4 py-3 font-medium marker:text-muted-foreground">
+                {item.q}
+              </summary>
+              <p class="px-4 pb-4 text-muted-foreground">{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+    <nav aria-label={t('content.related')} class="mt-6 flex flex-wrap gap-x-6 gap-y-1">
+      <a class={relatedLink} href={startHref}>{t('content.start')}</a>
+      <a class={relatedLink} href={`/${kind}`}>{hubH1}</a>
+      {
+        data.related.map((href) => (
+          <a class={relatedLink} href={href}>
+            {href.replace(/^\//u, '').replaceAll('/', ' · ').replaceAll('-', ' ')}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+  <Card className="mt-8 py-4">
+    <CardContent className="flex items-center gap-3 px-4 text-sm">
+      <span
+        aria-hidden="true"
+        class="grid size-10 shrink-0 place-items-center rounded-full bg-accent font-semibold text-accent-foreground"
+      >
+        SB
+      </span>
+      <div>
+        <p class="font-medium">Soubhik Biswas</p>
+        <p class="text-muted-foreground">
+          {t('content.author.role')} <a class="text-primary underline underline-offset-4" href="/about">{t('content.author.about')}</a>
+        </p>
+      </div>
+    </CardContent>
+  </Card>
+</ContentLayout>

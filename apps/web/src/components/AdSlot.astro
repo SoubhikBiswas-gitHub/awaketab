@@ -1,0 +1,25 @@
+---
+interface Props {
+  kind: 'rail' | 'inline';
+}
+
+// docs/00-conventions.md §8.3 and docs/09-monetization-impl.md §3.1: the box is reserved in
+// static HTML with a fixed min-height (tool.css `.at-ad-slot*`) so CLS stays 0, and it is never
+// removed after first paint. `data-ad-slot` / `data-size*` are read by lib/ads.ts and by the
+// Playwright placement check (`[data-ad-slot]`); keep them byte-exact.
+const { kind } = Astro.props;
+const size = kind === 'rail' ? '160x600' : '336x280';
+const placement =
+  kind === 'rail'
+    ? 'order-last w-full max-w-40 lg:order-none lg:col-start-2 lg:row-start-1 lg:self-start'
+    : 'my-8 w-full max-w-[336px]';
+---
+
+<aside
+  class={`at-ad-slot at-ad-slot-${kind} mx-auto rounded-lg bg-muted/40 ${placement}`}
+  data-ad-slot={kind}
+  data-size-sm={kind === 'rail' ? '320x50' : '300x250'}
+  data-size={size}
+  hidden={false}
+  aria-hidden="true"
+></aside>

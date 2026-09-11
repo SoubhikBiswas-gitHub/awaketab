@@ -1,0 +1,63 @@
+---
+import BaseLayout from './BaseLayout.astro';
+// After BaseLayout on purpose: tokens.css (Tailwind + layer order) and tool.css must precede this sheet.
+import '../styles/content.css';
+import AdSlot from '../components/AdSlot.astro';
+import type { TLocale } from '../i18n/locales';
+import type { TSchemaNode } from '../lib/seo';
+import { shouldRenderAdSlots } from '../lib/ads';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  locale?: TLocale;
+  ogImage?: string | undefined;
+  schema: TSchemaNode;
+  alternates?: Array<{ locale: TLocale; href: string }> | undefined;
+}
+
+const { title, description, canonical, locale = 'en', ogImage, schema, alternates } = Astro.props;
+// Ads render only here, gated by PUBLIC_ADS_ENABLED (docs/00 §8.3, docs/09 §3.1). The rail slot
+// takes the second grid column on large screens; slot order in the DOM is unchanged.
+const showAds = shouldRenderAdSlots();
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  locale={locale}
+  ogImage={ogImage}
+  schema={schema}
+  alternates={alternates}
+  contentPage
+>
+  <slot name="header" />
+  <div
+    class:list={[
+      'at-content-layout grid grid-cols-1 gap-8',
+      showAds && 'lg:grid-cols-[minmax(0,1fr)_10rem]',
+    ]}
+  >
+    {showAds && <AdSlot kind="rail" />}
+    <main class="at-content mx-auto mt-8 w-full max-w-[45rem] text-base leading-normal lg:col-start-1 lg:row-start-1">
+      <article>
+        <slot />
+      </article>
+    </main>
+    {showAds && <AdSlot kind="inline" />}
+  </div>
+  {showAds && (
+    <script>
+      import { bootAds } from '../lib/ads';
+      void bootAds({
+        onSlot: (page) => {
+          void import('../lib/analytics.js').then((mod) => {
+            mod.track('ad_slot_loaded', { page }, { telemetry: true, source: 'web', locale: document.documentElement.lang || 'en' });
+          });
+        },
+      });
+    </script>
+  )}
+</BaseLayout>

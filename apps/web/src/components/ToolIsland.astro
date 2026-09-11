@@ -1,0 +1,85 @@
+---
+import { createT } from '../i18n/load';
+import type { TLocale } from '../i18n/locales';
+import ToolPanel from './ToolPanel.astro';
+import { badgeVariants } from '@/components/ui/badge';
+import { buttonVariants } from '@/components/ui/button';
+import { CircleHelp, Download, PictureInPicture2, Settings, Share2, SunMoon } from 'lucide-react';
+
+interface Props {
+  heading: string;
+  autostart?: '0' | '1' | undefined;
+  pip?: boolean;
+  preset?: string | undefined;
+  mode?: string | undefined;
+  locale?: TLocale;
+  embed?: boolean;
+}
+
+const { heading, autostart, pip = false, preset, mode, locale = 'en', embed = false } = Astro.props;
+const t = createT(locale);
+
+// shadcn/ui renders at build time only (docs/03 ADR-013): cva class strings on plain elements, no React runtime.
+// `icon-lg` is 40 px; min-h/min-w-11 lift every header control to the 44 px target (docs/00 §11).
+const iconBtn = [buttonVariants({ variant: 'ghost', size: 'icon-lg' }), 'at-icon-btn min-h-11 min-w-11 text-base'];
+const proBadge = badgeVariants({ variant: 'secondary' });
+---
+
+{!embed && <a class="at-skip" href="#content">{t('tool.skip')}</a>}
+{/* `#awaketab-tool` is the island root main.ts boots from (docs/05 §2). It wraps the header too, because the
+    header controls are bound with root.querySelector(); the data-* attributes are the URL-param defaults. */}
+<div
+  id="awaketab-tool"
+  class:list={['at-island', embed && 'at-tool-embed']}
+  data-autostart={autostart}
+  data-pip={pip ? '1' : undefined}
+  data-preset={preset}
+  data-mode={mode}
+>
+  {
+    embed ? (
+      <section aria-label={t('app.name')}>
+        <div class="at-header-actions">
+          <span class:list={[proBadge, 'at-pro-badge']} data-pro-badge hidden>{t('pro.badge')}</span>
+          <button class:list={iconBtn} type="button" data-open-settings aria-label={t('tool.header.settings')}>
+            <Settings aria-hidden="true" className="size-5" />
+          </button>
+        </div>
+        <ToolPanel locale={locale} />
+      </section>
+    ) : (
+      <>
+        <header class="at-header">
+          <a class="at-wordmark" href="/">{t('app.name')}</a>
+          <div class="at-header-actions">
+            <span class:list={[proBadge, 'at-pro-badge']} data-pro-badge hidden>{t('pro.badge')}</span>
+            <button class:list={iconBtn} type="button" data-install hidden aria-label={t('tool.header.install')}>
+              <Download aria-hidden="true" className="size-5" />
+            </button>
+            <button class:list={iconBtn} type="button" data-open-share aria-label={t('tool.header.share')}>
+              <Share2 aria-hidden="true" className="size-5" />
+            </button>
+            <button class:list={iconBtn} type="button" data-open-pip aria-label={t('tool.header.pip')}>
+              <PictureInPicture2 aria-hidden="true" className="size-5" />
+            </button>
+            <button class:list={iconBtn} type="button" data-cycle-theme aria-label={t('tool.header.theme')}>
+              <SunMoon aria-hidden="true" className="size-5" />
+            </button>
+            <button class:list={iconBtn} type="button" data-open-shortcuts aria-label={t('tool.header.shortcuts')}>
+              <CircleHelp aria-hidden="true" className="size-5" />
+            </button>
+            <button class:list={iconBtn} type="button" data-open-settings aria-label={t('tool.header.settings')}>
+              <Settings aria-hidden="true" className="size-5" />
+            </button>
+          </div>
+        </header>
+        <main>
+          <h1 class="at-h1" id="content">{heading}</h1>
+          <ToolPanel locale={locale} />
+          <slot />
+        </main>
+      </>
+    )
+  }
+</div>
+<script src="../tool/main.ts"></script>

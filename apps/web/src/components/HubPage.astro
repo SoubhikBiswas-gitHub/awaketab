@@ -1,0 +1,131 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from 'cn';
+import { t } from '../i18n/load';
+import { articleSchema } from '../lib/seo';
+
+interface Props {
+  kind: 'for' | 'on' | 'vs' | 'guides' | 'learn';
+}
+
+const { kind } = Astro.props;
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const canonical = `${site}/${kind}`;
+const title = t(`page.hub.${kind}.title`);
+const description = t(`page.hub.${kind}.description`);
+const h1 = t(`page.hub.${kind}.h1`);
+const copy = {
+  for: [
+    'Start with the task you need to finish: following a recipe, presenting slides, reading reference material or watching a long download. Each guide pairs a suitable timer preset with the limits that matter in that situation.',
+    'AwakeTab works through the browser. Keep its tab visible, leave the device open and watch the live status pill. A hidden tab or a battery-saving policy can release the wake lock; the pill changes immediately when that happens.',
+  ],
+  on: [
+    'Browser and operating-system behavior varies. These guides separate native Screen Wake Lock support from the video fallback and document the settings that can block either mechanism.',
+    'No browser page can override a closed laptop lid, force a hidden tab to stay eligible or guarantee operation under Low Power Mode. Check the live pill rather than assuming support from a device name alone.',
+  ],
+  vs: [
+    'Screen-awake tools use different mechanisms. AwakeTab requests the standard browser API and reports the returned state. Native utilities may have broader system access; extensions may continue in contexts where an ordinary tab cannot.',
+    'Comparisons focus on mechanism, permissions, privacy, installation, battery impact and failure visibility. They do not award points for synthetic input or misleading claims about chat presence.',
+  ],
+  guides: [
+    'Troubleshooting starts with evidence: confirm HTTPS, keep the tab visible, check battery-saving settings and read the advice shown after a denied request. Retrying without fixing the reported condition usually produces the same result.',
+    'The guides use operating-system menu paths only where they have been verified. Product versions and browser support come from the maintained support matrix rather than assumptions.',
+  ],
+  learn: [
+    'The Screen Wake Lock API lets a visible page ask the browser to prevent display sleep. The browser remains in control and can reject or release the request when visibility, permissions or power conditions change.',
+    'Learn how AwakeTab models those changes, why timers run only while a lock is held or the fallback is active, and how the project tests claims before publishing them.',
+  ],
+} as const;
+const pages = (await getCollection(kind))
+  .filter((entry) => entry.data.locale === 'en')
+  .sort((a, b) => a.data.h1.localeCompare(b.data.h1));
+
+// 44 px targets throughout (docs/05 accessibility rules). Ghost (not link) so these read as
+// secondary navigation, not competing with primary CTAs for the one accent colour on the page;
+// it also lets the `.at-prose nav a` chip rule in tool.css take effect instead of being
+// overridden by the link variant's `text-primary` utility.
+const crumbLink = 'inline-flex min-h-11 items-center';
+const relatedLink = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11 px-4');
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogImage={`/og/${kind}-en.png`}
+  schema={articleSchema({
+    canonical,
+    title: h1,
+    description,
+    locale: 'en',
+    published: '2026-09-09',
+    breadcrumbs: [
+      { name: 'AwakeTab', url: site },
+      { name: h1, url: canonical },
+    ],
+  })}
+>
+  <header class="at-page-header">
+    <a class="at-wordmark" href="/">AwakeTab</a>
+  </header>
+  <main class="mx-auto mt-6 w-full max-w-3xl">
+    <Breadcrumb aria-label="Breadcrumb">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{h1}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+    <h1 class="mt-4 text-3xl font-semibold leading-tight tracking-tight">{h1}</h1>
+    <div class="mt-4 space-y-4 leading-relaxed">
+      {copy[kind].map((paragraph) => <p>{paragraph}</p>)}
+    </div>
+    <Alert role="note" className="mt-6 border-l-4 border-l-warning">
+      <AlertDescription className="text-foreground">
+        AwakeTab never claims to work in a hidden tab, keep Teams or Slack “Available”, prevent sleep after
+        closing a laptop lid, or simulate mouse and keyboard input.
+      </AlertDescription>
+    </Alert>
+    {/*
+      A row list, not a grid of identical cards: 18+ plain links don't each need their own
+      bordered box (the generic "SaaS card kit" look). One shared list border plus a divider
+      per row reads as a considered index; the tint and ring only appear on hover/focus.
+    */}
+    <ul class="mt-8 list-none rounded-lg border divide-y divide-border p-0 sm:columns-2 sm:gap-0 sm:[column-fill:balance]">
+      {
+        pages.map((entry) => {
+          const slug = entry.id.replace(/^en\//u, '');
+          return (
+            <li class="break-inside-avoid">
+              <div class="relative px-4 py-3 leading-snug transition-colors hover:bg-accent/40 has-[a:focus-visible]:ring-[3px] has-[a:focus-visible]:ring-inset has-[a:focus-visible]:ring-ring/50">
+                <a class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none" href={`/${kind}/${slug}`}>
+                  {entry.data.h1}
+                </a>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <nav aria-label="Related pages" class="mt-8 flex flex-wrap gap-x-6 gap-y-1">
+      <a class={relatedLink} href="/">Open AwakeTab</a>
+      <a class={relatedLink} href="/30m">Start a 30-minute session</a>
+      <a class={relatedLink} href="/about">How AwakeTab is tested</a>
+    </nav>
+  </main>
+</BaseLayout>

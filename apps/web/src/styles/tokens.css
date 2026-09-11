@@ -1,27 +1,196 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * shadcn/ui theme bridge — docs/05-frontend-spec.md §1.5, docs/03-architecture.md ADR-013.
+ * The `--at-*` tokens below stay the canonical palette (byte-identical to docs/05 §1.1).
+ * shadcn's semantic variables alias them so every shadcn component follows the
+ * light / dark / oled themes selected by `data-theme` on <html>.
+ */
+
+/* stylelint-disable nesting-selector-no-missing-scoping-root -- Tailwind v4 variant syntax */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *, [data-theme="oled"], [data-theme="oled"] *) {
+    @slot;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme]), :root:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+/* stylelint-enable nesting-selector-no-missing-scoping-root */
 
 @theme {
   --color-at-accent: var(--at-accent);
   --color-at-surface: var(--at-surface);
-  --color-at-text: var(--at-text);
+  --color-at-ink: var(--at-ink);
+  --font-at: var(--at-font);
+}
+
+@theme inline {
+  --font-sans: var(--at-font);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-night: var(--night);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 4px;
+  --radius-md: var(--at-r-sm);
+  --radius-lg: var(--at-r-md);
+  --radius-xl: var(--at-r-md);
+  --radius-2xl: var(--at-r-lg);
+  --radius-3xl: var(--at-r-lg);
+  --radius-4xl: var(--at-r-lg);
+}
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground;
+  }
+}
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --at-ground: #faf7f2;
+  --at-surface: #fff;
+  --at-ink: #1a1a1a;
+  --at-muted: #5c5c5c;
+  --at-line: #e3ded6;
+  --at-accent: #b86e00;
+  --at-accent-text: #8a5200;
+  --at-on-accent: #fff;
+  --at-night: #2b3a67;
+  --at-good: #1e7b4d;
+  --at-warn: #a64b00;
+  --at-bad: #b3261e;
+  --at-focus: #b86e00;
+  --at-text: var(--at-ink);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --at-ground: #14161c;
+  --at-surface: #1c1f27;
+  --at-ink: #f2f2f2;
+  --at-muted: #a3a6ae;
+  --at-line: #2a2e38;
+  --at-accent: #ffb84d;
+  --at-accent-text: #ffb84d;
+  --at-on-accent: #1a1200;
+  --at-night: #9db0ff;
+  --at-good: #5fd39a;
+  --at-warn: #ff9f6e;
+  --at-bad: #ff8a80;
+  --at-focus: #ffb84d;
+}
+
+[data-theme="oled"] {
+  color-scheme: dark;
+  --at-ground: #000;
+  --at-surface: #0a0a0a;
+  --at-ink: #e6e6e6;
+  --at-muted: #8a8a8a;
+  --at-line: #1f1f1f;
+  --at-accent: #ffb84d;
+  --at-accent-text: #ffb84d;
+  --at-on-accent: #1a1200;
+  --at-night: #9db0ff;
+  --at-good: #5fd39a;
+  --at-warn: #ff9f6e;
+  --at-bad: #ff8a80;
+  --at-focus: #ffb84d;
 }
 
 :root {
-  color-scheme: light dark;
-  --at-accent: #b86e00;
-  --at-accent-dark: #ffb84d;
-  --at-accent-text: #8a5200;
-  --at-indigo: #2b3a67;
-  --at-indigo-dark: #9db0ff;
-  --at-oled: #000;
-  --at-surface: #fffaf2;
-  --at-text: #241b10;
+  --radius: var(--at-r-md);
+  --background: var(--at-ground);
+  --foreground: var(--at-ink);
+  --card: var(--at-surface);
+  --card-foreground: var(--at-ink);
+  --popover: var(--at-surface);
+  --popover-foreground: var(--at-ink);
+  --primary: var(--at-accent-text);
+  --primary-foreground: var(--at-on-accent);
+  --secondary: color-mix(in srgb, var(--at-ink) 6%, var(--at-surface));
+  --secondary-foreground: var(--at-ink);
+  --muted: color-mix(in srgb, var(--at-ink) 6%, var(--at-surface));
+  --muted-foreground: var(--at-muted);
+  --accent: color-mix(in srgb, var(--at-accent) 12%, var(--at-surface));
+  --accent-foreground: var(--at-ink);
+  --destructive: var(--at-bad);
+  --destructive-foreground: #fff;
+  --success: var(--at-good);
+  --success-foreground: #fff;
+  --warning: var(--at-warn);
+  --warning-foreground: #fff;
+  --night: var(--at-night);
+  --border: var(--at-line);
+  --input: var(--at-line);
+  --ring: var(--at-focus);
+  --at-font: system-ui, -apple-system, "Segoe UI", "Roboto", "Noto Sans", "Ubuntu", "Cantarell",
+    "Noto Sans JP", "Noto Sans SC", "Noto Sans Devanagari", sans-serif;
+  --at-t-xs: 0.75rem;
+  --at-t-sm: 0.875rem;
+  --at-t-md: 1rem;
+  --at-t-lg: 1.125rem;
+  --at-t-xl: 1.375rem;
+  --at-t-2xl: 1.75rem;
+  --at-t-3xl: 2.5rem;
+  --at-t-timer: clamp(2.5rem, 12vw, 4rem);
+  --at-s-1: 4px;
+  --at-s-2: 8px;
+  --at-s-3: 12px;
+  --at-s-4: 16px;
+  --at-s-6: 24px;
+  --at-s-8: 32px;
+  --at-r-sm: 6px;
+  --at-r-md: 10px;
+  --at-r-lg: 16px;
+  --at-r-pill: 999px;
+  --at-d-fast: 120ms;
+  --at-d-base: 200ms;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --at-accent: var(--at-accent-dark);
-    --at-surface: #15120e;
-    --at-text: #fff8ed;
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --at-ground: #14161c;
+    --at-surface: #1c1f27;
+    --at-ink: #f2f2f2;
+    --at-muted: #a3a6ae;
+    --at-line: #2a2e38;
+    --at-accent: #ffb84d;
+    --at-accent-text: #ffb84d;
+    --at-on-accent: #1a1200;
+    --at-warn: #ff9f6e;
+    --at-bad: #ff8a80;
+    --at-focus: #ffb84d;
   }
 }

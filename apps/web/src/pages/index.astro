@@ -1,58 +1,447 @@
 ---
-import '../styles/holding.css';
-import '../styles/tokens.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolIsland from '../components/ToolIsland.astro';
+import { SupportMatrix } from '../components/SupportMatrix';
+import { Kbd } from '@/components/ui/kbd';
+import { t } from '../i18n/load';
+import { homeSchema, type IRatingsSummary } from '../lib/seo';
+import matrix from '../data/support-matrix.json';
+import ratings from '../../../../data/ratings.json';
 
-const site = 'https://awaketab.com';
-const title = 'Keep Your Screen Awake — AwakeTab';
-const description =
-  'AwakeTab is the tab that keeps your screen awake. A focused browser utility is coming soon.';
-const schemas = [
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'AwakeTab',
-    url: site,
-  },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'AwakeTab',
-    url: site,
-    logo: `${site}/og/awaketab-placeholder.svg`,
-  },
+type TSupportMechanism = 'native' | 'fallback';
+
+interface ISupportRow {
+  id: string;
+  name: string;
+  minimumVersion: string | null;
+  mechanism: TSupportMechanism;
+  platforms: string[];
+  notes: string;
+}
+
+interface IPillState {
+  label: string;
+  meaning: string;
+}
+
+interface ILink {
+  href: string;
+  label: string;
+}
+
+const MECHANISM_LABEL: Record<TSupportMechanism, string> = {
+  native: 'Native wake lock',
+  fallback: 'Video fallback',
+};
+
+function toMechanism(value: string): TSupportMechanism {
+  return value === 'fallback' ? 'fallback' : 'native';
+}
+
+// Shared shadcn Card / list classes — build time only (docs/03 ADR-013), no client directive anywhere.
+const card = 'rounded-xl border bg-card text-card-foreground shadow-sm';
+const linkList = 'at-links m-0 grid list-none gap-2 p-0';
+const linkItem = 'my-0 rounded-lg border bg-card px-4 py-3 text-card-foreground shadow-sm';
+const faqItem = `${card} px-4`;
+const faqSummary = 'flex min-h-11 cursor-pointer list-none items-center py-3 font-semibold';
+
+const supportRows: ISupportRow[] = [
+  ...matrix.browsers.map((browser) => ({
+    id: browser.id,
+    name: browser.name,
+    minimumVersion: browser.minimumVersion,
+    mechanism: toMechanism(browser.mechanism),
+    platforms: browser.platforms,
+    notes: browser.notes,
+  })),
+  ...matrix.contexts.map((context) => ({
+    id: context.id,
+    name: context.name,
+    minimumVersion: context.minimumVersion,
+    mechanism: toMechanism(context.mechanism),
+    platforms: [],
+    notes: context.notes,
+  })),
+];
+
+const matrixRows = supportRows.map((row) => ({
+  id: row.id,
+  name: row.name,
+  minimumVersion: row.minimumVersion,
+  mechanism: MECHANISM_LABEL[row.mechanism],
+  platforms: row.platforms.join(', '),
+  notes: row.notes,
+}));
+
+const lastVerified = new Intl.DateTimeFormat('en-GB', {
+  dateStyle: 'long',
+  timeZone: 'UTC',
+}).format(new Date(`${matrix.lastUpdated}T00:00:00Z`));
+
+const ratingsSummary: IRatingsSummary = { count: ratings.count, average: ratings.average };
+const schema = homeSchema('en', ratingsSummary);
+
+const pillStates: IPillState[] = [
+  { label: t('tool.pill.idle'), meaning: 'Nothing requested yet. Pick a duration to start.' },
+  { label: t('tool.pill.requesting'), meaning: 'The request is in flight; the browser has not answered.' },
+  { label: t('tool.pill.held'), meaning: 'The browser confirmed the lock. Only now does the timer run.' },
+  { label: t('tool.pill.lost'), meaning: 'The tab lost focus, so the lock was taken back. AwakeTab asks again when you return.' },
+  { label: t('tool.pill.denied'), meaning: 'The request was refused — usually battery saver. The panel names the cause and the fix.' },
+  { label: t('tool.pill.unsupported'), meaning: 'No Wake Lock API here; a fallback is offered instead.' },
+  { label: t('tool.pill.fallback'), meaning: 'A silent one-frame video is holding the display, at a higher power cost.' },
+];
+
+const scenarios: ILink[] = [
+  { href: '/for/cooking', label: 'Keep the screen on while cooking' },
+  { href: '/for/presentations', label: 'Keep the screen on during a presentation' },
+  { href: '/for/downloads', label: 'Keep the computer awake while downloading' },
+  { href: '/for/dashboards', label: 'Keep a wall dashboard on' },
+  { href: '/for/night-clock', label: 'Run a night clock on an OLED screen' },
+  { href: '/for/video-calls', label: 'Keep the screen on during a video call' },
+];
+
+const devices: ILink[] = [
+  { href: '/on/iphone-safari', label: 'Keep an iPhone screen on in Safari' },
+  { href: '/on/android-chrome', label: 'Keep an Android screen on in Chrome' },
+  { href: '/on/windows-11', label: 'Keep the screen on in Windows 11' },
+  { href: '/on/macos', label: 'Prevent Mac display sleep in a browser' },
+  { href: '/on/chromebook', label: 'Keep a Chromebook screen on' },
+  { href: '/on/firefox', label: 'Keep the screen on in Firefox' },
+];
+
+const comparisons: ILink[] = [
+  { href: '/vs/caffeine', label: 'AwakeTab vs Caffeine' },
+  { href: '/vs/powertoys-awake', label: 'AwakeTab vs PowerToys Awake' },
+  { href: '/vs/nosleep-page', label: 'AwakeTab vs nosleep.page' },
+  { href: '/vs/mouse-jigglers', label: 'AwakeTab vs mouse jigglers' },
+];
+
+const guides: ILink[] = [
+  { href: '/guides/windows-11-screen-turns-off-after-1-minute', label: 'Windows 11 screen turns off after 1 minute' },
+  { href: '/guides/iphone-auto-lock-never-greyed-out', label: 'iPhone Auto-Lock “Never” is greyed out' },
+  { href: '/guides/mac-prevent-sleep-lid-closed', label: 'Prevent a Mac from sleeping with the lid closed' },
+];
+
+const learn: ILink[] = [
+  { href: '/learn/screen-wake-lock-api-guide', label: 'A developer guide to the Screen Wake Lock API' },
+  { href: '/learn/browser-support-matrix', label: 'Wake lock browser support, version by version' },
+  { href: '/learn/does-a-wake-lock-keep-teams-green', label: 'Does a wake lock keep Teams green?' },
+  { href: '/learn/how-we-tested', label: 'How AwakeTab was tested' },
 ];
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="theme-color" content="#B86E00" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={site} />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="AwakeTab" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={site} />
-    <meta property="og:image" content={`${site}/og/awaketab-placeholder.svg`} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={`${site}/og/awaketab-placeholder.svg`} />
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(schemas)} />
-  </head>
-  <body>
-    <main>
-      <div class="brand" aria-hidden="true">
-        <span class="ring"></span>
-      </div>
-      <p class="eyebrow">AwakeTab</p>
-      <h1>The tab that keeps your screen awake.</h1>
-      <p class="status">Coming soon.</p>
-    </main>
-  </body>
-</html>
+<BaseLayout
+  title={t('page.home.title')}
+  description={t('page.home.description')}
+  schema={schema}
+  footer={{ privacy: t('footer.privacy'), terms: t('footer.terms'), changelog: t('footer.changelog'), donate: t('footer.donate') }}
+>
+  <ToolIsland heading={t('page.home.h1')}>
+    <div class="at-prose">
+      <section class="at-section" aria-labelledby="answer-title">
+        <h2 id="answer-title">What AwakeTab does</h2>
+        <p>
+          {t('page.home.intro')} Pick a duration — {t('tool.preset.p15')} to {t('tool.preset.p240')},
+          {t('tool.preset.custom')} up to seven days, or {t('tool.preset.until')} a clock time — and the display
+          stops dimming, sleeping and showing the lock screen. The pill reads
+          <strong>{t('tool.pill.held')}</strong> only while the browser is actually holding the lock. Hide this tab
+          and the browser takes the lock back, so the pill switches to <strong>{t('tool.pill.lost')}</strong> and the
+          timer stops until you come back.
+        </p>
+        <p>
+          There is no account, no download and no extension needed: the whole tool is this page. Settings, the
+          current session and seven days of stats stay in this browser. Nothing is sent unless you leave the
+          optional usage beacon on. This page loads no third-party scripts or web fonts, so it stays fast on a
+          phone and works offline after the first visit. The header offers <strong>{t('pwa.install')}</strong> if
+          you want it on a home screen or dock; the installed app can chime and notify when a session ends.
+        </p>
+      </section>
+
+      <section class="at-section" aria-labelledby="how-title">
+        <h2 id="how-title">How it works</h2>
+        <ol>
+          <li>
+            <strong>You pick a duration.</strong> A preset, a custom length or a clock time starts a session. The
+            same choices are one keypress: <Kbd>1</Kbd>–<Kbd>6</Kbd> for presets, <Kbd>0</Kbd> for no end time,
+            <Kbd>U</Kbd> for a clock time and <Kbd>Space</Kbd> to start or stop.
+          </li>
+          <li>
+            <strong>The browser is asked for a screen wake lock.</strong> AwakeTab calls the Screen Wake Lock API —
+            the same mechanism a video player uses. The browser can accept, refuse, or take the lock back later;
+            all three answers are shown as they happen.
+          </li>
+          <li>
+            <strong>The timer follows the lock, not the clock.</strong> The countdown runs only while the lock is
+            held, and every calculation uses system time, so a laptop that was suspended comes back with an honest
+            number. When the time is up you get a chime and the choice to extend or stop.
+          </li>
+        </ol>
+        <p>
+          A lock has exactly seven states, and the pill names the one you are in. That is the point: a status you
+          can trust.
+        </p>
+        <dl class="at-states m-0 grid gap-3 p-0 md:grid-cols-2">
+          {
+            pillStates.map((state) => (
+              <div class:list={['at-state flex flex-col gap-1.5 p-4', card]}>
+                <dt class="font-semibold leading-none">{state.label}</dt>
+                <dd class="m-0 text-sm text-muted-foreground">{state.meaning}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      <section class="at-section" aria-labelledby="limits-title">
+        <h2 id="limits-title">Honest limits</h2>
+        <aside class="at-limit">
+          <ul>
+            <li>
+              <strong>A hidden tab cannot hold a wake lock.</strong> Switching apps, minimising or changing tabs
+              pauses the session. That is a platform rule. For a display awake behind other windows, use the
+              AwakeTab extension for Chrome and Edge.
+            </li>
+            <li>
+              <strong>Closing the lid still puts the machine to sleep.</strong> No web page or extension can change
+              that. It takes an OS setting, an external display or a native tool.
+            </li>
+            <li>
+              <strong>Battery saver wins.</strong> iPhone Low Power Mode forces a 30-second Auto-Lock; Android and
+              Windows battery saver can refuse the request. You get <strong>{t('tool.pill.denied')}</strong> with
+              the cause.
+            </li>
+            <li>
+              <strong>It does not touch your chat status.</strong> Teams, Slack and Zoom presence follows keyboard
+              and mouse idle time, not the display. A wake lock will not keep you green, and AwakeTab never
+              simulates input to fake it.
+            </li>
+            <li>
+              <strong>Display sleep is not system sleep.</strong> A wake lock holds the screen. In our tests
+              Chromium on Windows also deferred idle sleep; macOS did not. For a machine awake with the screen off,
+              use a native utility.
+            </li>
+            <li>
+              <strong>Other software keeps its own rules.</strong> A bank logout, a proctoring app, a monitor that
+              sleeps on lost signal or a corporate lock-screen policy are all outside a wake lock's reach.
+            </li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="at-section" aria-labelledby="support-title">
+        <h2 id="support-title">Browser and device support</h2>
+        <p>
+          Native support means the browser implements the Screen Wake Lock API. Where it is missing, a silent
+          one-frame video loop is offered after one tap. Rows come from the same data file the rest of the site reads.
+        </p>
+        <div class:list={['at-matrix-scroll overflow-x-auto p-2', card]} tabindex="0">
+          <SupportMatrix
+            caption="Screen Wake Lock support as tested by AwakeTab"
+            headers={{
+              name: 'Browser or context',
+              version: 'From version',
+              mechanism: 'Mechanism',
+              platforms: 'Platforms',
+              notes: 'What to expect',
+            }}
+            anyLabel="Any"
+            rows={matrixRows}
+          />
+        </div>
+        <p class="at-verified mt-3 text-sm text-muted-foreground">Last verified: {lastVerified}</p>
+        <p>
+          Below these versions AwakeTab shows <strong>{t('tool.pill.unsupported')}</strong> and offers the fallback.
+          Per-version detail lives in <a href="/learn">the learn hub</a>.
+        </p>
+      </section>
+
+      <section class="at-section" aria-labelledby="scenarios-title">
+        <h2 id="scenarios-title">Pick the guide for what you are doing</h2>
+        <p>
+          Cooking, a talk, a long download, a wall dashboard: each has a sensible duration and its own honest limit,
+          so each gets a page with the tool already set up.
+        </p>
+        <ul class={linkList}>
+          {scenarios.map((link) => <li class={linkItem}><a href={link.href}>{link.label}</a></li>)}
+        </ul>
+        <p><a href="/for">{t('page.hub.for.h1')}</a> lists all eighteen scenarios.</p>
+      </section>
+
+      <section class="at-section" aria-labelledby="devices-title">
+        <h2 id="devices-title">Your device, specifically</h2>
+        <p>
+          Wake locks differ on iPhone, a managed Chromebook and a Windows laptop in battery saver. These pages name
+          the versions we tested and the settings that override AwakeTab.
+        </p>
+        <ul class={linkList}>
+          {devices.map((link) => <li class={linkItem}><a href={link.href}>{link.label}</a></li>)}
+        </ul>
+        <p><a href="/on">{t('page.hub.on.h1')}</a> covers twelve browsers and platforms.</p>
+      </section>
+
+      <section class="at-section" aria-labelledby="alternatives-title">
+        <h2 id="alternatives-title">When something else is the better tool</h2>
+        <p>
+          AwakeTab is instant and installation-free — and a native utility beats it when the screen must stay on
+          with the browser out of sight. Comparisons use dated facts.
+        </p>
+        <ul class={linkList}>
+          {comparisons.map((link) => <li class={linkItem}><a href={link.href}>{link.label}</a></li>)}
+        </ul>
+        <p><a href="/vs">{t('page.hub.vs.h1')}</a> has all seven comparisons.</p>
+      </section>
+
+      <section class="at-section" aria-labelledby="fix-title">
+        <h2 id="fix-title">Or fix the setting itself</h2>
+        <p>
+          Sometimes the real answer is a system setting. These walkthroughs show where the timeout lives, what to do
+          when it is greyed out, and when AwakeTab is faster.
+        </p>
+        <ul class={linkList}>
+          {guides.map((link) => <li class={linkItem}><a href={link.href}>{link.label}</a></li>)}
+        </ul>
+        <p>
+          <a href="/guides">{t('page.hub.guides.h1')}</a> collects the operating-system fixes, and
+          <a href="/learn">{t('page.hub.learn.h1')}</a> goes under the hood.
+        </p>
+        <ul class={linkList}>
+          {learn.map((link) => <li class={linkItem}><a href={link.href}>{link.label}</a></li>)}
+        </ul>
+      </section>
+
+      <section class="at-section" aria-labelledby="faq-title">
+        <h2 id="faq-title">Questions we are asked most</h2>
+        <div class="at-faq grid gap-2">
+          <details class={faqItem}>
+            <summary class={faqSummary}>Does it still work if I switch tabs or minimise the window?</summary>
+            <p class="mb-0 pb-4">
+              No. The browser releases the lock when the document is hidden. AwakeTab pauses and re-requests when the
+              tab is visible again. For a display behind other windows, use the extension or the {t('tool.header.pip')}.
+            </p>
+          </details>
+          <details class={faqItem}>
+            <summary class={faqSummary}>Will it keep my laptop awake with the lid closed?</summary>
+            <p class="mb-0 pb-4">
+              No, and neither will any other web page. Lid-close behaviour is an OS decision. Change it in power
+              settings, attach an external display, or use a native tool.
+            </p>
+          </details>
+          <details class={faqItem}>
+            <summary class={faqSummary}>Does it keep Teams or Slack showing me as available?</summary>
+            <p class="mb-0 pb-4">
+              No. Presence follows keyboard and mouse idle time, not a lit display. AwakeTab never sends synthetic
+              input. A green dot is a conversation with your employer, not a browser tab.
+            </p>
+          </details>
+          <details class={faqItem}>
+            <summary class={faqSummary}>Does it stop the whole computer from sleeping, or only the screen?</summary>
+            <p class="mb-0 pb-4">
+              The screen is the guarantee. Idle system sleep is a separate policy: Chromium on Windows deferred it in
+              our tests, macOS did not. For a machine awake with the display off, use a native utility.
+            </p>
+          </details>
+          <details class={faqItem}>
+            <summary class={faqSummary}>Why does my iPhone lock the screen anyway?</summary>
+            <p class="mb-0 pb-4">
+              Low Power Mode forces a 30-second Auto-Lock. Turn it off in Settings → Battery. Safari needs iOS 16.4;
+              a Home Screen app needs iOS 18.4. Below those, AwakeTab offers the video fallback.
+            </p>
+          </details>
+          <details class={faqItem}>
+            <summary class={faqSummary}>What is the video fallback, and when does it run?</summary>
+            <p class="mb-0 pb-4">
+              A silent one-frame loop so the browser treats media as playing. It runs only when there is no Wake Lock
+              API, and only after you tap. The pill says {t('tool.pill.fallback')}.
+            </p>
+          </details>
+          <details class={faqItem}>
+            <summary class={faqSummary}>How much battery does it use, and can I leave it running overnight?</summary>
+            <p class="mb-0 pb-4">
+              The lock costs almost nothing; the lit screen drains the battery. Plug in, dim the display, and consider
+              night clock mode on OLED. On Chromium, {t('settings.battery.autoStop')} ends the session before the
+              battery gets low.
+            </p>
+          </details>
+          <details class={faqItem}>
+            <summary class={faqSummary}>Is it free, and what happens to my data?</summary>
+            <p class="mb-0 pb-4">
+              Free, no sign-up. Settings, session and stats stay in this browser — no cookies, no fingerprinting. The
+              optional first-party beacon sends no identifiers and can be turned off. No ads on this screen, now or later.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section class="at-section" aria-labelledby="more-title">
+        <h2 id="more-title">The rest of AwakeTab</h2>
+        <ul class={linkList}>
+          <li class={linkItem}>
+            <a href="/about">About AwakeTab and how it is tested</a> — who maintains the project.
+          </li>
+          <li class={linkItem}>
+            <a href="/changelog">Changelog</a> — what shipped recently.
+          </li>
+          <li class={linkItem}>
+            <a href="/privacy">Privacy</a> — local storage, optional telemetry and the no-ads rule for this screen.
+          </li>
+        </ul>
+      </section>
+
+      <section class="at-section" aria-labelledby="author-title">
+        <h2 id="author-title">Who tested this</h2>
+        <div class:list={['at-author flex flex-col gap-3 p-6', card]}>
+          <p class="m-0">
+            AwakeTab is built by Soubhik Biswas. Every support claim comes from a device on a shelf here — iPhone,
+            Android, iPad, Chromebook, Windows and Mac — retested after each browser and OS release. When a browser
+            changes, the matrix and the affected pages change with it.
+          </p>
+          <p class="m-0">
+            <a href="/about">About the maker and the test rig</a>,
+            <a href="/learn">testing notes</a>, or
+            <a href="/changelog">the changelog</a>. Last verified {lastVerified}.
+          </p>
+        </div>
+      </section>
+    </div>
+  </ToolIsland>
+</BaseLayout>
+
+<style>
+  /* Sections own the containment (docs/05-frontend-spec.md §4.2); the wrapper must not skip them all at once. */
+  .at-prose {
+    content-visibility: visible;
+    contain-intrinsic-size: auto;
+  }
+
+  .at-section {
+    margin-block-start: var(--at-s-8);
+    content-visibility: auto;
+    contain-intrinsic-size: auto 480px;
+  }
+
+  .at-section :is(p, li) {
+    max-inline-size: 42rem;
+  }
+
+  /* The focusable wrapper is the single scroll region; shadcn's inner table container must not scroll too
+     (axe: scrollable-region-focusable). */
+  .at-matrix-scroll :global([data-slot='table-container']) {
+    overflow: visible;
+  }
+
+  .at-faq details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .at-faq details > summary::after {
+    content: '+';
+    margin-inline-start: auto;
+    padding-inline-start: var(--at-s-3);
+    color: var(--muted-foreground);
+    font-weight: 400;
+  }
+
+  .at-faq details[open] > summary::after {
+    content: '−';
+  }
+</style>

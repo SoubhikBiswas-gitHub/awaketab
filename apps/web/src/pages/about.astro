@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { Separator } from '@/components/ui/separator';
+import { t } from '../i18n/load';
+import { personSchema } from '../lib/seo';
+
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const crumbLink = 'inline-flex min-h-11 items-center';
+const inlineLink = 'text-primary underline underline-offset-4';
+---
+
+<BaseLayout
+  title={t('page.about.title')}
+  description={t('page.about.description')}
+  canonical={`${site}/about`}
+  ogImage="/og/about-en.png"
+  schema={personSchema()}
+>
+  <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
+  <main class="mx-auto mt-6 w-full max-w-[45rem] leading-relaxed">
+    <Breadcrumb aria-label="Breadcrumb">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{t('page.about.h1')}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+    <section class="mt-4 space-y-4">
+      <h1 class="text-3xl font-semibold leading-tight tracking-tight">{t('page.about.h1')}</h1>
+      <p>
+        AwakeTab is an independent project built and maintained by Soubhik Biswas. Its purpose is narrow:
+        request a browser wake lock, show the result honestly, and make the common timer and until-time
+        workflows fast without requiring an account.
+      </p>
+    </section>
+    <Separator className="my-8" />
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold tracking-tight">How it is tested</h2>
+      <p>
+        The lock layer is tested as a seven-state transition machine. Browser journeys inject a controllable
+        Wake Lock implementation and verify acquisition, denial, release on hidden tabs, reacquisition,
+        fallback behavior and multi-tab warnings. Device claims are kept in the support matrix and are
+        refreshed separately from application code.
+      </p>
+    </section>
+    <Separator className="my-8" />
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold tracking-tight">What AwakeTab will not claim</h2>
+      <p>
+        A normal browser tab cannot guarantee operation while hidden, prevent system sleep after a laptop
+        lid closes, or override battery-saving policy. AwakeTab does not simulate mouse movement or
+        keystrokes and does not claim to keep chat presence indicators available.
+      </p>
+      <p>
+        The awake screen carries no advertising or third-party scripts. The core wake-lock package is
+        developed as open-source software so its state transitions can be inspected independently.
+      </p>
+      <p>
+        If AwakeTab is useful, you can <a class={inlineLink} href="https://buymeacoffee.com/awaketab" rel="noopener" target="_blank">buy Soubhik a coffee</a>.
+        There is no widget, account, or extra script — just a link.
+      </p>
+    </section>
+  </main>
+</BaseLayout>

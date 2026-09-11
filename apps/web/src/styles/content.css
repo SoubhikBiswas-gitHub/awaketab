@@ -1,0 +1,100 @@
+/*
+ * Content-page typography — docs/06-content-seo-spec.md §2, docs/03-architecture.md ADR-013.
+ * Imported only by ContentLayout.astro. The MDX body inside `.at-prose` carries no classes
+ * of its own, so it needs element defaults here. Rules live in the `components` layer so
+ * Tailwind utilities on the templates (FAQ cards, related links) always win.
+ *
+ * Layer priority is fixed by first appearance, so restate Tailwind's order here: if this file is
+ * ever bundled ahead of tokens.css, `components` must not become the lowest layer (preflight in
+ * `base` would then override every `.at-*` rule on the page).
+ */
+@layer properties, theme, base, components, utilities;
+
+@layer components {
+  .at-content .at-prose > :is(p, ul, ol, blockquote, pre, table) {
+    margin-block: 0 1rem;
+  }
+
+  .at-content .at-prose :is(h2, h3) {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .at-content .at-prose h3 {
+    margin-block: 1.5rem 0.5rem;
+    font-size: var(--at-t-lg);
+    line-height: 1.3;
+  }
+
+  .at-content .at-prose :is(ul, ol) {
+    padding-inline-start: 1.5rem;
+  }
+
+  .at-content .at-prose ul {
+    list-style: disc;
+  }
+
+  .at-content .at-prose ol {
+    list-style: decimal;
+  }
+
+  .at-content .at-prose li + li {
+    margin-block-start: 0.25rem;
+  }
+
+  .at-content .at-prose code {
+    padding-inline: 0.3em;
+    border-radius: var(--at-r-sm);
+    background: var(--muted);
+    font-size: 0.9em;
+  }
+
+  .at-content .at-prose pre {
+    overflow-x: auto;
+    padding: var(--at-s-4);
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-md);
+    background: var(--card);
+    font-size: var(--at-t-sm);
+  }
+
+  .at-content .at-prose pre code {
+    padding: 0;
+    background: none;
+    font-size: inherit;
+  }
+
+  .at-content .at-prose table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: var(--at-t-sm);
+  }
+
+  .at-content .at-prose :is(th, td) {
+    padding-block: var(--at-s-2);
+    padding-inline: var(--at-s-3);
+    border-block-end: 1px solid var(--border);
+    text-align: start;
+  }
+
+  .at-content .at-prose blockquote {
+    padding-inline-start: var(--at-s-4);
+    border-inline-start: 3px solid var(--border);
+    color: var(--muted-foreground);
+  }
+
+  .at-content .at-prose strong {
+    font-weight: 600;
+  }
+}
+
+/*
+ * The embedded tool keeps its own `.at-tool-embed` frame in tool.css. Inside a shadcn Card
+ * the card is the frame, so drop the inner border. Deliberately unlayered: tool.css is
+ * unlayered too, and only a more specific unlayered rule can override it.
+ */
+.at-content [data-slot="card"] > .at-tool-embed {
+  margin-block: 0;
+  border: 0;
+}

@@ -1,6 +1,6 @@
 # 13 · Testing strategy
 
-Status: v1.0 · 2026-09-07 · Owner: Soubhik
+Status: v1.1 · 2026-09-11 · Owner: Soubhik
 
 **Purpose.** The product's one promise is "the pill never lies". This document defines the tests that prove it — from the state machine to real devices — plus the SEO, performance, accessibility and API checks that protect the other goals. Everything here is automated except the device matrix, whose results are published as `/learn/how-we-tested`.
 
@@ -18,7 +18,7 @@ Related docs: `04-engine-spec.md` (what is being tested) · `08-data-storage.md`
 | E2E (chromium) | Playwright | every PR (preview URL) | yes |
 | E2E (firefox, webkit) + visual regression | Playwright | nightly + release | release only |
 | Accessibility | axe-core in Playwright + manual SR checklist | every PR (axe) | yes (axe) |
-| Performance | Lighthouse CI + `size-limit` | every PR (size) / preview (LHCI) | yes |
+| Performance | Lighthouse CI + `size-limit` (packages) + `pnpm size` (`apps/web/scripts/size.mjs` over `dist/`, incl. the zero-hydration check) | every PR (size) / preview (LHCI) | yes |
 | SEO build checks | custom Vitest suite over `dist/` | every PR | yes |
 | Extension | Vitest + Playwright (extension loaded) | PR touching `apps/extension` | yes |
 | Device matrix | manual, templated | before each phase exit and each browser major | gate |
@@ -126,6 +126,8 @@ axe-core on every template (home, preset page, one per collection, `/pro`, `/emb
 ## 7. Performance
 
 - `size-limit`: `@awaketab/wake` ≤ 2 KB gz; tool island critical chunk ≤ 15 KB gz; total JS on `/` ≤ 40 KB gz; content pages ≤ 60 KB before ads.
+- `pnpm size` (`apps/web/scripts/size.mjs`, after `pnpm -F web build`) prints one JSON report and exits non-zero on any breach: `criticalJs` ≤ 15,360 B gz (the `<script src>` chunks `index.html` loads), `totalJs` ≤ 40,960 B gz (every `dist/_astro/*.js`), `totalCss` ≤ 20,480 B gz (inlined `<style>`), and — since `03-architecture.md` ADR-013 — `hydrated: []` (no built HTML anywhere under `dist/` contains `<astro-island`) and `reactChunks: []` (no `dist/_astro/` file matches `react.*.js`, `jsx-runtime.*.js` or `client.*.js`). A non-empty `hydrated` or `reactChunks` list is a failure even when the byte budgets pass: shadcn/ui is a build-time renderer and React must never ship. Reference values after adoption: `criticalJs` 14,876, `totalJs` 30,428, `totalCss` ≈ 7,300.
+- `AT_DIST=<dir>` makes `size.mjs`, `prune-unreferenced.mjs`, `sitemap.mjs` and the SEO suite read an alternate output directory (`apps/web/dist-*`, git-ignored), so parallel verification builds can be measured without clobbering `dist/`; wrap concurrent builds in `node scripts/locked.mjs -- <cmd>` (`14-devops.md` §6).
 - Lighthouse CI (mobile, `--preset=desktop` also) on the preview URL for `/`, `/30m`, `/for/cooking`, `/guides/lock-screen-vs-sleep`, `/es/`: performance ≥ 95, a11y 100, best practices 100, SEO 100; budgets JSON asserts LCP ≤ 1.2 s (lab), TBT ≤ 100 ms, CLS = 0, zero third-party requests on tool routes.
 - Weekly CrUX pull (`14-devops.md`) alerts when INP p75 > 200 ms or CLS > 0.1 on any route class.
 
@@ -168,7 +170,7 @@ Template (one row per case): date, OS/browser/version, plugged/battery, mode, ex
 
 ## 12. Policies
 
-- **Merge gate:** unit + DOM + functions + chromium e2e + axe + size-limit + SEO checks green; LHCI budgets green on the preview.
+- **Merge gate:** unit + DOM + functions + chromium e2e + axe + size-limit + `pnpm size` (byte budgets, `hydrated: []`, `reactChunks: []`) + SEO checks green; LHCI budgets green on the preview.
 - **Nightly:** firefox/webkit e2e, visual regression, link check across all locales.
 - **Flaky tests:** quarantine with `test.fixme` + issue within 24 h; no retries above 1 in CI; a test flaky twice in a week is rewritten or deleted.
 - **Definition of done (per ticket):** acceptance criteria automated where feasible; new engine transitions have a `T##` test; user-visible change has a changelog fragment; docs updated if an identifier changed (and `00-conventions.md` first).
