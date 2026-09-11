@@ -54,7 +54,7 @@ The extension has three keep-awake levels, mapped onto the shared pill vocabular
 
 Because `chrome.power` cannot fail asynchronously the way the web API does, the only error states are `unsupported` (API missing — some Chromium forks) and `denied` (enterprise policy). Both use the shared advice codes (`unsupported_browser`, `permissions_policy`).
 
-The session layer is `@awaketab/core` unchanged: plans, presets, `endBehaviour`, stats and the `Session` shape (`source:'ext'`). Timer end → `releaseKeepAwake()` → optional notification (`chrome.notifications`, only if the optional permission was granted) → extend prompt inside the popup or notification buttons (+30 min / Stop).
+The session layer is `@awaketab/core` unchanged: plans, presets, `endBehaviour`, stats and the `ISession` shape (`source:'ext'`). Timer end → `releaseKeepAwake()` → optional notification (`chrome.notifications`, only if the optional permission was granted) → extend prompt inside the popup or notification buttons (+30 min / Stop).
 
 ---
 
@@ -80,7 +80,7 @@ Mirrors the web tool at small scale: `StatusPill`, level toggle (Screen / System
 
 Sections: Default level · Default preset · End behaviour and sound · Notifications (request permission here) · Battery auto-stop (Chromium only) · Schedules (Pro) · Auto-start sites (Pro; requests host permission per site) · Pro licence (enter key / manage devices / open `https://awaketab.com/pro/activate?ext=1`) · Privacy (telemetry toggle, "what we store") · About (version, changelog link).
 
-Storage: `chrome.storage.local` for `at.v1.settings`, `at.v1.session`, `at.v1.license`, `at.v1.meta`; `chrome.storage.sync` for `Settings` plus schedules and auto-start domains (≤ 100 KB total, ≤ 8 KB per item). The licence token is never synced.
+Storage: `chrome.storage.local` for `at.v1.settings`, `at.v1.session`, `at.v1.license`, `at.v1.meta`; `chrome.storage.sync` for `ISettings` plus schedules and auto-start domains (≤ 100 KB total, ≤ 8 KB per item). The licence token is never synced.
 
 ---
 

@@ -43,10 +43,10 @@ Verified in the blueprint and re-verified per release on `/support-matrix`:
 
 ```ts
 // PROPOSED — add to 00-conventions.md §5.1a
-export type LockState = 'idle' | 'requesting' | 'held' | 'lost' | 'denied' | 'unsupported' | 'fallback';
+export type TLockState = 'idle' | 'requesting' | 'held' | 'lost' | 'denied' | 'unsupported' | 'fallback';
 
 /** Why a transition happened. Carried on every `change` event. */
-export type LockReason =
+export type TLockReason =
   | 'request'            // request() called
   | 'acquired'           // native promise resolved
   | 'fallback_started'   // video play() resolved
@@ -163,46 +163,46 @@ function createFallbackVideo(doc: Document, sources: { webm?: string; mp4?: stri
 ### 6. Public API of `@awaketab/wake`
 
 ```ts
-export interface WakeLockSentinelLike {
+export interface IWakeLockSentinelLike {
   readonly released: boolean;
   release(): Promise<void>;
   addEventListener(type: 'release', cb: () => void): void;
   removeEventListener(type: 'release', cb: () => void): void;
 }
-export interface WakeLockLike { request(type: 'screen'): Promise<WakeLockSentinelLike>; }
+export interface IWakeLockLike { request(type: 'screen'): Promise<IWakeLockSentinelLike>; }
 
-export interface RetryOptions { attempts?: number /* 3 */; baseMs?: number /* 1000 */; maxMs?: number /* 8000 */ }
+export interface IRetryOptions { attempts?: number /* 3 */; baseMs?: number /* 1000 */; maxMs?: number /* 8000 */ }
 
-export interface WakeLockOptions {
+export interface IWakeLockOptions {
   fallback?: 'video' | 'none';                 // default 'video'
   videoSources?: { webm?: string; mp4?: string };
   reacquireOnVisible?: boolean;                // default true
-  retry?: RetryOptions;
+  retry?: IRetryOptions;
   debug?: boolean | ((msg: string, data?: unknown) => void);
   /** Test/PiP hooks: inject the API and document to observe. */
-  wakeLock?: WakeLockLike | null;              // default navigator.wakeLock (null forces `unsupported`)
+  wakeLock?: IWakeLockLike | null;              // default navigator.wakeLock (null forces `unsupported`)
   document?: Document;                          // default globalThis.document
   isIOS?: boolean;                              // default: UA sniff for iPhone|iPad|iPod
 }
 
-export interface ChangeEvent { from: LockState; to: LockState; reason: LockReason; advice: Advice | null; deniedReason?: DeniedReason }
-export interface ErrorEvent  { error: unknown; state: LockState; advice: Advice | null }
-export interface WakeLockEvents extends Record<string, unknown> { change: ChangeEvent; error: ErrorEvent }
+export interface IChangeEvent { from: TLockState; to: TLockState; reason: TLockReason; advice: Advice | null; deniedReason?: DeniedReason }
+export interface IErrorEvent  { error: unknown; state: TLockState; advice: Advice | null }
+export interface WakeLockEvents extends Record<string, unknown> { change: IChangeEvent; error: IErrorEvent }
 
 export interface WakeLock {
-  readonly state: LockState;
+  readonly state: TLockState;
   readonly mode: 'native' | 'video' | null;
   readonly advice: Advice | null;
   readonly supported: boolean;                 // API present in this document (false during SSR)
   /** Never rejects; resolves with the state reached: held | fallback | denied | unsupported | idle (if destroyed). */
-  request(): Promise<LockState>;
+  request(): Promise<TLockState>;
   release(): Promise<void>;
   on<K extends keyof WakeLockEvents>(type: K, cb: (ev: WakeLockEvents[K]) => void): () => void;
   destroy(): void;
 }
 
-export function createWakeLock(options?: WakeLockOptions): WakeLock;
-export function createEmitter<E extends Record<string, unknown>>(): Emitter<E>;
+export function createWakeLock(options?: IWakeLockOptions): WakeLock;
+export function createEmitter<E extends Record<string, unknown>>(): IEmitter<E>;
 ```
 
 Usage:
@@ -227,37 +227,37 @@ Constraints: `createWakeLock()` touches no globals until `request()`/`on()` is f
 ### 7. Types
 
 ```ts
-import type { LockState, Advice, WakeLock } from '@awaketab/wake';
+import type { TLockState, Advice, WakeLock } from '@awaketab/wake';
 
-export type PlanType = 'indefinite' | 'duration' | 'until';
-export type Plan =
+export type TPlanType = 'indefinite' | 'duration' | 'until';
+export type TPlan =
   | { type: 'indefinite' }
   | { type: 'duration'; ms: number }                       // 60_000 ≤ ms ≤ 7 days
   | { type: 'until'; endsAt: number; wall: string };       // endsAt epoch ms (local clock); wall 'HH:MM' — PROPOSED field `wall`
 
-export type SessionStatus = 'inactive' | 'active' | 'paused' | 'completed' | 'aborted';
-export type EndReason = 'completed' | 'user' | 'lost_timeout' | 'denied' | 'battery' | 'error';
-export type PresetId = 'p15' | 'p30' | 'p45' | 'p60' | 'p120' | 'p240' | 'pinf' | 'custom' | 'until';
-export type AmbientMode = 'standard' | 'clock' | 'focus' | 'minimal' | 'night' | 'message' | 'cook';
-export type Theme = 'auto' | 'light' | 'dark' | 'oled';
-export type EndBehaviour = 'stop' | 'prompt_extend';
+export type TSessionStatus = 'inactive' | 'active' | 'paused' | 'completed' | 'aborted';
+export type TEndReason = 'completed' | 'user' | 'lost_timeout' | 'denied' | 'battery' | 'error';
+export type TPresetId = 'p15' | 'p30' | 'p45' | 'p60' | 'p120' | 'p240' | 'pinf' | 'custom' | 'until';
+export type TAmbientMode = 'standard' | 'clock' | 'focus' | 'minimal' | 'night' | 'message' | 'cook';
+export type TTheme = 'auto' | 'light' | 'dark' | 'oled';
+export type TEndBehaviour = 'stop' | 'prompt_extend';
 
-export interface Session {
+export interface ISession {
   id: string;                 // crypto.randomUUID()
-  plan: Plan;
-  presetId: PresetId;
-  mode: AmbientMode;
+  plan: TPlan;
+  presetId: TPresetId;
+  mode: TAmbientMode;
   startedAt: number;          // epoch ms
   endsAt: number | null;      // null for indefinite; shifted on pause/resume for duration plans
-  status: SessionStatus;
+  status: TSessionStatus;
   pausedAt: number | null;
   pausedMs: number;           // total paused time — PROPOSED field
   endedAt: number | null;     // PROPOSED field
-  endReason: EndReason | null;// PROPOSED field
+  endReason: TEndReason | null;// PROPOSED field
   awakeSeconds: number;       // seconds spent in held|fallback, for stats — PROPOSED field
 }
 
-export const PRESET_MS: Record<Exclude<PresetId, 'pinf' | 'custom' | 'until'>, number> = {
+export const PRESET_MS: Record<Exclude<TPresetId, 'pinf' | 'custom' | 'until'>, number> = {
   p15: 15 * 60_000, p30: 30 * 60_000, p45: 45 * 60_000, p60: 60 * 60_000, p120: 120 * 60_000, p240: 240 * 60_000,
 };
 ```
@@ -338,10 +338,10 @@ Channel: `new BroadcastChannel('awaketab')`. `tabId` is `crypto.randomUUID()` ke
 
 ```ts
 // PROPOSED — add to 00-conventions.md §6a
-type TabMessage =
+type TTabMessage =
   | { type: 'hello'; tabId: string; ts: number }
-  | { type: 'lock';  tabId: string; ts: number; state: LockState }
-  | { type: 'state'; tabId: string; ts: number; status: SessionStatus; lock: LockState; startedAt: number | null }
+  | { type: 'lock';  tabId: string; ts: number; state: TLockState }
+  | { type: 'state'; tabId: string; ts: number; status: TSessionStatus; lock: TLockState; startedAt: number | null }
   | { type: 'bye';   tabId: string; ts: number };
 ```
 
@@ -357,12 +357,12 @@ Rules:
 Synchronous, runs once at boot (< 1 ms), result cached in the store and re-used by the pill copy, settings visibility and analytics `ua` class.
 
 ```ts
-export type BrowserFamily = 'chrome' | 'edge' | 'firefox' | 'safari' | 'samsung' | 'opera' | 'other';
-export type OSFamily = 'ios' | 'ipados' | 'android' | 'windows' | 'macos' | 'linux' | 'chromeos' | 'other';
+export type TBrowserFamily = 'chrome' | 'edge' | 'firefox' | 'safari' | 'samsung' | 'opera' | 'other';
+export type TOSFamily = 'ios' | 'ipados' | 'android' | 'windows' | 'macos' | 'linux' | 'chromeos' | 'other';
 
-export interface Capabilities {
-  browser: { family: BrowserFamily; major: number | null; minor: number | null; source: 'ua-ch' | 'ua' };
-  os: { family: OSFamily };
+export interface ICapabilities {
+  browser: { family: TBrowserFamily; major: number | null; minor: number | null; source: 'ua-ch' | 'ua' };
+  os: { family: TOSFamily };
   isIOS: boolean;                 // iPhone/iPad/iPod, including iPadOS desktop UA (MacIntel + maxTouchPoints > 1)
   isStandalone: boolean;          // matchMedia('(display-mode: standalone)') || navigator.standalone === true
   isSecureContext: boolean;
@@ -381,7 +381,7 @@ export interface Capabilities {
   advice: Advice | null;          // initial advice before any request: insecure_context | unsupported_browser | null
 }
 
-const NATIVE_MIN: Partial<Record<BrowserFamily, [major: number, minor: number]>> = { chrome: [84, 0], edge: [84, 0], firefox: [126, 0], safari: [16, 4], samsung: [14, 0], opera: [70, 0] };
+const NATIVE_MIN: Partial<Record<TBrowserFamily, [major: number, minor: number]>> = { chrome: [84, 0], edge: [84, 0], firefox: [126, 0], safari: [16, 4], samsung: [14, 0], opera: [70, 0] };
 ```
 
 Browser family comes from `navigator.userAgentData.brands` when present (pick, in order, `Microsoft Edge`, `Samsung Internet`, `Opera`, `Google Chrome`, `Chromium`; version from that brand), else from the UA string (`Edg/`, `SamsungBrowser/`, `OPR/`, `Firefox/`, `Chrome/`, `Version/… Safari/`). `wakeLock` is `'native'` if `'wakeLock' in navigator`, else `'fallback'` if a `<video>` can be created (`typeof HTMLVideoElement !== 'undefined'`), else `'none'`. The matrix does not override detection; it only produces copy such as "Safari 16.3 — update to 16.4 for native support". iOS Home-Screen apps below 18.4 are detected as `isIOS && isStandalone` with `os` version < 18.4 → `matrix.nativeExpected = false` and advice copy points to the browser tab instead.
@@ -391,13 +391,13 @@ Browser family comes from `navigator.userAgentData.brands` when present (pick, i
 ### 16. Public API of `@awaketab/core`
 
 ```ts
-export interface StorageAdapter { get<T>(key: string): T | null; set(key: string, value: unknown): void; remove(key: string): void; readonly persistent: boolean }
+export interface IStorageAdapter { get<T>(key: string): T | null; set(key: string, value: unknown): void; remove(key: string): void; readonly persistent: boolean }
 
-export interface SessionOptions {
+export interface ISessionOptions {
   lock: WakeLock;
-  storage: StorageAdapter;                     // from createStorage() — see 08-data-storage.md
+  storage: IStorageAdapter;                     // from createStorage() — see 08-data-storage.md
   channel?: BroadcastChannel | null;           // null disables multi-tab logic
-  settings: () => Settings;                    // live getter so changes apply without restart
+  settings: () => ISettings;                    // live getter so changes apply without restart
   now?: () => number;                          // default Date.now
   setTimeout?: typeof setTimeout; clearTimeout?: typeof clearTimeout;
   lostTimeoutMs?: number;                      // default 6 h
@@ -405,36 +405,36 @@ export interface SessionOptions {
   track?: (event: string, params?: Record<string, string | number | boolean>) => void;
 }
 
-export interface SessionEvents extends Record<string, unknown> {
+export interface ISessionEvents extends Record<string, unknown> {
   tick:    { now: number; remainingMs: number | null; elapsedMs: number };
-  status:  { from: SessionStatus; to: SessionStatus; reason: EndReason | null };
-  lock:    ChangeEvent;                        // re-emitted from @awaketab/wake
-  ended:   { session: Session; reason: EndReason };
+  status:  { from: TSessionStatus; to: TSessionStatus; reason: TEndReason | null };
+  lock:    IChangeEvent;                        // re-emitted from @awaketab/wake
+  ended:   { session: ISession; reason: TEndReason };
   warning: { code: 'battery_low' | 'second_tab' | 'clock_adjusted' | 'ios_low_power' | 'storage_memory'; level?: number };
   peers:   { count: number };
 }
 
-export interface SessionEngine {
-  readonly session: Session | null;
-  readonly lockState: LockState;
-  start(plan: Plan, meta: { presetId: PresetId; mode: AmbientMode; source?: string }): Promise<LockState>;
+export interface ISessionEngine {
+  readonly session: ISession | null;
+  readonly lockState: TLockState;
+  start(plan: TPlan, meta: { presetId: TPresetId; mode: TAmbientMode; source?: string }): Promise<TLockState>;
   pause(): void;
-  resume(): Promise<LockState>;
+  resume(): Promise<TLockState>;
   stop(): void;                                // endReason 'user'
-  extend(ms: number | 'indefinite'): Promise<LockState>;
-  getResumable(): Session | null;
-  resumeSession(): Promise<LockState>;         // accept the resume banner
+  extend(ms: number | 'indefinite'): Promise<TLockState>;
+  getResumable(): ISession | null;
+  resumeSession(): Promise<TLockState>;         // accept the resume banner
   discardResumable(): void;
-  on<K extends keyof SessionEvents>(type: K, cb: (ev: SessionEvents[K]) => void): () => void;
+  on<K extends keyof ISessionEvents>(type: K, cb: (ev: ISessionEvents[K]) => void): () => void;
   destroy(): void;
 }
 
-export function createSession(opts: SessionOptions): SessionEngine;
-export function planFromPreset(id: Exclude<PresetId, 'custom' | 'until'>): Plan;
-export function planUntil(wall: string, now?: number): Plan;               // 'HH:MM' → { type:'until', endsAt, wall }
-export function probeCapabilities(win?: Window & typeof globalThis): Capabilities;
+export function createSession(opts: ISessionOptions): ISessionEngine;
+export function planFromPreset(id: Exclude<TPresetId, 'custom' | 'until'>): TPlan;
+export function planUntil(wall: string, now?: number): TPlan;               // 'HH:MM' → { type:'until', endsAt, wall }
+export function probeCapabilities(win?: Window & typeof globalThis): ICapabilities;
 export { createStorage, migrate, readStats, exportStatsCsv, clearAllData } from './storage';
-export { verifyLicenseToken, type LicenseState } from './license';
+export { verifyLicenseToken, type ILicenseState } from './license';
 export { dayKey, computeStreaks } from './stats';
 ```
 
@@ -449,12 +449,12 @@ engine.on('ended', ({ reason }) => reason !== 'user' && store.set(s => ({ ui: { 
 startButton.onclick = () => engine.start(planFromPreset('p30'), { presetId: 'p30', mode: 'standard', source: 'button' });
 ```
 
-Extension: the background service worker implements `WakeLock` over `chrome.power.requestKeepAwake('display')` / `releaseKeepAwake()` (always `held` after request; `unsupported` when `chrome.power` is absent) and passes it to `createSession()` with a `chrome.storage.local`-backed `StorageAdapter`, `channel: null`, and `notify` via `chrome.notifications`.
+Extension: the background service worker implements `WakeLock` over `chrome.power.requestKeepAwake('display')` / `releaseKeepAwake()` (always `held` after request; `unsupported` when `chrome.power` is absent) and passes it to `createSession()` with a `chrome.storage.local`-backed `IStorageAdapter`, `channel: null`, and `notify` via `chrome.notifications`.
 
 ### 17. Test hooks
 
 - `createWakeLock({ wakeLock: fake, document: fakeDoc })` — `@awaketab/wake/testing` exports `createFakeWakeLock()` returning `{ api: WakeLockLike; sentinels: FakeSentinel[]; rejectNextWith(err: Error): void; releaseAll(): void }` where `FakeSentinel.fireRelease()` simulates the browser releasing. `setVisibility(doc, 'hidden' | 'visible')` redefines `visibilityState` and dispatches `visibilitychange`. Passing `wakeLock: null` forces the `unsupported` path; a `HTMLVideoElement.prototype.play` stub (`vi.spyOn`) drives rows 7–9.
 - `createSession({ now, setTimeout, clearTimeout })` — inject a controllable clock, or use Vitest fake timers (`vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] })`) and `vi.setSystemTime()` to test DST/`until` reconciliation and the 12 h resume window.
-- `StorageAdapter` in-memory implementation is the same class used for the private-mode fallback, so storage tests need no jsdom `localStorage`.
+- `IStorageAdapter` in-memory implementation is the same class used for the private-mode fallback, so storage tests need no jsdom `localStorage`.
 - `BroadcastChannel` is polyfilled in tests with an in-process implementation that delivers to all other instances synchronously; election tests create two engines on the same channel.
 - Every transition row in §4 has a Vitest case named `T<row>`; the e2e suite (Playwright, chromium/firefox/webkit) asserts the pill text after tab hide/show and after a forced `NotAllowedError` via `--disable-features=WakeLock` or CDP `Emulation.setIdleOverride`. See `13-testing-strategy.md`.

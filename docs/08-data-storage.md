@@ -24,11 +24,11 @@ All values are JSON. Sizes are well under 50 KB total; localStorage quota (≥ 5
 ### 2.1 `at.v1.settings`
 
 ```ts
-export interface Settings {
+export interface ISettings {
   v: 1;
   theme: 'auto' | 'light' | 'dark' | 'oled';        // default 'auto'
   accent: string;                                   // hex, default '#B86E00' (light) — UI derives dark variant
-  defaultPreset: PresetId;                          // 'p15'|'p30'|'p45'|'p60'|'p120'|'p240'|'pinf'|'custom'|'until'; default 'pinf'
+  defaultPreset: TPresetId;                          // 'p15'|'p30'|'p45'|'p60'|'p120'|'p240'|'pinf'|'custom'|'until'; default 'pinf'
   lastCustomMs: number;                             // default 90 * 60_000
   lastUntilWall: string | null;                     // 'HH:MM', default null
   autostart: boolean;                               // default true (request lock on load when visible)
@@ -46,7 +46,7 @@ export interface Settings {
     focus: { workMin: number; breakMin: number; cycles: number }; // default {25, 5, 4}
   };
   locale: string | null;                            // explicit override, default null (URL decides)
-  telemetry: boolean;                               // default true (anonymous events); toggle in Settings + /privacy
+  telemetry: boolean;                               // default true (anonymous events); toggle in ISettings + /privacy
   keyboardShortcuts: boolean;                       // default true — single-key shortcuts (WCAG 2.1.4)
   keyboardHints: boolean;                           // default true — show hints in UI
   reduceMotion: 'system' | 'on' | 'off';            // default 'system'
@@ -58,27 +58,27 @@ export interface Settings {
 Written by `@awaketab/core` on every status change and at most once per 15 s while active (the tick does not write).
 
 ```ts
-export type Plan =
+export type TPlan =
   | { type: 'indefinite' }
   | { type: 'duration'; ms: number }
   | { type: 'until'; endsAt: number; wall: string };
 
-export type SessionStatus = 'inactive' | 'active' | 'paused' | 'completed' | 'aborted';
-export type EndReason = 'completed' | 'user' | 'lost_timeout' | 'denied' | 'battery' | 'error';
+export type TSessionStatus = 'inactive' | 'active' | 'paused' | 'completed' | 'aborted';
+export type TEndReason = 'completed' | 'user' | 'lost_timeout' | 'denied' | 'battery' | 'error';
 
-export interface Session {
+export interface ISession {
   v: 1;
   id: string;               // UUID
-  plan: Plan;
-  presetId: PresetId;
-  mode: AmbientMode;
+  plan: TPlan;
+  presetId: TPresetId;
+  mode: TAmbientMode;
   startedAt: number;        // epoch ms
   endsAt: number | null;    // null for indefinite
-  status: SessionStatus;
+  status: TSessionStatus;
   pausedAt: number | null;
   pausedMs: number;         // total paused time (informational; endsAt is never shifted)
   endedAt: number | null;
-  endReason: EndReason | null;
+  endReason: TEndReason | null;
   awakeSeconds: number;     // seconds spent in lock `held` or `fallback`
   modeState: Record<string, unknown>; // e.g. { cookTimers: [{label, endsAt}], focus: {cycle, phase} }
   source: 'web' | 'pwa' | 'pip' | 'ext' | 'embed';
@@ -90,7 +90,7 @@ export interface Session {
 ### 2.3 `at.v1.stats`
 
 ```ts
-export interface Stats {
+export interface IStats {
   v: 1;
   days: Record<string, number>;   // 'YYYY-MM-DD' (LOCAL date) → awake minutes
   totalMinutes: number;
@@ -106,11 +106,11 @@ Day key: `new Intl.DateTimeFormat('en-CA', { year:'numeric', month:'2-digit', da
 ### 2.4 `at.v1.license`
 
 ```ts
-export interface LicenseRecord {
+export interface ILicenseRecord {
   v: 1;
   token: string;            // JWT (ES256)
   plan: 'pro_yearly' | 'pro_lifetime' | 'biz_embed_site_yearly' | 'biz_kiosk_site' | 'biz_kiosk_5';
-  features: FeatureGate[];  // copied from token for fast reads
+  features: TFeatureGate[];  // copied from token for fast reads
   exp: number;              // epoch seconds from token
   lastValidatedAt: number;  // epoch ms of last successful online validate
   deviceId: string;         // random UUID, generated once, never derived from hardware
@@ -123,7 +123,7 @@ Token claims: `{ sub: keyHash, plan, features, dev: deviceHash, iat, exp, ver }`
 ### 2.5 `at.v1.meta`
 
 ```ts
-export interface Meta {
+export interface IMeta {
   v: 1;
   installedAt: number;
   sessionCount: number;            // completed sessions ≥ 5 min
@@ -142,10 +142,10 @@ export interface Meta {
 
 ```ts
 // packages/core/src/storage.ts
-export interface StorageAdapter { get(k: string): string | null; set(k: string, v: string): void; remove(k: string): void }
-export const memoryAdapter: StorageAdapter;   // used when localStorage throws (private mode, disabled)
-export function createStore(adapter?: StorageAdapter): {
-  settings: Ref<Settings>; session: Ref<Session | null>; stats: Ref<Stats>; license: Ref<LicenseRecord | null>; meta: Ref<Meta>;
+export interface IStorageAdapter { get(k: string): string | null; set(k: string, v: string): void; remove(k: string): void }
+export const memoryAdapter: IStorageAdapter;   // used when localStorage throws (private mode, disabled)
+export function createStore(adapter?: IStorageAdapter): {
+  settings: Ref<ISettings>; session: Ref<ISession | null>; stats: Ref<IStats>; license: Ref<ILicenseRecord | null>; meta: Ref<IMeta>;
   migrate(): void; clearAll(): void; exportCsv(): string;
 };
 ```
@@ -164,7 +164,7 @@ Settings → "Delete all local data": removes every `at.*` key and `sessionStora
 
 ## 3. Extension storage
 
-`chrome.storage.local`: the same `Settings`, `Session` (extension-scoped, `source:'ext'`), `LicenseRecord` and `Meta` shapes under keys `at.v1.*`. `chrome.storage.sync` (≤ 100 KB): `Settings` and the list of auto-start domains and schedules only; never the licence token. See `10-extension-spec.md`.
+`chrome.storage.local`: the same `ISettings`, `ISession` (extension-scoped, `source:'ext'`), `ILicenseRecord` and `IMeta` shapes under keys `at.v1.*`. `chrome.storage.sync` (≤ 100 KB): `ISettings` and the list of auto-start domains and schedules only; never the licence token. See `10-extension-spec.md`.
 
 ---
 

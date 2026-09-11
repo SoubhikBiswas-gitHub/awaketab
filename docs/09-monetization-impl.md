@@ -198,7 +198,7 @@ export async function verifyLicenseToken(
 
 ```ts
 // lic:{keyHash}
-interface LicenseRecord {
+interface ILicenseRecord {
   v: 1;
   plan: PlanId;
   status: 'active' | 'canceled' | 'revoked' | 'refunded';   // canceled = still valid until periodEnd

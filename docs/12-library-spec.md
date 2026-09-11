@@ -25,13 +25,13 @@ Related docs: `00-conventions.md` §5.1, §13.1 · `04-engine-spec.md` §3–§5
 ## 2. Public API
 
 ```ts
-export type LockState = 'idle' | 'requesting' | 'held' | 'lost' | 'denied' | 'unsupported' | 'fallback';
-export type LockReason = 'request' | 'acquired' | 'fallback_started' | 'released_hidden' | 'released_platform'
+export type TLockState = 'idle' | 'requesting' | 'held' | 'lost' | 'denied' | 'unsupported' | 'fallback';
+export type TLockReason = 'request' | 'acquired' | 'fallback_started' | 'released_hidden' | 'released_platform'
   | 'denied' | 'unsupported' | 'user_release' | 'retry' | 'destroyed';
-export type AdviceCode = 'battery_saver' | 'low_power_ios' | 'hidden_document' | 'permissions_policy'
+export type TAdviceCode = 'battery_saver' | 'low_power_ios' | 'hidden_document' | 'permissions_policy'
   | 'insecure_context' | 'unsupported_browser' | 'ios_safari_old' | 'firefox_old' | 'iframe_no_allow';
 
-export interface WakeLockOptions {
+export interface IWakeLockOptions {
   fallback?: 'video' | 'none';                 // default 'video'
   videoSources?: { webm?: string; mp4?: string }; // override the inlined 1-frame assets (data: or https: URLs)
   reacquireOnVisible?: boolean;                // default true — re-request when the document becomes visible after `lost`
@@ -42,21 +42,21 @@ export interface WakeLockOptions {
   debug?: boolean | ((msg: string, data?: unknown) => void);
 }
 
-export interface ChangeEvent { from: LockState; to: LockState; reason: LockReason; advice?: AdviceCode; error?: unknown; at: number }
+export interface IChangeEvent { from: TLockState; to: TLockState; reason: TLockReason; advice?: TAdviceCode; error?: unknown; at: number }
 
-export interface WakeLockHandle {
-  readonly state: LockState;
+export interface IWakeLockHandle {
+  readonly state: TLockState;
   readonly supported: boolean;                 // native API present in a secure context
   readonly usingFallback: boolean;
-  request(): Promise<LockState>;               // resolves with the resulting state; never throws
+  request(): Promise<TLockState>;               // resolves with the resulting state; never throws
   release(): Promise<void>;
-  on(event: 'change', cb: (e: ChangeEvent) => void): () => void;
+  on(event: 'change', cb: (e: IChangeEvent) => void): () => void;
   on(event: 'error', cb: (e: { error: unknown; at: number }) => void): () => void;
   destroy(): void;                             // release + remove listeners + remove video element
 }
 
-export function createWakeLock(options?: WakeLockOptions): WakeLockHandle;
-export function classifyDenial(err: unknown, ctx: { visible: boolean; secure: boolean; inIframe: boolean; ua: string }): AdviceCode;
+export function createWakeLock(options?: IWakeLockOptions): IWakeLockHandle;
+export function classifyDenial(err: unknown, ctx: { visible: boolean; secure: boolean; inIframe: boolean; ua: string }): TAdviceCode;
 export const isWakeLockSupported: () => boolean;
 ```
 
@@ -91,7 +91,7 @@ packages/wake/
 │  ├─ index.ts          # createWakeLock, classifyDenial, isWakeLockSupported
 │  ├─ machine.ts        # transition table (mirrors 04-engine-spec §4)
 │  ├─ fallback.ts       # video element management + inlined assets
-│  ├─ classify.ts       # denial → AdviceCode
+│  ├─ classify.ts       # denial → TAdviceCode
 │  ├─ adapters/react.ts · preact.ts · vue.ts
 │  └─ assets/blank.webm.b64.ts · blank.mp4.b64.ts
 ├─ test/                # Vitest: one test per transition row (T01…Tnn), fallback, classify, SSR
