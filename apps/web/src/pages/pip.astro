@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ToolIsland from '../components/ToolIsland.astro';
+import { t } from '../i18n/load';
+---
+
+<BaseLayout title={t('page.pip.title')} description={t('page.home.description')} noindex>
+  <ToolIsland heading={t('page.pip.title')} pip autostart="0" />
+</BaseLayout>

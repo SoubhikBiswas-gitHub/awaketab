@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "AwakeTab — keep your screen awake",
+  "short_name": "AwakeTab",
+  "description": "Keeps your screen awake with the browser's Wake Lock API. Presets, until-time, clock modes. No account, no tracking.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "en",
+  "dir": "ltr",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "categories": ["utilities", "productivity"],
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "30 minutes", "url": "/30m?autostart=1" },
+    { "name": "Until I stop", "url": "/?preset=pinf&autostart=1" },
+    { "name": "Clock", "url": "/?mode=clock" }
+  ]
+}
