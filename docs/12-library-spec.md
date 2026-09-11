@@ -12,7 +12,7 @@ Related docs: `00-conventions.md` §5.1, §13.1 · `04-engine-spec.md` §3–§5
 
 | Goal | Target |
 |---|---|
-| Size | ≤ 2 KB gz for the core entry (`size-limit` in CI); fallback video assets inlined as base64 add ≈ 1.4 KB |
+| Size | ≤ 3.4 KB gz for the core entry (`size-limit` in CI, `packages/wake/package.json`); the base64-inlined fallback video assets are part of that entry, not an addition on top |
 | Dependencies | zero |
 | Environments | Browsers per the support matrix; SSR-safe (`typeof window === 'undefined'` → inert instance) |
 | Types | TypeScript, `strict`, `.d.ts` shipped |
@@ -141,7 +141,7 @@ Build: `tsup` with `format: ['esm','cjs','iife']`, `dts: true`, `minify: true`, 
 | Fallback | inlined 1-frame video, gesture-aware, pauses when hidden | looping video, always on |
 | Denial diagnosis | `classifyDenial()` → advice codes | none |
 | Re-acquire on visible | yes, configurable | yes |
-| Size (gz) | ≤ 2 KB (+1.4 KB assets) | ≈ 4 KB with assets |
+| Size (gz) | ≤ 3.4 KB (fallback assets inlined in that budget) | ≈ 3.2 KB measured |
 | TypeScript | native | community typings |
 | SSR-safe | yes | no |
 | Adapters | React/Preact/Vue | no |
@@ -162,7 +162,7 @@ Live status pill bound to the library, a "simulate tab hidden" button (dispatche
 
 ## 7. Versioning and release
 
-Changesets in the monorepo; `release.yml` publishes on merge to `main` when a changeset exists, with npm provenance (GitHub Actions OIDC, `npm publish --provenance`). Breaking changes bump major; the web app pins `workspace:*`. Bundle-size check (`size-limit`) fails CI above 2 KB gz for `dist/index.js`.
+Changesets in the monorepo; `release.yml` publishes on merge to `main` when a changeset exists, with npm provenance (GitHub Actions OIDC, `npm publish --provenance`). Breaking changes bump major; the web app pins `workspace:*`. Bundle-size check (`size-limit`) fails CI above 3.4 KB gz for `dist/index.js`.
 
 ---
 

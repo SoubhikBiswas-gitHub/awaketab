@@ -81,10 +81,8 @@ None. Lock reasons and advice codes follow `docs/00-conventions.md` §13.1.
 - Translated content slugs exist in `slugs.json` but locale article routes are not built yet (E6-T06).
 - `@vite-pwa/astro` / Workbox injectManifest, per-locale manifests, and LHCI on a preview URL are not in this checkpoint.
 - `/pip` popup fallback does not yet fully sync over `BroadcastChannel('awaketab')`.
-- `@awaketab/wake` gzip with inlined fallback assets is ~3.2 kB (size-limit 3.4 kB); docs/12 still cites 2 kB core.
 - Lighthouse SEO 100 on five URLs was not re-run this checkpoint (no preview URL).
 - Polar live products, a real-card purchase e2e, Funding Choices CMP script, Miniflare function tests, and production ES256 key rotation remain external.
-- No Conventional Commits in this session (commit only when asked).
 
 ## Known external gaps
 

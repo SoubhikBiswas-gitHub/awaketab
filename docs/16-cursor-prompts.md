@@ -101,7 +101,7 @@ Deliverables (packages/wake/src): index.ts (createWakeLock, classifyDenial, isWa
 
 Behaviour contract (do not deviate): states idle|requesting|held|lost|denied|unsupported|fallback. request() never throws; resolves with the resulting state. Sentinel `release` while hidden → lost (released_hidden) and re-request on visibilitychange→visible when reacquireOnVisible; release while visible → lost (released_platform) + one retry. NotAllowedError → denied with advice from classifyDenial; transient (hidden_document) retries on visible; others wait for request(). Missing API or insecure context → unsupported; request() in unsupported with fallback:'video' plays the video; play() rejection keeps unsupported and emits error. fullscreenchange re-requests while held. destroy() releases and removes everything.
 
-Tests (Vitest): one test per transition row named T01…Tnn (docs/13 §2 lists T01–T16 minimum) using an injected fake navigator.wakeLock and document; SSR test; size-limit ≤ 2 KB gz for dist/index.js.
+Tests (Vitest): one test per transition row named T01…Tnn (docs/13 §2 lists T01–T16 minimum) using an injected fake navigator.wakeLock and document; SSR test; size-limit ≤ 3.4 KB gz for dist/index.js.
 
 Also: README.md per docs/12 §5, CHANGELOG via changeset, tsup build producing ESM/CJS/IIFE (global AwakeTabWake).
 

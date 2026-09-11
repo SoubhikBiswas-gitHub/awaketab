@@ -105,7 +105,7 @@ Related docs: `15-implementation-plan.md` (phases, gates) · `13-testing-strateg
 - [ ] Point an uptime monitor at `GET /api/health`. Email on two consecutive failures (Cloudflare notifications or Better Stack).
 
 **Library**
-- [ ] `@awaketab/wake` 1.0.0 published with provenance; README badges; `/library` demo bound to the published IIFE; GitHub release notes; size ≤ 2 KB gz.
+- [ ] `@awaketab/wake` 1.0.0 published with provenance; README badges; `/library` demo bound to the published IIFE; GitHub release notes; size ≤ 3.4 KB gz.
 - [ ] `/learn/nosleep-js-vs-wake-lock` and `/learn/screen-wake-lock-api-guide` live and linked from the README.
 
 **Research and embed**

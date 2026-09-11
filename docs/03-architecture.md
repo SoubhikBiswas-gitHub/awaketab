@@ -389,7 +389,7 @@ The budgets in `00-conventions.md` §11 are hit by construction, not by tuning a
 
 | Slice | Budget (gz) | Mechanism |
 |---|---|---|
-| `@awaketab/wake` | ≤ 2 KB (+ ≤ 1.5 KB inline video clips) | Hand-written state machine, no classes, no deps |
+| `@awaketab/wake` | ≤ 3.4 KB gz, inline video clips included (`size-limit`, `packages/wake/package.json`) | Hand-written state machine, no classes, no deps |
 | `@awaketab/core` (session, tick, stats, storage, probe, tabs) | ≤ 7 KB | No schema library; hand-written guards; licence verify is a lazy chunk |
 | `tool/ui` (pill, ring, presets, overlays, toasts, shortcuts) | ≤ 9 KB | Direct DOM patching; markup is server-rendered |
 | `tool/store.ts` + `main.ts` + `lib/analytics.ts` | ≤ 4 KB | — |
