@@ -95,6 +95,15 @@ Related docs: `15-implementation-plan.md` (phases, gates) · `13-testing-strateg
 - [ ] `ads.free` verified: Pro user sees no ads on content pages.
 - [ ] Beacon events `pro_view`, `pro_checkout_click`, `pro_activated` flowing.
 
+**Refund runbook**
+1. Customer emails support@awaketab.com or uses the Polar portal within 14 days.
+2. Polar issues `order.refunded` / `refund.created` → `POST /api/webhooks/polar` sets `lic:{keyHash}.status = refunded` (idempotent via `wh:{eventId}`).
+3. Next `POST /api/license/validate` returns `{ revoked: true }`; the client removes `at.v1.license` and shows `license.error.revoked`.
+4. Do not write IPs. Confirm KV has no `cf-connecting-ip` values. Screenshot Polar refund + KV status into `docs/metrics/`.
+
+**Uptime**
+- [ ] Point an uptime monitor at `GET /api/health`. Email on two consecutive failures (Cloudflare notifications or Better Stack).
+
 **Library**
 - [ ] `@awaketab/wake` 1.0.0 published with provenance; README badges; `/library` demo bound to the published IIFE; GitHub release notes; size ≤ 2 KB gz.
 - [ ] `/learn/nosleep-js-vs-wake-lock` and `/learn/screen-wake-lock-api-guide` live and linked from the README.

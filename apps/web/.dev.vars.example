@@ -2,12 +2,13 @@ POLAR_ACCESS_TOKEN=dummy_polar_sandbox_token
 POLAR_WEBHOOK_SECRET=dummy_standard_webhooks_secret
 POLAR_ORGANIZATION_ID=dummy_organization_id
 POLAR_BENEFIT_MAP={"dummy_benefit_id":"pro_yearly"}
-LICENSE_SIGNING_KEY={"kty":"EC","crv":"P-256","d":"dummy","x":"dummy","y":"dummy"}
+LICENSE_SIGNING_KEY={"kty":"EC","crv":"P-256","x":"jqIeyjT-NfASTfu5XUDoOFE9o8DB6upegCSAJ7ECPIs","y":"ZijZiX6xHO9FMdzAGKDIItiQr5OTTW9Yvjre15iPEGg","d":"sh_slQI5MKZAo1c4eLzd2RQqznb1aZzbc604zVUBrYE"}
 LICENSE_SIGNING_VER=1
-LICENSE_KEY_ENC_KEY=dummy_32_byte_base64_key
+LICENSE_KEY_ENC_KEY=YXdha2V0YWItZGV2LWVuYy1rZXktMzItYnl0ZXMhIQA=
 RATE_LIMIT_SALT=dummy_rate_limit_salt
 TURNSTILE_SECRET_KEY=dummy_optional_turnstile_key
 PUBLIC_SITE_URL=https://awaketab.com
 PUBLIC_ADS_ENABLED=0
 PUBLIC_SPONSOR_ENABLED=0
 PUBLIC_POLAR_SERVER=sandbox
+# LICENSE_SIGNING_KEY is a local/dev pair matching LICENSE_PUBLIC_KEYS[1] in @awaketab/core. Rotate before production.
