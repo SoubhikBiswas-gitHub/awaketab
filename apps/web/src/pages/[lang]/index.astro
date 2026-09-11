@@ -5,6 +5,14 @@ import { createT } from '../../i18n/load';
 import { LOCALE_META, isLocale, type TLocale } from '../../i18n/locales';
 import { homeSchema } from '../../lib/seo';
 import ratings from '../../../../../data/ratings.json';
+import type { ILocaleHomeCopy } from '../../content/locale-home/types';
+import { es } from '../../content/locale-home/es';
+import { ptBr } from '../../content/locale-home/pt-br';
+import { de } from '../../content/locale-home/de';
+import { fr } from '../../content/locale-home/fr';
+import { ja } from '../../content/locale-home/ja';
+import { zh } from '../../content/locale-home/zh';
+import { hi } from '../../content/locale-home/hi';
 
 export function getStaticPaths() {
   return ['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'].map((lang) => ({ params: { lang } }));
@@ -19,6 +27,32 @@ const t = createT(locale);
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/${locale}`;
 const meta = LOCALE_META[locale];
+
+// Draft, unreviewed machine-assisted translations (docs/BUILD-STATE.md "Known gaps" E6-T04).
+// meta.reviewed stays false until a native speaker signs off, so `noindex` below is unaffected
+// by how much prose exists on the page.
+const COPY: Record<Exclude<TLocale, 'en'>, ILocaleHomeCopy> = {
+  es,
+  'pt-br': ptBr,
+  de,
+  fr,
+  ja,
+  zh,
+  hi,
+};
+const copy = COPY[locale];
+
+const pillKeys = [
+  'tool.pill.idle',
+  'tool.pill.requesting',
+  'tool.pill.held',
+  'tool.pill.lost',
+  'tool.pill.denied',
+  'tool.pill.unsupported',
+  'tool.pill.fallback',
+] as const;
+
+const card = 'rounded-xl border bg-card text-card-foreground shadow-sm';
 ---
 
 <BaseLayout
@@ -37,9 +71,35 @@ const meta = LOCALE_META[locale];
   }}
 >
   <ToolIsland heading={t('page.home.h1')} locale={locale}>
-    <section class="at-prose">
-      <p>{t('page.home.intro')}</p>
-      <aside class="at-limit">{t('tool.advice.hidden_document')}</aside>
-    </section>
+    <div class="at-prose">
+      <section class="at-section" aria-labelledby="answer-title">
+        <h2 id="answer-title">{t('page.home.what.title')}</h2>
+        <p>{copy.whatItDoes[0]}</p>
+        <p>{copy.whatItDoes[1]}</p>
+      </section>
+
+      <section class="at-section" aria-labelledby="how-title">
+        <h2 id="how-title">{t('page.home.how.title')}</h2>
+        <ol>
+          {copy.howItWorks.map((step) => <li>{step}</li>)}
+        </ol>
+        <ul class:list={['m-0 grid list-none gap-2 p-0 sm:grid-cols-2', 'mt-4']}>
+          {
+            pillKeys.map((key) => (
+              <li class:list={['px-3 py-2 text-sm font-medium', card]}>{t(key)}</li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="at-section" aria-labelledby="limits-title">
+        <h2 id="limits-title">{t('page.home.limits.title')}</h2>
+        <aside class="at-limit">
+          <ul>
+            {copy.honestLimits.map((point) => <li>{point}</li>)}
+          </ul>
+        </aside>
+      </section>
+    </div>
   </ToolIsland>
 </BaseLayout>
