@@ -1,8 +1,5 @@
 import type { TAdviceCode } from '@awaketab/wake';
-import en from '../../i18n/en.json';
-import { t, setCatalog } from '../i18n.js';
-
-setCatalog(en);
+import { t } from '../i18n.js';
 
 const GUIDE: Record<TAdviceCode, string> = {
   battery_saver: '/guides',

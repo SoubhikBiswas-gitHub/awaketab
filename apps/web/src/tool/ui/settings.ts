@@ -1,9 +1,6 @@
 import type { ISettings, TTheme } from '@awaketab/core';
 import { DEFAULT_SETTINGS } from '@awaketab/core';
-import en from '../../i18n/en.json';
-import { t, setCatalog } from '../i18n.js';
-
-setCatalog(en);
+import { t } from '../i18n.js';
 
 export function bindSettings(
   dialog: HTMLDialogElement,

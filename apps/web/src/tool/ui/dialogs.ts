@@ -1,10 +1,7 @@
 import { CUSTOM_MAX_MS } from '@awaketab/core';
-import en from '../../i18n/en.json';
 import { formatHms } from '../format.js';
-import { t, setCatalog } from '../i18n.js';
+import { t } from '../i18n.js';
 import { CUSTOM_MIN_MS } from '../params.js';
-
-setCatalog(en);
 
 export function customMs(days: number, hours: number, minutes: number): number {
   return ((days * 24 + hours) * 60 + minutes) * 60_000;
