@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { onRequestPost as onCsp } from './csp';
-import { harness, invoke, ipTraces, SITE, TEST_IP, type IHarness } from '../../test/functions/harness';
+import { MAX_BODY_BYTES, RATE_MAX } from '../_lib/env';
+import { ipHash } from '../_lib/ratelimit';
+import { harness, invoke, ipTraces, sha256Hex, SITE, TEST_IP, type IHarness } from '../../test/functions/harness';
 
 function report(h: IHarness, body: string, contentType: string) {
   return invoke(
@@ -38,6 +40,7 @@ const LEGACY = JSON.stringify({
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.useRealTimers();
 });
 
 describe('POST /api/csp', () => {
@@ -71,7 +74,7 @@ describe('POST /api/csp', () => {
     expect(h.ae.points[0]?.blobs[5]).toBe('csp');
   });
 
-  it('persists no IP, user agent, blocked URL or query string, and never touches KV', async () => {
+  it('persists no IP, user agent, blocked URL or query string; KV holds only the salted rate-limit counter', async () => {
     const h = harness();
     await report(h, REPORTING_API, 'application/reports+json');
     await report(h, LEGACY, 'application/csp-report');
@@ -80,7 +83,89 @@ describe('POST /api/csp', () => {
     expect(stored).not.toContain('Mozilla');
     expect(stored).not.toContain('evil.example');
     expect(stored).not.toContain('utm_source');
-    expect(h.kv.writes).toEqual([]);
+    expect(h.kv.writes.every((row) => row.key.startsWith('rl:csp:'))).toBe(true);
+    expect(h.kv.writes.map((row) => row.value)).toEqual(['1', '2']);
+  });
+
+  it('keys the rate-limit counter by the salted IP hash with a 240 s TTL', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(Date.parse('2026-09-01T10:00:00.000Z'));
+    const h = harness();
+    await report(h, LEGACY, 'application/csp-report');
+    const salted = await ipHash(h.env, TEST_IP);
+    expect(salted).not.toBe(await sha256Hex(TEST_IP));
+    const bucket = Math.floor(Date.now() / 1000 / 120);
+    expect(h.kv.writes).toEqual([{ op: 'put', key: `rl:csp:${salted}:${String(bucket)}`, value: '1', expirationTtl: 240 }]);
+  });
+
+  it('answers 429 with Retry-After once RATE_MAX is reached, and records nothing more', async () => {
+    const h = harness();
+    for (let i = 0; i < RATE_MAX; i += 1) {
+      expect((await report(h, LEGACY, 'application/csp-report')).status).toBe(200);
+    }
+    const res = await report(h, LEGACY, 'application/csp-report');
+    expect(res.status).toBe(429);
+    expect(res.headers.get('cache-control')).toBe('no-store');
+    expect(Number(res.headers.get('retry-after'))).toBeGreaterThan(0);
+    expect(Number(res.headers.get('retry-after'))).toBeLessThanOrEqual(120);
+    expect(h.ae.points).toHaveLength(RATE_MAX);
+  });
+
+  it('limits per IP: another address still gets through', async () => {
+    const h = harness();
+    for (let i = 0; i <= RATE_MAX; i += 1) await report(h, LEGACY, 'application/csp-report');
+    const other = await invoke(
+      onCsp,
+      h.env,
+      new Request(`${SITE}/api/csp`, { method: 'POST', headers: { 'cf-connecting-ip': '198.51.100.4' }, body: LEGACY }),
+    );
+    expect(other.status).toBe(200);
+  });
+
+  it('rejects a body over 8 KB with 413 and writes no point', async () => {
+    const h = harness();
+    const big = JSON.stringify({ 'csp-report': { 'document-uri': `https://awaketab.com/${'x'.repeat(MAX_BODY_BYTES)}` } });
+    const res = await report(h, big, 'application/csp-report');
+    expect(res.status).toBe(413);
+    expect(await res.json()).toEqual({ error: 'too_large' });
+    expect(h.ae.points).toEqual([]);
+  });
+
+  it('refuses an oversized Content-Length before reading, and caps a streamed body without one', async () => {
+    const h = harness();
+    const declared = await invoke(
+      onCsp,
+      h.env,
+      new Request(`${SITE}/api/csp`, {
+        method: 'POST',
+        headers: { 'cf-connecting-ip': TEST_IP, 'content-length': String(MAX_BODY_BYTES + 1) },
+        body: '{}',
+      }),
+    );
+    expect(declared.status).toBe(413);
+    let pulled = 0;
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulled += 1;
+        if (pulled > 100) throw new Error('read past the cap');
+        controller.enqueue(new Uint8Array(1024).fill(0x20));
+      },
+    });
+    const init = { method: 'POST', headers: { 'cf-connecting-ip': TEST_IP }, body: stream, duplex: 'half' };
+    const streamed = await invoke(onCsp, h.env, new Request(`${SITE}/api/csp`, init as RequestInit));
+    expect(streamed.status).toBe(413);
+    expect(pulled).toBeLessThanOrEqual(Math.ceil(MAX_BODY_BYTES / 1024) + 2);
+    expect(h.ae.points).toEqual([]);
+  });
+
+  it('accepts a body of exactly 8 KB', async () => {
+    const h = harness();
+    const prefix = '{"csp-report":{"document-uri":"https://awaketab.com/a","pad":"';
+    const body = `${prefix}${'x'.repeat(MAX_BODY_BYTES - prefix.length - 3)}"}}`;
+    expect(new TextEncoder().encode(body).byteLength).toBe(MAX_BODY_BYTES);
+    const res = await report(h, body, 'application/csp-report');
+    expect(res.status).toBe(200);
+    expect(h.ae.points[0]?.blobs[0]).toBe('/a');
   });
 
   it('answers 200 without an EVENTS binding', async () => {

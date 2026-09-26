@@ -103,6 +103,37 @@ export function mapEvent(row: IIncomingEvent, serverTs: number): IAePoint | null
   };
 }
 
+/**
+ * Reads the body as UTF-8, or returns `null` once it exceeds `max` bytes. A declared `Content-Length` over the
+ * cap is refused before reading; otherwise the stream is consumed chunk by chunk and cancelled at the cap, so a
+ * chunked or mislabelled upload never lands in memory whole.
+ */
+export async function readCappedText(request: Request, max: number): Promise<string | null> {
+  const declared = Number(request.headers.get('content-length') ?? '');
+  if (Number.isFinite(declared) && declared > max) return null;
+  if (!request.body) return '';
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > max) {
+      await reader.cancel();
+      return null;
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new TextDecoder().decode(bytes);
+}
+
 export async function parseBatch(request: Request): Promise<{ ok: true; events: IIncomingEvent[] } | { ok: false; status: number }> {
   const raw = await request.text();
   if (raw.length > MAX_BODY_BYTES) return { ok: false, status: 413 };

@@ -1,6 +1,7 @@
-import type { IEnv } from '../_lib/env';
-import { mapEvent, writePoints, type IIncomingEvent } from '../_lib/events';
-import { jsonOk } from '../_lib/http';
+import { MAX_BODY_BYTES, type IEnv } from '../_lib/env';
+import { mapEvent, readCappedText, writePoints, type IIncomingEvent } from '../_lib/events';
+import { jsonError, jsonOk, rateLimited } from '../_lib/http';
+import { clientIp, rateLimit } from '../_lib/ratelimit';
 
 interface ICspReport {
   'csp-report'?: { 'document-uri'?: unknown };
@@ -26,8 +27,15 @@ function reportPath(parsed: unknown): string {
   }
 }
 
+/**
+ * Same guards as `/api/e` (docs/09 §2.10): the salted-IP-hash limiter (`rl:csp:{hash}:{bucket}`, no IP stored)
+ * answers 429 + `Retry-After`, and a body over `MAX_BODY_BYTES` (8 KB) answers 413 without being read in full.
+ */
 export const onRequestPost: PagesFunction<IEnv> = async (context) => {
-  const raw = await context.request.text();
+  const ip = await clientIp(context.request);
+  if (!(await rateLimit(context.env, 'csp', ip))) return rateLimited();
+  const raw = await readCappedText(context.request, MAX_BODY_BYTES);
+  if (raw === null) return jsonError('too_large', 413);
   let path: string;
   try {
     path = reportPath(JSON.parse(raw));
