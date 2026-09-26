@@ -44,7 +44,21 @@ const withVerified = page.refine((entry) => entry.lastVerified !== undefined, {
   message: 'lastVerified required',
 });
 
+/**
+ * `changelog/*.md` at the repo root (docs/14 §7: fragments compiled into `/changelog` at build). Front matter is
+ * required, so a fragment without a `title` and `date` fails the build instead of rendering its YAML as text.
+ * `release` marks a release summary, which heads the fragments of its day (F-07; `src/lib/changelog.ts`).
+ */
+const changelog = z
+  .object({
+    title: z.string().min(1).max(120),
+    date: z.coerce.date(),
+    release: z.string().optional(),
+  })
+  .strict();
+
 export const collections = {
+  changelog: defineCollection({ loader: glob({ pattern: '*.md', base: '../../changelog' }), schema: changelog }),
   for: defineCollection({ loader: glob({ pattern: '**/*.md', base: './src/content/for' }), schema: page }),
   on: defineCollection({ loader: glob({ pattern: '**/*.md', base: './src/content/on' }), schema: withVerified }),
   vs: defineCollection({ loader: glob({ pattern: '**/*.md', base: './src/content/vs' }), schema: withVerified }),

@@ -1,5 +1,5 @@
 ---
-import { readdir, readFile } from 'node:fs/promises';
+import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import {
   Breadcrumb,
@@ -11,27 +11,31 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { t } from '../i18n/load';
+import { changelogDate, sortChangelog } from '../lib/changelog';
 import { articleSchema } from '../lib/seo';
 
-interface IChangeEntry {
-  title: string;
-  date: string;
-  paragraphs: string[];
-}
-
-const directory = new URL('../../../../changelog/', import.meta.url);
-const files = (await readdir(directory)).filter((file) => file.endsWith('.md')).sort().reverse();
-const entries: IChangeEntry[] = [];
-for (const file of files) {
-  const source = await readFile(new URL(file, directory), 'utf8');
-  const title = /^title:\s*(.+)$/mu.exec(source)?.[1]?.trim() ?? file.replace(/\.md$/u, '');
-  const date = /^date:\s*(.+)$/mu.exec(source)?.[1]?.trim() ?? '';
-  const body = source.replace(/^---[\s\S]*?---/u, '').trim();
-  entries.push({ title, date, paragraphs: body.split(/\n{2,}/u).map((paragraph) => paragraph.trim()) });
-}
+// Fragments are the `changelog` content collection (repo-root `changelog/*.md`), rendered at build time by
+// Astro's Markdown pipeline like the content pages: no client JS (F-07, docs/14 §7).
+const entries = await Promise.all(
+  sortChangelog(await getCollection('changelog')).map(async (entry) => ({
+    id: entry.id,
+    title: entry.data.title,
+    date: changelogDate(entry.data.date),
+    Content: (await render(entry)).Content,
+  })),
+);
+const latest = entries[0]?.date;
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/changelog`;
 const crumbLink = 'inline-flex min-h-11 items-center';
+// The rendered Markdown carries no classes; style its elements from the card (Tailwind, build time only).
+const body = [
+  'space-y-3 px-5 [overflow-wrap:anywhere]',
+  '[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4',
+  '[&_code]:rounded-sm [&_code]:bg-muted [&_code]:px-1 [&_code]:text-[0.9em]',
+  '[&_ul]:list-disc [&_ol]:list-decimal [&_:is(ul,ol)]:ps-6 [&_li+li]:mt-1',
+  '[&_strong]:font-semibold',
+].join(' ');
 ---
 
 <BaseLayout
@@ -45,6 +49,7 @@ const crumbLink = 'inline-flex min-h-11 items-center';
     description: t('page.changelog.description'),
     locale: 'en',
     published: '2026-09-09',
+    ...(latest ? { updated: latest } : {}),
     breadcrumbs: [
       { name: 'AwakeTab', url: site },
       { name: t('page.changelog.h1'), url: canonical },
@@ -68,18 +73,16 @@ const crumbLink = 'inline-flex min-h-11 items-center';
     <ol class="mt-8 grid list-none gap-4 p-0">
       {
         entries.map((entry) => (
-          <li>
+          <li data-changelog-entry={entry.id}>
             <Card className="gap-4 py-5">
               <CardHeader className="px-5">
                 <h2 class="text-lg leading-snug font-semibold">{entry.title}</h2>
-                {entry.date && (
-                  <CardDescription>
-                    <time datetime={entry.date}>{entry.date}</time>
-                  </CardDescription>
-                )}
+                <CardDescription>
+                  <time datetime={entry.date}>{entry.date}</time>
+                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3 px-5">
-                {entry.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+              <CardContent className={body}>
+                <entry.Content />
               </CardContent>
             </Card>
           </li>

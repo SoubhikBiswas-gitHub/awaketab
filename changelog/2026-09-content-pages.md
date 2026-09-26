@@ -1,5 +1,3 @@
-# 2026-09 English content pages
-
 ---
 title: Fifty-one English scenario pages
 date: 2026-09-09
