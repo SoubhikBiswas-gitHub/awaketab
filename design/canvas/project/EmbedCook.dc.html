@@ -166,7 +166,7 @@ const AT_GLYPH = {
 // The seven contract pill strings (docs/04, docs/05). Exact, and alone inside the pill.
 const AT_PILL_TEXT = { idle: 'Ready', requesting: 'Starting…', held: 'Screen awake', lost: 'Paused — tab hidden', denied: "Blocked — here's the fix", unsupported: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
 // Status pill sizes (§11.4): height, text, padding, gap, glyph.
-const AT_PILL = { L: [48, 20, '0 20px 0 16px', 12, 16], M: [38, 15, '0 16px 0 12px', 8, 12], S: [32, 14, '0 12px 0 8px', 8, 12], XS: [26, 13, '0 8px', 4, 12] };
+const AT_PILL = { L: [48, 20, '0 20px 0 16px', 8, 16], M: [38, 15, '0 16px 0 12px', 8, 12], S: [32, 14, '0 12px 0 8px', 8, 12], XS: [26, 13, '0 8px', 4, 12] };
 
 function atRgba(hex, a) {
   const n = parseInt(String(hex).replace('#', ''), 16);
@@ -244,10 +244,10 @@ function atHeader(c, t, layout, current, bead) {
     logo: 'display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; color: ' + t.ink + '; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em',
     ink: t.ink, bead: bead || t.muted,
     showNav: layout === 'desktop',
-    navStyle: 'display: flex; align-items: center; gap: 32px',
+    navStyle: 'display: flex; align-items: center; gap: 8px',
     nav: AT_NAV.map(([label, href, id]) => ({
       label, href, cur: id === current ? 'page' : 'false',
-      style: 'display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; text-decoration: none; font-size: 15px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2),
+      style: 'display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 0 12px; box-sizing: border-box; text-decoration: none; font-size: 15px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2),
       dot: 'width: 6px; height: 6px; border-radius: 999px; background: ' + (id === current ? t.lamp : 'transparent')
     })),
     bar: 'position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line,
@@ -267,8 +267,8 @@ function atFooter(t, layout) {
   return {
     style: 'flex-shrink: 0; margin-top: ' + AT_SECTION[layout] + 'px; box-sizing: border-box; padding: 24px ' + g + 'px ' + (layout === 'phone' ? 32 : 24) + 'px; border-top: 1px solid ' + t.line + '; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px',
     line: 'margin: 0; font-size: 13px; line-height: 18px; color: ' + t.muted,
-    nav: 'display: flex; flex-wrap: wrap; column-gap: 20px',
-    link: 'min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; font-size: 14px; line-height: 20px; color: ' + t.ink2 + '; text-decoration: none',
+    nav: 'display: flex; flex-wrap: wrap; column-gap: 16px',
+    link: 'min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; font-size: 13px; line-height: 18px; font-weight: 500; color: ' + t.ink2 + '; text-decoration: none',
     links: AT_FOOT_LINKS.map(([label, href]) => ({ label, href }))
   };
 }

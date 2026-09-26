@@ -44,9 +44,9 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid 
       AwakeTab
     </a>
     <sc-if value="{{isDesk}}" hint-placeholder-val="{{false}}">
-      <nav aria-label="Main" style="display: flex; gap: 32px; font-size: 15px; line-height: 22px; font-weight: 500">
+      <nav aria-label="Main" style="display: flex; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 500">
         <sc-for list="{{nav}}" as="n" hint-placeholder-count="4">
-          <a href="#" aria-current="{{n.cur}}" style="color: {{n.ink}}; font-weight: {{n.weight}}; text-decoration: none; display: flex; align-items: center; gap: 8px; min-height: 44px"><sc-if value="{{n.on}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: {{p.lamp}}"></span></sc-if>{{n.label}}</a>
+          <a href="#" aria-current="{{n.cur}}" style="padding: 0 12px; box-sizing: border-box; color: {{n.ink}}; font-weight: {{n.weight}}; text-decoration: none; display: flex; align-items: center; gap: 8px; min-height: 44px"><sc-if value="{{n.on}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: {{p.lamp}}"></span></sc-if>{{n.label}}</a>
         </sc-for>
       </nav>
     </sc-if>
@@ -343,7 +343,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid 
 
   <footer style="border-top: 1px solid {{t.line}}; padding: {{foot.pad}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px">
     <p style="margin: 0; font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p>
-    <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; column-gap: 16px; font-size: 13px; line-height: 18px">
+    <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; column-gap: 16px; font-size: 13px; line-height: 18px; font-weight: 500">
       <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Privacy</a>
       <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Terms</a>
       <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Changelog</a>

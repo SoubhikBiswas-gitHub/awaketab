@@ -1,6 +1,11 @@
-> **Superseded** by `design/canvas/PRIMITIVES.md` (O-77 merge). Kept for history.
+# AwakeTab shared primitives: the one set (O-77 merge, 27 September 2026)
 
-# Fix batch 1b: shared primitives (copy VERBATIM, byte-identical)
+This file replaces `tools/fix1b/PRIMITIVES.md` (batch 1b) and the batch 2a `prim.mjs` snippet. Three code shapes carry the **same numbers**; the build implements them once as Astro components:
+- 1b boards (Main, Extras, Ambient, Pip, Content, HubFor, HomeBelow, Intl, A11y, Guide, Preset, Until): the markup below with holes `t.* tone toneSoft hdr.* foot.* cardPad`.
+- 2a boards (Pro, Ext, Welcome, Store, Growth, Brand): `AT_DARK`/`AT_LIGHT`/`AT_OLED`/`AT_LAMPS` constants and `footPad`/`cardPad` holes.
+- 2b boards (Page, Embed, Kiosk, Og, IconSet, Sys): `atHeader()`, `atFooter()`, `atPill()` helpers and `AT_PILL`.
+`tools/final/primvariance.py` renders-and-compares the primitives across every board (header, theme bar, nav, pill, footer, kbd, logo); any second variant is a bug.
+
 
 Source of numbers: /home/user/awaketab/DESIGN.md §2.1, §3, §11. Every file in batch 1b that shows one of
 these primitives must contain exactly the markup below (whitespace inside the tag included). Where a primitive needs
@@ -47,7 +52,7 @@ Elevation: dark borders only; light cards may add `0 1px 2px rgba(14,23,38,.06)`
       AwakeTab
     </a>
 ```
-(desktop nav, if the page has one, sits between the logo and the theme switch: `<nav aria-label="Main" style="display: flex; gap: 32px; font-size: 15px; line-height: 22px; font-weight: 500">`, items `min-height: 44px`, current item = ink 600 + 6 px lamp dot, others ink2. No side stripes.)
+(desktop nav, if the page has one, sits between the logo and the theme switch: `<nav aria-label="Main" style="display: flex; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 500">`, items `padding: 0 12px; box-sizing: border-box; min-height: 44px; min-width: 44px` (so the visible rhythm between labels is 32 and even "Pro" is a 48 px target), current item = ink 600 + 6 px lamp dot, others ink2. No side stripes.)
 
 ## P-THEME (segmented bar: 1 px line + 4 px padding + 44 px items = 54 total; indicator inset 4, `raised`)
 
@@ -77,7 +82,7 @@ Same as M with: `gap: 8px; height: 32px; padding: 0 12px 0 8px; ... font-size: 1
 ## P-PILL-XS (compact embed: 26; text 13/600; padding 0 8; gap 4)
 Same as M with: `gap: 4px; height: 26px; padding: 0 8px; ... font-size: 13px; line-height: 18px;`
 
-## P-PILL-L (kiosk ≥ 1180 wide, xl: 48; text 20/600; padding 0 20 0 16; gap 8)
+## P-PILL-L (kiosk ≥ 1180 wide, xl: 48; text 20/600; padding 0 20 0 16; gap 8; glyph 16)
 
 ## P-TAG (non-interactive: Pro, Free, Proposed, Release, licence, result badges)
 
@@ -147,12 +152,12 @@ FAQ question button: `min-height: 56px; padding: 16px 0` (no 2 px side padding),
 ```html
 <footer style="border-top: 1px solid {{t.line}}; padding: {{foot.pad}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px">
     <p style="margin: 0; font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p>
-    <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; column-gap: 16px; font-size: 13px; line-height: 18px">
-      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Privacy</a>
-      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Terms</a>
-      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Changelog</a>
-      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">About</a>
-      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a>
+    <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; column-gap: 16px; font-size: 13px; line-height: 18px; font-weight: 500">
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Privacy</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Terms</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Changelog</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">About</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a>
     </nav>
   </footer>
 ```
@@ -160,7 +165,7 @@ FAQ question button: `min-height: 56px; padding: 16px 0` (no 2 px side padding),
 ## Type (DESIGN.md §11.5): size/line-height, weight
 kicker 12/16 600 +0.14em upper · caption 13/18 · small 14/20 · ui 15/22 · body 16/26 · lead 18/28 · h3 20/28 600 ·
 h2 28/36 (phone 24/32) 600 · h1 48/56 (phone 34/42) 600 −0.02em · price 48/56 (phone 40/48) 600.
-Allowed sizes only: 12 13 14 15 16 17 (primary label) 18 20 24 28 34 40 48, plus display digits. Weights 400/500/600
+Allowed sizes only: 12 13 14 15 16 17 (primary label) 18 20 24 28 34 40 48, plus display digits; TV/kiosk meta 32 and date 40, OG url 22 (§11.5). Weights 400/500/600
 (digits 200/300). Never below 12 px. Never 11, 12.5, 13.5, 19, 21, 22, 26, 27, 30, 36 etc.
 
 ## Digits (one numeral voice)

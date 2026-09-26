@@ -53,9 +53,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #5BE0
         <sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -8px; inset-inline-start: -12px; {{f.logo.badge}}">{{f.logo.n}}</span></sc-if>
       </span>
       <sc-if value="{{S.desk}}" hint-placeholder-val="{{false}}">
-        <nav aria-label="Main" style="display: flex; gap: 32px; font-size: 15px; line-height: 22px; font-weight: 500">
+        <nav aria-label="Main" style="display: flex; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 500">
           <sc-for list="{{navs}}" as="n" hint-placeholder-count="4">
-            <a href="#" style="position: relative; display: flex; align-items: center; min-height: 44px; color: {{n.color}}; text-decoration: none; border-radius: 8px; outline: {{n.ring}}; outline-offset: 3px">{{n.label}}<sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -8px; inset-inline-start: -16px; {{n.badge}}">{{n.n}}</span></sc-if></a>
+            <a href="#" style="padding: 0 12px; box-sizing: border-box; position: relative; display: flex; align-items: center; min-height: 44px; color: {{n.color}}; text-decoration: none; border-radius: 8px; outline: {{n.ring}}; outline-offset: 3px">{{n.label}}<sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -8px; inset-inline-start: -16px; {{n.badge}}">{{n.n}}</span></sc-if></a>
           </sc-for>
         </nav>
       </sc-if>
