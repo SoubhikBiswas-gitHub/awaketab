@@ -12,7 +12,10 @@ declare const __AT_LICENSE_DEV_KEY__: boolean | undefined;
  * entry. Never add the dev key here: `pnpm build` with `PUBLIC_POLAR_SERVER=production` runs
  * `apps/web/scripts/check-keys.mts`, which fails when this is empty or contains it.
  */
-export const PRODUCTION_LICENSE_PUBLIC_KEYS: Readonly<Record<number, JsonWebKey>> = {};
+export const PRODUCTION_LICENSE_PUBLIC_KEYS: Readonly<Record<number, JsonWebKey>> = {
+  // ver 2 — first production key (generated 2026-09-26; private half is the LICENSE_SIGNING_KEY Pages secret).
+  2: { kty: 'EC', crv: 'P-256', x: 'zE_N4lGBH2RLZnOZ0dZTDz9YCcy2Nw3-a_OFRS4gCXA', y: 'u2GJ3Adhv4xb61aELAzSDFc74e1pyGNj6WpINLK8qc8' },
+};
 
 /** `ver` of the dev pair. Its private half is public (`apps/web/.dev.vars.example`), so production never trusts it. */
 export const DEV_LICENSE_KEY_VER = 1;
