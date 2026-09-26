@@ -12,8 +12,8 @@ export const gz = (buf) => gzipSync(buf, { level: 9 }).byteLength;
 
 /**
  * The same-origin module entry scripts a page loads with `<script type="module" src>` — Astro's `/_astro/*`
- * chunks on the tool page, `/embed/app.js` (esbuild) on /embed/cook. Classic scripts (theme-boot.js) and JSON
- * blocks are not part of the island budgets.
+ * chunks on the tool page, `/embed/assets/app.<hash>.js` (esbuild, fingerprinted post-build) on /embed/cook.
+ * Classic scripts (theme-boot.js) and JSON blocks are not part of the island budgets.
  */
 export function entryScripts(html) {
   const tags = [...html.matchAll(/<script\b[^>]*>/gu)].map((m) => m[0]);
@@ -63,4 +63,10 @@ export async function pageJs(dist, rel) {
     totalBytes: await gzTotal(all),
     files: (set) => [...set].map((f) => `/${path.relative(dist, f).split(path.sep).join('/')}`).sort(),
   };
+}
+
+/** True when the page loads exactly one module entry and it matches `pattern` (the fingerprinted embed app). */
+export function embedEntryHashed(html, pattern) {
+  const entries = entryScripts(html);
+  return entries.length === 1 && pattern.test(entries[0] ?? '');
 }

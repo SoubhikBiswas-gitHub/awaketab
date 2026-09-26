@@ -54,6 +54,10 @@ describe('Cloudflare generated rules', () => {
 
     // Cloudflare joins a header set by two matching rules; the specific rules detach the /* default first.
     expect(at('/embed.js').get('cache-control')).toBe('public, max-age=3600');
+    // The fingerprinted iframe app (embed-loader.mjs --fingerprint) is immutable; the pages that load it are not.
+    expect(at('/embed/assets/app.0123456789.js').get('cache-control')).toBe('public, max-age=31536000, immutable');
+    expect(at('/embed/cook').get('cache-control')).toBe('public, max-age=0, must-revalidate');
+    expect(at('/embed/app.js').get('cache-control')).toBe('public, max-age=0, must-revalidate');
     expect(at('/_astro/x.js').get('cache-control')).toBe('public, max-age=31536000, immutable');
     expect(at('/sw.js').get('cache-control')).toBe('no-cache');
     expect(at('/api/health').get('cache-control')).toBe('no-store');

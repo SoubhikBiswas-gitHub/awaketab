@@ -1,5 +1,10 @@
 export const LOADER_OUT: string;
 export const APP_OUT: string;
+export const APP_URL: string;
+export const APP_ASSET_DIR: string;
+export const HASHED_APP_RE: RegExp;
 export function frameTitles(): Promise<Record<string, string>>;
 export function buildLoader(): Promise<string>;
 export function buildApp(): Promise<string>;
+export function hashedAppUrl(code: string | Uint8Array): string;
+export function fingerprintApp(dist?: string): Promise<{ url: string; pages: string[] }>;

@@ -92,6 +92,10 @@ ${content}
   ! Cache-Control
   Cache-Control: public, max-age=3600
 
+/embed/assets/*
+  ! Cache-Control
+  Cache-Control: public, max-age=31536000, immutable
+
 ${['/pip', ...LOCALES.map((locale) => `/${locale}/pip`)]
   .map((route) => `${route}
   X-Robots-Tag: noindex`)

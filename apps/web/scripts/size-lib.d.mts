@@ -13,3 +13,4 @@ export interface IPageJs {
   files(set: Set<string>): string[];
 }
 export function pageJs(dist: string, rel: string): Promise<IPageJs>;
+export function embedEntryHashed(html: string, pattern: RegExp): boolean;

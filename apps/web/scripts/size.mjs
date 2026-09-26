@@ -1,7 +1,8 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { gz, pageJs } from './size-lib.mjs';
+import { HASHED_APP_RE } from './embed-loader.mjs';
+import { embedEntryHashed, gz, pageJs } from './size-lib.mjs';
 
 // AT_DIST lets parallel verification builds target their own output directory.
 const DIST = process.env.AT_DIST
@@ -40,6 +41,9 @@ const totalJs = tool.totalBytes;
 // Embed iframe app (docs/11 §2, ≤ 25 KB gz): same full closure, from its own page.
 const embed = await pageJs(DIST, 'embed/cook/index.html');
 const embedJs = embed.totalBytes;
+// The app must ship fingerprinted (embed-loader.mjs --fingerprint) so /embed/assets/* can be served immutable; an
+// empty closure would also make embedJs read 0 and pass.
+const embedHashed = embedEntryHashed(embed.html, HASHED_APP_RE);
 
 // Loader (docs/11 §1, ≤ 3 KB gz): a single classic script, no imports.
 const loaderPath = path.join(DIST, 'embed.js');
@@ -70,6 +74,7 @@ const report = {
   files: tool.files(tool.critical),
   lazyFiles: tool.files(tool.all).filter((f) => !tool.files(tool.critical).includes(f)),
   embedFiles: embed.files(embed.all),
+  embedHashed,
   hydrated,
   reactChunks,
 };
@@ -79,6 +84,7 @@ if (
   criticalJs > limits.criticalJs ||
   totalCss > limits.css ||
   embedJs > limits.embedJs ||
+  !embedHashed ||
   loaderJs > limits.loaderJs ||
   hydrated.length > 0 ||
   reactChunks.length > 0

@@ -37,6 +37,10 @@ beforeAll(async () => {
   await put('_astro/font.woff2', 'woff2');
   // Content pages ship too but are not part of the offline shell.
   await put('learn/index.html', '<!doctype html><title>learn</title>');
+  // So does the embed iframe and its fingerprinted app: runtime-cached by src/sw.ts, never precached.
+  await put('embed/cook/index.html', '<script type="module" src="/embed/assets/app.0123456789.js"></script>');
+  await put('embed/assets/app.0123456789.js', 'export{};');
+  await put('embed.js', '/*! loader */');
 });
 
 afterAll(async () => {
@@ -77,6 +81,11 @@ describe('precacheManifest (docs/05 §8.2)', () => {
     expect(entries).toContainEqual({ url: '/_astro/x.js', revision: null });
     expect(entries).toContainEqual({ url: '/_astro/x.css', revision: null });
     expect(entries.some((e) => e.url === '/_astro/font.woff2')).toBe(false);
+  });
+
+  it('never precaches the embed iframe, its hashed app or the host loader', async () => {
+    const urls = (await precacheManifest(dist)).map((e) => e.url);
+    expect(urls.filter((u) => u.startsWith('/embed'))).toEqual([]);
   });
 
   it('is sorted and free of duplicates', async () => {

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/embed-loader.mjs && node scripts/library.mjs && astro dev",
-    "build": "node scripts/headers.mjs && node scripts/embed-loader.mjs && node scripts/library.mjs && pnpm exec tsx scripts/support-matrix.mts && node scripts/icons.mjs && node scripts/manifests.mjs && pnpm exec tsx scripts/og.mts && astro build && node scripts/prune-unreferenced.mjs && node scripts/sw.mjs && node scripts/sitemap.mjs",
+    "build": "node scripts/headers.mjs && node scripts/embed-loader.mjs && node scripts/library.mjs && pnpm exec tsx scripts/support-matrix.mts && node scripts/icons.mjs && node scripts/manifests.mjs && pnpm exec tsx scripts/og.mts && astro build && node scripts/embed-loader.mjs --fingerprint && node scripts/prune-unreferenced.mjs && node scripts/sw.mjs && node scripts/sitemap.mjs",
     "preview": "astro preview --host 127.0.0.1",
     "typecheck": "astro check",
     "size": "node scripts/size.mjs",

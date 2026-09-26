@@ -3,7 +3,8 @@ import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { closure, entryScripts, pageJs } from './size-lib.mjs';
+import { HASHED_APP_RE } from './embed-loader.mjs';
+import { closure, embedEntryHashed, entryScripts, pageJs } from './size-lib.mjs';
 
 // docs/00 §11 / §13.10: `criticalJs` = static-import closure of the tool page's entry scripts; `totalJs` = the
 // closure over static AND dynamic imports; `embedJs` the same for /embed/cook. A fixture dist exercises each.
@@ -14,6 +15,7 @@ beforeAll(async () => {
   const astro = path.join(dist, '_astro');
   await mkdir(astro, { recursive: true });
   await mkdir(path.join(dist, 'embed/cook'), { recursive: true });
+  await mkdir(path.join(dist, 'embed/assets'), { recursive: true });
   const files: Record<string, string> = {
     'entry.js': 'import{a}from"./shared.js";import"./side.js";document.x=()=>import("./lazy.js");',
     'shared.js': 'export const a=1;',
@@ -27,8 +29,8 @@ beforeAll(async () => {
     path.join(dist, 'index.html'),
     '<script src="/theme-boot.js"></script><script type="application/json" data-x>{}</script><script type="module" src="/_astro/entry.js"></script>',
   );
-  await writeFile(path.join(dist, 'embed/app.js'), 'export const app=1;');
-  await writeFile(path.join(dist, 'embed/cook/index.html'), '<script type="module" src="/embed/app.js"></script>');
+  await writeFile(path.join(dist, 'embed/assets/app.0123456789.js'), 'export const app=1;');
+  await writeFile(path.join(dist, 'embed/cook/index.html'), '<script type="module" src="/embed/assets/app.0123456789.js"></script>');
 });
 
 afterAll(async () => {
@@ -60,7 +62,14 @@ describe('size gate closures', () => {
 
   it('measures the embed page from its own entry', async () => {
     const page = await pageJs(dist, 'embed/cook/index.html');
-    expect(page.files(page.all)).toEqual(['/embed/app.js']);
+    expect(page.files(page.all)).toEqual(['/embed/assets/app.0123456789.js']);
+    expect(embedEntryHashed(page.html, HASHED_APP_RE)).toBe(true);
+  });
+
+  it('fails the embed page when its app is not fingerprinted or missing', () => {
+    expect(embedEntryHashed('<script type="module" src="/embed/app.js"></script>', HASHED_APP_RE)).toBe(false);
+    expect(embedEntryHashed('<script src="/theme-boot.js"></script>', HASHED_APP_RE)).toBe(false);
+    expect(embedEntryHashed('<script type="module" src="/embed/assets/app.abc.js"></script>', HASHED_APP_RE)).toBe(false);
   });
 
   it('visits each file once even with cycles', async () => {

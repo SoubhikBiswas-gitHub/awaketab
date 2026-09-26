@@ -5,7 +5,8 @@
  *
  * - App shell (tool routes, locale homes, /pip, hashed JS, icons, manifests): precached, served cache-first,
  *   so the tool — and an honest pill — works offline.
- * - Content pages: stale-while-revalidate. Images: cache-first. /api/*: network only. /embed/*: network first.
+ * - Content pages: stale-while-revalidate. Images: cache-first. /api/*: network only. /embed/*: network first,
+ *   except the content-hashed /embed/assets/* (cache-first).
  * - Update flow is `prompt`: a new worker waits until the page posts SKIP_WAITING, which the island does only
  *   when no session is active (FR-PWA-01). It never skips waiting on its own.
  */
@@ -33,6 +34,13 @@ const expire = (maxEntries: number): TPlugin =>
   new ExpirationPlugin({ maxEntries, maxAgeSeconds: 30 * DAY_S }) as unknown as TPlugin;
 
 registerRoute(({ url }) => sameOrigin(url) && url.pathname.startsWith('/api/'), new NetworkOnly());
+
+// /embed/assets/app.<hash>.js is content-hashed (scripts/embed-loader.mjs --fingerprint): cache-first is safe.
+// It is never precached — the embed iframe is not part of the tool's offline shell.
+registerRoute(
+  ({ url }) => sameOrigin(url) && url.pathname.startsWith('/embed/assets/'),
+  new CacheFirst({ cacheName: 'at-embed-assets', plugins: [expire(4)] }),
+);
 
 registerRoute(
   ({ url }) => sameOrigin(url) && url.pathname.startsWith('/embed/'),

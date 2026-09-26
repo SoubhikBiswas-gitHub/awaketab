@@ -1,8 +1,19 @@
 // @vitest-environment node
-import { readFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { gzipSync } from 'node:zlib';
-import { describe, expect, it } from 'vitest';
-import { buildApp, buildLoader, frameTitles, LOADER_OUT } from './embed-loader.mjs';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import {
+  APP_URL,
+  buildApp,
+  buildLoader,
+  fingerprintApp,
+  frameTitles,
+  HASHED_APP_RE,
+  hashedAppUrl,
+  LOADER_OUT,
+} from './embed-loader.mjs';
 
 // docs/11 §1, §6 and docs/00 §11: the loader sites paste is ≤ 3 KB gz and the committed public/embed.js is exactly
 // what src/tool/embed/loader.ts builds to (so a reviewer reads the source, and a site loads the same thing).
@@ -40,5 +51,53 @@ describe('/embed/app.js (the iframe app bundle)', () => {
     const code = await buildApp();
     expect(code).not.toMatch(/\bimport\s*\(\s*["']|\bfrom\s*["']/u);
     expect(gzipSync(code, { level: 9 }).byteLength).toBeLessThanOrEqual(APP_BUDGET);
+  });
+});
+
+describe('fingerprintApp (post-build, serves the iframe app immutable)', () => {
+  let dist = '';
+  const put = async (rel: string, body: string) => {
+    await mkdir(path.dirname(path.join(dist, rel)), { recursive: true });
+    await writeFile(path.join(dist, rel), body);
+  };
+
+  beforeEach(async () => {
+    dist = await mkdtemp(path.join(tmpdir(), 'at-embed-fp-'));
+  });
+  afterEach(async () => {
+    await rm(dist, { recursive: true, force: true });
+  });
+
+  it('moves the app to a content-hashed /embed/assets URL and rewrites the page that loads it', async () => {
+    await put('embed/app.js', 'export const app=1;');
+    await put('embed/cook/index.html', `<script src="/theme-boot.js"></script><script type="module" src="${APP_URL}"></script>`);
+    await put('index.html', '<script type="module" src="/_astro/index.js"></script>');
+    await put('embed.js', '/*! loader */');
+
+    const { url, pages } = await fingerprintApp(dist);
+    expect(url).toMatch(HASHED_APP_RE);
+    expect(url).toBe(hashedAppUrl('export const app=1;'));
+    expect(pages).toEqual(['embed/cook/index.html']);
+    expect(await readFile(path.join(dist, url.slice(1)), 'utf8')).toBe('export const app=1;');
+    await expect(stat(path.join(dist, 'embed/app.js'))).rejects.toThrow();
+    const html = await readFile(path.join(dist, 'embed/cook/index.html'), 'utf8');
+    expect(html).toContain(`<script type="module" src="${url}"></script>`);
+    expect(html).not.toContain(APP_URL);
+    // The host-page loader keeps its stable URL; other pages are untouched.
+    expect(await readFile(path.join(dist, 'embed.js'), 'utf8')).toBe('/*! loader */');
+    expect(await readFile(path.join(dist, 'index.html'), 'utf8')).toBe('<script type="module" src="/_astro/index.js"></script>');
+  });
+
+  it('changes the URL when the bundle changes', () => {
+    expect(hashedAppUrl('a')).not.toBe(hashedAppUrl('b'));
+    expect(hashedAppUrl('a')).toBe(hashedAppUrl('a'));
+  });
+
+  it('fails loudly when no built page references the app, or the app is missing', async () => {
+    await put('embed/app.js', 'export const app=1;');
+    await put('embed/cook/index.html', '<p>no script</p>');
+    await expect(fingerprintApp(dist)).rejects.toThrow(/no built page/u);
+    await rm(path.join(dist, 'embed/app.js'));
+    await expect(fingerprintApp(dist)).rejects.toThrow();
   });
 });
