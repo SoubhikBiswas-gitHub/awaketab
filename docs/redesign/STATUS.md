@@ -2,7 +2,7 @@
 
 Auto-generated from the canvas status table. Canvas: https://claude.ai/artifact/MArJ4zoZRiYmppEd9hXv5e
 
-Updated Sunday, 27 September 2026 · 4:34 AM
+Updated Sunday, 27 September 2026 · 4:47 AM
 
 | # | Item | Canvas design | Real app |
 |---|---|---|---|
@@ -59,7 +59,7 @@ Updated Sunday, 27 September 2026 · 4:34 AM
 | 43 | Audit A: tool, ambient, PiP, banners, content (overflow, contrast, targets) | ✅ on canvas | ⬜ |
 | 44 | Audit B: Pro, extension, embed, brand + cross-board consistency | ✅ on canvas | ⬜ |
 | 46 | Design director critique + system drift report (design-critique.md) | ✅ on canvas | ⬜ |
-| 47 | Apply strict system §11 + critique fixes, batch 1 (tool, content, edge) | 🔄 building | ⬜ |
+| 47 | Apply strict system §11 + critique fixes, batch 1 (1a Main done; 1b follow-up next) | 🔄 building | ⬜ |
 | 48 | Apply strict system §11 + critique fixes, batch 2 (Pro, ext, embed, pages, assets) | 🔄 building | ⬜ |
 | 45 | Final audit: every board incl. wave 3 | ⬜ not started | ⬜ |
 | | **I · Marketing audit (senior marketing leads, docs/research/marketing-*.md)** | | |

@@ -262,9 +262,9 @@ ul,ol{padding:0;list-style:none}
           </sc-if>
 
           <sc-if value="{{isBold}}" hint-placeholder-val="{{false}}">
-            <div class="at-in" style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 20px; padding: 0 8px">
+            <div class="at-in" style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 20px; padding: 0 8px; container-type: inline-size">
               <sc-if value="{{showKicker}}" hint-placeholder-val="{{true}}"><div style="font-size: {{fk}}; line-height: 1.3; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{kickerInk}}">{{kicker}}</div></sc-if>
-              <div role="timer" aria-label="{{timerAria}}" style="font-weight: 600; font-size: {{boldSize}}; line-height: 0.9; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{numColor}}; transition: color .6s">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
+              <div role="timer" aria-label="{{timerAria}}" style="font-weight: 600; font-size: min({{boldSize}}, {{boldFit}}); line-height: 0.9; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{numColor}}; transition: color .6s">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
               <div aria-hidden="true" style="position: relative; height: 12px; border-radius: 999px; background: {{t.track}}; overflow: hidden">
                 <div class="at-lin" style="position: absolute; inset: 0; border-radius: 999px; overflow: hidden; background: {{faceColor}}; transform-origin: left center; transform: scaleX({{p}}); box-shadow: 0 0 18px {{toneGlow}}">
                   <sc-if value="{{live}}" hint-placeholder-val="{{true}}"><div class="at-shim" style="position: absolute; top: 0; bottom: 0; width: 26%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)"></div></sc-if>
@@ -1435,7 +1435,7 @@ class Component extends DCLogic {
       numColor: final ? lampText : live || ask ? t.ink : t.ink2, hzSecs: this.rgba('#F6F2EA', 0.8),
       timerAria: shown === null ? 'No limit' : (lowBatt ? 'Stopped with ' : '') + (multi ? this.words(shown) : bigA + bigB) + ' ' + (live && noLimit ? 'awake so far' : 'left'),
       ofTotal: noLimit ? 'no limit' : 'of ' + this.words(total),
-      ringSize: multi ? '42px' : hours ? '60px' : '76px', boldSize: multi ? '62px' : hours ? '96px' : '128px', hzSize: multi ? '34px' : hours ? '48px' : '64px', tideSize: multi ? '50px' : hours ? '64px' : '84px',
+      ringSize: multi ? '42px' : hours ? '60px' : '76px', boldSize: multi ? '62px' : hours ? '96px' : '128px', boldFit: multi ? '16cqi' : hours ? '22cqi' : '34cqi', /* Bold never clips, even in a wide system-ui */ hzSize: multi ? '34px' : hours ? '48px' : '64px', tideSize: multi ? '50px' : hours ? '64px' : '84px',
       arcDash: DASH[mode] ?? (p <= 0 ? '0.01 ' + C : (C * p).toFixed(1) + ' ' + C.toFixed(1)),
       arcOp: mode === 'ready' || lowBatt ? 0.45 : mode === 'ended' ? 0 : 1, glowOp: live ? 0.45 : 0,
       trackDash: mode === 'fallback' || (ask && s.askFrom === 'fallback') ? '3 9' : 'none',

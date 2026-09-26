@@ -86,7 +86,7 @@ Tool pages use **system fonts only** (contract). Canvas mocks use Geist / Geist 
 | Small counters (≤ 28 px: PiP, embed, extension badge text) | `ui-monospace` allowed, but only with a plain (unslashed) zero | Geist Mono |
 | Horizon / Tide digits | `system-ui` weight 200 | Geist 200 |
 
-Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · button 15–17 · date/time line 15 · digits: ring 76 (60 with hours), bold 128 (96), horizon 64 (48), tide 84 (64); desktop scales the face ×1.55.
+Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · button 15–17 · date/time line 15 · digits: ring 76 (60 with hours), bold 128 (96), horizon 64 (48), tide 84 (64); desktop scales the face ×1.55. Bold digits are capped to the face width (`min(128px, 34cqi)`, `min(96px, 22cqi)` with hours, `min(62px, 16cqi)` multi-day) so a wide system font never clips them.
 
 ## 4. Time and dates
 

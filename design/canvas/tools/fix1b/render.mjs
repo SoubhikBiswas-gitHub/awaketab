@@ -105,6 +105,9 @@ for (const [file, b] of Object.entries(boards)) {
         }
       }
       document.body.appendChild(renderFile(name, {}));
+      // wait for helmet stylesheets and the mock web fonts, else digits are measured in a fallback font
+      await Promise.all([...document.querySelectorAll('link[rel=stylesheet]')].map((l) => l.sheet ? 0 : new Promise((r) => { l.onload = l.onerror = r; setTimeout(r, 4000); })));
+      await Promise.all(['200', '300', '400', '500', '600'].map((w) => document.fonts.load(w + ' 16px Geist').catch(() => 0)).concat([document.fonts.load('400 16px "Geist Mono"').catch(() => 0), document.fonts.load('600 16px "Space Grotesk"').catch(() => 0)]));
       await document.fonts.ready;
       await new Promise((r) => setTimeout(r, 500));
       const parseC = (c) => { const m = /rgba?\(([^)]+)\)/.exec(c || ''); if (!m) return null; const p = m[1].split(/[ ,/]+/).filter(Boolean).map(Number); return [p[0], p[1], p[2], p.length > 3 ? p[3] : 1]; };

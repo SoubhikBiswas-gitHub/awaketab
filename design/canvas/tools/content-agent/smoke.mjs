@@ -1,9 +1,10 @@
 // Content agent: writes wrapper boards, then smoke-tests ContentArticle, HubFor and HomeBelow.
+// Wrappers are only rewritten with WRITE_WRAPPERS=1 (their heights were updated by fix batch 1b).
 import { readFileSync, writeFileSync } from 'node:fs';
 const D = '/home/user/awaketab/design/canvas/project/';
 
 // 1. Wrappers (same shape as gen.mjs).
-const wrap = (file, name, title, props, w, h) => writeFileSync(D + file, `<!doctype html>
+const wrap = (file, name, title, props, w, h) => process.env.WRITE_WRAPPERS && writeFileSync(D + file, `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
