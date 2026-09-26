@@ -185,13 +185,15 @@ Settings → "Delete all local data": removes every `at.*` key and `sessionStora
 
 | Key | Value | TTL / lifecycle |
 |---|---|---|
-| `lic:{keyHash}` | `{ plan, status: 'active'|'revoked'|'refunded'|'expired', keyEnc, polarOrderId, customerId, activations: [{ devHash, label, at }], limit, exp, createdAt, updatedAt }` | until `exp + 1 y`, then expire |
+| `lic:{keyHash}` | `{ plan, status: 'active'|'canceled'|'revoked'|'refunded'|'expired', keyEnc, polarOrderId, customerId, activations: [{ devHash, label, at }], limit, exp, createdAt, updatedAt }` | until `exp + 1 y`, then expire |
 | `cus:{customerId}` | `string[]` of keyHashes | with the licences |
 | `wh:{eventId}` | `{ at }` | 30 days (idempotency) |
 | `ord:{orderId}` | `{ plan, amountCents, currency, customerId, at }` | 2 years (reporting) |
 | `embed:{domain}` | `{ keyHash, attribution: false, theme: { accent, scheme }, expiresAt }` | until `expiresAt + 30 d` |
 | `rl:{route}:{ipHash}:{bucket}` | counter | 120 s |
 | `rating:{id}` | `{ stars, text?, locale, ver, at }` | 2 years; exported nightly to `data/ratings.json` (aggregate only) |
+
+`canceled` = the subscription will not renew; tokens keep working until `exp` (docs/09 §2.7). `revoked` and `refunded` are terminal. `activations[].at` is the device's last-seen time (refreshed by `/api/license/validate`); activate evicts a device unseen for 90 days. `wh:{eventId}` is written after the event is handled, so a failed delivery is re-processed on Polar's retry.
 
 `keyHash = sha256(licenceKey)` hex; `devHash = sha256(deviceId)`; `ipHash = sha256(RATE_LIMIT_SALT + ip)` — the salt rotates quarterly so hashes cannot be joined across quarters. The raw key is stored only as `keyEnc` (AES-256-GCM with `LICENSE_KEY_ENC_KEY`) because Polar's deactivate endpoint needs it.
 

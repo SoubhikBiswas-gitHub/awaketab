@@ -40,7 +40,7 @@ Related docs: `15-implementation-plan.md` (phases, gates) · `13-testing-strateg
 
 **Security and headers**
 - [ ] `_headers` deployed: CSP (report-only on content routes for 2 weeks, enforced on tool routes), `Permissions-Policy: screen-wake-lock=(self), picture-in-picture=(self)`, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, COOP, `X-Frame-Options: DENY` except `/embed/*`.
-- [ ] `/api/*` `no-store`; rate limiting proven with a burst test; no IP stored (KV/AE inspection).
+- [ ] `/api/*` `no-store`; rate limiting proven with a burst test; no IP stored (KV/AE inspection). Automated in `pnpm test:functions` (burst → 429 + `Retry-After` and `ipTraces()` over every KV/AE write, `13-testing-strategy.md` §9); still spot-check production KV once.
 - [ ] Secrets set in production and preview; `.dev.vars.example` complete.
 
 **Pages and legal**
@@ -88,8 +88,8 @@ Related docs: `15-implementation-plan.md` (phases, gates) · `13-testing-strateg
 
 **Pro launch (G2)**
 - [ ] Polar: products `pro_yearly`, `pro_lifetime` (+ `LAUNCH19` discount attached to the lifetime checkout link, ends Pro launch + 90 days), `biz_embed_site_yearly`, `biz_kiosk_site`, `biz_kiosk_5`; benefits `lk_*` with activation limits; webhook endpoint set with the production secret; tax settings confirmed (MoR).
-- [ ] Production test purchase in each plan with a real card, refund within 14 days, revocation observed in KV and in the app (`revoked` toast) — screenshots in `docs/metrics/`.
-- [ ] Activation on web and extension counts as separate devices; 6th device → `activation_limit`; `/pro/manage` deactivation works.
+- [ ] Production test purchase in each plan with a real card, refund within 14 days, revocation observed in KV and in the app (`revoked` toast) — screenshots in `docs/metrics/`. Confirm the live `order.refunded` / `subscription.revoked` payloads actually flip `lic:` status: the function suites cover key-bearing payloads only (see the known gap in `13-testing-strategy.md` §9).
+- [ ] Activation on web and extension counts as separate devices; 6th device → `activation_limit`; `/pro/manage` deactivation works. (Server side covered by `pnpm test:functions`: LIC-02–LIC-04, LIC-12; this item is the live check.)
 - [ ] Offline verification: kill network → Pro features remain until `exp`.
 - [ ] `/pro` copy: prices in USD, "taxes at checkout" note, refund policy, what Free includes (everything that matters), no dark patterns.
 - [ ] `ads.free` verified: Pro user sees no ads on content pages.
@@ -97,8 +97,8 @@ Related docs: `15-implementation-plan.md` (phases, gates) · `13-testing-strateg
 
 **Refund runbook**
 1. Customer emails support@awaketab.com or uses the Polar portal within 14 days.
-2. Polar issues `order.refunded` / `refund.created` → `POST /api/webhooks/polar` sets `lic:{keyHash}.status = refunded` (idempotent via `wh:{eventId}`).
-3. Next `POST /api/license/validate` returns `{ revoked: true }`; the client removes `at.v1.license` and shows `license.error.revoked`.
+2. Polar issues `order.refunded` / `refund.created` → `POST /api/webhooks/polar` sets `lic:{keyHash}.status = refunded` (idempotent via `wh:{eventId}`, written only after the event is handled, so a failed delivery is retried). Covered by `apps/web/functions/api/webhooks/polar.test.ts` (LIC-10, LIC-11).
+3. Next `POST /api/license/validate` returns `{ revoked: true, reason: 'refunded' }`; the client removes `at.v1.license` and shows `license.error.revoked`.
 4. Do not write IPs. Confirm KV has no `cf-connecting-ip` values. Screenshot Polar refund + KV status into `docs/metrics/`.
 
 **Uptime**

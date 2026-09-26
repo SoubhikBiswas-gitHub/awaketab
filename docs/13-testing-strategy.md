@@ -1,6 +1,6 @@
 # 13 · Testing strategy
 
-Status: v1.2 · 2026-09-26 · Owner: Soubhik
+Status: v1.3 · 2026-09-26 · Owner: Soubhik
 
 **Purpose.** The product's one promise is "the pill never lies". This document defines the tests that prove it — from the state machine to real devices — plus the SEO, performance, accessibility and API checks that protect the other goals. Everything here is automated except the device matrix, whose results are published as `/learn/how-we-tested`.
 
@@ -14,7 +14,7 @@ Related docs: `04-engine-spec.md` (what is being tested) · `08-data-storage.md`
 |---|---|---|---|
 | Unit (`packages/*`, `apps/web/src/lib`) | Vitest + fake timers | every PR | yes |
 | DOM/component (`apps/web/src/tool`) | Vitest + happy-dom | every PR | yes |
-| Pages Functions | Vitest with `@cloudflare/vitest-pool-workers` (Miniflare) | every PR | yes |
+| Pages Functions | Vitest (node) against the handlers with in-memory KV / Analytics Engine / Polar fakes (`apps/web/test/functions/harness.ts`; §9 says why not Miniflare) | every PR | yes |
 | E2E (chromium) | Playwright | every PR (preview URL) | yes |
 | E2E (firefox, webkit) + visual regression | Playwright | nightly + release | release only |
 | Accessibility | axe-core in Playwright + manual SR checklist | every PR (axe) | yes (axe) |
@@ -168,9 +168,23 @@ Every indexable HTML file has exactly one `<h1>`; `<title>` ≤ 60 chars (CJK �
 
 ---
 
-## 9. Pages Functions tests (Miniflare)
+## 9. Pages Functions tests (`pnpm test:functions`)
 
-`/api/e`: valid batch 200; > 20 events 413; unknown field dropped; rate limit 429 after 60 req/min per IP hash; nothing written contains an IP. `/api/license/activate`: happy path mints a verifiable ES256 token; sixth device → `activation_limit`; revoked → `revoked`; Polar 5xx → `polar_unavailable` with no KV write. `/api/license/validate`: revoked in KV → `{ revoked:true }`. `/api/webhooks/polar`: bad HMAC 401; duplicate `eventId` 200 no-op; `subscription.revoked` flips status. `/api/embed/config`: unknown domain → `{ licensed:false }` cached; `/api/rating`: stars outside 1–5 → 400.
+**Approach.** `@cloudflare/vitest-pool-workers` (0.22.0, latest as of 2026-09-26) peers `vitest ^4.1`; the repo pins vitest 5.0.0, so the suites call each `onRequest*` handler in Node with a realistic `EventContext` and faithful fakes from `apps/web/test/functions/harness.ts`: `MemoryKv` (Cloudflare validation — `expirationTtl ≥ 60`, key ≤ 512 bytes, string values, TTL expiry on the fake clock, injectable put failures, full write log), `MemoryAnalytics` (1 index ≤ 96 B, ≤ 20 blobs ≤ 16 KB total, ≤ 20 doubles), and `FakePolar` (stateful sandbox: validate / activate with the activation limit / deactivate / checkouts, bearer + organisation checks, HTTP and network outages) behind a stubbed `fetch`. Secrets come from `apps/web/.dev.vars.example`; its signing pair matches `LICENSE_PUBLIC_KEYS[1]`, so minted tokens are verified with `verifyLicenseToken` from `@awaketab/core`. `ipTraces()` scans every KV key/value written (including overwritten ones) and every AE point for the request IP and its unsalted SHA-256. Revisit Miniflare when the pool supports vitest 5. No devDependencies were added.
+
+| Route | File | Covered |
+|---|---|---|
+| `POST /api/e` | `api/e.test.ts` | valid batch 200; unknown event and fields dropped; > 20 events 413; > 8 KB 413; non-array / non-JSON 400; 429 at `RATE_MAX` per salted IP hash with `Retry-After`; counter key `rl:e:{ipHash}:{bucket}` TTL 240 s; no request IP (IPv4, IPv6, `x-forwarded-for`) or unsalted IP hash in any KV or AE write; points inside AE limits |
+| `POST /api/csp` | `api/csp.test.ts` | Reporting API (`application/reports+json`) and legacy `csp-report` bodies → one `client_error` point, `code = csp`, pathname only; malformed bodies still counted; no IP / UA / blocked URL / query stored; no KV writes |
+| `POST /api/rating` | `api/rating.test.ts` | `rating:{uuid}` = `{ stars, text?, locale, ver, at }` TTL 2 y; text ≤ 500, locale ≤ 16; stars outside integer 1–5, non-JSON → 400 with no write; allow-list only; 11th per window 429 + `Retry-After`; no IP stored |
+| `POST /api/license/activate` | `api/license/activate.test.ts` | token verifies with the shipped public key, claims and header exact, yearly `exp = periodEnd + 7 d` (LIC-05), lifetime rolling 90 d also on re-activation (LIC-06); `lic:` / `cus:` per docs/08 §4, key only as AES-GCM `keyEnc`; Polar call sequence and auth; key normalisation; same device → no Polar call (LIC-02); 6th device 409 with 5 labels (LIC-03); > 90-day device evicted on Polar (LIC-04); Polar 403 → `activation_limit`; unknown key / unmapped benefit 404 with no licence write (LIC-01); Polar not granted, KV revoked/refunded 403; Polar HTTP and network outage 502 with no KV write; missing fields / bad UUID / bad key / non-JSON 400; label sanitising; 11th call 429 + `Retry-After` (LIC-15); `checkoutId` flow; yearly `exp` refreshed from Polar |
+| `POST /api/license/validate` | `api/license/validate.test.ts` | fresh token (docs/00 §9) verified by core; last-seen refresh protects active devices from eviction; expired-but-signed lifetime token re-minted (LIC-07); revoked / refunded / missing record → `{ revoked: true, reason }` (LIC-08); `canceled` still valid; deactivated device → `{ revoked: true, reason: 'deactivated' }`; tampered payload, foreign signing key, malformed tokens 401; non-JSON 400; shared licence rate limit |
+| `POST /api/license/deactivate` | `api/license/deactivate.test.ts` | self and other device (by `devHash`, LIC-12) removed on Polar with the decrypted key and in KV; slot freed at the limit; expired token accepted; Polar 404 (already gone) still removes; Polar down 502 with KV unchanged; unknown device 400; bad token 401; unknown licence 404; rate limit |
+| `POST /api/webhooks/polar` | `api/webhooks/polar.test.ts` | valid Standard Webhooks HMAC 200 and `wh:{id}` TTL 30 d; multi-signature header; bad / foreign-secret / altered-body signature 401 with no writes; timestamp outside ±300 s and missing headers 400 with no writes (LIC-09); replay is a no-op (LIC-10); failed delivery is re-processed on retry (marker written last); `order.created` → `ord:` (2 y), `lic:`, `cus:`; late create events keep activations/status; embed domain record; `subscription.canceled` → `canceled`, `uncanceled` → `active`; `subscription.revoked` / `benefit_grant.revoked` → `revoked` and validate/activate follow; `order.refunded` / `refund.created` → `refunded`, activate 403 (LIC-11); terminal states never re-opened; unknown types and bad JSON ignored |
+| `GET /api/health` | `api/health.test.ts` | `{ ok, version }`, `no-store` |
+| `GET /api/embed/config` | `api/embed/config.test.ts` | owned by the embed suite (unknown domain → `{ licensed: false }` cached) |
+
+**Known gap (tracked as `it.todo`).** The webhook handler matches licences by `data.license_key.key`. Polar's subscription / refund / benefit-grant payloads carry `customer_id`, `subscription_id`, `order_id` and `properties.license_key_id` instead, and docs/09 §2.7's `cus:{customerId}` fan-out needs subscription and licence-key ids that `lic:` records (docs/08 §4) do not hold yet. Until that lands, revocation in production relies on a key-bearing payload.
 
 ---
 
