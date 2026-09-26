@@ -272,7 +272,7 @@ function atHeader(c, t, layout, current, bead) {
     nav: AT_NAV.map(([label, href, id]) => ({
       label, href, cur: id === current ? 'page' : 'false',
       style: 'display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 0 12px; box-sizing: border-box; text-decoration: none; font-size: 15px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2),
-      dot: 'width: 6px; height: 6px; border-radius: 999px; background: ' + (id === current ? t.lamp : 'transparent')
+      dot: id === current ? 'width: 6px; height: 6px; border-radius: 999px; background: ' + t.lamp : 'display: none'
     })),
     bar: 'position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line,
     ind: 'position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: ' + t.raised + '; transform: translateX(' + order.indexOf(theme) * 44 + 'px)',
