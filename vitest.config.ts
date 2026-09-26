@@ -16,6 +16,7 @@ export default defineConfig({
       'apps/web/test/lib/**/*.test.ts',
       'apps/web/test/i18n/**/*.test.ts',
       'packages/*/test/**/*.test.ts',
+      'apps/extension/test/**/*.test.ts',
     ],
     environment: 'happy-dom',
     setupFiles: ['./vitest.setup.ts'],
