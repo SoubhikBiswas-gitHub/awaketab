@@ -336,5 +336,6 @@
   "settings.ambient.clock12h": "12-Stunden-Anzeige",
   "settings.notifications.unavailable": "Auf iPhone und iPad benötigen Benachrichtigungen die installierte App.",
   "pip.add15.label": "15 Minuten hinzufügen",
-  "pip.empty": "Starten Sie eine Sitzung in"
+  "pip.empty": "Starten Sie eine Sitzung in",
+  "ambient.focus.today": "{n, plural, one {# Fokusblock heute} other {# Fokusblöcke heute}}"
 }

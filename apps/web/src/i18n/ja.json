@@ -336,5 +336,6 @@
   "settings.ambient.clock12h": "12時間表示",
   "settings.notifications.unavailable": "iPhone と iPad で通知を使うには、インストールしたアプリが必要です。",
   "pip.add15.label": "15分追加",
-  "pip.empty": "セッションの開始はこちら："
+  "pip.empty": "セッションの開始はこちら：",
+  "ambient.focus.today": "{n, plural, one {今日の集中ブロック：#回} other {今日の集中ブロック：#回}}"
 }

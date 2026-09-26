@@ -79,6 +79,8 @@ export function buildHeatmap(
 
 export interface IStatsSummary {
   todayMinutes: number;
+  /** Sessions ended today (`daySessions`); 0 when the record predates per-day counts. */
+  todaySessions: number;
   weekMinutes: number;
   streakDays: number;
   totalMinutes: number;
@@ -87,15 +89,23 @@ export interface IStatsSummary {
 }
 
 export function summarise(
-  stats: { days: Record<string, number>; totalMinutes: number; sessions: number; currentStreakDays: number },
+  stats: {
+    days: Record<string, number>;
+    daySessions?: Record<string, number>;
+    totalMinutes: number;
+    sessions: number;
+    currentStreakDays: number;
+  },
   now = Date.now(),
   timeZone?: string,
 ): IStatsSummary {
   const base = todayLocal(now, timeZone);
   let week = 0;
   for (let i = 0; i < 7; i += 1) week += stats.days[ymd(localDay(base, -i))] ?? 0;
+  const today = dayKey(now, timeZone);
   return {
-    todayMinutes: stats.days[dayKey(now, timeZone)] ?? 0,
+    todayMinutes: stats.days[today] ?? 0,
+    todaySessions: stats.daySessions?.[today] ?? 0,
     weekMinutes: week,
     streakDays: stats.currentStreakDays,
     totalMinutes: stats.totalMinutes,

@@ -336,5 +336,6 @@
   "settings.ambient.clock12h": "12 小时制",
   "settings.notifications.unavailable": "在 iPhone 和 iPad 上，需要安装应用才能接收通知。",
   "pip.add15.label": "增加 15 分钟",
-  "pip.empty": "开始会话请前往"
+  "pip.empty": "开始会话请前往",
+  "ambient.focus.today": "{n, plural, one {今天已完成 # 个专注时段} other {今天已完成 # 个专注时段}}"
 }
