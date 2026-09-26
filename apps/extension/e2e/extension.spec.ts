@@ -57,14 +57,22 @@ test('a finite preset shows minutes left on the badge; keyboard shortcuts work',
   await expect(pill(page)).toHaveText('Ready');
 });
 
-test('System level: requestKeepAwake("system"), SYS badge and the honest secondary line', async ({ context, extensionId }) => {
+test('System level: requestKeepAwake("system"), SYS badge, and the pill never says "Screen awake" (D-02)', async ({ context, extensionId }) => {
   const page = await openPopup(context, extensionId);
   await page.locator('input[name="level"][value="system"]').check({ force: true });
   await expect(page.locator('[data-level-help]')).toHaveText('Keeps the computer awake. The screen may still dim or turn off.');
   await page.locator('[data-preset="pinf"]').click();
-  await expect(page.locator('[data-pill-extra]')).toHaveText('System awake — screen may dim');
+  await expect(page.locator('[data-pill]')).toHaveAttribute('data-lock', 'held');
+  await expect(pill(page)).toHaveText('System awake');
+  await expect(page.locator('[data-pill-extra]')).toHaveText('Screen may dim or lock');
+  await expect(page.locator('[data-pill]')).not.toContainText('Screen awake');
   await expect.poll(() => badge(page)).toBe('SYS');
   await expect.poll(async () => (await powerLog(page)).filter((c) => c.call === 'request').at(-1)?.level).toBe('system');
+  // Switching back to display level mid-session restores the shared held pill and drops the secondary line.
+  await page.locator('input[name="level"][value="display"]').check({ force: true });
+  await expect(pill(page)).toHaveText('Screen awake');
+  await expect(page.locator('[data-pill-extra]')).toBeHidden();
+  await expect.poll(() => badge(page)).toBe('ON');
 });
 
 test('until-time starts an until session', async ({ context, extensionId }) => {

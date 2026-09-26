@@ -408,7 +408,7 @@
   "ext.level.display.help": "保持屏幕常亮，电脑也不会休眠。",
   "ext.level.system": "系统",
   "ext.level.system.help": "电脑保持唤醒，但屏幕仍可能变暗或关闭。",
-  "ext.pill.system": "系统保持唤醒 — 屏幕可能变暗",
+  "ext.pill.system": "屏幕可能变暗或锁定",
   "ext.popup.start": "开始",
   "ext.popup.open": "打开 AwakeTab",
   "ext.popup.limits": "只要 Chrome 在运行就有效，即使标签页被隐藏或窗口已最小化。合上笔记本盖子时无法阻止睡眠。",
@@ -492,5 +492,6 @@
   "page.extension.permissions.notifications": "notifications（可选）— 在计时结束时通知你。",
   "page.extension.permissions.sites": "网站访问权限（可选，每次一个网站）— 在你选定的网站上自动启动。默认不访问任何网站。",
   "page.extension.privacy": "匿名使用统计默认关闭。扩展从不发送网址、标签页标题或网站名称，也不显示广告。",
-  "page.extension.web": "不想安装任何东西？网页版会在标签页可见时让屏幕保持常亮。"
+  "page.extension.web": "不想安装任何东西？网页版会在标签页可见时让屏幕保持常亮。",
+  "ext.pill.systemHeld": "系统保持唤醒"
 }

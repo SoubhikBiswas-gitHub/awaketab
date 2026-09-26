@@ -408,7 +408,7 @@
   "ext.level.display.help": "画面をオンのままにし、コンピューターもスリープさせません。",
   "ext.level.system": "システム",
   "ext.level.system.help": "コンピューターはスリープしませんが、画面は暗くなったり消えたりすることがあります。",
-  "ext.pill.system": "システム起動中 — 画面は暗くなることがあります",
+  "ext.pill.system": "画面が暗くなったりロックされたりすることがあります",
   "ext.popup.start": "開始",
   "ext.popup.open": "AwakeTab を開く",
   "ext.popup.limits": "Chrome の起動中は、タブが非表示でもウィンドウが最小化されていても動作します。ノートパソコンのふたを閉じたときのスリープは防げません。",
@@ -492,5 +492,6 @@
   "page.extension.permissions.notifications": "notifications（任意）— タイマーの終了を知らせるため。",
   "page.extension.permissions.sites": "サイトへのアクセス（任意・1 サイトずつ）— 選んだサイトで自動的に開始するため。デフォルトではどのサイトにもアクセスしません。",
   "page.extension.privacy": "匿名の利用統計はデフォルトでオフです。拡張機能が URL・タブのタイトル・サイト名を送ることはなく、広告も表示しません。",
-  "page.extension.web": "何もインストールしたくない場合は、Web アプリでタブが表示されているあいだ画面をオンに保てます。"
+  "page.extension.web": "何もインストールしたくない場合は、Web アプリでタブが表示されているあいだ画面をオンに保てます。",
+  "ext.pill.systemHeld": "システム起動中"
 }

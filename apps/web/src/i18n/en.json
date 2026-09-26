@@ -435,7 +435,7 @@
   "ext.level.display.help": "Keeps the screen on and the computer awake.",
   "ext.level.system": "System",
   "ext.level.system.help": "Keeps the computer awake. The screen may still dim or turn off.",
-  "ext.pill.system": "System awake — screen may dim",
+  "ext.pill.system": "Screen may dim or lock",
   "ext.popup.start": "Start",
   "ext.popup.open": "Open AwakeTab",
   "ext.popup.limits": "Works while Chrome is running, even with the tab hidden or the window minimised. It can’t stop sleep when you close the lid.",
@@ -519,5 +519,6 @@
   "page.extension.permissions.notifications": "notifications (optional) — tell you when a timer ends.",
   "page.extension.permissions.sites": "Site access (optional, one site at a time) — start automatically on sites you pick. No site access by default.",
   "page.extension.privacy": "Anonymous usage statistics are off by default. The extension never sends URLs, tab titles or site names, and it shows no ads.",
-  "page.extension.web": "Rather not install anything? The web app keeps the screen awake while its tab is visible."
+  "page.extension.web": "Rather not install anything? The web app keeps the screen awake while its tab is visible.",
+  "ext.pill.systemHeld": "System awake"
 }

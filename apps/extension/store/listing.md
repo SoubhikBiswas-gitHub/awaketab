@@ -24,7 +24,7 @@ AwakeTab for Chrome keeps your display — or just your computer — awake while
 - Screen or System: keep the display on, or keep only the computer awake and let the screen dim.
 - The same presets as the AwakeTab web app: 15 minutes to 4 hours, until a time, or until you stop.
 - The toolbar badge shows ON, SYS or the minutes left. Alt+Shift+A toggles it from any tab.
-- An honest status: the popup says "Screen awake" only after Chrome has accepted the request.
+- An honest status: the popup says "Screen awake" only after Chrome has accepted the request, and "System awake" when only the computer is kept awake.
 - Optional notification when a timer ends, with +30 min and Stop buttons.
 - With AwakeTab Pro: weekly schedules, and auto-start when Chrome opens or when you visit a site you choose. Your Pro key works on five devices across the web app and the extension.
 

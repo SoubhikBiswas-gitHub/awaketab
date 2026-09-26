@@ -408,7 +408,7 @@
   "ext.level.display.help": "Garde l’écran allumé et l’ordinateur éveillé.",
   "ext.level.system": "Système",
   "ext.level.system.help": "Garde l’ordinateur éveillé. L’écran peut quand même s’assombrir ou s’éteindre.",
-  "ext.pill.system": "Système éveillé — l’écran peut s’assombrir",
+  "ext.pill.system": "L’écran peut s’assombrir ou se verrouiller",
   "ext.popup.start": "Démarrer",
   "ext.popup.open": "Ouvrir AwakeTab",
   "ext.popup.limits": "Fonctionne tant que Chrome est ouvert, même onglet masqué ou fenêtre réduite. N’empêche pas la mise en veille quand vous fermez le capot.",
@@ -492,5 +492,6 @@
   "page.extension.permissions.notifications": "notifications (facultatif) — vous prévenir à la fin d’un minuteur.",
   "page.extension.permissions.sites": "Accès aux sites (facultatif, un site à la fois) — démarrer automatiquement sur les sites choisis. Aucun accès par défaut.",
   "page.extension.privacy": "Les statistiques d’utilisation anonymes sont désactivées par défaut. L’extension n’envoie jamais d’URL, de titres d’onglets ni de noms de sites, et n’affiche aucune publicité.",
-  "page.extension.web": "Vous préférez ne rien installer ? L’application web garde l’écran allumé tant que son onglet est visible."
+  "page.extension.web": "Vous préférez ne rien installer ? L’application web garde l’écran allumé tant que son onglet est visible.",
+  "ext.pill.systemHeld": "Système éveillé"
 }

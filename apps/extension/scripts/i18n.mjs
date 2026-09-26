@@ -33,6 +33,7 @@ export const BG_KEYS = [
   'tool.pill.unsupported',
   'tool.pill.fallback',
   'ext.pill.system',
+  'ext.pill.systemHeld',
   'tool.timer.remaining',
   'stats.minutes',
   'tool.preset.p15',

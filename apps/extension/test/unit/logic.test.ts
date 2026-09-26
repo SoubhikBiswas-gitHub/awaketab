@@ -1,10 +1,11 @@
 import type { ISession } from '@awaketab/core';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { BG_KEYS, LOCALES, readCatalog } from '../../scripts/i18n.mjs';
 import { format, resolveLocale } from '../../src/i18n';
 import { parseRequest } from '../../src/messages';
 import { activeWindow, mergeWindows, scheduleAlarms, windowsOf } from '../../src/schedules';
 import { matchSite, normalizeHost, readExt, readSettings } from '../../src/settings';
-import { badgeText, formatClock, pillExtraKey, pillKey } from '../../src/status';
+import { badgeText, formatClock, pillExtraKey, pillKey, pillTextKey } from '../../src/status';
 
 const live = (patch: Partial<ISession>): ISession => ({
   v: 1,
@@ -33,6 +34,30 @@ describe('level ↔ pill mapping (docs/10 §3)', () => {
     expect(pillExtraKey('held', 'system')).toBe('ext.pill.system');
     expect(pillExtraKey('held', 'display')).toBeNull();
     expect(pillExtraKey('requesting', 'system')).toBeNull();
+  });
+
+  it('never says "Screen awake" at system level: a held system lock reads ext.pill.systemHeld (D-02)', () => {
+    expect(pillTextKey('held', 'system')).toBe('ext.pill.systemHeld');
+    expect(pillTextKey('held', 'display')).toBe('tool.pill.held');
+    expect(pillTextKey('held', null)).toBe('tool.pill.held');
+    for (const state of ['idle', 'requesting', 'lost', 'denied', 'unsupported', 'fallback'] as const) {
+      expect(pillTextKey(state, 'system')).toBe(`tool.pill.${state}`);
+      expect(pillTextKey(state, 'display')).toBe(`tool.pill.${state}`);
+    }
+  });
+
+  it('ships the system-level copy in every locale, distinct from the held pill', () => {
+    for (const locale of LOCALES) {
+      const catalog = readCatalog(locale);
+      expect(catalog['ext.pill.systemHeld'], locale).toBeTruthy();
+      expect(catalog['ext.pill.system'], locale).toBeTruthy();
+      expect(catalog['ext.pill.systemHeld'], locale).not.toBe(catalog['tool.pill.held']);
+      expect(catalog['ext.pill.system'], locale).not.toContain(catalog['tool.pill.held']);
+    }
+    const en = readCatalog('en');
+    expect(en['ext.pill.systemHeld']).toBe('System awake');
+    expect(en['ext.pill.system']).toBe('Screen may dim or lock');
+    expect(BG_KEYS).toEqual(expect.arrayContaining(['ext.pill.system', 'ext.pill.systemHeld']));
   });
 
   it('badge: ON/SYS for open-ended sessions, minutes left for finite ones, nothing unless held', () => {

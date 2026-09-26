@@ -43,7 +43,7 @@ export const SHOTS: IShot[] = [
   { file: 'screenshot-2-presets.png', headline: '15 minutes to 4 hours, until a time, or until you stop', caption: 'Presets, until-time and Alt+Shift+A from any tab.', pill: 'Ready', timer: '--:--:--', badge: '' },
   { file: 'screenshot-3-schedules.png', headline: 'Weekly schedules with Pro', caption: 'Weekdays 09:00–18:00. Overlapping windows merge.', pill: 'Screen awake', timer: '5:12:40', extra: 'Started by your schedule', badge: 'ON' },
   { file: 'screenshot-4-web-and-extension.png', headline: 'The web app and the extension, side by side', caption: 'Same vocabulary, same settings, one Pro licence.', pill: 'Screen awake', timer: '00:42', badge: 'ON' },
-  { file: 'screenshot-5-honest-limits.png', headline: 'Honest limits', caption: 'Works while Chrome runs. Cannot stop lid-close sleep. Never fakes input.', pill: 'Screen awake', timer: '1:05:00', extra: 'System awake — screen may dim', badge: 'SYS' },
+  { file: 'screenshot-5-honest-limits.png', headline: 'Honest limits', caption: 'Works while Chrome runs. Cannot stop lid-close sleep. Never fakes input.', pill: 'System awake', timer: '1:05:00', extra: 'Screen may dim or lock', badge: 'SYS' },
 ];
 
 function popupCard(shot: IShot, ring: string): IElement {

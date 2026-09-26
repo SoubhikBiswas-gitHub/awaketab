@@ -3,16 +3,27 @@ import type { TPowerLevel } from './api';
 
 /**
  * Extension level ↔ shared vocabulary (docs/10 §3). The extension adds no lock state: `display` and
- * `system` are both the `held` pill; `system` adds the secondary line `ext.pill.system`.
+ * `system` are both the `held` state. At `system` level `chrome.power` keeps the computer awake but the
+ * display may still sleep, so the pill never says "Screen awake" there (docs/19 B1, owner decision D-02):
+ * its text is `ext.pill.systemHeld` ("System awake") and the secondary line `ext.pill.system` ("Screen may
+ * dim or lock"). The web tool is unaffected.
  */
 
-export const BADGE_COLORS: Record<TPowerLevel, string> = { display: '#B86E00', system: '#2B3A67' }; // PROPOSED — add to 00-conventions.md
+export const BADGE_COLORS: Record<TPowerLevel, string> = { display: '#B86E00', system: '#2B3A67' };
 export const BADGE_TEXT_COLOR = '#FFFFFF';
 
-export type TOrigin = 'user' | 'command' | 'schedule' | 'autostart' | 'startup'; // PROPOSED — add to 00-conventions.md
+export type TOrigin = 'user' | 'command' | 'schedule' | 'autostart' | 'startup';
 
 export function pillKey(lock: TLockState): `tool.pill.${TLockState}` {
   return `tool.pill.${lock}`;
+}
+
+/**
+ * The popup pill's primary text for a lock state at a level: `ext.pill.systemHeld` for a held system-level
+ * lock, otherwise the shared `tool.pill.<state>` copy (docs/00 §5.1).
+ */
+export function pillTextKey(lock: TLockState, level: TPowerLevel | null): `tool.pill.${TLockState}` | 'ext.pill.systemHeld' {
+  return lock === 'held' && level === 'system' ? 'ext.pill.systemHeld' : pillKey(lock);
 }
 
 /** The secondary line under the pill, or `null`. Only a held system-level lock gets one. */

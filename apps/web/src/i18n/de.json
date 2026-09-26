@@ -408,7 +408,7 @@
   "ext.level.display.help": "Hält den Bildschirm an und den Computer wach.",
   "ext.level.system": "System",
   "ext.level.system.help": "Hält den Computer wach. Der Bildschirm kann trotzdem dunkler werden oder sich ausschalten.",
-  "ext.pill.system": "System wach – Bildschirm kann dunkler werden",
+  "ext.pill.system": "Bildschirm kann dunkler werden oder sperren",
   "ext.popup.start": "Starten",
   "ext.popup.open": "AwakeTab öffnen",
   "ext.popup.limits": "Funktioniert, solange Chrome läuft – auch bei verstecktem Tab oder minimiertem Fenster. Beim Zuklappen des Deckels kann es den Ruhezustand nicht verhindern.",
@@ -492,5 +492,6 @@
   "page.extension.permissions.notifications": "notifications (optional) – Sie benachrichtigen, wenn ein Timer endet.",
   "page.extension.permissions.sites": "Websitezugriff (optional, jeweils eine Website) – automatisch auf Websites Ihrer Wahl starten. Standardmäßig kein Websitezugriff.",
   "page.extension.privacy": "Anonyme Nutzungsstatistiken sind standardmäßig aus. Die Erweiterung sendet nie URLs, Tab-Titel oder Websitenamen und zeigt keine Werbung.",
-  "page.extension.web": "Lieber nichts installieren? Die Web-App hält den Bildschirm wach, solange ihr Tab sichtbar ist."
+  "page.extension.web": "Lieber nichts installieren? Die Web-App hält den Bildschirm wach, solange ihr Tab sichtbar ist.",
+  "ext.pill.systemHeld": "System wach"
 }

@@ -37,14 +37,14 @@ import {
   isLive,
   levelOf,
   originOf,
-  pillKey,
+  pillTextKey,
   remainingMs,
   type TOrigin,
 } from './status';
 import { createChromeStorageAdapter } from './storage';
 import { createTelemetry } from './telemetry';
 
-// PROPOSED — add to 00-conventions.md (§13.9): alarm names, cadences and windows of the extension worker.
+// Alarm names, cadences and windows of the extension worker (docs/00 §13.9).
 export const ALARMS = { tick: 'at.tick', end: 'at.end', license: 'at.license' } as const;
 /** docs/10 §4: MV3 alarms tick at most every 30 s. */
 export const TICK_PERIOD_MIN = 0.5;
@@ -461,7 +461,8 @@ export function createController(opts: IControllerOptions): IController {
     const at = now();
     const text = badgeText(lock.state, lvl, session, at);
     const held = lock.state === 'held' && isLive(session);
-    const status = held ? t(lvl === 'system' ? 'ext.pill.system' : 'tool.pill.held') : t(pillKey(lock.state));
+    const status =
+      held && lvl === 'system' ? `${t('ext.pill.systemHeld')} · ${t('ext.pill.system')}` : t(pillTextKey(lock.state, lvl));
     const rem = held ? remainingMs(session, at) : null;
     const left =
       rem === null

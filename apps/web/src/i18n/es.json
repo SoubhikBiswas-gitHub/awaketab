@@ -408,7 +408,7 @@
   "ext.level.display.help": "Mantiene la pantalla encendida y el ordenador despierto.",
   "ext.level.system": "Sistema",
   "ext.level.system.help": "Mantiene el ordenador despierto. La pantalla puede atenuarse o apagarse.",
-  "ext.pill.system": "Sistema despierto — la pantalla puede atenuarse",
+  "ext.pill.system": "La pantalla puede atenuarse o bloquearse",
   "ext.popup.start": "Iniciar",
   "ext.popup.open": "Abrir AwakeTab",
   "ext.popup.limits": "Funciona mientras Chrome esté abierto, aunque la pestaña esté oculta o la ventana minimizada. No evita la suspensión al cerrar la tapa.",
@@ -492,5 +492,6 @@
   "page.extension.permissions.notifications": "notifications (opcional): avisarte cuando termina un temporizador.",
   "page.extension.permissions.sites": "Acceso a sitios (opcional, de uno en uno): iniciar automáticamente en los sitios que elijas. Sin acceso a sitios por defecto.",
   "page.extension.privacy": "Las estadísticas de uso anónimas están desactivadas por defecto. La extensión nunca envía URL, títulos de pestañas ni nombres de sitios, y no muestra anuncios.",
-  "page.extension.web": "¿Prefieres no instalar nada? La app web mantiene la pantalla despierta mientras su pestaña está visible."
+  "page.extension.web": "¿Prefieres no instalar nada? La app web mantiene la pantalla despierta mientras su pestaña está visible.",
+  "ext.pill.systemHeld": "Sistema despierto"
 }

@@ -1,6 +1,6 @@
 # 10 · Browser extension specification — AwakeTab for Chrome
 
-Status: v1.0 · 2026-09-07 · Owner: Soubhik
+Status: v1.1 · 2026-09-26 (system-level pill copy, LAUNCH-AUDIT D-02) · Owner: Soubhik
 
 **Purpose.** The web tool cannot keep a screen awake once its tab is hidden — the browser releases the wake lock. The extension is the honest answer to that limitation: it uses `chrome.power` to hold a display or system wake lock from a background service worker, shares the web app's vocabulary, settings and Pro licence, and never claims more than it does. This document specifies it for implementation with WXT (Manifest V3).
 
@@ -50,7 +50,9 @@ The extension has three keep-awake levels, mapped onto the shared pill vocabular
 |---|---|---|---|
 | `off` | `releaseKeepAwake()` | `idle` → "Ready" | none |
 | `display` | `requestKeepAwake('display')` | `held` → "Screen awake" | `ON`, amber |
-| `system` | `requestKeepAwake('system')` | `held` + secondary line "System awake — screen may dim" | `SYS`, indigo |
+| `system` | `requestKeepAwake('system')` | `held`, shown as `ext.pill.systemHeld` "System awake" + secondary line `ext.pill.system` "Screen may dim or lock" | `SYS`, indigo |
+
+**System level never says "Screen awake"** (decided 2026-09-26, LAUNCH-AUDIT D-02; docs/19 B1, B7). At `system` level `chrome.power` keeps the computer awake but the display may still dim, turn off or lock, so the shared `held` copy "Screen awake" would overclaim. The lock state is still `held` (the seven states of `00-conventions.md` §5.1 are unchanged; `data-lock="held"`, same colour token); only the extension popup's display copy differs: the pill text is the extension-only key `ext.pill.systemHeld` ("System awake") and the secondary line is `ext.pill.system` ("Screen may dim or lock"). The badge tooltip reads "AwakeTab — System awake · Screen may dim or lock". The web tool has no system level and is unaffected. `status.ts` `pillTextKey(lock, level)` picks the key; unit and e2e tests assert that "Screen awake" never shows at system level.
 
 Because `chrome.power` cannot fail asynchronously the way the web API does, the only error states are `unsupported` (API missing — some Chromium forks) and `denied` (enterprise policy). Both use the shared advice codes (`unsupported_browser`, `permissions_policy`).
 
@@ -148,9 +150,9 @@ Where the implementation settles something this spec left open, or differs from 
 
 **Lifecycle.** Every start of the worker loads storage, verifies the licence offline and re-hydrates: a live session is resumed (keep-awake re-issued); a finite session whose end passed while the worker slept is finalised as `completed` and announced only if it ended < 5 min ago; with no live session `releaseKeepAwake()` is called defensively. `onStartup`, `onInstalled` and every `at.tick` alarm (0.5 min, only while a session is live) re-issue `requestKeepAwake(level)`. `at.end` fires at the session end so completion happens on time even if the worker slept. Stats undercount time while the worker is stopped (the engine only counts seconds while alive); the extension does not show stats.
 
-**Badge.** Only while the lock is `held`: `ON` (display) / `SYS` (system) for ∞, otherwise minutes left (`25m`, `3h` from 100 minutes up). Amber `#B86E00` for display, night indigo `#2B3A67` for system, white text; the tooltip (`action.setTitle`) spells out the pill text and time left, so the level is not conveyed by colour alone.
+**Badge.** Only while the lock is `held`: `ON` (display) / `SYS` (system) for ∞, otherwise minutes left (`25m`, `3h` from 100 minutes up). Amber `#B86E00` for display, night indigo `#2B3A67` for system, white text; the tooltip (`action.setTitle`) spells out the pill text and time left (at system level "System awake · Screen may dim or lock", §3), so the level is not conveyed by colour alone.
 
-**Popup.** Ring, pill (`tool.pill.*`, `aria-live`), timer from `endsAt` and `Date.now()` (runs only while `held`), secondary line `ext.pill.system` for a held system lock and `ext.origin.*` for schedule/auto-start/startup sessions, Start/Stop, Screen/System switch with a one-line explanation, chips `p15`…`p240` + ∞ + Until…, the extend prompt (+15/+30/+1 h/Stop) for 5 min after a user session completes with `prompt_extend`. Keyboard: `Space`, `1`–`6`, `0`, `U`, `Esc` (single-key shortcuts follow `settings.keyboardShortcuts`). The pill shows `requesting` until the worker answers; it never shows `held` on the button's say-so. Measured first render ≈ 50 ms after navigation start in headless Chromium (`data-ready` on `<html>`).
+**Popup.** Ring, pill (`tool.pill.*`, or `ext.pill.systemHeld` "System awake" for a held system lock, §3; `aria-live`), timer from `endsAt` and `Date.now()` (runs only while `held`), secondary line `ext.pill.system` "Screen may dim or lock" for a held system lock and `ext.origin.*` for schedule/auto-start/startup sessions, Start/Stop, Screen/System switch with a one-line explanation, chips `p15`…`p240` + ∞ + Until…, the extend prompt (+15/+30/+1 h/Stop) for 5 min after a user session completes with `prompt_extend`. Keyboard: `Space`, `1`–`6`, `0`, `U`, `Esc` (single-key shortcuts follow `settings.keyboardShortcuts`). The pill shows `requesting` until the worker answers; it never shows `held` on the button's say-so. Measured first render ≈ 50 ms after navigation start in headless Chromium (`data-ready` on `<html>`).
 
 **Unsupported / denied.** No `chrome.power` → `unsupported` pill + `ext.advice.unsupported`, Start disabled, no session is created. A throwing `requestKeepAwake` → `denied` + `ext.advice.denied`.
 

@@ -6,7 +6,7 @@ import type { IExtApi, TPowerLevel } from '../../src/api';
 import type { IExtState, TExtRequest } from '../../src/messages';
 import { loadPage, send, translateTree } from '../../src/page';
 import { isExtPreset, isHHMM } from '../../src/settings';
-import { formatClock, isLive, pillKey, remainingMs, totalMs } from '../../src/status';
+import { formatClock, isLive, pillTextKey, remainingMs, totalMs } from '../../src/status';
 
 /**
  * Toolbar popup (docs/10 §5): ring + seven-state pill parity with the web tool, presets, until, level.
@@ -68,7 +68,8 @@ async function boot(): Promise<void> {
     const live = isLive(session);
     const held = view.lock === 'held' && live;
     el.pill.dataset.lock = view.lock;
-    el.pillText.textContent = t(pillKey(view.lock));
+    // A held system-level lock says "System awake", never "Screen awake": the display may still sleep (D-02).
+    el.pillText.textContent = t(pillTextKey(view.lock, view.level));
     const extras: string[] = [];
     if (held && view.level === 'system') extras.push(t('ext.pill.system'));
     if (held && view.origin && view.origin !== 'user' && view.origin !== 'command') extras.push(t(`ext.origin.${view.origin}`));

@@ -51,11 +51,14 @@ describe('background controller — keep-awake and badge', () => {
     expect(fake.power.at(-1)).toEqual({ call: 'request', level: 'system' });
     expect(fake.badge.text).toBe('SYS');
     expect(fake.badge.color).toBe(BADGE_COLORS.system);
-    expect(fake.badge.title).toContain('System awake — screen may dim');
+    expect(fake.badge.title).toContain('System awake · Screen may dim or lock');
+    expect(fake.badge.title).not.toContain('Screen awake');
     // Switching level mid-session re-issues the request at the new level.
     await ctl.onMessage({ type: 'level', level: 'display' });
     expect(fake.power.at(-1)).toEqual({ call: 'request', level: 'display' });
     expect(fake.badge.text).toBe('ON');
+    expect(fake.badge.title).toContain('Screen awake');
+    expect(fake.badge.title).not.toContain('System awake');
   });
 
   it('stop releases the keep-awake, clears the badge and the session alarms', async () => {

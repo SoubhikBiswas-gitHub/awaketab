@@ -408,7 +408,7 @@
   "ext.level.display.help": "Mantém a tela acesa e o computador ligado.",
   "ext.level.system": "Sistema",
   "ext.level.system.help": "Mantém o computador ligado. A tela ainda pode escurecer ou desligar.",
-  "ext.pill.system": "Sistema ligado — a tela pode escurecer",
+  "ext.pill.system": "A tela pode escurecer ou bloquear",
   "ext.popup.start": "Iniciar",
   "ext.popup.open": "Abrir o AwakeTab",
   "ext.popup.limits": "Funciona enquanto o Chrome estiver aberto, mesmo com a aba oculta ou a janela minimizada. Não impede a suspensão ao fechar a tampa.",
@@ -492,5 +492,6 @@
   "page.extension.permissions.notifications": "notifications (opcional) — avisar quando um timer termina.",
   "page.extension.permissions.sites": "Acesso a sites (opcional, um de cada vez) — iniciar automaticamente nos sites que você escolher. Sem acesso a sites por padrão.",
   "page.extension.privacy": "As estatísticas de uso anônimas vêm desativadas. A extensão nunca envia URLs, títulos de abas ou nomes de sites, e não mostra anúncios.",
-  "page.extension.web": "Prefere não instalar nada? O app web mantém a tela ligada enquanto a aba está visível."
+  "page.extension.web": "Prefere não instalar nada? O app web mantém a tela ligada enquanto a aba está visível.",
+  "ext.pill.systemHeld": "Sistema ligado"
 }
