@@ -45,10 +45,11 @@ export function mountExtras(
   syncPro();
   void import('../lib/license.js').then(async (mod) => {
     const result = await mod.revalidateStoredLicense();
-    if (result === 'revoked') {
+    if (result === 'revoked' || result === 'reactivate') {
       store.set({ license: null });
       storage.writeLicense(null);
-      pushToast(store, { kind: 'warn', text: t('license.error.revoked'), id: 'license' });
+      const text = t(result === 'revoked' ? 'license.error.revoked' : 'license.error.token');
+      pushToast(store, { kind: 'warn', text, id: 'license' });
     } else {
       store.set({ license: storage.license() });
     }

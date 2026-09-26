@@ -140,7 +140,14 @@ export async function deactivateDevice(
   };
 }
 
-export async function revalidateStoredLicense(): Promise<'ok' | 'revoked' | 'skip'> {
+/**
+ * Re-validates the stored licence (docs/09 §5): on load when the plan's interval has passed or the token no
+ * longer verifies offline. A fresh token from /api/license/validate replaces the stored one only after it
+ * verifies offline for this device. Network failures and 5xx never downgrade (offline grace until `exp`).
+ * - 'revoked': refunded/cancelled/revoked on the server → licence removed.
+ * - 'reactivate': the server rejects this token (401) or removed this device → licence removed, user re-activates.
+ */
+export async function revalidateStoredLicense(): Promise<'ok' | 'revoked' | 'reactivate' | 'skip'> {
   const raw = localStorage.getItem(LICENSE_KEY);
   if (!raw) return 'skip';
   let record: { token: string; plan: string; lastValidatedAt: number; deviceId: string; features: TFeatureGate[]; exp: number };
@@ -151,21 +158,37 @@ export async function revalidateStoredLicense(): Promise<'ok' | 'revoked' | 'ski
   }
   const state = await verifyLicenseToken(record.token, { deviceId: record.deviceId, lastValidatedAt: record.lastValidatedAt });
   if (!needsRevalidation(record.plan, record.lastValidatedAt) && state.valid) return 'ok';
+  let res: Response;
+  let data: { revoked?: boolean; reason?: string; token?: string };
   try {
-    const res = await fetch('/api/license/validate', {
+    res = await fetch('/api/license/validate', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ token: record.token }),
     });
-    const data = (await res.json()) as { revoked?: boolean };
-    if (data.revoked) {
-      localStorage.removeItem(LICENSE_KEY);
-      return 'revoked';
-    }
-    record.lastValidatedAt = Date.now();
-    localStorage.setItem(LICENSE_KEY, JSON.stringify(record));
-    return 'ok';
+    data = (await res.json()) as typeof data;
   } catch {
     return 'skip';
   }
+  if (res.status === 401) {
+    localStorage.removeItem(LICENSE_KEY);
+    return 'reactivate';
+  }
+  if (data.revoked) {
+    localStorage.removeItem(LICENSE_KEY);
+    return data.reason === 'deactivated' ? 'reactivate' : 'revoked';
+  }
+  if (!res.ok) return 'skip';
+  if (typeof data.token === 'string') {
+    const fresh = await verifyLicenseToken(data.token, { deviceId: record.deviceId, lastValidatedAt: Date.now() });
+    if (fresh.valid && fresh.exp !== null) {
+      record.token = data.token;
+      record.features = fresh.features;
+      record.exp = fresh.exp;
+      if (fresh.plan) record.plan = fresh.plan;
+    }
+  }
+  record.lastValidatedAt = Date.now();
+  localStorage.setItem(LICENSE_KEY, JSON.stringify(record));
+  return 'ok';
 }
