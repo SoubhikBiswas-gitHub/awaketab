@@ -24,6 +24,7 @@ export interface IAlternate {
 export const CONTENT_KINDS: readonly TContentKind[];
 export const SITE: string;
 export const HREFLANG: Readonly<Record<'en' | 'es' | 'pt-br' | 'de' | 'fr' | 'ja' | 'zh' | 'hi', string>>;
+export const TRANSLATED_SLUG_LOCALES: readonly ['es', 'pt-br', 'de', 'fr'];
 
 export function frontmatterScalars(text: string): Record<string, string | boolean>;
 export function publicSlug(slugs: TSlugMap, kind: string, enSlug: string, locale: string): string;
