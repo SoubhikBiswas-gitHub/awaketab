@@ -13,6 +13,8 @@ export default tseslint.config(
       '**/.wxt/**',
       '**/node_modules/**',
       'apps/web/public/**',
+      // Agent/editor git worktrees are full repo copies; lint the checkout, not its clones.
+      '.claude/**',
     ],
   },
   eslint.configs.recommended,

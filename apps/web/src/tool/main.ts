@@ -44,13 +44,17 @@ export function boot(root: HTMLElement): () => void {
     ? 'custom'
     : (params.preset ??
       (params.routePreset && params.routePreset !== 'eight' ? params.routePreset : settings.defaultPreset));
+  // A tool embedded in a content page never opens its full-screen ambient layer over the article on load;
+  // the page's scenario mode (e.g. cook on /for/cooking) takes over when the reader starts a session.
+  const embedded = root.classList.contains('at-tool-embed');
+  const scene = params.mode ?? settings.ambient.mode;
   const store = createStore({
     ...initialState(settings),
     license: storage.license(),
     storagePersistent: storage.persistent,
     eightHour: params.eightHour,
     selectedPreset,
-    ui: { ...initialState(settings).ui, mode: params.mode ?? settings.ambient.mode },
+    ui: { ...initialState(settings).ui, mode: embedded ? 'standard' : scene },
   });
 
   applyTheme(params.theme ?? settings.theme, store.get().ui.mode === 'night');
@@ -138,6 +142,7 @@ export function boot(root: HTMLElement): () => void {
       selectedPreset: presetId,
       eightHour: presetId === 'custom' && plan.type === 'duration' && plan.ms === EIGHT_H_MS,
     });
+    if (embedded && !switched) store.set({ ui: { mode: scene } });
     const state = await engine.start(plan, {
       presetId,
       mode: store.get().ui.mode,

@@ -1,7 +1,7 @@
 ---
-title: "Keep the PC awake while downloading — AwakeTab"
-description: "Large copies stall when the laptop sleeps. AwakeTab keeps the display awake in a visible tab. Whether the rest of the machine stays out of idle sleep"
-h1: "Keep the PC awake while downloading"
+title: "Keep the screen on while downloading — AwakeTab"
+description: "Large downloads stall when a laptop sleeps. AwakeTab keeps the display on in a visible tab; whether the system skips idle sleep depends on your OS."
+h1: "Keep the screen on while downloading"
 intent: "keep computer awake while downloading"
 preset: pinf
 mode: standard
@@ -11,7 +11,7 @@ lastVerified: 2026-09-09
 browsers: []
 os: []
 faq:
-  - q: "Does keep the PC awake while downloading work in a hidden tab?"
+  - q: "Does keep the screen on while downloading work in a hidden tab?"
     a: "No. The downloads flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
   - q: "Will this keep Teams or Slack Available?"
     a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
@@ -36,7 +36,7 @@ AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible 
 
 Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
 
-## Practical setup for Keep the PC awake while downloading
+## Practical setup for Keep the screen on while downloading
 
 Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
 
@@ -62,4 +62,4 @@ Plenty of pages keep a video looping and hope the display stays on. AwakeTab tre
 
 ## Battery, heat and overnight use
 
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Keep the PC awake while downloading to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Keep the screen on while downloading to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.

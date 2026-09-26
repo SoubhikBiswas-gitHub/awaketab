@@ -322,3 +322,13 @@ test.describe('axe on M6 surfaces', () => {
     });
   }
 });
+
+test('content page scenario mode waits for a session instead of covering the article', async ({ page }) => {
+  await page.goto('/for/cooking');
+  await expect(page.locator('h1').first()).toBeVisible();
+  await expect(page.locator('dialog[data-ambient]')).toBeHidden();
+  await page.locator('#awaketab-tool [data-chips] button[data-preset="pinf"]').click();
+  await expect(page.locator('dialog[data-ambient]')).toBeVisible();
+  await expect(page.locator('dialog[data-ambient]')).toHaveAttribute('data-mode', 'cook');
+  await expect(page.locator('dialog[data-ambient] [data-pill-text]')).toHaveText('Screen awake');
+});

@@ -181,6 +181,8 @@ describe('localized chrome (E6-T05)', () => {
       const relative = path.relative(distPath, file).replace(/\\/gu, '/');
       const code = relative.split('/')[0] ?? '';
       if (!(code in LOCALES)) continue;
+      // /{lang}/pip is the noindex floating-timer popup (docs/05 §9): no structured data by design.
+      if (relative === `${code}/pip/index.html`) continue;
       const html = await readFile(file, 'utf8');
       const nodes = jsonLd(html).filter((node) => 'inLanguage' in node);
       expect(nodes.length, relative).toBeGreaterThan(0);

@@ -90,8 +90,12 @@ export function mountPwa(
   });
   if (!navigator.onLine) offline();
   if ('serviceWorker' in navigator && import.meta.env.PROD) {
-    void navigator.serviceWorker.register('/sw.js').then((reg) => {
-      watchUpdates(reg, store, sessionStatus);
-    });
+    // Registration can be refused (blocked by policy, some private modes); the tool works without it.
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((reg) => {
+        watchUpdates(reg, store, sessionStatus);
+      })
+      .catch(() => undefined);
   }
 }

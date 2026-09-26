@@ -28,7 +28,7 @@ published: 2026-09-09
 
 ## What you are actually asking
 
-Caffeine for macOS fakes an F15 key to hold the system awake even with no window. AwakeTab is a visible browser tab using the standard API. Pick Caffeine when you need closed-lid or hidden-window behaviour; pick AwakeTab when you want an honest status pill and no extra app.
+Caffeine for macOS fakes an F15 key to hold the system awake even with no window. AwakeTab is a visible browser tab using the standard API. Pick Caffeine when you need the Mac held awake with no browser window in front (neither tool stops a closed lid from sleeping); pick AwakeTab when you want an honest status pill and no extra app.
 
 ## How the lock works on this page
 
