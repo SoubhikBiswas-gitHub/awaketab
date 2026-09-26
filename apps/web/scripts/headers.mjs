@@ -40,6 +40,9 @@ const contentRoutes = [
   ),
 ];
 
+// Cloudflare Pages applies every matching rule and joins a header set twice with ", ". Rules that replace
+// a /* default (CSP on content routes, Cache-Control on assets) detach it first with `! Name`; otherwise
+// /_astro/* would ship "public, max-age=0, must-revalidate, public, max-age=31536000, immutable".
 export function generateHeaders() {
   const content = contentRoutes
     .map(
@@ -74,19 +77,24 @@ ${['/pip', ...LOCALES.map((locale) => `/${locale}/pip`)]
   .join('\n\n')}
 
 /config/*
+  ! Cache-Control
   Cache-Control: public, max-age=300
 
 /sw.js
+  ! Cache-Control
   Cache-Control: no-cache
   Service-Worker-Allowed: /
 
 /_astro/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
 /assets/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
 /api/*
+  ! Cache-Control
   Cache-Control: no-store
   X-Robots-Tag: noindex
 `;
