@@ -2,6 +2,8 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  // Tests sign tokens with the dev pair (apps/web/.dev.vars.example), so they build like a sandbox bundle.
+  define: { __AT_POLAR_SERVER__: JSON.stringify('sandbox'), __AT_LICENSE_DEV_KEY__: 'true' },
   resolve: {
     alias: {
       '@awaketab/wake': fileURLToPath(new URL('./packages/wake/src/index.ts', import.meta.url)),

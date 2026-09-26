@@ -25,8 +25,24 @@ export class PolarError extends Error {
   }
 }
 
-function apiBase(env: IEnv): string {
-  return (env.POLAR_API_BASE ?? 'https://sandbox-api.polar.sh').replace(/\/$/u, '');
+/** F-06 / docs/09 §1: the Polar API for each `PUBLIC_POLAR_SERVER` value. */
+export const POLAR_API_BASES = {
+  sandbox: 'https://sandbox-api.polar.sh',
+  production: 'https://api.polar.sh',
+} as const;
+
+export type TPolarServer = keyof typeof POLAR_API_BASES;
+
+/**
+ * The same Pages variable that picks the checkout links at build time (`scripts/polar-server.mjs`). Anything but
+ * `production` is the sandbox, so a preview or local run can never reach production Polar by accident.
+ */
+export function polarServer(env: Pick<IEnv, 'PUBLIC_POLAR_SERVER'>): TPolarServer {
+  return env.PUBLIC_POLAR_SERVER?.trim() === 'production' ? 'production' : 'sandbox';
+}
+
+export function apiBase(env: Pick<IEnv, 'PUBLIC_POLAR_SERVER'>): string {
+  return POLAR_API_BASES[polarServer(env)];
 }
 
 export function planFromBenefit(env: IEnv, benefitId: string): TPlanId | null {

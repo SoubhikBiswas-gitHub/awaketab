@@ -12,13 +12,7 @@ export const PLAN_PRICES = {
 
 export const PRO_LAUNCH_END = Date.parse('2026-12-08T00:00:00.000Z');
 
-export const CHECKOUT_LINKS: Record<TPlanId, string> = {
-  pro_yearly: 'https://sandbox.polar.sh/checkout/awaketab-pro-yearly',
-  pro_lifetime: 'https://sandbox.polar.sh/checkout/awaketab-pro-lifetime',
-  biz_embed_site_yearly: 'https://sandbox.polar.sh/checkout/awaketab-embed',
-  biz_kiosk_site: 'https://sandbox.polar.sh/checkout/awaketab-kiosk',
-  biz_kiosk_5: 'https://sandbox.polar.sh/checkout/awaketab-kiosk-5',
-};
+// CHECKOUT_LINKS live in ./checkout.ts (F-06: picked by PUBLIC_POLAR_SERVER; imported by .astro pages only).
 
 export const PLAN_FEATURES: Record<TPlanId, TFeatureGate[]> = {
   pro_yearly: [

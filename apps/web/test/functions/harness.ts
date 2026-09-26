@@ -329,7 +329,7 @@ export function harness(overrides: Partial<Record<keyof IEnv, unknown>> = {}): I
     POLAR_ACCESS_TOKEN: token,
     POLAR_WEBHOOK_SECRET: vars.POLAR_WEBHOOK_SECRET,
     POLAR_ORGANIZATION_ID: organizationId,
-    POLAR_API_BASE: 'https://sandbox-api.polar.sh',
+    PUBLIC_POLAR_SERVER: vars.PUBLIC_POLAR_SERVER,
     POLAR_BENEFIT_MAP: JSON.stringify({
       [BENEFITS.yearly]: 'pro_yearly',
       [BENEFITS.lifetime]: 'pro_lifetime',

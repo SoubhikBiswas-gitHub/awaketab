@@ -2,6 +2,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
+import { polarDefines } from './scripts/polar-server.mjs';
 
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL ?? 'https://awaketab.com',
@@ -22,6 +23,8 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    // F-06: PUBLIC_POLAR_SERVER picks CHECKOUT_LINKS and whether the bundles trust the dev licence key.
+    define: polarDefines(),
     build: {
       // No __vitePreload wrapper or deps map: it put a shared helper chunk and a dependency table on the
       // island's critical path (docs/00 §11: ≤ 15 KB gz). Lazy chunks are small and load on first use.

@@ -2,7 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { t } from '../../i18n/load';
 import { articleSchema } from '../../lib/seo';
-import { CHECKOUT_LINKS, PLAN_PRICES, lifetimePrice } from '../../lib/license';
+import { CHECKOUT_LINKS } from '../../lib/checkout';
+import { PLAN_PRICES, lifetimePrice } from '../../lib/license';
 // shadcn/ui renders at build time only (docs/03-architecture.md ADR-013): no client:* directives here.
 import { cn } from 'cn';
 import { Alert, AlertDescription } from '@/components/ui/alert';

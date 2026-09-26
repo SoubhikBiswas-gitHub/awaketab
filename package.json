@@ -21,6 +21,8 @@
     "typecheck": "pnpm -r typecheck",
     "size": "pnpm -r --if-present size",
     "keys:dev": "node apps/web/scripts/keys-dev.mjs",
+    "keys:prod": "tsx apps/web/scripts/keys-prod.mts",
+    "keys:check": "tsx apps/web/scripts/check-keys.mts",
     "lighthouse": "lhci autorun"
   },
   "devDependencies": {

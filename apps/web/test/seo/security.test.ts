@@ -3,6 +3,8 @@ import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
+import { PRODUCTION_LICENSE_PUBLIC_KEYS } from '../../../../packages/core/src/license';
+
 /*
  * Security checks over the built site (docs/19 §E, docs/17 §2, docs/14 §3):
  * 1. no secret — by name or by its .dev.vars.example value — and no private key material in any file that
@@ -103,8 +105,12 @@ describe('no secrets in client files', () => {
       if (/-----BEGIN (?:EC |RSA |ENCRYPTED )?PRIVATE KEY-----/u.test(text)) hits.push(`${file}: PEM private key`);
     }
     expect(hits).toEqual([]);
-    // Not vacuous: the licence verifier's LICENSE_PUBLIC_KEYS JWK is in the bundle and was inspected.
-    expect(publicJwks).toBeGreaterThan(0);
+    // Not vacuous: the licence verifier's LICENSE_PUBLIC_KEYS JWK is in the bundle and was inspected. The one
+    // exception is a production-mode build made before N-03 (no production key yet, check-keys waived): it
+    // trusts no key at all, so there is nothing to find.
+    const pro = await readFile(path.join(dist, 'pro/index.html'), 'utf8');
+    const productionMode = !pro.includes('https://sandbox.polar.sh/');
+    if (!productionMode || Object.keys(PRODUCTION_LICENSE_PUBLIC_KEYS).length > 0) expect(publicJwks).toBeGreaterThan(0);
   });
 });
 
@@ -233,6 +239,15 @@ describe('security headers per route class (docs/14 §3)', async () => {
     ['/for/cooking', 'public, max-age=0, must-revalidate'],
   ])('%s has a single Cache-Control policy', (p, want) => {
     expect(effective(rules, p).get('cache-control')).toBe(want);
+  });
+
+  it('the shipped _headers ends with the *.pages.dev noindex rules (F-03: previews are never indexed)', () => {
+    const hostRules = rules.filter((rule) => !rule.pattern.startsWith('/'));
+    expect(hostRules.map((rule) => rule.pattern)).toEqual(['https://:project.pages.dev/*', 'https://:version.:project.pages.dev/*']);
+    expect(rules.slice(-2)).toEqual(hostRules);
+    for (const rule of hostRules) expect(rule.set).toEqual([['x-robots-tag', 'noindex']]);
+    // Path rules never match a host-qualified pattern, so the production (awaketab.com) view above is unchanged.
+    expect(effective(rules, '/').has('x-robots-tag')).toBe(false);
   });
 
   it('/api/* is no-store and noindex (functions set their own headers too; _headers never reach them)', () => {

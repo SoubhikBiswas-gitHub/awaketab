@@ -17,6 +17,7 @@ import { readdir, readFile, rm, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
+import { polarDefines } from './polar-server.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const REPO = path.resolve(ROOT, '../..');
@@ -71,7 +72,7 @@ export async function buildApp() {
     target: 'es2020',
     legalComments: 'none',
     alias: ALIAS,
-    define: { 'import.meta.env.DEV': 'false' },
+    define: { 'import.meta.env.DEV': 'false', ...polarDefines() },
   });
   return result.outputFiles[0]?.text ?? '';
 }
