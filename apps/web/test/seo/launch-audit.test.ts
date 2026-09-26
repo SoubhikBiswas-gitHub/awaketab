@@ -5,12 +5,14 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { readSitemapUrls, selectUrls } from '../../scripts/indexnow.mjs';
+import { servedFile } from '../../scripts/served.mjs';
 
 const dist = process.env.AT_DIST ? path.resolve(process.env.AT_DIST) : path.resolve(import.meta.dirname, '../../dist');
 const devVars = path.resolve(import.meta.dirname, '../../.dev.vars.example');
 const SITE = 'https://awaketab.com';
 
-const page = (route: string) => readFile(path.join(dist, route, 'index.html'), 'utf8');
+/** The built HTML Pages serves at `pathname` (scripts/served.mjs: `/about` → `about.html`, `/es/` → `es/index.html`). */
+const page = (pathname: string) => readFile(path.join(dist, servedFile(pathname)), 'utf8');
 const text = (html: string) =>
   html
     .replace(/<script[\s\S]*?<\/script>/gu, ' ')
@@ -31,13 +33,13 @@ async function files(dir: string): Promise<string[]> {
 
 describe('F-04 · /about contact and /privacy retention rows', () => {
   it('/about has a working contact address', async () => {
-    const html = await page('about');
+    const html = await page('/about');
     expect(html).toContain('id="contact"');
     expect(html).toMatch(/<a [^>]*href="mailto:support@awaketab\.com"[^>]*>support@awaketab\.com<\/a>/u);
   });
 
   it('/privacy lists every docs/08 §7 row, retention periods and how to ask for deletion', async () => {
-    const html = await page('privacy');
+    const html = await page('/privacy');
     const body = text(html);
     // Anonymous usage events: Analytics Engine, 90 days.
     expect(body).toMatch(/Anonymous usage events/u);
@@ -64,7 +66,7 @@ describe('F-04 · /about contact and /privacy retention rows', () => {
 
 describe('F-07 · /changelog renders Markdown and orders by date', () => {
   it('renders inline code and links as HTML, never as literal Markdown', async () => {
-    const html = await page('changelog');
+    const html = await page('/changelog');
     const cards = html.slice(html.indexOf('data-changelog-entry'), html.lastIndexOf('</ol>'));
     expect(cards.length).toBeGreaterThan(1000);
     expect(cards).toContain('<code>M</code>');
@@ -77,7 +79,7 @@ describe('F-07 · /changelog renders Markdown and orders by date', () => {
   });
 
   it('puts the 1.0 launch entry first, then newest date first', async () => {
-    const html = await page('changelog');
+    const html = await page('/changelog');
     const titles = [...html.matchAll(/<h2[^>]*>([^<]+)<\/h2>/gu)].map((m) => m[1]);
     const dates = [...html.matchAll(/<time datetime="(\d{4}-\d{2}-\d{2})">/gu)].map((m) => m[1] ?? '');
     expect(titles[0]).toBe('1.0 — launch');
@@ -95,17 +97,18 @@ describe('F-05 · IndexNow URL selection', () => {
   it('selects only indexable pages from the built sitemaps', async () => {
     const urls = selectUrls(await readSitemapUrls({ from: 'dist', dist, site: SITE, fetchFn: fetch }));
     expect(urls.length).toBeGreaterThan(50);
-    expect(urls).toContain(SITE);
+    expect(urls).toContain(`${SITE}/`);
     expect(urls).toContain(`${SITE}/for/cooking`);
     for (const url of urls) {
       const { pathname } = new URL(url);
       expect(pathname, url).not.toMatch(/^\/(?:api|until|embed\/)|\/pip$/u);
-      const html = await readFile(path.join(dist, pathname, 'index.html'), 'utf8');
+      // Every submitted URL is the spelling Pages serves with a 200 (servedFile throws on one it would 308).
+      const html = await readFile(path.join(dist, servedFile(pathname)), 'utf8');
       // Never a noindex page: /pip, /until/*, and translations still waiting for native review.
       expect(html, url).not.toMatch(/<meta name="robots" content="[^"]*noindex/u);
     }
     // Unreviewed translations exist in the build but are never submitted.
-    expect(await page('es/for/cocinar')).toMatch(/content="noindex/u);
+    expect(await page('/es/for/cocinar')).toMatch(/content="noindex/u);
     expect(urls).not.toContain(`${SITE}/es/for/cocinar`);
   });
 
@@ -128,7 +131,7 @@ describe('F-06 / N-03 · Polar server and licence keys in the bundle', () => {
   }
 
   async function mode(): Promise<'sandbox' | 'production'> {
-    const pro = await page('pro');
+    const pro = await page('/pro');
     const links = [...pro.matchAll(/href="(https:\/\/[^"]*polar\.sh[^"]*)"/gu)].map((m) => m[1] ?? '');
     expect(links.length).toBeGreaterThanOrEqual(2);
     const sandbox = links.every((href) => href.startsWith('https://sandbox.polar.sh/'));
@@ -140,7 +143,7 @@ describe('F-06 / N-03 · Polar server and licence keys in the bundle', () => {
   it('every checkout link on /pro, /embed and /kiosk comes from the same Polar server', async () => {
     const want = await mode();
     for (const route of ['pro', 'embed', 'kiosk']) {
-      const links = [...(await page(route)).matchAll(/href="(https:\/\/[^"]*polar\.sh[^"]*)"/gu)].map((m) => m[1] ?? '');
+      const links = [...(await page(`/${route}`)).matchAll(/href="(https:\/\/[^"]*polar\.sh[^"]*)"/gu)].map((m) => m[1] ?? '');
       expect(links.length, route).toBeGreaterThan(0);
       for (const href of links) expect(href.includes('sandbox'), `${route}: ${href}`).toBe(want === 'sandbox');
     }

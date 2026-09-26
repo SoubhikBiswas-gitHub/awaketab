@@ -14,7 +14,6 @@ beforeAll(async () => {
   dist = await mkdtemp(path.join(tmpdir(), 'at-size-'));
   const astro = path.join(dist, '_astro');
   await mkdir(astro, { recursive: true });
-  await mkdir(path.join(dist, 'embed/cook'), { recursive: true });
   await mkdir(path.join(dist, 'embed/assets'), { recursive: true });
   const files: Record<string, string> = {
     'entry.js': 'import{a}from"./shared.js";import"./side.js";document.x=()=>import("./lazy.js");',
@@ -30,7 +29,7 @@ beforeAll(async () => {
     '<script src="/theme-boot.js"></script><script type="application/json" data-x>{}</script><script type="module" src="/_astro/entry.js"></script>',
   );
   await writeFile(path.join(dist, 'embed/assets/app.0123456789.js'), 'export const app=1;');
-  await writeFile(path.join(dist, 'embed/cook/index.html'), '<script type="module" src="/embed/assets/app.0123456789.js"></script>');
+  await writeFile(path.join(dist, 'embed/cook.html'), '<script type="module" src="/embed/assets/app.0123456789.js"></script>');
 });
 
 afterAll(async () => {
@@ -61,7 +60,7 @@ describe('size gate closures', () => {
   });
 
   it('measures the embed page from its own entry', async () => {
-    const page = await pageJs(dist, 'embed/cook/index.html');
+    const page = await pageJs(dist, 'embed/cook.html');
     expect(page.files(page.all)).toEqual(['/embed/assets/app.0123456789.js']);
     expect(embedEntryHashed(page.html, HASHED_APP_RE)).toBe(true);
   });

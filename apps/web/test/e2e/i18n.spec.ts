@@ -56,11 +56,15 @@ test.describe('per-locale smoke', () => {
       // The static preview has no Pages Functions; WebKit logs the analytics beacon's 404 to the console.
       await page.route('**/api/e', (route) => route.fulfill({ status: 204, body: '' }));
 
-      await page.goto(`/${code}`);
+      await page.goto(`/${code}/?ref=e2e`);
       await expect(page.locator('html')).toHaveAttribute('lang', lang);
       await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(strings['page.home.h1'] ?? '');
       await expect(page.locator('[data-pill-text]')).toHaveText(strings['tool.pill.held'] ?? '', { timeout: 4000 });
+      // The island strips the query but keeps the locale home's slash: /es/ is its served, canonical URL
+      // (es/index.html; Cloudflare Pages 308s /es → /es/, docs/14 §2.1).
+      await expect.poll(() => new URL(page.url()).pathname + new URL(page.url()).search).toBe(`/${code}/`);
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `https://awaketab.com/${code}/`);
 
       // Let the home's lazy chunks settle: WebKit reports a module import aborted by navigation as an error.
       await page.waitForLoadState('networkidle');
@@ -222,9 +226,9 @@ test.describe('pseudo-locale overflow at 320 px', () => {
   }
 
   for (const { code } of LOCALES) {
-    for (const route of [`/${code}`, cookingPath(code)]) {
+    for (const route of [`/${code}/`, cookingPath(code)]) {
       test(`no clipped strings in ${route}`, async ({ page }) => {
-        await page.goto(route.startsWith(`/${code}/`) ? route : `${route}?autostart=0`);
+        await page.goto(route === `/${code}/` ? `${route}?autostart=0` : route);
         await expect(page.locator('[data-pill-text]')).toBeVisible();
         const result = await findClipping(page);
         expect(result.scrollWidth, 'horizontal page scroll').toBeLessThanOrEqual(320);

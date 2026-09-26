@@ -73,7 +73,8 @@ export function selectUrls(urls, site = SITE) {
     }
     if (url.protocol !== 'https:' || url.host !== host || url.search || url.hash) continue;
     if (EXCLUDED.some((re) => re.test(url.pathname))) continue;
-    out.add(url.href.replace(/\/$/u, ''));
+    // As listed: the served spelling (scripts/served.mjs), e.g. `/for/cooking`, but `/es/` with its slash.
+    out.add(url.href);
   }
   return [...out].sort();
 }

@@ -64,6 +64,8 @@ const contentRoutes = [
  */
 export const PREVIEW_HOST_RULES = ['https://:project.pages.dev/*', 'https://:version.:project.pages.dev/*'];
 
+// Routes are the URLs Pages serves with a 200 (scripts/served.mjs): `/embed`, `/pip`, `/for/cooking` — never
+// `/embed/`, which Pages 308-redirects to `/embed` because the build writes `embed.html` (docs/14 §2.1).
 // Cloudflare Pages applies every matching rule and joins a header set twice with ", ". Rules that replace
 // a /* default (CSP on content routes, Cache-Control on assets) detach it first with `! Name`; otherwise
 // /_astro/* would ship "public, max-age=0, must-revalidate, public, max-age=31536000, immutable".
@@ -96,13 +98,6 @@ ${content}
   X-Robots-Tag: noindex
 
 /embed
-  ! Content-Security-Policy
-  Content-Security-Policy: ${DEFAULT_CSP}
-  ! X-Frame-Options
-  X-Frame-Options: DENY
-  ! X-Robots-Tag
-
-/embed/
   ! Content-Security-Policy
   Content-Security-Policy: ${DEFAULT_CSP}
   ! X-Frame-Options

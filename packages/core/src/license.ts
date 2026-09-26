@@ -25,7 +25,7 @@ const DEV_LICENSE_PUBLIC_KEY: JsonWebKey = {
 };
 
 /** Whether this bundle trusts the dev key. Folded to a literal at build time, so production drops the key. */
-export const TRUSTS_DEV_LICENSE_KEY: boolean = typeof __AT_LICENSE_DEV_KEY__ !== 'undefined' && __AT_LICENSE_DEV_KEY__ === true;
+export const TRUSTS_DEV_LICENSE_KEY: boolean = typeof __AT_LICENSE_DEV_KEY__ !== 'undefined' && __AT_LICENSE_DEV_KEY__;
 
 export const LICENSE_PUBLIC_KEYS: Record<number, JsonWebKey> = TRUSTS_DEV_LICENSE_KEY
   ? { ...PRODUCTION_LICENSE_PUBLIC_KEYS, [DEV_LICENSE_KEY_VER]: DEV_LICENSE_PUBLIC_KEY }

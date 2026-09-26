@@ -3,6 +3,8 @@ import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
+import { servedFile, servedPath } from '../../scripts/served.mjs';
+
 // E6-T05 / E6-T06 over the built site: 70 translated top-10 pages, noindex and out of the sitemaps
 // while `reviewed: false`, per-page localized OG images, JSON-LD inLanguage, localized manifests and
 // a reciprocal hreflang graph that agrees with the sitemaps (docs/06 §5, §6, §9; docs/13 §8).
@@ -73,7 +75,7 @@ function jsonLd(html: string): Array<Record<string, unknown>> {
 }
 
 const pagePath = (code: string, kind: string, enSlug: string): string => `/${code}/${kind}/${slugs[kind]?.[enSlug]?.[code] ?? enSlug}`;
-const fileFor = (pathname: string): string => path.join(distPath, pathname.replace(/^\//u, ''), 'index.html');
+const fileFor = (pathname: string): string => path.join(distPath, servedFile(pathname));
 
 const sitemaps = await Promise.all(
   ['en', ...Object.keys(LOCALES)].map(async (locale) => readFile(new URL(`sitemap-${locale}.xml`, dist), 'utf8')),
@@ -89,7 +91,7 @@ describe('translated top-10 content pages (E6-T06)', () => {
     }
     const localized = (await htmlFiles(distPath))
       .map((file) => path.relative(distPath, file).replace(/\\/gu, '/'))
-      .filter((relative) => /^(es|pt-br|de|fr|ja|zh|hi)\/(for|on|vs|guides|learn)\/[^/]+\/index\.html$/u.test(relative));
+      .filter((relative) => /^(es|pt-br|de|fr|ja|zh|hi)\/(for|on|vs|guides|learn)\/[^/]+\.html$/u.test(relative));
     expect(localized).toHaveLength(70);
   });
 
@@ -146,13 +148,8 @@ describe('translated top-10 content pages (E6-T06)', () => {
 
   it('links every localized page only to existing routes', async () => {
     const files = await htmlFiles(distPath);
-    const existing = new Set(
-      files.map((file) => {
-        const relative = path.relative(distPath, file).replace(/\\/gu, '/');
-        if (relative === 'index.html') return '/';
-        return `/${relative.replace(/\/index\.html$/u, '').replace(/\.html$/u, '')}`;
-      }),
-    );
+    // Served URLs only (docs/14 §2.1): a link Cloudflare Pages would 308 (`/for/`, `/es`) does not count.
+    const existing = new Set(files.map((file) => servedPath(path.relative(distPath, file).replace(/\\/gu, '/'))));
     for (const code of Object.keys(LOCALES)) {
       for (const [kind, enSlug] of TOP10) {
         const pathname = pagePath(code, kind, enSlug);
@@ -160,7 +157,7 @@ describe('translated top-10 content pages (E6-T06)', () => {
         for (const match of html.matchAll(/href="(\/[^"#?]*)/gu)) {
           const href = match[1] ?? '';
           if (/^\/(?:api|og|icons)\//u.test(href) || /\.(?:webmanifest|svg|js|png)$/u.test(href)) continue;
-          expect(existing.has(href) || existing.has(href.replace(/\/$/u, '')), `${pathname} -> ${href}`).toBe(true);
+          expect(existing.has(href), `${pathname} -> ${href}`).toBe(true);
         }
         // Links marked as English (related cards, the translation notice) only point at English pages
         // that have no translation in this locale — otherwise the same-locale page must be linked.
@@ -182,7 +179,7 @@ describe('localized chrome (E6-T05)', () => {
       const code = relative.split('/')[0] ?? '';
       if (!(code in LOCALES)) continue;
       // /{lang}/pip is the noindex floating-timer popup (docs/05 §9): no structured data by design.
-      if (relative === `${code}/pip/index.html`) continue;
+      if (relative === servedFile(`/${code}/pip`)) continue;
       const html = await readFile(file, 'utf8');
       const nodes = jsonLd(html).filter((node) => 'inLanguage' in node);
       expect(nodes.length, relative).toBeGreaterThan(0);
@@ -208,7 +205,7 @@ describe('localized chrome (E6-T05)', () => {
       expect(manifest.start_url.startsWith(`/${code}/`), code).toBe(true);
       expect(manifest.scope, code).toBe(`/${code}/`);
       expect(manifest.id, code).toBe(`/${code}/`);
-      const home = await readFile(new URL(`${code}/index.html`, dist), 'utf8');
+      const home = await readFile(new URL(servedFile(`/${code}/`), dist), 'utf8');
       expect(home, code).toContain(`<link rel="manifest" href="/${code}/manifest.webmanifest">`);
     }
   });

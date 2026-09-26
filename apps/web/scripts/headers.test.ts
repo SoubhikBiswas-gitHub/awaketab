@@ -36,14 +36,14 @@ describe('Cloudflare generated rules', () => {
     expect(widget.get('permissions-policy')).toContain('screen-wake-lock=(self)');
     expect(widget.get('content-security-policy')).toContain("connect-src 'self'");
 
-    // The /embed landing page is an ordinary, indexable, unframeable page even though /embed/* matches it.
-    for (const landing of ['/embed', '/embed/']) {
-      const h = at(landing);
-      expect(h.get('content-security-policy')).toContain("frame-ancestors 'none'");
-      expect(h.get('content-security-policy')).not.toContain('frame-ancestors *');
-      expect(h.get('x-frame-options')).toBe('DENY');
-      expect(h.has('x-robots-tag')).toBe(false);
-    }
+    // The /embed landing page is an ordinary, indexable, unframeable page. It is served at /embed (embed.html;
+    // /embed/ only 308-redirects there, docs/14 §2.1), so no rule is keyed on /embed/.
+    expect(headerTools.parseRules(text).map(({ route }) => route)).not.toContain('/embed/');
+    const landing = at('/embed');
+    expect(landing.get('content-security-policy')).toContain("frame-ancestors 'none'");
+    expect(landing.get('content-security-policy')).not.toContain('frame-ancestors *');
+    expect(landing.get('x-frame-options')).toBe('DENY');
+    expect(landing.has('x-robots-tag')).toBe(false);
 
     for (const other of ['/', '/30m', '/pip', '/library', '/kiosk', '/for/cooking', '/es/learn/x']) {
       const h = at(other);
@@ -65,7 +65,7 @@ describe('Cloudflare generated rules', () => {
 
   it('marks every *.pages.dev host noindex and leaves the production host indexable (F-03, docs/14 §1)', () => {
     const text = headerTools.generateHeaders();
-    const PAGES = ['/', '/30m', '/for/cooking', '/es/learn/x', '/embed', '/embed/', '/sitemap-index.xml', '/_astro/x.js'];
+    const PAGES = ['/', '/es/', '/30m', '/for/cooking', '/es/learn/x', '/embed', '/pip', '/sitemap-index.xml', '/_astro/x.js'];
     for (const host of ['awaketab.pages.dev', '3f2a9c1b.awaketab.pages.dev', 'm6-engagement.awaketab.pages.dev']) {
       for (const pathname of PAGES) {
         expect(headerTools.resolveHeaders(text, pathname, host).get('x-robots-tag'), `${host}${pathname}`).toMatch(/^noindex(, noindex)?$/u);

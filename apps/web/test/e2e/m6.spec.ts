@@ -224,7 +224,7 @@ test('the /pip popup opens in the page language and mirrors the owner there', as
   await page.addInitScript(() => {
     Object.defineProperty(window, 'documentPictureInPicture', { configurable: true, value: undefined });
   });
-  await page.goto('/es');
+  await page.goto('/es/');
   await page.locator('[data-preset="p30"]').click();
   await expect(pillText(page)).toHaveText('Pantalla despierta', { timeout: 4000 });
 

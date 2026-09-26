@@ -4,6 +4,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { PRODUCTION_LICENSE_PUBLIC_KEYS } from '../../../../packages/core/src/license';
+import { servedFile } from '../../scripts/served.mjs';
 
 /*
  * Security checks over the built site (docs/19 §E, docs/17 §2, docs/14 §3):
@@ -108,7 +109,7 @@ describe('no secrets in client files', () => {
     // Not vacuous: the licence verifier's LICENSE_PUBLIC_KEYS JWK is in the bundle and was inspected. The one
     // exception is a production-mode build made before N-03 (no production key yet, check-keys waived): it
     // trusts no key at all, so there is nothing to find.
-    const pro = await readFile(path.join(dist, 'pro/index.html'), 'utf8');
+    const pro = await readFile(path.join(dist, servedFile('/pro')), 'utf8');
     const productionMode = !pro.includes('https://sandbox.polar.sh/');
     if (!productionMode || Object.keys(PRODUCTION_LICENSE_PUBLIC_KEYS).length > 0) expect(publicJwks).toBeGreaterThan(0);
   });
@@ -263,9 +264,9 @@ describe('inline boot script (docs/05 §11)', () => {
     const headers = await readFile(path.join(dist, '_headers'), 'utf8');
     const allowed = new Set([...headers.matchAll(/'sha256-[A-Za-z0-9+/]+=*'/gu)].map((m) => m[0]));
     expect(allowed.size).toBe(1);
-    const pages = ['index.html', '30m/index.html', 'for/cooking/index.html', 'es/index.html', 'embed/cook/index.html', 'pro/index.html'];
+    const pages = ['/', '/30m', '/for/cooking', '/es/', '/embed/cook', '/pro'];
     for (const page of pages) {
-      const html = await readFile(path.join(dist, page), 'utf8');
+      const html = await readFile(path.join(dist, servedFile(page)), 'utf8');
       // Executable inline scripts only: JSON data blocks are not scripts and need no hash.
       const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*type="application\/(?:ld\+)?json")[^>]*>([\s\S]*?)<\/script>/gu)];
       expect(inline.length, page).toBe(1);
