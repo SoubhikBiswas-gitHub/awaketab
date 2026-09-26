@@ -133,7 +133,7 @@ ul,ol{padding:0;list-style:none}
   <div style="{{bodyStyle}}">
     <span aria-hidden="true" class="{{igTravel}}" style="position: absolute; left: calc(50% - 2px); bottom: {{travelFrom}}; width: 4px; height: 96px; border-radius: 999px; background: linear-gradient(180deg, {{lamp}} 0%, {{lampFaint}} 70%, transparent 100%); box-shadow: 0 0 16px {{lampGlow}}; --at-ty: {{travelTy}}"></span>
 
-    <sc-if value="{{showTabs}}" hint-placeholder-val="{{true}}">
+    <sc-if value="{{tabsEarly}}" hint-placeholder-val="{{true}}">
     <div style="grid-area: tabs; justify-self: {{tabsAlign}}; width: {{tabsW}}; min-width: 0">
       <div role="tablist" aria-label="Clock face" style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
         <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 4); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{tabIndBg}}; border: 1px solid {{tabIndLine}}; transform: translateX({{faceX}})"></div>
@@ -521,6 +521,16 @@ ul,ol{padding:0;list-style:none}
         </div>
       </sc-if>
     </div>
+    <sc-if value="{{tabsLate}}" hint-placeholder-val="{{false}}"><!-- O-65: on desktop the face tabs sit last, so they come last in the DOM too -->
+    <div style="grid-area: tabs; justify-self: {{tabsAlign}}; width: {{tabsW}}; min-width: 0">
+      <div role="tablist" aria-label="Clock face" style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+        <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 4); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{tabIndBg}}; border: 1px solid {{tabIndLine}}; transform: translateX({{faceX}})"></div>
+        <sc-for list="{{faces}}" as="f" hint-placeholder-count="4">
+          <button role="tab" aria-selected="{{f.sel}}" onClick="{{f.pick}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: {{tabFont}}; line-height: 20px; font-weight: {{f.weight}}; color: {{f.color}}; white-space: nowrap">{{f.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
   </div>
 
   <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{false}}">
@@ -1399,7 +1409,7 @@ class Component extends DCLogic {
       showLine: !land, lineInHdr: land, compactTheme: small, fullTheme: !small,
       linePad: '0 ' + hdr.pad.split(' ')[1], lineFont: px(g.lineFont), lineLH: px(g.lineLH),
       bodyStyle: BODY[layout],
-      showTabs: !small && !(land && (mode === 'blocked' || hasToast || panel !== 'none')), tabsAlign: side ? 'start' : land ? 'end' : 'center', tabsW: side ? '360px' : land ? '100%' : tab ? '440px' : '100%', tabFont: land ? '13px' : '14px',
+      showTabs: !small && !(land && (mode === 'blocked' || hasToast || panel !== 'none')), tabsEarly: !side && !small && !(land && (mode === 'blocked' || hasToast || panel !== 'none')), tabsLate: side && !small && !(land && (mode === 'blocked' || hasToast || panel !== 'none')), tabsAlign: side ? 'start' : land ? 'end' : 'center', tabsW: side ? '360px' : land ? '100%' : tab ? '440px' : '100%', tabFont: land ? '13px' : '14px',
       tabIndBg: this.rgba(tone, 0.14), tabIndLine: this.rgba(tone, 0.45),
       pillAlign: side || land ? 'start' : 'center', pillItems: side || land ? 'flex-start' : 'center', pillJustify: side || land ? 'flex-start' : 'center',
       pillM: !xl, pillL: xl, sparkX: xl ? '6px' : '2px',

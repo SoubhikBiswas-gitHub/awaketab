@@ -250,3 +250,28 @@ Still relevant:
 - **O-72:** the "Who tested this" heading is kept; its body already uses the approved line.
 - **O-62:** the French pill wraps.
 - **O-09, O-02, O-12, O-60:** unchanged.
+
+## Follow-up (owner delegation, cloud agent, 27 September 2026)
+Each delegated decision was checked in the 1b boards against the source and the rendered output:
+
+| Decision | Result |
+|---|---|
+| O-72 "How AwakeTab is checked" | HomeBelow and the related links use the new title |
+| O-86 cooking framing, author "Builds AwakeTab" | ContentArticle and all Guide* boards |
+| O-81 share inline panel on desktop | Extras `shareInline` (right column); phones keep the sheet |
+| O-09 / O-82 Night pill night-muted, Minimal pill muted | rendered: Night pill text #A89690, Minimal #8E9AAE |
+| O-83 PiP digits up to 40 px | PipWindow `digitSize` 40 (28 for H:MM:SS) |
+| O-12 rating radio group | ExtrasRating stars are `role="radio"` |
+| O-75 offline toast | "You're offline. The tool still works; guides may not load." (Main; Extras has no offline toast) |
+| O-87 ∞ | ContentArticle/HubFor "Keep awake · ∞"; Intl labels ∞ with a localised "until I stop" name |
+| O-74 seven presets on phones | every phone board shows all seven in every locale (de, ja, hi, fr, pt), and in the no-JS page |
+| O-63 one banner at a time on phones | Intl shows the suggestion first; the note replaces it after dismissal |
+| O-62 two-line pill | fr unsupported pill wraps (min-height 38, radius 20) |
+| O-65 focus order follows the visual order | **fixed now in Main**: on desktop and tablet landscape the face tabs are rendered after the dock (`tabsEarly`/`tabsLate`), so focus runs pill → presets → actions → face tabs; phones are unchanged |
+| O-02 all ambient modes free, Message Pro | Ambient shows no Pro tag except on Message |
+| O-04 no sponsor card | none on any 1b board |
+| O-56 input border, O-57 light ground stop | AT-PRIMITIVES v1 tokens |
+| kbd padding 0 8 | all `<kbd>` use `padding: 0 8px` |
+| Split View (accuracy) | never rendered; the de/hi cooking source strings stay listed under O-80 for the build |
+
+Checks: tool-smoke ALL PASS · SizeSmoke 42,894 combinations, 0 failures · IntlA11y 7,128, 0 missing. `tools/final/check.py` on the re-rendered Desk/Size/A11y boards: 0 issues, except the A11yKeyboardDesk header "Pro" link (24 px wide), which is fixed in the O-77 primitives merge.
