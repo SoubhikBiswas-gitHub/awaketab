@@ -50,6 +50,8 @@ test.describe('per-locale smoke', () => {
     test(`${code}: home and a translated page render with the right lang/dir and a working pill`, async ({ page }) => {
       const strings = catalog(code);
       const errors = collectErrors(page);
+      // The static preview has no Pages Functions; WebKit logs the analytics beacon's 404 to the console.
+      await page.route('**/api/e', (route) => route.fulfill({ status: 204, body: '' }));
 
       await page.goto(`/${code}`);
       await expect(page.locator('html')).toHaveAttribute('lang', lang);
@@ -57,6 +59,8 @@ test.describe('per-locale smoke', () => {
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(strings['page.home.h1'] ?? '');
       await expect(page.locator('[data-pill-text]')).toHaveText(strings['tool.pill.held'] ?? '', { timeout: 4000 });
 
+      // Let the home's lazy chunks settle: WebKit reports a module import aborted by navigation as an error.
+      await page.waitForLoadState('networkidle');
       await page.goto(safariPath(code));
       await expect(page.locator('html')).toHaveAttribute('lang', lang);
       await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');

@@ -97,7 +97,10 @@ test('journey 10 loader → cross-origin iframe with allow holds the lock', asyn
   await expect(frame.locator('[data-embed-attrib]')).toBeVisible();
 });
 
-test('journey 10 iframe without allow shows the "Ask the site owner" state', async ({ page }) => {
+test('journey 10 iframe without allow shows the "Ask the site owner" state', async ({ page, browserName }) => {
+  // Only Chromium enforces (and exposes) the screen-wake-lock Permissions Policy in iframes. Firefox and WebKit
+  // grant the lock without allow=, and the widget honestly reports it held, so there is no blocked state to show.
+  test.skip(browserName !== 'chromium', 'engine does not enforce the screen-wake-lock iframe policy');
   await hostPage(page, `<iframe src="${WIDGET}/embed/cook?mode=cook&size=compact&lang=en" title="Keep screen awake" style="width:320px;height:120px;border:0"></iframe>`);
   const frame = await widgetFrame(page);
   await expect(frame.locator('[data-embed-notice]')).toContainText('Ask the site owner');
