@@ -1,4 +1,4 @@
-import type { TLocale } from '../i18n/locales';
+import { LOCALE_META, type TLocale } from '../i18n/locales';
 
 export type TSchemaNode = Record<string, unknown>;
 
@@ -14,6 +14,8 @@ export interface IArticleSchemaInput {
   locale: TLocale;
   published: string;
   updated?: string;
+  /** Absolute OG image URL (docs/06 §7.2). */
+  image?: string;
   breadcrumbs: Array<{ name: string; url: string }>;
 }
 
@@ -29,7 +31,7 @@ export function homeSchema(locale: TLocale, ratings: IRatingsSummary): TSchemaNo
     operatingSystem: 'Any',
     browserRequirements: 'Requires a browser with Screen Wake Lock API support or the video fallback',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    inLanguage: locale,
+    inLanguage: LOCALE_META[locale].hreflang,
   };
   if (ratings.count >= 25) {
     application.aggregateRating = {
@@ -63,7 +65,7 @@ export function homeSchema(locale: TLocale, ratings: IRatingsSummary): TSchemaNo
         name: 'AwakeTab',
         url: `${SITE}/`,
         publisher: { '@id': `${SITE}/#org` },
-        inLanguage: locale,
+        inLanguage: LOCALE_META[locale].hreflang,
       },
       application,
     ],
@@ -78,10 +80,11 @@ export function articleSchema(input: IArticleSchemaInput): TSchemaNode {
     url: input.canonical,
     datePublished: input.published,
     dateModified: input.updated ?? input.published,
-    inLanguage: input.locale,
+    inLanguage: LOCALE_META[input.locale].hreflang,
     author: { '@id': `${SITE}/about#person` },
     publisher: { '@id': `${SITE}/#org` },
   };
+  if (input.image) article.image = input.image;
   return {
     '@context': 'https://schema.org',
     '@graph': [

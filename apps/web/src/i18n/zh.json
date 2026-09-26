@@ -274,13 +274,13 @@
   "footer.donate": "请我喝杯咖啡",
   "footer.shortcuts": "键盘快捷键",
   "footer.terms": "条款",
-  "content.verified": "Last verified: {date}",
-  "content.stale": "Last verified over 6 months ago — re-testing",
-  "content.faq": "Questions",
-  "content.related": "Related",
-  "content.start": "Start this session",
-  "content.author.role": "Builds and tests AwakeTab.",
-  "content.author.about": "About AwakeTab",
+  "content.verified": "最后验证：{date}",
+  "content.stale": "上次验证已超过 6 个月 — 正在重新测试",
+  "content.faq": "常见问题",
+  "content.related": "相关页面",
+  "content.start": "开始此会话",
+  "content.author.role": "开发并测试 AwakeTab。",
+  "content.author.about": "关于 AwakeTab",
 
   "end.notify.title": "AwakeTab",
   "end.notify.body": "你的 {label} 会话已结束",
@@ -337,5 +337,8 @@
   "settings.notifications.unavailable": "在 iPhone 和 iPad 上，需要安装应用才能接收通知。",
   "pip.add15.label": "增加 15 分钟",
   "pip.empty": "开始会话请前往",
-  "ambient.focus.today": "{n, plural, one {今天已完成 # 个专注时段} other {今天已完成 # 个专注时段}}"
+  "ambient.focus.today": "{n, plural, one {今天已完成 # 个专注时段} other {今天已完成 # 个专注时段}}",
+  "content.breadcrumb": "面包屑导航",
+  "content.translation.pending": "译自英文，等待母语审校。",
+  "content.translation.original": "阅读英文原文"
 }

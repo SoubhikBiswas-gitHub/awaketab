@@ -1,0 +1,19 @@
+---
+// Translated content pages: /{lang}/{collection}/{translated slug} (docs/00 §7, docs/06 §5).
+// Files live at src/content/{collection}/{locale}/{EN slug}.md; the public slug comes from
+// src/i18n/slugs.json. A page exists only where a translation file exists — no fallback pages.
+import ArticlePage from '../../../components/ArticlePage.astro';
+import { contentIndex, pageSlug } from '../../../lib/content-i18n';
+
+export async function getStaticPaths() {
+  const pages = (await contentIndex()).filter((page) => page.locale !== 'en');
+  return pages.map((page) => ({
+    params: { lang: page.locale, kind: page.kind, slug: pageSlug(page.kind, page.enSlug, page.locale) },
+    props: { kind: page.kind, entry: page.entry },
+  }));
+}
+
+const { kind, entry } = Astro.props;
+---
+
+<ArticlePage kind={kind} entry={entry} />

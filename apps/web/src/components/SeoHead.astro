@@ -11,6 +11,7 @@ interface Props {
   noindex?: boolean;
   contentPage?: boolean;
   ogImage?: string | undefined;
+  ogImageAlt?: string | undefined;
   schema?: TSchemaNode | undefined;
   alternates?: Array<{ locale: TLocale; href: string }> | undefined;
 }
@@ -23,6 +24,7 @@ const {
   noindex = false,
   contentPage = false,
   ogImage = '/og/home-en.png',
+  ogImageAlt,
   schema,
   alternates = [{ locale, href: canonical }],
 } = Astro.props;
@@ -46,12 +48,19 @@ const english = uniqueAlternates.find((item) => item.locale === 'en');
 <meta property="og:type" content={contentPage ? 'article' : 'website'} />
 <meta property="og:site_name" content="AwakeTab" />
 <meta property="og:locale" content={selfMeta.htmlLang.replace('-', '_')} />
+{
+  !noindex &&
+    uniqueAlternates
+      .filter((item) => item.locale !== locale)
+      .map((item) => <meta property="og:locale:alternate" content={LOCALE_META[item.locale].htmlLang.replace('-', '_')} />)
+}
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
 <meta property="og:image" content={image} />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
+{ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />

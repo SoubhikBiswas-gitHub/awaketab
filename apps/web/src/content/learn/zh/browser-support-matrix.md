@@ -1,0 +1,70 @@
+---
+title: "屏幕唤醒锁浏览器支持一览 — AwakeTab"
+description: "Chrome 与 Edge 84、Firefox 126、Safari 16.4 起原生支持屏幕唤醒锁，其余浏览器见表；更低版本只能改用视频备用方案。"
+h1: "Wake Lock（屏幕唤醒锁）浏览器支持一览表"
+intent: "屏幕唤醒锁 浏览器支持"
+secondaryQueries: ["wake lock 浏览器兼容性", "screen wake lock api 支持", "哪些浏览器支持屏幕常亮", "safari wake lock 版本", "firefox wake lock 支持"]
+preset: p15
+mode: standard
+locale: zh
+reviewed: false
+translationOf: "browser-support-matrix"
+lastVerified: 2026-09-09
+browsers: []
+os: []
+faq:
+  - q: "表里显示“支持”，是不是切到后台也能保持常亮？"
+    a: "不是。所有浏览器都遵循同一条规则：标签页被隐藏、窗口最小化或手机切换到其他应用后，唤醒锁就会被收回，状态显示“已暂停 — 标签页已隐藏”。“支持”只表示标签页可见时浏览器能给出原生锁。"
+  - q: "我的浏览器版本比表里的低，还能用吗？"
+    a: "可以尝试视频备用方案：点按“开始”后，AwakeTab 会播放一段极小的视频来保持屏幕常亮，状态显示“通过视频备用方案常亮”。它必须由你亲手点按才能启动，而且比原生唤醒锁更耗电。"
+  - q: "为什么表里没有我用的浏览器？"
+    a: "我们只列出经过测试的浏览器和环境。没有测试过的组合不作任何承诺。表中没有的浏览器，请以状态标签的实际显示为准：只有它显示“屏幕保持常亮”，锁才是真的。"
+  - q: "iPhone 上添加到主屏幕的 AwakeTab 需要什么版本？"
+    a: "主屏幕 App 需要 iOS 18.4 或更高版本才能使用原生唤醒锁。更早的版本请直接在 Safari 16.4 或更高版本中打开 AwakeTab。"
+honestLimit: "此表以 2026年9月9日的测试为准；低于这些版本的浏览器会改用视频备用方案；每一行都只对应该日期的测试结果，没有测试过的组合不作承诺。"
+related:
+  - "/learn/how-we-tested"
+  - "/learn/screen-wake-lock-api-guide"
+  - "/on/ios-home-screen"
+  - "/on/iphone-safari"
+  - "/on/android-chrome"
+  - "/for/kiosk"
+author: soubhik
+published: 2026-09-26
+---
+
+## 一句话答案
+
+截至 2026年9月9日，支持原生屏幕唤醒锁（Screen Wake Lock API）的最低版本是：Chrome 84、Edge 84、Firefox 126、Safari 16.4、Samsung Internet 14、Opera 70；添加到 iOS 主屏幕的 App 需要 iOS 18.4。低于这些版本的 Firefox 等浏览器会改用视频备用方案。下表的数据全部来自 AwakeTab 的支持矩阵文件，没有测试过的组合一律不写。
+
+## 支持矩阵
+
+| 浏览器 | 最低版本 | 机制 | 平台 | 备注 |
+|---|---|---|---|---|
+| Chrome | 84 | 原生 | Windows、macOS、Linux、Android、ChromeOS | 标签页必须保持可见；省电模式可能拒绝或收回锁 |
+| Edge | 84 | 原生 | Windows、macOS | 标签页必须保持可见；效率模式可能影响锁 |
+| Firefox | 126 | 原生 | Windows、macOS、Linux、Android | 更早的版本在用户点按后使用视频备用方案 |
+| Safari | 16.4 | 原生 | macOS、iOS、iPadOS | 低电量模式可能阻止唤醒锁；标签页必须保持可见 |
+| Samsung Internet | 14 | 原生 | Android | 省电设置可能拒绝或收回锁 |
+| Opera | 70 | 原生 | Windows、macOS、Linux、Android | 基于 Chromium；标签页必须保持可见 |
+
+| 环境 | 最低版本 | 机制 | 备注 |
+|---|---|---|---|
+| iOS 主屏幕 App | 18.4 | 原生 | 更早的版本请在 Safari 中使用 AwakeTab |
+| 视频备用方案 | — | 备用 | 需要用户点按启动，耗电高于原生唤醒锁 |
+
+## 怎么读这张表
+
+“原生”表示浏览器直接提供屏幕唤醒锁，AwakeTab 调用 `navigator.wakeLock.request('screen')` 即可获得。但即使版本达标，以下情况仍会导致请求被拒绝或锁被收回：标签页被隐藏、开启了省电模式或低电量模式、页面不是 HTTPS、嵌入页面的 Permissions-Policy 禁用了 `screen-wake-lock`。这时状态标签会显示“已被阻止 — 这样解决”或“已暂停 — 标签页已隐藏”，绝不会显示假的常亮。
+
+## 各操作系统的测试备注
+
+- **Windows**：熄屏时间在“设置 → 系统 → 电源和电池”中设置，节电模式可能拒绝唤醒锁。详见 [Windows 11 屏幕常亮](/zh/on/windows-11)。
+- **macOS**：相关设置在“系统设置 → 锁定屏幕 / 节能”中；合上盖子一定会睡眠，在我们的测试中系统空闲休眠没有被阻止。
+- **iPhone**：设置 → 显示与亮度 → 自动锁定；低电量模式会让“永不”变灰。
+- **Android**：设置 → 显示 → 屏幕超时；部分厂商还有“休眠应用”列表，可能结束后台标签页。
+- **Linux**：我们在 Ubuntu 24.04 的 GNOME 桌面上测试了空闲抑制（idle-inhibit），使用 Firefox 126 及以上和 Chrome 84 及以上版本。
+
+## 数据的时效
+
+浏览器更新很快，这张表只对 2026年9月9日的测试负责，每一行都与该日期绑定。测试方法见[我们如何测试](/learn/how-we-tested)。如果你的浏览器不在表中，最可靠的判断方式是打开 AwakeTab，点按开始后看状态标签：显示“屏幕保持常亮”，就说明浏览器确实持有了锁；想在 iPhone 上使用，可参考 [iPhone Safari 屏幕常亮](/zh/on/iphone-safari)。

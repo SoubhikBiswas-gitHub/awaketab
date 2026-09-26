@@ -1,0 +1,73 @@
+---
+title: "Wake Lock: Browser-Unterstützung im Überblick — AwakeTab"
+description: "Nativer Wake Lock ab Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14, Opera 70 und iOS-Web-Apps ab 18.4. Ältere Versionen nur per Video."
+h1: "Wake Lock API: Welche Browser den Bildschirm anlassen"
+ogTitle: "Wake Lock: Browser-Unterstützung"
+intent: "wake lock api browser unterstützung"
+secondaryQueries: ["screen wake lock api unterstützung", "wake lock safari ios version", "wake lock firefox ab version", "welcher browser hält den bildschirm an", "standby verhindern browser", "bildschirm anlassen browser vergleich"]
+preset: p15
+mode: standard
+locale: de
+reviewed: false
+translationOf: "browser-support-matrix"
+lastVerified: 2026-09-09
+browsers: []
+os: []
+faq:
+  - q: "Gilt die Tabelle auch, wenn der Tab im Hintergrund liegt?"
+    a: "Nein. In jedem aufgeführten Browser gilt der Wake Lock nur für ein sichtbares Dokument. Minimieren Sie das Fenster, wechseln Sie den Tab oder am Handy die App, gibt der Browser den Lock frei, und die Anzeige zeigt „Pausiert — Tab ausgeblendet“."
+  - q: "Warum steht Chrome auf dem iPhone nicht in der Tabelle?"
+    a: "Wir führen nur Zeilen, die wir getestet haben. Für iPhone und iPad ist Safari ab 16.4 belegt, für Web-Apps auf dem Home-Bildschirm iOS 18.4. Andere Kombinationen beanspruchen wir nicht."
+  - q: "Was bedeutet „Video-Ersatzlösung“ genau?"
+    a: "Unterstützt ein Browser die Screen Wake Lock API nicht, etwa Firefox vor Version 126, kann AwakeTab nach einem Tippen oder Klick ein winziges stummes Video abspielen, das den Bildschirm anlässt. Die Anzeige lautet dann „Bildschirm bleibt per Video an“. Das verbraucht mehr Strom als der native Lock."
+  - q: "Unterstützt ein Browser den Lock, heißt das, er wird immer gewährt?"
+    a: "Nein. Energiesparmodus, Stromsparmodus, eine unsichere Verbindung ohne HTTPS oder eine Einbettung ohne Berechtigung für screen-wake-lock führen zu „Blockiert — so beheben Sie es“, auch in einem Browser, der in der Tabelle steht."
+honestLimit: "Die Tabelle gibt den Stand vom 9. September 2026 wieder. Ältere Versionen weichen auf die Video-Ersatzlösung aus, und jede Zeile gilt nur für dieses Testdatum."
+related:
+  - "/learn/screen-wake-lock-api-guide"
+  - "/learn/how-we-tested"
+  - "/on/ios-home-screen"
+  - "/on/iphone-safari"
+  - "/on/android-chrome"
+  - "/for/kiosk"
+author: soubhik
+published: 2026-09-26
+---
+
+## Kurzfassung
+
+Einen nativen Screen Wake Lock gewähren Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 und Opera 70; Web-Apps auf dem iPhone-Home-Bildschirm ab iOS 18.4. Das ist der Stand unserer Datei `support-matrix.json` vom 9. September 2026. Ältere Firefox-Versionen kommen nur über die Video-Ersatzlösung ans Ziel. Kombinationen, die wir nicht getestet haben, stehen nicht in der Tabelle und werden auch nicht beansprucht.
+
+## Browser und Mindestversionen
+
+| Browser | Nativ ab Version | Plattformen | Hinweis |
+|---|---|---|---|
+| Chrome | 84 | Windows, macOS, Linux, Android, ChromeOS | Tab muss sichtbar bleiben; der Energiesparmodus kann den Lock ablehnen oder beenden. |
+| Edge | 84 | Windows, macOS | Tab muss sichtbar bleiben; der Effizienzmodus kann den Lock beeinflussen. |
+| Firefox | 126 | Windows, macOS, Linux, Android | Frühere Versionen nutzen die Video-Ersatzlösung nach einer Nutzeraktion. |
+| Safari | 16.4 | macOS, iOS, iPadOS | Der Stromsparmodus kann den Lock verhindern; Tab muss sichtbar bleiben. |
+| Samsung Internet | 14 | Android | Energiespareinstellungen können den Lock ablehnen oder beenden. |
+| Opera | 70 | Windows, macOS, Linux, Android | Chromium-Basis; Tab muss sichtbar bleiben. |
+
+## Besondere Umgebungen
+
+| Umgebung | Ab Version | Mechanismus | Hinweis |
+|---|---|---|---|
+| Web-App auf dem iOS-Home-Bildschirm | 18.4 | nativ | Auf älteren Versionen AwakeTab besser in Safari nutzen. |
+| Video-Ersatzlösung | – | Ersatz | Braucht ein Tippen oder einen Klick und verbraucht mehr Strom als der native Lock. |
+
+## Was „nativ“ in der Praxis heißt
+
+AwakeTab ruft `navigator.wakeLock.request('screen')` aus einer sicheren, sichtbaren Seite auf. Die Statusanzeige kennt sieben Zustände, von „Bereit“ über „Wird gestartet…“ bis „Tippen für die Ersatzlösung“. Einen laufenden Timer zeigt sie nur, wenn der Browser den Lock hält („Bildschirm bleibt an“) oder die Ersatzlösung läuft („Bildschirm bleibt per Video an“). Nimmt der Browser den Lock zurück, heißt es „Pausiert — Tab ausgeblendet“; lehnt er ab, „Blockiert — so beheben Sie es“. Ein vorgetäuschtes „gehalten“ gibt es nicht.
+
+## Was die Tabelle nicht aussagt
+
+Eine Versionsnummer bedeutet Unterstützung der Schnittstelle, keine Garantie im Einzelfall. Energiesparmodi, fehlendes HTTPS oder eine Permissions-Policy, die `screen-wake-lock` sperrt, führen auch in unterstützten Browsern zur Ablehnung. Außerdem betrifft der Lock nur das Display. Auf dem Mac ging das System bei Inaktivität in unseren Tests dennoch schlafen, und einen zugeklappten Laptop hält kein Browser wach. Die Anwesenheit in Teams oder Slack beeinflusst er ebenfalls nicht, weil diese Dienste auf Eingaben achten.
+
+## Methodik und Datum
+
+Jede Zeile stammt aus einem Test und ist an das Datum 9. September 2026 gebunden. Für Linux liegt ein Test unter Ubuntu 24.04 (GNOME, Idle-Inhibit) vor, durchgeführt mit Chrome 84+ und Firefox 126+. Neuere Browserversionen gelten erst dann als geprüft, wenn eine Zeile ein neues Testdatum trägt. Gerätespezifische Details finden Sie auf den Seiten zu [Safari auf dem iPhone](/de/on/iphone-safari), [Chrome unter Android](/de/on/android-chrome) und [Windows 11](/de/on/windows-11).
+
+## Selbst ausprobieren
+
+Das eingebettete Tool startet hier mit „15 Min.“. Tippen Sie auf „Bildschirm eingeschaltet lassen“ und prüfen Sie, welche Meldung Ihr Browser liefert. Zeigt die Anzeige „Tippen für die Ersatzlösung“, fehlt Ihrem Browser der native Lock.

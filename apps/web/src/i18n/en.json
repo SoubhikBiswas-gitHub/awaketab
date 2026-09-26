@@ -364,5 +364,8 @@
   "settings.notifications.unavailable": "Notifications need the installed app on iPhone and iPad.",
   "pip.add15.label": "Add 15 minutes",
   "pip.empty": "Start a session in",
-  "ambient.focus.today": "{n, plural, one {# focus block today} other {# focus blocks today}}"
+  "ambient.focus.today": "{n, plural, one {# focus block today} other {# focus blocks today}}",
+  "content.breadcrumb": "Breadcrumb",
+  "content.translation.pending": "Translated from English — native review pending.",
+  "content.translation.original": "Read the English original"
 }

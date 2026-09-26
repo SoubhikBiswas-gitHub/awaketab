@@ -274,13 +274,13 @@
   "footer.donate": "मुझे एक कॉफ़ी पिलाएँ",
   "footer.shortcuts": "कीबोर्ड शॉर्टकट",
   "footer.terms": "शर्तें",
-  "content.verified": "Last verified: {date}",
-  "content.stale": "Last verified over 6 months ago — re-testing",
-  "content.faq": "Questions",
-  "content.related": "Related",
-  "content.start": "Start this session",
-  "content.author.role": "Builds and tests AwakeTab.",
-  "content.author.about": "About AwakeTab",
+  "content.verified": "अंतिम जाँच: {date}",
+  "content.stale": "अंतिम जाँच 6 महीने से पहले — दोबारा परीक्षण जारी",
+  "content.faq": "सवाल",
+  "content.related": "संबंधित",
+  "content.start": "यह सत्र शुरू करें",
+  "content.author.role": "AwakeTab बनाते और टेस्ट करते हैं।",
+  "content.author.about": "AwakeTab के बारे में",
 
   "end.notify.title": "AwakeTab",
   "end.notify.body": "आपका {label} वाला सेशन पूरा हुआ",
@@ -337,5 +337,8 @@
   "settings.notifications.unavailable": "iPhone और iPad पर नोटिफ़िकेशन के लिए इंस्टॉल किया हुआ ऐप चाहिए।",
   "pip.add15.label": "15 मिनट जोड़ें",
   "pip.empty": "सेशन शुरू करें:",
-  "ambient.focus.today": "{n, plural, one {आज # फ़ोकस ब्लॉक} other {आज # फ़ोकस ब्लॉक}}"
+  "ambient.focus.today": "{n, plural, one {आज # फ़ोकस ब्लॉक} other {आज # फ़ोकस ब्लॉक}}",
+  "content.breadcrumb": "ब्रेडक्रंब",
+  "content.translation.pending": "अंग्रेज़ी से अनुवादित — मूल भाषी समीक्षा बाकी है।",
+  "content.translation.original": "अंग्रेज़ी मूल पढ़ें"
 }

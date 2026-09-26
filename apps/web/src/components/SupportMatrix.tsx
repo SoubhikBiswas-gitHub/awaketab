@@ -30,7 +30,7 @@ export interface ISupportMatrixProps {
 export function SupportMatrix({ caption, headers, anyLabel, rows }: ISupportMatrixProps) {
   return (
     <Table className="min-w-[32rem] caption-top">
-      <TableCaption className="mb-2 mt-0 text-left">{caption}</TableCaption>
+      <TableCaption className="mb-2 mt-0 text-start">{caption}</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead scope="col">{headers.name}</TableHead>

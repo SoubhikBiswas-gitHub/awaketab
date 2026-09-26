@@ -12,12 +12,27 @@ interface Props {
   description: string;
   canonical: string;
   locale?: TLocale;
+  noindex?: boolean;
   ogImage?: string | undefined;
+  ogImageAlt?: string | undefined;
   schema: TSchemaNode;
   alternates?: Array<{ locale: TLocale; href: string }> | undefined;
+  /** Locale-switcher targets: the page's own translations (docs/07 §8 "links point to the same-locale page"). */
+  localeLinks?: Partial<Record<TLocale, string>> | undefined;
 }
 
-const { title, description, canonical, locale = 'en', ogImage, schema, alternates } = Astro.props;
+const {
+  title,
+  description,
+  canonical,
+  locale = 'en',
+  noindex = false,
+  ogImage,
+  ogImageAlt,
+  schema,
+  alternates,
+  localeLinks,
+} = Astro.props;
 // Ads render only here, gated by PUBLIC_ADS_ENABLED (docs/00 §8.3, docs/09 §3.1). The rail slot
 // takes the second grid column on large screens; slot order in the DOM is unchanged.
 const showAds = shouldRenderAdSlots();
@@ -28,9 +43,12 @@ const showAds = shouldRenderAdSlots();
   description={description}
   canonical={canonical}
   locale={locale}
+  noindex={noindex}
   ogImage={ogImage}
+  ogImageAlt={ogImageAlt}
   schema={schema}
   alternates={alternates}
+  localeLinks={localeLinks}
   contentPage
 >
   <slot name="header" />

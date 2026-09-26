@@ -6,9 +6,11 @@ import { createT } from '../i18n/load';
 
 interface Props {
   locale: TLocale;
+  /** The page's translations by locale; a locale without one links to its home (docs/07 §8). */
+  links?: Partial<Record<TLocale, string>> | undefined;
 }
 
-const { locale } = Astro.props;
+const { locale, links = {} } = Astro.props;
 const t = createT(locale);
 // 44 px targets; the current locale is marked in bold and underlined, not by colour alone.
 const link = cn(
@@ -22,8 +24,9 @@ const link = cn(
     (Object.keys(LOCALE_META) as TLocale[]).map((code) => (
       <a
         class={link}
-        href={localePath(code, '/')}
+        href={links[code] ?? localePath(code, '/')}
         hreflang={LOCALE_META[code].hreflang}
+        lang={LOCALE_META[code].htmlLang}
         aria-current={code === locale ? 'page' : undefined}
       >
         {LOCALE_META[code].label}

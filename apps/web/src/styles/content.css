@@ -48,6 +48,10 @@
     border-radius: var(--at-r-sm);
     background: var(--muted);
     font-size: 0.9em;
+
+    /* Inline API names (`navigator.wakeLock.request('screen')`) have no break opportunity; without this
+       they overflow a 320 px viewport, and CJK/Devanagari prose around them cannot absorb it (E6-T07). */
+    overflow-wrap: anywhere;
   }
 
   .at-content .at-prose pre {
@@ -63,6 +67,7 @@
     padding: 0;
     background: none;
     font-size: inherit;
+    overflow-wrap: normal;
   }
 
   .at-content .at-prose table {

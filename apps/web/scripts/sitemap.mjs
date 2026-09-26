@@ -1,15 +1,15 @@
 import { execFile } from 'node:child_process';
-import { readdir, writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
+import { alternatesFor, HREFLANG, isIndexable, readContentIndex } from './translations.mjs';
 
 const exec = promisify(execFile);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = process.env.AT_DIST ? path.resolve(process.env.AT_DIST) : path.join(ROOT, 'dist');
 const SITE = 'https://awaketab.com';
 const LOCALES = ['en', 'es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
-const HREFLANG = { en: 'en', es: 'es', 'pt-br': 'pt-BR', de: 'de', fr: 'fr', ja: 'ja', zh: 'zh-Hans', hi: 'hi' };
 const ENGLISH_PATHS = [
   '/',
   '/15m',
@@ -43,39 +43,40 @@ async function lastModified() {
 }
 
 const CONTENT = path.join(ROOT, 'src/content');
-const collections = ['for', 'on', 'vs', 'guides', 'learn'];
-for (const collection of collections) {
-  const dir = path.join(CONTENT, collection, 'en');
-  try {
-    const files = await readdir(dir);
-    for (const file of files) {
-      if (file.endsWith('.md')) ENGLISH_PATHS.push(`/${collection}/${file.slice(0, -3)}`);
-    }
-  } catch {
-    // Collection folder may be empty during early builds.
-  }
-}
+const slugs = JSON.parse(await readFile(path.join(ROOT, 'src/i18n/slugs.json'), 'utf8'));
+const pages = await readContentIndex(CONTENT);
 const modified = await lastModified();
 const escapeXml = (value) =>
   value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
-const englishAlternates = (pathname) => {
+const link = (hreflang, href) => `<xhtml:link rel="alternate" hreflang="${hreflang}" href="${escapeXml(href)}"/>`;
+const url = (loc, alternates) =>
+  `<url><loc>${escapeXml(loc)}</loc><lastmod>${modified}</lastmod>${alternates.join('')}</url>`;
+
+/** @type {Record<string, string[]>} */
+const urls = Object.fromEntries(LOCALES.map((locale) => [locale, []]));
+for (const pathname of ENGLISH_PATHS) {
   const href = `${SITE}${pathname === '/' ? '' : pathname}`;
-  return [
-    `<xhtml:link rel="alternate" hreflang="${HREFLANG.en}" href="${escapeXml(href)}"/>`,
-    `<xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(href)}"/>`,
-  ].join('');
-};
+  urls.en.push(url(href, [link(HREFLANG.en, href), link('x-default', href)]));
+}
+// Content pages: only indexable versions (English + translations with `reviewed: true`) are listed, each
+// with the same reciprocal alternates the page's HTML emits (scripts/translations.mjs alternatesFor).
+for (const page of pages) {
+  if (!isIndexable(page)) continue;
+  const alternates = alternatesFor(pages, slugs, page.kind, page.enSlug, page.locale, SITE);
+  const self = alternates.find((item) => item.locale === page.locale);
+  const english = alternates.find((item) => item.locale === 'en');
+  if (!self) continue;
+  urls[page.locale]?.push(
+    url(self.href, [
+      ...alternates.map((item) => link(item.hreflang, item.href)),
+      link('x-default', english?.href ?? self.href),
+    ]),
+  );
+}
 
 for (const locale of LOCALES) {
-  const paths = locale === 'en' ? ENGLISH_PATHS : [];
-  const urls = paths
-    .map((pathname) => {
-      const loc = `${SITE}${pathname === '/' ? '' : pathname}`;
-      return `<url><loc>${escapeXml(loc)}</loc><lastmod>${modified}</lastmod>${englishAlternates(pathname)}</url>`;
-    })
-    .join('');
-  const xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${urls}</urlset>`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${(urls[locale] ?? []).join('')}</urlset>`;
   await writeFile(path.join(DIST, `sitemap-${locale}.xml`), xml);
 }
 

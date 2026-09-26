@@ -245,3 +245,9 @@
   --at-on-accent: #3f0613;
   --at-focus: #fda4af;
 }
+
+/* RTL readiness (docs/07 §6): icons that imply a direction mirror under <html dir="rtl">; every layout
+   rule already flips through logical properties (stylelint liberty/use-logical-spec). */
+[dir="rtl"] :is([data-slot="breadcrumb-separator"] > svg, .at-flip-rtl) {
+  transform: scaleX(-1);
+}
