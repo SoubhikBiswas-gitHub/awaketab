@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · Tell a friend · share a setup · no referral codes</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease),opacity .45s var(--ease)}
+button:active{transform:scale(.96)}
+button:disabled,input:disabled,select:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+a{transition:color .45s var(--ease),background-color .45s var(--ease),border-color .45s var(--ease)}
+h1,h2,h3,h4,p,figure,blockquote{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+.at-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.at-num{font-family:Geist,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"zero" 0}
+.at-kick{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.2s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-fade{transition:background-color .6s var(--ease),border-color .6s var(--ease),opacity .6s var(--ease),fill .6s var(--ease),stroke .6s var(--ease)}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-breathe{animation:at-breathe 3.4s var(--ease) infinite alternate}
+.at-ignite{transform-box:fill-box;transform-origin:center;animation:at-ignite .6s var(--ease) .3s both}
+.at-travel{animation:at-travel .6s var(--ease) both}
+.at-off{transition:stroke-dasharray .9s var(--ease),stroke-opacity .9s var(--ease),opacity .9s var(--ease),fill .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-breathe{from{opacity:.55}to{opacity:1}}
+@keyframes at-ignite{0%{transform:scale(.6);opacity:.4}55%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes at-travel{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--at-tx,0),var(--at-ty,0)) scale(.5);opacity:0}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+<style>
+.at-wave{animation:at-wave 9s linear infinite}
+.at-wave2{animation:at-wave 15s linear infinite reverse}
+.at-bub{animation:at-bub 9s ease-in infinite}
+.at-cloud{animation:at-drift 90s linear infinite}
+.at-cloud2{animation:at-drift 130s linear infinite;animation-delay:-60s}
+.at-tw{animation:at-tw 5s ease-in-out infinite}
+.at-tw2{animation:at-tw 7s ease-in-out infinite;animation-delay:-3s}
+.at-glint{transform-origin:top center;animation:at-glint 6s ease-in-out infinite}
+.at-shim{animation:at-shim 3.8s var(--ease) infinite}
+.at-float{animation:at-float 7s ease-in-out infinite}
+.at-scrim{animation:at-fade .5s var(--ease) both}
+.at-sheet-up{animation:at-up .7s var(--ease) both}
+.at-sheet-side{animation:at-side .7s var(--ease) both}
+.at-sheet-body{scrollbar-width:thin}
+.at-time{color-scheme:inherit}
+.at-ig{opacity:0;pointer-events:none}
+.at-ig-dock{animation:at-flash .5s var(--ease) both}
+.at-ig-travel{animation:at-travel .6s var(--ease) .1s both}
+.at-ig-pill{animation:at-spark .7s var(--ease) .3s both}
+.at-ig-face{animation:at-flash .9s var(--ease) .45s both}
+.at-ig-tip{transform-box:fill-box;transform-origin:center;animation:at-spark .8s var(--ease) .5s both}
+.at-ig-bead{animation:at-spark .8s var(--ease) .55s both}
+@keyframes at-wave{to{transform:translateX(-358px)}}
+@keyframes at-bub{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.55}100%{transform:translateY(-240px) scale(1.1);opacity:0}}
+@keyframes at-drift{from{transform:translateX(-170px)}to{transform:translateX(420px)}}
+@keyframes at-tw{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes at-glint{0%,100%{transform:scaleX(.6);opacity:.35}50%{transform:scaleX(1);opacity:.7}}
+@keyframes at-shim{0%{transform:translateX(-120%)}100%{transform:translateX(420%)}}
+@keyframes at-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes at-fade{from{opacity:0}to{opacity:1}}
+@keyframes at-up{from{opacity:0;transform:translateY(72px)}to{opacity:1;transform:none}}
+@keyframes at-side{from{opacity:0;transform:translateX(56px)}to{opacity:1;transform:none}}
+@keyframes at-flash{0%{opacity:0}35%{opacity:1}100%{opacity:0}}
+@keyframes at-spark{0%{opacity:0;transform:scale(.4)}40%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(2.4)}}
+@keyframes at-off{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(.94)}}
+.at-rise3{animation:at-in .9s var(--ease) both;animation-delay:.35s}
+.at-step{transition:opacity .6s var(--ease),transform .6s var(--ease),background-color .6s var(--ease),border-color .6s var(--ease)}
+.at-l button:focus-visible,.at-l a:focus-visible,.at-l input:focus-visible,.at-l textarea:focus-visible{outline-color:#087B87}
+</style>
+</helmet>
+<div class="{{rootCls}}" style="width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; left: -25%; top: 4%; width: 150%; height: 70%; background: radial-gradient(45% 45% at 50% 50%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
+  <header style="position: relative; height: {{hdrH}}; flex-shrink: 0; box-sizing: border-box; padding: 0 {{gutter}}; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+    <a href="Main.dc.html" aria-label="AwakeTab, open the tool" style="display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; color: {{t.ink}}; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{bead}}" style="transition: fill .6s"></circle></svg>AwakeTab</a>
+    <sc-if value="{{isDesk}}" hint-placeholder-val="{{false}}"><nav aria-label="Main" style="display: flex; gap: 32px; font-size: 15px; line-height: 22px; font-weight: 500"><a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Use cases</a><a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Devices</a><a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Extension</a><a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Pro</a></nav></sc-if>
+    <div role="radiogroup" aria-label="Theme" style="position: relative; flex-shrink: 0; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}"><div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{themeX}})"></div><button role="radio" aria-checked="{{themeLight}}" aria-label="Light" title="Light" onClick="{{setLight}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeLightInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button><button role="radio" aria-checked="{{themeDark}}" aria-label="Dark" title="Dark" onClick="{{setDark}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeDarkInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button><button role="radio" aria-checked="{{themeAuto}}" aria-label="Auto, follows your system" title="Auto: follows your system" onClick="{{setAuto}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeAutoInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button></div>
+  </header>
+  <div style="position: relative; flex-shrink: 0; padding: {{linePad}}; display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+    <time style="font-size: 15px; line-height: 22px; color: {{t.ink2}}">{{dateLong}}</time>
+    <time class="at-num" style="font-size: 15px; line-height: 22px; color: {{t.ink}}">{{nowTime}}</time>
+  </div>
+  <main style="{{bodyStyle}}">
+    <div style="grid-area: ctx; display: flex; flex-direction: column; gap: 16px; align-items: {{alignItems}}; text-align: {{textAlign}}">
+      <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: {{pl.gap}}; height: {{pl.h}}; max-width: 100%; padding: {{pl.pad}}; box-sizing: border-box; border-radius: 999px; background: {{pl.soft}}; border: 1px solid {{pl.line}}; font-size: {{pl.fs}}; line-height: {{pl.lh}}; font-weight: 600; color: {{t.ink}}; white-space: nowrap"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0; overflow: visible; filter: drop-shadow(0 0 4px {{pl.glow}})"><path class="{{pl.cls}}" d="{{pl.glyph}}" fill="{{pl.fill}}" stroke="{{pl.tone}}" stroke-width="{{pl.stroke}}" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pl.label}}</output>
+      <sc-if value="{{showCtx}}" hint-placeholder-val="{{true}}">
+        <p style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Session complete</span><span style="font-family: Geist, system-ui, sans-serif; font-weight: 300; font-size: {{ctxSize}}; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums">30<span style="font-size: 0.4em; color: {{t.ink2}}"> min</span></span><span style="font-size: 15px; color: {{t.ink2}}">ended at {{endText}} · your 5th session</span></p>
+      </sc-if>
+      <sc-if value="{{isPreset}}" hint-placeholder-val="{{false}}">
+        <figure style="margin: 0; width: 100%; max-width: {{prevMax}}; display: flex; flex-direction: column; gap: 12px">
+          <figcaption style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">What they will see</figcaption>
+          <div style="border-radius: 20px; overflow: hidden; border: 1px solid {{t.line}}; background: {{t.surface}}; text-align: start">
+            <div aria-hidden="true" style="position: relative; height: {{ogH}}; background: radial-gradient(120% 90% at 50% 20%, #13203A 0%, #0A0E16 60%); display: grid; place-items: center">
+              <svg width="{{ogRing}}" height="{{ogRing}}" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="#1A2336" stroke-width="5"></circle><circle cx="60" cy="60" r="50" fill="none" stroke="#5BE0E8" stroke-width="5" stroke-linecap="round" stroke-dasharray="314 314" transform="rotate(-90 60 60)"></circle><text x="60" y="68" text-anchor="middle" font-family="Geist Mono, ui-monospace, monospace" font-size="24" font-weight="300" fill="#EAF0F7">{{ogDigits}}</text></svg>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 16px 16px">
+              <span style="font-size: 13px; color: {{t.muted}}">awaketab.com</span>
+              <span style="font-size: 16px; font-weight: 600; line-height: 1.3">Keep your screen awake for {{lenWords}}</span>
+              <span style="font-size: 14px; line-height: 20px; color: {{t.ink2}}">Free, no account. The pill says when it is really working.</span>
+            </div>
+          </div>
+          <p style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty">{{opensText}}</p>
+        </figure>
+      </sc-if>
+    </div>
+
+    <div style="grid-area: card; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+      <sc-if value="{{isTell}}" hint-placeholder-val="{{true}}">
+        <section aria-labelledby="sh-tell" class="at-rise" style="display: flex; flex-direction: column; gap: 16px; padding: {{cardPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; box-shadow: {{cardShadow}}">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap">
+            <p role="status" style="font-size: 15px; line-height: 22px; font-weight: 600">Thanks — that helps.</p>
+            <div role="radiogroup" aria-label="Rating, 1 to 5 stars" style="display: flex; gap: 4px">
+              <sc-for list="{{stars}}" as="st" hint-placeholder-count="5">
+                <button role="radio" aria-checked="{{st.sel}}" aria-label="{{st.aria}}" onClick="{{st.pick}}" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; display: grid; place-items: center"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.5 6 .8-4.4 4.1 1.1 5.9L12 16.6l-5.3 2.9 1.1-5.9-4.4-4.1 6-.8z" fill="{{st.fill}}" stroke="{{st.line}}" stroke-width="1.5" stroke-linejoin="round"></path></svg></button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="height: 1px; background: {{t.line}}"></div>
+          <h2 id="sh-tell" style="font-size: 20px; line-height: 28px; font-weight: 600">Know someone whose screen keeps going dark?</h2>
+          <label style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 13px; color: {{t.muted}}">You can edit this before it goes anywhere</span>
+            <textarea rows="4" maxLength="280" onChange="{{editMsg}}" style="box-sizing: border-box; width: 100%; resize: none; padding: 12px 16px; border-radius: 8px; border: 1px solid {{t.inputBorder}}; background: {{t.field}}; color: {{t.ink}}; font-size: 15px; line-height: 22px">{{msg}}</textarea>
+          </label>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+            <button onClick="{{share}}" style="height: 52px; box-sizing: border-box; padding: 0 20px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 15px; font-weight: 600; color: {{t.ink}}; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"></path><path d="M6 11H5v10h14V11h-1"></path></svg>Share…</button>
+            <button onClick="{{copy}}" style="height: 52px; box-sizing: border-box; padding: 0 20px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 15px; font-weight: 600; color: {{t.ink}}; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap">{{copyLabel}}</button>
+            <button onClick="{{skip}}" style="height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 20px; border: 0; background: transparent; font-size: 15px; font-weight: 600; color: {{t.ink2}}">Not now</button>
+          </div>
+          <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">No referral codes and no rewards. The link is plain awaketab.com, with nothing that tracks you or them.</p>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{isLow}}" hint-placeholder-val="{{false}}">
+        <section aria-labelledby="sh-low" class="at-rise" style="display: flex; flex-direction: column; gap: 16px; padding: {{cardPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; box-shadow: {{cardShadow}}">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap">
+            <h2 id="sh-low" style="font-size: 20px; line-height: 28px; font-weight: 600">Sorry it fell short</h2>
+            <div role="radiogroup" aria-label="Rating, 1 to 5 stars" style="display: flex; gap: 4px">
+              <sc-for list="{{stars}}" as="st" hint-placeholder-count="5">
+                <button role="radio" aria-checked="{{st.sel}}" aria-label="{{st.aria}}" onClick="{{st.pick}}" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; display: grid; place-items: center"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l2.6 5.5 6 .8-4.4 4.1 1.1 5.9L12 16.6l-5.3 2.9 1.1-5.9-4.4-4.1 6-.8z" fill="{{st.fill}}" stroke="{{st.line}}" stroke-width="1.5" stroke-linejoin="round"></path></svg></button>
+              </sc-for>
+            </div>
+          </div>
+          <label style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 14px; line-height: 20px; color: {{t.ink2}}">Anything we should fix? (optional)</span>
+            <textarea rows="4" maxLength="280" onChange="{{editNote}}" placeholder="The screen still went dark on my…" style="box-sizing: border-box; width: 100%; resize: none; padding: 12px 16px; border-radius: 8px; border: 1px solid {{t.inputBorder}}; background: {{t.field}}; color: {{t.ink}}; font-size: 15px; line-height: 22px">{{note}}</textarea>
+            <span style="align-self: flex-end; font-family: Geist, system-ui, sans-serif; font-size: 12px; color: {{t.muted}}">{{noteCount}} / 280</span>
+          </label>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <button onClick="{{send}}" style="height: 52px; box-sizing: border-box; padding: 0 20px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 15px; font-weight: 600; color: {{t.ink}}; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap">{{sendLabel}}</button>
+            <button onClick="{{skip}}" style="height: 52px; box-sizing: border-box; padding: 0 16px; border-radius: 20px; border: 0; background: transparent; font-size: 15px; font-weight: 600; color: {{t.ink2}}">Maybe later</button>
+          </div>
+          <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">Your stars count toward the public rating exactly like anyone else's. We only suggest sharing after a 4 or 5.</p>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{isPreset}}" hint-placeholder-val="{{false}}">
+        <section aria-labelledby="sh-preset" class="at-rise" style="display: flex; flex-direction: column; gap: 16px; padding: {{cardPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; box-shadow: {{cardShadow}}">
+          <h2 id="sh-preset" style="font-size: 20px; line-height: 28px; font-weight: 600">Share this setup</h2>
+          <div role="radiogroup" aria-label="Length" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+            <sc-for list="{{lens}}" as="l" hint-placeholder-count="4">
+              <button role="radio" aria-checked="{{l.sel}}" onClick="{{l.pick}}" style="height: 44px; border-radius: 999px; border: 1px solid {{l.ring}}; background: {{l.bg}}; font-size: 14px; font-weight: {{l.weight}}; color: {{t.ink}}">{{l.label}}</button>
+            </sc-for>
+          </div>
+          <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px">
+            <span style="display: flex; flex-direction: column; gap: 4px"><span id="sh-auto" style="font-size: 15px; font-weight: 600">Start automatically</span><span style="font-size: 13px; color: {{t.muted}}">Starts as soon as the link opens, where the browser allows it</span></span>
+            <button role="switch" aria-checked="{{autoOn}}" aria-labelledby="sh-auto" onClick="{{toggleAuto}}" style="position: relative; width: 52px; height: 44px; padding: 0; border: 0; background: transparent">
+              <span aria-hidden="true" style="position: absolute; left: 0; top: 6px; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{sw.track}}; border: 1px solid {{sw.line}}"></span>
+              <span aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 10px; width: 24px; height: 24px; border-radius: 50%; background: {{sw.knob}}; transform: translateX({{sw.x}})"></span>
+            </button>
+          </div>
+          <div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px">
+            <output aria-label="Link" style="min-height: 48px; box-sizing: border-box; padding: 0 16px; border-radius: 8px; border: 1px solid {{t.line2}}; background: {{t.field}}; display: flex; align-items: center; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 14px; color: {{t.ink}}; overflow-wrap: anywhere">{{url}}</output>
+            <button onClick="{{copy}}" style="height: 52px; box-sizing: border-box; padding: 0 20px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 15px; font-weight: 600; color: {{t.ink}}; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap">{{copyLabel}}</button>
+          </div>
+          <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">Nothing about you is in the link. It only carries the length.</p>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{closed}}" hint-placeholder-val="{{false}}">
+        <p role="status" class="at-in" style="font-size: 14px; color: {{t.muted}}; text-align: {{textAlign}}">{{closedText}}</p>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{notPreset}}" hint-placeholder-val="{{true}}">
+      <div style="grid-area: dock">
+        <button onClick="{{skip}}" style="width: 100%; height: 60px; box-sizing: border-box; border-radius: 20px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 17px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 30px -8px {{lampGlow}}"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>Again · 30 min</button>
+      </div>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"variant":{"editor":"enum","options":["tell","low","preset"],"default":"tell"},"$preview":{"width":390,"height":844}}'>
+// AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
+const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#EAF0F7', primaryInk: '#0A0E16', shadow: 'none' };
+const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#0E1726', primaryInk: '#FFFFFF', shadow: '0 1px 2px rgba(14,23,38,.06)' };
+const AT_OLED = Object.assign({}, AT_DARK, { bg: '#000000', ground: '#000000', surface: '#0A0A0A' });
+const AT_LAMPS = [
+  { id: 'aqua', name: 'Aqua', dark: '#5BE0E8', light: '#087B87', pro: false },
+  { id: 'violet', name: 'Violet', dark: '#A594FF', light: '#5A47CF', pro: false },
+  { id: 'mint', name: 'Mint', dark: '#7EF0B8', light: '#167A50', pro: true },
+  { id: 'sky', name: 'Sky', dark: '#7CB8FF', light: '#255FBD', pro: true }
+];
+const AT_GLYPH = {
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z'
+};
+// Status pill sizes (§11.4): L kiosk, M tool, S popup / PiP / full embed, XS compact embed.
+const AT_PILL = {
+  L: { h: '48px', pad: '0 20px 0 16px', gap: '8px', fs: '20px', lh: '28px' },
+  M: { h: '38px', pad: '0 16px 0 12px', gap: '8px', fs: '15px', lh: '22px' },
+  S: { h: '32px', pad: '0 12px 0 8px', gap: '8px', fs: '14px', lh: '20px' },
+  XS: { h: '26px', pad: '0 8px', gap: '4px', fs: '13px', lh: '18px' }
+};
+function atRgba(hex, a) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atPill(o) {
+  const s = AT_PILL[o.size || 'M'];
+  return { label: o.label, h: s.h, pad: s.pad, gap: s.gap, fs: s.fs, lh: s.lh, tone: o.tone, glyph: o.glyph || AT_GLYPH.dot, fill: o.hollow ? 'transparent' : o.tone, stroke: o.stroke || '1.6', soft: atRgba(o.tone, 0.12), line: atRgba(o.tone, 0.38), glow: o.glow ? atRgba(o.tone, 0.8) : 'transparent', cls: 'at-fade' };
+}
+// Page chrome shared by every board: tokens, lamp, header, theme switch, card and footer metrics.
+function atChrome(o) {
+  const L = o.layout || 'phone';
+  const desk = L === 'desktop', tab = L === 'tablet', phone = !desk && !tab;
+  const theme = o.theme || 'auto';
+  const dark = theme === 'dark' || theme === 'oled' || (theme === 'auto' && o.sysDark !== false);
+  const t = theme === 'oled' ? AT_OLED : dark ? AT_DARK : AT_LIGHT;
+  const def = AT_LAMPS.find((l) => l.id === o.lamp) || AT_LAMPS[0];
+  const lamp = dark ? def.dark : def.light;
+  const set = (id) => () => { if (o.set) o.set(id); };
+  const ink = (id) => (theme === id ? t.ink : t.ink2);
+  return {
+    t, dark, lamp, lampText: lamp, lampInk: dark ? '#04232A' : '#FFFFFF', bead: lamp,
+    lampSoft: atRgba(lamp, 0.14), lampLine: atRgba(lamp, 0.45), lampGlow: atRgba(lamp, 0.55), lampFaint: atRgba(lamp, 0.08), lampTag: atRgba(lamp, 0.12),
+    halo: 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(lamp, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(lamp, 0) + ' 100%)',
+    isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone,
+    hdrH: phone ? '60px' : '68px', gutter: desk ? '80px' : tab ? '32px' : '16px', secGap: desk ? '96px' : tab ? '64px' : '48px',
+    cardPad: phone ? '20px' : '24px', cardShadow: t.shadow, footPad: phone ? '24px 16px 32px' : desk ? '24px 80px' : '24px 32px',
+    themeX: (theme === 'light' ? 0 : theme === 'dark' ? 44 : 88) + 'px',
+    themeLight: theme === 'light', themeDark: theme === 'dark', themeAuto: theme === 'auto',
+    themeLightInk: ink('light'), themeDarkInk: ink('dark'), themeAutoInk: ink('auto'),
+    setLight: set('light'), setDark: set('dark'), setAuto: set('auto')
+  };
+}
+const C = 2 * Math.PI * 146;
+// Growth names on top of the shared tokens (all values are tokens).
+const DARK = Object.assign({}, AT_DARK, { chip: AT_DARK.raised, chipShadow: 'transparent', field: AT_DARK.sunken, screen: AT_DARK.sunken });
+const LIGHT = Object.assign({}, AT_LIGHT, { chip: AT_LIGHT.raised, chipShadow: 'transparent', field: AT_LIGHT.sunken, screen: AT_LIGHT.sunken });
+// Lamp colours (DESIGN.md 2.2): id, name, dark, light, Pro.
+const LAMPS = [['aqua', 'Aqua', '#5BE0E8', '#087B87', false], ['violet', 'Violet', '#A594FF', '#5A47CF', false], ['mint', 'Mint', '#7EF0B8', '#167A50', true], ['sky', 'Sky', '#7CB8FF', '#255FBD', true]];
+// Preset labels from en.json; phones show all seven (PRODUCT.md anti-reference). ∞ is named Until I stop.
+const PRESET_ROWS = [['p15', '15 min', '15 minutes', 900], ['p30', '30 min', '30 minutes', 1800], ['p45', '45 min', '45 minutes', 2700], ['p60', '1 h', '1 hour', 3600], ['p120', '2 h', '2 hours', 7200], ['p240', '4 h', '4 hours', 14400], ['pinf', '∞', 'Until I stop', 0]];
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const GLYPH = { paused: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z', blocked: 'M6 1L11.2 10.5H.8z', fallback: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z' };
+// Pill strings are a contract: exactly these seven.
+const LABEL = { ready: 'Ready', ended: 'Ready', starting: 'Starting…', awake: 'Screen awake', paused: 'Paused — tab hidden', blocked: "Blocked — here's the fix", needtap: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
+
+class Component extends DCLogic {
+constructor(props) {
+    super(props);
+    this.state = { theme: props.theme || 'auto', sysDark: this.sys(), now: Date.now(), stars: props.variant === 'low' ? 2 : 5, closed: '', copied: false, sent: false, auto: false, len: 'p45', note: '',
+      msg: 'I use AwakeTab to keep my screen on from a browser tab. It shows when it is really working, and there is no account. awaketab.com' };
+  }
+  heights() { return { phone: 844, tablet: 1180, desktop: 800 }; }
+  update(prev) { if (prev.variant !== this.props.variant) this.setState({ stars: this.props.variant === 'low' ? 2 : 5, closed: '', copied: false, sent: false }); }
+  vals(b) {
+    const s = this.state, t = b.t, desk = b.isDesk, tab = b.isTab, phone = b.isPhone;
+    const v = this.props.variant || 'tell';
+    const pl = this.pill('ended', b);
+    const lowNow = s.stars <= 3;
+    const isTell = v !== 'preset' && !s.closed && !lowNow, isLow = v !== 'preset' && !s.closed && lowNow;
+    const starC = b.lamp; // Stars use the lamp, like the rating prompt in Extras; amber stays reserved for Paused.
+    const stars = [1, 2, 3, 4, 5].map((n) => ({ aria: n + (n === 1 ? ' star' : ' stars'), sel: s.stars === n ? 'true' : 'false', fill: n <= s.stars ? starC : 'transparent', line: n <= s.stars ? starC : t.line2, pick: () => this.setState({ stars: n }) }));
+    const LENS = [['p15', '15 min', '/15m', 900], ['p30', '30 min', '/30m', 1800], ['p45', '45 min', '/45m', 2700], ['p60', '1 h', '/1h', 3600]];
+    const cur = LENS.find((l) => l[0] === s.len) || LENS[2];
+    const lens = LENS.map(([id, label]) => ({ label, sel: s.len === id ? 'true' : 'false', ring: s.len === id ? b.lamp : t.line, bg: s.len === id ? b.lampSoft : 'transparent', weight: s.len === id ? 600 : 500, pick: () => this.setState({ len: id, copied: false }) }));
+    const on = s.auto;
+    const endMs = Math.round((s.now - 60000) / 60000) * 60000;
+    return {
+      tone: pl.tone, pl, aura: this.rgba(t.muted, 0.06),
+      bodyStyle: desk
+        ? "position: relative; flex-grow: 1; display: grid; grid-template-columns: minmax(0, 1fr) 480px; grid-template-rows: 1fr auto auto 1fr; grid-template-areas: 'ctx .' 'ctx card' 'ctx dock' 'ctx .'; column-gap: 64px; row-gap: 20px; align-items: center; padding: 8px 80px 40px 80px"
+        : tab
+          ? "position: relative; flex-grow: 1; display: grid; grid-template-columns: minmax(0, 520px); justify-content: center; grid-template-rows: auto auto 1fr auto; grid-template-areas: 'ctx' 'card' '.' 'dock'; row-gap: 32px; padding: 40px 32px 48px"
+          : "position: relative; flex-grow: 1; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto 1fr auto; grid-template-areas: 'ctx' 'card' '.' 'dock'; row-gap: 16px; padding: 12px 16px 20px",
+      alignItems: desk ? 'flex-start' : 'center', textAlign: desk ? 'start' : 'center',
+      ctxSize: desk ? '112px' : tab ? '88px' : '56px', endText: this.hm(endMs),
+      isTell, isLow, showCtx: v !== 'preset' && !phone, isPreset: v === 'preset', notPreset: v !== 'preset', closed: !!s.closed, closedText: s.closed,
+      stars, msg: s.msg, note: s.note, noteCount: s.note.length,
+      editMsg: (e) => this.setState({ msg: String(e && e.target ? e.target.value : s.msg).slice(0, 280) }),
+      editNote: (e) => this.setState({ note: String(e && e.target ? e.target.value : '').slice(0, 280) }),
+      share: () => this.setState({ closed: 'Shared. Thank you for passing it on.' }),
+      copy: () => this.setState({ copied: true }), copyLabel: s.copied ? 'Copied' : 'Copy link',
+      send: () => this.setState({ closed: 'Sent. Thank you, we read every note.' }), sendLabel: 'Send',
+      skip: () => this.setState({ closed: 'No problem. We will not ask again for a while.' }),
+      lens, lenWords: this.words(cur[3]), ogDigits: cur[3] >= 3600 ? '1:00:00' : String(cur[3] / 60) + ':00',
+      prevMax: desk ? '520px' : '100%', ogH: desk ? '220px' : '96px', ogRing: desk ? '150' : '72',
+      url: 'awaketab.com' + cur[2] + (on ? '?autostart=1' : ''),
+      opensText: on ? 'It opens AwakeTab set to ' + this.words(cur[3]) + ' and starts right away where the browser allows it. If not, one tap on Keep awake starts it.' : 'It opens AwakeTab set to ' + this.words(cur[3]) + '. It starts when they tap Keep awake.',
+      autoOn: on ? 'true' : 'false', toggleAuto: () => this.setState({ auto: !this.state.auto, copied: false }),
+      sw: { track: on ? b.lamp : t.track, line: on ? b.lamp : t.line2, knob: on ? b.lampInk : t.muted, x: on ? '20px' : '0px' }
+    };
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    this.timer = setInterval(() => this.tick(), 1000);
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+    if (this.mount) this.mount();
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    (this.timers || []).forEach((x) => clearTimeout(x));
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+  }
+  componentDidUpdate(prev) {
+    if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme });
+    if (this.update) this.update(prev);
+  }
+  tick() { this.setState({ now: Date.now() }); if (this.onTick) this.onTick(); }
+  later(ms, fn) { (this.timers = this.timers || []).push(setTimeout(fn, ms)); }
+  rgba(hex, a) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  hm(ms, secs) {
+    const o = { hour: 'numeric', minute: '2-digit', hour12: true };
+    if (secs) o.second = '2-digit';
+    return new Date(ms).toLocaleTimeString('en-US', o);
+  }
+  nextDay(ms) { return new Date(ms).toDateString() !== new Date(this.state.now).toDateString(); }
+  when(ms) { return this.hm(ms) + (this.nextDay(ms) && ms > this.state.now ? ' tomorrow' : ''); }
+  dateLong(ms) {
+    const d = new Date(ms);
+    return d.toLocaleDateString('en-GB', { weekday: 'long' }) + ', ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  split(sec) {
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+    const p = (n) => String(n).padStart(2, '0');
+    return h ? [h + ':' + p(m), ':' + p(s)] : [p(m), ':' + p(s)];
+  }
+  words(sec) {
+    if (!sec) return 'no limit';
+    const h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60);
+    if (h && m) return h + ' h ' + m + ' min';
+    if (h) return h === 1 ? '1 hour' : h + ' hours';
+    return m + ' min';
+  }
+  mins(m) {
+    if (!m) return '0 min';
+    const h = Math.floor(m / 60), r = m % 60;
+    return h ? h + ' h' + (r ? ' ' + r + ' min' : '') : r + ' min';
+  }
+  pill(mode, b) {
+    const tone = { ready: b.t.muted, ended: b.t.muted, paused: b.amber, blocked: b.red }[mode] || b.lamp;
+    const live = mode === 'awake' || mode === 'fallback' || mode === 'starting';
+    const hollow = mode === 'ready' || mode === 'ended' || mode === 'starting';
+    return atPill({ size: 'M', label: LABEL[mode], tone, glyph: GLYPH[mode] || DOT, hollow, glow: live && mode !== 'starting' });
+  }
+  ring(o, b) {
+    const mode = o.mode, p = o.p;
+    const live = mode === 'awake' || mode === 'fallback' || mode === 'starting';
+    const tone = { paused: b.amber, blocked: b.red }[mode] || o.color || b.lamp;
+    const DASH = { paused: '18 12', blocked: '1 13' };
+    const shown = o.shown;
+    const parts = shown === null ? ['∞', ''] : this.split(shown);
+    const size = o.size || 320;
+    return {
+      box: size + 'px', scale: (size / 320).toFixed(4), live, color: tone, faint: this.rgba(tone, b.dark ? 0.16 : 0.12),
+      dash: DASH[mode] || (p <= 0 ? '0.01 ' + C.toFixed(1) : (C * p).toFixed(1) + ' ' + C.toFixed(1)),
+      op: mode === 'ready' ? 0.45 : mode === 'ended' ? 0 : 1, glowOp: live ? 0.45 : 0,
+      trackDash: mode === 'fallback' ? '3 9' : 'none',
+      tipDeg: (360 * p).toFixed(2) + 'deg', tipOp: live && shown !== null && p > 0 ? 1 : 0,
+      kicker: o.kicker, metaA: o.metaA, metaB: o.metaB, bigA: parts[0], bigB: parts[1],
+      size: shown !== null && shown >= 3600 ? '60px' : '76px', numColor: live ? b.t.ink : b.t.ink2,
+      aria: shown === null ? 'No limit' : parts[0] + parts[1] + ' left'
+    };
+  }
+  presetBar(cur, phone, b, set) {
+    const rows = PRESET_ROWS;
+    const i = Math.max(0, rows.findIndex((x) => x[0] === cur));
+    return {
+      presets: rows.map(([id, label, aria]) => ({ label, aria, sel: cur === id ? 'true' : 'false', weight: cur === id ? 600 : 500, color: cur === id ? b.t.ink : b.t.ink2, ring: cur === id ? b.lampLine : b.t.line, bg: cur === id ? b.lampSoft : 'transparent', pick: () => set(id) })),
+      presetN: rows.length, presetX: i * 100 + '%', presetFont: b.isTab ? '15px' : '13px'
+    };
+  }
+  presetSecs(id) { const f = PRESET_ROWS.find((x) => x[0] === id); return f ? f[3] : 1800; }
+  base() {
+    const s = this.state;
+    const L = this.props.layout || 'phone';
+    const c = atChrome({ theme: s.theme, sysDark: s.sysDark, layout: L, set: (id) => this.setState({ theme: id }) });
+    const dark = c.dark, lamp = c.lamp;
+    const t = dark ? DARK : LIGHT;
+    const amber = t.warn, red = t.bad;
+    const H = this.heights()[L];
+    return Object.assign(c, {
+      t, amber, red, amberSoft: this.rgba(amber, 0.1), amberLine: this.rgba(amber, 0.38), redSoft: this.rgba(red, 0.08), redLine: this.rgba(red, 0.32),
+      layout: L, W: c.isDesk ? '1280px' : c.isTab ? '820px' : '390px', H: H + 'px', rootCls: dark ? 'at-root' : 'at-root at-l',
+      hdrPad: '0 ' + c.gutter, linePad: '0 ' + c.gutter,
+      sheetShadow: '0 24px 64px -24px rgba(0,0,0,.45)',
+      dateLong: this.dateLong(s.now), nowTime: this.hm(s.now),
+      scrim: 'rgba(4,7,12,0.55)',
+      aura: this.rgba(lamp, dark ? 0.1 : 0.08)
+    });
+  }
+  renderVals() { const b = this.base(); Object.assign(b, this.vals(b)); b.bead = b.tone || b.lamp; return b; }
+}
+</script>
+</body>
+</html>

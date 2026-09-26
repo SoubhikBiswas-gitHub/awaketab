@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · floating window over work</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;family=Geist+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+.at-in{animation:at-in .9s cubic-bezier(.22,1,.36,1) both;animation-delay:.2s}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; position: relative; overflow: hidden; background: {{wall}}; font-family: Geist, system-ui, sans-serif">
+
+  <div aria-hidden="true" data-placeholder="foreign app: spreadsheet (exempt from token rules, DESIGN.md §11.2)" style="position: absolute; left: 56px; top: 48px; width: 1040px; height: 660px; border-radius: 12px; overflow: hidden; background: #FFFFFF; box-shadow: 0 30px 80px -30px rgba(5,10,20,0.55), 0 0 0 1px rgba(10,20,40,0.12); display: flex; flex-direction: column; color: #1E2633">
+    <div style="height: 40px; flex-shrink: 0; display: flex; align-items: center; gap: 16px; padding: 0 16px; background: #EEF1F5; border-bottom: 1px solid #DDE2E9">
+      <div style="display: flex; gap: 8px"><span style="width: 12px; height: 12px; border-radius: 50%; background: #C9D0DA"></span><span style="width: 12px; height: 12px; border-radius: 50%; background: #C9D0DA"></span><span style="width: 12px; height: 12px; border-radius: 50%; background: #C9D0DA"></span></div>
+      <div style="flex-grow: 1; text-align: center; font-size: 13px; font-weight: 500; color: #4A5566">Q3 regional report · Spreadsheet</div>
+      <div style="width: 52px"></div>
+    </div>
+    <div style="height: 44px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid #E4E8EE">
+      <sc-for list="{{tools}}" as="w" hint-placeholder-count="9">
+        <span style="width: {{w.w}}; height: 24px; border-radius: 4px; background: #EDF0F4"></span>
+      </sc-for>
+    </div>
+    <div style="height: 34px; flex-shrink: 0; display: flex; align-items: center; gap: 12px; padding: 0 16px; border-bottom: 1px solid #E4E8EE; font-size: 13px">
+      <span style="width: 56px; color: #5B6779; font-family: 'Geist Mono', ui-monospace, monospace">E9</span>
+      <span style="font-style: italic; color: #5B6779">fx</span>
+      <span style="font-family: 'Geist Mono', ui-monospace, monospace; color: #1E2633">=D9/C9-1</span>
+    </div>
+    <div style="flex-grow: 1; overflow: hidden; font-size: 13px">
+      <div style="display: grid; grid-template-columns: 44px 200px repeat(6, 124px) minmax(0, 1fr); background: #F4F6F9; border-bottom: 1px solid #DDE2E9; color: #5B6779; font-weight: 500">
+        <sc-for list="{{cols}}" as="c" hint-placeholder-count="9">
+          <span style="height: 26px; display: grid; place-items: center; border-right: 1px solid #E4E8EE">{{c}}</span>
+        </sc-for>
+      </div>
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="18">
+        <div style="display: grid; grid-template-columns: 44px 200px repeat(6, 124px) minmax(0, 1fr); border-bottom: 1px solid #EDF0F4; background: {{r.bg}}; font-weight: {{r.weight}}">
+          <span style="height: 29px; display: grid; place-items: center; background: #F4F6F9; color: #5B6779; border-right: 1px solid #E4E8EE">{{r.n}}</span>
+          <sc-for list="{{r.cells}}" as="x" hint-placeholder-count="8">
+            <span style="height: 29px; box-sizing: border-box; display: flex; align-items: center; justify-content: {{x.align}}; padding: 0 8px; border-right: 1px solid #EDF0F4; font-variant-numeric: tabular-nums; outline: {{x.outline}}; outline-offset: -2px; color: {{x.color}}">{{x.v}}</span>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div class="at-in" style="position: absolute; left: 952px; top: 540px; width: 280px; border-radius: 12px; overflow: hidden; box-shadow: 0 28px 70px -20px rgba(0,0,0,0.6), 0 0 0 1px {{frameLine}}">
+    <div data-placeholder="browser chrome: floating window title bar" style="height: 28px; display: flex; align-items: center; justify-content: space-between; padding: 0 0 0 12px; background: {{frame}}; color: {{frameInk}}; font-size: 12px; line-height: 16px">
+      <span style="font-family: 'Geist Mono', ui-monospace, monospace">awaketab.com</span>
+      <span aria-hidden="true" style="width: 28px; height: 28px; display: grid; place-items: center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></span>
+    </div>
+    <dc-import name="PipWindow" theme="{{pipTheme}}" hint-size="280px,120px"></dc-import>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"dark"},"layout":{"editor":null,"default":"desktop"},"$preview":{"width":1280,"height":800}}'>
+const REGIONS = [['North', 412, 438, 471], ['South', 388, 392, 405], ['East', 296, 318, 349], ['West', 507, 498, 530], ['Central', 244, 251, 262], ['Online', 612, 674, 731], ['Partners', 158, 171, 166], ['Wholesale', 331, 329, 344], ['Export', 205, 219, 238], ['Retail', 447, 452, 470], ['Direct', 189, 204, 221], ['Other', 72, 69, 75]];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sysDark: this.sys() };
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() { if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  renderVals() {
+    const th = this.props.theme ?? 'dark';
+    const dark = th === 'dark' || (th === 'auto' && this.state.sysDark);
+    const money = (n) => '$' + n + 'k';
+    const cell = (v, align, extra) => Object.assign({ v, align: align === 'r' ? 'flex-end' : 'flex-start', outline: 'none', color: '#1E2633' }, extra || {});
+    const rows = [{ n: '1', bg: '#FFFFFF', weight: 600, cells: ['Region', 'Q1', 'Q2', 'Q3', 'Change', 'Target', 'Owner', ''].map((v, i) => cell(v, i > 0 && i < 6 ? 'r' : 'l')) }];
+    REGIONS.forEach(([name, a, b, c], i) => {
+      const ch = ((c / b - 1) * 100).toFixed(1);
+      rows.push({
+        n: String(i + 2), bg: '#FFFFFF', weight: 400,
+        cells: [cell(name), cell(money(a), 'r'), cell(money(b), 'r'), cell(money(c), 'r'),
+          cell((ch > 0 ? '+' : '') + ch + '%', 'r', { color: ch < 0 ? '#9A3B3B' : '#1E2633', outline: i === 7 ? '2px solid #255FBD' : 'none' }),
+          cell(money(Math.round(b * 1.06)), 'r'), cell(['AK', 'MR', 'JS', 'PL'][i % 4]), cell('')]
+      });
+    });
+    const tot = (k) => REGIONS.reduce((s, r) => s + r[k], 0);
+    rows.push({ n: '14', bg: '#F7F9FB', weight: 600, cells: [cell('Total'), cell(money(tot(1)), 'r'), cell(money(tot(2)), 'r'), cell(money(tot(3)), 'r'), cell('+' + ((tot(3) / tot(2) - 1) * 100).toFixed(1) + '%', 'r'), cell(''), cell(''), cell('')] });
+    for (let n = 15; n <= 18; n++) rows.push({ n: String(n), bg: '#FFFFFF', weight: 400, cells: [cell(''), cell(''), cell(''), cell(''), cell(''), cell(''), cell(''), cell('')] });
+    return {
+      wall: dark ? 'radial-gradient(90% 90% at 70% 10%, #26324B 0%, #111826 55%, #0A0E16 100%)' : 'radial-gradient(90% 90% at 70% 10%, #FFFFFF 0%, #DCE6F1 55%, #C3CFDD 100%)',
+      frame: dark ? '#1A2336' : '#E3E9F1', frameInk: dark ? '#B7C1D1' : '#3A4659', frameLine: dark ? 'rgba(255,255,255,0.1)' : 'rgba(14,23,38,0.14)',
+      pipTheme: dark ? 'dark' : 'light',
+      tools: [28, 28, 1, 64, 28, 28, 28, 1, 120].map((w) => ({ w: w + 'px' })),
+      cols: ['', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+      rows
+    };
+  }
+}
+</script>
+</body>
+</html>

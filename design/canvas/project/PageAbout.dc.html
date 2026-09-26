@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · about</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+/* AwakeTab primitives v2 · fix batch 2b · keep byte-identical */
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.97)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-u{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.at-u:hover{text-decoration-thickness:2px}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-tw{animation:at-tw 5s ease-in-out infinite}
+.at-tw2{animation:at-tw 7s ease-in-out infinite;animation-delay:-3s}
+.at-glint{transform-origin:top center;animation:at-glint 6s ease-in-out infinite}
+.at-pulse{animation:at-tw 3.4s ease-in-out infinite}
+@keyframes at-tw{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes at-glint{0%,100%{transform:scaleX(.6);opacity:.35}50%{transform:scaleX(1);opacity:.7}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div class="at-root" style="width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{p.ground}}; color: {{t.ink}}; display: flex; flex-direction: column">
+  <header style="{{hdr.style}}">
+    <a href="Main.dc.html" aria-label="AwakeTab home" style="{{hdr.logo}}"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{hdr.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{hdr.bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{hdr.bead}}" style="transition: fill .6s"></circle></svg>AwakeTab</a>
+    <sc-if value="{{hdr.showNav}}" hint-placeholder-val="{{false}}">
+      <nav aria-label="Main" style="{{hdr.navStyle}}">
+        <sc-for list="{{hdr.nav}}" as="n" hint-placeholder-count="4">
+          <a href="{{n.href}}" aria-current="{{n.cur}}" style="{{n.style}}"><span aria-hidden="true" style="{{n.dot}}"></span>{{n.label}}</a>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <div role="radiogroup" aria-label="Theme" style="{{hdr.bar}}">
+      <div aria-hidden="true" class="at-slide" style="{{hdr.ind}}"></div>
+      <sc-for list="{{hdr.themes}}" as="m" hint-placeholder-count="3">
+        <button role="radio" aria-checked="{{m.sel}}" aria-label="{{m.aria}}" title="{{m.title}}" onClick="{{m.pick}}" style="{{m.style}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="{{m.icon}}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{m.icon2}}" fill="currentColor"></path></svg></button>
+      </sc-for>
+    </div>
+  </header>
+
+  <main style="position: relative; flex-grow: 1; display: grid; grid-template-columns: {{cols}}; grid-template-areas: {{areas}}; column-gap: 96px; row-gap: {{rowGap}}; align-items: start; padding: {{mainPad}}">
+
+    <div class="at-in" style="grid-area: intro; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+      <nav aria-label="Breadcrumb">
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; font-size: 14px; color: {{t.muted}}">
+          <li style="display: flex; align-items: center; gap: 8px"><a href="Main.dc.html" style="color: {{t.ink2}}; text-decoration: none; min-height: 44px; display: flex; align-items: center">AwakeTab</a><span aria-hidden="true">›</span></li>
+          <li aria-current="page" style="min-height: 44px; display: flex; align-items: center">About AwakeTab</li>
+        </ol>
+      </nav>
+      <h1 style="margin: 0; {{ty.h1}}">About AwakeTab</h1>
+      <p style="margin: 0; {{ty.lead}}; color: {{t.ink2}}; text-wrap: pretty">AwakeTab is an independent project built and maintained by Soubhik Biswas. Its purpose is narrow: request a browser wake lock, show the result honestly, and make the common timer and until-time workflows fast without requiring an account.</p>
+    </div>
+
+    <aside aria-label="Author" style="grid-area: side; {{card}}; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+      <div style="display: flex; align-items: center; gap: 16px">
+        <div aria-hidden="true" style="position: relative; width: 60px; height: 60px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; background: {{avatarBg}}; border: 1px solid {{t.line2}}; font-size: 20px; font-weight: 600; letter-spacing: -0.02em; color: {{t.ink}}">SB<span style="position: absolute; right: 1px; top: 1px; width: 12px; height: 12px; border-radius: 50%; background: {{p.lamp}}; box-shadow: 0 0 0 3px {{t.surface}}, 0 0 12px {{lampGlow}}"></span></div>
+        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+          <span style="font-size: 18px; line-height: 28px; font-weight: 600">Soubhik Biswas</span>
+          <span style="{{ty.small}}; color: {{t.ink2}}">Builds AwakeTab</span>
+        </div>
+      </div>
+      <p style="margin: 0; {{ty.ui}}; color: {{t.ink2}}; text-wrap: pretty">Messages go to Soubhik directly.</p>
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <a href="mailto:support@awaketab.com" style="min-height: 44px; display: flex; align-items: center; gap: 12px; color: {{t.ink}}; text-decoration: none; {{ty.ui}}; font-weight: 500"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.ink2}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M4 7l8 6 8-6"></path></svg>support@awaketab.com</a>
+        <a href="https://buymeacoffee.com/awaketab" style="min-height: 44px; display: flex; align-items: center; gap: 12px; color: {{t.ink}}; text-decoration: none; {{ty.ui}}; font-weight: 500"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.ink2}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"></path><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5v2.5M11 3.5v2.5"></path></svg>Buy Soubhik a coffee<span aria-hidden="true" style="color: {{t.muted}}">↗</span></a>
+        <a href="PageChangelogPhone.dc.html" style="min-height: 44px; display: flex; align-items: center; gap: 12px; color: {{t.ink}}; text-decoration: none; {{ty.ui}}; font-weight: 500"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.ink2}}" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 4v16M6 7h12M6 12h9M6 17h11"></path></svg>Changelog</a>
+      </div>
+    </aside>
+
+    <div style="grid-area: body; display: flex; flex-direction: column; gap: {{secGap}}; min-width: 0">
+      <section aria-labelledby="ab-test" style="display: flex; flex-direction: column; gap: 20px">
+        <h2 id="ab-test" style="margin: 0; {{ty.h2}}">How AwakeTab is checked</h2>
+        <p style="margin: 0; {{ty.body}}; color: {{t.ink2}}; max-width: 68ch; text-wrap: pretty">The lock layer is tested as a seven-state transition machine. Browser journeys inject a controllable Wake Lock implementation and verify acquisition, denial, release on hidden tabs, reacquisition, fallback behaviour and multi-tab warnings. Device claims are kept in the support matrix and are refreshed separately from application code.</p>
+        <ol aria-label="The seven lock states" style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: {{stateCols}}; gap: 12px">
+          <sc-for list="{{states}}" as="s" hint-placeholder-count="7">
+            <li style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+              <span style="display: flex; align-items: center; gap: 8px"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible"><path d="{{s.glyph}}" fill="{{s.fill}}" stroke="{{s.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg><code style="{{mono}}; font-size: 13px; line-height: 18px; color: {{t.muted}}">{{s.id}}</code></span>
+              <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: {{t.ink}}">{{s.pill}}</span>
+            </li>
+          </sc-for>
+        </ol>
+        <ul aria-label="What the browser journeys verify" style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{journeys}}" as="j" hint-placeholder-count="6">
+            <li style="{{tag}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{p.lamp}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{j.label}}</li>
+          </sc-for>
+        </ul>
+        <p style="margin: 0; {{ty.ui}}; color: {{t.muted}}; max-width: 68ch">Real-device results are pending until the manual run is recorded. <a href="#" style="color: {{p.link}}" class="at-u">How AwakeTab is checked</a></p>
+      </section>
+
+      <section aria-labelledby="ab-claims" style="display: flex; flex-direction: column; gap: 24px">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <span style="{{ty.kicker}}; color: {{t.muted}}">Principles</span>
+          <h2 id="ab-claims" style="margin: 0; {{ty.h2}}">What AwakeTab will not claim</h2>
+        </div>
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border-top: 1px solid {{t.line}}">
+          <sc-for list="{{principles}}" as="r" hint-placeholder-count="4">
+            <li style="display: grid; grid-template-columns: {{prinCols}}; column-gap: 24px; row-gap: 8px; padding: 24px 0; border-bottom: 1px solid {{t.line}}">
+              <span aria-hidden="true" style="{{digitFont}}; font-size: 14px; line-height: 20px; color: {{t.muted}}; padding-top: 4px">{{r.n}}</span>
+              <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+                <h3 style="margin: 0; {{ty.h3}}">{{r.head}}</h3>
+                <p style="margin: 0; {{ty.body}}; color: {{t.ink2}}; max-width: 64ch; text-wrap: pretty">{{r.body}}</p>
+              </div>
+            </li>
+          </sc-for>
+        </ol>
+        <p style="margin: 0; {{ty.body}}; color: {{t.ink2}}; max-width: 68ch">If AwakeTab is useful, you can <a href="https://buymeacoffee.com/awaketab" style="color: {{p.link}}" class="at-u">buy Soubhik a coffee</a>. There is no widget, account or extra script: just a link.</p>
+      </section>
+
+      <section id="contact" aria-labelledby="ab-contact" style="display: flex; flex-direction: column; gap: 16px">
+        <h2 id="ab-contact" style="margin: 0; {{ty.h2}}">Contact</h2>
+        <p style="margin: 0; {{ty.body}}; color: {{t.ink2}}; max-width: 68ch; text-wrap: pretty">Email <a href="mailto:support@awaketab.com" style="color: {{p.link}}" class="at-u">support@awaketab.com</a> for support, refunds, bug reports, device results that differ from the support matrix, or a request to delete your licence data. Messages go to Soubhik directly.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer style="{{ftr.style}}">
+    <p style="{{ftr.line}}">No ads on the awake screen, now or later.</p>
+    <nav aria-label="Footer" style="{{ftr.nav}}">
+      <sc-for list="{{ftr.links}}" as="f" hint-placeholder-count="5"><a href="{{f.href}}" style="{{ftr.link}}">{{f.label}}</a></sc-for>
+    </nav>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"desktop"},"$preview":{"width":1280,"height":2066}}'>
+/* ── AwakeTab primitives v2 · fix batch 2b · DESIGN.md §2, §3, §11. Byte-identical in every file of the batch; edit prims/prims.js and rebuild, never one copy. ── */
+const AT_TOK = {
+  dark: { ground: '#0A0E16', lift: '#13203A', surface: '#111826', raised: '#26324B', sunken: '#0D131F', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', warn: '#F2B34C', bad: '#FF7A7A', lamp: '#5BE0E8', onLamp: '#04232A', stopBg: '#EAF0F7', stopInk: '#0A0E16', horizonInk: '#F6F2EA', violet: '#A594FF', inputLine: '#5A6781', groundEnd: '#0A0E16', elev: 'none' },
+  light: { ground: '#F2F6FA', lift: '#FFFFFF', surface: '#FFFFFF', raised: '#E3E9F1', sunken: '#F6F9FC', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', warn: '#B7791F', bad: '#D14343', lamp: '#087B87', onLamp: '#FFFFFF', stopBg: '#0E1726', stopInk: '#F2F6FA', horizonInk: '#F6F2EA', violet: '#5A47CF', inputLine: '#8C98AA', groundEnd: '#EEF3F8', elev: '0 1px 2px rgba(14,23,38,0.06)' }
+};
+AT_TOK.oled = Object.assign({}, AT_TOK.dark, { ground: '#000000', lift: '#000000', groundEnd: '#000000', surface: '#0A0A0A' });
+const AT_NIGHT = { ground: '#000000', ink: '#FF5A3C', ink2: '#E8563C', muted: '#A89690', line: '#3A2E2A' };
+const AT_SCRIM = 'rgba(4,7,12,0.55)';
+const AT_FLOAT = '0 24px 64px -24px rgba(0,0,0,0.45)';
+// Display digits: system-ui (Geist in mocks) 200–300, tabular, plain zero. Mono only for code, keys, file names and URLs.
+const AT_DIGITS = "font-family: Geist, system-ui, sans-serif; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1, 'zero' 0";
+const AT_MONO = "font-family: 'Geist Mono', ui-monospace, monospace";
+const AT_GUTTER = { phone: 16, tablet: 32, desktop: 80, xl: 120 };
+const AT_SECTION = { phone: 48, tablet: 64, desktop: 96 };
+const AT_TYPE = {
+  kicker: 'font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase',
+  caption: 'font-size: 13px; line-height: 18px',
+  small: 'font-size: 14px; line-height: 20px',
+  ui: 'font-size: 15px; line-height: 22px',
+  body: 'font-size: 16px; line-height: 26px',
+  lead: 'font-size: 18px; line-height: 28px',
+  h3: 'font-size: 20px; line-height: 28px; font-weight: 600',
+  h2: 'font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em',
+  h2Phone: 'font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em',
+  h1: 'font-size: 48px; line-height: 56px; font-weight: 600; letter-spacing: -0.02em',
+  h1Phone: 'font-size: 34px; line-height: 42px; font-weight: 600; letter-spacing: -0.02em',
+  price: 'font-size: 48px; line-height: 56px; font-weight: 600; letter-spacing: -0.02em',
+  pricePhone: 'font-size: 40px; line-height: 48px; font-weight: 600; letter-spacing: -0.02em'
+};
+// State glyphs (12 × 12): shape carries the state, never colour alone.
+const AT_GLYPH = {
+  ring: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z'
+};
+// The seven contract pill strings (docs/04, docs/05). Exact, and alone inside the pill.
+const AT_PILL_TEXT = { idle: 'Ready', requesting: 'Starting…', held: 'Screen awake', lost: 'Paused — tab hidden', denied: "Blocked — here's the fix", unsupported: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
+// Status pill sizes (§11.4): height, text, padding, gap, glyph.
+const AT_PILL = { L: [48, 20, '0 20px 0 16px', 12, 16], M: [38, 15, '0 16px 0 12px', 8, 12], S: [32, 14, '0 12px 0 8px', 8, 12], XS: [26, 13, '0 8px', 4, 12] };
+
+function atRgba(hex, a) {
+  const n = parseInt(String(hex).replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atTheme(theme, sysDark) {
+  const dark = theme === 'dark' || theme === 'oled' || (theme !== 'light' && sysDark);
+  return { dark, t: theme === 'oled' ? AT_TOK.oled : dark ? AT_TOK.dark : AT_TOK.light };
+}
+// Ground: the night lift fades into the ground token, and the one status halo (--at-halo) sits behind the status element.
+function atGround(t) { return 'radial-gradient(120% 70% at 50% 26%, ' + t.lift + ' 0%, ' + t.ground + ' 62%, ' + t.groundEnd + ' 100%)'; }
+function atHalo(tone, dark) { return 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(tone, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(tone, 0) + ' 70%)'; }
+// Status pill for a lock state. size: L | M | S | XS.
+function atPill(size, state, t, extra) {
+  const [h, fs, pad, gap, g] = AT_PILL[size];
+  const tone = state === 'idle' ? t.muted : state === 'lost' ? t.warn : state === 'denied' ? t.bad : t.lamp;
+  const d = state === 'lost' ? AT_GLYPH.pause : state === 'denied' ? AT_GLYPH.tri : state === 'fallback' ? AT_GLYPH.ringDot : AT_GLYPH.dot;
+  const hollow = state === 'idle' || state === 'requesting';
+  return {
+    label: (extra && extra.label) || AT_PILL_TEXT[state] || AT_PILL_TEXT.idle, tone, d, g,
+    fill: hollow ? 'transparent' : tone,
+    gStyle: 'flex-shrink: 0; overflow: visible; filter: drop-shadow(0 0 4px ' + (state === 'held' ? atRgba(tone, 0.8) : 'transparent') + ')',
+    // M may wrap to two lines (O-62): min-height 38, radius 20, balanced wrap. L, S and XS stay on one line.
+    style: 'display: inline-flex; align-items: center; gap: ' + gap + 'px; ' + (size === 'M' ? 'min-height: 38px; padding: 8px 16px 8px 12px; border-radius: 20px; line-height: 20px; text-wrap: balance' : 'height: ' + h + 'px; padding: ' + pad + '; border-radius: 999px; line-height: 1; white-space: nowrap') + '; box-sizing: border-box; background: ' + atRgba(tone, 0.12) + '; border: 1px solid ' + atRgba(tone, 0.38) + '; color: ' + t.ink + '; font-size: ' + fs + 'px; font-weight: 600'
+  };
+}
+// Buttons (§11.4): primary 60 r20 · cook 64 r20 · stop 60 ink fill · medium 52 r20 · small 44 r12.
+function atBtn(kind, t) {
+  const base = 'box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; white-space: nowrap; font-weight: 600; ';
+  if (kind === 'primary' || kind === 'cook') return base + 'height: ' + (kind === 'cook' ? 64 : 60) + 'px; padding: 0 24px; border-radius: 20px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 17px; line-height: 24px; box-shadow: 0 10px 28px -12px ' + atRgba(t.lamp, 0.6);
+  if (kind === 'stop') return base + 'height: 60px; padding: 0 24px; border-radius: 20px; border: 0; background: ' + t.stopBg + '; color: ' + t.stopInk + '; font-size: 17px; line-height: 24px';
+  if (kind === 'medium') return base + 'height: 52px; padding: 0 20px; border-radius: 20px; border: 1px solid ' + t.line2 + '; background: ' + t.surface + '; color: ' + t.ink + '; font-size: 15px; line-height: 22px';
+  if (kind === 'mediumLamp') return base + 'height: 52px; padding: 0 20px; border-radius: 20px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 15px; line-height: 22px';
+  if (kind === 'smallLamp') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 15px; line-height: 22px';
+  if (kind === 'smallStop') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: ' + t.stopBg + '; color: ' + t.stopInk + '; font-size: 15px; line-height: 22px';
+  if (kind === 'quiet') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: transparent; color: ' + t.ink2 + '; font-size: 15px; line-height: 22px; font-weight: 500';
+  return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid ' + t.line2 + '; background: ' + t.surface + '; color: ' + t.ink + '; font-size: 15px; line-height: 22px';
+}
+// Card (§11.6): surface, 1 px line, r16, padding 20 phone / 24.
+function atCard(t, phone) { return 'box-sizing: border-box; background: ' + t.surface + '; border: 1px solid ' + t.line + '; border-radius: 16px; padding: ' + (phone ? 20 : 24) + 'px; box-shadow: ' + t.elev; }
+// Tag (§11.4): 24 high, 12/16 600, r999, padding 0 8, 1 px line-strong (or a tone at 12 %).
+function atTag(t, tone) {
+  return 'display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; color: ' + t.ink + '; ' +
+    (tone ? 'background: ' + atRgba(tone, 0.12) + '; border: 1px solid ' + atRgba(tone, 0.38) : 'background: transparent; border: 1px solid ' + t.line2);
+}
+// Keyboard hint (§11.4): one theme keycap everywhere, never inherits the button it sits on.
+function atKbd(t) { return 'display: inline-flex; align-items: center; justify-content: center; height: 24px; min-width: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid ' + t.line2 + '; box-shadow: inset 0 -1px 0 ' + t.line2 + '; background: ' + t.raised + '; font-family: ui-monospace, \'Geist Mono\', monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: ' + t.ink + '; vertical-align: middle'; }
+function atCode(t) { return AT_MONO + '; font-size: 14px; padding: 0 4px; border-radius: 4px; background: ' + t.sunken + '; color: ' + t.ink + '; overflow-wrap: anywhere'; }
+// Segmented bar (§11.4): 1 px border + 4 px padding + 44 px items = 54. Selected = lamp 14 % + 1 px lamp 45 % (or raised for neutral switches).
+function atSeg(options, current, onPick, t, opts) {
+  const o = opts || {};
+  const n = options.length;
+  const i = Math.max(0, options.findIndex((x) => x[0] === current));
+  return {
+    bar: 'position: relative; display: grid; grid-template-columns: repeat(' + n + ', minmax(0, 1fr)); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line + (o.max ? '; max-width: ' + o.max : ''),
+    ind: 'position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / ' + n + '); height: 44px; box-sizing: border-box; border-radius: 999px; transform: translateX(' + i * 100 + '%); ' + (o.neutral ? 'background: ' + t.raised + '; border: 0' : 'background: ' + atRgba(t.lamp, 0.14) + '; border: 1px solid ' + atRgba(t.lamp, 0.45)),
+    items: options.map(([id, label, aria]) => ({
+      id, label, aria: aria || label, sel: id === current ? 'true' : 'false', pick: () => onPick(id),
+      style: 'position: relative; min-width: 0; height: 44px; padding: 0 8px; border: 0; background: transparent; border-radius: 999px; font-size: ' + (o.fs || 15) + 'px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2) + '; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+    }))
+  };
+}
+// Header (§11.6): 60 phone / 68 ≥ tablet, gutter = page gutter, logo 26 + wordmark 17 with gap 8, nav on desktop, theme switch as a segmented bar.
+const AT_NAV = [['Use cases', '#', 'for'], ['Devices', '#', 'on'], ['Extension', 'PageExtensionDesk.dc.html', 'extension'], ['Pro', 'Pro.dc.html', 'pro']];
+const AT_THEME_ICON = {
+  light: ['M12 8a4 4 0 1 1 0 8a4 4 0 1 1 0-8zM12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4', ''],
+  dark: ['M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z', ''],
+  auto: ['M12 4a8 8 0 1 1 0 16a8 8 0 1 1 0-16z', 'M12 4a8 8 0 0 1 0 16z']
+};
+function atHeader(c, t, layout, current, bead) {
+  const theme = c.state.theme === 'light' || c.state.theme === 'dark' ? c.state.theme : 'auto';
+  const order = ['light', 'dark', 'auto'];
+  return {
+    style: 'position: relative; height: ' + (layout === 'phone' ? 60 : 68) + 'px; flex-shrink: 0; box-sizing: border-box; padding-inline: ' + AT_GUTTER[layout] + 'px; display: flex; align-items: center; justify-content: space-between; gap: 16px',
+    logo: 'display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; color: ' + t.ink + '; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em',
+    ink: t.ink, bead: bead || t.muted,
+    showNav: layout === 'desktop',
+    navStyle: 'display: flex; align-items: center; gap: 32px',
+    nav: AT_NAV.map(([label, href, id]) => ({
+      label, href, cur: id === current ? 'page' : 'false',
+      style: 'display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; font-size: 15px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2),
+      dot: 'width: 6px; height: 6px; border-radius: 999px; background: ' + (id === current ? t.lamp : 'transparent')
+    })),
+    bar: 'position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line,
+    ind: 'position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: ' + t.raised + '; transform: translateX(' + order.indexOf(theme) * 44 + 'px)',
+    themes: order.map((id) => ({
+      sel: id === theme ? 'true' : 'false', aria: id === 'auto' ? 'Auto, follows your system' : id === 'light' ? 'Light' : 'Dark', title: id === 'auto' ? 'Auto: follows your system' : id === 'light' ? 'Light' : 'Dark',
+      icon: AT_THEME_ICON[id][0], icon2: AT_THEME_ICON[id][1],
+      pick: () => c.setState({ theme: id }),
+      style: 'position: relative; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; display: grid; place-items: center; color: ' + (id === theme ? t.ink : t.muted)
+    }))
+  };
+}
+// Footer (§11.7): 1 px line top, padding 24 (phone 32 bottom), honest line left in caption muted, links right.
+const AT_FOOT_LINKS = [['Privacy', 'PagePrivacyDesk.dc.html'], ['Terms', 'PageTermsPhone.dc.html'], ['Changelog', 'PageChangelogPhone.dc.html'], ['About', 'PageAboutDesk.dc.html'], ['Buy me a coffee', 'https://buymeacoffee.com/awaketab']];
+function atFooter(t, layout) {
+  const g = AT_GUTTER[layout];
+  return {
+    style: 'flex-shrink: 0; margin-top: ' + AT_SECTION[layout] + 'px; box-sizing: border-box; padding: 24px ' + g + 'px ' + (layout === 'phone' ? 32 : 24) + 'px; border-top: 1px solid ' + t.line + '; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px',
+    line: 'margin: 0; font-size: 13px; line-height: 18px; color: ' + t.muted,
+    nav: 'display: flex; flex-wrap: wrap; column-gap: 20px',
+    link: 'min-height: 44px; display: inline-flex; align-items: center; font-size: 14px; line-height: 20px; color: ' + t.ink2 + '; text-decoration: none',
+    links: AT_FOOT_LINKS.map(([label, href]) => ({ label, href }))
+  };
+}
+/* ── end primitives ── */
+
+// Page shell on top of the primitives: t (theme tokens), p (page roles), ty (type scale per layout), hdr, ftr.
+function pageRoles(t) {
+  return {
+    ground: 'radial-gradient(1400px 900px at 50% -160px, ' + t.lift + ' 0%, ' + atRgba(t.ground, 0) + ' 72%), ' + t.ground,
+    lamp: t.lamp, lampFill: t.lamp, lampInk: t.onLamp, link: t.lamp, warn: t.warn, bad: t.bad, well: t.sunken, codeBg: t.sunken
+  };
+}
+const rgba = atRgba;
+function hm(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+function hms(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }); }
+function fullDate(iso) { return new Date(iso + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }); }
+function dateLong(ms) {
+  const d = new Date(ms);
+  return d.toLocaleDateString('en-GB', { weekday: 'long' }) + ', ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+function pad2(n) { return String(n).padStart(2, '0'); }
+function clockParts(sec) {
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+  return h ? [h + ':' + pad2(m), ':' + pad2(s)] : [pad2(m), ':' + pad2(s)];
+}
+function sysDark() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+function themeMount(c) {
+  try {
+    c.mq = window.matchMedia('(prefers-color-scheme: dark)');
+    c.onMq = (e) => c.setState({ sysDark: e.matches });
+    c.mq.addEventListener('change', c.onMq);
+  } catch (e) {}
+}
+function themeUnmount(c) { if (c.mq) c.mq.removeEventListener('change', c.onMq); }
+// The default layout matches the board width: pages whose play-me board is 390 wide default to phone.
+function layoutOf(props, def) { return ['phone', 'tablet', 'desktop'].includes(props.layout) ? props.layout : (def || 'desktop'); }
+
+// Inline markup: `code`, **strong**, [label](href), {{key}} as a keycap (kbd). Returns segments for <sc-for>.
+function segs(str, p, t) {
+  const out = [];
+  const re = /`([^`]+)`|\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)]+)\)|\{([^{}]+)\}/g;
+  let last = 0, m;
+  const plain = 'color: inherit';
+  const push = (text, style, kind) => out.push({ text, style, kind: kind || 'text', isText: true, isLink: false, href: '' });
+  while ((m = re.exec(str))) {
+    if (m.index > last) push(str.slice(last, m.index), plain);
+    if (m[1]) push(m[1], atCode(t), 'code');
+    else if (m[2]) push(m[2], 'font-weight: 600; color: ' + t.ink);
+    else if (m[5]) push(m[5], atKbd(t), 'kbd');
+    else out.push({ text: m[3], href: m[4], isText: false, isLink: true, style: '' });
+    last = re.lastIndex;
+  }
+  if (last < str.length) push(str.slice(last), plain);
+  return out;
+}
+
+// Shared shell values: theme tokens, layout flags, type scale, header, footer, gutters.
+function shell(c, sizes, current, def) {
+  const s = c.state;
+  const layout = layoutOf(c.props, def);
+  const desk = layout === 'desktop', tab = layout === 'tablet', phone = layout === 'phone';
+  const { dark, t } = atTheme(s.theme, s.sysDark);
+  const p = pageRoles(t);
+  const size = sizes[layout];
+  const g = AT_GUTTER[layout];
+  return {
+    t, p, dark, layout, isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone, notDesk: !desk,
+    W: size[0] + 'px', H: size[1] + 'px',
+    ty: Object.assign({}, AT_TYPE, { h1: phone ? AT_TYPE.h1Phone : AT_TYPE.h1, h2: phone ? AT_TYPE.h2Phone : AT_TYPE.h2, price: phone ? AT_TYPE.pricePhone : AT_TYPE.price }),
+    gut: g + 'px', secGap: AT_SECTION[layout] + 'px', mono: AT_MONO, digitFont: AT_DIGITS,
+    hdr: atHeader(c, t, layout, current, t.muted), ftr: atFooter(t, layout),
+    card: atCard(t, phone), tag: atTag(t), code: atCode(t),
+    setLight: () => c.setState({ theme: 'light' }), setDark: () => c.setState({ theme: 'dark' }), setAuto: () => c.setState({ theme: 'auto' }),
+    btnPrimary: atBtn('primary', t), btnStop: atBtn('stop', t), btnMedium: atBtn('medium', t), btnSmall: atBtn('small', t), btnSmallLamp: atBtn('smallLamp', t), btnQuiet: atBtn('quiet', t)
+  };
+}
+
+// A segmented bar (one sliding indicator), as in Main; shape kept for the page templates.
+function seg(options, current, onPick, t, opts) {
+  const b = atSeg(options, current, onPick, t, opts);
+  const i = Math.max(0, options.findIndex((o) => o[0] === current));
+  return Object.assign(b, { n: options.length, x: i * 100 + '%' });
+}
+
+const SIZES = { phone: [390, 3104], tablet: [820, 2296], desktop: [1280, 2066] };
+const STATES = [['idle', 'Ready'], ['requesting', 'Starting…'], ['held', 'Screen awake'], ['lost', 'Paused — tab hidden'], ['denied', "Blocked — here's the fix"], ['unsupported', 'Tap to use the fallback'], ['fallback', 'Awake via video fallback']];
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const GLYPH = { lost: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z', denied: 'M6 1L11.2 10.5H.8z', fallback: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z' };
+const JOURNEYS = ['Acquisition', 'Denial', 'Release on hidden tabs', 'Reacquisition', 'Fallback behaviour', 'Multi-tab warnings'];
+const PRINCIPLES = [
+  ['A tab is not a system setting', 'A normal browser tab cannot guarantee operation while hidden, prevent system sleep after a laptop lid closes, or override battery-saving policy.'],
+  ['No fake input', 'AwakeTab does not simulate mouse movement or keystrokes and does not claim to keep chat presence indicators available.'],
+  ['Nothing else on the awake screen', 'The awake screen carries no advertising or third-party scripts.'],
+  ['Open to inspection', 'The core wake-lock package is developed as open-source software so its state transitions can be inspected independently.']
+];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: props.theme ?? 'auto', sysDark: sysDark() };
+  }
+  componentDidMount() { themeMount(this); }
+  componentWillUnmount() { themeUnmount(this); }
+  componentDidUpdate(prev) {
+    if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme });
+  }
+  renderVals() {
+    const sh = shell(this, SIZES, '', 'desktop');
+    const { t, p, dark, isDesk, isTab, isPhone } = sh;
+    const TONE = { idle: t.muted, requesting: p.lamp, held: p.lamp, unsupported: p.lamp, fallback: p.lamp, lost: p.warn, denied: p.bad };
+    return Object.assign(sh, {
+      cols: isDesk ? 'minmax(0, 1fr) 320px' : 'minmax(0, 1fr)',
+      areas: isDesk ? '"intro side" "body side"' : '"intro" "side" "body"',
+      rowGap: isDesk ? '64px' : '48px',
+      mainPad: isDesk ? '32px 80px 0' : isTab ? '32px 32px 0' : '12px 16px 0',
+      secGap: isDesk ? '96px' : '64px',
+      avatarBg: t.raised, lampGlow: atRgba(p.lamp, 0.6),
+      stateCols: isDesk ? 'repeat(4, minmax(0, 1fr))' : isTab ? 'repeat(4, minmax(0, 1fr))' : 'repeat(2, minmax(0, 1fr))',
+      states: STATES.map(([id, pill]) => ({ id, pill, glyph: GLYPH[id] || DOT, tone: TONE[id], fill: id === 'idle' || id === 'requesting' ? 'transparent' : TONE[id] })),
+      journeys: JOURNEYS.map((label) => ({ label })),
+      prinCols: isPhone ? '28px minmax(0, 1fr)' : '48px minmax(0, 1fr)',
+      principles: PRINCIPLES.map(([head, body], i) => ({ n: '0' + (i + 1), head, body }))
+    });
+  }
+}
+</script>
+</body>
+</html>

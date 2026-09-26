@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · floating window light</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;font-family:Geist,system-ui,sans-serif}</style>
+</helmet>
+<div style="width: 632px; height: 236px; box-sizing: border-box; padding: 24px; background: #F2F6FA; display: flex; gap: 24px; align-items: flex-start">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 13px; line-height: 18px; font-variant-numeric: tabular-nums; color: #5B6779">Free · 280 × 120</span>
+    <div style="width: 280px; height: 120px; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px rgba(14,23,38,0.14), 0 18px 40px -20px rgba(0,0,0,0.5)">
+      <dc-import name="PipWindow" theme="light" hint-size="280px,120px"></dc-import>
+    </div>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <span style="font-size: 13px; line-height: 18px; font-variant-numeric: tabular-nums; color: #5B6779">Pro · 280 × 160 · focus digits</span>
+    <div style="width: 280px; height: 160px; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px rgba(14,23,38,0.14), 0 18px 40px -20px rgba(0,0,0,0.5)">
+      <dc-import name="PipWindow" theme="light" pro="true" ambient="focus" hint-size="280px,160px"></dc-import>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":632,"height":236}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

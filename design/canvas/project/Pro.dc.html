@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab Pro</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease),opacity .45s var(--ease)}
+button:active{transform:scale(.96)}
+button:disabled,input:disabled,select:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+a{transition:color .45s var(--ease),background-color .45s var(--ease),border-color .45s var(--ease)}
+h1,h2,h3,h4,p,figure,blockquote{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+.at-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.at-num{font-family:Geist,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"zero" 0}
+.at-kick{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.2s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-fade{transition:background-color .6s var(--ease),border-color .6s var(--ease),opacity .6s var(--ease),fill .6s var(--ease),stroke .6s var(--ease)}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-breathe{animation:at-breathe 3.4s var(--ease) infinite alternate}
+.at-ignite{transform-box:fill-box;transform-origin:center;animation:at-ignite .6s var(--ease) .3s both}
+.at-travel{animation:at-travel .6s var(--ease) both}
+.at-off{transition:stroke-dasharray .9s var(--ease),stroke-opacity .9s var(--ease),opacity .9s var(--ease),fill .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-breathe{from{opacity:.55}to{opacity:1}}
+@keyframes at-ignite{0%{transform:scale(.6);opacity:.4}55%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes at-travel{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--at-tx,0),var(--at-ty,0)) scale(.5);opacity:0}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</helmet>
+<div class="at-root" style="--at-focus: {{lamp}}; width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; left: -25%; top: -2%; width: 150%; height: {{auraH}}; background: radial-gradient(45% 45% at 62% 40%, {{aura}} 0%, transparent 70%); pointer-events: none; transition: background .8s"></div>
+
+  <header style="position: relative; height: {{hdrH}}; flex-shrink: 0; box-sizing: border-box; padding: 0 {{gutter}}; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+    <a href="Main.dc.html" aria-label="AwakeTab, open the tool" style="display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; color: {{t.ink}}; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{bead}}" style="transition: fill .6s"></circle></svg>AwakeTab</a>
+    <sc-if value="{{isDesk}}" hint-placeholder-val="{{false}}"><nav aria-label="Main" style="display: flex; gap: 32px; font-size: 15px; line-height: 22px; font-weight: 500"><a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Use cases</a><a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Devices</a><a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Extension</a><a href="#" aria-current="page" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; color: {{t.ink}}; font-weight: 600; text-decoration: none"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: {{lamp}}"></span>Pro</a></nav></sc-if>
+    <div role="radiogroup" aria-label="Theme" style="position: relative; flex-shrink: 0; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}"><div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{themeX}})"></div><button role="radio" aria-checked="{{themeLight}}" aria-label="Light" title="Light" onClick="{{setLight}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeLightInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button><button role="radio" aria-checked="{{themeDark}}" aria-label="Dark" title="Dark" onClick="{{setDark}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeDarkInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button><button role="radio" aria-checked="{{themeAuto}}" aria-label="Auto, follows your system" title="Auto: follows your system" onClick="{{setAuto}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeAutoInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button></div>
+  </header>
+
+  <main id="top" style="position: relative; flex-grow: 1; box-sizing: border-box; width: 100%; max-width: 1280px; margin: 0 auto; padding: {{mainPad}}; display: flex; flex-direction: column; gap: {{secGap}}">
+
+    <section aria-labelledby="pro-h1" style="{{heroStyle}}">
+      <div class="at-in" style="display: flex; flex-direction: column; gap: 16px">
+        <p style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">AwakeTab Pro</p>
+        <h1 id="pro-h1" style="font-size: {{h1Size}}; line-height: {{h1LH}}; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance">One evening with AwakeTab</h1>
+        <p style="font-size: 18px; line-height: 28px; color: {{t.ink2}}; text-wrap: pretty; max-width: 34ch">Keeping a screen awake is free and stays free. Pro is for the hours around it. Pick a lamp colour: this page follows it.</p>
+        <ul aria-label="At a glance" style="display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; line-height: 20px; font-weight: 500; color: {{t.ink2}}">
+          <li style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" class="at-fade" style="width: 6px; height: 6px; border-radius: 999px; background: {{lamp}}"></span>5 devices</li>
+          <li style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" class="at-fade" style="width: 6px; height: 6px; border-radius: 999px; background: {{lamp}}"></span>No account</li>
+          <li style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" class="at-fade" style="width: 6px; height: 6px; border-radius: 999px; background: {{lamp}}"></span>14-day refund</li>
+        </ul>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding-top: 8px">
+          <a href="#plans" style="height: 60px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>See the plans</a>
+          <a href="ProActivate.dc.html" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; text-decoration: underline; text-decoration-color: {{t.line2}}; text-underline-offset: 4px">Enter licence key</a>
+        </div>
+      </div>
+
+      <figure class="at-rise" aria-labelledby="lamp-cap" style="display: flex; flex-direction: column; align-items: center; gap: 16px">
+        <div style="position: relative; width: {{ringBox}}; height: {{ringBox}}">
+          <div style="position: absolute; left: 0; top: 0; width: 320px; height: 320px; transform: scale({{ringScale}}); transform-origin: 0 0">
+            <div aria-hidden="true" style="position: absolute; inset: 0; border-radius: 50%; background: repeating-conic-gradient(from -0.6deg, {{t.tick}} 0deg 1.2deg, transparent 1.2deg 6deg); -webkit-mask: radial-gradient(circle, transparent 125px, #000 126px, #000 132px, transparent 133px); mask: radial-gradient(circle, transparent 125px, #000 126px, #000 132px, transparent 133px)"></div>
+            <div aria-hidden="true" class="at-sweep" style="position: absolute; inset: 28px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg 240deg, {{lampFaintRing}} 360deg); transition: background .6s"></div>
+            <svg width="320" height="320" viewBox="0 0 320 320" aria-hidden="true" style="position: absolute; inset: 0; overflow: visible">
+              <defs><filter id="proRingGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"></feGaussianBlur></filter></defs>
+              <circle cx="160" cy="160" r="146" fill="none" stroke="{{t.track}}" stroke-width="6"></circle>
+              <g transform="rotate(-90 160 160)">
+                <circle class="at-arc" cx="160" cy="160" r="146" fill="none" stroke="{{lamp}}" stroke-opacity="0.45" stroke-width="14" stroke-linecap="round" filter="url(#proRingGlow)" style="stroke-dasharray: {{arcDash}}"></circle>
+                <circle class="at-arc" cx="160" cy="160" r="146" fill="none" stroke="{{lamp}}" stroke-width="6" stroke-linecap="round" style="stroke-dasharray: {{arcDash}}"></circle>
+              </g>
+              <g style="transform: rotate({{tipDeg}}); transform-origin: 160px 160px">
+                <circle class="at-halo at-fade" cx="160" cy="14" r="7" fill="{{lamp}}"></circle>
+                <circle cx="160" cy="14" r="5.5" fill="{{t.ink}}"></circle>
+              </g>
+            </svg>
+          </div>
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px">
+            <p style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Lamp colour</p>
+            <p aria-live="polite" style="font-size: 48px; line-height: 56px; font-weight: 300; letter-spacing: -0.02em; color: {{t.ink}}">{{pickName}}</p>
+            <span class="at-fade" style="{{pickTagStyle}}">{{pickTag}}</span>
+          </div>
+        </div>
+        <div role="radiogroup" aria-label="Preview a lamp colour" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; max-width: 360px">
+          <sc-for list="{{lamps}}" as="l" hint-placeholder-count="4">
+            <button role="radio" aria-checked="{{l.sel}}" aria-label="{{l.aria}}" onClick="{{l.pick}}" class="at-slide" style="height: 64px; border-radius: 16px; border: 1px solid {{l.border}}; background: {{l.bg}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: {{t.ink}}">
+              <span aria-hidden="true" style="width: 16px; height: 16px; border-radius: 999px; background: {{l.hex}}; box-shadow: 0 0 12px {{l.glow}}"></span>
+              <span style="font-size: 13px; line-height: 18px; font-weight: {{l.weight}}">{{l.name}}</span>
+            </button>
+          </sc-for>
+        </div>
+        <figcaption id="lamp-cap" style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty; text-align: center; max-width: 36ch">Aqua and Violet are free. Mint and Sky come with Pro. The page shows a preview; nothing is saved.</figcaption>
+      </figure>
+    </section>
+
+    <section aria-labelledby="fit-h" style="{{helperStyle}}">
+      <div style="display: flex; flex-direction: column; gap: 24px; min-width: 0">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <h2 id="fit-h" style="font-size: {{h2Size}}; line-height: {{h2LH}}; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">Which plan fits you?</h2>
+          <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">The answer is often free, and this page says so.</p>
+        </div>
+        <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+          <legend style="padding: 0; margin-bottom: 12px; font-size: 16px; line-height: 24px; font-weight: 600">1 · Where will you use it?</legend>
+          <div role="radiogroup" aria-label="Where will you use it?" style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{q1}}" as="o" hint-placeholder-count="3">
+              <button role="radio" aria-checked="{{o.sel}}" onClick="{{o.pick}}" class="at-slide" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid {{o.ring}}; background: {{o.bg}}; font-size: 15px; line-height: 22px; font-weight: {{o.weight}}; color: {{o.ink}}; white-space: nowrap">{{o.label}}</button>
+            </sc-for>
+          </div>
+        </fieldset>
+        <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+          <legend style="padding: 0; margin-bottom: 12px; font-size: 16px; line-height: 24px; font-weight: 600">{{q2Legend}}</legend>
+          <div role="{{q2Role}}" aria-label="{{q2Legend}}" style="display: flex; flex-wrap: wrap; gap: 8px">
+            <sc-for list="{{q2}}" as="o" hint-placeholder-count="5">
+              <button role="{{o.role}}" aria-checked="{{o.sel}}" onClick="{{o.pick}}" class="at-slide" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid {{o.ring}}; background: {{o.bg}}; font-size: 15px; line-height: 22px; font-weight: {{o.weight}}; color: {{o.ink}}; white-space: nowrap">{{o.label}}</button>
+            </sc-for>
+          </div>
+        </fieldset>
+        <sc-if value="{{showQ3}}" hint-placeholder-val="{{false}}">
+          <fieldset class="at-in" style="margin: 0; padding: 0; border: 0; min-width: 0">
+            <legend style="padding: 0; margin-bottom: 12px; font-size: 16px; line-height: 24px; font-weight: 600">3 · How would you rather pay?</legend>
+            <div role="radiogroup" aria-label="How would you rather pay?" style="display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{q3}}" as="o" hint-placeholder-count="2">
+                <button role="radio" aria-checked="{{o.sel}}" onClick="{{o.pick}}" class="at-slide" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid {{o.ring}}; background: {{o.bg}}; font-size: 15px; line-height: 22px; font-weight: {{o.weight}}; color: {{o.ink}}; white-space: nowrap">{{o.label}}</button>
+              </sc-for>
+            </div>
+          </fieldset>
+        </sc-if>
+      </div>
+      <aside aria-labelledby="res-h" aria-live="polite" style="box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; padding: {{cardPad}}; box-shadow: {{cardShadow}}; display: flex; flex-direction: column; gap: 16px; border-color: {{resLine}}; min-width: 0">
+        <p style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Our suggestion</p>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap">
+          <h3 id="res-h" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">{{res.title}}</h3>
+          <p class="at-num" style="display: flex; align-items: baseline; gap: 8px"><span style="font-size: 28px; line-height: 36px; font-weight: 600">{{res.price}}</span><span style="font-size: 14px; line-height: 20px; color: {{t.ink2}}">{{res.per}}</span></p>
+        </div>
+        <p style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty">{{res.why}}</p>
+        <sc-if value="{{res.lamp}}" hint-placeholder-val="{{false}}">
+          <a href="{{res.href}}" style="height: 60px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>{{res.cta}}</a>
+        </sc-if>
+        <sc-if value="{{res.plain}}" hint-placeholder-val="{{true}}">
+          <a href="{{res.href}}" style="height: 52px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px">{{res.cta}}</a>
+        </sc-if>
+        <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{res.note}}</p>
+      </aside>
+    </section>
+
+    <section aria-labelledby="eve-h" style="display: flex; flex-direction: column; gap: {{eveGap}}">
+      <div style="display: flex; flex-direction: column; gap: 8px; max-width: 640px">
+        <h2 id="eve-h" style="font-size: {{h2Size}}; line-height: {{h2LH}}; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">From the lectern to the wall</h2>
+        <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Pro changes what AwakeTab looks like and remembers, never how the screen is kept awake.</p>
+      </div>
+
+      <article aria-labelledby="f-msg" style="{{momentStyle}}">
+        <div aria-hidden="true" style="{{railStyle}}"></div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <p class="at-num" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}; display: flex; align-items: center; gap: 8px; color: {{t.ink2}}"><span aria-hidden="true" class="at-fade" style="width: 8px; height: 8px; border-radius: 999px; background: {{lamp}}"></span>5:30 PM · At the lectern</p>
+          <h3 id="f-msg" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">Your words on the awake screen</h3>
+          <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Message mode puts your own line, up to 80 characters, in big type on the awake screen. Anyone can try it free for 60 seconds.</p>
+        </div>
+        <figure aria-labelledby="msg-cap" style="padding: {{figPad}}; border-radius: 28px; background: {{t.sunken}}; display: flex; flex-direction: column; gap: 16px">
+          <div role="img" aria-label="{{msgAria}}" style="position: relative; height: {{screenH}}; box-sizing: border-box; border-radius: 16px; overflow: hidden; background: {{t.ground}}; border: 1px solid {{t.line}}; display: flex; flex-direction: column; justify-content: space-between; padding: 16px">
+            <div aria-hidden="true" style="position: absolute; left: 10%; top: 10%; width: 80%; height: 80%; background: radial-gradient(50% 50% at 50% 50%, {{lampFaint}} 0%, transparent 70%)"></div>
+            <div style="position: relative; display: flex; justify-content: space-between; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}"><span>Message</span><span class="at-num" style="letter-spacing: 0; font-weight: 500; font-size: 13px; line-height: 16px; text-transform: none">{{nowTime}}</span></div>
+            <div style="position: relative; font-size: {{msgSize}}; line-height: 1.15; font-weight: 500; letter-spacing: -0.02em; text-align: center; color: {{msgInk}}; text-wrap: balance; overflow-wrap: anywhere">{{msgShown}}</div>
+            <div style="position: relative; height: 4px; border-radius: 999px; background: {{t.track}}; overflow: hidden"><div class="at-fade" style="width: 62%; height: 100%; border-radius: 999px; background: {{lamp}}"></div></div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+              <label for="pro-msg" style="font-size: 14px; line-height: 20px; font-weight: 600">Try your own message</label>
+              <span aria-live="polite" class="at-num" style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{msgCount}}</span>
+            </div>
+            <input id="pro-msg" type="text" value="{{msg}}" onChange="{{setMsg}}" maxLength="80" autoComplete="off" style="height: 48px; box-sizing: border-box; padding: 0 16px; border-radius: 8px; border: 1px solid {{t.inputBorder}}; background: {{t.surface}}; color: {{t.ink}}; font: inherit; font-size: 16px">
+          </div>
+          <figcaption id="msg-cap" class="at-sr">Preview of Message mode on the awake screen</figcaption>
+        </figure>
+      </article>
+
+      <div style="{{pairStyle}}">
+        <article aria-labelledby="f-cook" style="position: relative; display: flex; flex-direction: column; gap: 8px; padding-inline-start: {{railPad}}">
+          <div aria-hidden="true" style="{{railStyle}}"></div>
+          <p class="at-num" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}; display: flex; align-items: center; gap: 8px; color: {{t.ink2}}"><span aria-hidden="true" class="at-fade" style="width: 8px; height: 8px; border-radius: 999px; background: {{lamp}}"></span>7:00 PM · In the kitchen</p>
+          <h3 id="f-cook" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">Cook mode stays free, timers and all</h3>
+          <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Up to three kitchen timers on the awake screen, readable from the stove. Every ambient mode is free; Pro adds nothing here, on purpose.</p>
+        </article>
+        <article aria-labelledby="f-lamp" style="position: relative; display: flex; flex-direction: column; gap: 8px; padding-inline-start: {{railPad}}">
+          <div aria-hidden="true" style="{{railStyle}}"></div>
+          <p class="at-num" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}; display: flex; align-items: center; gap: 8px; color: {{t.ink2}}"><span aria-hidden="true" class="at-fade" style="width: 8px; height: 8px; border-radius: 999px; background: {{lamp}}"></span>11:00 PM · On the nightstand</p>
+          <h3 id="f-lamp" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">A lamp in your colour</h3>
+          <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">{{lampLine2}} <a href="#top" style="color: {{t.ink}}; font-weight: 600; text-decoration: underline; text-decoration-color: {{lamp}}; text-underline-offset: 4px">Try them at the top</a>.</p>
+        </article>
+      </div>
+
+      <article aria-labelledby="f-hist" style="{{momentStyle}}">
+        <div aria-hidden="true" style="{{railStyle}}"></div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <p class="at-num" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}; display: flex; align-items: center; gap: 8px; color: {{t.ink2}}"><span aria-hidden="true" class="at-fade" style="width: 8px; height: 8px; border-radius: 999px; background: {{lamp}}"></span>Overnight · The build that ran</p>
+          <h3 id="f-hist" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">Twelve weeks of history, and a file to check it</h3>
+          <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Free stats show the last 7 days. Pro keeps 12 weeks and exports your sessions as CSV, so you can see what really ran and for how long.</p>
+        </div>
+        <figure aria-labelledby="heat-cap" style="padding: {{figPad}}; border-radius: 28px; background: {{t.sunken}}; display: flex; flex-direction: column; gap: 16px">
+          <div role="radiogroup" aria-label="Compare history" style="position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+            <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 2); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{lampSoft}}; border: 1px solid {{lampLine}}; transform: translateX({{heatX}})"></div>
+            <button role="radio" aria-checked="{{heatFree}}" onClick="{{showFree}}" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; line-height: 20px; font-weight: {{heatFreeW}}; color: {{heatFreeInk}}">Free · 7 days</button>
+            <button role="radio" aria-checked="{{heatPro}}" onClick="{{showPro}}" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; line-height: 20px; font-weight: {{heatProW}}; color: {{heatProInk}}">Pro · 12 weeks</button>
+          </div>
+          <div style="position: relative; display: flex; gap: 8px; justify-content: center">
+            <div aria-hidden="true" style="display: grid; grid-template-rows: repeat(7, {{cell}}); gap: 4px; font-size: 12px; line-height: {{cell}}; color: {{t.muted}}; text-align: end">
+              <span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span></span>
+            </div>
+            <div role="img" aria-label="{{heatAria}}" style="display: grid; grid-template-rows: repeat(7, {{cell}}); grid-auto-columns: {{cell}}; grid-auto-flow: column; gap: 4px">
+              <sc-for list="{{heat}}" as="h" hint-placeholder-count="84">
+                <span class="at-fade" style="border-radius: 4px; background: {{h.bg}}; border: 1px {{h.bs}} {{h.bc}}; box-sizing: border-box"></span>
+              </sc-for>
+            </div>
+            <sc-if value="{{heatLocked}}" hint-placeholder-val="{{false}}">
+              <div class="at-in" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink2}}; white-space: nowrap; background: {{t.surface}}; gap: 8px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+                Locked — Pro keeps 12 weeks
+              </div>
+            </sc-if>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+            <p id="heat-cap" style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">Last 12 weeks, by local day</p>
+            <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink2}}; white-space: nowrap; gap: 8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{exportIcon}}"></path></svg>{{exportLabel}}</span>
+          </div>
+        </figure>
+      </article>
+
+      <article aria-labelledby="f-wall" style="{{momentStyle}}">
+        <div aria-hidden="true" style="{{railStyle}}"></div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <p class="at-num" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}; display: flex; align-items: center; gap: 8px; color: {{t.ink2}}"><span aria-hidden="true" class="at-fade" style="width: 8px; height: 8px; border-radius: 999px; background: {{lamp}}"></span>Monday · On the wall</p>
+          <h3 id="f-wall" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">A dashboard that wakes up on schedule</h3>
+          <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">In AwakeTab for Chrome, pick the days and hours a screen stays on, or start whenever Chrome opens. Nobody has to touch it.</p>
+        </div>
+        <figure aria-labelledby="sch-cap" style="padding: {{figPad}}; border-radius: 28px; background: {{t.sunken}}; display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+            <span style="font-size: 14px; line-height: 20px; font-weight: 600">Schedule</span>
+            <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink2}}; white-space: nowrap">AwakeTab for Chrome</span>
+          </div>
+          <div role="group" aria-label="Days" style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px">
+            <sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+              <button aria-pressed="{{d.sel}}" aria-label="{{d.aria}}" onClick="{{d.toggle}}" class="at-slide" style="height: 44px; min-width: 44px; border-radius: 12px; border: 1px solid {{d.border}}; background: {{d.bg}}; color: {{d.ink}}; font-size: 14px; line-height: 20px; font-weight: {{d.weight}}">{{d.short}}</button>
+            </sc-for>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+            <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; border-radius: 12px; background: {{t.surface}}; border: 1px solid {{t.line}}"><span style="font-size: 12px; line-height: 16px; color: {{t.muted}}">From</span><span class="at-num" style="font-size: 15px; line-height: 22px; font-weight: 500">8:00 AM</span></div>
+            <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; border-radius: 12px; background: {{t.surface}}; border: 1px solid {{t.line}}"><span style="font-size: 12px; line-height: 16px; color: {{t.muted}}">To</span><span class="at-num" style="font-size: 15px; line-height: 22px; font-weight: 500">6:00 PM</span></div>
+            <div style="display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; border-radius: 12px; background: {{t.surface}}; border: 1px solid {{t.line}}"><span style="font-size: 12px; line-height: 16px; color: {{t.muted}}">Level</span><span style="font-size: 15px; line-height: 22px; font-weight: 500">Screen</span></div>
+          </div>
+          <p id="sch-cap" aria-live="polite" style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty">{{schedLine}}</p>
+        </figure>
+      </article>
+    </section>
+
+    <section id="plans" aria-labelledby="plans-h" style="display: flex; flex-direction: column; gap: 24px">
+      <div style="display: flex; flex-direction: column; gap: 8px; max-width: 640px">
+        <h2 id="plans-h" style="font-size: {{h2Size}}; line-height: {{h2LH}}; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">Two ways to pay</h2>
+        <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Both plans unlock everything above, plus no ads on the guides, on 5 devices. There is no monthly plan and no account.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: {{planCols}}; gap: 16px; align-items: stretch">
+        <article aria-labelledby="plan-yearly" style="box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; padding: {{cardPad}}; box-shadow: {{cardShadow}}; display: flex; flex-direction: column; gap: 16px">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+            <p style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Yearly</p>
+            <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink2}}; white-space: nowrap">5 devices</span>
+          </div>
+          <h3 id="plan-yearly" class="at-num" style="display: flex; align-items: baseline; gap: 8px"><span style="font-size: {{priceSize}}; line-height: {{priceLH}}; font-weight: 600; letter-spacing: -0.02em">$12</span><span style="font-size: 18px; line-height: 28px; font-weight: 400; color: {{t.ink2}}">a year</span></h3>
+          <p style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty; flex-grow: 1">Renews yearly through Polar. Cancel any time.</p>
+          <a href="ProActivate.dc.html" aria-describedby="plan-yearly" style="height: 52px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px">Get yearly Pro</a>
+        </article>
+        <article aria-labelledby="plan-lifetime" style="box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; padding: {{cardPad}}; box-shadow: {{cardShadow}}; display: flex; flex-direction: column; gap: 16px; border-color: {{lampLine}}">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+            <span style="display: flex; align-items: center; gap: 8px"><span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Lifetime</span><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{lampLine}}; background: {{lampTag}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">Pay once</span></span>
+            <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink2}}; white-space: nowrap">5 devices</span>
+          </div>
+          <h3 id="plan-lifetime" class="at-num" style="display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px"><span style="font-size: {{priceSize}}; line-height: {{priceLH}}; font-weight: 600; letter-spacing: -0.02em">$19</span><span style="font-size: 18px; line-height: 28px; font-weight: 400; color: {{t.ink2}}">once</span></h3>
+          <ul style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty">
+            <li>Launch price for the first 90 days after launch, then $29.</li>
+            <li>At the launch price, less than two years of the yearly plan.</li>
+            <li>Pay once, no renewal.</li>
+          </ul>
+          <a href="ProActivate.dc.html" aria-describedby="plan-lifetime" style="height: 60px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>Get lifetime Pro</a>
+        </article>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <p style="display: flex; gap: 12px; align-items: flex-start; font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{lamp}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4h4"></path></svg><span><strong style="color: {{t.ink}}; font-weight: 600">14-day refund, no questions asked.</strong> Email support@awaketab.com with your receipt or use the Polar customer portal. Refunds deactivate the licence key.</span></p>
+        <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">If AwakeTab ever shuts down, we will ship a final update that unlocks Pro for everyone.</p>
+        <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">Charged in USD; taxes added at checkout where applicable. Both buttons open Polar checkout, and your licence key arrives by email and on the receipt page.</p>
+      </div>
+    </section>
+
+    <div style="{{duoStyle}}">
+    <section aria-labelledby="free-h" style="display: flex; flex-direction: column; gap: 24px; min-width: 0">
+      <div style="display: flex; flex-direction: column; gap: 8px; max-width: 640px">
+        <h2 id="free-h" style="font-size: {{h2Size}}; line-height: {{h2LH}}; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">What stays free</h2>
+        <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Keeping a screen awake never needs Pro. The status pill only says what the browser really did, in all seven states:</p>
+      </div>
+      <ul aria-label="The seven status pills" style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{pills}}" as="p" hint-placeholder-count="7">
+          <li style="display: inline-flex; align-items: center; gap: {{pillGap}}; height: {{pillH}}; padding: {{pillPad}}; box-sizing: border-box; border-radius: 999px; background: {{p.soft}}; border: 1px solid {{p.line}}; font-size: {{pillFs}}; line-height: 18px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible"><path d="{{p.glyph}}" fill="{{p.fill}}" stroke="{{p.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+            {{p.label}}
+          </li>
+        </sc-for>
+      </ul>
+      <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty; max-width: 68ch">Also free: every length from 15 min to 4 h, until I stop, until a time or a custom length up to 7 days; all four clock faces; every ambient mode (Standard, Clock, Focus, Minimal, Night and Cook); Aqua and Violet; 7 days of stats; AwakeTab for Chrome at Screen or System level; offline install in 8 languages. No ads on the awake screen, now or later.</p>
+    </section>
+
+    <section aria-labelledby="faq-h" style="{{faqStyle}}">
+      <h2 id="faq-h" style="font-size: {{h2Size}}; line-height: {{h2LH}}; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">Questions</h2>
+      <div style="display: flex; flex-direction: column; border-top: 1px solid {{t.line}}">
+        <sc-for list="{{faq}}" as="q" hint-placeholder-count="5">
+          <div style="border-bottom: 1px solid {{t.line}}">
+            <h3 style="font-size: 16px; line-height: 24px; font-weight: 600">
+              <button aria-expanded="{{q.open}}" aria-controls="{{q.id}}" onClick="{{q.toggle}}" style="width: 100%; min-height: 56px; padding: 8px 0; border: 0; background: transparent; color: {{t.ink}}; font-size: 16px; line-height: 24px; font-weight: 600; text-align: start; display: flex; justify-content: space-between; align-items: center; gap: 16px">
+                {{q.q}}
+                <span aria-hidden="true" style="width: 44px; height: 44px; flex-shrink: 0; display: grid; place-items: center; color: {{t.ink2}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="at-slide" style="transform: rotate({{q.rot}})"><path d="M12 5v14M5 12h14"></path></svg></span>
+              </button>
+            </h3>
+            <sc-if value="{{q.isOpen}}" hint-placeholder-val="{{false}}">
+              <p id="{{q.id}}" class="at-in" style="padding: 0 48px 16px 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">{{q.a}}</p>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    </div>
+
+    <section aria-labelledby="biz-h" style="display: flex; flex-direction: column; gap: 16px">
+      <h2 id="biz-h" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">For your website or your screens</h2>
+      <div style="display: grid; grid-template-columns: {{bizCols}}; column-gap: 40px; border-top: 1px solid {{t.line}}">
+        <a href="EmbedShowcase.dc.html" style="min-height: 56px; box-sizing: border-box; padding: 16px 0; border-bottom: 1px solid {{t.line}}; display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: {{t.ink}}">
+          <span style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap"><span style="font-size: 16px; line-height: 24px; font-weight: 600">Embed licence</span><span class="at-num" style="font-size: 15px; line-height: 22px; color: {{t.ink2}}">$29 a year per site</span></span>
+          <span style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty">Removes the "Keep awake by AwakeTab" credit. Licences open soon; the free embed works today.</span>
+        </a>
+        <a href="PageKiosk.dc.html" style="min-height: 56px; box-sizing: border-box; padding: 16px 0; border-bottom: 1px solid {{t.line}}; display: flex; flex-direction: column; gap: 4px; text-decoration: none; color: {{t.ink}}">
+          <span style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap"><span style="font-size: 16px; line-height: 24px; font-weight: 600">Kiosk licence</span><span class="at-num" style="font-size: 15px; line-height: 22px; color: {{t.ink2}}">$19 one site · $49 five sites</span></span>
+          <span style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty">Signage and kiosk screens that stay awake from one URL, with your own logo and message.</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer style="position: relative; flex-shrink: 0; box-sizing: border-box; width: 100%; padding: {{footPad}}; border-top: 1px solid {{t.line}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px"><p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p><nav aria-label="Site" style="display: flex; flex-wrap: wrap; column-gap: 16px"><a href="PagePrivacyDesk.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Privacy</a><a href="PageTermsPhone.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Terms</a><a href="PageChangelog.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Changelog</a><a href="PageAbout.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">About</a><a href="#" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a></nav></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"$preview":{"width":390,"height":6180}}'>
+// AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
+const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#EAF0F7', primaryInk: '#0A0E16', shadow: 'none' };
+const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#0E1726', primaryInk: '#FFFFFF', shadow: '0 1px 2px rgba(14,23,38,.06)' };
+const AT_OLED = Object.assign({}, AT_DARK, { bg: '#000000', ground: '#000000', surface: '#0A0A0A' });
+const AT_LAMPS = [
+  { id: 'aqua', name: 'Aqua', dark: '#5BE0E8', light: '#087B87', pro: false },
+  { id: 'violet', name: 'Violet', dark: '#A594FF', light: '#5A47CF', pro: false },
+  { id: 'mint', name: 'Mint', dark: '#7EF0B8', light: '#167A50', pro: true },
+  { id: 'sky', name: 'Sky', dark: '#7CB8FF', light: '#255FBD', pro: true }
+];
+const AT_GLYPH = {
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z'
+};
+// Status pill sizes (§11.4): L kiosk, M tool, S popup / PiP / full embed, XS compact embed.
+const AT_PILL = {
+  L: { h: '48px', pad: '0 20px 0 16px', gap: '8px', fs: '20px', lh: '28px' },
+  M: { h: '38px', pad: '0 16px 0 12px', gap: '8px', fs: '15px', lh: '22px' },
+  S: { h: '32px', pad: '0 12px 0 8px', gap: '8px', fs: '14px', lh: '20px' },
+  XS: { h: '26px', pad: '0 8px', gap: '4px', fs: '13px', lh: '18px' }
+};
+function atRgba(hex, a) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atPill(o) {
+  const s = AT_PILL[o.size || 'M'];
+  return { label: o.label, h: s.h, pad: s.pad, gap: s.gap, fs: s.fs, lh: s.lh, tone: o.tone, glyph: o.glyph || AT_GLYPH.dot, fill: o.hollow ? 'transparent' : o.tone, stroke: o.stroke || '1.6', soft: atRgba(o.tone, 0.12), line: atRgba(o.tone, 0.38), glow: o.glow ? atRgba(o.tone, 0.8) : 'transparent', cls: 'at-fade' };
+}
+// Page chrome shared by every board: tokens, lamp, header, theme switch, card and footer metrics.
+function atChrome(o) {
+  const L = o.layout || 'phone';
+  const desk = L === 'desktop', tab = L === 'tablet', phone = !desk && !tab;
+  const theme = o.theme || 'auto';
+  const dark = theme === 'dark' || theme === 'oled' || (theme === 'auto' && o.sysDark !== false);
+  const t = theme === 'oled' ? AT_OLED : dark ? AT_DARK : AT_LIGHT;
+  const def = AT_LAMPS.find((l) => l.id === o.lamp) || AT_LAMPS[0];
+  const lamp = dark ? def.dark : def.light;
+  const set = (id) => () => { if (o.set) o.set(id); };
+  const ink = (id) => (theme === id ? t.ink : t.ink2);
+  return {
+    t, dark, lamp, lampText: lamp, lampInk: dark ? '#04232A' : '#FFFFFF', bead: lamp,
+    lampSoft: atRgba(lamp, 0.14), lampLine: atRgba(lamp, 0.45), lampGlow: atRgba(lamp, 0.55), lampFaint: atRgba(lamp, 0.08), lampTag: atRgba(lamp, 0.12),
+    halo: 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(lamp, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(lamp, 0) + ' 100%)',
+    isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone,
+    hdrH: phone ? '60px' : '68px', gutter: desk ? '80px' : tab ? '32px' : '16px', secGap: desk ? '96px' : tab ? '64px' : '48px',
+    cardPad: phone ? '20px' : '24px', cardShadow: t.shadow, footPad: phone ? '24px 16px 32px' : desk ? '24px 80px' : '24px 32px',
+    themeX: (theme === 'light' ? 0 : theme === 'dark' ? 44 : 88) + 'px',
+    themeLight: theme === 'light', themeDark: theme === 'dark', themeAuto: theme === 'auto',
+    themeLightInk: ink('light'), themeDarkInk: ink('dark'), themeAutoInk: ink('auto'),
+    setLight: set('light'), setDark: set('dark'), setAuto: set('auto')
+  };
+}
+
+const C = 2 * Math.PI * 146;
+const DAYS = [['M', 'Monday'], ['T', 'Tuesday'], ['W', 'Wednesday'], ['T', 'Thursday'], ['F', 'Friday'], ['S', 'Saturday'], ['S', 'Sunday']];
+// Natural content heights per layout, measured with the static render (fix batch 2a).
+const HEIGHTS = { phone: 6180, tablet: 4596, desktop: 4148 };
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: props.theme ?? 'auto', sysDark: this.sys(), now: Date.now(), lamp: 'mint', msg: 'Back at 11:30 AM', days: [1, 1, 1, 1, 1, 0, 0], heat: 'pro', faq: 0, use: 'me', wants: ['look'], pay: 'once', credit: 'fine', logo: 'no' };
+    this.levels = this.makeLevels();
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState({ now: Date.now() }), 15000);
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+  }
+  componentDidUpdate(prev) {
+    if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme });
+  }
+  hm(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+  makeLevels() {
+    // Deterministic sample: busier on weekdays, the odd quiet day. Column-major, Monday first; the last
+    // column ends on Saturday 26 September 2026, so its Sunday is in the future.
+    let x = 20260926;
+    const r = () => (x = (x * 16807) % 2147483647) / 2147483647;
+    const out = [];
+    for (let i = 0; i < 84; i++) {
+      const wd = i % 7;
+      const v = r();
+      const base = wd < 5 ? 1.2 + v * 3.2 : v * 2.2;
+      out.push(i === 83 ? -1 : Math.max(0, Math.min(4, Math.floor(v < 0.12 ? 0 : base))));
+    }
+    return out;
+  }
+  schedLine(days) {
+    const on = days.map((d, i) => (d ? i : -1)).filter((i) => i >= 0);
+    if (!on.length) return 'No days picked, so this screen follows its normal sleep settings.';
+    const hours = ', 8:00 AM to 6:00 PM, then lets the screen sleep.';
+    if (on.length === 7) return 'Awake every day' + hours;
+    const contiguous = on.every((d, i) => i === 0 || d === on[i - 1] + 1);
+    let span;
+    if (on.length === 1) span = 'on ' + DAYS[on[0]][1];
+    else if (contiguous && on.length > 2) span = DAYS[on[0]][1] + ' to ' + DAYS[on[on.length - 1]][1];
+    else span = on.slice(0, -1).map((i) => DAYS[i][1]).join(', ') + ' and ' + DAYS[on[on.length - 1]][1];
+    return 'Awake ' + span + hours;
+  }
+  // The plan helper from GrowthPlanHelper, inline: three questions, one honest suggestion.
+  helper(b) {
+    const s = this.state, t = b.t;
+    const opt = (on, label, pick, role) => ({ label, pick, role: role || 'radio', sel: on ? 'true' : 'false', ring: on ? b.lampLine : t.line, bg: on ? b.lampSoft : 'transparent', weight: on ? 600 : 500, ink: on ? t.ink : t.ink2 });
+    const q1 = [['me', 'My own devices'], ['site', 'A website I run'], ['screens', 'Screens I manage']].map(([id, l]) => opt(s.use === id, l, () => this.setState({ use: id })));
+    const toggle = (id) => () => {
+      const cur = this.state.wants;
+      if (id === 'none') return this.setState({ wants: ['none'] });
+      const next = cur.filter((w) => w !== 'none');
+      const out = next.includes(id) ? next.filter((w) => w !== id) : next.concat(id);
+      this.setState({ wants: out.length ? out : ['none'] });
+    };
+    let q2, q2Legend, q2Role = 'group';
+    if (s.use === 'site') {
+      q2Legend = '2 · Is a small credit under the button fine?'; q2Role = 'radiogroup';
+      q2 = [['fine', 'Yes, keep the credit'], ['remove', 'No, remove it']].map(([id, l]) => opt(s.credit === id, l, () => this.setState({ credit: id })));
+    } else if (s.use === 'screens') {
+      q2Legend = '2 · Do the screens need your own logo?'; q2Role = 'radiogroup';
+      q2 = [['no', 'No, a clock is enough'], ['yes', 'Yes, our logo']].map(([id, l]) => opt(s.logo === id, l, () => this.setState({ logo: id })));
+    } else {
+      q2Legend = '2 · Beyond keeping the screen on, what do you want?';
+      q2 = [['none', 'Nothing else'], ['look', 'Colours and a message'], ['sched', 'Schedules'], ['stats', '12 weeks of stats'], ['ads', 'No ads on guides']].map(([id, l]) => opt(s.wants.includes(id), l, toggle(id), 'checkbox'));
+    }
+    const wantsPro = s.use === 'me' && !s.wants.includes('none');
+    const q3 = [['once', 'Pay once'], ['year', 'Every year']].map(([id, l]) => opt(s.pay === id, l, () => this.setState({ pay: id })));
+    let res;
+    if (s.use === 'site') res = s.credit === 'remove'
+      ? { title: 'Embed licence', price: '$29', per: 'a year per site', why: 'Removes the credit line and includes one staging subdomain. Licences open soon; the free embed works today, with the credit.', cta: 'Get the free embed code', href: 'EmbedShowcase.dc.html', lamp: false, note: 'We open licences once checkout can register your domain.' }
+      : { title: 'The free embed', price: '$0', per: 'with a small credit', why: 'Your readers get the same button and the same status pill. The credit links back to AwakeTab.', cta: 'Get the embed code', href: 'EmbedShowcase.dc.html', lamp: false, note: 'Want the credit gone later? The Embed licence is $29 a year per site.' };
+    else if (s.use === 'screens') res = s.logo === 'yes'
+      ? { title: 'Kiosk licence', price: '$19', per: 'one site, $49 five sites', why: 'Your logo instead of the AwakeTab wordmark, and your own message, set from one URL. Paid once per site.', cta: 'Build a kiosk link', href: 'PageKiosk.dc.html', lamp: true, note: 'The kiosk link itself is free; the licence adds branding.' }
+      : { title: 'A free kiosk link', price: '$0', per: 'no licence needed', why: 'Auto-start, Minimal mode and Clock mode all work without paying.', cta: 'Build a kiosk link', href: 'PageKiosk.dc.html', lamp: false, note: 'Add a logo and a message later with a Kiosk licence.' };
+    else if (!wantsPro) res = { title: 'Free is enough', price: '$0', per: 'no key, no account', why: 'Everything that keeps a screen awake is free, and stays free.', cta: 'Open AwakeTab', href: 'Main.dc.html', lamp: false, note: 'If you want more later, Pro starts at $12 a year.' };
+    else if (s.pay === 'year') res = { title: 'Pro, yearly', price: '$12', per: 'a year', why: 'The extras you picked, on 5 devices. If the plan ends, Pro features lock; your settings and stats stay.', cta: 'Get yearly Pro', href: 'ProActivate.dc.html', lamp: true, note: '14-day refund, no questions asked.' };
+    else res = { title: 'Pro, pay once', price: '$19', per: 'once', why: 'Launch price for the first 90 days after launch, then $29. The extras you picked, on 5 devices. Pay once, no renewal.', cta: 'Get lifetime Pro', href: 'ProActivate.dc.html', lamp: true, note: 'At the launch price, less than two years of the yearly plan.' };
+    res.plain = !res.lamp;
+    return { q1, q2, q2Legend, q2Role, q3, showQ3: wantsPro, res, resLine: res.lamp ? b.lampLine : t.line };
+  }
+  renderVals() {
+    const s = this.state;
+    const L = this.props.layout ?? 'phone';
+    // The page lamp follows the colour picked in the hero: the whole page is the preview.
+    const b = atChrome({ theme: s.theme, sysDark: s.sysDark, layout: L, lamp: s.lamp, set: (id) => this.setState({ theme: id }) });
+    const t = b.t, dark = b.dark, lamp = b.lamp;
+    const desk = b.isDesk, tab = b.isTab, phone = b.isPhone;
+    const pick = AT_LAMPS.find((l) => l.id === s.lamp) || AT_LAMPS[2];
+    const p = 0.72;
+
+    const lamps = AT_LAMPS.map((l) => {
+      const on = l.id === s.lamp;
+      const hex = dark ? l.dark : l.light;
+      return {
+        name: l.name, hex, glow: on ? atRgba(hex, 0.7) : 'transparent', sel: on ? 'true' : 'false', weight: on ? 600 : 500,
+        aria: l.name + (l.pro ? ', Pro colour' : ', free colour'),
+        border: on ? atRgba(hex, 0.45) : t.line, bg: on ? atRgba(hex, 0.14) : t.surface,
+        pick: () => this.setState({ lamp: l.id })
+      };
+    });
+
+    const msgRaw = s.msg ?? '';
+    const msgShown = msgRaw.trim() || 'Add a message in Settings';
+    const len = msgShown.length;
+    const msgSize = len <= 20 ? (desk ? '48px' : '28px') : len <= 44 ? (desk ? '28px' : '24px') : (desk ? '24px' : '18px');
+
+    const days = DAYS.map(([short, full], i) => {
+      const on = !!s.days[i];
+      return {
+        short, aria: full, sel: on ? 'true' : 'false', weight: on ? 600 : 500,
+        border: on ? b.lampLine : t.line, bg: on ? b.lampSoft : t.surface, ink: on ? t.ink : t.ink2,
+        toggle: () => this.setState({ days: s.days.map((d, j) => (j === i ? (d ? 0 : 1) : d)) })
+      };
+    });
+
+    const locked = s.heat === 'free';
+    const LV = [t.track, atRgba(lamp, 0.28), atRgba(lamp, 0.5), atRgba(lamp, 0.75), lamp];
+    const heat = this.levels.map((lv, i) => {
+      if (lv < 0) return { bg: 'transparent', bs: 'dashed', bc: 'transparent' };
+      if (locked && i < 76) return { bg: 'transparent', bs: 'dashed', bc: t.tick };
+      return { bg: LV[lv], bs: 'solid', bc: 'transparent' };
+    });
+
+    const PILLS = [
+      ['Ready', AT_GLYPH.dot, t.muted, true], ['Starting…', AT_GLYPH.dot, lamp, true], ['Screen awake', AT_GLYPH.dot, lamp, false],
+      ['Paused — tab hidden', AT_GLYPH.pause, t.warn, false], ["Blocked — here's the fix", AT_GLYPH.tri, t.bad, false],
+      ['Tap to use the fallback', AT_GLYPH.dot, lamp, false], ['Awake via video fallback', AT_GLYPH.ringDot, lamp, false]
+    ];
+    const pills = PILLS.map(([label, glyph, tone, hollow]) => ({ label, glyph, tone, fill: hollow ? 'transparent' : tone, soft: atRgba(tone, 0.12), line: atRgba(tone, 0.38) }));
+
+
+    const FAQ = [
+      ['Does Pro keep the screen awake better?', 'No. Free and Pro use the same wake lock and the same status pill. Pro adds colours, a message, history and schedules on top.'],
+      ['Do I need an account?', 'No. Polar handles checkout and emails you a licence key. AwakeTab never stores a password.'],
+      ['What counts as a device?', 'Each browser where you enter the key uses one of five activations. AwakeTab for Chrome activates itself and uses one too. Devices unused for 90 days are removed automatically when you activate a new one.'],
+      ['Can I get a refund?', '14-day refund, no questions asked. Email support@awaketab.com with your receipt or use the Polar customer portal. Refunds deactivate the licence key.']
+    ];
+    const faq = FAQ.map(([q, a], i) => {
+      const open = s.faq === i;
+      return { q, a, id: 'faq-' + i, open: open ? 'true' : 'false', isOpen: open, rot: open ? '45deg' : '0deg', toggle: () => this.setState({ faq: open ? -1 : i }) };
+    });
+
+    const two = 'repeat(2, minmax(0, 1fr))';
+    const rail = phone ? 'none' : 'block';
+    return Object.assign(b, this.helper(b), {
+      W: desk ? '1280px' : tab ? '820px' : '390px', H: HEIGHTS[L] + 'px',
+      aura: atRgba(lamp, dark ? 0.16 : 0.1), auraH: desk ? '1100px' : '1200px',
+      lampFaintRing: atRgba(lamp, dark ? 0.16 : 0.12),
+      mainPad: (desk ? '48px ' : tab ? '40px ' : '24px ') + b.gutter + (desk ? ' 96px' : tab ? ' 64px' : ' 48px'),
+      h1Size: phone ? '34px' : '48px', h1LH: phone ? '42px' : '56px', h2Size: phone ? '24px' : '28px', h2LH: phone ? '32px' : '36px',
+      priceSize: phone ? '40px' : '48px', priceLH: phone ? '48px' : '56px',
+      heroStyle: desk
+        ? 'display: grid; grid-template-columns: minmax(0, 1fr) 400px; column-gap: 64px; align-items: center'
+        : tab ? 'display: grid; grid-template-columns: minmax(0, 1fr) 300px; column-gap: 32px; align-items: center'
+        : 'display: flex; flex-direction: column; gap: 32px',
+      helperStyle: desk ? 'display: grid; grid-template-columns: minmax(0, 1fr) 400px; column-gap: 64px; align-items: start' : 'display: flex; flex-direction: column; gap: 24px',
+      ringBox: desk ? '320px' : tab ? '256px' : '224px', ringScale: desk ? 1 : tab ? 0.8 : 0.7,
+      arcDash: (C * p).toFixed(1) + ' ' + C.toFixed(1), tipDeg: (360 * p).toFixed(2) + 'deg',
+      pickName: pick.name, pickTag: pick.pro ? 'Pro colour' : 'Free colour',
+      pickTagStyle: 'display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; color: ' + t.ink + '; border: 1px solid ' + (pick.pro ? b.lampLine : t.line2) + '; background: ' + (pick.pro ? b.lampTag : 'transparent'),
+      lamps,
+      lampLine2: pick.pro ? 'You are previewing ' + pick.name + ', a Pro colour.' : pick.name + ' is one of the free colours.',
+      eveGap: desk ? '64px' : '48px',
+      momentStyle: !phone
+        ? 'position: relative; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: ' + (desk ? '64px' : '40px') + '; align-items: center; padding-inline-start: 24px'
+        : 'position: relative; display: flex; flex-direction: column; gap: 24px; padding-inline-start: ' + (phone ? '0' : '24px'),
+      pairStyle: desk || tab ? 'display: grid; grid-template-columns: ' + two + '; column-gap: 40px' : 'display: flex; flex-direction: column; gap: 48px',
+      railPad: phone ? '0' : '24px',
+      railStyle: 'display: ' + rail + '; position: absolute; left: 0; top: 4px; bottom: 4px; width: 1px; background: ' + t.line,
+      figPad: phone ? '12px' : '24px',
+      screenH: desk ? '200px' : '160px',
+      nowTime: this.hm(s.now), msg: msgRaw, msgShown, msgSize, msgInk: msgRaw.trim() ? t.ink : t.muted,
+      msgCount: msgRaw.length + ' / 80', msgAria: 'Message mode preview showing: ' + msgShown,
+      setMsg: (e) => this.setState({ msg: String((e && e.target && e.target.value) ?? '').slice(0, 80) }),
+      days, schedLine: this.schedLine(s.days),
+      heat, cell: phone ? '16px' : tab ? '20px' : '24px', heatLocked: locked,
+      heatAria: locked ? 'Sample stats: only the last 7 days are visible on the free plan' : 'Sample stats: 12 weeks of daily use, darker means longer',
+      heatX: locked ? '0%' : '100%', heatFree: locked ? 'true' : 'false', heatPro: locked ? 'false' : 'true',
+      heatFreeW: locked ? 600 : 500, heatProW: locked ? 500 : 600, heatFreeInk: locked ? t.ink : t.ink2, heatProInk: locked ? t.ink2 : t.ink,
+      showFree: () => this.setState({ heat: 'free' }), showPro: () => this.setState({ heat: 'pro' }),
+      exportLabel: locked ? 'CSV export is Pro' : 'Export CSV',
+      exportIcon: locked ? 'M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3' : 'M12 4v11M7 10l5 5 5-5M5 20h14',
+      planCols: phone ? 'minmax(0, 1fr)' : two,
+      pills, pillH: phone ? '26px' : '38px', pillPad: phone ? '0 8px' : '0 16px 0 12px', pillGap: phone ? '4px' : '8px', pillFs: phone ? '13px' : '15px',
+      faq, faqStyle: 'display: flex; flex-direction: column; gap: 16px; min-width: 0',
+      duoStyle: desk ? 'display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 64px; align-items: start' : 'display: flex; flex-direction: column; gap: ' + b.secGap,
+      bizCols: phone ? 'minmax(0, 1fr)' : two
+    });
+  }
+}
+</script>
+</body>
+</html>

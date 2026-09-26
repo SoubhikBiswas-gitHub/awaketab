@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · D · brand</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease),opacity .45s var(--ease)}
+button:active{transform:scale(.96)}
+button:disabled,input:disabled,select:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+a{transition:color .45s var(--ease),background-color .45s var(--ease),border-color .45s var(--ease)}
+h1,h2,h3,h4,p,figure,blockquote{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+.at-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.at-num{font-family:Geist,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"zero" 0}
+.at-kick{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.2s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-fade{transition:background-color .6s var(--ease),border-color .6s var(--ease),opacity .6s var(--ease),fill .6s var(--ease),stroke .6s var(--ease)}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-breathe{animation:at-breathe 3.4s var(--ease) infinite alternate}
+.at-ignite{transform-box:fill-box;transform-origin:center;animation:at-ignite .6s var(--ease) .3s both}
+.at-travel{animation:at-travel .6s var(--ease) both}
+.at-off{transition:stroke-dasharray .9s var(--ease),stroke-opacity .9s var(--ease),opacity .9s var(--ease),fill .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-breathe{from{opacity:.55}to{opacity:1}}
+@keyframes at-ignite{0%{transform:scale(.6);opacity:.4}55%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes at-travel{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--at-tx,0),var(--at-ty,0)) scale(.5);opacity:0}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</helmet>
+<div style="width: 1280px; height: {{H}}; box-sizing: border-box; background: radial-gradient(120% 70% at 30% 20%, #13203A 0%, #0A0E16 58%); color: #EAF0F7; padding: 40px 48px; display: grid; grid-template-columns: 520px minmax(0, 1fr); column-gap: 64px; overflow: hidden">
+
+  <section aria-label="Logo and states" style="display: flex; flex-direction: column; gap: 20px; min-width: 0">
+    <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #8E9AAE">Mark · Pilot Light</div>
+    <div style="display: grid; grid-template-columns: 200px minmax(0, 1fr); column-gap: 20px; align-items: stretch">
+      <div style="height: 200px; border-radius: 28px; background: radial-gradient(70% 70% at 50% 45%, #13203A 0%, #0A0E16 75%); border: 1px solid #1F2940; display: grid; place-items: center">
+        <svg width="136" height="136" viewBox="0 0 48 48" role="img" aria-label="AwakeTab mark">
+          <defs><filter id="bb" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2.4"></feGaussianBlur></filter></defs>
+          <path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#EAF0F7" stroke-width="4.5" stroke-linecap="round"></path>
+          <circle cx="24" cy="9" r="5" fill="{{accent}}" filter="url(#bb)" opacity="0.8"></circle>
+          <circle cx="24" cy="9" r="4.2" fill="{{accent}}"></circle>
+        </svg>
+      </div>
+      <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 16px">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.02em">
+          <svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#EAF0F7" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.2" fill="{{accent}}"></circle></svg>
+          AwakeTab
+        </div>
+        <div style="display: flex; gap: 16px">
+          <div style="width: 88px; height: 88px; border-radius: 20px; background: linear-gradient(160deg, #13203A 0%, #0A0E16 100%); border: 1px solid #1F2940; display: grid; place-items: center">
+            <svg width="56" height="56" viewBox="0 0 48 48" role="img" aria-label="App icon, dark"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#EAF0F7" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.2" fill="{{accent}}"></circle></svg>
+          </div>
+          <div style="width: 88px; height: 88px; border-radius: 20px; background: #F2F6FA; border: 1px solid #DCE3EC; display: grid; place-items: center">
+            <svg width="56" height="56" viewBox="0 0 48 48" role="img" aria-label="App icon, light"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#0E1726" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.2" fill="{{accentLight}}"></circle></svg>
+          </div>
+        </div>
+        <p style="margin: 0; font-size: 13px; line-height: 18px; color: #B7C1D1">The bead is a status light: the header logo, tab icon and toolbar badge take the current tone.</p>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 4px">
+      <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #8E9AAE">State colour map</div>
+      <div style="font-size: 13px; line-height: 18px; color: #8E9AAE">Pill · bead · ring, never colour alone</div>
+    </div>
+    <ul aria-label="Lock states" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px">
+      <sc-for list="{{states}}" as="s" hint-placeholder-count="7">
+        <li style="display: grid; grid-template-columns: 24px 232px 64px minmax(0, 1fr); column-gap: 12px; align-items: center; height: 38px">
+          <svg width="24" height="24" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#EAF0F7" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="5" fill="{{s.tone}}"></circle></svg>
+          <span style="justify-self: start; display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px 0 12px; box-sizing: border-box; border-radius: 999px; background: {{s.soft}}; border: 1px solid {{s.line}}; font-size: 15px; line-height: 22px; font-weight: 600; white-space: nowrap">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible"><path d="{{s.glyph}}" fill="{{s.fill}}" stroke="{{s.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+            {{s.label}}
+          </span>
+          <svg width="64" height="16" viewBox="0 0 72 16" role="img" aria-label="{{s.ringAria}}">
+            <line x1="4" y1="8" x2="68" y2="8" stroke="{{s.trackColor}}" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{s.trackDash}}"></line>
+            <line x1="4" y1="8" x2="{{s.arcEnd}}" y2="8" stroke="{{s.tone}}" stroke-opacity="{{s.arcOp}}" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{s.arcDash}}"></line>
+            <circle cx="{{s.arcEnd}}" cy="8" r="{{s.tipR}}" fill="#EAF0F7"></circle>
+          </svg>
+          <span style="display: flex; flex-direction: column; min-width: 0; font-size: 13px; line-height: 16px"><span style="color: #EAF0F7; font-weight: 500">{{s.id}} · {{s.toneName}}</span><span style="color: #B7C1D1; white-space: nowrap">{{s.ring}}</span></span>
+        </li>
+      </sc-for>
+    </ul>
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 4px">
+      <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #8E9AAE">Numerals · system-ui, tabular, plain zero</div>
+    </div>
+    <div style="display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: end; column-gap: 32px">
+      <div style="display: flex; flex-direction: column; gap: 4px"><span class="at-num" style="font-weight: 200; font-size: 64px; line-height: 1; letter-spacing: -0.02em">30:00</span><span style="font-size: 12px; line-height: 16px; color: #8E9AAE">Ring · 200</span></div>
+      <div style="display: flex; flex-direction: column; gap: 4px"><span class="at-num" style="font-weight: 600; font-size: 64px; line-height: 1; letter-spacing: -0.06em">24:18</span><span style="font-size: 12px; line-height: 16px; color: #8E9AAE">Bold · 600</span></div>
+      <div style="display: flex; flex-direction: column; gap: 4px"><span class="at-num" style="font-weight: 300; font-size: 20px; line-height: 1; letter-spacing: -0.02em">12:59:59</span><span style="font-size: 12px; line-height: 16px; color: #8E9AAE">Popup · 300</span></div>
+    </div>
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) 144px; column-gap: 24px; align-items: center">
+      <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+        <div aria-hidden="true" style="height: 16px; background: repeating-linear-gradient(90deg, {{t.tick}} 0 2px, transparent 2px 12px); -webkit-mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)"></div>
+        <span style="font-size: 12px; line-height: 16px; color: #8E9AAE">Minute-tick rule: the ring's 60 ticks laid flat. The only ornament: section divider, progress track, loading state.</span>
+      </div>
+      <div style="position: relative; height: 72px; border-radius: 16px; background: {{t.sunken}}; border: 1px solid {{t.line}}; overflow: hidden; display: grid; place-items: center">
+        <div aria-hidden="true" style="position: absolute; inset: 0; background: {{halo}}"></div>
+        <span style="position: relative; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #B7C1D1">Halo</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Colour and type" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+    <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #8E9AAE">Colour · Clear Night · dark / light</div>
+    <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px 8px">
+      <sc-for list="{{swatches}}" as="w" hint-placeholder-count="14">
+        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+          <div aria-hidden="true" style="height: 40px; border-radius: 12px; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #33405C"><span style="background: {{w.dark}}"></span><span style="background: {{w.light}}"></span></div>
+          <div style="font-size: 13px; line-height: 18px; font-weight: 500">{{w.name}}</div>
+          <div style="display: flex; flex-direction: column; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; color: #8E9AAE; white-space: nowrap"><span>{{w.dark}}</span><span>{{w.light}}</span></div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 4px">
+      <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #8E9AAE">Lamp colours · awake only</div>
+      <div style="font-size: 13px; line-height: 18px; color: #8E9AAE">Amber and red stay status colours</div>
+    </div>
+    <div role="table" aria-label="Lamp colours" style="display: flex; flex-direction: column; border-top: 1px solid #1F2940">
+      <div role="row" style="display: grid; grid-template-columns: 60px 64px 156px 112px minmax(0, 1fr); column-gap: 12px; align-items: center; height: 32px; border-bottom: 1px solid #1F2940; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #8E9AAE">
+        <span role="columnheader">Lamp</span><span role="columnheader">Name</span><span role="columnheader">Dark · light</span><span role="columnheader">On fill</span><span role="columnheader">Gate (proposal)</span>
+      </div>
+      <sc-for list="{{lamps}}" as="l" hint-placeholder-count="4">
+        <div role="row" style="display: grid; grid-template-columns: 60px 64px 156px 112px minmax(0, 1fr); column-gap: 12px; align-items: center; height: 44px; border-bottom: 1px solid #1F2940">
+          <span role="cell" aria-label="{{l.swatchAria}}" style="display: flex; gap: 4px"><span style="width: 28px; height: 28px; border-radius: 999px; background: {{l.dark}}; box-shadow: 0 0 10px {{l.glow}}"></span><span style="width: 28px; height: 28px; border-radius: 999px; background: {{l.light}}; box-shadow: 0 0 0 1px #33405C"></span></span>
+          <span role="cell" style="font-size: 15px; line-height: 22px; font-weight: 600">{{l.name}}</span>
+          <span role="cell" style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 13px; line-height: 18px; color: #B7C1D1; white-space: nowrap">{{l.dark}} · {{l.light}}</span>
+          <span role="cell" style="justify-self: start; display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; background: {{l.light}}; color: #FFFFFF; font-size: 12px; line-height: 16px; font-weight: 600">Start · {{l.ratio}}</span>
+          <span role="cell" style="font-size: 13px; line-height: 18px; color: {{l.gateInk}}; font-weight: 500">{{l.gate}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-top: 4px">
+      <div style="height: 104px; border-radius: 16px; background: #F2F6FA; border: 1px solid #DCE3EC; padding: 12px 16px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between">
+        <span style="display: flex; justify-content: space-between; font-size: 13px; line-height: 18px; color: #3A4659"><span>Light theme</span><span class="at-num" style="color: #0E1726">9:04 PM</span></span>
+        <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px 0 12px; box-sizing: border-box; border-radius: 999px; background: {{accentLightSoft}}; border: 1px solid {{accentLightLine}}; font-size: 15px; line-height: 22px; font-weight: 600; color: #0E1726; white-space: nowrap"><span style="width: 12px; height: 12px; border-radius: 999px; background: {{accentLight}}"></span>Screen awake</span><span style="font-size: 14px; line-height: 20px; font-weight: 500; color: {{accentLight}}; white-space: nowrap">until 10:30 PM</span></span>
+      </div>
+      <div style="height: 104px; border-radius: 16px; background: #111826; border: 1px solid #1F2940; padding: 12px 16px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between">
+        <span style="display: flex; justify-content: space-between; font-size: 13px; line-height: 18px; color: #B7C1D1"><span>Dark theme</span><span class="at-num" style="color: #EAF0F7">9:04 PM</span></span>
+        <span style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px 0 12px; box-sizing: border-box; border-radius: 999px; background: {{accentSoft}}; border: 1px solid {{accentLine}}; font-size: 15px; line-height: 22px; font-weight: 600; color: #EAF0F7; white-space: nowrap"><span style="width: 12px; height: 12px; border-radius: 999px; background: {{accent}}; box-shadow: 0 0 8px {{accent}}"></span>Screen awake</span><span style="font-size: 14px; line-height: 20px; font-weight: 500; color: {{accent}}; white-space: nowrap">until 10:30 PM</span></span>
+      </div>
+    </div>
+
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#5BE0E8","options":["#5BE0E8","#A594FF","#7EF0B8","#7CB8FF"]},"$preview":{"width":1280,"height":932}}'>
+// AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
+const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#EAF0F7', primaryInk: '#0A0E16', shadow: 'none' };
+const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#0E1726', primaryInk: '#FFFFFF', shadow: '0 1px 2px rgba(14,23,38,.06)' };
+const AT_OLED = Object.assign({}, AT_DARK, { bg: '#000000', ground: '#000000', surface: '#0A0A0A' });
+const AT_LAMPS = [
+  { id: 'aqua', name: 'Aqua', dark: '#5BE0E8', light: '#087B87', pro: false },
+  { id: 'violet', name: 'Violet', dark: '#A594FF', light: '#5A47CF', pro: false },
+  { id: 'mint', name: 'Mint', dark: '#7EF0B8', light: '#167A50', pro: true },
+  { id: 'sky', name: 'Sky', dark: '#7CB8FF', light: '#255FBD', pro: true }
+];
+const AT_GLYPH = {
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z'
+};
+// Status pill sizes (§11.4): L kiosk, M tool, S popup / PiP / full embed, XS compact embed.
+const AT_PILL = {
+  L: { h: '48px', pad: '0 20px 0 16px', gap: '8px', fs: '20px', lh: '28px' },
+  M: { h: '38px', pad: '0 16px 0 12px', gap: '8px', fs: '15px', lh: '22px' },
+  S: { h: '32px', pad: '0 12px 0 8px', gap: '8px', fs: '14px', lh: '20px' },
+  XS: { h: '26px', pad: '0 8px', gap: '4px', fs: '13px', lh: '18px' }
+};
+function atRgba(hex, a) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atPill(o) {
+  const s = AT_PILL[o.size || 'M'];
+  return { label: o.label, h: s.h, pad: s.pad, gap: s.gap, fs: s.fs, lh: s.lh, tone: o.tone, glyph: o.glyph || AT_GLYPH.dot, fill: o.hollow ? 'transparent' : o.tone, stroke: o.stroke || '1.6', soft: atRgba(o.tone, 0.12), line: atRgba(o.tone, 0.38), glow: o.glow ? atRgba(o.tone, 0.8) : 'transparent', cls: 'at-fade' };
+}
+// Page chrome shared by every board: tokens, lamp, header, theme switch, card and footer metrics.
+function atChrome(o) {
+  const L = o.layout || 'phone';
+  const desk = L === 'desktop', tab = L === 'tablet', phone = !desk && !tab;
+  const theme = o.theme || 'auto';
+  const dark = theme === 'dark' || theme === 'oled' || (theme === 'auto' && o.sysDark !== false);
+  const t = theme === 'oled' ? AT_OLED : dark ? AT_DARK : AT_LIGHT;
+  const def = AT_LAMPS.find((l) => l.id === o.lamp) || AT_LAMPS[0];
+  const lamp = dark ? def.dark : def.light;
+  const set = (id) => () => { if (o.set) o.set(id); };
+  const ink = (id) => (theme === id ? t.ink : t.ink2);
+  return {
+    t, dark, lamp, lampText: lamp, lampInk: dark ? '#04232A' : '#FFFFFF', bead: lamp,
+    lampSoft: atRgba(lamp, 0.14), lampLine: atRgba(lamp, 0.45), lampGlow: atRgba(lamp, 0.55), lampFaint: atRgba(lamp, 0.08), lampTag: atRgba(lamp, 0.12),
+    halo: 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(lamp, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(lamp, 0) + ' 100%)',
+    isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone,
+    hdrH: phone ? '60px' : '68px', gutter: desk ? '80px' : tab ? '32px' : '16px', secGap: desk ? '96px' : tab ? '64px' : '48px',
+    cardPad: phone ? '20px' : '24px', cardShadow: t.shadow, footPad: phone ? '24px 16px 32px' : desk ? '24px 80px' : '24px 32px',
+    themeX: (theme === 'light' ? 0 : theme === 'dark' ? 44 : 88) + 'px',
+    themeLight: theme === 'light', themeDark: theme === 'dark', themeAuto: theme === 'auto',
+    themeLightInk: ink('light'), themeDarkInk: ink('dark'), themeAutoInk: ink('auto'),
+    setLight: set('light'), setDark: set('dark'), setAuto: set('auto')
+  };
+}
+
+// Lamp colours (DESIGN.md §2.2): id, name, dark, light (ring, fills and accent text), white-on-fill contrast, gate.
+const LAMPS = [
+  ['aqua', 'Aqua', '#5BE0E8', '#087B87', '5.0:1', 'Free (default)'],
+  ['violet', 'Violet', '#A594FF', '#5A47CF', '6.5:1', 'Free'],
+  ['mint', 'Mint', '#7EF0B8', '#167A50', '5.3:1', 'Pro · ambient.packs'],
+  ['sky', 'Sky', '#7CB8FF', '#255FBD', '6.1:1', 'Pro · ambient.packs']
+];
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const PAUSE = 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z';
+const TRI = 'M6 1L11.2 10.5H.8z';
+const RINGDOT = 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z';
+const MUTED = AT_DARK.muted, WARN = AT_DARK.warn, BAD = AT_DARK.bad, TRACK = AT_DARK.line2;
+
+class Component extends DCLogic {
+  rgba(hex, a) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#5BE0E8';
+    const row = LAMPS.find((l) => l[2].toLowerCase() === String(accent).toLowerCase()) ?? LAMPS[0];
+    const accentLight = row[3];
+    // [pill copy, tone, glyph, hollow, ring kind, lock state, tone name, ring pattern]
+    const STATES = [
+      ['Ready', MUTED, DOT, true, 'idle', 'idle', 'muted', 'arc at 45%, no glow'],
+      ['Starting…', accent, DOT, true, 'full', 'requesting', 'lamp', 'full arc, sweep starts'],
+      ['Screen awake', accent, DOT, false, 'held', 'held', 'lamp', 'depleting arc, tip, sweep'],
+      ['Paused — tab hidden', WARN, PAUSE, false, 'lost', 'lost', 'amber', 'long dashes 18 12'],
+      ["Blocked — here's the fix", BAD, TRI, false, 'denied', 'denied', 'red', 'dots 1 13, no tip'],
+      ['Tap to use the fallback', accent, DOT, false, 'full', 'unsupported', 'lamp', 'full arc, CTA floats'],
+      ['Awake via video fallback', accent, RINGDOT, false, 'fallback', 'fallback', 'lamp', 'dashed track 3 9']
+    ];
+    const states = STATES.map(([label, tone, glyph, hollow, kind, id, toneName, ring]) => ({
+      label, tone, glyph, id, toneName, ring, fill: hollow ? 'transparent' : tone,
+      soft: this.rgba(tone, 0.12), line: this.rgba(tone, 0.38),
+      arcEnd: kind === 'held' || kind === 'fallback' ? 44 : 68,
+      arcOp: kind === 'idle' ? 0.45 : 1,
+      arcDash: kind === 'lost' ? '9 6' : kind === 'denied' ? '0.5 6.5' : 'none',
+      trackColor: kind === 'held' || kind === 'fallback' ? TRACK : 'transparent',
+      trackDash: kind === 'fallback' ? '1.5 4.5' : 'none',
+      tipR: kind === 'held' || kind === 'fallback' ? 3.5 : 0,
+      ringAria: 'Ring pattern: ' + ring
+    }));
+    const swatches = [
+      ['Ground', '#0A0E16', '#F2F6FA'], ['Surface', '#111826', '#FFFFFF'], ['Line', '#1F2940', '#DCE3EC'], ['Line strong', '#33405C', '#C3CDDA'],
+      ['Ink', '#EAF0F7', '#0E1726'], ['Ink 2', '#B7C1D1', '#3A4659'], ['Muted', '#8E9AAE', '#5B6779'], ['Track', '#1A2336', '#E3E9F1'], ['Caution', '#F2B34C', '#B7791F'], ['Alert', '#FF7A7A', '#D14343'],
+      ['Raised', '#26324B', '#E3E9F1'], ['Sunken', '#0D131F', '#F6F9FC'], ['Horizon ink', '#F6F2EA', '#F6F2EA'], ['Night ink', '#FF5A3C', '#000000']
+    ].map(([name, dark, light]) => ({ name, dark, light }));
+    const lamps = LAMPS.map(([id, name, dark, light, ratio, gate]) => ({
+      name, dark, light, ratio, gate, gateInk: gate.startsWith('Pro') ? '#EAF0F7' : '#B7C1D1',
+      glow: dark === accent ? this.rgba(dark, 0.7) : 'transparent',
+      swatchAria: name + ': ' + dark + ' on dark, ' + light + ' on light'
+    }));
+    const t = atChrome({ theme: 'dark', layout: 'desktop' }).t;
+    return { t, H: '932px', halo: 'radial-gradient(50% 50% at 50% 26%, ' + this.rgba(accent, 0.18) + ' 0%, ' + this.rgba(accent, 0) + ' 100%)', accent, accentLight, accentSoft: this.rgba(accent, 0.12), accentLine: this.rgba(accent, 0.38), accentLightSoft: this.rgba(accentLight, 0.12), accentLightLine: this.rgba(accentLight, 0.38), states, swatches, lamps };
+  }
+}
+</script>
+</body>
+</html>

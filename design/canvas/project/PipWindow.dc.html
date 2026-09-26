@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab floating window</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.96)}
+button:focus-visible,a:focus-visible{outline:2px solid #5BE0E8;outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div class="at-root" style="width: 280px; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column; gap: {{gap}}; padding: 12px">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; left: -30%; top: -40%; width: 160%; height: 160%; background: radial-gradient(40% 40% at 50% 50%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
+
+  <div style="position: relative; height: 32px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+    <div style="display: flex; align-items: center; gap: 8px; min-width: 0">
+      <svg role="img" aria-label="AwakeTab" width="20" height="20" viewBox="0 0 48 48" style="overflow: visible; flex-shrink: 0"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{tone}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{tone}}" style="transition: fill .6s"></circle></svg>
+      <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 8px; box-sizing: border-box; border-radius: 999px; background: {{toneSoft}}; border: 1px solid {{toneLine}}; font-size: 14px; line-height: 20px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 0 5px {{toneGlow}})"><path d="{{glyph}}" fill="{{glyphFill}}" stroke="{{tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+            {{statusLabel}}
+          </output>
+    </div>
+    <sc-if value="{{showUntil}}" hint-placeholder-val="{{true}}">
+      <span style="font-size: 12px; line-height: 16px; color: {{t.muted}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{untilText}}</span>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{showKicker}}" hint-placeholder-val="{{false}}">
+    <div style="position: relative; display: flex; align-items: center; gap: 8px; height: 16px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">
+      <span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: {{kickDot}}"></span>
+      {{kicker}}
+    </div>
+  </sc-if>
+
+  <sc-if value="{{running}}" hint-placeholder-val="{{true}}">
+    <div style="position: relative; flex-grow: 1; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+      <div role="timer" aria-label="{{timerAria}}" style="font-family: Geist, system-ui, sans-serif; font-weight: 300; font-size: {{digitSize}}; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{t.ink}}">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
+      <div style="display: flex; gap: 8px; flex-shrink: 0">
+        <button onClick="{{extend}}" aria-label="Add 15 minutes" style="width: 52px; height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">+15</button>
+        <button onClick="{{stop}}" style="width: 60px; height: 44px; padding: 0 12px; border-radius: 12px; border: 0; background: {{t.primaryBg}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{stopped}}" hint-placeholder-val="{{false}}">
+    <p class="at-in" style="position: relative; flex-grow: 1; margin: 0; display: flex; align-items: center; font-size: 15px; line-height: 22px; color: {{t.ink2}}">Start a session in&#160;<a href="Main.dc.html" style="color: {{lampText}}; font-weight: 600; min-height: 44px; display: inline-flex; align-items: center">AwakeTab</a></p>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"dark"},"pro":{"editor":"boolean","default":false},"ambient":{"editor":"enum","options":["focus","clock"],"default":"focus"},"status":{"editor":"enum","options":["awake","fallback","paused"],"default":"awake"},"layout":{"editor":null,"default":"desktop"},"$preview":{"width":280,"height":120}}'>
+// AT-PRIMITIVES v1 (fix batch 1b): DESIGN.md §2.1 tokens and §11 geometry. Keep identical across files.
+const AT_TOK = {
+  dark: { raised: '#26324B', sunken: '#0D131F', horizonInk: '#F6F2EA', line2: '#33405C', inputBorder: '#5A6781', groundEnd: '#070A11' },
+  light: { raised: '#E3E9F1', sunken: '#F6F9FC', horizonInk: '#F6F2EA', line2: '#C3CDDA', inputBorder: '#8C98AA', groundEnd: '#EEF3F8' }
+};
+const AT_NIGHT = { ground: '#000000', ink: '#FF5A3C', ink2: '#E8563C', muted: '#A89690', line: '#3A2E2A' };
+const AT_SCRIM = 'rgba(4,7,12,.55)';
+const AT_HDR = { phone: { h: '60px', pad: '0 16px' }, tablet: { h: '68px', pad: '0 32px' }, desktop: { h: '68px', pad: '0 80px' }, xl: { h: '68px', pad: '0 120px' } };
+const AT_FOOT = { phone: '24px 16px 32px', tablet: '24px 32px', desktop: '24px 80px', xl: '24px 120px' };
+const AT_CARD_PAD = { phone: '20px', tablet: '24px', desktop: '24px', xl: '24px' };
+const AT_TYPE = {
+  phone: { h1: '34px', h1lh: '42px', h2: '24px', h2lh: '32px', gutter: '16px', section: '48px' },
+  tablet: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '32px', section: '64px' },
+  desktop: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '80px', section: '96px' }
+};
+const DARK = {
+  bg: 'radial-gradient(120% 90% at 30% 20%, #13203A 0%, #0A0E16 70%)',
+  surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', primaryBg: '#EAF0F7', primaryInk: '#0A0E16'
+};
+const LIGHT = {
+  bg: 'radial-gradient(120% 90% at 30% 20%, #FFFFFF 0%, #F2F6FA 70%)',
+  surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', primaryBg: '#0E1726', primaryInk: '#F4F7FB'
+};
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const GLYPH = { awake: DOT, ready: DOT, paused: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z', fallback: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z' };
+const LABEL = { awake: 'Screen awake', fallback: 'Awake via video fallback', paused: 'Paused — tab hidden', ready: 'Ready' };
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: props.theme ?? 'dark', sysDark: this.sys(), now: Date.now(), status: props.status ?? 'awake', left: 1458, focusLeft: 1122 };
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    this.timer = setInterval(() => this.tick(), 1000);
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+  }
+  componentDidUpdate(prev) {
+    if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme });
+    if (prev.status !== this.props.status) this.setState({ status: this.props.status ?? 'awake', left: 1458 });
+  }
+  tick() {
+    const s = this.state;
+    const next = { now: Date.now() };
+    if ((s.status === 'awake' || s.status === 'fallback') && s.left > 0) {
+      next.left = s.left - 1;
+      next.focusLeft = s.focusLeft > 1 ? s.focusLeft - 1 : 300;
+      if (next.left === 0) next.status = 'ready';
+    }
+    this.setState(next);
+  }
+  rgba(hex, a) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  pad(n) { return String(n).padStart(2, '0'); }
+  hm(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+  split(sec) {
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), x = sec % 60;
+    return h ? [h + ':' + this.pad(m), ':' + this.pad(x)] : [this.pad(m), ':' + this.pad(x)];
+  }
+  renderVals() {
+    const s = this.state;
+    const pro = this.props.pro === true || this.props.pro === 'true';
+    const amb = this.props.ambient === 'clock' ? 'clock' : 'focus';
+    const dark = s.theme === 'dark' || (s.theme === 'auto' && s.sysDark);
+    const t = Object.assign({}, dark ? DARK : LIGHT, dark ? AT_TOK.dark : AT_TOK.light);
+    const lamp = dark ? '#5BE0E8' : '#087B87';
+    const violet = dark ? '#A594FF' : '#5A47CF';
+    const st = s.status;
+    const live = st === 'awake' || st === 'fallback';
+    const running = st !== 'ready';
+    const tone = { awake: lamp, fallback: lamp, paused: dark ? '#F2B34C' : '#B7791F', ready: t.muted }[st] ?? lamp;
+    // Pro swaps the session timer for the ambient digits (docs/05 §9); the pill never steps aside.
+    const showAmb = pro && running;
+    const d = new Date(s.now);
+    const h12 = d.getHours() % 12 || 12;
+    let bigA, bigB, kicker, kickDot, timerAria;
+    if (showAmb && amb === 'clock') {
+      bigA = h12 + ':' + this.pad(d.getMinutes());
+      bigB = '';
+      kicker = (d.getHours() < 12 ? 'AM' : 'PM') + ' · ' + d.toLocaleDateString('en-GB', { weekday: 'long' }) + ', ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' });
+      kickDot = t.muted;
+      timerAria = 'Time now ' + bigA + ' ' + (d.getHours() < 12 ? 'AM' : 'PM');
+    } else if (showAmb) {
+      [bigA, bigB] = this.split(s.focusLeft);
+      kicker = 'Focus · Cycle 2 of 4';
+      kickDot = lamp;
+      timerAria = bigA + bigB + ' left in focus';
+    } else {
+      [bigA, bigB] = this.split(s.left);
+      kicker = '';
+      kickDot = lamp;
+      timerAria = bigA + bigB + ' left';
+    }
+    const endMs = Math.round((s.now + s.left * 1000) / 60000) * 60000;
+    return {
+      t, H: pro ? '160px' : '120px', gap: pro ? '8px' : '12px',
+      tone, toneSoft: this.rgba(tone, 0.12), toneLine: this.rgba(tone, 0.38), toneGlow: live ? this.rgba(tone, 0.8) : 'transparent',
+      aura: this.rgba(tone, live ? (dark ? 0.16 : 0.1) : 0.05),
+      glyph: GLYPH[st] ?? DOT, glyphFill: st === 'ready' ? 'transparent' : tone, statusLabel: LABEL[st] ?? 'Screen awake',
+      showUntil: st === 'awake', untilText: 'until ' + this.hm(endMs),
+      showKicker: showAmb, kicker, kickDot: amb === 'focus' ? kickDot : violet,
+      running, stopped: !running,
+      bigA, bigB, timerAria, // display-s in PiP (O-83): up to 40 px, Geist 300 tabular.
+      digitSize: (bigA + bigB).length > 5 ? '28px' : '40px',
+      lampText: dark ? lamp : '#087B87',
+      extend: () => this.setState({ left: this.state.left + 900 }),
+      stop: () => this.setState({ status: 'ready', left: 0 })
+    };
+  }
+}
+</script>
+</body>
+</html>

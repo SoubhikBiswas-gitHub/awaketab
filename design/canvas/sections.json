@@ -1,0 +1,2130 @@
+[
+ [
+  "Tool · phone · dark",
+  [
+   [
+    "Main.dc.html",
+    390,
+    844,
+    "▶ Play me · follows your system",
+    true
+   ],
+   [
+    "RingDark.dc.html",
+    390,
+    844,
+    "Dark · Ring · awake",
+    true
+   ],
+   [
+    "BoldDark.dc.html",
+    390,
+    844,
+    "Dark · Bold · awake",
+    true
+   ],
+   [
+    "HorizonDark.dc.html",
+    390,
+    844,
+    "Dark · Horizon · night sky",
+    true
+   ],
+   [
+    "TideDark.dc.html",
+    390,
+    844,
+    "Dark · Tide · awake",
+    true
+   ],
+   [
+    "PausedDark.dc.html",
+    390,
+    844,
+    "Dark · Paused — tab hidden",
+    true
+   ],
+   [
+    "BlockedDark.dc.html",
+    390,
+    844,
+    "Dark · Blocked — here's the fix",
+    true
+   ],
+   [
+    "DoneDark.dc.html",
+    390,
+    844,
+    "Dark · Session complete",
+    true
+   ],
+   [
+    "UntilDark.dc.html",
+    390,
+    844,
+    "Dark · Until a time · inline",
+    true
+   ]
+  ]
+ ],
+ [
+  "Tool · phone · light",
+  [
+   [
+    "RingLight.dc.html",
+    390,
+    844,
+    "Light · Ring · awake",
+    true
+   ],
+   [
+    "BoldLight.dc.html",
+    390,
+    844,
+    "Light · Bold · awake",
+    true
+   ],
+   [
+    "HorizonLight.dc.html",
+    390,
+    844,
+    "Light · Horizon · day sky",
+    true
+   ],
+   [
+    "TideLight.dc.html",
+    390,
+    844,
+    "Light · Tide · awake",
+    true
+   ],
+   [
+    "PausedLight.dc.html",
+    390,
+    844,
+    "Light · Paused — tab hidden",
+    true
+   ],
+   [
+    "BlockedLight.dc.html",
+    390,
+    844,
+    "Light · Blocked — here's the fix",
+    true
+   ],
+   [
+    "DoneLight.dc.html",
+    390,
+    844,
+    "Light · Session complete",
+    true
+   ],
+   [
+    "UntilLight.dc.html",
+    390,
+    844,
+    "Light · Until a time · inline",
+    true
+   ]
+  ]
+ ],
+ [
+  "Tool · tablet, settings, stats, time's up",
+  [
+   [
+    "ToolTabletDark.dc.html",
+    820,
+    1180,
+    "Dark · Tablet · Ring",
+    true
+   ],
+   [
+    "ToolTabletLight.dc.html",
+    820,
+    1180,
+    "Light · Tablet · Ring",
+    true
+   ],
+   [
+    "ToolSettingsDark.dc.html",
+    390,
+    844,
+    "Dark · Settings + lamp colour",
+    true
+   ],
+   [
+    "ToolSettingsLight.dc.html",
+    390,
+    844,
+    "Light · Settings + lamp colour",
+    true
+   ],
+   [
+    "ToolStats.dc.html",
+    390,
+    844,
+    "Dark · Stats (sample data)",
+    true
+   ],
+   [
+    "ToolTimesUp.dc.html",
+    390,
+    844,
+    "Dark · Time's up",
+    true
+   ],
+   [
+    "ToolTimesUpLight.dc.html",
+    390,
+    844,
+    "Light · Time's up",
+    true
+   ]
+  ]
+ ],
+ [
+  "Tool · desktop",
+  [
+   [
+    "DeskRingDark.dc.html",
+    1280,
+    800,
+    "Dark · Desktop · Ring",
+    true
+   ],
+   [
+    "DeskHorizonDark.dc.html",
+    1280,
+    800,
+    "Dark · Desktop · Horizon",
+    true
+   ],
+   [
+    "DeskTideDark.dc.html",
+    1280,
+    800,
+    "Dark · Desktop · Tide",
+    true
+   ],
+   [
+    "ToolSettingsDesk.dc.html",
+    1280,
+    800,
+    "Light · Desktop · Settings side sheet",
+    true
+   ]
+  ]
+ ],
+ [
+  "Tool · desktop · light",
+  [
+   [
+    "DeskRingLight.dc.html",
+    1280,
+    800,
+    "Light · Desktop · Ring",
+    true
+   ],
+   [
+    "DeskHorizonLight.dc.html",
+    1280,
+    800,
+    "Light · Desktop · Horizon",
+    true
+   ],
+   [
+    "DeskTideLight.dc.html",
+    1280,
+    800,
+    "Light · Desktop · Tide",
+    true
+   ]
+  ]
+ ],
+ [
+  "Tool · more screen sizes (320 phone, landscape, tablet landscape)",
+  [
+   [
+    "SizeSmallDark.dc.html",
+    320,
+    568,
+    "Small 320 · dark · awake",
+    true
+   ],
+   [
+    "SizeSmallLight.dc.html",
+    320,
+    568,
+    "Small 320 · light · ready",
+    true
+   ],
+   [
+    "SizeLandscape.dc.html",
+    844,
+    390,
+    "Phone landscape · dark · Bold",
+    true
+   ],
+   [
+    "SizeLandscapeLight.dc.html",
+    844,
+    390,
+    "Phone landscape · light · Tide",
+    true
+   ],
+   [
+    "SizeTabletLandscape.dc.html",
+    1180,
+    820,
+    "Tablet landscape · light · Horizon",
+    true
+   ]
+  ]
+ ],
+ [
+  "Tool · large displays (1920)",
+  [
+   [
+    "SizeXL.dc.html",
+    1920,
+    1080,
+    "Large display · dark · Ring",
+    true
+   ],
+   [
+    "SizeXLLight.dc.html",
+    1920,
+    1080,
+    "Large display · light · Tide",
+    true
+   ]
+  ]
+ ],
+ [
+  "Tool · edge states",
+  [
+   [
+    "EdgeLastMinute.dc.html",
+    390,
+    844,
+    "Final minute · dark",
+    true
+   ],
+   [
+    "EdgeMultiDay.dc.html",
+    390,
+    844,
+    "1 day 2 h session · light",
+    true
+   ],
+   [
+    "EdgeUntilPassed.dc.html",
+    390,
+    844,
+    "Time already passed · dark",
+    true
+   ],
+   [
+    "EdgeDeferred.dc.html",
+    390,
+    844,
+    "Opened in background · dark",
+    true
+   ],
+   [
+    "EdgeOffline.dc.html",
+    390,
+    844,
+    "Offline · light",
+    true
+   ],
+   [
+    "EdgeLowBattery.dc.html",
+    390,
+    844,
+    "Stopped at 15% battery · dark",
+    true
+   ],
+   [
+    "EdgeOled.dc.html",
+    390,
+    844,
+    "OLED black",
+    true
+   ]
+  ]
+ ],
+ [
+  "Tool · edge states on desktop",
+  [
+   [
+    "EdgeLongNoLimit.dc.html",
+    1280,
+    800,
+    "No limit, 27 h · desktop light",
+    true
+   ],
+   [
+    "EdgeReturn.dc.html",
+    1280,
+    800,
+    "Back from hidden tab · desktop light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Languages (real translations, 7 locales)",
+  [
+   [
+    "Intl.dc.html",
+    390,
+    844,
+    "▶ Languages · QA view (missing keys outlined)",
+    true
+   ],
+   [
+    "IntlDePhone.dc.html",
+    390,
+    844,
+    "Deutsch · phone dark",
+    true
+   ],
+   [
+    "IntlJaPhone.dc.html",
+    390,
+    844,
+    "日本語 · phone light",
+    true
+   ],
+   [
+    "IntlHiPhone.dc.html",
+    390,
+    844,
+    "हिन्दी · phone dark · blocked",
+    true
+   ],
+   [
+    "IntlFrPhone.dc.html",
+    390,
+    844,
+    "Français · phone light · tap to start",
+    true
+   ],
+   [
+    "IntlPtPhone.dc.html",
+    390,
+    844,
+    "Português · phone dark · fallback",
+    true
+   ],
+   [
+    "IntlArticleDe.dc.html",
+    390,
+    1296,
+    "Deutsch article · translation badge",
+    false
+   ]
+  ]
+ ],
+ [
+  "Languages · desktop",
+  [
+   [
+    "IntlZhDesk.dc.html",
+    1280,
+    800,
+    "简体中文 · desktop light",
+    true
+   ],
+   [
+    "IntlEsDesk.dc.html",
+    1280,
+    800,
+    "Español · desktop dark · paused",
+    true
+   ]
+  ]
+ ],
+ [
+  "Accessibility · keyboard, before JavaScript",
+  [
+   [
+    "A11yKeyboardDesk.dc.html",
+    1760,
+    800,
+    "Keyboard focus order",
+    true
+   ],
+   [
+    "A11yNoJsDesk.dc.html",
+    1760,
+    800,
+    "Before JavaScript · desktop",
+    false
+   ]
+  ]
+ ],
+ [
+  "Accessibility · high contrast, zoom, reduced motion, screen reader",
+  [
+   [
+    "A11yForcedDark.dc.html",
+    870,
+    844,
+    "Forced colours · High Contrast Black",
+    false
+   ],
+   [
+    "A11yForcedLight.dc.html",
+    870,
+    844,
+    "Forced colours · High Contrast White",
+    false
+   ],
+   [
+    "A11yZoomPhone.dc.html",
+    870,
+    1532,
+    "Text 200% on phone",
+    false
+   ],
+   [
+    "A11yReflow320.dc.html",
+    800,
+    832,
+    "Reflow 320 px at 400% zoom",
+    false
+   ]
+  ]
+ ],
+ [
+  "Accessibility · reduced motion, no JS phone, screen reader",
+  [
+   [
+    "A11yReducedPhone.dc.html",
+    870,
+    844,
+    "Reduced motion",
+    false
+   ],
+   [
+    "A11yNoJsPhone.dc.html",
+    870,
+    844,
+    "Before JavaScript · phone",
+    false
+   ],
+   [
+    "A11yScreenReader.dc.html",
+    870,
+    844,
+    "Screen reader announcements",
+    true
+   ]
+  ]
+ ],
+ [
+  "Tool · banners, prompts, overlays",
+  [
+   [
+    "Extras.dc.html",
+    390,
+    844,
+    "▶ Tool overlays · play me",
+    true
+   ],
+   [
+    "ExtrasResume.dc.html",
+    390,
+    844,
+    "Resume banner · phone dark",
+    true
+   ],
+   [
+    "ExtrasSecondTab.dc.html",
+    390,
+    844,
+    "Second tab banner · phone light",
+    true
+   ],
+   [
+    "ExtrasInstall.dc.html",
+    390,
+    844,
+    "Install prompt · phone dark",
+    true
+   ],
+   [
+    "ExtrasDenied.dc.html",
+    390,
+    844,
+    "Blocked notice · phone light",
+    true
+   ],
+   [
+    "ExtrasRating.dc.html",
+    390,
+    844,
+    "Rating prompt · phone dark",
+    true
+   ]
+  ]
+ ],
+ [
+  "Tool · shortcuts, share, toasts",
+  [
+   [
+    "ExtrasShortcutsDesk.dc.html",
+    1280,
+    800,
+    "Keyboard shortcuts · desktop dark",
+    true
+   ],
+   [
+    "ExtrasShareDesk.dc.html",
+    1280,
+    800,
+    "Share · desktop light",
+    true
+   ],
+   [
+    "ExtrasToasts.dc.html",
+    1280,
+    800,
+    "Toasts · desktop dark",
+    true
+   ]
+  ]
+ ],
+ [
+  "Ambient modes · floating window",
+  [
+   [
+    "Ambient.dc.html",
+    1280,
+    800,
+    "▶ Ambient · all modes (play me)",
+    true
+   ],
+   [
+    "AmbientClockDesk.dc.html",
+    1280,
+    800,
+    "Ambient · Clock · desktop dark",
+    true
+   ],
+   [
+    "AmbientClockPhone.dc.html",
+    390,
+    844,
+    "Ambient · Clock · phone light",
+    true
+   ],
+   [
+    "AmbientNightPhone.dc.html",
+    390,
+    844,
+    "Ambient · Night · phone OLED",
+    true
+   ],
+   [
+    "AmbientFocusDesk.dc.html",
+    1280,
+    800,
+    "Ambient · Focus · cycle 2 of 4",
+    true
+   ]
+  ]
+ ],
+ [
+  "Ambient · minimal, message, cook",
+  [
+   [
+    "AmbientMinimalDesk.dc.html",
+    1280,
+    800,
+    "Ambient · Minimal (bar auto-hides)",
+    true
+   ],
+   [
+    "AmbientMessageDesk.dc.html",
+    1280,
+    800,
+    "Ambient · Message · free preview · light",
+    true
+   ],
+   [
+    "AmbientCookTablet.dc.html",
+    1180,
+    820,
+    "Ambient · Cook · 3 timers · tablet light",
+    true
+   ],
+   [
+    "AmbientCookTabletDark.dc.html",
+    1180,
+    820,
+    "Ambient · Cook · quick add · tablet dark",
+    true
+   ]
+  ]
+ ],
+ [
+  "Floating window (PiP)",
+  [
+   [
+    "PipDark.dc.html",
+    632,
+    236,
+    "Floating window · dark · free and Pro",
+    true
+   ],
+   [
+    "PipLight.dc.html",
+    632,
+    236,
+    "Floating window · light · free and Pro",
+    true
+   ],
+   [
+    "PipWindow.dc.html",
+    280,
+    120,
+    "Floating window · free",
+    true
+   ],
+   [
+    "PipOverDesk.dc.html",
+    1280,
+    800,
+    "Floating window over a spreadsheet",
+    true
+   ]
+  ]
+ ],
+ [
+  "Content · /for/cooking article (51 pages use this)",
+  [
+   [
+    "ContentArticle.dc.html",
+    390,
+    5232,
+    "▶ Article · play me · follows your system",
+    true
+   ],
+   [
+    "ContentArticlePhoneDark.dc.html",
+    390,
+    5232,
+    "/for/cooking · phone · dark",
+    true
+   ],
+   [
+    "ContentArticlePhoneLight.dc.html",
+    390,
+    5232,
+    "/for/cooking · phone · light · awake",
+    true
+   ],
+   [
+    "ContentArticleTablet.dc.html",
+    820,
+    4644,
+    "/for/cooking · tablet · light",
+    true
+   ],
+   [
+    "ContentArticleDeskDark.dc.html",
+    1280,
+    4510,
+    "/for/cooking · desktop · dark · awake",
+    true
+   ],
+   [
+    "ContentArticleDeskLight.dc.html",
+    1280,
+    4510,
+    "/for/cooking · desktop · light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Content · hub and home below the tool",
+  [
+   [
+    "HubFor.dc.html",
+    390,
+    4168,
+    "▶ /for hub · play me",
+    true
+   ],
+   [
+    "HubForPhone.dc.html",
+    390,
+    4168,
+    "/for hub · phone · dark",
+    true
+   ],
+   [
+    "HubForDesk.dc.html",
+    1280,
+    2928,
+    "/for hub · desktop · light",
+    true
+   ],
+   [
+    "HomeBelow.dc.html",
+    390,
+    7956,
+    "▶ Home below the tool · play me",
+    true
+   ],
+   [
+    "HomeBelowPhone.dc.html",
+    390,
+    7956,
+    "Home below the tool · phone · dark",
+    true
+   ],
+   [
+    "HomeBelowDesk.dc.html",
+    1280,
+    6028,
+    "Home below the tool · desktop · light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Chrome extension · popup and badges",
+  [
+   [
+    "ExtPopup.dc.html",
+    360,
+    600,
+    "▶ Extension popup · play me",
+    true
+   ],
+   [
+    "ExtPopupAwakeDark.dc.html",
+    360,
+    600,
+    "Popup · Screen awake · dark",
+    true
+   ],
+   [
+    "ExtPopupAwakeLight.dc.html",
+    360,
+    600,
+    "Popup · Screen awake · light",
+    true
+   ],
+   [
+    "ExtPopupReady.dc.html",
+    360,
+    600,
+    "Popup · Ready",
+    true
+   ],
+   [
+    "ExtPopupSystem.dc.html",
+    360,
+    600,
+    "Popup · System awake",
+    true
+   ],
+   [
+    "ExtBadges.dc.html",
+    1280,
+    400,
+    "Toolbar icon and badge states",
+    false
+   ]
+  ]
+ ],
+ [
+  "Chrome extension · settings",
+  [
+   [
+    "ExtOptions.dc.html",
+    1280,
+    3860,
+    "▶ Extension settings · play me",
+    true
+   ],
+   [
+    "ExtOptionsDark.dc.html",
+    1280,
+    3860,
+    "Extension settings · dark · Pro",
+    true
+   ],
+   [
+    "ExtOptionsLight.dc.html",
+    1280,
+    4050,
+    "Extension settings · light · no Pro",
+    true
+   ]
+  ]
+ ],
+ [
+  "Extension · popup edge states",
+  [
+   [
+    "ExtEdge.dc.html",
+    360,
+    600,
+    "▶ Popup edge states (all)",
+    true
+   ],
+   [
+    "ExtEdgeScheduled.dc.html",
+    360,
+    600,
+    "Popup · scheduled",
+    true
+   ],
+   [
+    "ExtEdgeAutostart.dc.html",
+    360,
+    600,
+    "Popup · auto-start",
+    true
+   ],
+   [
+    "ExtEdgeProLocked.dc.html",
+    360,
+    600,
+    "Popup · Pro locked",
+    true
+   ],
+   [
+    "ExtEdgeError.dc.html",
+    360,
+    600,
+    "Popup · blocked",
+    true
+   ],
+   [
+    "ExtEdgeTimesUp.dc.html",
+    360,
+    600,
+    "Popup · time's up",
+    true
+   ],
+   [
+    "ExtEdgeUpdate.dc.html",
+    360,
+    600,
+    "Popup · updated",
+    false
+   ],
+   [
+    "ExtEdgeFirstOpen.dc.html",
+    360,
+    600,
+    "Popup · first open",
+    true
+   ]
+  ]
+ ],
+ [
+  "Extension · welcome page after install",
+  [
+   [
+    "WelcomeDark.dc.html",
+    1280,
+    2672,
+    "Welcome · dark",
+    true
+   ],
+   [
+    "WelcomeLight.dc.html",
+    1280,
+    2672,
+    "Welcome · light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Embed widget",
+  [
+   [
+    "EmbedCompactLight.dc.html",
+    320,
+    96,
+    "Embed · Compact 320 × 96 · light",
+    true
+   ],
+   [
+    "EmbedFullDark.dc.html",
+    720,
+    240,
+    "Embed · Full width · dark · kitchen timers",
+    true
+   ],
+   [
+    "EmbedWidget.dc.html",
+    720,
+    240,
+    "▶ Embed widget · play me",
+    true
+   ],
+   [
+    "EmbedShowcase.dc.html",
+    1280,
+    1340,
+    "Embed · on a recipe page + snippet builder",
+    true
+   ]
+  ]
+ ],
+ [
+  "Pro · /pro",
+  [
+   [
+    "Pro.dc.html",
+    390,
+    7360,
+    "▶ Pro · play me · follows your system",
+    true
+   ],
+   [
+    "ProPhoneDark.dc.html",
+    390,
+    7360,
+    "Pro · phone · dark",
+    true
+   ],
+   [
+    "ProPhoneLight.dc.html",
+    390,
+    7360,
+    "Pro · phone · light",
+    true
+   ],
+   [
+    "ProTablet.dc.html",
+    820,
+    5580,
+    "Pro · tablet · light",
+    true
+   ],
+   [
+    "ProDeskDark.dc.html",
+    1280,
+    5140,
+    "Pro · desktop · dark",
+    true
+   ],
+   [
+    "ProDeskLight.dc.html",
+    1280,
+    5140,
+    "Pro · desktop · light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Pro · activate and manage devices",
+  [
+   [
+    "ProActivate.dc.html",
+    390,
+    1500,
+    "▶ Activate · try the flow",
+    true
+   ],
+   [
+    "ProActivatePhone.dc.html",
+    390,
+    960,
+    "Activate · phone · dark · success",
+    true
+   ],
+   [
+    "ProActivateDesk.dc.html",
+    1280,
+    880,
+    "Activate · desktop · light · error",
+    true
+   ],
+   [
+    "ProManage.dc.html",
+    390,
+    1020,
+    "▶ Manage devices · phone",
+    true
+   ],
+   [
+    "ProManageDesk.dc.html",
+    1280,
+    940,
+    "Manage devices · desktop · dark",
+    true
+   ],
+   [
+    "ProManagePhoneEmpty.dc.html",
+    390,
+    844,
+    "Manage devices · phone · light · empty",
+    true
+   ]
+  ]
+ ],
+ [
+  "Guide types · /on device page",
+  [
+   [
+    "GuideOn.dc.html",
+    390,
+    6760,
+    "▶ /on/iphone-safari · follows your system",
+    true
+   ],
+   [
+    "GuideOnPhoneDark.dc.html",
+    390,
+    6760,
+    "/on · phone · dark",
+    true
+   ],
+   [
+    "GuideOnStalePhone.dc.html",
+    390,
+    6760,
+    "/on · phone · light · stale badge",
+    true
+   ],
+   [
+    "GuideOnDeskLight.dc.html",
+    1280,
+    6180,
+    "/on · desktop · light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Guide types · /vs comparison",
+  [
+   [
+    "GuideVs.dc.html",
+    390,
+    6020,
+    "▶ /vs/nosleep-page · follows your system",
+    true
+   ],
+   [
+    "GuideVsPhoneLight.dc.html",
+    390,
+    6020,
+    "/vs · phone · light",
+    true
+   ],
+   [
+    "GuideVsDeskDark.dc.html",
+    1280,
+    4760,
+    "/vs · desktop · dark",
+    true
+   ]
+  ]
+ ],
+ [
+  "Guide types · /learn with code",
+  [
+   [
+    "GuideLearn.dc.html",
+    390,
+    7930,
+    "▶ /learn · follows your system",
+    true
+   ],
+   [
+    "GuideLearnPhoneLight.dc.html",
+    390,
+    7930,
+    "/learn · phone · light",
+    true
+   ],
+   [
+    "GuideLearnDeskDark.dc.html",
+    1280,
+    6910,
+    "/learn · desktop · dark",
+    true
+   ]
+  ]
+ ],
+ [
+  "Guide types · /guides how-to",
+  [
+   [
+    "GuideGuides.dc.html",
+    390,
+    5090,
+    "▶ /guides · follows your system",
+    true
+   ],
+   [
+    "GuideGuidesPhoneDark.dc.html",
+    390,
+    5090,
+    "/guides · phone · dark",
+    true
+   ],
+   [
+    "GuideGuidesDeskLight.dc.html",
+    1280,
+    4400,
+    "/guides · desktop · light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Preset page /30m and /until/07-30",
+  [
+   [
+    "PresetPage.dc.html",
+    390,
+    2452,
+    "▶ /30m · follows your system",
+    true
+   ],
+   [
+    "PresetPhoneDark.dc.html",
+    390,
+    2452,
+    "/30m · phone · dark",
+    true
+   ],
+   [
+    "PresetTablet.dc.html",
+    820,
+    2364,
+    "/30m · tablet · dark",
+    true
+   ],
+   [
+    "PresetDeskLight.dc.html",
+    1280,
+    2080,
+    "/30m · desktop · light",
+    true
+   ],
+   [
+    "UntilPage.dc.html",
+    390,
+    2124,
+    "▶ /until/07-30 · follows your system",
+    true
+   ],
+   [
+    "UntilPhoneLight.dc.html",
+    390,
+    2124,
+    "/until · phone · light · ends tomorrow",
+    true
+   ],
+   [
+    "UntilDeskDark.dc.html",
+    1280,
+    1856,
+    "/until · desktop · dark · ends today",
+    true
+   ]
+  ]
+ ],
+ [
+  "Kiosk and library",
+  [
+   [
+    "PageKioskDesk.dc.html",
+    1280,
+    2926,
+    "Kiosk · desktop dark · URL builder",
+    true
+   ],
+   [
+    "PageKioskPhone.dc.html",
+    390,
+    4296,
+    "Kiosk · phone light",
+    true
+   ],
+   [
+    "PageLibraryDesk.dc.html",
+    1280,
+    3059,
+    "Library · desktop dark · live state machine",
+    true
+   ]
+  ]
+ ],
+ [
+  "Extension landing, about, changelog",
+  [
+   [
+    "PageExtensionDesk.dc.html",
+    1280,
+    3582,
+    "Extension · desktop light",
+    true
+   ],
+   [
+    "PageExtensionPhone.dc.html",
+    390,
+    5680,
+    "Extension · phone dark",
+    true
+   ],
+   [
+    "PageAboutDesk.dc.html",
+    1280,
+    2076,
+    "About · desktop light",
+    true
+   ],
+   [
+    "PageChangelogPhone.dc.html",
+    390,
+    8000,
+    "Changelog · phone dark",
+    true
+   ]
+  ]
+ ],
+ [
+  "Privacy, terms, 404",
+  [
+   [
+    "PagePrivacyDesk.dc.html",
+    1280,
+    4508,
+    "Privacy · desktop light",
+    true
+   ],
+   [
+    "PageTermsPhone.dc.html",
+    390,
+    2341,
+    "Terms · phone dark",
+    true
+   ],
+   [
+    "Page404Phone.dc.html",
+    390,
+    1436,
+    "404 · phone dark · mini tool",
+    true
+   ],
+   [
+    "Page404Desk.dc.html",
+    1280,
+    1017,
+    "404 · desktop light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Kiosk wall screens",
+  [
+   [
+    "KioskScreen.dc.html",
+    1920,
+    1080,
+    "▶ Kiosk · source (tweak size, mode, licence)",
+    true
+   ],
+   [
+    "KioskTvClock.dc.html",
+    1920,
+    1080,
+    "Kiosk TV · Clock · licensed",
+    false
+   ],
+   [
+    "KioskTvMessage.dc.html",
+    1920,
+    1080,
+    "Kiosk TV · Message · licensed",
+    false
+   ]
+  ]
+ ],
+ [
+  "Kiosk · free, dashboard, portrait",
+  [
+   [
+    "KioskTvUnlicensed.dc.html",
+    1920,
+    1080,
+    "Kiosk TV · free: wordmark + message preview",
+    false
+   ],
+   [
+    "KioskTvDashboard.dc.html",
+    1920,
+    1080,
+    "Kiosk TV · dashboard with docked widget · light",
+    true
+   ],
+   [
+    "KioskPortraitLogo.dc.html",
+    1080,
+    1920,
+    "Kiosk portrait · Your logo · licensed",
+    false
+   ]
+  ]
+ ],
+ [
+  "Embed edge states",
+  [
+   [
+    "EmbedEdge.dc.html",
+    1280,
+    800,
+    "▶ Embed edge states · source",
+    true
+   ],
+   [
+    "EmbedEdgeNoAllow.dc.html",
+    1280,
+    800,
+    "Embed · missing allow attribute + fix",
+    true
+   ],
+   [
+    "EmbedEdgeSidebar.dc.html",
+    1280,
+    800,
+    "Embed · 280 px sidebar · dark host",
+    true
+   ],
+   [
+    "EmbedEdgeLicensed.dc.html",
+    1280,
+    800,
+    "Embed · licensed, no attribution",
+    true
+   ]
+  ]
+ ],
+ [
+  "Embed · tablet, phone, /embed/cook",
+  [
+   [
+    "EmbedEdgeUnsupportedTablet.dc.html",
+    820,
+    1120,
+    "Embed · unsupported browser · tablet",
+    true
+   ],
+   [
+    "EmbedEdgeBatteryPhone.dc.html",
+    390,
+    1080,
+    "Embed · refused · phone dark",
+    true
+   ],
+   [
+    "EmbedCook.dc.html",
+    720,
+    240,
+    "▶ /embed/cook · source",
+    true
+   ],
+   [
+    "EmbedCookCompact.dc.html",
+    320,
+    96,
+    "/embed/cook · 320×96 running",
+    true
+   ],
+   [
+    "EmbedCookFull.dc.html",
+    720,
+    240,
+    "/embed/cook · timer done",
+    true
+   ]
+  ]
+ ],
+ [
+  "Social share images (1200×630)",
+  [
+   [
+    "OgHome.dc.html",
+    1200,
+    630,
+    "OG · home",
+    false
+   ],
+   [
+    "OgArticle.dc.html",
+    1200,
+    630,
+    "OG · /for/cooking",
+    false
+   ],
+   [
+    "OgDevice.dc.html",
+    1200,
+    630,
+    "OG · /on/ipad",
+    false
+   ],
+   [
+    "OgVs.dc.html",
+    1200,
+    630,
+    "OG · /vs/mouse-jigglers",
+    false
+   ],
+   [
+    "OgPro.dc.html",
+    1200,
+    630,
+    "OG · /pro",
+    false
+   ],
+   [
+    "OgPreset.dc.html",
+    1200,
+    630,
+    "OG · /30m",
+    false
+   ]
+  ]
+ ],
+ [
+  "Chrome Web Store listing",
+  [
+   [
+    "StoreShot1.dc.html",
+    1280,
+    800,
+    "Store 1 · popup over a page",
+    false
+   ],
+   [
+    "StoreShot2.dc.html",
+    1280,
+    800,
+    "Store 2 · schedule editor",
+    false
+   ],
+   [
+    "StoreShot3.dc.html",
+    1280,
+    800,
+    "Store 3 · badge states",
+    false
+   ],
+   [
+    "StoreShot4.dc.html",
+    1280,
+    800,
+    "Store 4 · Screen vs System",
+    false
+   ],
+   [
+    "StoreShot5.dc.html",
+    1280,
+    800,
+    "Store 5 · Pro auto-start",
+    false
+   ]
+  ]
+ ],
+ [
+  "Store promo tiles, icons",
+  [
+   [
+    "StorePromoSmall.dc.html",
+    440,
+    280,
+    "Store · small promo tile",
+    false
+   ],
+   [
+    "StoreMarquee.dc.html",
+    1400,
+    560,
+    "Store · marquee",
+    false
+   ],
+   [
+    "IconSet.dc.html",
+    1280,
+    900,
+    "Icons · app, maskable, themed, favicon states, PWA splash",
+    false
+   ]
+  ]
+ ],
+ [
+  "System · offline, notifications, tab states",
+  [
+   [
+    "Sys.dc.html",
+    390,
+    844,
+    "▶ System states (all kinds)",
+    true
+   ],
+   [
+    "SysOfflinePhone.dc.html",
+    390,
+    844,
+    "Offline · phone",
+    false
+   ],
+   [
+    "SysOfflineDesk.dc.html",
+    1280,
+    888,
+    "Offline · desktop",
+    false
+   ],
+   [
+    "SysNotify.dc.html",
+    1280,
+    900,
+    "Time's up notifications",
+    false
+   ]
+  ]
+ ],
+ [
+  "System · browser tabs, Pro lapsed",
+  [
+   [
+    "SysTabsLight.dc.html",
+    1280,
+    1088,
+    "Tab strip · light",
+    false
+   ],
+   [
+    "SysTabsDark.dc.html",
+    1280,
+    1088,
+    "Tab strip · dark",
+    false
+   ],
+   [
+    "SysProLapsed.dc.html",
+    1280,
+    1732,
+    "Pro lapsed · tool + manage",
+    false
+   ]
+  ]
+ ],
+ [
+  "System · checkout, update, installed app",
+  [
+   [
+    "SysCheckoutSuccess.dc.html",
+    1280,
+    848,
+    "Checkout · success",
+    true
+   ],
+   [
+    "SysCheckoutFailed.dc.html",
+    1280,
+    820,
+    "Checkout · payment failed",
+    false
+   ],
+   [
+    "SysUpdate.dc.html",
+    1280,
+    860,
+    "PWA update waits",
+    true
+   ],
+   [
+    "SysInstalledDesk.dc.html",
+    1280,
+    800,
+    "Installed · desktop window",
+    false
+   ],
+   [
+    "SysInstalledPhone.dc.html",
+    1280,
+    1084,
+    "Installed · phone launch",
+    false
+   ]
+  ]
+ ],
+ [
+  "Growth · first visit: proof in 5 seconds",
+  [
+   [
+    "GrowthFirstVisit.dc.html",
+    390,
+    844,
+    "▶ First visit · proof in 5 seconds · play me",
+    true
+   ],
+   [
+    "GrowthFirstVisitPhoneDark.dc.html",
+    390,
+    844,
+    "First visit · phone · dark · tap to start",
+    true
+   ],
+   [
+    "GrowthFirstVisitPhoneLight.dc.html",
+    390,
+    844,
+    "First visit · phone · light · proof shown",
+    true
+   ],
+   [
+    "GrowthFirstVisitTabletDark.dc.html",
+    820,
+    1180,
+    "First visit · tablet · dark · auto-start",
+    true
+   ],
+   [
+    "GrowthFirstVisitDeskDark.dc.html",
+    1280,
+    800,
+    "First visit · desktop · dark · proof shown",
+    true
+   ],
+   [
+    "GrowthFirstVisitDeskLight.dc.html",
+    1280,
+    800,
+    "First visit · desktop · light · tap to start",
+    true
+   ]
+  ]
+ ],
+ [
+  "Growth · trust panel: how AwakeTab knows",
+  [
+   [
+    "GrowthTrust.dc.html",
+    390,
+    844,
+    "▶ Trust panel · how AwakeTab knows · play me",
+    true
+   ],
+   [
+    "GrowthTrustPhoneDark.dc.html",
+    390,
+    844,
+    "Trust panel · phone · dark · awake",
+    true
+   ],
+   [
+    "GrowthTrustPhoneLight.dc.html",
+    390,
+    844,
+    "Trust panel · phone · light · paused",
+    true
+   ],
+   [
+    "GrowthTrustDeskDark.dc.html",
+    1280,
+    800,
+    "Trust panel · desktop · dark · fallback",
+    true
+   ],
+   [
+    "GrowthTrustDeskLight.dc.html",
+    1280,
+    800,
+    "Trust panel · desktop · light · blocked",
+    true
+   ]
+  ]
+ ],
+ [
+  "Growth · session done: one gentle next step",
+  [
+   [
+    "GrowthDone.dc.html",
+    390,
+    844,
+    "▶ Session done · one gentle next step · play me",
+    true
+   ],
+   [
+    "GrowthDoneInstallPhoneDark.dc.html",
+    390,
+    844,
+    "Done · install after 2nd session · phone · dark",
+    true
+   ],
+   [
+    "GrowthDoneIosPhoneLight.dc.html",
+    390,
+    844,
+    "Done · iPhone Home Screen steps · phone · light",
+    true
+   ],
+   [
+    "GrowthDoneExtensionDeskDark.dc.html",
+    1280,
+    800,
+    "Done · hidden 3 times · extension · desktop · dark",
+    true
+   ],
+   [
+    "GrowthDoneProDeskLight.dc.html",
+    1280,
+    800,
+    "Done · one Pro line · desktop · light",
+    true
+   ],
+   [
+    "GrowthDoneNonePhoneLight.dc.html",
+    390,
+    844,
+    "Done · nothing to suggest · phone · light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Growth · back from a hidden tab",
+  [
+   [
+    "GrowthPaused.dc.html",
+    390,
+    844,
+    "▶ Back from a hidden tab · honest options · play me",
+    true
+   ],
+   [
+    "GrowthPausedDeskDark.dc.html",
+    1280,
+    800,
+    "Back from hidden · 3rd time · Chrome · desktop · dark",
+    true
+   ],
+   [
+    "GrowthPausedDeskLight.dc.html",
+    1280,
+    800,
+    "Back from hidden · 3rd time · Firefox · desktop · light",
+    true
+   ],
+   [
+    "GrowthPausedPhoneDark.dc.html",
+    390,
+    844,
+    "Back from hidden · 1st time · quiet · phone · dark",
+    true
+   ],
+   [
+    "GrowthPausedPhoneLight.dc.html",
+    390,
+    844,
+    "Back from hidden · 3rd time · phone · light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Growth · Pro moments (informative, never pushy)",
+  [
+   [
+    "GrowthProMoment.dc.html",
+    390,
+    844,
+    "▶ Pro moments · informative, never pushy · play me",
+    true
+   ],
+   [
+    "GrowthProLampPhoneDark.dc.html",
+    390,
+    844,
+    "Pro moment · previewing a Pro lamp · phone · dark",
+    true
+   ],
+   [
+    "GrowthProLampDeskLight.dc.html",
+    1280,
+    800,
+    "Pro moment · previewing a Pro lamp · desktop · light",
+    true
+   ],
+   [
+    "GrowthProMessageDeskDark.dc.html",
+    1280,
+    800,
+    "Pro moment · end of the 60 s Message preview · desktop · dark",
+    true
+   ],
+   [
+    "GrowthProMessagePhoneLight.dc.html",
+    390,
+    844,
+    "Pro moment · end of the 60 s Message preview · phone · light",
+    true
+   ],
+   [
+    "GrowthProStatsPhoneLight.dc.html",
+    390,
+    844,
+    "Pro moment · day 8 of stats · phone · light",
+    true
+   ],
+   [
+    "GrowthProStatsDeskDark.dc.html",
+    1280,
+    800,
+    "Pro moment · day 8 of stats · desktop · dark",
+    true
+   ]
+  ]
+ ],
+ [
+  "Growth · which plan fits (/pro helper)",
+  [
+   [
+    "GrowthPlanHelper.dc.html",
+    390,
+    2080,
+    "▶ Which plan fits · /pro helper · play me",
+    true
+   ],
+   [
+    "GrowthPlanPhoneDark.dc.html",
+    390,
+    2080,
+    "Which plan fits · free is enough · phone · dark",
+    true
+   ],
+   [
+    "GrowthPlanPhoneLight.dc.html",
+    390,
+    2080,
+    "Which plan fits · pay once · phone · light",
+    true
+   ],
+   [
+    "GrowthPlanTabletLight.dc.html",
+    820,
+    1600,
+    "Which plan fits · kiosk · tablet · light",
+    true
+   ],
+   [
+    "GrowthPlanDeskDark.dc.html",
+    1280,
+    1100,
+    "Which plan fits · yearly · desktop · dark",
+    true
+   ],
+   [
+    "GrowthPlanDeskLight.dc.html",
+    1280,
+    1100,
+    "Which plan fits · recipe site · desktop · light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Growth · tell a friend, share a setup",
+  [
+   [
+    "GrowthShare.dc.html",
+    390,
+    844,
+    "▶ Tell a friend · share a setup · no referral codes · play me",
+    true
+   ],
+   [
+    "GrowthShareTellPhoneDark.dc.html",
+    390,
+    844,
+    "Tell a friend · after 5 stars · phone · dark",
+    true
+   ],
+   [
+    "GrowthShareLowPhoneLight.dc.html",
+    390,
+    844,
+    "Low rating · ask what to fix, no share · phone · light",
+    true
+   ],
+   [
+    "GrowthSharePresetDeskLight.dc.html",
+    1280,
+    800,
+    "Share a setup · link preview · desktop · light",
+    true
+   ],
+   [
+    "GrowthSharePresetPhoneDark.dc.html",
+    390,
+    844,
+    "Share a setup · link preview · phone · dark",
+    true
+   ],
+   [
+    "GrowthShareTellDeskDark.dc.html",
+    1280,
+    800,
+    "Tell a friend · after 5 stars · desktop · dark",
+    true
+   ]
+  ]
+ ],
+ [
+  "Growth · business entry points in articles",
+  [
+   [
+    "GrowthB2B.dc.html",
+    390,
+    1680,
+    "▶ Business entry points inside a use-case article · play me",
+    true
+   ],
+   [
+    "GrowthB2BRecipePhoneLight.dc.html",
+    390,
+    1680,
+    "B2B entry · recipe sites · /for/cooking · phone · light",
+    true
+   ],
+   [
+    "GrowthB2BRecipeDeskDark.dc.html",
+    1280,
+    1280,
+    "B2B entry · recipe sites · /for/cooking · desktop · dark",
+    true
+   ],
+   [
+    "GrowthB2BKioskPhoneDark.dc.html",
+    390,
+    1680,
+    "B2B entry · kiosks · /for/dashboards · phone · dark",
+    true
+   ],
+   [
+    "GrowthB2BKioskDeskLight.dc.html",
+    1280,
+    1280,
+    "B2B entry · kiosks · /for/dashboards · desktop · light",
+    true
+   ]
+  ]
+ ],
+ [
+  "Brand",
+  [
+   [
+    "Brand.dc.html",
+    1280,
+    800,
+    "Logo, colour, type",
+    false
+   ]
+  ]
+ ],
+ [
+  "Page components · play with all props (Tweaks)",
+  [
+   [
+    "PageKiosk.dc.html",
+    1280,
+    2926,
+    "▶ Kiosk page",
+    true
+   ],
+   [
+    "PageLibrary.dc.html",
+    1280,
+    3059,
+    "▶ Library page",
+    true
+   ],
+   [
+    "PageExtension.dc.html",
+    1280,
+    3582,
+    "▶ Extension page",
+    true
+   ],
+   [
+    "PageAbout.dc.html",
+    1280,
+    2076,
+    "▶ About page",
+    true
+   ],
+   [
+    "PageLegal.dc.html",
+    1280,
+    4508,
+    "▶ Privacy / Terms page",
+    true
+   ],
+   [
+    "PageChangelog.dc.html",
+    390,
+    8000,
+    "▶ Changelog page",
+    true
+   ],
+   [
+    "Page404.dc.html",
+    390,
+    1436,
+    "▶ 404 page",
+    true
+   ],
+   [
+    "OgCards.dc.html",
+    1200,
+    630,
+    "▶ OG card source (kind)",
+    true
+   ],
+   [
+    "StoreAssets.dc.html",
+    1280,
+    800,
+    "▶ Store asset source (kind)",
+    true
+   ],
+   [
+    "Welcome.dc.html",
+    1280,
+    2672,
+    "▶ Extension welcome page",
+    true
+   ],
+   [
+    "A11y.dc.html",
+    870,
+    844,
+    "▶ Accessibility source (mode)",
+    true
+   ]
+  ]
+ ]
+]

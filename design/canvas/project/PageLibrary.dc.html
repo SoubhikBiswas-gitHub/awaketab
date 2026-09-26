@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · @awaketab/wake library</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+/* AwakeTab primitives v2 · fix batch 2b · keep byte-identical */
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.97)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-u{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.at-u:hover{text-decoration-thickness:2px}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-tw{animation:at-tw 5s ease-in-out infinite}
+.at-tw2{animation:at-tw 7s ease-in-out infinite;animation-delay:-3s}
+.at-glint{transform-origin:top center;animation:at-glint 6s ease-in-out infinite}
+.at-pulse{animation:at-tw 3.4s ease-in-out infinite}
+@keyframes at-tw{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes at-glint{0%,100%{transform:scaleX(.6);opacity:.35}50%{transform:scaleX(1);opacity:.7}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div class="at-root" style="width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{p.ground}}; color: {{t.ink}}; display: flex; flex-direction: column">
+  <header style="{{hdr.style}}">
+    <a href="Main.dc.html" aria-label="AwakeTab home" style="{{hdr.logo}}"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{hdr.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{hdr.bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{hdr.bead}}" style="transition: fill .6s"></circle></svg>AwakeTab</a>
+    <sc-if value="{{hdr.showNav}}" hint-placeholder-val="{{false}}">
+      <nav aria-label="Main" style="{{hdr.navStyle}}">
+        <sc-for list="{{hdr.nav}}" as="n" hint-placeholder-count="4">
+          <a href="{{n.href}}" aria-current="{{n.cur}}" style="{{n.style}}"><span aria-hidden="true" style="{{n.dot}}"></span>{{n.label}}</a>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <div role="radiogroup" aria-label="Theme" style="{{hdr.bar}}">
+      <div aria-hidden="true" class="at-slide" style="{{hdr.ind}}"></div>
+      <sc-for list="{{hdr.themes}}" as="m" hint-placeholder-count="3">
+        <button role="radio" aria-checked="{{m.sel}}" aria-label="{{m.aria}}" title="{{m.title}}" onClick="{{m.pick}}" style="{{m.style}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="{{m.icon}}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{m.icon2}}" fill="currentColor"></path></svg></button>
+      </sc-for>
+    </div>
+  </header>
+
+  <main style="position: relative; flex-grow: 1; display: flex; flex-direction: column; gap: {{secGap}}; padding: {{mainPad}}">
+
+    <div class="at-in" style="display: flex; flex-direction: column; gap: 20px; max-width: 800px">
+      <span style="{{ty.kicker}}; color: {{t.muted}}">Open source · MIT · v1.0.0</span>
+      <h1 style="margin: 0; {{ty.h1}}; text-wrap: balance"><code style="{{mono}}; font-weight: 400; letter-spacing: -0.04em">@awaketab/wake</code>: the honest wake lock library</h1>
+      <p style="margin: 0; {{ty.lead}}; color: {{t.ink2}}; text-wrap: pretty"><code style="{{code}}">@awaketab/wake</code> keeps a web page's screen from dimming and tells you the truth about it: seven states, a reason and an advice code on every change, and <code style="{{code}}">held</code> only while the browser really holds the lock. Zero dependencies, ≤ 3.4 KB gzipped with the fallback videos inlined, MIT. The maintained replacement for NoSleep.js.</p>
+      <div style="display: flex; align-items: center; gap: 12px; max-width: 520px; padding: 4px 4px 4px 16px; border-radius: 16px; background: {{p.well}}; border: 1px solid {{t.line}}">
+        <code style="flex-grow: 1; min-width: 0; padding-block: 12px; {{mono}}; font-size: 15px; line-height: 22px; color: {{t.ink2}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><span style="color: {{t.muted}}">$ </span>npm install @awaketab/wake</code>
+        <span style="{{tagSoon}}; margin-inline-end: 12px">npm package coming soon</span>
+      </div>
+    </div>
+
+    <section aria-labelledby="demo" style="position: relative; display: grid; grid-template-columns: {{demoCols}}; grid-template-areas: {{demoAreas}}; column-gap: 32px; row-gap: 32px; padding: {{cardPad}}; border-radius: 28px; background: {{t.surface}}; border: 1px solid {{t.line}}; box-shadow: {{cardShadow}}; overflow: hidden">
+      <div aria-hidden="true" class="at-aura" style="position: absolute; left: -10%; top: -20%; width: 120%; height: 90%; background: radial-gradient(40% 45% at 60% 40%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
+
+      <div style="grid-area: head; position: relative; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px">
+        <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+          <h2 id="demo" style="margin: 0; {{ty.h2}}">Live state machine</h2>
+          <p style="margin: 0; font-size: 14px; line-height: 20px; color: {{t.muted}}">Running <code style="{{code}}">awaketab-wake.iife.js</code> v1.0.0, the build that will be published to npm.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; width: {{selW}}">
+          <label for="lib-scenario" style="{{ty.small}}; font-weight: 600; color: {{t.ink2}}">Scenario</label>
+          <div style="position: relative">
+            <select id="lib-scenario" value="{{scen}}" onChange="{{pickScenario}}" style="width: 100%; height: 48px; box-sizing: border-box; padding: 0 48px 0 16px; border-radius: 8px; border: 1px solid {{t.inputLine}}; background: {{t.sunken}}; color: {{t.ink}}; font-size: 15px; appearance: none; -webkit-appearance: none">
+              <option value="real">This browser (real API)</option>
+              <option value="simulated">Simulate tab hidden / Simulate tab visible</option>
+              <option value="denied">Simulated: the browser refuses the lock</option>
+              <option value="unsupported">Simulated: no Wake Lock API (video fallback)</option>
+            </select>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{t.ink2}}" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="position: absolute; right: 16px; top: 16px; pointer-events: none"><path d="M6 9l6 6 6-6"></path></svg>
+          </div>
+        </div>
+      </div>
+
+      <div style="grid-area: ctrl; position: relative; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px">
+          <output aria-live="polite" class="at-slide" style="{{pill.style}}"><svg width="{{pill.g}}" height="{{pill.g}}" viewBox="0 0 12 12" aria-hidden="true" style="{{pill.gStyle}}"><path d="{{pill.d}}" fill="{{pill.fill}}" stroke="{{pill.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pill.label}}</output>
+          <code style="{{mono}}; font-size: 15px; line-height: 22px; color: {{t.ink2}}">state: <span style="color: {{t.ink}}">{{cur.id}}</span></code>
+          <sc-if value="{{hasAdvice}}" hint-placeholder-val="{{false}}">
+            <span class="at-in" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; box-sizing: border-box; border-radius: 8px; background: {{p.codeBg}}; border: 1px solid {{t.line}}; {{ty.small}}; color: {{t.ink2}}">Advice:<code style="{{mono}}; color: {{t.ink}}">{{advice}}</code></span>
+          </sc-if>
+        </div>
+        <div style="display: grid; grid-template-columns: {{btnCols}}; gap: 12px">
+          <button onClick="{{request}}" style="{{btnRequest}}"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>Request</button>
+          <button onClick="{{release}}" style="{{btnRelease}}">Release</button>
+          <button onClick="{{hide}}" disabled="{{simOff}}" aria-describedby="lib-sim-note" style="{{btnSim}}">Simulate tab hidden</button>
+          <button onClick="{{show}}" disabled="{{simOff}}" aria-describedby="lib-sim-note" style="{{btnSim}}">Simulate tab visible</button>
+        </div>
+        <p id="lib-sim-note" style="margin: 0; font-size: 14px; line-height: 20px; color: {{t.muted}}; text-wrap: pretty">{{scenNote}}</p>
+      </div>
+
+      <div style="grid-area: diag; position: relative; display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <div style="position: relative; width: {{g.w}}; height: {{g.h}}; margin-inline: auto">
+          <div style="position: absolute; left: 0; top: 0; width: {{g.wpx}}; height: {{g.hpx}}; transform: scale({{g.scale}}); transform-origin: 0 0">
+          <sc-for list="{{edges}}" as="e" hint-placeholder-count="7">
+            <svg aria-hidden="true" width="{{g.wn}}" height="{{g.hn}}" style="position: absolute; left: 0; top: 0; overflow: visible"><path class="at-slide" d="{{e.d}}" fill="none" stroke="{{e.stroke}}" stroke-width="{{e.sw}}" stroke-linecap="round" stroke-dasharray="{{e.dash}}"></path><path d="{{e.head}}" fill="{{e.stroke}}"></path></svg>
+            <sc-if value="{{e.hasLabel}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="position: absolute; left: {{e.lx}}; top: {{e.ly}}; transform: translate(-50%, -50%); padding: 0 4px; border-radius: 4px; background: {{t.surface}}; {{mono}}; font-size: 12px; line-height: 16px; color: {{e.ink}}; white-space: nowrap">{{e.label}}</span></sc-if>
+          </sc-for>
+          <ol aria-label="The seven lock states" style="margin: 0; padding: 0; list-style: none">
+            <sc-for list="{{nodes}}" as="n" hint-placeholder-count="7">
+              <li aria-current="{{n.cur}}" class="at-slide" style="position: absolute; left: {{n.x}}; top: {{n.y}}; width: {{g.nw}}; height: {{g.nh}}; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 0 8px; border-radius: 999px; border: 1px solid {{n.border}}; background: {{n.bg}}; box-shadow: {{n.shadow}}; text-align: center">
+                <code style="display: flex; align-items: center; gap: 4px; {{g.idFont}}; font-size: {{g.cf}}; line-height: 16px; font-weight: 500; color: {{n.ink}}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible"><path d="{{n.glyph}}" fill="{{n.dot}}" stroke="{{n.dot}}" stroke-width="1.4" fill-rule="evenodd"></path></svg>{{n.id}}</code>
+                <sc-if value="{{g.showPill}}" hint-placeholder-val="{{true}}"><span style="font-size: 13px; line-height: 18px; color: {{n.sub}}; white-space: nowrap">{{n.pill}}</span></sc-if>
+              </li>
+            </sc-for>
+          </ol>
+          </div>
+        </div>
+        <p style="margin: 0; font-size: 13px; line-height: 18px; color: {{t.muted}}; text-align: center"><code style="{{code}}">release()</code> returns to <code style="{{code}}">idle</code> from any state. States you have visited stay lit.</p>
+      </div>
+
+      <div style="grid-area: log; position: relative; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+          <h3 style="margin: 0; {{ty.ui}}; font-weight: 600">Transition log</h3>
+          <span style="font-size: 13px; line-height: 18px; color: {{t.muted}}">newest first · last 12</span>
+        </div>
+        <div tabindex="0" aria-label="Transition log entries" style="flex-grow: 1; height: {{logMin}}; box-sizing: border-box; overflow-y: auto; padding: 16px; border-radius: 8px; background: {{p.well}}; border: 1px solid {{t.line}}">
+          <sc-if value="{{logEmpty}}" hint-placeholder-val="{{true}}">
+            <p style="margin: 0; font-size: 14px; line-height: 20px; color: {{t.muted}}">No transitions yet. Press Request to ask for a lock.</p>
+          </sc-if>
+          <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; {{mono}}; font-size: 13px; line-height: 18px">
+            <sc-for list="{{log}}" as="l" hint-placeholder-count="4">
+              <li class="{{l.cls}}" style="display: grid; grid-template-columns: 96px minmax(0, 1fr); column-gap: 12px">
+                <time style="color: {{t.muted}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{l.time}}</time>
+                <span style="color: {{t.ink}}; overflow-wrap: anywhere">{{l.from}} → <span style="color: {{l.toInk}}; font-weight: 500">{{l.to}}</span> <span style="color: {{t.muted}}">({{l.why}})</span></span>
+              </li>
+            </sc-for>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="usage" style="display: grid; grid-template-columns: {{useCols}}; column-gap: 48px; row-gap: 24px; align-items: start">
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <h2 id="usage" style="margin: 0; {{ty.h2}}">Use it</h2>
+        <p style="margin: 0; {{ty.body}}; color: {{t.ink2}}; text-wrap: pretty">{{tabNote}}</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <div role="tablist" aria-label="Setup" style="{{tabSeg.bar}}">
+          <div aria-hidden="true" class="at-slide" style="{{tabSeg.ind}}"></div>
+          <sc-for list="{{tabs}}" as="b" hint-placeholder-count="5">
+            <button role="tab" id="{{b.tid}}" aria-selected="{{b.sel}}" aria-controls="lib-code" onClick="{{b.pick}}" style="{{b.style}}">{{b.label}}</button>
+          </sc-for>
+        </div>
+        <div id="lib-code" role="tabpanel" aria-labelledby="{{tabId}}" style="border-radius: 16px; background: {{p.well}}; border: 1px solid {{t.line}}; overflow: hidden">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 8px 8px 20px; border-bottom: 1px solid {{t.line}}">
+            <code style="{{mono}}; font-size: 13px; line-height: 18px; color: {{t.muted}}">{{fileName}}</code>
+            <div style="display: flex; align-items: center; gap: 8px">
+              <span role="status" aria-live="polite" style="font-size: 13px; line-height: 18px; color: {{p.link}}">{{codeCopied}}</span>
+              <button onClick="{{copyCode}}" aria-label="{{copyAria}}" style="{{btnQuiet}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"></rect><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"></path></svg>Copy</button>
+            </div>
+          </div>
+          <pre tabindex="0" style="margin: 0; padding: 20px 20px 20px 12px; overflow-x: auto; {{mono}}; font-size: {{codeFont}}; line-height: 24px; color: {{t.ink}}"><code class="at-in" style="display: block; min-width: max-content"><sc-for list="{{lines}}" as="ln" hint-placeholder-count="8"><span style="display: block; min-height: 24px"><span aria-hidden="true" style="display: inline-block; width: 32px; padding-inline-end: 12px; box-sizing: border-box; text-align: end; color: {{lineNo}}; user-select: none">{{ln.n}}</span><sc-for list="{{ln.segs}}" as="sg" hint-placeholder-count="3"><span style="color: {{sg.c}}">{{sg.x}}</span></sc-for></span></sc-for></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="compare" style="display: flex; flex-direction: column; gap: 24px">
+      <div style="display: flex; flex-direction: column; gap: 8px; max-width: 720px">
+        <h2 id="compare" style="margin: 0; {{ty.h2}}">Compared with NoSleep.js</h2>
+        <p style="margin: 0; {{ty.body}}; color: {{t.ink2}}; text-wrap: pretty">Both use the native Wake Lock when it exists. The difference is what you are told when it does not work.</p>
+      </div>
+      <sc-if value="{{notPhone}}" hint-placeholder-val="{{true}}">
+        <div role="table" aria-label="@awaketab/wake compared with NoSleep.js 0.12.0" style="display: flex; flex-direction: column; border-radius: 16px; border: 1px solid {{t.line}}; background: {{t.surface}}; overflow: hidden">
+          <div role="row" style="display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.3fr) minmax(0, 1fr); column-gap: 24px; padding: 16px 24px; border-bottom: 1px solid {{t.line}}; {{ty.small}}; font-weight: 600">
+            <span role="columnheader" style="color: {{t.muted}}">Feature</span>
+            <span role="columnheader" style="display: flex; align-items: center; gap: 8px; color: {{t.ink}}"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 999px; background: {{p.lamp}}"></span><code style="{{mono}}">@awaketab/wake</code></span>
+            <span role="columnheader" style="color: {{t.ink2}}">NoSleep.js 0.12.0</span>
+          </div>
+          <sc-for list="{{cmp}}" as="r" hint-placeholder-count="8">
+            <div role="row" style="display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.3fr) minmax(0, 1fr); column-gap: 24px; padding: 16px 24px; border-top: {{r.border}}; {{ty.body}}">
+              <span role="rowheader" style="font-weight: 500; color: {{t.ink}}">{{r.label}}</span>
+              <span role="cell" style="color: {{t.ink}}"><sc-for list="{{r.a}}" as="s" hint-placeholder-count="1"><sc-if value="{{s.isText}}" hint-placeholder-val="{{true}}"><span data-kind="{{s.kind}}" style="{{s.style}}">{{s.text}}</span></sc-if></sc-for></span>
+              <span role="cell" style="color: {{t.ink2}}"><sc-for list="{{r.b}}" as="s" hint-placeholder-count="1"><sc-if value="{{s.isText}}" hint-placeholder-val="{{true}}"><span data-kind="{{s.kind}}" style="{{s.style}}">{{s.text}}</span></sc-if></sc-for></span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{isPhone}}" hint-placeholder-val="{{false}}">
+        <dl style="margin: 0; display: flex; flex-direction: column; border-radius: 16px; border: 1px solid {{t.line}}; background: {{t.surface}}; overflow: hidden">
+          <sc-for list="{{cmp}}" as="r" hint-placeholder-count="8">
+            <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px 20px; border-top: {{r.border}}">
+              <dt style="{{ty.kicker}}; color: {{t.muted}}">{{r.label}}</dt>
+              <dd style="margin: 0; display: grid; grid-template-columns: 88px minmax(0, 1fr); column-gap: 12px; {{ty.ui}}; color: {{t.ink}}"><code style="display: flex; align-items: center; gap: 8px; {{mono}}; font-size: 13px; color: {{t.ink2}}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: {{p.lamp}}"></span>wake</code><span><sc-for list="{{r.a}}" as="s" hint-placeholder-count="1"><sc-if value="{{s.isText}}" hint-placeholder-val="{{true}}"><span data-kind="{{s.kind}}" style="{{s.style}}">{{s.text}}</span></sc-if></sc-for></span></dd>
+              <dd style="margin: 0; display: grid; grid-template-columns: 88px minmax(0, 1fr); column-gap: 12px; {{ty.ui}}; color: {{t.ink2}}"><code style="{{mono}}; font-size: 13px; color: {{t.muted}}">NoSleep.js</code><span><sc-for list="{{r.b}}" as="s" hint-placeholder-count="1"><sc-if value="{{s.isText}}" hint-placeholder-val="{{true}}"><span data-kind="{{s.kind}}" style="{{s.style}}">{{s.text}}</span></sc-if></sc-for></span></dd>
+            </div>
+          </sc-for>
+        </dl>
+      </sc-if>
+    </section>
+
+    <div role="note" style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 12px; padding: {{notePad}}; box-sizing: border-box; border-radius: 16px; background: {{warnSoft}}; border: 1px solid {{warnLine}}; max-width: 820px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{p.warn}}" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="margin-top: 4px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <span style="{{ty.kicker}}; color: {{t.muted}}">What a wake lock cannot do</span>
+        <p style="margin: 0; {{ty.body}}; color: {{t.ink}}; text-wrap: pretty">A wake lock keeps the display on while the page is visible. Nothing more. It does not keep a hidden tab awake, does not stop a laptop sleeping when the lid closes, and does not keep Teams or Slack "Available" (presence follows input, and this library never fakes input).</p>
+      </div>
+    </div>
+
+    <nav aria-label="Related" style="display: flex; flex-wrap: wrap; gap: 12px">
+      <sc-for list="{{related}}" as="r" hint-placeholder-count="5">
+        <a href="{{r.href}}" style="{{chipLink}}">{{r.label}}<span aria-hidden="true" style="color: {{t.muted}}">{{r.arrow}}</span></a>
+      </sc-for>
+    </nav>
+  </main>
+
+  <footer style="{{ftr.style}}">
+    <p style="{{ftr.line}}">No ads on the awake screen, now or later.</p>
+    <nav aria-label="Footer" style="{{ftr.nav}}">
+      <sc-for list="{{ftr.links}}" as="f" hint-placeholder-count="5"><a href="{{f.href}}" style="{{ftr.link}}">{{f.label}}</a></sc-for>
+    </nav>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"desktop"},"$preview":{"width":1280,"height":3104}}'>
+/* ── AwakeTab primitives v2 · fix batch 2b · DESIGN.md §2, §3, §11. Byte-identical in every file of the batch; edit prims/prims.js and rebuild, never one copy. ── */
+const AT_TOK = {
+  dark: { ground: '#0A0E16', lift: '#13203A', surface: '#111826', raised: '#26324B', sunken: '#0D131F', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', warn: '#F2B34C', bad: '#FF7A7A', lamp: '#5BE0E8', onLamp: '#04232A', stopBg: '#EAF0F7', stopInk: '#0A0E16', horizonInk: '#F6F2EA', violet: '#A594FF', inputLine: '#5A6781', groundEnd: '#0A0E16', elev: 'none' },
+  light: { ground: '#F2F6FA', lift: '#FFFFFF', surface: '#FFFFFF', raised: '#E3E9F1', sunken: '#F6F9FC', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', warn: '#B7791F', bad: '#D14343', lamp: '#087B87', onLamp: '#FFFFFF', stopBg: '#0E1726', stopInk: '#F2F6FA', horizonInk: '#F6F2EA', violet: '#5A47CF', inputLine: '#8C98AA', groundEnd: '#EEF3F8', elev: '0 1px 2px rgba(14,23,38,0.06)' }
+};
+AT_TOK.oled = Object.assign({}, AT_TOK.dark, { ground: '#000000', lift: '#000000', groundEnd: '#000000', surface: '#0A0A0A' });
+const AT_NIGHT = { ground: '#000000', ink: '#FF5A3C', ink2: '#E8563C', muted: '#A89690', line: '#3A2E2A' };
+const AT_SCRIM = 'rgba(4,7,12,0.55)';
+const AT_FLOAT = '0 24px 64px -24px rgba(0,0,0,0.45)';
+// Display digits: system-ui (Geist in mocks) 200–300, tabular, plain zero. Mono only for code, keys, file names and URLs.
+const AT_DIGITS = "font-family: Geist, system-ui, sans-serif; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1, 'zero' 0";
+const AT_MONO = "font-family: 'Geist Mono', ui-monospace, monospace";
+const AT_GUTTER = { phone: 16, tablet: 32, desktop: 80, xl: 120 };
+const AT_SECTION = { phone: 48, tablet: 64, desktop: 96 };
+const AT_TYPE = {
+  kicker: 'font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase',
+  caption: 'font-size: 13px; line-height: 18px',
+  small: 'font-size: 14px; line-height: 20px',
+  ui: 'font-size: 15px; line-height: 22px',
+  body: 'font-size: 16px; line-height: 26px',
+  lead: 'font-size: 18px; line-height: 28px',
+  h3: 'font-size: 20px; line-height: 28px; font-weight: 600',
+  h2: 'font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em',
+  h2Phone: 'font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em',
+  h1: 'font-size: 48px; line-height: 56px; font-weight: 600; letter-spacing: -0.02em',
+  h1Phone: 'font-size: 34px; line-height: 42px; font-weight: 600; letter-spacing: -0.02em',
+  price: 'font-size: 48px; line-height: 56px; font-weight: 600; letter-spacing: -0.02em',
+  pricePhone: 'font-size: 40px; line-height: 48px; font-weight: 600; letter-spacing: -0.02em'
+};
+// State glyphs (12 × 12): shape carries the state, never colour alone.
+const AT_GLYPH = {
+  ring: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z'
+};
+// The seven contract pill strings (docs/04, docs/05). Exact, and alone inside the pill.
+const AT_PILL_TEXT = { idle: 'Ready', requesting: 'Starting…', held: 'Screen awake', lost: 'Paused — tab hidden', denied: "Blocked — here's the fix", unsupported: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
+// Status pill sizes (§11.4): height, text, padding, gap, glyph.
+const AT_PILL = { L: [48, 20, '0 20px 0 16px', 12, 16], M: [38, 15, '0 16px 0 12px', 8, 12], S: [32, 14, '0 12px 0 8px', 8, 12], XS: [26, 13, '0 8px', 4, 12] };
+
+function atRgba(hex, a) {
+  const n = parseInt(String(hex).replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atTheme(theme, sysDark) {
+  const dark = theme === 'dark' || theme === 'oled' || (theme !== 'light' && sysDark);
+  return { dark, t: theme === 'oled' ? AT_TOK.oled : dark ? AT_TOK.dark : AT_TOK.light };
+}
+// Ground: the night lift fades into the ground token, and the one status halo (--at-halo) sits behind the status element.
+function atGround(t) { return 'radial-gradient(120% 70% at 50% 26%, ' + t.lift + ' 0%, ' + t.ground + ' 62%, ' + t.groundEnd + ' 100%)'; }
+function atHalo(tone, dark) { return 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(tone, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(tone, 0) + ' 70%)'; }
+// Status pill for a lock state. size: L | M | S | XS.
+function atPill(size, state, t, extra) {
+  const [h, fs, pad, gap, g] = AT_PILL[size];
+  const tone = state === 'idle' ? t.muted : state === 'lost' ? t.warn : state === 'denied' ? t.bad : t.lamp;
+  const d = state === 'lost' ? AT_GLYPH.pause : state === 'denied' ? AT_GLYPH.tri : state === 'fallback' ? AT_GLYPH.ringDot : AT_GLYPH.dot;
+  const hollow = state === 'idle' || state === 'requesting';
+  return {
+    label: (extra && extra.label) || AT_PILL_TEXT[state] || AT_PILL_TEXT.idle, tone, d, g,
+    fill: hollow ? 'transparent' : tone,
+    gStyle: 'flex-shrink: 0; overflow: visible; filter: drop-shadow(0 0 4px ' + (state === 'held' ? atRgba(tone, 0.8) : 'transparent') + ')',
+    // M may wrap to two lines (O-62): min-height 38, radius 20, balanced wrap. L, S and XS stay on one line.
+    style: 'display: inline-flex; align-items: center; gap: ' + gap + 'px; ' + (size === 'M' ? 'min-height: 38px; padding: 8px 16px 8px 12px; border-radius: 20px; line-height: 20px; text-wrap: balance' : 'height: ' + h + 'px; padding: ' + pad + '; border-radius: 999px; line-height: 1; white-space: nowrap') + '; box-sizing: border-box; background: ' + atRgba(tone, 0.12) + '; border: 1px solid ' + atRgba(tone, 0.38) + '; color: ' + t.ink + '; font-size: ' + fs + 'px; font-weight: 600'
+  };
+}
+// Buttons (§11.4): primary 60 r20 · cook 64 r20 · stop 60 ink fill · medium 52 r20 · small 44 r12.
+function atBtn(kind, t) {
+  const base = 'box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; white-space: nowrap; font-weight: 600; ';
+  if (kind === 'primary' || kind === 'cook') return base + 'height: ' + (kind === 'cook' ? 64 : 60) + 'px; padding: 0 24px; border-radius: 20px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 17px; line-height: 24px; box-shadow: 0 10px 28px -12px ' + atRgba(t.lamp, 0.6);
+  if (kind === 'stop') return base + 'height: 60px; padding: 0 24px; border-radius: 20px; border: 0; background: ' + t.stopBg + '; color: ' + t.stopInk + '; font-size: 17px; line-height: 24px';
+  if (kind === 'medium') return base + 'height: 52px; padding: 0 20px; border-radius: 20px; border: 1px solid ' + t.line2 + '; background: ' + t.surface + '; color: ' + t.ink + '; font-size: 15px; line-height: 22px';
+  if (kind === 'mediumLamp') return base + 'height: 52px; padding: 0 20px; border-radius: 20px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 15px; line-height: 22px';
+  if (kind === 'smallLamp') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 15px; line-height: 22px';
+  if (kind === 'smallStop') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: ' + t.stopBg + '; color: ' + t.stopInk + '; font-size: 15px; line-height: 22px';
+  if (kind === 'quiet') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: transparent; color: ' + t.ink2 + '; font-size: 15px; line-height: 22px; font-weight: 500';
+  return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid ' + t.line2 + '; background: ' + t.surface + '; color: ' + t.ink + '; font-size: 15px; line-height: 22px';
+}
+// Card (§11.6): surface, 1 px line, r16, padding 20 phone / 24.
+function atCard(t, phone) { return 'box-sizing: border-box; background: ' + t.surface + '; border: 1px solid ' + t.line + '; border-radius: 16px; padding: ' + (phone ? 20 : 24) + 'px; box-shadow: ' + t.elev; }
+// Tag (§11.4): 24 high, 12/16 600, r999, padding 0 8, 1 px line-strong (or a tone at 12 %).
+function atTag(t, tone) {
+  return 'display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; color: ' + t.ink + '; ' +
+    (tone ? 'background: ' + atRgba(tone, 0.12) + '; border: 1px solid ' + atRgba(tone, 0.38) : 'background: transparent; border: 1px solid ' + t.line2);
+}
+// Keyboard hint (§11.4): one theme keycap everywhere, never inherits the button it sits on.
+function atKbd(t) { return 'display: inline-flex; align-items: center; justify-content: center; height: 24px; min-width: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid ' + t.line2 + '; box-shadow: inset 0 -1px 0 ' + t.line2 + '; background: ' + t.raised + '; font-family: ui-monospace, \'Geist Mono\', monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: ' + t.ink + '; vertical-align: middle'; }
+function atCode(t) { return AT_MONO + '; font-size: 14px; padding: 0 4px; border-radius: 4px; background: ' + t.sunken + '; color: ' + t.ink + '; overflow-wrap: anywhere'; }
+// Segmented bar (§11.4): 1 px border + 4 px padding + 44 px items = 54. Selected = lamp 14 % + 1 px lamp 45 % (or raised for neutral switches).
+function atSeg(options, current, onPick, t, opts) {
+  const o = opts || {};
+  const n = options.length;
+  const i = Math.max(0, options.findIndex((x) => x[0] === current));
+  return {
+    bar: 'position: relative; display: grid; grid-template-columns: repeat(' + n + ', minmax(0, 1fr)); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line + (o.max ? '; max-width: ' + o.max : ''),
+    ind: 'position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / ' + n + '); height: 44px; box-sizing: border-box; border-radius: 999px; transform: translateX(' + i * 100 + '%); ' + (o.neutral ? 'background: ' + t.raised + '; border: 0' : 'background: ' + atRgba(t.lamp, 0.14) + '; border: 1px solid ' + atRgba(t.lamp, 0.45)),
+    items: options.map(([id, label, aria]) => ({
+      id, label, aria: aria || label, sel: id === current ? 'true' : 'false', pick: () => onPick(id),
+      style: 'position: relative; min-width: 0; height: 44px; padding: 0 8px; border: 0; background: transparent; border-radius: 999px; font-size: ' + (o.fs || 15) + 'px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2) + '; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+    }))
+  };
+}
+// Header (§11.6): 60 phone / 68 ≥ tablet, gutter = page gutter, logo 26 + wordmark 17 with gap 8, nav on desktop, theme switch as a segmented bar.
+const AT_NAV = [['Use cases', '#', 'for'], ['Devices', '#', 'on'], ['Extension', 'PageExtensionDesk.dc.html', 'extension'], ['Pro', 'Pro.dc.html', 'pro']];
+const AT_THEME_ICON = {
+  light: ['M12 8a4 4 0 1 1 0 8a4 4 0 1 1 0-8zM12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4', ''],
+  dark: ['M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z', ''],
+  auto: ['M12 4a8 8 0 1 1 0 16a8 8 0 1 1 0-16z', 'M12 4a8 8 0 0 1 0 16z']
+};
+function atHeader(c, t, layout, current, bead) {
+  const theme = c.state.theme === 'light' || c.state.theme === 'dark' ? c.state.theme : 'auto';
+  const order = ['light', 'dark', 'auto'];
+  return {
+    style: 'position: relative; height: ' + (layout === 'phone' ? 60 : 68) + 'px; flex-shrink: 0; box-sizing: border-box; padding-inline: ' + AT_GUTTER[layout] + 'px; display: flex; align-items: center; justify-content: space-between; gap: 16px',
+    logo: 'display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; color: ' + t.ink + '; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em',
+    ink: t.ink, bead: bead || t.muted,
+    showNav: layout === 'desktop',
+    navStyle: 'display: flex; align-items: center; gap: 32px',
+    nav: AT_NAV.map(([label, href, id]) => ({
+      label, href, cur: id === current ? 'page' : 'false',
+      style: 'display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; font-size: 15px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2),
+      dot: 'width: 6px; height: 6px; border-radius: 999px; background: ' + (id === current ? t.lamp : 'transparent')
+    })),
+    bar: 'position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line,
+    ind: 'position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: ' + t.raised + '; transform: translateX(' + order.indexOf(theme) * 44 + 'px)',
+    themes: order.map((id) => ({
+      sel: id === theme ? 'true' : 'false', aria: id === 'auto' ? 'Auto, follows your system' : id === 'light' ? 'Light' : 'Dark', title: id === 'auto' ? 'Auto: follows your system' : id === 'light' ? 'Light' : 'Dark',
+      icon: AT_THEME_ICON[id][0], icon2: AT_THEME_ICON[id][1],
+      pick: () => c.setState({ theme: id }),
+      style: 'position: relative; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; display: grid; place-items: center; color: ' + (id === theme ? t.ink : t.muted)
+    }))
+  };
+}
+// Footer (§11.7): 1 px line top, padding 24 (phone 32 bottom), honest line left in caption muted, links right.
+const AT_FOOT_LINKS = [['Privacy', 'PagePrivacyDesk.dc.html'], ['Terms', 'PageTermsPhone.dc.html'], ['Changelog', 'PageChangelogPhone.dc.html'], ['About', 'PageAboutDesk.dc.html'], ['Buy me a coffee', 'https://buymeacoffee.com/awaketab']];
+function atFooter(t, layout) {
+  const g = AT_GUTTER[layout];
+  return {
+    style: 'flex-shrink: 0; margin-top: ' + AT_SECTION[layout] + 'px; box-sizing: border-box; padding: 24px ' + g + 'px ' + (layout === 'phone' ? 32 : 24) + 'px; border-top: 1px solid ' + t.line + '; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px',
+    line: 'margin: 0; font-size: 13px; line-height: 18px; color: ' + t.muted,
+    nav: 'display: flex; flex-wrap: wrap; column-gap: 20px',
+    link: 'min-height: 44px; display: inline-flex; align-items: center; font-size: 14px; line-height: 20px; color: ' + t.ink2 + '; text-decoration: none',
+    links: AT_FOOT_LINKS.map(([label, href]) => ({ label, href }))
+  };
+}
+/* ── end primitives ── */
+
+// Page shell on top of the primitives: t (theme tokens), p (page roles), ty (type scale per layout), hdr, ftr.
+function pageRoles(t) {
+  return {
+    ground: 'radial-gradient(1400px 900px at 50% -160px, ' + t.lift + ' 0%, ' + atRgba(t.ground, 0) + ' 72%), ' + t.ground,
+    lamp: t.lamp, lampFill: t.lamp, lampInk: t.onLamp, link: t.lamp, warn: t.warn, bad: t.bad, well: t.sunken, codeBg: t.sunken
+  };
+}
+const rgba = atRgba;
+function hm(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+function hms(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }); }
+function fullDate(iso) { return new Date(iso + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }); }
+function dateLong(ms) {
+  const d = new Date(ms);
+  return d.toLocaleDateString('en-GB', { weekday: 'long' }) + ', ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+function pad2(n) { return String(n).padStart(2, '0'); }
+function clockParts(sec) {
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+  return h ? [h + ':' + pad2(m), ':' + pad2(s)] : [pad2(m), ':' + pad2(s)];
+}
+function sysDark() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+function themeMount(c) {
+  try {
+    c.mq = window.matchMedia('(prefers-color-scheme: dark)');
+    c.onMq = (e) => c.setState({ sysDark: e.matches });
+    c.mq.addEventListener('change', c.onMq);
+  } catch (e) {}
+}
+function themeUnmount(c) { if (c.mq) c.mq.removeEventListener('change', c.onMq); }
+// The default layout matches the board width: pages whose play-me board is 390 wide default to phone.
+function layoutOf(props, def) { return ['phone', 'tablet', 'desktop'].includes(props.layout) ? props.layout : (def || 'desktop'); }
+
+// Inline markup: `code`, **strong**, [label](href), {{key}} as a keycap (kbd). Returns segments for <sc-for>.
+function segs(str, p, t) {
+  const out = [];
+  const re = /`([^`]+)`|\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)]+)\)|\{([^{}]+)\}/g;
+  let last = 0, m;
+  const plain = 'color: inherit';
+  const push = (text, style, kind) => out.push({ text, style, kind: kind || 'text', isText: true, isLink: false, href: '' });
+  while ((m = re.exec(str))) {
+    if (m.index > last) push(str.slice(last, m.index), plain);
+    if (m[1]) push(m[1], atCode(t), 'code');
+    else if (m[2]) push(m[2], 'font-weight: 600; color: ' + t.ink);
+    else if (m[5]) push(m[5], atKbd(t), 'kbd');
+    else out.push({ text: m[3], href: m[4], isText: false, isLink: true, style: '' });
+    last = re.lastIndex;
+  }
+  if (last < str.length) push(str.slice(last), plain);
+  return out;
+}
+
+// Shared shell values: theme tokens, layout flags, type scale, header, footer, gutters.
+function shell(c, sizes, current, def) {
+  const s = c.state;
+  const layout = layoutOf(c.props, def);
+  const desk = layout === 'desktop', tab = layout === 'tablet', phone = layout === 'phone';
+  const { dark, t } = atTheme(s.theme, s.sysDark);
+  const p = pageRoles(t);
+  const size = sizes[layout];
+  const g = AT_GUTTER[layout];
+  return {
+    t, p, dark, layout, isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone, notDesk: !desk,
+    W: size[0] + 'px', H: size[1] + 'px',
+    ty: Object.assign({}, AT_TYPE, { h1: phone ? AT_TYPE.h1Phone : AT_TYPE.h1, h2: phone ? AT_TYPE.h2Phone : AT_TYPE.h2, price: phone ? AT_TYPE.pricePhone : AT_TYPE.price }),
+    gut: g + 'px', secGap: AT_SECTION[layout] + 'px', mono: AT_MONO, digitFont: AT_DIGITS,
+    hdr: atHeader(c, t, layout, current, t.muted), ftr: atFooter(t, layout),
+    card: atCard(t, phone), tag: atTag(t), code: atCode(t),
+    setLight: () => c.setState({ theme: 'light' }), setDark: () => c.setState({ theme: 'dark' }), setAuto: () => c.setState({ theme: 'auto' }),
+    btnPrimary: atBtn('primary', t), btnStop: atBtn('stop', t), btnMedium: atBtn('medium', t), btnSmall: atBtn('small', t), btnSmallLamp: atBtn('smallLamp', t), btnQuiet: atBtn('quiet', t)
+  };
+}
+
+// A segmented bar (one sliding indicator), as in Main; shape kept for the page templates.
+function seg(options, current, onPick, t, opts) {
+  const b = atSeg(options, current, onPick, t, opts);
+  const i = Math.max(0, options.findIndex((o) => o[0] === current));
+  return Object.assign(b, { n: options.length, x: i * 100 + '%' });
+}
+
+const SIZES = { phone: [390, 4228], tablet: [820, 3408], desktop: [1280, 3104] };
+const STATES = ['idle', 'requesting', 'held', 'lost', 'denied', 'unsupported', 'fallback'];
+const PILL = { idle: 'Ready', requesting: 'Starting…', held: 'Screen awake', lost: 'Paused — tab hidden', denied: "Blocked — here's the fix", unsupported: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const GLYPH = { idle: DOT, requesting: DOT, held: DOT, unsupported: DOT, lost: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z', denied: 'M6 1L11.2 10.5H.8z', fallback: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z' };
+// Grid cell of each state: column, row.
+const CELL = { idle: [0, 0], requesting: [1, 0], held: [2, 0], unsupported: [0, 1], denied: [1, 1], lost: [2, 1], fallback: [0, 2] };
+const EDGES = [['idle', 'requesting', 'request()'], ['requesting', 'held', 'acquired'], ['requesting', 'denied', 'denied'], ['held', 'lost', 'released'], ['lost', 'requesting', 'retry'], ['idle', 'unsupported', 'no API'], ['unsupported', 'fallback', 'gesture']];
+const GEO = {
+  wide: { w: 700, h: 310, nw: 180, nh: 64, col: 260, row: 124, cf: '13px', showPill: true, labels: true, mono: true },
+  phone: { w: 316, h: 236, nw: 100, nh: 44, col: 108, row: 96, cf: '12px', showPill: false, labels: false, mono: false }
+};
+const SCENARIOS = {
+  real: 'Uses this browser’s own Screen Wake Lock API. Switch tabs for real to see it pause.',
+  simulated: 'An injected lock whose “tab hidden” releases it, so lost and the retry are visible.',
+  denied: 'An injected lock that rejects with NotAllowedError, as Firefox does at 5 % battery or less while not charging.',
+  unsupported: 'No Wake Lock API, so Request starts the inlined video fallback from your click.'
+};
+const MAJOR = '1';
+const CODE = {
+  esm: ['main.js', `import { createWakeLock } from '@awaketab/wake';
+
+const lock = createWakeLock();
+lock.on('change', ({ from, to, reason, advice }) => {
+  pill.textContent = to;            // idle · requesting · held · lost · denied · unsupported · fallback
+  hint.textContent = advice ?? '';  // e.g. 'iframe_no_allow', 'hidden_document'
+});
+start.addEventListener('click', () => lock.request()); // a gesture keeps the video fallback available
+stop.addEventListener('click', () => lock.release());`, 'ESM, for bundlers. Every change event carries the state it left, the state it entered, a reason and an advice code.'],
+  cdn: ['index.html', `<!-- Once the npm package is published -->
+<script src="https://cdn.jsdelivr.net/npm/@awaketab/wake@${MAJOR}/dist/awaketab-wake.iife.js"><\/script>
+<script>
+  const lock = AwakeTabWake.createWakeLock();
+  document.querySelector('#start').addEventListener('click', () => lock.request());
+<\/script>`, 'CDN, no build step. The IIFE build puts AwakeTabWake on the page.'],
+  react: ['KeepAwake.jsx', `import { useWakeLock } from '@awaketab/wake/react';
+
+export function KeepAwake() {
+  const { state, request, release } = useWakeLock();
+  return state === 'held' || state === 'fallback'
+    ? <button onClick={release}>Screen awake · Stop</button>
+    : <button onClick={request}>Keep screen on</button>;
+}`, 'Each adapter is < 400 B and imports the core, so you get one lock instance.'],
+  preact: ['KeepAwake.jsx', `import { useWakeLock } from '@awaketab/wake/preact';
+
+export function KeepAwake() {
+  const { state, request, release } = useWakeLock();
+  return state === 'held' || state === 'fallback'
+    ? <button onClick={release}>Screen awake · Stop</button>
+    : <button onClick={request}>Keep screen on</button>;
+}`, 'Each adapter is < 400 B and imports the core, so you get one lock instance.'],
+  vue: ['KeepAwake.vue', `<script setup>
+import { useWakeLock } from '@awaketab/wake/vue';
+const { state, request, release } = useWakeLock();
+<\/script>
+
+<template>
+  <button v-if="state === 'held' || state === 'fallback'" @click="release">Screen awake · Stop</button>
+  <button v-else @click="request">Keep screen on</button>
+</template>`, 'Each adapter is < 400 B and imports the core, so you get one lock instance.']
+};
+const TABS = [['esm', 'ESM'], ['cdn', 'CDN'], ['react', 'React'], ['preact', 'Preact'], ['vue', 'Vue']];
+const CMP = [
+  ['Last release', 'Maintained; semver', '16 December 2020'],
+  ['Native Wake Lock', 'Yes, first', 'Yes (when present)'],
+  ['Honest state', 'Seven states + change events with reason and advice', '`isEnabled` boolean'],
+  ['Denial diagnosis', '`classifyDenial()` advice codes', 'None'],
+  ['Fallback', 'Inlined 1-frame video, gesture-aware, pauses when hidden', 'Looping video, always on'],
+  ['Size (gzip)', '≤ 3.4 KB, fallback included', '≈ 3.2 KB'],
+  ['TypeScript · SSR', 'Native · inert on the server', 'Community typings · no'],
+  ['Adapters', 'React, Preact, Vue (< 400 B each)', 'No']
+];
+const RELATED = [['How AwakeTab is checked', '#', '→'], ['Screen Wake Lock API guide', '#', '→'], ['NoSleep.js vs Wake Lock', '#', '→']];
+const TOKEN = /(\/\/.*$|<!--.*?-->)|('[^']*'|"[^"]*"|`[^`]*`)|\b(import|from|export|function|const|return|let|await|async|new)\b|(<\/?[A-Za-z][\w-]*|\/?(?<!=)>)/g;
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.timers = [];
+    this.state = Object.assign({ theme: props.theme ?? 'auto', sysDark: sysDark(), tab: 'esm', codeCopied: false, installCopied: false }, this.fresh('real'));
+  }
+  fresh(scen) { return { scen, lock: 'idle', advice: null, log: [], visited: { idle: true }, last: null }; }
+  componentDidMount() {
+    themeMount(this);
+    try {
+      this.onVis = () => {
+        if (this.state.scen !== 'real') return;
+        if (document.visibilityState === 'visible' && this.state.lock === 'lost') this.realRequest('retry');
+      };
+      document.addEventListener('visibilitychange', this.onVis);
+    } catch (e) {}
+  }
+  componentWillUnmount() {
+    this.clear();
+    themeUnmount(this);
+    try { document.removeEventListener('visibilitychange', this.onVis); } catch (e) {}
+    clearTimeout(this.ct); clearTimeout(this.it);
+  }
+  componentDidUpdate(prev) {
+    if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme });
+  }
+  clear() {
+    this.timers.forEach(clearTimeout);
+    this.timers = [];
+    this.dropSentinel();
+  }
+  dropSentinel() {
+    const s = this.sentinel;
+    this.sentinel = null;
+    if (s) { try { s.release(); } catch (e) {} }
+  }
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms)); }
+  go(to, reason, advice) {
+    this.setState((s) => {
+      if (s.lock === to && reason !== 'retry') return {};
+      const entry = { at: Date.now(), from: s.lock, to, reason, advice: advice || null };
+      const visited = Object.assign({}, s.visited, { [to]: true });
+      return { lock: to, advice: advice || (to === 'held' || to === 'fallback' || to === 'idle' ? null : s.advice), log: [entry].concat(s.log).slice(0, 12), visited, last: [s.lock, to] };
+    });
+  }
+  realRequest(reason) {
+    let wl = null;
+    try { wl = navigator && navigator.wakeLock ? navigator.wakeLock : null; } catch (e) { wl = null; }
+    if (!wl) {
+      this.go('unsupported', 'unsupported');
+      this.later(() => this.go('fallback', 'fallback_started'), 420);
+      return;
+    }
+    this.go('requesting', reason);
+    let inIframe = false;
+    try { inIframe = window.self !== window.top; } catch (e) { inIframe = true; }
+    Promise.resolve().then(() => wl.request('screen')).then((sentinel) => {
+      this.sentinel = sentinel;
+      this.go('held', 'acquired');
+      sentinel.addEventListener('release', () => {
+        if (this.sentinel !== sentinel) return;
+        this.sentinel = null;
+        let hidden = false;
+        try { hidden = document.visibilityState === 'hidden'; } catch (e) {}
+        this.go('lost', hidden ? 'released_hidden' : 'released_platform', hidden ? 'hidden_document' : null);
+      });
+    }).catch((err) => {
+      const name = err && err.name;
+      this.go('denied', 'denied', name === 'SecurityError' ? 'insecure_context' : inIframe ? 'iframe_no_allow' : 'battery_saver');
+    });
+  }
+  request() {
+    const s = this.state;
+    if (s.lock === 'held' || s.lock === 'fallback' || s.lock === 'requesting') return;
+    if (s.scen === 'real') return this.realRequest('request');
+    if (s.scen === 'unsupported') {
+      if (s.lock !== 'unsupported') this.go('unsupported', 'unsupported');
+      this.later(() => this.go('fallback', 'fallback_started'), 420);
+      return;
+    }
+    this.go('requesting', 'request');
+    if (s.scen === 'denied') this.later(() => this.go('denied', 'denied', 'battery_saver'), 350);
+    else this.later(() => this.go('held', 'acquired'), 350);
+  }
+  release() {
+    this.clear();
+    if (this.state.lock !== 'idle') this.go('idle', 'user_release');
+  }
+  hide() {
+    if (this.state.scen !== 'simulated') return;
+    if (this.state.lock === 'held') this.go('lost', 'released_hidden', 'hidden_document');
+  }
+  show() {
+    if (this.state.scen !== 'simulated' || this.state.lock !== 'lost') return;
+    this.go('requesting', 'retry');
+    this.later(() => this.go('held', 'acquired'), 350);
+  }
+  highlight(code, t, p, dark) {
+    const kw = dark ? '#A594FF' : '#5A47CF';
+    return code.split('\n').map((line, i) => {
+      const segsOut = [];
+      let last = 0, m;
+      TOKEN.lastIndex = 0;
+      while ((m = TOKEN.exec(line))) {
+        if (m.index > last) segsOut.push({ x: line.slice(last, m.index), c: t.ink });
+        segsOut.push({ x: m[0], c: m[1] ? t.muted : m[2] ? p.link : m[3] ? kw : t.ink2 });
+        last = TOKEN.lastIndex;
+      }
+      if (last < line.length) segsOut.push({ x: line.slice(last), c: t.ink });
+      return { n: i + 1, segs: segsOut };
+    });
+  }
+  renderVals() {
+    const s = this.state;
+    const sh = shell(this, SIZES, '', 'desktop');
+    const { t, p, dark, isDesk, isTab, isPhone } = sh;
+    const TONE = { idle: t.muted, requesting: p.lamp, held: p.lamp, unsupported: p.lamp, fallback: p.lamp, lost: p.warn, denied: p.bad };
+    const tone = TONE[s.lock];
+    const live = s.lock === 'held' || s.lock === 'fallback';
+
+    // Diagram geometry
+    const G = isPhone ? GEO.phone : GEO.wide;
+    const pos = (id) => { const [c, r] = CELL[id]; return [c * G.col, r * G.row]; };
+    const ctr = (id) => { const [x, y] = pos(id); return [x + G.nw / 2, y + G.nh / 2]; };
+    const clip = (dx, dy) => Math.min(dx ? (G.nw / 2) / Math.abs(dx) : Infinity, dy ? (G.nh / 2) / Math.abs(dy) : Infinity);
+    const edges = EDGES.map(([a, b, label]) => {
+      const [ax, ay] = ctr(a), [bx, by] = ctr(b);
+      const len = Math.hypot(bx - ax, by - ay), dx = (bx - ax) / len, dy = (by - ay) / len;
+      const sa = clip(dx, dy) + 4, sb = clip(dx, dy) + 5;
+      const x1 = ax + dx * sa, y1 = ay + dy * sa, x2 = bx - dx * sb, y2 = by - dy * sb;
+      const hx = x2 - dx * 8, hy = y2 - dy * 8, nx = -dy * 4.5, ny = dx * 4.5;
+      const on = s.last && s.last[0] === a && s.last[1] === b;
+      const f = (n) => n.toFixed(1);
+      return {
+        d: 'M' + f(x1) + ' ' + f(y1) + 'L' + f(hx) + ' ' + f(hy), head: 'M' + f(x2) + ' ' + f(y2) + 'L' + f(hx + nx) + ' ' + f(hy + ny) + 'L' + f(hx - nx) + ' ' + f(hy - ny) + 'Z',
+        stroke: on ? TONE[b] : t.line2, sw: on ? 2.5 : 1.5, dash: on ? 'none' : '4 5',
+        label: G.labels ? label : '', hasLabel: G.labels, lx: f((x1 + x2) / 2) + 'px', ly: f((y1 + y2) / 2) + 'px', ink: on ? t.ink : t.muted
+      };
+    }).filter((e) => e);
+    const nodes = STATES.map((id) => {
+      const [x, y] = pos(id);
+      const cur = s.lock === id, seen = !!s.visited[id];
+      const tn = TONE[id];
+      return {
+        id, pill: PILL[id], x: x + 'px', y: y + 'px', cur: cur ? 'step' : 'false', glyph: GLYPH[id], tone: tn,
+        border: cur ? atRgba(tn, 0.45) : seen ? t.line2 : t.line,
+        bg: cur ? 'linear-gradient(' + atRgba(tn, 0.14) + ', ' + atRgba(tn, 0.14) + '), ' + t.surface : t.surface,
+        shadow: cur ? '0 0 0 4px ' + rgba(tn, 0.1) + ', 0 0 30px ' + rgba(tn, 0.28) : 'none',
+        ink: cur || seen ? t.ink : t.muted, sub: cur ? t.ink2 : t.muted, dot: cur || seen ? tn : t.muted
+      };
+    });
+    const scale = isTab ? 632 / 700 : 1;
+
+    const log = s.log.map((e, i) => ({
+      time: hms(e.at), from: e.from, to: e.to, why: e.reason + (e.advice ? ', ' + e.advice : ''),
+      toInk: TONE[e.to] === t.muted ? t.ink : TONE[e.to], cls: i === 0 ? 'at-in' : ''
+    }));
+
+    const [fileName, code, tabNote] = CODE[s.tab];
+    const ti = TABS.findIndex((x) => x[0] === s.tab);
+    const tabSeg = seg(TABS, s.tab, (id) => this.setState({ tab: id, codeCopied: false }), t, { fs: isPhone ? 13 : 14 });
+    const tabs = tabSeg.items.map((b) => Object.assign({}, b, { tid: 'lib-tab-' + b.id }));
+    const sim = s.scen === 'simulated';
+
+    return Object.assign(sh, {
+      mainPad: isDesk ? '40px 80px 0' : isTab ? '32px 32px 0' : '24px 16px 0', tabSeg, notePad: isPhone ? '20px' : '24px',
+      chipLink: 'min-height: 44px; padding: 0 16px; box-sizing: border-box; display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; border: 1px solid ' + t.line2 + '; color: ' + t.ink + '; text-decoration: none; font-size: 15px; line-height: 22px; font-weight: 500',
+      lampSoft: rgba(p.lamp, 0.14), lampLine: rgba(p.lamp, 0.45), warnSoft: rgba(p.warn, 0.08), warnLine: rgba(p.warn, 0.32),
+      installLabel: s.installCopied ? 'Copied' : 'Copy', tagSoon: atTag(t, p.lamp),
+      copyInstall: () => {
+        try { navigator.clipboard.writeText('npm install @awaketab/wake'); } catch (e) {}
+        clearTimeout(this.it); this.setState({ installCopied: true });
+        this.it = setTimeout(() => this.setState({ installCopied: false }), 2000);
+      },
+      cardPad: isDesk ? '32px' : isTab ? '24px' : '20px 16px',
+      cardShadow: dark ? '0 40px 80px -48px rgba(0,0,0,0.8)' : '0 30px 60px -40px rgba(14,23,38,0.25)',
+      aura: rgba(tone, live ? (dark ? 0.12 : 0.08) : 0.04),
+      demoCols: isDesk ? 'minmax(0, 1fr) 340px' : 'minmax(0, 1fr)',
+      demoAreas: isDesk ? '"head head" "ctrl ctrl" "diag log"' : '"head" "ctrl" "diag" "log"',
+      selW: isPhone ? '100%' : '380px',
+      scen: s.scen,
+      pickScenario: (e) => { this.clear(); this.setState(this.fresh(e.target.value in SCENARIOS ? e.target.value : 'real')); },
+      scenNote: SCENARIOS[s.scen] + (sim ? '' : ' Simulate tab hidden and visible work in the second scenario.'),
+      cur: { id: s.lock, pill: PILL[s.lock], tone, soft: rgba(tone, 0.12), line: rgba(tone, 0.38), glow: live ? rgba(tone, 0.8) : 'transparent', glyph: GLYPH[s.lock], fill: s.lock === 'idle' || s.lock === 'requesting' ? 'transparent' : tone },
+      pill: atPill('M', s.lock, t),
+      hasAdvice: !!s.advice, advice: s.advice || '',
+      btnCols: isPhone ? 'repeat(2, minmax(0, 1fr))' : 'auto auto auto auto',
+      request: () => this.request(), release: () => this.release(), hide: () => this.hide(), show: () => this.show(),
+      simOff: !sim, btnRequest: atBtn('mediumLamp', t), btnRelease: atBtn('medium', t) + '; border: 0; background: ' + t.stopBg + '; color: ' + t.stopInk,
+      btnSim: atBtn('medium', t) + (sim ? '' : '; background: transparent; border-color: ' + t.line + '; color: ' + t.muted + '; cursor: not-allowed') + (isPhone ? '; font-size: 14px; padding: 0 12px' : ''),
+      g: { wpx: G.w + 'px', hpx: G.h + 'px', w: Math.round(G.w * scale) + 'px', h: Math.round(G.h * scale) + 'px', wn: G.w, hn: G.h, nw: G.nw + 'px', nh: G.nh + 'px', cf: G.cf, idFont: G.mono ? AT_MONO : 'font-family: inherit', showPill: G.showPill, scale: scale.toFixed(4) },
+      edges, nodes,
+      log, logEmpty: log.length === 0, logMin: isDesk ? '348px' : '240px',
+      useCols: isDesk ? 'minmax(0, 300px) minmax(0, 1fr)' : 'minmax(0, 1fr)',
+      tabs, tabX: tabSeg.x, tabId: 'lib-tab-' + s.tab, tabNote, fileName,
+      lines: this.highlight(code, t, p, dark), lineNo: t.muted, codeFont: isPhone ? '13px' : '14px',
+      codeCopied: s.codeCopied ? 'Copied' : '', copyAria: 'Copy the ' + TABS[ti][1] + ' example',
+      copyCode: () => {
+        try { navigator.clipboard.writeText(code); } catch (e) {}
+        clearTimeout(this.ct); this.setState({ codeCopied: true });
+        this.ct = setTimeout(() => this.setState({ codeCopied: false }), 2000);
+      },
+      cmp: CMP.map(([label, a, b], i) => ({ label, a: segs(a, p, t), b: segs(b, p, t), border: i ? '1px solid ' + t.line : 'none' })),
+      related: RELATED.map(([label, href, arrow]) => ({ label, href, arrow }))
+    });
+  }
+}
+</script>
+</body>
+</html>

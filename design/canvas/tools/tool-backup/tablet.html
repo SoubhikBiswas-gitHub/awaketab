@@ -1,0 +1,203 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.96)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #5BE0E8;outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-wave{animation:at-wave 9s linear infinite}
+.at-wave2{animation:at-wave 15s linear infinite reverse}
+.at-bub{animation:at-bub 9s ease-in infinite}
+.at-cloud{animation:at-drift 90s linear infinite}
+.at-cloud2{animation:at-drift 130s linear infinite;animation-delay:-60s}
+.at-tw{animation:at-tw 5s ease-in-out infinite}
+.at-tw2{animation:at-tw 7s ease-in-out infinite;animation-delay:-3s}
+.at-glint{transform-origin:top center;animation:at-glint 6s ease-in-out infinite}
+.at-shim{animation:at-shim 3.8s var(--ease) infinite}
+.at-float{animation:at-float 7s ease-in-out infinite}
+.at-scrim{animation:at-fade .5s var(--ease) both}
+.at-sheet-up{animation:at-up .7s var(--ease) both}
+.at-sheet-side{animation:at-side .7s var(--ease) both}
+.at-sheet-body{scrollbar-width:thin}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-wave{to{transform:translateX(-358px)}}
+@keyframes at-bub{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.55}100%{transform:translateY(-240px) scale(1.1);opacity:0}}
+@keyframes at-drift{from{transform:translateX(-170px)}to{transform:translateX(420px)}}
+@keyframes at-tw{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes at-glint{0%,100%{transform:scaleX(.6);opacity:.35}50%{transform:scaleX(1);opacity:.7}}
+@keyframes at-shim{0%{transform:translateX(-120%)}100%{transform:translateX(420%)}}
+@keyframes at-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes at-fade{from{opacity:0}to{opacity:1}}
+@keyframes at-up{from{opacity:0;transform:translateY(72px)}to{opacity:1;transform:none}}
+@keyframes at-side{from{opacity:0;transform:translateX(56px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head><body>
+<div class="at-root" style="width: 820px; height: 1180px; box-sizing: border-box; position: relative; overflow: hidden; background: radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%, #070A11 100%); color: #EAF0F7; display: flex; flex-direction: column">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; left: -25%; top: 4%; width: 150%; height: 70%; background: radial-gradient(45% 45% at 50% 50%, rgba(91,224,232,0.16) 0%, transparent 70%); pointer-events: none"></div>
+
+  <header style="position: relative; height: 60px; flex-shrink: 0; box-sizing: border-box; padding: 0 20px 0 32px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+    <a href="#" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #EAF0F7; font-weight: 600; font-size: 17px; letter-spacing: -0.01em; min-height: 44px">
+      <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#EAF0F7" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="#5BE0E8" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="#5BE0E8" style="transition: fill .6s"></circle></svg>
+      AwakeTab
+    </a>
+    
+    <div style="display: flex; align-items: center; gap: 6px">
+      <div role="radiogroup" aria-label="Theme" style="position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 3px; border-radius: 999px; background: #111826; border: 1px solid #1F2940">
+        <div aria-hidden="true" class="at-slide" style="position: absolute; left: 3px; top: 3px; width: 44px; height: 44px; border-radius: 999px; background: #26324B; box-shadow: 0 1px 3px rgba(0,0,0,0.4); transform: translateX(44px)"></div>
+        <button role="radio" aria-checked="false" aria-label="Light" title="Light" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #8E9AAE; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button>
+        <button role="radio" aria-checked="true" aria-label="Dark" title="Dark" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #EAF0F7; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button>
+        <button role="radio" aria-checked="false" aria-label="Auto, follows your system" title="Auto: follows your system" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #8E9AAE; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button>
+      </div>
+      
+      <button aria-label="Your stats" aria-haspopup="dialog" aria-expanded="false" style="width: 44px; height: 44px; border: 0; background: transparent; border-radius: 12px; color: #B7C1D1; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-7"></path></svg></button>
+      
+      <button aria-label="Settings" aria-haspopup="dialog" aria-expanded="false" style="width: 44px; height: 44px; border: 0; background: transparent; border-radius: 12px; color: #B7C1D1; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></button>
+    </div>
+  </header>
+
+  <div style="position: relative; flex-shrink: 0; padding: 0 32px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+    <time style="font-size: 15px; color: #B7C1D1">Saturday, 26 September 2026</time>
+    <time style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 15px; color: #EAF0F7; font-variant-numeric: tabular-nums">10:00 PM</time>
+  </div>
+
+  <div style="position: relative; flex-grow: 1; display: grid; grid-template-columns: minmax(0, 520px); justify-content: center; grid-template-rows: auto auto 459px auto 1fr auto; grid-template-areas: &quot;tabs&quot; &quot;pill&quot; &quot;face&quot; &quot;note&quot; &quot;.&quot; &quot;dock&quot;; row-gap: 20px; padding: 28px 24px 48px">
+
+    <div style="grid-area: tabs; justify-self: center; width: 440px">
+      <div role="tablist" aria-label="Clock face" style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: #111826; border: 1px solid #1F2940">
+        <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 4); height: 38px; box-sizing: border-box; border-radius: 999px; background: rgba(91,224,232,0.12); border: 1px solid rgba(91,224,232,0.38); transform: translateX(0%)"></div>
+        
+          <button role="tab" aria-selected="true" style="position: relative; height: 38px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; font-weight: 600; color: #EAF0F7">Ring</button>
+        
+          <button role="tab" aria-selected="false" style="position: relative; height: 38px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; font-weight: 500; color: #B7C1D1">Bold</button>
+        
+          <button role="tab" aria-selected="false" style="position: relative; height: 38px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; font-weight: 500; color: #B7C1D1">Horizon</button>
+        
+          <button role="tab" aria-selected="false" style="position: relative; height: 38px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; font-weight: 500; color: #B7C1D1">Tide</button>
+        
+      </div>
+    </div>
+
+    <div style="grid-area: pill; justify-self: center">
+      <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: 10px; height: 38px; padding: 0 17px 0 13px; box-sizing: border-box; border-radius: 999px; background: rgba(91,224,232,0.12); border: 1px solid rgba(91,224,232,0.38); font-size: 15px; font-weight: 600; color: #EAF0F7">
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 0 5px rgba(91,224,232,0.8))"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z" fill="#5BE0E8" stroke="#5BE0E8" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+        Screen awake
+      </output>
+    </div>
+
+    <div style="grid-area: face; display: flex; align-items: center; justify-content: center">
+      <div style="position: relative; width: 483px; height: 459px">
+        <div style="position: absolute; left: 0; top: 0; width: 358px; height: 340px; transform: scale(1.35); transform-origin: 0 0">
+
+          
+            <div class="at-in" style="position: absolute; inset: 0; display: grid; place-items: center">
+              <div style="position: relative; width: 320px; height: 320px">
+                <div aria-hidden="true" style="position: absolute; inset: 0; border-radius: 50%; background: repeating-conic-gradient(from -0.6deg, #2A3752 0deg 1.2deg, transparent 1.2deg 6deg); -webkit-mask: radial-gradient(circle, transparent 125px, #000 126px, #000 132px, transparent 133px); mask: radial-gradient(circle, transparent 125px, #000 126px, #000 132px, transparent 133px)"></div>
+                
+                  <div aria-hidden="true" class="at-sweep" style="position: absolute; inset: 28px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg 240deg, rgba(91,224,232,0.16) 360deg)"></div>
+                
+                <svg width="320" height="320" viewBox="0 0 320 320" aria-hidden="true" style="position: absolute; inset: 0; overflow: visible">
+                  <defs><filter id="ringGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"></feGaussianBlur></filter></defs>
+                  <circle cx="160" cy="160" r="146" fill="none" stroke="#1A2336" stroke-width="6" stroke-dasharray="none"></circle>
+                  <g transform="rotate(-90 160 160)">
+                    <circle class="at-arc" cx="160" cy="160" r="146" fill="none" stroke="#5BE0E8" stroke-opacity="0.45" stroke-width="14" stroke-linecap="round" filter="url(#ringGlow)" style="stroke-dasharray: 743.0 917.3"></circle>
+                    <circle class="at-arc" cx="160" cy="160" r="146" fill="none" stroke="#5BE0E8" stroke-opacity="1" stroke-width="6" stroke-linecap="round" style="stroke-dasharray: 743.0 917.3"></circle>
+                  </g>
+                  <g class="at-lin" style="transform: rotate(291.60deg); transform-origin: 160px 160px; opacity: 1">
+                    <circle class="at-halo" cx="160" cy="14" r="7" fill="#5BE0E8"></circle>
+                    <circle cx="160" cy="14" r="5.5" fill="#EAF0F7"></circle>
+                  </g>
+                </svg>
+                <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px">
+                  <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8E9AAE">Time left</div>
+                  <div role="timer" aria-label="24:18 left" style="font-family: 'Geist Mono', ui-monospace, monospace; font-weight: 300; font-size: 76px; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; color: #EAF0F7; transition: color .6s">24<span style="color: #8E9AAE">:18</span></div>
+                  <div style="font-size: 15px; color: #8E9AAE">until <span style="color: #EAF0F7; font-weight: 500">10:24 PM</span></div>
+                </div>
+              </div>
+            </div>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </div>
+    </div>
+
+    <div style="grid-area: note; text-align: center">
+      
+      
+        <p class="at-rise" style="margin: 0; font-size: 14px; line-height: 1.5; color: #8E9AAE; text-wrap: pretty">Started 10:17 PM · keep this tab visible</p>
+      
+    </div>
+
+    <div style="grid-area: dock; display: flex; flex-direction: column; gap: 20px">
+      
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          
+            <div role="group" aria-label="Session length" style="position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: #111826; border: 1px solid #1F2940">
+              <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 7); height: 46px; box-sizing: border-box; border-radius: 999px; background: rgba(91,224,232,0.14); border: 1px solid rgba(91,224,232,0.45); opacity: 1; transform: translateX(100%)"></div>
+              
+                <button aria-pressed="false" aria-label="15 minutes" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #B7C1D1; white-space: nowrap">15m</button>
+              
+                <button aria-pressed="true" aria-label="30 minutes" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 600; color: #EAF0F7; white-space: nowrap">30m</button>
+              
+                <button aria-pressed="false" aria-label="45 minutes" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #B7C1D1; white-space: nowrap">45m</button>
+              
+                <button aria-pressed="false" aria-label="1 hour" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #B7C1D1; white-space: nowrap">1h</button>
+              
+                <button aria-pressed="false" aria-label="2 hours" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #B7C1D1; white-space: nowrap">2h</button>
+              
+                <button aria-pressed="false" aria-label="4 hours" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #B7C1D1; white-space: nowrap">4h</button>
+              
+                <button aria-pressed="false" aria-label="No limit" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #B7C1D1; white-space: nowrap">No limit</button>
+              
+            </div>
+            <div style="display: flex; justify-content: center; gap: 8px">
+              <button style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px dashed #33405C; background: transparent; font-size: 14px; font-weight: 500; color: #B7C1D1">Until a time…</button>
+              <button style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px dashed #33405C; background: transparent; font-size: 14px; font-weight: 500; color: #B7C1D1">Custom…</button>
+            </div>
+          
+          
+          
+        </div>
+      
+
+      
+
+      
+        <div class="at-rise" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          
+            <button style="height: 60px; border-radius: 20px; border: 1px solid #33405C; background: #111826; font-size: 17px; font-weight: 600; color: #EAF0F7">+15 min</button>
+          
+          <button style="height: 60px; border-radius: 20px; border: 0; background: #EAF0F7; font-size: 17px; font-weight: 600; color: #0A0E16; display: flex; align-items: center; justify-content: center; gap: 10px">Stop<kbd aria-hidden="true" style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; padding: 2px 7px; border-radius: 6px; border: 1px solid currentColor; opacity: 0.6">Space</kbd></button>
+        </div>
+      
+
+      
+
+      
+
+      
+    </div>
+  </div>
+
+  
+</div>
+</body></html>

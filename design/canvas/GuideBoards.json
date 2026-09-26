@@ -1,0 +1,122 @@
+{
+ "GuideOn.dc.html": {
+  "w": 390,
+  "h": 6010,
+  "title": "/on/iphone-safari · follows your system",
+  "is_interactive": true
+ },
+ "GuideOnPhoneDark.dc.html": {
+  "w": 390,
+  "h": 6010,
+  "title": "/on/iphone-safari · phone · dark",
+  "is_interactive": true
+ },
+ "GuideOnDeskLight.dc.html": {
+  "w": 1280,
+  "h": 5680,
+  "title": "/on/iphone-safari · desktop · light",
+  "is_interactive": true
+ },
+ "GuideOnStalePhone.dc.html": {
+  "w": 390,
+  "h": 6010,
+  "title": "/on/iphone-safari · phone · light · stale badge",
+  "is_interactive": true
+ },
+ "GuideVs.dc.html": {
+  "w": 390,
+  "h": 5360,
+  "title": "/vs/nosleep-page · follows your system",
+  "is_interactive": true
+ },
+ "GuideVsPhoneLight.dc.html": {
+  "w": 390,
+  "h": 5360,
+  "title": "/vs/nosleep-page · phone · light",
+  "is_interactive": true
+ },
+ "GuideVsDeskDark.dc.html": {
+  "w": 1280,
+  "h": 4070,
+  "title": "/vs/nosleep-page · desktop · dark",
+  "is_interactive": true
+ },
+ "GuideLearn.dc.html": {
+  "w": 390,
+  "h": 5690,
+  "title": "/learn/screen-wake-lock-api-guide · follows your system",
+  "is_interactive": true
+ },
+ "GuideLearnDeskDark.dc.html": {
+  "w": 1280,
+  "h": 5000,
+  "title": "/learn/screen-wake-lock-api-guide · desktop · dark",
+  "is_interactive": true
+ },
+ "GuideLearnPhoneLight.dc.html": {
+  "w": 390,
+  "h": 5690,
+  "title": "/learn/screen-wake-lock-api-guide · phone · light",
+  "is_interactive": true
+ },
+ "GuideGuides.dc.html": {
+  "w": 390,
+  "h": 4500,
+  "title": "/guides/iphone-auto-lock-never-greyed-out · follows your system",
+  "is_interactive": true
+ },
+ "GuideGuidesPhoneDark.dc.html": {
+  "w": 390,
+  "h": 4500,
+  "title": "/guides/iphone-auto-lock · phone · dark",
+  "is_interactive": true
+ },
+ "GuideGuidesDeskLight.dc.html": {
+  "w": 1280,
+  "h": 3870,
+  "title": "/guides/iphone-auto-lock · desktop · light",
+  "is_interactive": true
+ },
+ "PresetPage.dc.html": {
+  "w": 390,
+  "h": 2470,
+  "title": "/30m · follows your system",
+  "is_interactive": true
+ },
+ "PresetPhoneDark.dc.html": {
+  "w": 390,
+  "h": 2470,
+  "title": "/30m · phone · dark",
+  "is_interactive": true
+ },
+ "PresetDeskLight.dc.html": {
+  "w": 1280,
+  "h": 1900,
+  "title": "/30m · desktop · light",
+  "is_interactive": true
+ },
+ "PresetTablet.dc.html": {
+  "w": 820,
+  "h": 2350,
+  "title": "/30m · tablet · dark",
+  "is_interactive": true
+ },
+ "UntilPage.dc.html": {
+  "w": 390,
+  "h": 2100,
+  "title": "/until/07-30 · follows your system",
+  "is_interactive": true
+ },
+ "UntilPhoneLight.dc.html": {
+  "w": 390,
+  "h": 2100,
+  "title": "/until/07-30 · phone · light · evening, ends tomorrow",
+  "is_interactive": true
+ },
+ "UntilDeskDark.dc.html": {
+  "w": 1280,
+  "h": 1750,
+  "title": "/until/07-30 · desktop · dark · morning, ends today",
+  "is_interactive": true
+ }
+}

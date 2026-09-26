@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · Chrome popup</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease),opacity .45s var(--ease)}
+button:active{transform:scale(.96)}
+button:disabled,input:disabled,select:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+a{transition:color .45s var(--ease),background-color .45s var(--ease),border-color .45s var(--ease)}
+h1,h2,h3,h4,p,figure,blockquote{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+.at-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.at-num{font-family:Geist,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"zero" 0}
+.at-kick{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.2s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-fade{transition:background-color .6s var(--ease),border-color .6s var(--ease),opacity .6s var(--ease),fill .6s var(--ease),stroke .6s var(--ease)}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-breathe{animation:at-breathe 3.4s var(--ease) infinite alternate}
+.at-ignite{transform-box:fill-box;transform-origin:center;animation:at-ignite .6s var(--ease) .3s both}
+.at-travel{animation:at-travel .6s var(--ease) both}
+.at-off{transition:stroke-dasharray .9s var(--ease),stroke-opacity .9s var(--ease),opacity .9s var(--ease),fill .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-breathe{from{opacity:.55}to{opacity:1}}
+@keyframes at-ignite{0%{transform:scale(.6);opacity:.4}55%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes at-travel{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--at-tx,0),var(--at-ty,0)) scale(.5);opacity:0}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+<style>
+.at-draw{animation:at-draw .4s var(--ease) backwards}
+@keyframes at-draw{from{stroke-dasharray:0.01 400}}
+</style>
+</helmet>
+<div class="at-root" style="--at-focus: {{lamp}}; width: 360px; height: 600px; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column; padding: 0 16px 12px">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; left: -30%; top: -8%; width: 160%; height: 60%; background: radial-gradient(45% 45% at 50% 50%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
+
+  <header style="position: relative; height: 60px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+    <div style="display: flex; align-items: center; gap: 8px; min-height: 44px; color: {{t.ink}}; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{bead}}" style="transition: fill .6s"></circle></svg><h1 style="font-size: 17px; line-height: 24px; font-weight: 600">AwakeTab</h1></div>
+    <button aria-label="Settings" title="Settings" style="width: 44px; height: 44px; margin-inline-end: -12px; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></button>
+  </header>
+
+  <section aria-label="Status" style="position: relative; min-height: 128px; flex-shrink: 0; display: grid; grid-template-columns: 124px minmax(0, 1fr); column-gap: 16px; align-items: center">
+    <div style="position: relative; width: 124px; height: 124px">
+      <div aria-hidden="true" style="position: absolute; inset: 0; border-radius: 50%; background: repeating-conic-gradient(from -0.6deg, {{t.tick}} 0deg 1.2deg, transparent 1.2deg 6deg); -webkit-mask: radial-gradient(circle, transparent 44px, #000 45px, #000 48px, transparent 49px); mask: radial-gradient(circle, transparent 44px, #000 45px, #000 48px, transparent 49px)"></div>
+      <sc-if value="{{held}}" hint-placeholder-val="{{true}}">
+        <div aria-hidden="true" class="at-sweep" style="position: absolute; inset: 12px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg 240deg, {{toneFaint}} 360deg)"></div>
+      </sc-if>
+      <svg width="124" height="124" viewBox="0 0 124 124" aria-hidden="true" style="position: absolute; inset: 0; overflow: visible">
+        <defs><filter id="{{gid}}" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"></feGaussianBlur></filter></defs>
+        <circle cx="62" cy="62" r="56" fill="none" stroke="{{t.track}}" stroke-width="5"></circle>
+        <g transform="rotate(-90 62 62)">
+          <circle class="{{arcCls}} at-draw" cx="62" cy="62" r="56" fill="none" stroke="{{tone2}}" stroke-opacity="{{glowOp}}" stroke-width="10" stroke-linecap="round" filter="url(#{{gid}})" style="stroke-dasharray: {{arcDash}}"></circle>
+          <circle class="{{arcCls}} at-draw" cx="62" cy="62" r="56" fill="none" stroke="{{tone2}}" stroke-opacity="{{arcOp}}" stroke-width="5" stroke-linecap="round" style="stroke-dasharray: {{arcDash}}"></circle>
+        </g>
+        <g class="at-lin" style="transform: rotate({{tipDeg}}); transform-origin: 62px 62px; opacity: {{tipOp}}">
+          <circle class="at-halo" cx="62" cy="6" r="5" fill="{{tone2}}"></circle>
+          <circle class="{{tipCls}}" cx="62" cy="6" r="4" fill="{{t.ink}}"></circle>
+        </g>
+      </svg>
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+        <sc-if value="{{showKicker}}" hint-placeholder-val="{{false}}">
+          <div style="font-size: 13px; line-height: 16px; font-weight: 500; color: {{t.muted}}">{{kicker}}</div>
+        </sc-if>
+        <div role="timer" aria-label="{{timerAria}}" class="at-num" style="display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 300; color: {{numColor}}; transition: color .6s">
+          <sc-if value="{{showDays}}" hint-placeholder-val="{{false}}">
+            <span style="font-size: 13px; line-height: 16px; font-weight: 500; color: {{t.ink2}}">{{dayPart}}</span>
+          </sc-if>
+          <span style="font-size: {{digitSize}}; line-height: 1; letter-spacing: -0.02em; white-space: nowrap">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></span>
+        </div>
+        <div style="max-width: 96px; text-align: center; font-size: 13px; line-height: 16px; font-weight: 500; color: {{t.muted}}">{{caption}}</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0">
+      <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: {{pl.gap}}; height: {{pl.h}}; max-width: 100%; padding: {{pl.pad}}; box-sizing: border-box; border-radius: 999px; background: {{pl.soft}}; border: 1px solid {{pl.line}}; font-size: {{pl.fs}}; line-height: {{pl.lh}}; font-weight: 600; color: {{t.ink}}; white-space: nowrap"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0; overflow: visible; filter: drop-shadow(0 0 4px {{pl.glow}})"><path class="{{pl.cls}}" d="{{pl.glyph}}" fill="{{pl.fill}}" stroke="{{pl.tone}}" stroke-width="{{pl.stroke}}" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pl.label}}</output>
+      <sc-if value="{{showCaveat}}" hint-placeholder-val="{{false}}">
+        <p class="at-in" style="display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}">
+          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M10.4 7.6A4.6 4.6 0 1 1 4.4 1.6a3.7 3.7 0 0 0 6 6z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+          Screen may dim or lock
+        </p>
+      </sc-if>
+      <sc-if value="{{showMeta}}" hint-placeholder-val="{{true}}">
+        <p class="{{metaCls}}" style="font-size: 13px; line-height: 18px; font-weight: {{metaWeight}}; color: {{metaColor}}; text-wrap: pretty">{{meta}}</p>
+      </sc-if>
+      <sc-if value="{{showExtend}}" hint-placeholder-val="{{false}}">
+        <div class="at-rise" role="group" aria-label="{{extendLabel}}" style="align-self: stretch; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <sc-for list="{{extendOpts}}" as="x" hint-placeholder-count="3">
+            <button onClick="{{x.pick}}" aria-label="{{x.aria}}" style="height: 44px; border-radius: 12px; border: 1px solid {{x.border}}; background: {{x.bg}}; font-size: 13px; line-height: 18px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">{{x.label}}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <sc-if value="{{showPrimary}}" hint-placeholder-val="{{true}}">
+    <div style="margin-top: 12px; flex-shrink: 0">
+      <sc-if value="{{live}}" hint-placeholder-val="{{false}}">
+        <button onClick="{{stop}}" style="width: 100%; height: 60px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 0; background: {{t.primaryBg}}; color: {{t.primaryInk}}; font-size: 17px; line-height: 24px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px">Stop</button>
+      </sc-if>
+      <sc-if value="{{idle}}" hint-placeholder-val="{{true}}">
+        <button onClick="{{start}}" style="width: 100%; height: 60px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>{{startLabel}}</button>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <div role="radiogroup" aria-label="Keep awake" style="margin-top: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 12px">
+      <span style="font-size: 13px; line-height: 18px; font-weight: 600; color: {{t.ink2}}">Keep awake</span>
+      <div style="position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+        <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 2); height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{levelX}})"></div>
+        <sc-for list="{{levels}}" as="l" hint-placeholder-count="2">
+          <button role="radio" aria-checked="{{l.sel}}" onClick="{{l.pick}}" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; line-height: 20px; font-weight: {{l.weight}}; color: {{l.color}}; display: flex; align-items: center; justify-content: center; gap: 8px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{l.icon}}"></path></svg>
+            {{l.label}}
+          </button>
+        </sc-for>
+      </div>
+    </div>
+    <p aria-live="polite" style="min-height: 36px; font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{levelHelp}}</p>
+  </div>
+
+  <div style="margin-top: 12px; flex-shrink: 0">
+    <sc-if value="{{panelNone}}" hint-placeholder-val="{{true}}">
+      <div role="group" aria-label="Session length" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{chips}}" as="c" hint-placeholder-count="7">
+          <button aria-pressed="{{c.sel}}" aria-label="{{c.aria}}" onClick="{{c.pick}}" class="at-slide" style="height: 44px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{c.ring}}; background: {{c.bg}}; font-size: 14px; line-height: 20px; font-weight: {{c.weight}}; color: {{c.color}}; white-space: nowrap">{{c.label}}</button>
+        </sc-for>
+        <button aria-pressed="{{untilSel}}" aria-label="{{untilAria}}" onClick="{{openUntil}}" class="at-slide" style="height: 44px; box-sizing: border-box; border-radius: 999px; border: 1px {{untilStyle}} {{untilBorder}}; background: {{untilBg}}; font-size: 14px; line-height: 20px; font-weight: {{untilWeight}}; color: {{untilInk}}; white-space: nowrap">{{untilChip}}</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{panelUntil}}" hint-placeholder-val="{{false}}">
+      <div class="at-in" role="group" aria-label="Stay awake until" style="display: flex; flex-direction: column; gap: 8px">
+        <div style="display: grid; grid-template-columns: 48px minmax(0, 1fr) 48px; align-items: center; gap: 8px">
+          <button type="button" onClick="{{untilLess}}" aria-label="15 minutes earlier" style="height: 48px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; font-size: 20px; line-height: 28px; color: {{t.ink}}">−</button>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
+            <span class="at-kick" style="color: {{t.muted}}">Stay awake until</span>
+            <output class="at-num" style="font-size: 24px; line-height: 28px; font-weight: 300; color: {{t.ink}}">{{draftTime}}</output>
+          </div>
+          <button type="button" onClick="{{untilMore}}" aria-label="15 minutes later" style="height: 48px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; font-size: 20px; line-height: 28px; color: {{t.ink}}">+</button>
+        </div>
+        <p aria-live="polite" style="text-align: center; font-size: 13px; line-height: 18px; color: {{t.muted}}">{{draftSummary}}</p>
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 8px">
+          <button type="button" onClick="{{closeUntil}}" style="height: 44px; box-sizing: border-box; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap">Cancel</button>
+          <button type="button" onClick="{{startUntil}}" style="height: 44px; border-radius: 12px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 15px; line-height: 22px; font-weight: 600">Start</button>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <footer style="margin-top: auto; padding-top: 8px; border-top: 1px solid {{t.line}}; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0">
+    <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">Works while Chrome runs, even with the tab hidden or the window minimised. It can't stop sleep when you close the lid.</p>
+    <a href="https://awaketab.com/?source=ext" target="_blank" rel="noopener" style="align-self: flex-start; min-height: 44px; display: inline-flex; align-items: center; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; text-decoration: none">Open AwakeTab<svg style="color: {{lampText}}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+  </footer>
+
+  <sc-if value="{{igniteOn}}" hint-placeholder-val="{{false}}">
+    <span aria-hidden="true" class="at-travel" style="position: absolute; left: 174px; top: 224px; width: 12px; height: 12px; border-radius: 999px; background: {{lamp}}; box-shadow: 0 0 12px {{lampGlow}}; pointer-events: none; --at-tx: -10px; --at-ty: -148px"></span>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"status":{"editor":"enum","options":["ready","awake","system","dim","ended","long","overnight","multiday","unlimited"],"default":"awake"},"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"desktop"},"$preview":{"width":360,"height":600}}'>
+// AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
+const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#EAF0F7', primaryInk: '#0A0E16', shadow: 'none' };
+const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#0E1726', primaryInk: '#FFFFFF', shadow: '0 1px 2px rgba(14,23,38,.06)' };
+const AT_OLED = Object.assign({}, AT_DARK, { bg: '#000000', ground: '#000000', surface: '#0A0A0A' });
+const AT_LAMPS = [
+  { id: 'aqua', name: 'Aqua', dark: '#5BE0E8', light: '#087B87', pro: false },
+  { id: 'violet', name: 'Violet', dark: '#A594FF', light: '#5A47CF', pro: false },
+  { id: 'mint', name: 'Mint', dark: '#7EF0B8', light: '#167A50', pro: true },
+  { id: 'sky', name: 'Sky', dark: '#7CB8FF', light: '#255FBD', pro: true }
+];
+const AT_GLYPH = {
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z'
+};
+// Status pill sizes (§11.4): L kiosk, M tool, S popup / PiP / full embed, XS compact embed.
+const AT_PILL = {
+  L: { h: '48px', pad: '0 20px 0 16px', gap: '8px', fs: '20px', lh: '28px' },
+  M: { h: '38px', pad: '0 16px 0 12px', gap: '8px', fs: '15px', lh: '22px' },
+  S: { h: '32px', pad: '0 12px 0 8px', gap: '8px', fs: '14px', lh: '20px' },
+  XS: { h: '26px', pad: '0 8px', gap: '4px', fs: '13px', lh: '18px' }
+};
+function atRgba(hex, a) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atPill(o) {
+  const s = AT_PILL[o.size || 'M'];
+  return { label: o.label, h: s.h, pad: s.pad, gap: s.gap, fs: s.fs, lh: s.lh, tone: o.tone, glyph: o.glyph || AT_GLYPH.dot, fill: o.hollow ? 'transparent' : o.tone, stroke: o.stroke || '1.6', soft: atRgba(o.tone, 0.12), line: atRgba(o.tone, 0.38), glow: o.glow ? atRgba(o.tone, 0.8) : 'transparent', cls: 'at-fade' };
+}
+// Page chrome shared by every board: tokens, lamp, header, theme switch, card and footer metrics.
+function atChrome(o) {
+  const L = o.layout || 'phone';
+  const desk = L === 'desktop', tab = L === 'tablet', phone = !desk && !tab;
+  const theme = o.theme || 'auto';
+  const dark = theme === 'dark' || theme === 'oled' || (theme === 'auto' && o.sysDark !== false);
+  const t = theme === 'oled' ? AT_OLED : dark ? AT_DARK : AT_LIGHT;
+  const def = AT_LAMPS.find((l) => l.id === o.lamp) || AT_LAMPS[0];
+  const lamp = dark ? def.dark : def.light;
+  const set = (id) => () => { if (o.set) o.set(id); };
+  const ink = (id) => (theme === id ? t.ink : t.ink2);
+  return {
+    t, dark, lamp, lampText: lamp, lampInk: dark ? '#04232A' : '#FFFFFF', bead: lamp,
+    lampSoft: atRgba(lamp, 0.14), lampLine: atRgba(lamp, 0.45), lampGlow: atRgba(lamp, 0.55), lampFaint: atRgba(lamp, 0.08), lampTag: atRgba(lamp, 0.12),
+    halo: 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(lamp, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(lamp, 0) + ' 100%)',
+    isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone,
+    hdrH: phone ? '60px' : '68px', gutter: desk ? '80px' : tab ? '32px' : '16px', secGap: desk ? '96px' : tab ? '64px' : '48px',
+    cardPad: phone ? '20px' : '24px', cardShadow: t.shadow, footPad: phone ? '24px 16px 32px' : desk ? '24px 80px' : '24px 32px',
+    themeX: (theme === 'light' ? 0 : theme === 'dark' ? 44 : 88) + 'px',
+    themeLight: theme === 'light', themeDark: theme === 'dark', themeAuto: theme === 'auto',
+    themeLightInk: ink('light'), themeDarkInk: ink('dark'), themeAutoInk: ink('auto'),
+    setLight: set('light'), setDark: set('dark'), setAuto: set('auto')
+  };
+}
+
+const C = 2 * Math.PI * 56;
+// Presets from en.json (tool.preset.*): all seven, ∞ named "Until I stop".
+const CHIPS = [['p15', '15 min', 900], ['p30', '30 min', 1800], ['p45', '45 min', 2700], ['p60', '1 h', 3600], ['p120', '2 h', 7200], ['p240', '4 h', 14400], ['pinf', '∞', 0]];
+const ICON_SCREEN = 'M3 5h18v11H3zM9 20h6M12 16v4';
+const ICON_SYSTEM = 'M5 4h14v12H5zM3 20h18M9 10h6';
+let uid = 0;
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.gid = 'ppGlow' + (++uid);
+    this.state = Object.assign({ theme: props.theme ?? 'auto', sysDark: this.sys(), now: Date.now(), panel: 'none', draft: 0, ignitedAt: 0, offAt: 0 }, this.seed(props.status ?? 'awake'));
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  seed(status) {
+    const now = Date.now();
+    const S = {
+      ready: { mode: 'ready', level: 'display', preset: 'pinf', total: 0, left: 0, el: 0 },
+      awake: { mode: 'held', level: 'display', preset: 'p60', total: 3600, left: 2658, el: 0 },
+      system: { mode: 'held', level: 'system', preset: 'p120', total: 7200, left: 5058, el: 0 },
+      dim: { mode: 'held', level: 'system', preset: 'pinf', total: 0, left: 0, el: 2538 },
+      ended: { mode: 'ended', level: 'display', preset: 'p30', total: 1800, left: 0, el: 0 }
+    };
+    // Long sessions, seeded relative to now so the boards read right at any hour.
+    // Overnight ends tomorrow at 4:11 AM, or earlier tomorrow when that is a full day away.
+    const t0 = new Date(now); t0.setHours(24, 0, 0, 0);
+    let overEnd = t0.getTime() + 15060000;
+    if (overEnd - now >= 86340000) overEnd = Math.max(t0.getTime() + 300000, Math.floor((now + 84600000) / 60000) * 60000);
+    const tmr = new Date(overEnd);
+    const overLeft = Math.round((overEnd - now) / 1000);
+    S.long = { mode: 'held', level: 'display', preset: 'p120', total: 7200, left: 5058, el: 0 };
+    S.overnight = { mode: 'held', level: 'display', preset: 'until', untilAt: tmr.getTime(), total: overLeft + 3600, left: overLeft, el: 0 };
+    S.multiday = { mode: 'held', level: 'display', preset: 'custom', total: 259200, left: 94500, el: 0 };
+    S.unlimited = { mode: 'held', level: 'display', preset: 'pinf', total: 0, left: 0, el: 4325 };
+    const s = S[status] ?? S.ready;
+    const endedAt = now - 40000;
+    const receipt = status === 'ended' ? { from: endedAt - 1800000, to: endedAt } : null;
+    return Object.assign({ untilAt: 0 }, s, { startedAt: now - (s.total ? (s.total - s.left) : s.el) * 1000, endedAt, receipt, ignitedAt: 0, offAt: 0 });
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => this.tick(), 1000);
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    clearTimeout(this.boot);
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+  }
+  componentDidUpdate(prev) {
+    const p = this.props;
+    if (prev.status !== p.status) this.setState(this.seed(p.status ?? 'awake'));
+    if (prev.theme !== p.theme && p.theme) this.setState({ theme: p.theme });
+  }
+  tick() {
+    const s = this.state;
+    const now = Date.now();
+    const next = { now };
+    if (s.mode === 'held') {
+      if (s.total === 0) next.el = s.el + 1;
+      else if (s.left <= 1) Object.assign(next, { left: 0, mode: 'ended', endedAt: now, offAt: now, receipt: { from: s.startedAt, to: now } });
+      else next.left = s.left - 1;
+    }
+    this.setState(next);
+  }
+  hm(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+  nextDay(ms) { return new Date(ms).toDateString() !== new Date(this.state.now).toDateString(); }
+  dayDiff(ms) {
+    const a = new Date(ms), b = new Date(this.state.now);
+    return Math.round((new Date(a.getFullYear(), a.getMonth(), a.getDate()) - new Date(b.getFullYear(), b.getMonth(), b.getDate())) / 86400000);
+  }
+  weekday(ms) { return new Date(ms).toLocaleDateString('en-GB', { weekday: 'long' }); }
+  // Same rules as Main: today "10:30 PM"; tomorrow "4:11 AM tomorrow"; further out "Monday 12:42 AM".
+  when(ms) {
+    const d = this.dayDiff(ms);
+    if (d >= 2 || d < 0) return this.weekday(ms) + ' ' + this.hm(ms);
+    return this.hm(ms) + (d === 1 ? ' tomorrow' : '');
+  }
+  since(ms) {
+    const d = this.dayDiff(ms);
+    return d === 0 ? this.hm(ms) : d === -1 ? 'yesterday ' + this.hm(ms) : this.weekday(ms) + ' ' + this.hm(ms);
+  }
+  // "Sunday, 27 September · 10:30 AM"
+  fullDate(ms) {
+    const d = new Date(ms);
+    return this.weekday(ms) + ', ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' }) + ' · ' + this.hm(ms);
+  }
+  // "9:12 to 9:42 PM": drop the first AM/PM when both times share it.
+  span(a, b) {
+    const x = this.hm(a), y = this.hm(b);
+    return (x.slice(-2) === y.slice(-2) ? x.slice(0, -3) : x) + ' to ' + y;
+  }
+  // Digits: "24:18", "2:15:00", and from a full day "1d" over "02:15:00" (docs/05 §3.6).
+  split(sec) {
+    const d = Math.floor(sec / 86400), h = Math.floor((sec % 86400) / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+    const p = (n) => String(n).padStart(2, '0');
+    if (d) return [p(h) + ':' + p(m), ':' + p(s), d + 'd'];
+    return h ? [h + ':' + p(m), ':' + p(s), ''] : [p(m), ':' + p(s), ''];
+  }
+  words(sec) {
+    if (!sec) return 'no limit';
+    const d = Math.floor(sec / 86400), h = Math.floor((sec % 86400) / 3600), m = Math.round((sec % 3600) / 60);
+    if (d) return d + (d === 1 ? ' day' : ' days') + (h ? ' ' + h + ' h' : '') + (m ? ' ' + m + ' min' : '');
+    if (h && m) return h + ' h ' + m + ' min';
+    if (h) return h + ' h';
+    return m + ' min';
+  }
+  secsFor(preset, untilAt) {
+    if (preset === 'until') return Math.max(60, Math.round((untilAt - Date.now()) / 1000));
+    if (preset === 'custom') return this.state.total || 3600;
+    const f = CHIPS.find((c) => c[0] === preset);
+    return f ? f[2] : 0;
+  }
+  // Ignition fires only when Chrome grants the request (starting -> held), never on mount.
+  begin(preset, untilAt) {
+    const sec = this.secsFor(preset, untilAt);
+    clearTimeout(this.boot);
+    this.setState({ mode: 'starting', preset, untilAt: untilAt ?? this.state.untilAt, total: sec, left: sec, el: 0, panel: 'none', startedAt: Date.now(), receipt: null, offAt: 0 });
+    this.boot = setTimeout(() => this.setState({ mode: 'held', ignitedAt: Date.now() }), 700);
+  }
+  firstDraft() {
+    const q = 900000;
+    return Math.ceil((Date.now() + 3600000) / q) * q;
+  }
+  renderVals() {
+    const s = this.state;
+    const b = atChrome({ theme: s.theme, sysDark: s.sysDark, layout: 'phone' });
+    const t = b.t, lamp = b.lamp, dark = b.dark;
+    const mode = s.mode;
+    const held = mode === 'held';
+    const live = held || mode === 'starting';
+    const idle = !live;
+    const sysLvl = s.level === 'system';
+    const total = idle ? this.secsFor(s.preset, s.untilAt) : s.total;
+    const noLimit = total === 0;
+    const left = idle ? (mode === 'ended' ? 0 : total) : s.left;
+    const nowMs = Date.now();
+    const off = !live && s.offAt && nowMs - s.offAt < 900;
+    const igniting = held && s.ignitedAt && nowMs - s.ignitedAt < 1200;
+    const p = mode === 'ended' || off ? 0 : noLimit ? 1 : left / total;
+    const tone = live ? lamp : t.muted;
+    const tone2 = mode === 'ready' ? lamp : tone;
+
+    const shown = noLimit ? (live ? s.el : null) : left;
+    const [bigA, bigB, dayPart] = shown === null ? ['∞', '', ''] : this.split(shown);
+    const multi = shown !== null && shown >= 86400;
+    const endMs = Math.round((s.now + left * 1000) / 60000) * 60000;
+
+    let statusLabel = 'Ready';
+    if (mode === 'starting') statusLabel = 'Starting…';
+    if (held) statusLabel = sysLvl ? 'System awake' : 'Screen awake';
+
+    let caption = noLimit ? 'until you stop' : 'ends ' + this.when(endMs);
+    if (s.preset === 'until' && idle && mode === 'ready') caption = 'until ' + this.when(s.untilAt);
+    if (live) caption = noLimit ? 'since ' + this.since(s.startedAt) : multi ? 'Time left' : 'Until ' + this.when(endMs);
+    if (mode === 'starting') caption = 'Starting';
+    if (mode === 'ended') caption = 'Session complete';
+
+    // The receipt is the lamp-off moment: what really ran, from and to.
+    const r = s.receipt;
+    const heldFor = r ? this.words(Math.max(60, Math.round((r.to - r.from) / 60000) * 60)) : '';
+    let meta = 'Works with the tab hidden.';
+    if (mode === 'starting') meta = 'Asking Chrome…';
+    if (held) meta = noLimit ? 'No end time. Stop when you are done.' : multi ? 'Until ' + this.fullDate(endMs) : 'Started ' + this.since(s.startedAt);
+    if (mode === 'ready' && r) meta = 'Held ' + heldFor + ', ' + this.span(r.from, r.to) + '.';
+    if (mode === 'ended') meta = r ? "Time's up. Held " + this.span(r.from, r.to) + '.' : "Time's up. Keep going?";
+
+    const showCaveat = held && sysLvl;
+    const showExtend = (held && !noLimit) || mode === 'ended';
+
+    const extendOpts = [[900, '+15 min', 'Add 15 minutes', 'p15'], [1800, '+30 min', 'Add 30 minutes', 'p30'], [3600, '+1 h', 'Add 1 hour', 'p60']].map(([sec, label, aria, pid]) => ({
+      label, aria,
+      border: mode === 'ended' ? b.lampLine : t.line2,
+      bg: mode === 'ended' ? b.lampSoft : t.surface,
+      pick: () => {
+        if (this.state.mode === 'held') this.setState({ left: this.state.left + sec, total: this.state.total + sec });
+        else this.begin(pid);
+      }
+    }));
+
+    const sel = (on) => ({ weight: on ? 600 : 500, color: on ? t.ink : t.ink2 });
+    const chips = CHIPS.map(([id, label]) => Object.assign({
+      label,
+      aria: id === 'pinf' ? 'Until I stop' : 'Keep awake for ' + label,
+      sel: s.preset === id ? 'true' : 'false',
+      ring: s.preset === id ? b.lampLine : t.line, bg: s.preset === id ? b.lampSoft : 'transparent',
+      pick: () => this.begin(id)
+    }, sel(s.preset === id)));
+
+    const levels = [['display', 'Screen', ICON_SCREEN], ['system', 'System', ICON_SYSTEM]].map(([id, label, icon]) => Object.assign({
+      label, icon, sel: s.level === id ? 'true' : 'false', pick: () => this.setState({ level: id })
+    }, sel(s.level === id)));
+
+    const draft = s.draft || this.firstDraft();
+    const mins = Math.max(1, Math.round((draft - s.now) / 60000));
+    const remain = mins >= 60 ? Math.floor(mins / 60) + ' h ' + (mins % 60) + ' min' : mins + ' min';
+    const draftSummary = (this.nextDay(draft) ? 'Tomorrow' : 'Today') + ' at ' + this.hm(draft) + ', in ' + remain;
+    const startUntil = (e) => { if (e && e.preventDefault) e.preventDefault(); this.begin('until', draft); };
+    const untilSel = s.preset === 'until';
+
+    return Object.assign(b, {
+      tone, tone2, bead: tone, gid: this.gid,
+      toneFaint: atRgba(tone2, dark ? 0.16 : 0.12),
+      aura: atRgba(tone2, live ? (dark ? 0.18 : 0.12) : 0.06),
+      pl: Object.assign(atPill({ size: 'S', label: statusLabel, tone, glyph: held && sysLvl ? AT_GLYPH.half : AT_GLYPH.dot, hollow: !held, glow: held, stroke: held && sysLvl ? '0' : '1.6' }), { cls: igniting ? 'at-fade at-ignite' : 'at-fade' }),
+      statusLabel, caption, meta, showMeta: !showCaveat, showCaveat,
+      metaCls: r && idle ? 'at-rise' : '',
+      metaWeight: mode === 'ended' ? 600 : 500, metaColor: mode === 'ended' ? t.ink : t.ink2,
+      live, idle, held, bigA, bigB, dayPart, showDays: Boolean(dayPart),
+      showKicker: live && noLimit && mode !== 'starting', kicker: 'Awake for',
+      // 20 px is the size at which "12:59:59" fits inside the 88 px ring without wrapping.
+      digitSize: shown !== null && shown >= 3600 ? '20px' : '28px',
+      numColor: held ? t.ink : t.ink2,
+      timerAria: shown === null ? 'No limit' : (dayPart ? dayPart + ' ' : '') + bigA + bigB + (live && noLimit ? ' awake so far' : ' left'),
+      arcDash: p <= 0 ? '0.01 ' + C.toFixed(1) : (C * p).toFixed(1) + ' ' + C.toFixed(1),
+      arcCls: live ? 'at-arc' : off ? 'at-off' : 'at-fade',
+      arcOp: mode === 'ready' && !off ? 0.45 : mode === 'ended' || off ? 0 : 1, glowOp: held ? 0.5 : 0,
+      tipDeg: (360 * p).toFixed(2) + 'deg', tipOp: held && !noLimit && p > 0 ? 1 : 0,
+      tipCls: igniting ? 'at-ignite' : '', igniteOn: igniting,
+      showExtend: showExtend && s.panel === 'none', extendOpts, extendLabel: mode === 'ended' ? 'Keep going' : 'Add time',
+      showPrimary: s.panel === 'none',
+      startLabel: 'Start · ' + (s.preset === 'until' ? 'until ' + this.when(s.untilAt) : this.words(this.secsFor(s.preset, s.untilAt))),
+      start: () => this.begin(s.preset === 'until' && s.untilAt <= Date.now() + 60000 ? 'pinf' : s.preset, s.untilAt),
+      stop: () => {
+        clearTimeout(this.boot);
+        const at = Date.now();
+        this.setState({ mode: 'ready', panel: 'none', offAt: at, receipt: this.state.mode === 'held' ? { from: this.state.startedAt, to: at } : null });
+      },
+      levels, levelX: sysLvl ? '100%' : '0%',
+      levelHelp: sysLvl ? 'Keeps the computer awake. The screen may still dim or turn off.' : 'Keeps the screen on and the computer awake.',
+      panelNone: s.panel === 'none', panelUntil: s.panel === 'until',
+      chips,
+      untilSel: untilSel ? 'true' : 'false',
+      untilChip: untilSel && s.untilAt ? this.hm(s.untilAt) : 'Until…',
+      untilAria: untilSel && s.untilAt ? 'Until ' + this.when(s.untilAt) + ', change the end time' : 'Stay awake until a time',
+      untilStyle: untilSel ? 'solid' : 'dashed', untilBorder: untilSel ? b.lampLine : t.line2, untilBg: untilSel ? b.lampSoft : 'transparent',
+      untilWeight: untilSel ? 600 : 500, untilInk: untilSel ? t.ink : t.ink2,
+      openUntil: () => this.setState({ panel: 'until', draft: s.preset === 'until' && s.untilAt > Date.now() ? s.untilAt : this.firstDraft() }),
+      closeUntil: () => this.setState({ panel: 'none' }),
+      untilLess: () => this.setState({ draft: Math.max(Math.ceil((Date.now() + 60000) / 900000) * 900000, draft - 900000) }),
+      untilMore: () => this.setState({ draft: Math.min(Date.now() + 86400000, draft + 900000) }),
+      draftTime: this.hm(draft), draftSummary,
+      startUntil
+    });
+  }
+}
+</script>
+</body>
+</html>

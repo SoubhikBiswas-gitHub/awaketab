@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · privacy and terms</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+/* AwakeTab primitives v2 · fix batch 2b · keep byte-identical */
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.97)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-u{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.at-u:hover{text-decoration-thickness:2px}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-tw{animation:at-tw 5s ease-in-out infinite}
+.at-tw2{animation:at-tw 7s ease-in-out infinite;animation-delay:-3s}
+.at-glint{transform-origin:top center;animation:at-glint 6s ease-in-out infinite}
+.at-pulse{animation:at-tw 3.4s ease-in-out infinite}
+@keyframes at-tw{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes at-glint{0%,100%{transform:scaleX(.6);opacity:.35}50%{transform:scaleX(1);opacity:.7}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div class="at-root" style="width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{p.ground}}; color: {{t.ink}}; display: flex; flex-direction: column">
+  <header style="{{hdr.style}}">
+    <a href="Main.dc.html" aria-label="AwakeTab home" style="{{hdr.logo}}"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{hdr.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{hdr.bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{hdr.bead}}" style="transition: fill .6s"></circle></svg>AwakeTab</a>
+    <sc-if value="{{hdr.showNav}}" hint-placeholder-val="{{false}}">
+      <nav aria-label="Main" style="{{hdr.navStyle}}">
+        <sc-for list="{{hdr.nav}}" as="n" hint-placeholder-count="4">
+          <a href="{{n.href}}" aria-current="{{n.cur}}" style="{{n.style}}"><span aria-hidden="true" style="{{n.dot}}"></span>{{n.label}}</a>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <div role="radiogroup" aria-label="Theme" style="{{hdr.bar}}">
+      <div aria-hidden="true" class="at-slide" style="{{hdr.ind}}"></div>
+      <sc-for list="{{hdr.themes}}" as="m" hint-placeholder-count="3">
+        <button role="radio" aria-checked="{{m.sel}}" aria-label="{{m.aria}}" title="{{m.title}}" onClick="{{m.pick}}" style="{{m.style}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="{{m.icon}}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><path d="{{m.icon2}}" fill="currentColor"></path></svg></button>
+      </sc-for>
+    </div>
+  </header>
+
+  <main style="position: relative; flex-grow: 1; display: grid; grid-template-columns: {{cols}}; grid-template-areas: {{areas}}; column-gap: 64px; row-gap: 32px; align-items: start; padding: {{mainPad}}">
+
+    <div class="at-in" style="grid-area: head; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+      <nav aria-label="Breadcrumb">
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; font-size: 14px; color: {{t.muted}}">
+          <li style="display: flex; align-items: center; gap: 8px"><a href="Main.dc.html" style="color: {{t.ink2}}; text-decoration: none; min-height: 44px; display: flex; align-items: center">AwakeTab</a><span aria-hidden="true">›</span></li>
+          <li aria-current="page" style="min-height: 44px; display: flex; align-items: center">{{docTitle}}</li>
+        </ol>
+      </nav>
+      <h1 style="margin: 0; {{ty.h1}}">{{docTitle}}</h1>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px 12px">
+        <span style="{{tag}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{p.lamp}}" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Last updated {{updated}}</span>
+        <span style="display: inline-flex; align-items: center; height: 24px; {{ty.small}}; color: {{t.muted}}">Effective {{effective}}</span>
+      </div>
+      <p style="margin: 0; max-width: 64ch; {{ty.lead}}; color: {{t.ink2}}; text-wrap: pretty">{{lede}}</p>
+    </div>
+
+    <nav aria-label="On this page" style="grid-area: toc; display: flex; flex-direction: column; gap: 12px; min-width: 0; box-sizing: border-box; padding: {{tocPad}}; border-radius: 16px; background: {{tocBg}}; border: {{tocBorder}}">
+      <span style="{{ty.kicker}}; color: {{t.muted}}">On this page</span>
+      <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+        <sc-for list="{{toc}}" as="c" hint-placeholder-count="7">
+          <li><a href="{{c.href}}" aria-current="{{c.cur}}" onClick="{{c.pick}}" class="at-slide" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 0; box-sizing: border-box; font-size: 14px; line-height: 20px; font-weight: {{c.weight}}; color: {{c.color}}; text-decoration: none"><span aria-hidden="true" style="{{c.dot}}"></span>{{c.title}}</a></li>
+        </sc-for>
+      </ol>
+    </nav>
+
+    <article style="grid-area: body; display: flex; flex-direction: column; gap: 48px; min-width: 0; max-width: 70ch">
+      <sc-for list="{{sections}}" as="sec" hint-placeholder-count="6">
+        <section id="{{sec.id}}" aria-labelledby="{{sec.hid}}" style="display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 24px">
+          <h2 id="{{sec.hid}}" style="margin: 0; {{ty.h2}}; text-wrap: balance">{{sec.title}}</h2>
+          <div style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 12px; padding: 16px 20px; border-radius: 16px; background: {{sumBg}}; border: 1px solid {{sumLine}}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{p.lamp}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 4px"><path d="M4 7h16M4 12h10M4 17h7"></path></svg>
+            <p style="margin: 0; {{sumType}}; color: {{t.ink}}; text-wrap: pretty"><span style="font-weight: 600">In short: </span>{{sec.summary}}</p>
+          </div>
+          <sc-for list="{{sec.blocks}}" as="b" hint-placeholder-count="2">
+            <sc-if value="{{b.isP}}" hint-placeholder-val="{{true}}">
+              <p style="margin: 0; {{ty.body}}; color: {{t.ink2}}; text-wrap: pretty"><sc-for list="{{b.segs}}" as="s" hint-placeholder-count="3"><sc-if value="{{s.isText}}" hint-placeholder-val="{{true}}"><span data-kind="{{s.kind}}" style="{{s.style}}">{{s.text}}</span></sc-if><sc-if value="{{s.isLink}}" hint-placeholder-val="{{false}}"><a href="{{s.href}}" class="at-u" style="color: {{p.link}}">{{s.text}}</a></sc-if></sc-for></p>
+            </sc-if>
+            <sc-if value="{{b.isDl}}" hint-placeholder-val="{{false}}">
+              <dl style="margin: 0; display: flex; flex-direction: column; border-top: 1px solid {{t.line}}">
+                <sc-for list="{{b.items}}" as="it" hint-placeholder-count="4">
+                  <div style="display: grid; grid-template-columns: {{dlCols}}; column-gap: 20px; row-gap: 8px; padding: 16px 0; border-bottom: 1px solid {{t.line}}">
+                    <dt style="font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}"><sc-for list="{{it.term}}" as="s" hint-placeholder-count="1"><sc-if value="{{s.isText}}" hint-placeholder-val="{{true}}"><span data-kind="{{s.kind}}" style="{{s.style}}">{{s.text}}</span></sc-if></sc-for></dt>
+                    <dd style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty"><sc-for list="{{it.desc}}" as="s" hint-placeholder-count="3"><sc-if value="{{s.isText}}" hint-placeholder-val="{{true}}"><span data-kind="{{s.kind}}" style="{{s.style}}">{{s.text}}</span></sc-if><sc-if value="{{s.isLink}}" hint-placeholder-val="{{false}}"><a href="{{s.href}}" class="at-u" style="color: {{p.link}}">{{s.text}}</a></sc-if></sc-for></dd>
+                  </div>
+                </sc-for>
+              </dl>
+            </sc-if>
+          </sc-for>
+        </section>
+      </sc-for>
+      <p style="margin: 0; padding-top: 16px; border-top: 1px solid {{t.line}}; font-size: 15px; line-height: 22px; color: {{t.muted}}">Questions: <a href="mailto:support@awaketab.com" class="at-u" style="color: {{p.link}}">support@awaketab.com</a> · <a href="{{otherHref}}" class="at-u" style="color: {{p.link}}">{{otherLabel}}</a></p>
+    </article>
+  </main>
+
+  <footer style="{{ftr.style}}">
+    <p style="{{ftr.line}}">No ads on the awake screen, now or later.</p>
+    <nav aria-label="Footer" style="{{ftr.nav}}">
+      <sc-for list="{{ftr.links}}" as="f" hint-placeholder-count="5"><a href="{{f.href}}" style="{{ftr.link}}">{{f.label}}</a></sc-for>
+    </nav>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"doc":{"editor":"enum","options":["privacy","terms"],"default":"privacy"},"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"desktop"},"$preview":{"width":1280,"height":4312}}'>
+/* ── AwakeTab primitives v2 · fix batch 2b · DESIGN.md §2, §3, §11. Byte-identical in every file of the batch; edit prims/prims.js and rebuild, never one copy. ── */
+const AT_TOK = {
+  dark: { ground: '#0A0E16', lift: '#13203A', surface: '#111826', raised: '#26324B', sunken: '#0D131F', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', warn: '#F2B34C', bad: '#FF7A7A', lamp: '#5BE0E8', onLamp: '#04232A', stopBg: '#EAF0F7', stopInk: '#0A0E16', horizonInk: '#F6F2EA', violet: '#A594FF', inputLine: '#5A6781', groundEnd: '#0A0E16', elev: 'none' },
+  light: { ground: '#F2F6FA', lift: '#FFFFFF', surface: '#FFFFFF', raised: '#E3E9F1', sunken: '#F6F9FC', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', warn: '#B7791F', bad: '#D14343', lamp: '#087B87', onLamp: '#FFFFFF', stopBg: '#0E1726', stopInk: '#F2F6FA', horizonInk: '#F6F2EA', violet: '#5A47CF', inputLine: '#8C98AA', groundEnd: '#EEF3F8', elev: '0 1px 2px rgba(14,23,38,0.06)' }
+};
+AT_TOK.oled = Object.assign({}, AT_TOK.dark, { ground: '#000000', lift: '#000000', groundEnd: '#000000', surface: '#0A0A0A' });
+const AT_NIGHT = { ground: '#000000', ink: '#FF5A3C', ink2: '#E8563C', muted: '#A89690', line: '#3A2E2A' };
+const AT_SCRIM = 'rgba(4,7,12,0.55)';
+const AT_FLOAT = '0 24px 64px -24px rgba(0,0,0,0.45)';
+// Display digits: system-ui (Geist in mocks) 200–300, tabular, plain zero. Mono only for code, keys, file names and URLs.
+const AT_DIGITS = "font-family: Geist, system-ui, sans-serif; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1, 'zero' 0";
+const AT_MONO = "font-family: 'Geist Mono', ui-monospace, monospace";
+const AT_GUTTER = { phone: 16, tablet: 32, desktop: 80, xl: 120 };
+const AT_SECTION = { phone: 48, tablet: 64, desktop: 96 };
+const AT_TYPE = {
+  kicker: 'font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase',
+  caption: 'font-size: 13px; line-height: 18px',
+  small: 'font-size: 14px; line-height: 20px',
+  ui: 'font-size: 15px; line-height: 22px',
+  body: 'font-size: 16px; line-height: 26px',
+  lead: 'font-size: 18px; line-height: 28px',
+  h3: 'font-size: 20px; line-height: 28px; font-weight: 600',
+  h2: 'font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em',
+  h2Phone: 'font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em',
+  h1: 'font-size: 48px; line-height: 56px; font-weight: 600; letter-spacing: -0.02em',
+  h1Phone: 'font-size: 34px; line-height: 42px; font-weight: 600; letter-spacing: -0.02em',
+  price: 'font-size: 48px; line-height: 56px; font-weight: 600; letter-spacing: -0.02em',
+  pricePhone: 'font-size: 40px; line-height: 48px; font-weight: 600; letter-spacing: -0.02em'
+};
+// State glyphs (12 × 12): shape carries the state, never colour alone.
+const AT_GLYPH = {
+  ring: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z'
+};
+// The seven contract pill strings (docs/04, docs/05). Exact, and alone inside the pill.
+const AT_PILL_TEXT = { idle: 'Ready', requesting: 'Starting…', held: 'Screen awake', lost: 'Paused — tab hidden', denied: "Blocked — here's the fix", unsupported: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
+// Status pill sizes (§11.4): height, text, padding, gap, glyph.
+const AT_PILL = { L: [48, 20, '0 20px 0 16px', 12, 16], M: [38, 15, '0 16px 0 12px', 8, 12], S: [32, 14, '0 12px 0 8px', 8, 12], XS: [26, 13, '0 8px', 4, 12] };
+
+function atRgba(hex, a) {
+  const n = parseInt(String(hex).replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atTheme(theme, sysDark) {
+  const dark = theme === 'dark' || theme === 'oled' || (theme !== 'light' && sysDark);
+  return { dark, t: theme === 'oled' ? AT_TOK.oled : dark ? AT_TOK.dark : AT_TOK.light };
+}
+// Ground: the night lift fades into the ground token, and the one status halo (--at-halo) sits behind the status element.
+function atGround(t) { return 'radial-gradient(120% 70% at 50% 26%, ' + t.lift + ' 0%, ' + t.ground + ' 62%, ' + t.groundEnd + ' 100%)'; }
+function atHalo(tone, dark) { return 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(tone, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(tone, 0) + ' 70%)'; }
+// Status pill for a lock state. size: L | M | S | XS.
+function atPill(size, state, t, extra) {
+  const [h, fs, pad, gap, g] = AT_PILL[size];
+  const tone = state === 'idle' ? t.muted : state === 'lost' ? t.warn : state === 'denied' ? t.bad : t.lamp;
+  const d = state === 'lost' ? AT_GLYPH.pause : state === 'denied' ? AT_GLYPH.tri : state === 'fallback' ? AT_GLYPH.ringDot : AT_GLYPH.dot;
+  const hollow = state === 'idle' || state === 'requesting';
+  return {
+    label: (extra && extra.label) || AT_PILL_TEXT[state] || AT_PILL_TEXT.idle, tone, d, g,
+    fill: hollow ? 'transparent' : tone,
+    gStyle: 'flex-shrink: 0; overflow: visible; filter: drop-shadow(0 0 4px ' + (state === 'held' ? atRgba(tone, 0.8) : 'transparent') + ')',
+    // M may wrap to two lines (O-62): min-height 38, radius 20, balanced wrap. L, S and XS stay on one line.
+    style: 'display: inline-flex; align-items: center; gap: ' + gap + 'px; ' + (size === 'M' ? 'min-height: 38px; padding: 8px 16px 8px 12px; border-radius: 20px; line-height: 20px; text-wrap: balance' : 'height: ' + h + 'px; padding: ' + pad + '; border-radius: 999px; line-height: 1; white-space: nowrap') + '; box-sizing: border-box; background: ' + atRgba(tone, 0.12) + '; border: 1px solid ' + atRgba(tone, 0.38) + '; color: ' + t.ink + '; font-size: ' + fs + 'px; font-weight: 600'
+  };
+}
+// Buttons (§11.4): primary 60 r20 · cook 64 r20 · stop 60 ink fill · medium 52 r20 · small 44 r12.
+function atBtn(kind, t) {
+  const base = 'box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; white-space: nowrap; font-weight: 600; ';
+  if (kind === 'primary' || kind === 'cook') return base + 'height: ' + (kind === 'cook' ? 64 : 60) + 'px; padding: 0 24px; border-radius: 20px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 17px; line-height: 24px; box-shadow: 0 10px 28px -12px ' + atRgba(t.lamp, 0.6);
+  if (kind === 'stop') return base + 'height: 60px; padding: 0 24px; border-radius: 20px; border: 0; background: ' + t.stopBg + '; color: ' + t.stopInk + '; font-size: 17px; line-height: 24px';
+  if (kind === 'medium') return base + 'height: 52px; padding: 0 20px; border-radius: 20px; border: 1px solid ' + t.line2 + '; background: ' + t.surface + '; color: ' + t.ink + '; font-size: 15px; line-height: 22px';
+  if (kind === 'mediumLamp') return base + 'height: 52px; padding: 0 20px; border-radius: 20px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 15px; line-height: 22px';
+  if (kind === 'smallLamp') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 15px; line-height: 22px';
+  if (kind === 'smallStop') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: ' + t.stopBg + '; color: ' + t.stopInk + '; font-size: 15px; line-height: 22px';
+  if (kind === 'quiet') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: transparent; color: ' + t.ink2 + '; font-size: 15px; line-height: 22px; font-weight: 500';
+  return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid ' + t.line2 + '; background: ' + t.surface + '; color: ' + t.ink + '; font-size: 15px; line-height: 22px';
+}
+// Card (§11.6): surface, 1 px line, r16, padding 20 phone / 24.
+function atCard(t, phone) { return 'box-sizing: border-box; background: ' + t.surface + '; border: 1px solid ' + t.line + '; border-radius: 16px; padding: ' + (phone ? 20 : 24) + 'px; box-shadow: ' + t.elev; }
+// Tag (§11.4): 24 high, 12/16 600, r999, padding 0 8, 1 px line-strong (or a tone at 12 %).
+function atTag(t, tone) {
+  return 'display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; color: ' + t.ink + '; ' +
+    (tone ? 'background: ' + atRgba(tone, 0.12) + '; border: 1px solid ' + atRgba(tone, 0.38) : 'background: transparent; border: 1px solid ' + t.line2);
+}
+// Keyboard hint (§11.4): one theme keycap everywhere, never inherits the button it sits on.
+function atKbd(t) { return 'display: inline-flex; align-items: center; justify-content: center; height: 24px; min-width: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid ' + t.line2 + '; box-shadow: inset 0 -1px 0 ' + t.line2 + '; background: ' + t.raised + '; font-family: ui-monospace, \'Geist Mono\', monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: ' + t.ink + '; vertical-align: middle'; }
+function atCode(t) { return AT_MONO + '; font-size: 14px; padding: 0 4px; border-radius: 4px; background: ' + t.sunken + '; color: ' + t.ink + '; overflow-wrap: anywhere'; }
+// Segmented bar (§11.4): 1 px border + 4 px padding + 44 px items = 54. Selected = lamp 14 % + 1 px lamp 45 % (or raised for neutral switches).
+function atSeg(options, current, onPick, t, opts) {
+  const o = opts || {};
+  const n = options.length;
+  const i = Math.max(0, options.findIndex((x) => x[0] === current));
+  return {
+    bar: 'position: relative; display: grid; grid-template-columns: repeat(' + n + ', minmax(0, 1fr)); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line + (o.max ? '; max-width: ' + o.max : ''),
+    ind: 'position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / ' + n + '); height: 44px; box-sizing: border-box; border-radius: 999px; transform: translateX(' + i * 100 + '%); ' + (o.neutral ? 'background: ' + t.raised + '; border: 0' : 'background: ' + atRgba(t.lamp, 0.14) + '; border: 1px solid ' + atRgba(t.lamp, 0.45)),
+    items: options.map(([id, label, aria]) => ({
+      id, label, aria: aria || label, sel: id === current ? 'true' : 'false', pick: () => onPick(id),
+      style: 'position: relative; min-width: 0; height: 44px; padding: 0 8px; border: 0; background: transparent; border-radius: 999px; font-size: ' + (o.fs || 15) + 'px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2) + '; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+    }))
+  };
+}
+// Header (§11.6): 60 phone / 68 ≥ tablet, gutter = page gutter, logo 26 + wordmark 17 with gap 8, nav on desktop, theme switch as a segmented bar.
+const AT_NAV = [['Use cases', '#', 'for'], ['Devices', '#', 'on'], ['Extension', 'PageExtensionDesk.dc.html', 'extension'], ['Pro', 'Pro.dc.html', 'pro']];
+const AT_THEME_ICON = {
+  light: ['M12 8a4 4 0 1 1 0 8a4 4 0 1 1 0-8zM12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4', ''],
+  dark: ['M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z', ''],
+  auto: ['M12 4a8 8 0 1 1 0 16a8 8 0 1 1 0-16z', 'M12 4a8 8 0 0 1 0 16z']
+};
+function atHeader(c, t, layout, current, bead) {
+  const theme = c.state.theme === 'light' || c.state.theme === 'dark' ? c.state.theme : 'auto';
+  const order = ['light', 'dark', 'auto'];
+  return {
+    style: 'position: relative; height: ' + (layout === 'phone' ? 60 : 68) + 'px; flex-shrink: 0; box-sizing: border-box; padding-inline: ' + AT_GUTTER[layout] + 'px; display: flex; align-items: center; justify-content: space-between; gap: 16px',
+    logo: 'display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; color: ' + t.ink + '; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em',
+    ink: t.ink, bead: bead || t.muted,
+    showNav: layout === 'desktop',
+    navStyle: 'display: flex; align-items: center; gap: 32px',
+    nav: AT_NAV.map(([label, href, id]) => ({
+      label, href, cur: id === current ? 'page' : 'false',
+      style: 'display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; font-size: 15px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2),
+      dot: 'width: 6px; height: 6px; border-radius: 999px; background: ' + (id === current ? t.lamp : 'transparent')
+    })),
+    bar: 'position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line,
+    ind: 'position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: ' + t.raised + '; transform: translateX(' + order.indexOf(theme) * 44 + 'px)',
+    themes: order.map((id) => ({
+      sel: id === theme ? 'true' : 'false', aria: id === 'auto' ? 'Auto, follows your system' : id === 'light' ? 'Light' : 'Dark', title: id === 'auto' ? 'Auto: follows your system' : id === 'light' ? 'Light' : 'Dark',
+      icon: AT_THEME_ICON[id][0], icon2: AT_THEME_ICON[id][1],
+      pick: () => c.setState({ theme: id }),
+      style: 'position: relative; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; display: grid; place-items: center; color: ' + (id === theme ? t.ink : t.muted)
+    }))
+  };
+}
+// Footer (§11.7): 1 px line top, padding 24 (phone 32 bottom), honest line left in caption muted, links right.
+const AT_FOOT_LINKS = [['Privacy', 'PagePrivacyDesk.dc.html'], ['Terms', 'PageTermsPhone.dc.html'], ['Changelog', 'PageChangelogPhone.dc.html'], ['About', 'PageAboutDesk.dc.html'], ['Buy me a coffee', 'https://buymeacoffee.com/awaketab']];
+function atFooter(t, layout) {
+  const g = AT_GUTTER[layout];
+  return {
+    style: 'flex-shrink: 0; margin-top: ' + AT_SECTION[layout] + 'px; box-sizing: border-box; padding: 24px ' + g + 'px ' + (layout === 'phone' ? 32 : 24) + 'px; border-top: 1px solid ' + t.line + '; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px',
+    line: 'margin: 0; font-size: 13px; line-height: 18px; color: ' + t.muted,
+    nav: 'display: flex; flex-wrap: wrap; column-gap: 20px',
+    link: 'min-height: 44px; display: inline-flex; align-items: center; font-size: 14px; line-height: 20px; color: ' + t.ink2 + '; text-decoration: none',
+    links: AT_FOOT_LINKS.map(([label, href]) => ({ label, href }))
+  };
+}
+/* ── end primitives ── */
+
+// Page shell on top of the primitives: t (theme tokens), p (page roles), ty (type scale per layout), hdr, ftr.
+function pageRoles(t) {
+  return {
+    ground: 'radial-gradient(1400px 900px at 50% -160px, ' + t.lift + ' 0%, ' + atRgba(t.ground, 0) + ' 72%), ' + t.ground,
+    lamp: t.lamp, lampFill: t.lamp, lampInk: t.onLamp, link: t.lamp, warn: t.warn, bad: t.bad, well: t.sunken, codeBg: t.sunken
+  };
+}
+const rgba = atRgba;
+function hm(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+function hms(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }); }
+function fullDate(iso) { return new Date(iso + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }); }
+function dateLong(ms) {
+  const d = new Date(ms);
+  return d.toLocaleDateString('en-GB', { weekday: 'long' }) + ', ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+function pad2(n) { return String(n).padStart(2, '0'); }
+function clockParts(sec) {
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+  return h ? [h + ':' + pad2(m), ':' + pad2(s)] : [pad2(m), ':' + pad2(s)];
+}
+function sysDark() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+function themeMount(c) {
+  try {
+    c.mq = window.matchMedia('(prefers-color-scheme: dark)');
+    c.onMq = (e) => c.setState({ sysDark: e.matches });
+    c.mq.addEventListener('change', c.onMq);
+  } catch (e) {}
+}
+function themeUnmount(c) { if (c.mq) c.mq.removeEventListener('change', c.onMq); }
+// The default layout matches the board width: pages whose play-me board is 390 wide default to phone.
+function layoutOf(props, def) { return ['phone', 'tablet', 'desktop'].includes(props.layout) ? props.layout : (def || 'desktop'); }
+
+// Inline markup: `code`, **strong**, [label](href), {{key}} as a keycap (kbd). Returns segments for <sc-for>.
+function segs(str, p, t) {
+  const out = [];
+  const re = /`([^`]+)`|\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)]+)\)|\{([^{}]+)\}/g;
+  let last = 0, m;
+  const plain = 'color: inherit';
+  const push = (text, style, kind) => out.push({ text, style, kind: kind || 'text', isText: true, isLink: false, href: '' });
+  while ((m = re.exec(str))) {
+    if (m.index > last) push(str.slice(last, m.index), plain);
+    if (m[1]) push(m[1], atCode(t), 'code');
+    else if (m[2]) push(m[2], 'font-weight: 600; color: ' + t.ink);
+    else if (m[5]) push(m[5], atKbd(t), 'kbd');
+    else out.push({ text: m[3], href: m[4], isText: false, isLink: true, style: '' });
+    last = re.lastIndex;
+  }
+  if (last < str.length) push(str.slice(last), plain);
+  return out;
+}
+
+// Shared shell values: theme tokens, layout flags, type scale, header, footer, gutters.
+function shell(c, sizes, current, def) {
+  const s = c.state;
+  const layout = layoutOf(c.props, def);
+  const desk = layout === 'desktop', tab = layout === 'tablet', phone = layout === 'phone';
+  const { dark, t } = atTheme(s.theme, s.sysDark);
+  const p = pageRoles(t);
+  const size = sizes[layout];
+  const g = AT_GUTTER[layout];
+  return {
+    t, p, dark, layout, isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone, notDesk: !desk,
+    W: size[0] + 'px', H: size[1] + 'px',
+    ty: Object.assign({}, AT_TYPE, { h1: phone ? AT_TYPE.h1Phone : AT_TYPE.h1, h2: phone ? AT_TYPE.h2Phone : AT_TYPE.h2, price: phone ? AT_TYPE.pricePhone : AT_TYPE.price }),
+    gut: g + 'px', secGap: AT_SECTION[layout] + 'px', mono: AT_MONO, digitFont: AT_DIGITS,
+    hdr: atHeader(c, t, layout, current, t.muted), ftr: atFooter(t, layout),
+    card: atCard(t, phone), tag: atTag(t), code: atCode(t),
+    setLight: () => c.setState({ theme: 'light' }), setDark: () => c.setState({ theme: 'dark' }), setAuto: () => c.setState({ theme: 'auto' }),
+    btnPrimary: atBtn('primary', t), btnStop: atBtn('stop', t), btnMedium: atBtn('medium', t), btnSmall: atBtn('small', t), btnSmallLamp: atBtn('smallLamp', t), btnQuiet: atBtn('quiet', t)
+  };
+}
+
+// A segmented bar (one sliding indicator), as in Main; shape kept for the page templates.
+function seg(options, current, onPick, t, opts) {
+  const b = atSeg(options, current, onPick, t, opts);
+  const i = Math.max(0, options.findIndex((o) => o[0] === current));
+  return Object.assign(b, { n: options.length, x: i * 100 + '%' });
+}
+
+const SIZES = {
+  privacy: { phone: [390, 6944], tablet: [820, 4684], desktop: [1280, 4312] },
+  terms: { phone: [390, 2236], tablet: [820, 1732], desktop: [1280, 1536] }
+};
+const P = (text) => ({ kind: 'p', text });
+const DL = (items) => ({ kind: 'dl', items });
+const DOCS = {
+  privacy: {
+    title: 'Privacy', effective: '2026-09-09', updated: '2026-09-26', other: ['Terms', 'PageTermsPhone.dc.html'],
+    lede: 'AwakeTab requires no account and sets no cookies.',
+    sections: [
+      ['browser', 'Data stored in your browser', 'your settings, sessions and stats live in this browser, under six keys. You can clear them from Settings or your browser.', [
+        DL([
+          ['`at.v1.settings`', 'Theme, accent, default duration, sound, notifications, end behaviour, battery, ambient, language, telemetry and keyboard preferences.'],
+          ['`at.v1.session`', 'The current or last session so a reload can offer to resume it.'],
+          ['`at.v1.stats`', 'Local-date minute totals, session count and streak data retained for up to 365 days.'],
+          ['`at.v1.license`', 'An offline-verifiable Pro token, plan, features, validation time and random device identifier.'],
+          ['`at.v1.meta`', 'Install date, completed-session count, rating-prompt choice and last seen version.'],
+          ['`at.v1.onboarding`', 'Dismissed tips, including language suggestions.']
+        ]),
+        P('This data stays in browser storage unless a feature explicitly contacts the first-party API. You can clear it from Settings or your browser. `BroadcastChannel(\'awaketab\')` coordinates open tabs without sending that state to a server.')
+      ]],
+      ['telemetry', 'First-party telemetry', 'telemetry is on by default and anonymous: AwakeTab sends events to its own server, with no user id, no fingerprint and no persistent identifier. One switch in Settings turns it off everywhere.', [
+        P('While telemetry is on, AwakeTab may send: `page_view`, `session_start`, `session_end`, `lock_state`, `lock_denied`, `fallback_used`, `resume_shown`, `resume_accepted`, `pwa_install`, `pip_open`, `share_click`, `pro_view`, `pro_checkout_click`, `pro_activated`, `rating_prompt`, `extension_click`, `ad_slot_loaded`, `sponsor_view`, `sponsor_click`, `session_extend`, `affiliate_click`, `rating_submitted` and sampled `client_error` events.'),
+        P('Common fields are timestamp, path without query parameters, locale, coarse browser/OS and viewport classes, application version and a random per-tab session id held only in memory. AwakeTab does not collect a user id, exact user agent, fingerprint, full referrer or persistent analytics identifier.')
+      ]],
+      ['extension', 'AwakeTab for Chrome (browser extension)', 'the extension keeps the same records on your computer, asks for power, storage and alarms (anything else is optional), and sends no usage data unless you turn it on.', [
+        P('The extension keeps the same records as the site, in `chrome.storage.local` on your computer: `at.v1.settings`, `at.v1.session`, `at.v1.stats`, `at.v1.license` (only after you activate Pro), `at.v1.ext` (Screen or System level, schedules and auto-start sites) and `at.v1.device` (a random device id created once per browser profile, used only to count Pro activations).'),
+        P('If Chrome sync is on, your settings, schedules and auto-start sites are also copied through `chrome.storage.sync` to your other Chrome profiles. The licence token and the device id never sync.'),
+        P('The extension asks for `power`, `storage` and `alarms`. Notifications and access to a website are optional and requested only when you turn on end-of-timer notifications or add an auto-start site; the site permission covers that one site, and the extension never reads page content. Which sites you add is never sent anywhere.'),
+        P('Anonymous usage statistics are off by default in the extension. If you turn them on in its settings, it sends at most `session_start`, `session_end`, `pro_activated` and `client_error` events to `awaketab.com/api/e` with `source: ext` and the common fields above, never a URL, tab title or site name. Activating Pro sends the licence key, the random device id and the label “AwakeTab for Chrome · your operating system” to `/api/license/activate`. The extension shows no ads, loads no remote code and never simulates keyboard or mouse input.')
+      ]],
+      ['server-data', 'Data kept on our servers', 'three kinds of records, each with an end date: usage events for 90 days, ratings for up to 2 years, and a licence record until the licence expires plus one year.', [
+        P('AwakeTab runs on Cloudflare. It keeps three kinds of records there, and nothing else:'),
+        DL([
+          ['Anonymous usage events', 'The telemetry events above, and content-security-policy reports your browser may send to `/api/csp` (only the page path is kept). They are stored in Cloudflare Workers Analytics Engine and **deleted automatically after 90 days**. They carry no IP address and no identifier beyond the per-tab random session id, so they cannot be traced back to you. Turn telemetry off in Settings to stop sending them.'],
+          ['Ratings', 'If you rate AwakeTab, we store the stars, any text you choose to write (up to 280 characters), the page language, the app version and the time, for up to 2 years. No name, email, IP address or device id is attached. Only the aggregate (average and count) is published.'],
+          ['Licence record', 'If you buy Pro or a Business licence, we keep a record to fulfil the purchase, handle refunds and stop abuse: the plan and its status, your licence key (encrypted), the Polar order and customer ids, and for each activated device a hash of its random device id, its label and when it was last seen. It is kept until the licence expires plus one year, then deleted. Your name, email and payment details stay with Polar, the merchant of record, whose privacy terms apply.']
+        ]),
+        P('**Deleting your licence data.** Email [support@awaketab.com](mailto:support@awaketab.com) from any address with your licence key or Polar receipt, and ask us to delete your licence data. We delete the licence record and its device list within 7 days and confirm by reply. Deleting it ends Pro on every device, and it does not refund the purchase (a refund within 14 days does that, see the terms). Usage events and ratings carry no identity, so no one, including us, can pick out yours; they expire on the schedule above.')
+      ]],
+      ['network', 'Network and payment data', 'your IP address is used briefly, as a salted hash, for rate limiting and is never stored as analytics. Polar handles payment.', [
+        P('API rate limiting uses a salted hash of the source IP transiently; neither the IP nor its hash is stored as analytics. Pro purchases are processed by Polar, whose checkout privacy terms apply. Licence endpoints receive only the licence key or token, a random device id and a user-visible device label.')
+      ]],
+      ['ads', 'Advertising (not yet active)', 'no page shows ads today. If article ads start, they will never appear on the awake screen, in Picture-in-Picture, in embeds or in the extension.', [
+        P('**No page shows ads today.** This section describes what will apply once advertising starts on the articles; the effective date above will change when it does.'),
+        P('AwakeTab\'s tool pages load no third-party scripts and show no ads. Our articles (pages under /for, /on, /vs, /guides and /learn) will show advertisements from Google AdSense. Ad vendors may set cookies and process your IP address and browsing information to show and measure ads. If you are in the EEA, the UK or Switzerland we will ask for your consent first through a certified consent management platform, and you will be able to change your choice any time via “Manage consent” in the footer. AwakeTab Pro removes ads on all pages. We never show ads on the awake screen, in Picture-in-Picture, in embeds or in the browser extension.')
+      ]],
+      ['contact', 'Contact', 'one address for every question about this policy or your data.', [
+        P('Questions about this policy or your data: [support@awaketab.com](mailto:support@awaketab.com).')
+      ]]
+    ]
+  },
+  terms: {
+    title: 'Terms', effective: '2026-09-09', updated: '2026-09-09', other: ['Privacy', 'PagePrivacyDesk.dc.html'],
+    lede: 'You may use AwakeTab to request that a supported browser keep a display awake while the relevant page remains eligible. Browser, operating-system and device power policy always remain in control.',
+    sections: [
+      ['guarantee', 'No guarantee of uninterrupted wakefulness', 'trust the live status pill, not a promise. Do not rely on AwakeTab for safety-critical monitoring.', [
+        P('AwakeTab cannot guarantee operation in a hidden tab, after closing a laptop lid, during low-power modes, after browser suspension, or when a device administrator blocks the API. Use the live status pill as the current result and do not rely on AwakeTab for safety-critical monitoring.')
+      ]],
+      ['use', 'Responsible use', 'use the shortest session you need, and do not use AwakeTab to fake activity or availability.', [
+        P('Keeping a display on uses battery and may cause image retention on some screens. Follow device guidance, use the shortest suitable duration and stop a session when it is no longer needed. You must not use the service to misrepresent activity or availability.')
+      ]],
+      ['licences', 'Software and licences', 'the website is provided as-is, open-source packages keep their own licence, and paid licences have a 14-day refund.', [
+        P('The public website is provided as-is. Open-source packages are governed by the licence included with their source. Paid product terms, activation limits and refund information shown at checkout apply in addition to these terms. Features and browser support may change as platforms change.'),
+        P('Paid licences include a 14-day refund, no questions asked. Email [support@awaketab.com](mailto:support@awaketab.com) with your receipt or use the Polar customer portal. Refunds deactivate the licence key.')
+      ]]
+    ]
+  }
+};
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: props.theme ?? 'auto', sysDark: sysDark(), active: null };
+  }
+  componentDidMount() { themeMount(this); }
+  componentWillUnmount() { themeUnmount(this); }
+  componentDidUpdate(prev) {
+    if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme });
+    if (prev.doc !== this.props.doc) this.setState({ active: null });
+  }
+  renderVals() {
+    const s = this.state;
+    const docId = this.props.doc === 'terms' ? 'terms' : 'privacy';
+    const D = DOCS[docId];
+    const sh = shell(this, SIZES[docId], '', 'desktop');
+    const { t, p, dark, isDesk, isTab, isPhone } = sh;
+    const active = s.active && D.sections.some((x) => x[0] === s.active) ? s.active : D.sections[0][0];
+    return Object.assign(sh, {
+      docTitle: D.title, lede: D.lede, effective: fullDate(D.effective), updated: fullDate(D.updated),
+      otherLabel: D.other[0], otherHref: D.other[1],
+      cols: isDesk ? '232px minmax(0, 1fr)' : 'minmax(0, 1fr)',
+      areas: isDesk ? '". head" "toc body"' : '"head" "toc" "body"',
+      mainPad: isDesk ? '32px 80px 0' : isTab ? '32px 32px 0' : '12px 16px 0',
+      tocPad: isDesk ? '8px 0 0' : '20px 20px 12px', tocBg: isDesk ? 'transparent' : t.surface, tocBorder: isDesk ? '0' : '1px solid ' + t.line,
+      toc: D.sections.map(([id, title]) => ({
+        title, href: '#' + docId + '-' + id, cur: id === active ? 'location' : 'false', weight: id === active ? 600 : 500,
+        color: id === active ? t.ink : t.ink2, dot: 'flex-shrink: 0; width: 6px; height: 6px; border-radius: 999px; background: ' + (id === active ? p.lamp : 'transparent'), pick: () => this.setState({ active: id })
+      })),
+      sumBg: rgba(p.lamp, dark ? 0.07 : 0.06), sumLine: rgba(p.lamp, dark ? 0.22 : 0.26), sumType: isPhone ? AT_TYPE.ui : AT_TYPE.body,
+      dlCols: isPhone ? 'minmax(0, 1fr)' : '190px minmax(0, 1fr)',
+      sections: D.sections.map(([id, title, summary, blocks]) => ({
+        id: docId + '-' + id, hid: docId + '-' + id + '-h', title, summary,
+        blocks: blocks.map((b) => b.kind === 'p'
+          ? { isP: true, isDl: false, segs: segs(b.text, p, t), items: [] }
+          : { isP: false, isDl: true, segs: [], items: b.items.map(([term, desc]) => ({ term: segs(term, p, t), desc: segs(desc, p, t) })) })
+      }))
+    });
+  }
+}
+</script>
+</body>
+</html>

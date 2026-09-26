@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · home below the tool</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.96)}
+button:focus-visible,a:focus-visible{outline:2px solid #5BE0E8;outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-float{animation:at-float 7s ease-in-out infinite}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-chev{transition:transform .6s var(--ease)}
+.at-row{transition:background-color .45s var(--ease)}
+.at-row:hover{background-color:rgba(142,154,174,0.08)}
+.at-row .at-go{transition:transform .6s var(--ease)}
+.at-row:hover .at-go{transform:translateX(4px)}
+.at-prose a{text-decoration-thickness:1px;text-underline-offset:4px}
+.at-prose a:hover{text-decoration-thickness:2px}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div class="at-root at-prose" style="width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{p.ground}}; color: {{t.ink}}; display: flex; flex-direction: column">
+
+  <div style="position: relative; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 0 16px {{bandPad}}">
+    <div aria-hidden="true" style="width: 1px; height: {{bandLine}}; background: linear-gradient(180deg, transparent, {{lampLine}})"></div>
+    <a href="#home-what" class="at-float" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 12px; box-sizing: border-box; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}; color: {{t.ink2}}; font-size: 14px; line-height: 20px; font-weight: 500; text-decoration: none">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"></path></svg>
+      How it works, limits and support
+    </a>
+  </div>
+
+  <div style="display: flex; flex-direction: column; padding-inline: {{padX}}">
+
+    <section id="home-what" aria-labelledby="h-what" style="{{secStyle}}">
+      <h2 id="h-what" style="{{h2Style}}">What AwakeTab does</h2>
+      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 700px">
+        <p style="margin: 0; font-size: 18px; line-height: 28px; color: {{t.ink}}; text-wrap: pretty">AwakeTab uses the browser's Screen Wake Lock API while this tab is visible, and its status only says the screen is awake after the browser confirms the lock.</p>
+        <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Pick a duration, 15 min to 4 h, Custom… up to seven days, or Until… a clock time, and the display stops dimming and sleeping (a work idle-lock policy can still lock it). The pill reads <strong style="color: {{t.ink}}; font-weight: 600">Screen awake</strong> only while the browser is actually holding the lock. Hide this tab and the browser takes the lock back, so the pill switches to <strong style="color: {{t.ink}}; font-weight: 600">Paused — tab hidden</strong> and the timer stops until you come back.</p>
+        <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">No account, no download, no extension: the whole tool is this page. Settings, the current session and your stats stay in this browser, and nothing is sent unless you leave the optional usage beacon on. It works offline after the first visit, and <strong style="color: {{t.ink}}; font-weight: 600">Install AwakeTab</strong> in the header puts it on a home screen or dock.</p>
+      </div>
+    </section>
+
+    <section id="home-how" aria-labelledby="h-how" style="{{secStyle}}">
+      <h2 id="h-how" style="{{h2Style}}">How it works</h2>
+      <div style="display: flex; flex-direction: column; gap: {{howGap}}; min-width: 0">
+        <ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: {{stepCols}}; gap: {{stepGap}}">
+          <li style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 12px; align-items: start">
+            <span aria-hidden="true" style="width: 32px; height: 32px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{lampLine}}; display: grid; place-items: center; font-size: 14px; line-height: 20px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{p.lamp}}">1</span>
+            <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+            <strong style="font-size: 16px; line-height: 26px; font-weight: 600; color: {{t.ink}}">You pick a duration.</strong>
+            <span style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">A preset, a custom length or a clock time starts a session. Each choice is one keypress:</span>
+            <span style="display: flex; flex-wrap: wrap; gap: 8px 12px; padding-top: 4px; font-size: 14px; line-height: 20px; color: {{t.muted}}; align-items: center">
+              <span style="display: inline-flex; align-items: center; gap: 4px"><kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; background: {{t.raised}}; box-shadow: inset 0 -1px 0 {{t.line2}}; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">1</kbd>–<kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; background: {{t.raised}}; box-shadow: inset 0 -1px 0 {{t.line2}}; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">6</kbd> presets</span>
+              <span style="display: inline-flex; align-items: center; gap: 4px"><kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; background: {{t.raised}}; box-shadow: inset 0 -1px 0 {{t.line2}}; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">0</kbd> no end time</span>
+              <span style="display: inline-flex; align-items: center; gap: 4px"><kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; background: {{t.raised}}; box-shadow: inset 0 -1px 0 {{t.line2}}; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">U</kbd> clock time</span>
+              <span style="display: inline-flex; align-items: center; gap: 4px"><kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; background: {{t.raised}}; box-shadow: inset 0 -1px 0 {{t.line2}}; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">Space</kbd> start or stop</span>
+            </span>
+            </span>
+          </li>
+          <li style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 12px; align-items: start">
+            <span aria-hidden="true" style="width: 32px; height: 32px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{lampLine}}; display: grid; place-items: center; font-size: 14px; line-height: 20px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{p.lamp}}">2</span>
+            <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+            <strong style="font-size: 16px; line-height: 26px; font-weight: 600; color: {{t.ink}}">The browser is asked for a screen wake lock.</strong>
+            <span style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">The same Screen Wake Lock API a video player uses. The browser can accept, refuse, or take the lock back later; all three answers show as they happen.</span>
+            </span>
+          </li>
+          <li style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 12px; align-items: start">
+            <span aria-hidden="true" style="width: 32px; height: 32px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{lampLine}}; display: grid; place-items: center; font-size: 14px; line-height: 20px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{p.lamp}}">3</span>
+            <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+            <strong style="font-size: 16px; line-height: 26px; font-weight: 600; color: {{t.ink}}">The timer follows the lock, not the clock.</strong>
+            <span style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">The countdown runs only while the lock is held, on system time, so a suspended laptop comes back with an honest number. When time is up you get a chime and the choice to extend or stop.</span>
+            </span>
+          </li>
+        </ol>
+
+        <div style="display: flex; flex-direction: column; gap: 16px">
+          <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink}}; text-wrap: pretty">A lock has exactly seven states, and the pill names the one you are in.</p>
+          <dl style="margin: 0; display: grid; grid-template-columns: {{stateCols}}; column-gap: 32px; border-top: 1px solid {{t.line}}">
+            <sc-for list="{{states}}" as="st" hint-placeholder-count="7">
+              <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: {{stateRowPad}}; border-bottom: 1px solid {{t.line}}">
+                <dt style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 8px; box-sizing: border-box; border-radius: 999px; background: {{st.soft}}; border: 1px solid {{st.line}}; font-size: 14px; line-height: 20px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">
+                  <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible"><path d="{{st.glyph}}" fill="{{st.fill}}" stroke="{{st.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+                  {{st.label}}
+                </dt>
+                <dd style="margin: 0; font-size: 15px; line-height: 22px; color: {{t.ink2}}; text-wrap: pretty">{{st.meaning}}</dd>
+              </div>
+            </sc-for>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section id="home-limits" aria-labelledby="h-limits" style="{{secStyle}}">
+      <h2 id="h-limits" style="{{h2Style}}">Honest limits</h2>
+      <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: {{limitCols}}; column-gap: 40px; border-top: 1px solid {{t.line}}">
+        <li style="{{limitLi}}">
+          <strong style="font-size: 16px; line-height: 26px; font-weight: 600; color: {{t.ink}}">A hidden tab cannot hold a wake lock.</strong>
+          <span style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Switching apps, minimising or changing tabs pauses the session. That is a platform rule. For a display awake behind other windows, use the <a href="#" style="color: {{p.link}}">AwakeTab extension for Chrome and Edge</a>.</span>
+        </li>
+        <li style="{{limitLi}}">
+          <strong style="font-size: 16px; line-height: 26px; font-weight: 600; color: {{t.ink}}">Closing the lid still puts the machine to sleep.</strong>
+          <span style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">No web page or extension can change that. It takes an OS setting, an external display or a native tool.</span>
+        </li>
+        <li style="{{limitLi}}">
+          <strong style="font-size: 16px; line-height: 26px; font-weight: 600; color: {{t.ink}}">Low Power Mode shortens Auto-Lock.</strong>
+          <span style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">iPhone Low Power Mode forces a 30-second Auto-Lock. Separately, Firefox refuses a wake lock at 5% battery or less while not charging; the pill then reads <strong style="color: {{t.ink}}; font-weight: 600">Blocked — here's the fix</strong> and names the cause.</span>
+        </li>
+        <li style="{{limitLi}}">
+          <strong style="font-size: 16px; line-height: 26px; font-weight: 600; color: {{t.ink}}">It does not touch your chat status.</strong>
+          <span style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Teams, Slack and Zoom presence follows keyboard and mouse idle time, not the display. AwakeTab never simulates input to fake it.</span>
+        </li>
+        <li style="{{limitLi}}">
+          <strong style="font-size: 16px; line-height: 26px; font-weight: 600; color: {{t.ink}}">Display sleep is not system sleep.</strong>
+          <span style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">A wake lock holds the screen, not the whole computer. For a machine awake with the screen off, use a native utility.</span>
+        </li>
+        <li style="{{limitLi}}">
+          <strong style="font-size: 16px; line-height: 26px; font-weight: 600; color: {{t.ink}}">Other software keeps its own rules.</strong>
+          <span style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">A bank logout, a proctoring app, a monitor that sleeps on lost signal or a corporate lock-screen policy are outside a wake lock's reach.</span>
+        </li>
+      </ul>
+    </section>
+
+    <section id="home-support" aria-labelledby="h-support" style="{{secStyle}}">
+      <h2 id="h-support" style="{{h2Style}}">Browser and device support</h2>
+      <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty; max-width: 700px">Native support means the browser implements the Screen Wake Lock API. Where it is missing, a silent one-frame video loop is offered after one tap.</p>
+        <div role="table" aria-label="Screen Wake Lock API support by browser" style="border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; overflow: hidden">
+          <div role="row" style="display: grid; grid-template-columns: {{matCols}}; column-gap: 16px; padding: 12px {{matPad}}; border-bottom: 1px solid {{t.line}}">
+            <span role="columnheader"><sc-if value="{{showNotes}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Browser or context</span></sc-if><sc-if value="{{narrow}}" hint-placeholder-val="{{true}}"><span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Browser</span></sc-if></span>
+            <span role="columnheader"><span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">From</span></span>
+            <span role="columnheader"><span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Mechanism</span></span>
+            <sc-if value="{{showNotes}}" hint-placeholder-val="{{false}}"><span role="columnheader"><span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">What to expect</span></span></sc-if>
+          </div>
+          <sc-for list="{{matrix}}" as="m" hint-placeholder-count="8">
+            <div role="row" style="display: grid; grid-template-columns: {{matCols}}; column-gap: 16px; align-items: start; padding: {{matRowPad}}; border-bottom: 1px solid {{m.line}}">
+              <span role="cell" style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <span style="font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">{{m.name}}</span>
+                <sc-if value="{{showNotes}}" hint-placeholder-val="{{false}}"><span style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{m.platforms}}</span></sc-if>
+              </span>
+              <span role="cell" style="font-size: 15px; line-height: 22px; font-weight: 500; font-variant-numeric: tabular-nums; color: {{t.ink}}">{{m.v}}</span>
+              <span role="cell" style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: {{t.ink2}}">
+                <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0; overflow: visible"><path d="{{m.glyph}}" fill="{{p.lamp}}" fill-rule="evenodd"></path></svg>
+                {{m.mech}}
+              </span>
+              <sc-if value="{{showNotes}}" hint-placeholder-val="{{false}}"><span role="cell" style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty">{{m.notes}}</span></sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px">
+          <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: {{t.muted}}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{p.lamp}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.7 2.7L16.5 9.5"></path></svg>
+            Last verified: 9 September 2026
+          </span>
+          <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; color: {{p.link}}">Per-version detail in the learn hub</a>
+        </div>
+        <p style="margin: 0; font-size: 15px; line-height: 22px; color: {{t.muted}}; text-wrap: pretty; max-width: 700px">Below these versions AwakeTab shows <strong style="color: {{t.ink}}; font-weight: 600">Tap to use the fallback</strong> and offers the video fallback.</p>
+      </div>
+    </section>
+
+    <section id="home-guides" aria-labelledby="h-guides" style="{{secStyle}}">
+      <h2 id="h-guides" style="{{h2Style}}">Pick the guide for what you are doing</h2>
+      <div style="display: grid; grid-template-columns: {{pairCols}}; gap: {{pairGap}}; min-width: 0">
+        <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+          <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Cooking, a talk, a long download, a wall dashboard: each has a sensible duration and its own honest limit, so each gets a page with the tool already set up.</p>
+          <ul style="margin: 0; padding: 0; list-style: none; border-top: 1px solid {{t.line}}">
+            <sc-for list="{{scenarios}}" as="sc" hint-placeholder-count="6">
+              <li><a href="{{sc.href}}" class="at-row" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid {{t.line}}; font-size: 16px; line-height: 24px; font-weight: 500; color: {{t.ink}}; text-decoration: none"><span>{{sc.label}}</span><svg class="at-go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.muted}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12h13M13 6l6 6-6 6"></path></svg></a></li>
+            </sc-for>
+          </ul>
+          <a href="{{hubHref}}" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; font-weight: 600; color: {{p.link}}">All eighteen scenarios</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+          <h3 style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; color: {{t.ink}}">Your device, specifically</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Wake locks behave differently on an iPhone, a managed Chromebook and a Windows laptop. These pages name the supported versions and the settings that still apply.</p>
+          <ul style="margin: 0; padding: 0; list-style: none; border-top: 1px solid {{t.line}}">
+            <sc-for list="{{devices}}" as="l" hint-placeholder-count="6">
+              <li><a href="#" class="at-row" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid {{t.line}}; font-size: 16px; line-height: 24px; font-weight: 500; color: {{t.ink}}; text-decoration: none"><span>{{l.label}}</span><svg class="at-go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.muted}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12h13M13 6l6 6-6 6"></path></svg></a></li>
+            </sc-for>
+          </ul>
+          <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; font-weight: 600; color: {{p.link}}">Twelve browsers and platforms</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="home-alt" aria-labelledby="h-alt" style="{{secStyle}}">
+      <h2 id="h-alt" style="{{h2Style}}">When something else is the better tool</h2>
+      <div style="display: grid; grid-template-columns: {{pairCols}}; gap: {{pairGap}}; min-width: 0">
+        <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+          <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">AwakeTab is instant and needs no installation. A native utility beats it when the screen must stay on with the browser out of sight. Comparisons use dated facts.</p>
+          <ul style="margin: 0; padding: 0; list-style: none; border-top: 1px solid {{t.line}}">
+            <sc-for list="{{comparisons}}" as="l" hint-placeholder-count="4">
+              <li><a href="#" class="at-row" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid {{t.line}}; font-size: 16px; line-height: 24px; font-weight: 500; color: {{t.ink}}; text-decoration: none"><span>{{l.label}}</span><svg class="at-go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.muted}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12h13M13 6l6 6-6 6"></path></svg></a></li>
+            </sc-for>
+          </ul>
+          <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; font-weight: 600; color: {{p.link}}">All seven comparisons</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+          <h3 style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; color: {{t.ink}}">Or fix the setting itself</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Sometimes the real answer is a system setting. These walkthroughs show where the timeout lives, what to do when it is greyed out, and when AwakeTab is faster.</p>
+          <ul style="margin: 0; padding: 0; list-style: none; border-top: 1px solid {{t.line}}">
+            <sc-for list="{{fixes}}" as="l" hint-placeholder-count="3">
+              <li><a href="#" class="at-row" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid {{t.line}}; font-size: 16px; line-height: 24px; font-weight: 500; color: {{t.ink}}; text-decoration: none"><span>{{l.label}}</span><svg class="at-go" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.muted}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12h13M13 6l6 6-6 6"></path></svg></a></li>
+            </sc-for>
+          </ul>
+          <span style="display: flex; flex-wrap: wrap; column-gap: 16px">
+            <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; font-weight: 600; color: {{p.link}}">Troubleshooting guides</a>
+            <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; font-weight: 600; color: {{p.link}}">Learn about wake locks</a>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section id="home-faq" aria-labelledby="h-faq" style="{{secStyle}}">
+      <h2 id="h-faq" style="{{h2Style}}">Questions we are asked most</h2>
+      <div style="display: flex; flex-direction: column; border-top: 1px solid {{t.line}}; min-width: 0">
+        <sc-for list="{{faq}}" as="f" hint-placeholder-count="8">
+          <div style="border-bottom: 1px solid {{t.line}}">
+            <h3 style="margin: 0">
+              <button id="{{f.qid}}" aria-expanded="{{f.open}}" aria-controls="{{f.aid}}" onClick="{{f.toggle}}" style="width: 100%; min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0; box-sizing: border-box; border: 0; background: transparent; text-align: start; font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}">
+                <span style="text-wrap: pretty">{{f.q}}</span>
+                <span aria-hidden="true" style="flex-shrink: 0; width: 44px; height: 44px; margin-block: -10px; display: grid; place-items: center">
+                  <span style="width: 32px; height: 32px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; display: grid; place-items: center; color: {{t.ink2}}">
+                    <svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="transform: rotate({{f.rot}})"><path d="M12 5v14M5 12h14"></path></svg>
+                  </span>
+                </span>
+              </button>
+            </h3>
+            <sc-if value="{{f.isOpen}}" hint-placeholder-val="{{false}}">
+              <p id="{{f.aid}}" role="region" aria-labelledby="{{f.qid}}" class="at-in" style="margin: 0; padding: 0 48px 16px 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty; max-width: 680px">{{f.a}}</p>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="home-who" aria-labelledby="h-who" style="{{secStyle}}">
+      <h2 id="h-who" style="{{h2Style}}">How AwakeTab is checked</h2>
+      <div style="max-width: 700px">
+        <div style="border-radius: 16px; padding: {{cardPad}}; background: {{t.surface}}; border: 1px solid {{t.line}}">
+          <div style="display: flex; flex-direction: column; gap: 16px">
+            <div style="display: flex; align-items: center; gap: 12px">
+              <span aria-hidden="true" style="flex-shrink: 0; width: 48px; height: 48px; box-sizing: border-box; border-radius: 999px; background: {{lampSoft}}; border: 1px solid {{lampLine}}; display: grid; place-items: center; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">SB</span>
+              <span style="display: flex; flex-direction: column; gap: 4px">
+                <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}">Soubhik Biswas</span>
+                <span style="font-size: 14px; line-height: 20px; color: {{t.muted}}">Builds AwakeTab. Last verified 9 September 2026.</span>
+              </span>
+            </div>
+            <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Support claims come from browser documentation and automated tests. Real-device results appear in the matrix once recorded. When a browser changes, the matrix and the affected pages change with it.</p>
+            <span style="display: flex; flex-wrap: wrap; column-gap: 20px">
+              <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; color: {{p.link}}">About the maker and the test rig</a>
+              <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; color: {{p.link}}">Testing notes</a>
+              <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; color: {{p.link}}">Changelog</a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div style="flex-grow: 1"></div>
+
+  <footer style="border-top: 1px solid {{t.line}}; padding: {{foot.pad}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px">
+    <p style="margin: 0; font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p>
+    <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; column-gap: 16px; font-size: 13px; line-height: 18px">
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Privacy</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Terms</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Changelog</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">About</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a>
+    </nav>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"$preview":{"width":390,"height":7956}}'>
+const DARK = {
+  bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%, #070A11 100%)',
+  surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE',
+  track: '#1A2336', tick: '#2A3752', primaryBg: '#EAF0F7', primaryInk: '#0A0E16', chip: '#26324B', chipShadow: 'rgba(0,0,0,0.4)',
+  tideBg: 'radial-gradient(90% 80% at 50% 15%, #16233B 0%, #0B111D 100%)', tideInkTop: '#EAF0F7', tideInkWater: '#04232A'
+};
+const LIGHT = {
+  bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)',
+  surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779',
+  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#0E1726', primaryInk: '#F4F7FB', chip: '#E3E9F1', chipShadow: 'rgba(14,23,38,0.14)',
+  tideBg: 'radial-gradient(90% 80% at 50% 15%, #FFFFFF 0%, #E8EFF6 100%)', tideInkTop: '#0E1726', tideInkWater: '#FFFFFF'
+};
+// AT-PRIMITIVES v1 (fix batch 1b): DESIGN.md §2.1 tokens and §11 geometry. Keep identical across files.
+const AT_TOK = {
+  dark: { raised: '#26324B', sunken: '#0D131F', horizonInk: '#F6F2EA', line2: '#33405C', inputBorder: '#5A6781', groundEnd: '#070A11' },
+  light: { raised: '#E3E9F1', sunken: '#F6F9FC', horizonInk: '#F6F2EA', line2: '#C3CDDA', inputBorder: '#8C98AA', groundEnd: '#EEF3F8' }
+};
+const AT_NIGHT = { ground: '#000000', ink: '#FF5A3C', ink2: '#E8563C', muted: '#A89690', line: '#3A2E2A' };
+const AT_SCRIM = 'rgba(4,7,12,.55)';
+const AT_HDR = { phone: { h: '60px', pad: '0 16px' }, tablet: { h: '68px', pad: '0 32px' }, desktop: { h: '68px', pad: '0 80px' }, xl: { h: '68px', pad: '0 120px' } };
+const AT_FOOT = { phone: '24px 16px 32px', tablet: '24px 32px', desktop: '24px 80px', xl: '24px 120px' };
+const AT_CARD_PAD = { phone: '20px', tablet: '24px', desktop: '24px', xl: '24px' };
+const AT_TYPE = {
+  phone: { h1: '34px', h1lh: '42px', h2: '24px', h2lh: '32px', gutter: '16px', section: '48px' },
+  tablet: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '32px', section: '64px' },
+  desktop: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '80px', section: '96px' }
+};
+// Starts where the tool's ground ends (#070A11 dark, #EEF3F8 light) so the page reads as one surface.
+const PAGE = {
+  dark: { ground: 'linear-gradient(180deg, #070A11 0px, #0A0E16 480px)', lamp: '#5BE0E8', link: '#5BE0E8', amber: '#F2B34C', red: '#FF7A7A' },
+  light: { ground: 'linear-gradient(180deg, #EEF3F8 0px, #F2F6FA 480px)', lamp: '#087B87', link: '#087B87', amber: '#B7791F', red: '#D14343' }
+};
+const SIZES = { phone: [390, 7956], tablet: [820, 5992], desktop: [1280, 6028] };
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const PAUSE = 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z';
+const TRI = 'M6 1L11.2 10.5H.8z';
+const RINGDOT = 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z';
+// [label, tone, glyph, hollow, meaning]: labels are the exact pill contract.
+const STATES = [
+  ['Ready', 'muted', DOT, true, 'Nothing requested yet. Pick a duration to start.'],
+  ['Starting…', 'lamp', DOT, true, 'The request is in flight; the browser has not answered.'],
+  ['Screen awake', 'lamp', DOT, false, 'The browser confirmed the lock. Only now does the timer run.'],
+  ['Paused — tab hidden', 'amber', PAUSE, false, 'The tab lost focus, so the lock was taken back. AwakeTab asks again when you return.'],
+  ["Blocked — here's the fix", 'red', TRI, false, 'The browser refused the request, for example Safari before your first tap. The panel names the cause and the fix.'],
+  ['Tap to use the fallback', 'lamp', DOT, false, 'No Screen Wake Lock API here; a fallback is offered instead.'],
+  ['Awake via video fallback', 'lamp', RINGDOT, false, 'A silent one-frame video is holding the display. It needs this tab visible and uses a little more battery.']
+];
+const MATRIX = [
+  ['Chrome', '84', 'native', 'Windows, macOS, Linux, Android, ChromeOS', 'The tab must remain visible.'],
+  ['Edge', '84', 'native', 'Windows, macOS', 'The tab must remain visible.'],
+  ['Firefox', '126', 'native', 'Windows, macOS, Linux, Android', 'Earlier versions use the video fallback after a user gesture.'],
+  ['Safari', '16.4', 'native', 'macOS, iOS, iPadOS', 'Needs a tap to start. The tab must remain visible.'],
+  ['Samsung Internet', '14', 'native', 'Android', 'The tab must remain visible.'],
+  ['Opera', '70', 'native', 'Windows, macOS, Linux, Android', 'Chromium-based support; the tab must remain visible.'],
+  ['iOS Home Screen app', '18.4', 'native', '', 'Older versions should use AwakeTab in Safari.'],
+  ['Video fallback', 'Any', 'fallback', '', 'Requires a user gesture and uses more power than a native wake lock.']
+];
+const SCENARIOS = [['cooking', 'Keep your screen on while cooking'], ['presentations', 'Keep the screen on while presenting'], ['downloads', 'Keep the screen on while downloading'], ['dashboards', 'Keep a dashboard screen switched on'], ['night-clock', 'Run a night clock on OLED'], ['video-calls', 'Keep the screen on in a video call']];
+const DEVICES = ['Keep your iPhone screen on in Safari', 'Keep your Android screen on in Chrome', 'Keep the screen on in Windows 11', 'Prevent Mac display sleep in a browser', 'Keep a Chromebook screen on', 'Keep the screen on in Firefox'];
+const COMPARISONS = ['AwakeTab vs Caffeine', 'AwakeTab vs PowerToys Awake', 'AwakeTab vs nosleep.page', 'AwakeTab vs mouse jigglers'];
+const FIXES = ['Windows 11 screen turns off after 1 minute', 'iPhone Auto-Lock "Never" is greyed out', 'Prevent a Mac from sleeping with the lid closed'];
+const FAQ = [
+  ['Does it still work if I switch tabs or minimise the window?', 'No. The browser releases the lock when the document is hidden. AwakeTab pauses and asks again when the tab is visible. For a display behind other windows, use the extension or the floating window.'],
+  ['Will it keep my laptop awake with the lid closed?', 'No, and neither will any other web page. Lid-close behaviour is an OS decision. Change it in power settings, attach an external display, or use a native tool.'],
+  ['Does it keep Teams or Slack showing me as available?', 'No. Presence follows keyboard and mouse idle time, not a lit display. AwakeTab never sends synthetic input.'],
+  ['Does it stop the whole computer from sleeping, or only the screen?', 'The screen is the guarantee. Idle system sleep is a separate policy the page cannot control. For a machine awake with the display off, use a native utility.'],
+  ['Why does my iPhone lock the screen anyway?', 'Low Power Mode forces a 30-second Auto-Lock. Turn it off in Settings → Battery. Safari needs iOS 16.4; a Home Screen app needs iOS 18.4. Below those, AwakeTab offers the video fallback.'],
+  ['What is the video fallback, and when does it run?', 'A silent one-frame loop so the browser treats media as playing. It runs only when there is no Screen Wake Lock API, and only after you tap. The pill says "Awake via video fallback".'],
+  ['How much battery does it use, and can I leave it running overnight?', 'The lock costs almost nothing; the lit screen drains the battery. Plug in, dim the display, and consider night clock mode on OLED. In Chrome and Edge, "Stop automatically on low battery" ends the session before the battery runs out.'],
+  ['Is it free, and what happens to my data?', 'Free, no sign-up. Settings, session and stats stay in this browser, with no cookies and no fingerprinting. The optional first-party beacon sends no identifiers and can be turned off. No ads on the awake screen, now or later.']
+];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: props.theme ?? 'auto', sysDark: this.sys(), faqOpen: 0 };
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() { if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  componentDidUpdate(prev) {
+    if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme });
+  }
+  rgba(hex, a) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  renderVals() {
+    const s = this.state;
+    const layout = ['phone', 'tablet', 'desktop'].includes(this.props.layout) ? this.props.layout : 'phone';
+    const desk = layout === 'desktop', tab = layout === 'tablet';
+    const dark = s.theme === 'dark' || (s.theme === 'auto' && s.sysDark);
+    const t = Object.assign({}, dark ? DARK : LIGHT, AT_TOK[dark ? 'dark' : 'light']);
+    const p = dark ? PAGE.dark : PAGE.light;
+    const ty = AT_TYPE[layout];
+    const tones = { muted: t.muted, lamp: p.lamp, amber: p.amber, red: p.red };
+    const [W, H] = SIZES[layout];
+    const wide = desk || tab;
+    const hub = desk ? 'HubForDesk.dc.html' : 'HubForPhone.dc.html';
+    return {
+      W: W + 'px', H: H + 'px', t, p,
+      foot: { pad: AT_FOOT[layout] }, cardPad: AT_CARD_PAD[layout],
+      padX: ty.gutter,
+      bandPad: desk ? '40px' : '24px', bandLine: desk ? '64px' : '40px',
+      limitLi: (wide ? 'display: flex; flex-direction: column; gap: 4px' : 'display: block') + '; padding: ' + (wide ? '16px 0' : '12px 0') + '; border-bottom: 1px solid ' + t.line,
+      stateRowPad: wide ? '16px 0' : '12px 0',
+      secStyle: desk
+        ? 'display: grid; grid-template-columns: 300px minmax(0, 1fr); column-gap: 64px; align-items: start; padding-block: ' + ty.section + '; border-top: 1px solid ' + t.line + '; scroll-margin-top: 24px'
+        : 'display: flex; flex-direction: column; gap: ' + (tab ? '24px' : '20px') + '; padding-block: ' + ty.section + '; border-top: 1px solid ' + t.line + '; scroll-margin-top: 24px',
+      h2Style: 'margin: 0; font-size: ' + ty.h2 + '; line-height: ' + ty.h2lh + '; font-weight: 600; letter-spacing: -0.02em; color: ' + t.ink + '; text-wrap: balance' + (desk ? '; position: sticky; top: 24px' : ''),
+      stepCols: desk ? 'repeat(3, minmax(0, 1fr))' : 'minmax(0, 1fr)', stepGap: desk ? '32px' : '20px', howGap: wide ? '40px' : '32px',
+      stateCols: wide ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
+      limitCols: wide ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
+      pairCols: wide ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)', pairGap: wide ? '40px' : '32px',
+      lampLine: this.rgba(p.lamp, 0.45), lampSoft: this.rgba(p.lamp, 0.14),
+      states: STATES.map(([label, tone, glyph, hollow, meaning]) => ({ label, meaning, glyph, tone: tones[tone], fill: hollow ? 'transparent' : tones[tone], soft: this.rgba(tones[tone], 0.12), line: this.rgba(tones[tone], 0.38) })),
+      showNotes: wide, narrow: !wide, matPad: wide ? '20px' : '16px', matRowPad: wide ? '16px 20px' : '12px 16px',
+      matCols: wide ? (desk ? '184px 64px 152px minmax(0, 1fr)' : '168px 56px 140px minmax(0, 1fr)') : 'minmax(0, 1fr) 44px 92px',
+      matrix: MATRIX.map(([name, v, mech, platforms, notes], i) => ({ name, v, platforms, notes, mech: mech === 'native' ? (wide ? 'Native wake lock' : 'Native') : (wide ? 'Video fallback' : 'Fallback'), glyph: mech === 'native' ? DOT : RINGDOT, line: i === MATRIX.length - 1 ? 'transparent' : t.line })),
+      hubHref: hub,
+      scenarios: SCENARIOS.map(([slug, label]) => ({ label, href: slug === 'cooking' ? (desk ? (dark ? 'ContentArticleDeskDark.dc.html' : 'ContentArticleDeskLight.dc.html') : (dark ? 'ContentArticlePhoneDark.dc.html' : 'ContentArticlePhoneLight.dc.html')) : '#' })),
+      devices: DEVICES.map((label) => ({ label })),
+      comparisons: COMPARISONS.map((label) => ({ label })),
+      fixes: FIXES.map((label) => ({ label })),
+      faq: FAQ.map(([q, a], i) => {
+        const open = s.faqOpen === i;
+        return { q, a, qid: 'hq' + i, aid: 'ha' + i, open: open ? 'true' : 'false', isOpen: open, rot: open ? '45deg' : '0deg', toggle: () => this.setState({ faqOpen: this.state.faqOpen === i ? -1 : i }) };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · Which plan fits · /pro helper</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease),opacity .45s var(--ease)}
+button:active{transform:scale(.96)}
+button:disabled,input:disabled,select:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+a{transition:color .45s var(--ease),background-color .45s var(--ease),border-color .45s var(--ease)}
+h1,h2,h3,h4,p,figure,blockquote{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+.at-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.at-num{font-family:Geist,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"zero" 0}
+.at-kick{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.2s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-fade{transition:background-color .6s var(--ease),border-color .6s var(--ease),opacity .6s var(--ease),fill .6s var(--ease),stroke .6s var(--ease)}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-breathe{animation:at-breathe 3.4s var(--ease) infinite alternate}
+.at-ignite{transform-box:fill-box;transform-origin:center;animation:at-ignite .6s var(--ease) .3s both}
+.at-travel{animation:at-travel .6s var(--ease) both}
+.at-off{transition:stroke-dasharray .9s var(--ease),stroke-opacity .9s var(--ease),opacity .9s var(--ease),fill .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-breathe{from{opacity:.55}to{opacity:1}}
+@keyframes at-ignite{0%{transform:scale(.6);opacity:.4}55%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes at-travel{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--at-tx,0),var(--at-ty,0)) scale(.5);opacity:0}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+<style>
+.at-wave{animation:at-wave 9s linear infinite}
+.at-wave2{animation:at-wave 15s linear infinite reverse}
+.at-bub{animation:at-bub 9s ease-in infinite}
+.at-cloud{animation:at-drift 90s linear infinite}
+.at-cloud2{animation:at-drift 130s linear infinite;animation-delay:-60s}
+.at-tw{animation:at-tw 5s ease-in-out infinite}
+.at-tw2{animation:at-tw 7s ease-in-out infinite;animation-delay:-3s}
+.at-glint{transform-origin:top center;animation:at-glint 6s ease-in-out infinite}
+.at-shim{animation:at-shim 3.8s var(--ease) infinite}
+.at-float{animation:at-float 7s ease-in-out infinite}
+.at-scrim{animation:at-fade .5s var(--ease) both}
+.at-sheet-up{animation:at-up .7s var(--ease) both}
+.at-sheet-side{animation:at-side .7s var(--ease) both}
+.at-sheet-body{scrollbar-width:thin}
+.at-time{color-scheme:inherit}
+.at-ig{opacity:0;pointer-events:none}
+.at-ig-dock{animation:at-flash .5s var(--ease) both}
+.at-ig-travel{animation:at-travel .6s var(--ease) .1s both}
+.at-ig-pill{animation:at-spark .7s var(--ease) .3s both}
+.at-ig-face{animation:at-flash .9s var(--ease) .45s both}
+.at-ig-tip{transform-box:fill-box;transform-origin:center;animation:at-spark .8s var(--ease) .5s both}
+.at-ig-bead{animation:at-spark .8s var(--ease) .55s both}
+@keyframes at-wave{to{transform:translateX(-358px)}}
+@keyframes at-bub{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.55}100%{transform:translateY(-240px) scale(1.1);opacity:0}}
+@keyframes at-drift{from{transform:translateX(-170px)}to{transform:translateX(420px)}}
+@keyframes at-tw{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes at-glint{0%,100%{transform:scaleX(.6);opacity:.35}50%{transform:scaleX(1);opacity:.7}}
+@keyframes at-shim{0%{transform:translateX(-120%)}100%{transform:translateX(420%)}}
+@keyframes at-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes at-fade{from{opacity:0}to{opacity:1}}
+@keyframes at-up{from{opacity:0;transform:translateY(72px)}to{opacity:1;transform:none}}
+@keyframes at-side{from{opacity:0;transform:translateX(56px)}to{opacity:1;transform:none}}
+@keyframes at-flash{0%{opacity:0}35%{opacity:1}100%{opacity:0}}
+@keyframes at-spark{0%{opacity:0;transform:scale(.4)}40%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(2.4)}}
+@keyframes at-off{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(.94)}}
+.at-rise3{animation:at-in .9s var(--ease) both;animation-delay:.35s}
+.at-step{transition:opacity .6s var(--ease),transform .6s var(--ease),background-color .6s var(--ease),border-color .6s var(--ease)}
+.at-l button:focus-visible,.at-l a:focus-visible,.at-l input:focus-visible,.at-l textarea:focus-visible{outline-color:#087B87}
+</style>
+</helmet>
+<div class="{{rootCls}}" style="width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; left: -25%; top: -4%; width: 150%; height: 50%; background: radial-gradient(45% 45% at 60% 40%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
+  <header style="position: relative; height: {{hdrH}}; flex-shrink: 0; box-sizing: border-box; padding: 0 {{gutter}}; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+    <a href="Main.dc.html" aria-label="AwakeTab, open the tool" style="display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; color: {{t.ink}}; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{bead}}" style="transition: fill .6s"></circle></svg>AwakeTab</a>
+    <sc-if value="{{isDesk}}" hint-placeholder-val="{{false}}"><nav aria-label="Main" style="display: flex; gap: 32px; font-size: 15px; line-height: 22px; font-weight: 500"><a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Use cases</a><a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Devices</a><a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Extension</a><a href="#" aria-current="page" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; color: {{t.ink}}; font-weight: 600; text-decoration: none"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: {{lamp}}"></span>Pro</a></nav></sc-if>
+    <div role="radiogroup" aria-label="Theme" style="position: relative; flex-shrink: 0; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}"><div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{themeX}})"></div><button role="radio" aria-checked="{{themeLight}}" aria-label="Light" title="Light" onClick="{{setLight}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeLightInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button><button role="radio" aria-checked="{{themeDark}}" aria-label="Dark" title="Dark" onClick="{{setDark}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeDarkInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button><button role="radio" aria-checked="{{themeAuto}}" aria-label="Auto, follows your system" title="Auto: follows your system" onClick="{{setAuto}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeAutoInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button></div>
+  </header>
+  <main style="position: relative; flex-grow: 1; box-sizing: border-box; width: 100%; max-width: 1280px; margin: 0 auto; padding: {{mainPad}}; display: flex; flex-direction: column; gap: {{secGap}}">
+    <div class="at-in" style="display: flex; flex-direction: column; gap: 12px; max-width: 680px">
+      <p style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">AwakeTab Pro</p>
+      <h1 style="font-size: {{h1Size}}; line-height: {{h1LH}}; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance">Which plan fits you?</h1>
+      <p style="font-size: 18px; line-height: 28px; color: {{t.ink2}}; text-wrap: pretty">Three quick questions. The answer is often free, and we will say so.</p>
+    </div>
+
+    <div style="{{gridStyle}}">
+      <div style="display: flex; flex-direction: column; gap: 32px; min-width: 0">
+        <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+          <legend style="padding: 0; margin-bottom: 12px; font-size: 20px; line-height: 28px; font-weight: 600; color: {{t.ink}}">1 · Where will you use it?</legend>
+          <div role="radiogroup" aria-label="Where will you use it?" style="display: grid; grid-template-columns: {{q1Cols}}; gap: 8px">
+            <sc-for list="{{q1}}" as="o" hint-placeholder-count="3">
+              <button role="radio" aria-checked="{{o.sel}}" onClick="{{o.pick}}" style="min-height: 56px; padding: 12px 16px; border-radius: 16px; border: 1px solid {{o.ring}}; background: {{o.bg}}; color: {{t.ink}}; text-align: start; display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: center; gap: 12px">
+                <span aria-hidden="true" style="width: 24px; height: 24px; box-sizing: border-box; border-radius: {{o.shape}}; border: 1px solid {{o.mark}}; background: {{o.fill}}; display: grid; place-items: center"><svg width="12" height="12" viewBox="0 0 12 12" style="opacity: {{o.tick}}"><path d="M2 6.4l2.6 2.6L10 3.4" fill="none" stroke="{{lampInk}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 15px; font-weight: {{o.weight}}">{{o.label}}</span><span style="font-size: 13px; color: {{t.muted}}">{{o.sub}}</span></span>
+              </button>
+            </sc-for>
+          </div>
+        </fieldset>
+
+        <fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+          <legend style="padding: 0; margin-bottom: 12px; font-size: 20px; line-height: 28px; font-weight: 600; color: {{t.ink}}">{{q2Legend}}</legend>
+          <div role="{{q2Role}}" aria-label="{{q2Legend}}" style="display: grid; grid-template-columns: {{q2Cols}}; gap: 8px">
+            <sc-for list="{{q2}}" as="o" hint-placeholder-count="4">
+              <button role="{{o.role}}" aria-checked="{{o.sel}}" onClick="{{o.pick}}" style="min-height: 56px; padding: 12px 16px; border-radius: 16px; border: 1px solid {{o.ring}}; background: {{o.bg}}; color: {{t.ink}}; text-align: start; display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: center; gap: 12px">
+                <span aria-hidden="true" style="width: 24px; height: 24px; box-sizing: border-box; border-radius: {{o.shape}}; border: 1px solid {{o.mark}}; background: {{o.fill}}; display: grid; place-items: center"><svg width="12" height="12" viewBox="0 0 12 12" style="opacity: {{o.tick}}"><path d="M2 6.4l2.6 2.6L10 3.4" fill="none" stroke="{{lampInk}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 15px; font-weight: {{o.weight}}">{{o.label}}</span><span style="font-size: 13px; color: {{t.muted}}">{{o.sub}}</span></span>
+              </button>
+            </sc-for>
+          </div>
+        </fieldset>
+
+        <sc-if value="{{showQ3}}" hint-placeholder-val="{{true}}">
+          <fieldset class="at-in" style="margin: 0; padding: 0; border: 0; min-width: 0">
+            <legend style="padding: 0; margin-bottom: 12px; font-size: 20px; line-height: 28px; font-weight: 600; color: {{t.ink}}">3 · How would you rather pay?</legend>
+            <div role="radiogroup" aria-label="How would you rather pay?" style="display: grid; grid-template-columns: {{q1Cols2}}; gap: 8px">
+              <sc-for list="{{q3}}" as="o" hint-placeholder-count="2">
+                <button role="radio" aria-checked="{{o.sel}}" onClick="{{o.pick}}" style="min-height: 56px; padding: 12px 16px; border-radius: 16px; border: 1px solid {{o.ring}}; background: {{o.bg}}; color: {{t.ink}}; text-align: start; display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: center; gap: 12px">
+                <span aria-hidden="true" style="width: 24px; height: 24px; box-sizing: border-box; border-radius: {{o.shape}}; border: 1px solid {{o.mark}}; background: {{o.fill}}; display: grid; place-items: center"><svg width="12" height="12" viewBox="0 0 12 12" style="opacity: {{o.tick}}"><path d="M2 6.4l2.6 2.6L10 3.4" fill="none" stroke="{{lampInk}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 15px; font-weight: {{o.weight}}">{{o.label}}</span><span style="font-size: 13px; color: {{t.muted}}">{{o.sub}}</span></span>
+              </button>
+              </sc-for>
+            </div>
+          </fieldset>
+        </sc-if>
+      </div>
+
+      <aside aria-labelledby="fit-h" aria-live="polite" style="position: relative; display: flex; flex-direction: column; gap: 20px; padding: 24px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{resLine}}; box-shadow: {{cardShadow}}; min-width: 0">
+        <p style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Our suggestion</p>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <h2 id="fit-h" style="font-size: {{h2Size}}; line-height: {{h2LH}}; font-weight: 600">{{res.title}}</h2>
+          <p style="display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums"><span style="font-size: {{priceSize}}; line-height: {{priceLH}}">{{res.price}}</span><span style="font-size: 18px; font-weight: 400; letter-spacing: -0.01em; color: {{t.ink2}}">{{res.per}}</span></p>
+          <p style="font-size: 15px; line-height: 22px; color: {{t.ink2}}; text-wrap: pretty">{{res.why}}</p>
+        </div>
+        <ul style="display: flex; flex-direction: column; gap: 8px">
+          <sc-for list="{{res.gets}}" as="g" hint-placeholder-count="3">
+            <li style="display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 12px; font-size: 14px; line-height: 20px; color: {{t.ink}}"><svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true" style="margin-top: 3px"><path d="M2 6.4l2.6 2.6L10 3.4" fill="none" stroke="{{lamp}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{g}}</li>
+          </sc-for>
+        </ul>
+        <sc-if value="{{res.lamp}}" hint-placeholder-val="{{false}}">
+          <a href="{{res.href}}" style="height: 60px; box-sizing: border-box; border-radius: 20px; background: {{lamp}}; color: {{lampInk}}; font-size: 17px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>{{res.cta}}</a>
+        </sc-if>
+        <sc-if value="{{res.plain}}" hint-placeholder-val="{{true}}">
+          <a href="{{res.href}}" style="height: 52px; box-sizing: border-box; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.ground}}; color: {{t.ink}}; font-size: 16px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center">{{res.cta}}</a>
+        </sc-if>
+        <ul style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid {{t.line}}">
+          <sc-for list="{{res.notes}}" as="n" hint-placeholder-count="2">
+            <li style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{n}}</li>
+          </sc-for>
+        </ul>
+        <a href="Pro.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 600; color: {{t.ink}}; text-decoration: underline; text-decoration-color: {{lamp}}; text-underline-offset: 5px">Compare everything on the Pro page</a>
+      </aside>
+    </div>
+  </main>
+  <footer style="position: relative; flex-shrink: 0; box-sizing: border-box; width: 100%; padding: {{footPad}}; border-top: 1px solid {{t.line}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px"><p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p><nav aria-label="Site" style="display: flex; flex-wrap: wrap; column-gap: 16px"><a href="PagePrivacyDesk.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Privacy</a><a href="PageTermsPhone.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Terms</a><a href="PageChangelog.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Changelog</a><a href="PageAbout.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">About</a><a href="#" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a></nav></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"answer":{"editor":"enum","options":["free","once","year","site","screens"],"default":"free"},"$preview":{"width":390,"height":2080}}'>
+// AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
+const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#EAF0F7', primaryInk: '#0A0E16', shadow: 'none' };
+const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#0E1726', primaryInk: '#FFFFFF', shadow: '0 1px 2px rgba(14,23,38,.06)' };
+const AT_OLED = Object.assign({}, AT_DARK, { bg: '#000000', ground: '#000000', surface: '#0A0A0A' });
+const AT_LAMPS = [
+  { id: 'aqua', name: 'Aqua', dark: '#5BE0E8', light: '#087B87', pro: false },
+  { id: 'violet', name: 'Violet', dark: '#A594FF', light: '#5A47CF', pro: false },
+  { id: 'mint', name: 'Mint', dark: '#7EF0B8', light: '#167A50', pro: true },
+  { id: 'sky', name: 'Sky', dark: '#7CB8FF', light: '#255FBD', pro: true }
+];
+const AT_GLYPH = {
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z'
+};
+// Status pill sizes (§11.4): L kiosk, M tool, S popup / PiP / full embed, XS compact embed.
+const AT_PILL = {
+  L: { h: '48px', pad: '0 20px 0 16px', gap: '8px', fs: '20px', lh: '28px' },
+  M: { h: '38px', pad: '0 16px 0 12px', gap: '8px', fs: '15px', lh: '22px' },
+  S: { h: '32px', pad: '0 12px 0 8px', gap: '8px', fs: '14px', lh: '20px' },
+  XS: { h: '26px', pad: '0 8px', gap: '4px', fs: '13px', lh: '18px' }
+};
+function atRgba(hex, a) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atPill(o) {
+  const s = AT_PILL[o.size || 'M'];
+  return { label: o.label, h: s.h, pad: s.pad, gap: s.gap, fs: s.fs, lh: s.lh, tone: o.tone, glyph: o.glyph || AT_GLYPH.dot, fill: o.hollow ? 'transparent' : o.tone, stroke: o.stroke || '1.6', soft: atRgba(o.tone, 0.12), line: atRgba(o.tone, 0.38), glow: o.glow ? atRgba(o.tone, 0.8) : 'transparent', cls: 'at-fade' };
+}
+// Page chrome shared by every board: tokens, lamp, header, theme switch, card and footer metrics.
+function atChrome(o) {
+  const L = o.layout || 'phone';
+  const desk = L === 'desktop', tab = L === 'tablet', phone = !desk && !tab;
+  const theme = o.theme || 'auto';
+  const dark = theme === 'dark' || theme === 'oled' || (theme === 'auto' && o.sysDark !== false);
+  const t = theme === 'oled' ? AT_OLED : dark ? AT_DARK : AT_LIGHT;
+  const def = AT_LAMPS.find((l) => l.id === o.lamp) || AT_LAMPS[0];
+  const lamp = dark ? def.dark : def.light;
+  const set = (id) => () => { if (o.set) o.set(id); };
+  const ink = (id) => (theme === id ? t.ink : t.ink2);
+  return {
+    t, dark, lamp, lampText: lamp, lampInk: dark ? '#04232A' : '#FFFFFF', bead: lamp,
+    lampSoft: atRgba(lamp, 0.14), lampLine: atRgba(lamp, 0.45), lampGlow: atRgba(lamp, 0.55), lampFaint: atRgba(lamp, 0.08), lampTag: atRgba(lamp, 0.12),
+    halo: 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(lamp, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(lamp, 0) + ' 100%)',
+    isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone,
+    hdrH: phone ? '60px' : '68px', gutter: desk ? '80px' : tab ? '32px' : '16px', secGap: desk ? '96px' : tab ? '64px' : '48px',
+    cardPad: phone ? '20px' : '24px', cardShadow: t.shadow, footPad: phone ? '24px 16px 32px' : desk ? '24px 80px' : '24px 32px',
+    themeX: (theme === 'light' ? 0 : theme === 'dark' ? 44 : 88) + 'px',
+    themeLight: theme === 'light', themeDark: theme === 'dark', themeAuto: theme === 'auto',
+    themeLightInk: ink('light'), themeDarkInk: ink('dark'), themeAutoInk: ink('auto'),
+    setLight: set('light'), setDark: set('dark'), setAuto: set('auto')
+  };
+}
+const C = 2 * Math.PI * 146;
+// Growth names on top of the shared tokens (all values are tokens).
+const DARK = Object.assign({}, AT_DARK, { chip: AT_DARK.raised, chipShadow: 'transparent', field: AT_DARK.sunken, screen: AT_DARK.sunken });
+const LIGHT = Object.assign({}, AT_LIGHT, { chip: AT_LIGHT.raised, chipShadow: 'transparent', field: AT_LIGHT.sunken, screen: AT_LIGHT.sunken });
+// Lamp colours (DESIGN.md 2.2): id, name, dark, light, Pro.
+const LAMPS = [['aqua', 'Aqua', '#5BE0E8', '#087B87', false], ['violet', 'Violet', '#A594FF', '#5A47CF', false], ['mint', 'Mint', '#7EF0B8', '#167A50', true], ['sky', 'Sky', '#7CB8FF', '#255FBD', true]];
+// Preset labels from en.json; phones show all seven (PRODUCT.md anti-reference). ∞ is named Until I stop.
+const PRESET_ROWS = [['p15', '15 min', '15 minutes', 900], ['p30', '30 min', '30 minutes', 1800], ['p45', '45 min', '45 minutes', 2700], ['p60', '1 h', '1 hour', 3600], ['p120', '2 h', '2 hours', 7200], ['p240', '4 h', '4 hours', 14400], ['pinf', '∞', 'Until I stop', 0]];
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const GLYPH = { paused: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z', blocked: 'M6 1L11.2 10.5H.8z', fallback: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z' };
+// Pill strings are a contract: exactly these seven.
+const LABEL = { ready: 'Ready', ended: 'Ready', starting: 'Starting…', awake: 'Screen awake', paused: 'Paused — tab hidden', blocked: "Blocked — here's the fix", needtap: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
+
+class Component extends DCLogic {
+constructor(props) {
+    super(props);
+    this.state = Object.assign({ theme: props.theme || 'auto', sysDark: this.sys(), now: Date.now() }, this.seed(props.answer || 'free'));
+  }
+  seed(a) {
+    return {
+      free: { use: 'me', wants: ['none'], pay: 'once', logo: 'no', credit: 'fine' },
+      once: { use: 'me', wants: ['look', 'stats'], pay: 'once', logo: 'no', credit: 'fine' },
+      year: { use: 'me', wants: ['sched'], pay: 'year', logo: 'no', credit: 'fine' },
+      site: { use: 'site', wants: ['none'], pay: 'once', logo: 'no', credit: 'remove' },
+      screens: { use: 'screens', wants: ['none'], pay: 'once', logo: 'yes', credit: 'fine' }
+    }[a] || {};
+  }
+  heights() { return { phone: 2080, tablet: 1600, desktop: 1100 }; }
+  update(prev) { if (prev.answer !== this.props.answer) this.setState(this.seed(this.props.answer || 'free')); }
+  vals(b) {
+    const s = this.state, t = b.t, desk = b.isDesk, tab = b.isTab, phone = b.isPhone;
+    const opt = (on, label, sub, pick, round, role) => ({ label, sub, pick, role: role || 'radio', shape: role === 'checkbox' ? '8px' : '50%', sel: on ? 'true' : 'false', ring: on ? b.lamp : t.line, bg: on ? b.lampFaint : 'transparent', mark: on ? b.lamp : t.line2, fill: on ? b.lamp : 'transparent', tick: on ? 1 : 0, weight: on ? 600 : 500 });
+    const q1 = [['me', 'On my own devices', 'Phone, laptop, tablet, up to 5'], ['site', 'On a website I run', 'Recipes, docs, how-to pages'], ['screens', 'On screens I manage', 'Kiosks, dashboards, signage']]
+      .map(([id, l, sub]) => opt(s.use === id, l, sub, () => this.setState({ use: id })));
+    const WANTS = [['none', 'Nothing else, it already works', 'Keeping the screen on is free'], ['look', 'Lamp colours and a message', 'Mint and Sky, and Message mode'], ['sched', 'Schedules and auto-start', 'In AwakeTab for Chrome'], ['stats', '12 weeks of stats', 'And a CSV export'], ['ads', 'No ads on the guides', 'The tool itself never has ads']];
+    const toggle = (id) => () => {
+      const cur = this.state.wants;
+      if (id === 'none') return this.setState({ wants: ['none'] });
+      const next = cur.filter((w) => w !== 'none');
+      const out = next.includes(id) ? next.filter((w) => w !== id) : next.concat(id);
+      this.setState({ wants: out.length ? out : ['none'] });
+    };
+    let q2, q2Legend, q2Role = 'group';
+    if (s.use === 'site') {
+      q2Legend = '2 · Is a small credit under the button fine?';
+      q2Role = 'radiogroup';
+      q2 = [['fine', 'Yes, keep the credit', 'It reads "Keep awake by AwakeTab"'], ['remove', 'No, remove it', 'Clean embed on your own site']].map(([id, l, sub]) => opt(s.credit === id, l, sub, () => this.setState({ credit: id })));
+    } else if (s.use === 'screens') {
+      q2Legend = '2 · Do the screens need your own logo?';
+      q2Role = 'radiogroup';
+      q2 = [['no', 'No, a clock is enough', 'Minimal or Clock mode, starts by itself'], ['yes', 'Yes, our logo on screen', 'Replaces the AwakeTab wordmark']].map(([id, l, sub]) => opt(s.logo === id, l, sub, () => this.setState({ logo: id })));
+    } else {
+      q2Legend = '2 · Beyond keeping the screen on, what do you want?';
+      q2 = WANTS.map(([id, l, sub]) => opt(s.wants.includes(id), l, sub, toggle(id), false, 'checkbox'));
+    }
+    const wantsPro = s.use === 'me' && !s.wants.includes('none');
+    const q3 = [['once', 'Pay once', '$19. Launch price for the first 90 days after launch, then $29'], ['year', 'Every year', '$12 a year']].map(([id, l, sub]) => opt(s.pay === id, l, sub, () => this.setState({ pay: id })));
+    const GETS = { look: 'Mint and Sky lamps and Message mode on the awake screen', sched: 'Weekly schedules and auto-start in AwakeTab for Chrome', stats: '12 weeks of stats with a CSV export', ads: 'No ads on the guide pages' };
+    const proNotes = ['5 devices, no account. Your key arrives by email.', '14-day refund, no questions asked.', 'Charged in USD; taxes added at checkout where applicable.'];
+    let res;
+    if (s.use === 'site') res = s.credit === 'remove'
+      ? { title: 'Embed licence', price: '$29', per: 'a year per site, opening soon', why: 'Removes the credit line. Licences open soon; the free embed works today, with the credit.', gets: ['One script tag, Cook, Standard, Clock or Minimal mode', 'No "Keep awake by AwakeTab" credit', 'Includes one staging subdomain'], cta: 'Get the free embed code', href: 'EmbedShowcase.dc.html', lamp: false, notes: ['We open licences once checkout can register your domain.'] }
+      : { title: 'The free embed', price: '$0', per: 'with a small credit', why: 'Your readers get the same button and status pill. The credit links back to AwakeTab.', gets: ['One script tag', 'Kitchen timers in Cook mode', 'Readers never see ads in the widget'], cta: 'Get the embed code', href: 'EmbedShowcase.dc.html', lamp: false, notes: ['Want the credit gone later? Embed licences ($29 a year per site) open soon.'] };
+    else if (s.use === 'screens') res = s.logo === 'yes'
+      ? { title: 'Kiosk licence', price: '$19', per: 'one site · $49 five sites', why: 'Your logo on the screen instead of the AwakeTab wordmark, and your own message, set from one URL.', gets: ['Your logo and message in Minimal mode', 'Starts by itself and resumes after a restart', 'Paid once per site'], cta: 'Build a kiosk link', href: 'PageKiosk.dc.html', lamp: true, notes: ['The kiosk link itself is free; the licence adds branding.', 'Charged in USD; taxes added at checkout where applicable.'] }
+      : { title: 'A free kiosk link', price: '$0', per: 'no licence needed', why: 'Autostart, Minimal mode and Clock mode all work without paying.', gets: ['One URL per screen', 'Starts by itself, resumes after a restart', 'No ads on the screen'], cta: 'Build a kiosk link', href: 'PageKiosk.dc.html', lamp: false, notes: ['Add your logo and a message later with a Kiosk licence: $19 one site, $49 five sites.'] };
+    else if (!wantsPro) res = { title: 'Free is enough', price: '$0', per: 'no key, no account', why: 'Everything that keeps a screen awake is free, and stays free.', gets: ['Every length, Until a time, No limit', 'All seven honest states and the fallback', 'Ambient modes, the floating window and AwakeTab for Chrome'], cta: 'Open AwakeTab', href: 'Main.dc.html', lamp: false, notes: ['If you want more later, Pro starts at $12 a year.'] };
+    else if (s.pay === 'year') res = { title: 'Pro, yearly', price: '$12', per: 'a year', why: 'The extras you picked, on 5 devices.', gets: s.wants.map((w) => GETS[w]).filter(Boolean), cta: 'Get yearly Pro', href: 'Pro.dc.html', lamp: true, notes: ['If the plan ends, Pro features lock. Your settings and stats stay.', 'Lifetime: at the launch price, less than two years of the yearly plan.'].concat(proNotes.slice(1, 2)) };
+    else res = { title: 'Pro, pay once', price: '$19', per: 'once', why: 'Launch price for the first 90 days after launch, then $29. The extras you picked, on 5 devices. Pay once, no renewal.', gets: s.wants.map((w) => GETS[w]).filter(Boolean), cta: 'Get lifetime Pro', href: 'Pro.dc.html', lamp: true, notes: ['At the launch price, less than two years of the yearly plan.'].concat(proNotes) };
+    res.plain = !res.lamp;
+    return {
+      tone: b.lamp, aura: b.aura,
+      mainPad: desk ? '40px 80px 96px' : tab ? '40px 32px 64px' : '24px 16px 48px', secGap: desk ? '48px' : '32px',
+      h1Size: phone ? '34px' : '48px', priceSize: phone ? '40px' : '48px', priceLH: phone ? '48px' : '56px', h1LH: phone ? '42px' : '56px', h2Size: phone ? '24px' : '28px', h2LH: phone ? '32px' : '36px',
+      gridStyle: desk ? 'display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 48px; align-items: start' : 'display: flex; flex-direction: column; gap: 32px',
+      q1Cols: desk ? 'repeat(3, minmax(0, 1fr))' : tab ? 'repeat(3, minmax(0, 1fr))' : 'minmax(0, 1fr)',
+      q1Cols2: phone ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
+      q2Cols: phone ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
+      q1, q2, q2Legend, q2Role, q3, showQ3: wantsPro, res,
+      resLine: res.lamp ? b.lampLine : t.line, resGlow: res.lamp ? b.lampGlow : 'transparent'
+    };
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    this.timer = setInterval(() => this.tick(), 1000);
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+    if (this.mount) this.mount();
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    (this.timers || []).forEach((x) => clearTimeout(x));
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+  }
+  componentDidUpdate(prev) {
+    if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme });
+    if (this.update) this.update(prev);
+  }
+  tick() { this.setState({ now: Date.now() }); if (this.onTick) this.onTick(); }
+  later(ms, fn) { (this.timers = this.timers || []).push(setTimeout(fn, ms)); }
+  rgba(hex, a) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  hm(ms, secs) {
+    const o = { hour: 'numeric', minute: '2-digit', hour12: true };
+    if (secs) o.second = '2-digit';
+    return new Date(ms).toLocaleTimeString('en-US', o);
+  }
+  nextDay(ms) { return new Date(ms).toDateString() !== new Date(this.state.now).toDateString(); }
+  when(ms) { return this.hm(ms) + (this.nextDay(ms) && ms > this.state.now ? ' tomorrow' : ''); }
+  dateLong(ms) {
+    const d = new Date(ms);
+    return d.toLocaleDateString('en-GB', { weekday: 'long' }) + ', ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  split(sec) {
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+    const p = (n) => String(n).padStart(2, '0');
+    return h ? [h + ':' + p(m), ':' + p(s)] : [p(m), ':' + p(s)];
+  }
+  words(sec) {
+    if (!sec) return 'no limit';
+    const h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60);
+    if (h && m) return h + ' h ' + m + ' min';
+    if (h) return h === 1 ? '1 hour' : h + ' hours';
+    return m + ' min';
+  }
+  mins(m) {
+    if (!m) return '0 min';
+    const h = Math.floor(m / 60), r = m % 60;
+    return h ? h + ' h' + (r ? ' ' + r + ' min' : '') : r + ' min';
+  }
+  pill(mode, b) {
+    const tone = { ready: b.t.muted, ended: b.t.muted, paused: b.amber, blocked: b.red }[mode] || b.lamp;
+    const live = mode === 'awake' || mode === 'fallback' || mode === 'starting';
+    const hollow = mode === 'ready' || mode === 'ended' || mode === 'starting';
+    return atPill({ size: 'M', label: LABEL[mode], tone, glyph: GLYPH[mode] || DOT, hollow, glow: live && mode !== 'starting' });
+  }
+  ring(o, b) {
+    const mode = o.mode, p = o.p;
+    const live = mode === 'awake' || mode === 'fallback' || mode === 'starting';
+    const tone = { paused: b.amber, blocked: b.red }[mode] || o.color || b.lamp;
+    const DASH = { paused: '18 12', blocked: '1 13' };
+    const shown = o.shown;
+    const parts = shown === null ? ['∞', ''] : this.split(shown);
+    const size = o.size || 320;
+    return {
+      box: size + 'px', scale: (size / 320).toFixed(4), live, color: tone, faint: this.rgba(tone, b.dark ? 0.16 : 0.12),
+      dash: DASH[mode] || (p <= 0 ? '0.01 ' + C.toFixed(1) : (C * p).toFixed(1) + ' ' + C.toFixed(1)),
+      op: mode === 'ready' ? 0.45 : mode === 'ended' ? 0 : 1, glowOp: live ? 0.45 : 0,
+      trackDash: mode === 'fallback' ? '3 9' : 'none',
+      tipDeg: (360 * p).toFixed(2) + 'deg', tipOp: live && shown !== null && p > 0 ? 1 : 0,
+      kicker: o.kicker, metaA: o.metaA, metaB: o.metaB, bigA: parts[0], bigB: parts[1],
+      size: shown !== null && shown >= 3600 ? '60px' : '76px', numColor: live ? b.t.ink : b.t.ink2,
+      aria: shown === null ? 'No limit' : parts[0] + parts[1] + ' left'
+    };
+  }
+  presetBar(cur, phone, b, set) {
+    const rows = PRESET_ROWS;
+    const i = Math.max(0, rows.findIndex((x) => x[0] === cur));
+    return {
+      presets: rows.map(([id, label, aria]) => ({ label, aria, sel: cur === id ? 'true' : 'false', weight: cur === id ? 600 : 500, color: cur === id ? b.t.ink : b.t.ink2, ring: cur === id ? b.lampLine : b.t.line, bg: cur === id ? b.lampSoft : 'transparent', pick: () => set(id) })),
+      presetN: rows.length, presetX: i * 100 + '%', presetFont: b.isTab ? '15px' : '13px'
+    };
+  }
+  presetSecs(id) { const f = PRESET_ROWS.find((x) => x[0] === id); return f ? f[3] : 1800; }
+  base() {
+    const s = this.state;
+    const L = this.props.layout || 'phone';
+    const c = atChrome({ theme: s.theme, sysDark: s.sysDark, layout: L, set: (id) => this.setState({ theme: id }) });
+    const dark = c.dark, lamp = c.lamp;
+    const t = dark ? DARK : LIGHT;
+    const amber = t.warn, red = t.bad;
+    const H = this.heights()[L];
+    return Object.assign(c, {
+      t, amber, red, amberSoft: this.rgba(amber, 0.1), amberLine: this.rgba(amber, 0.38), redSoft: this.rgba(red, 0.08), redLine: this.rgba(red, 0.32),
+      layout: L, W: c.isDesk ? '1280px' : c.isTab ? '820px' : '390px', H: H + 'px', rootCls: dark ? 'at-root' : 'at-root at-l',
+      hdrPad: '0 ' + c.gutter, linePad: '0 ' + c.gutter,
+      sheetShadow: '0 24px 64px -24px rgba(0,0,0,.45)',
+      dateLong: this.dateLong(s.now), nowTime: this.hm(s.now),
+      scrim: 'rgba(4,7,12,0.55)',
+      aura: this.rgba(lamp, dark ? 0.1 : 0.08)
+    });
+  }
+  renderVals() { const b = this.base(); Object.assign(b, this.vals(b)); b.bead = b.tone || b.lamp; return b; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · 30 min preset</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+a:focus-visible{outline:2px solid #5BE0E8;outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-prose a{text-decoration-thickness:1px;text-underline-offset:4px;transition:text-decoration-thickness .3s var(--ease)}
+.at-prose a:hover{text-decoration-thickness:2px}
+.at-row{transition:background-color .45s var(--ease)}
+.at-row:hover{background-color:rgba(127,140,160,0.08)}
+.at-nudge{transition:transform .6s var(--ease)}
+.at-row:hover .at-nudge{transform:translateX(4px)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div class="at-root" style="width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{p.ground}}; color: {{t.ink}}; display: flex; flex-direction: column">
+
+  <div style="position: relative; flex-shrink: 0; width: {{toolW}}; height: {{toolH}}">
+    <dc-import name="Main" status="ready" face="ring" panel="none" sheet="none" theme="{{mainTheme}}" layout="{{layout}}" hint-size="{{hint}}"></dc-import>
+  </div>
+
+  <main class="at-prose" style="position: relative; flex-shrink: 0; box-sizing: border-box; width: 100%; max-width: {{proseMax}}; margin-inline: auto; padding: {{prosePad}}; display: flex; flex-direction: column; gap: {{gap}}">
+
+    <div style="display: flex; flex-direction: column; gap: 24px">
+      <section aria-labelledby="h-preset" style="display: flex; flex-direction: column; gap: 16px">
+        <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">About this page</span>
+        <h1 id="h-preset" style="margin: 0; font-size: {{fs.h1}}; line-height: {{fs.h1lh}}; font-weight: 600; letter-spacing: -0.02em; color: {{t.ink}}; text-wrap: balance">Keep your screen awake for 30 minutes</h1>
+        <p style="margin: 0; font-size: 18px; line-height: 28px; color: {{t.ink}}; text-wrap: pretty">Tap “Keep awake · 30 min” above and this screen stays on for the next 30 minutes, as long as this tab stays visible. Before you start, the tool shows the time it will stop, so you know when the screen may dim again.</p>
+        <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">When the 30 minutes are up, AwakeTab asks “Time's up. Keep going?” with +15 min, +30 min, +1 h and Stop. If you do nothing, it stops on its own and your usual screen timeout takes over. To change the length, pick another preset in the tool or one of the lengths below; a change during a session applies straight away.</p>
+        <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Trust the pill, not the button. It reads “Screen awake” only after the browser confirms the wake lock, and it changes to “Paused — tab hidden” the moment you switch away.</p>
+        <div role="note" style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 12px; row-gap: 4px; padding: {{cardPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.ink2}}" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="margin-top: 2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
+          <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+            <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Honest limit</span>
+            <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink}}; text-wrap: pretty">Keep this tab visible and the device open. A hidden tab, a closed laptop lid or a work sign-in policy can still let the display sleep or lock. AwakeTab never simulates input, so it will not keep Teams or Slack showing you as active.</p>
+          </div>
+        </div>
+      </section>
+
+      <nav aria-labelledby="h-lengths" style="display: flex; flex-direction: column; gap: 12px">
+        <h2 id="h-lengths" style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Other lengths</h2>
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{lengths}}" as="l" hint-placeholder-count="8">
+            <li style="display: flex">
+              <sc-if value="{{l.here}}" hint-placeholder-val="{{false}}">
+                <span aria-current="page" style="position: relative; display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 12px; box-sizing: border-box; border-radius: 999px; background: {{lampSoft}}; border: 1px solid {{lampLine}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; white-space: nowrap"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: {{p.lamp}}"></span>{{l.label}}<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%)">, this page</span></span>
+              </sc-if>
+              <sc-if value="{{l.away}}" hint-placeholder-val="{{true}}">
+                <a href="{{l.href}}" aria-label="{{l.aria}}" style="display: inline-flex; align-items: center; height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; border: 1px {{l.border}} {{t.line2}}; font-size: 15px; line-height: 22px; font-weight: 500; color: {{t.ink2}}; text-decoration: none; white-space: nowrap">{{l.label}}</a>
+              </sc-if>
+            </li>
+          </sc-for>
+        </ul>
+      </nav>
+    </div>
+
+    <nav aria-labelledby="h-guides" style="display: flex; flex-direction: column; gap: 12px">
+      <h2 id="h-guides" style="margin: 0; font-size: {{fs.h2}}; line-height: {{fs.h2lh}}; font-weight: 600; letter-spacing: -0.02em; color: {{t.ink}}">Guides for a 30-minute job</h2>
+      <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: {{guideCols}}; column-gap: 32px; border-top: 1px solid {{t.line}}">
+        <sc-for list="{{guides}}" as="g" hint-placeholder-count="4">
+          <li style="border-bottom: 1px solid {{t.line}}">
+            <a href="#" class="at-row" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 16px 0; box-sizing: border-box; text-decoration: none; color: {{t.ink}}">
+              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <span style="font-size: 16px; line-height: 24px; font-weight: 500; text-wrap: pretty">{{g.label}}</span>
+                <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 13px; line-height: 18px; color: {{t.muted}}">{{g.path}}</span>
+              </span>
+              <svg class="at-nudge" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{p.link}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M5 12h13M13 6l6 6-6 6"></path></svg>
+            </a>
+          </li>
+        </sc-for>
+      </ul>
+    </nav>
+  </main>
+
+  <div style="flex-grow: 1"></div>
+
+  <footer style="border-top: 1px solid {{t.line}}; padding: {{foot.pad}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px">
+    <p style="margin: 0; font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p>
+    <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; column-gap: 16px; font-size: 13px; line-height: 18px">
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Privacy</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Terms</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Changelog</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">About</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a>
+    </nav>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"$preview":{"width":390,"height":2452}}'>
+// AT-PRIMITIVES v1 (fix batch 1b): DESIGN.md §2.1 tokens and §11 geometry. Keep identical across files.
+const AT_TOK = {
+  dark: { raised: '#26324B', sunken: '#0D131F', horizonInk: '#F6F2EA', line2: '#33405C', inputBorder: '#5A6781', groundEnd: '#070A11' },
+  light: { raised: '#E3E9F1', sunken: '#F6F9FC', horizonInk: '#F6F2EA', line2: '#C3CDDA', inputBorder: '#8C98AA', groundEnd: '#EEF3F8' }
+};
+const AT_NIGHT = { ground: '#000000', ink: '#FF5A3C', ink2: '#E8563C', muted: '#A89690', line: '#3A2E2A' };
+const AT_SCRIM = 'rgba(4,7,12,.55)';
+const AT_HDR = { phone: { h: '60px', pad: '0 16px' }, tablet: { h: '68px', pad: '0 32px' }, desktop: { h: '68px', pad: '0 80px' }, xl: { h: '68px', pad: '0 120px' } };
+const AT_FOOT = { phone: '24px 16px 32px', tablet: '24px 32px', desktop: '24px 80px', xl: '24px 120px' };
+const AT_CARD_PAD = { phone: '20px', tablet: '24px', desktop: '24px', xl: '24px' };
+const AT_TYPE = {
+  phone: { h1: '34px', h1lh: '42px', h2: '24px', h2lh: '32px', gutter: '16px', section: '48px' },
+  tablet: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '32px', section: '64px' },
+  desktop: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '80px', section: '96px' }
+};
+const DARK = Object.assign({ surface: '#111826', line: '#1F2940', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336' }, AT_TOK.dark);
+const LIGHT = Object.assign({ surface: '#FFFFFF', line: '#DCE3EC', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1' }, AT_TOK.light);
+// Below the tool the page continues on the tool's own floor colour (Main ends on the radial ground's edge tone).
+const PAGE = {
+  dark: { ground: 'linear-gradient(180deg, #070A11 0px, #0A0E16 360px), #0A0E16', lamp: '#5BE0E8', link: '#5BE0E8' },
+  light: { ground: 'linear-gradient(180deg, #EEF3F8 0px, #F2F6FA 360px), #F2F6FA', lamp: '#087B87', link: '#087B87' }
+};
+// Tool heights follow Main.dc.html (phone 390×844, tablet 820×1180, desktop 1280×800).
+const TOOL = { phone: [390, 844], tablet: [820, 1180], desktop: [1280, 800] };
+const SIZES = { phone: 2452, tablet: 2364, desktop: 2080 };
+const LENGTHS = [['15 min', '/15m'], ['30 min', '/30m'], ['45 min', '/45m'], ['1 h', '/1h'], ['2 h', '/2h'], ['4 h', '/4h'], ['8 h', '/8h'], ['Until a time…', '/']];
+const GUIDES = [['Keep the screen on during a video call', '/for/video-calls'], ['Keep the screen on while downloading', '/for/downloads'], ['Keep a work laptop display on', '/for/work-laptop'], ['Keep the screen on while you present', '/for/presentations']];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sysDark: this.sys() };
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() { if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  renderVals() {
+    const layout = ['phone', 'tablet', 'desktop'].includes(this.props.layout) ? this.props.layout : 'phone';
+    const theme = ['auto', 'light', 'dark'].includes(this.props.theme) ? this.props.theme : 'auto';
+    const desk = layout === 'desktop', tab = layout === 'tablet';
+    const dark = theme === 'dark' || (theme === 'auto' && this.state.sysDark);
+    const t = dark ? DARK : LIGHT;
+    const p = dark ? PAGE.dark : PAGE.light;
+    const [tw, th] = TOOL[layout];
+    const ty = AT_TYPE[layout];
+    const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; };
+    return {
+      W: tw + 'px', H: SIZES[layout] + 'px', layout, mainTheme: theme, t, p,
+      toolW: tw + 'px', toolH: th + 'px', hint: tw + 'px,' + th + 'px',
+      proseMax: desk ? '760px' : tab ? '680px' : '100%',
+      prosePad: desk ? '96px 0 96px' : tab ? '64px 0 64px' : '48px 16px 48px',
+      gap: ty.section,
+      fs: { h1: ty.h1, h1lh: ty.h1lh, h2: ty.h2, h2lh: ty.h2lh },
+      foot: { pad: AT_FOOT[layout] }, cardPad: AT_CARD_PAD[layout],
+      lampSoft: rgba(p.lamp, 0.14), lampLine: rgba(p.lamp, 0.45),
+      guideCols: desk || tab ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
+      lengths: LENGTHS.map(([label, href]) => ({ label, href, here: href === '/30m', away: href !== '/30m', aria: href === '/' ? 'Pick an end time in the tool' : 'Keep awake for ' + label, border: href === '/' ? 'dashed' : 'solid' })),
+      guides: GUIDES.map(([label, path]) => ({ label, path }))
+    };
+  }
+}
+</script>
+</body>
+</html>

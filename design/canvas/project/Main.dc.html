@@ -1,0 +1,1508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · keep screen awake</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.96)}
+button:disabled,input:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+h2,h3,p,dl,dd,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.3s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-wave{animation:at-wave 9s linear infinite}
+.at-wave2{animation:at-wave 15s linear infinite reverse}
+.at-bub{animation:at-bub 9s ease-in infinite}
+.at-cloud{animation:at-drift 90s linear infinite}
+.at-cloud2{animation:at-drift 130s linear infinite;animation-delay:-60s}
+.at-tw{animation:at-tw 5s ease-in-out infinite}
+.at-tw2{animation:at-tw 7s ease-in-out infinite;animation-delay:-3s}
+.at-glint{transform-origin:top center;animation:at-glint 6s ease-in-out infinite}
+.at-shim{animation:at-shim 3.8s var(--ease) infinite}
+.at-float{animation:at-float 7s ease-in-out infinite}
+.at-scrim{animation:at-fade .5s var(--ease) both}
+.at-sheet-up{animation:at-up .7s var(--ease) both}
+.at-sheet-side{animation:at-side .7s var(--ease) both}
+.at-sheet-body{scrollbar-width:thin}
+.at-breathe{opacity:.55;animation:at-breathe 4s ease-in-out infinite}
+.at-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.at-time{color-scheme:inherit}
+.at-ig{opacity:0;pointer-events:none}
+.at-ig-dock{animation:at-flash .5s var(--ease) both}
+.at-ig-travel{animation:at-travel .6s var(--ease) .1s both}
+.at-ig-pill{animation:at-spark .7s var(--ease) .3s both}
+.at-ig-face{animation:at-flash .9s var(--ease) .45s both}
+.at-ig-tip{transform-box:fill-box;transform-origin:center;animation:at-spark .8s var(--ease) .5s both}
+.at-ig-bead{animation:at-spark .8s var(--ease) .55s both}
+.at-off{animation:at-off .9s var(--ease) both}
+@keyframes at-breathe{0%,100%{opacity:.3;transform:scale(.96)}50%{opacity:.85;transform:scale(1.03)}}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-wave{to{transform:translateX(-358px)}}
+@keyframes at-bub{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.55}100%{transform:translateY(-240px) scale(1.1);opacity:0}}
+@keyframes at-drift{from{transform:translateX(-170px)}to{transform:translateX(420px)}}
+@keyframes at-tw{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes at-glint{0%,100%{transform:scaleX(.6);opacity:.35}50%{transform:scaleX(1);opacity:.7}}
+@keyframes at-shim{0%{transform:translateX(-120%)}100%{transform:translateX(420%)}}
+@keyframes at-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes at-fade{from{opacity:0}to{opacity:1}}
+@keyframes at-up{from{opacity:0;transform:translateY(72px)}to{opacity:1;transform:none}}
+@keyframes at-side{from{opacity:0;transform:translateX(56px)}to{opacity:1;transform:none}}
+@keyframes at-flash{0%{opacity:0}35%{opacity:1}100%{opacity:0}}
+@keyframes at-spark{0%{opacity:0;transform:scale(.4)}40%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(2.4)}}
+@keyframes at-travel{0%{opacity:0;transform:translateY(0)}15%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translateY(var(--at-ty,-400px))}}
+@keyframes at-off{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(.94)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div class="at-root" style="--at-focus: {{lamp}}; width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; inset: -10%; background: {{halo}}; pointer-events: none"></div>
+
+  <span class="at-sr" role="status">{{announce}}</span>
+  <header style="position: relative; height: {{hdr.h}}; flex-shrink: 0; box-sizing: border-box; padding: {{hdr.pad}}; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+    <a href="#" aria-label="AwakeTab home" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: {{t.ink}}; font-weight: 600; font-size: 17px; line-height: 24px; letter-spacing: -0.01em; min-height: 44px">
+      <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{tone}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{tone}}" style="transition: fill .6s"></circle></svg>
+      AwakeTab
+    </a>
+    <span aria-hidden="true" class="{{igBead}}" style="position: absolute; left: {{beadX}}; top: calc(50% - 20px); width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(closest-side, {{lamp}} 0%, {{lampFaint}} 60%, transparent 100%)"></span>
+    <sc-if value="{{isDesk}}" hint-placeholder-val="{{false}}">
+      <nav aria-label="Main" style="display: flex; gap: 32px; font-size: 15px; line-height: 22px; font-weight: 500">
+        <a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Use cases</a>
+        <a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Devices</a>
+        <a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Extension</a>
+        <a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Pro</a>
+      </nav>
+    </sc-if>
+    <sc-if value="{{lineInHdr}}" hint-placeholder-val="{{false}}">
+      <div style="flex: 1; min-width: 0; display: flex; justify-content: center; align-items: baseline; gap: 12px; font-size: 13px; line-height: 18px; white-space: nowrap">
+        <time style="color: {{t.ink2}}">{{dateLong}}</time>
+        <time style="font-variant-numeric: tabular-nums; font-weight: 500; color: {{t.ink}}">{{nowTime}}</time>
+      </div>
+    </sc-if>
+    <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0">
+      <sc-if value="{{compactTheme}}" hint-placeholder-val="{{false}}">
+      <button aria-label="{{themeAria}}" title="{{themeAria}}" onClick="{{cycleTheme}}" style="width: 44px; height: 44px; padding: 0; border: 1px solid {{t.line}}; background: {{t.surface}}; border-radius: 12px; color: {{t.ink}}; display: grid; place-items: center">
+        <sc-if value="{{themeLight}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></sc-if>
+        <sc-if value="{{themeDark}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></sc-if>
+        <sc-if value="{{themeAuto}}" hint-placeholder-val="{{true}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></sc-if>
+      </button>
+      </sc-if>
+      <sc-if value="{{fullTheme}}" hint-placeholder-val="{{true}}">
+      <div role="radiogroup" aria-label="Theme" style="position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+      <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{themeX}})"></div>
+      <button role="radio" aria-checked="{{themeLight}}" aria-label="Light" title="Light" onClick="{{setLight}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeLightInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button>
+      <button role="radio" aria-checked="{{themeDark}}" aria-label="Dark" title="Dark" onClick="{{setDark}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeDarkInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button>
+      <button role="radio" aria-checked="{{themeAuto}}" aria-label="Auto, follows your system" title="Auto: follows your system" onClick="{{setAuto}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeAutoInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button>
+    </div>
+      </sc-if>
+      <sc-if value="{{showStatsBtn}}" hint-placeholder-val="{{false}}">
+      <button aria-label="Your stats" aria-haspopup="dialog" aria-expanded="{{statsOpen}}" onClick="{{openStats}}" style="width: 44px; height: 44px; padding: 0; border: 0; background: {{statsBtnBg}}; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-7"></path></svg></button>
+      </sc-if>
+      <button aria-label="Settings" aria-haspopup="dialog" aria-expanded="{{settingsOpen}}" onClick="{{openSettings}}" style="width: 44px; height: 44px; padding: 0; border: 0; background: {{settingsBtnBg}}; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></button>
+    </div>
+  </header>
+
+  <sc-if value="{{showLine}}" hint-placeholder-val="{{true}}">
+  <div style="position: relative; flex-shrink: 0; padding: {{linePad}}; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: {{lineFont}}; line-height: {{lineLH}}">
+    <time style="color: {{t.ink2}}">{{dateLong}}</time>
+    <time style="font-variant-numeric: tabular-nums; font-weight: 500; color: {{t.ink}}">{{nowTime}}</time>
+  </div>
+  </sc-if>
+
+  <div style="{{bodyStyle}}">
+    <span aria-hidden="true" class="{{igTravel}}" style="position: absolute; left: calc(50% - 2px); bottom: {{travelFrom}}; width: 4px; height: 96px; border-radius: 999px; background: linear-gradient(180deg, {{lamp}} 0%, {{lampFaint}} 70%, transparent 100%); box-shadow: 0 0 16px {{lampGlow}}; --at-ty: {{travelTy}}"></span>
+
+    <sc-if value="{{showTabs}}" hint-placeholder-val="{{true}}">
+    <div style="grid-area: tabs; justify-self: {{tabsAlign}}; width: {{tabsW}}; min-width: 0">
+      <div role="tablist" aria-label="Clock face" style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+        <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 4); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{tabIndBg}}; border: 1px solid {{tabIndLine}}; transform: translateX({{faceX}})"></div>
+        <sc-for list="{{faces}}" as="f" hint-placeholder-count="4">
+          <button role="tab" aria-selected="{{f.sel}}" onClick="{{f.pick}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: {{tabFont}}; line-height: 20px; font-weight: {{f.weight}}; color: {{f.color}}; white-space: nowrap">{{f.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <div style="grid-area: pill; justify-self: {{pillAlign}}; min-width: 0; display: flex; flex-direction: column; align-items: {{pillItems}}; gap: 8px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: {{pillJustify}}; gap: 4px 12px">
+        <span style="position: relative; display: inline-flex">
+          <sc-if value="{{pillM}}" hint-placeholder-val="{{true}}">
+          <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px 0 12px; box-sizing: border-box; border-radius: 999px; background: {{toneSoft}}; border: 1px solid {{toneLine}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 0 5px {{toneGlow}})"><path d="{{glyph}}" fill="{{glyphFill}}" stroke="{{tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+            {{statusLabel}}
+          </output>
+          </sc-if>
+          <sc-if value="{{pillL}}" hint-placeholder-val="{{false}}">
+          <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px 0 16px; box-sizing: border-box; border-radius: 999px; background: {{toneSoft}}; border: 1px solid {{toneLine}}; font-size: 20px; line-height: 28px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 0 5px {{toneGlow}})"><path d="{{glyph}}" fill="{{glyphFill}}" stroke="{{tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+            {{statusLabel}}
+          </output>
+          </sc-if>
+          <span aria-hidden="true" class="{{igPill}}" style="position: absolute; left: {{sparkX}}; top: calc(50% - 16px); width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(closest-side, {{lamp}} 0%, {{lampFaint}} 55%, transparent 100%)"></span>
+        </span>
+        <sc-if value="{{whyText}}" hint-placeholder-val="{{true}}">
+          <button aria-expanded="{{whyOpen}}" aria-controls="at-why" onClick="{{toggleWhy}}" style="min-height: 44px; margin: -3px 0; padding: 0; border: 0; background: transparent; font-size: 14px; line-height: 20px; font-weight: 600; color: {{t.ink}}; text-decoration: underline; text-decoration-color: {{lamp}}; text-underline-offset: 5px; white-space: nowrap">How do we know?</button>
+        </sc-if>
+        <sc-if value="{{whyIcon}}" hint-placeholder-val="{{false}}">
+          <button aria-label="How do we know?" title="How do we know?" aria-expanded="{{whyOpen}}" aria-controls="at-why" onClick="{{toggleWhy}}" style="width: 44px; height: 44px; margin: -3px 0; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6M12 17.2v.1"></path></svg></button>
+        </sc-if>
+      </div>
+      <sc-if value="{{deferred}}" hint-placeholder-val="{{false}}">
+        <span id="at-deferred" class="at-rise" style="display: inline-flex; align-items: center; gap: 8px; font-size: {{noteFont}}; line-height: 20px; font-weight: 500; color: {{t.ink2}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M3 9.5h18M7 7.2h.01M10 7.2h.01"></path></svg>Starts when you open this tab</span>
+      </sc-if>
+    </div>
+
+    <div style="grid-area: face; position: relative; display: flex; align-items: center; justify-content: center; min-width: 0">
+      <sc-if value="{{isMini}}" hint-placeholder-val="{{false}}">
+        <div class="at-in" style="display: flex; align-items: baseline; justify-content: center; gap: 12px; flex-wrap: wrap">
+          <div role="timer" aria-label="{{timerAria}}" style="font-weight: 300; font-size: 28px; line-height: 32px; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{numColor}}">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
+          <div style="font-size: 13px; line-height: 18px; color: {{t.ink2}}">{{metaA}} <span style="color: {{t.ink}}; font-weight: 500">{{metaB}}</span></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{showWhy}}" hint-placeholder-val="{{false}}">
+        <section id="at-why" aria-labelledby="at-why-h" class="at-in" style="width: {{boxW}}; height: {{boxH}}; box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain; padding: {{whyPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; box-shadow: {{t.elev}}; display: flex; flex-direction: column; gap: 8px; text-align: start">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+            <h2 id="at-why-h" style="font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}">How AwakeTab knows</h2>
+            <button onClick="{{toggleWhy}}" aria-label="Back to the clock" style="width: 44px; height: 44px; flex-shrink: 0; margin-inline-end: -12px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+          </div>
+          <ul style="display: flex; flex-direction: column">
+            <sc-for list="{{whyChecks}}" as="c" hint-placeholder-count="4">
+              <li style="display: grid; grid-template-columns: 16px minmax(0, 1fr); column-gap: 12px; padding: 12px 0; border-top: 1px solid {{t.line}}">
+                <span aria-hidden="true" style="width: 10px; height: 10px; margin-top: 6px; border-radius: 50%; box-sizing: border-box; border: 1px solid {{c.line}}; background: {{c.fill}}; justify-self: center"></span>
+                <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                  <span style="font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">{{c.title}}</span>
+                  <span style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty">{{c.detail}}</span>
+                </span>
+              </li>
+            </sc-for>
+          </ul>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{showReceipt}}" hint-placeholder-val="{{false}}">
+        <section aria-labelledby="at-done-k" class="at-rise2" style="width: {{boxW}}; height: {{boxH}}; box-sizing: border-box; padding: 0 {{rc.padX}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: {{rc.gap}}; text-align: center">
+          <h2 id="at-done-k" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Session complete</h2>
+          <p style="display: flex; flex-direction: column; align-items: center; gap: 8px">
+            <span style="font-weight: 300; font-size: {{rc.bigSize}}; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; color: {{t.ink}}">{{rc.big}}<span style="font-weight: 400; font-size: {{rc.unitSize}}; letter-spacing: 0; color: {{t.ink2}}">{{rc.unit}}</span></span>
+            <sc-if value="{{rc.showWords}}" hint-placeholder-val="{{true}}"><span style="font-size: 16px; line-height: 24px; color: {{t.ink2}}">{{rc.words}}</span></sc-if>
+          </p>
+          <div style="width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 8px">
+            <div role="img" aria-label="{{rc.aria}}" style="display: flex; gap: 4px; height: 14px">
+              <sc-for list="{{rc.segs}}" as="b" hint-placeholder-count="3">
+                <span style="flex-grow: {{b.grow}}; flex-basis: 0; min-width: 4px; border-radius: 999px; box-sizing: border-box; background: {{b.bg}}; border: {{b.border}}"></span>
+              </sc-for>
+            </div>
+            <div aria-hidden="true" style="display: flex; justify-content: space-between; font-size: 13px; line-height: 18px; font-variant-numeric: tabular-nums; color: {{t.muted}}"><span>{{rc.from}}</span><span>{{rc.to}}</span></div>
+            <ul style="display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; font-size: 14px; line-height: 20px; color: {{t.ink2}}">
+              <li style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 16px; height: 8px; border-radius: 999px; background: {{lamp}}"></span>{{rc.heldLegend}}</li>
+              <sc-if value="{{rc.hasPause}}" hint-placeholder-val="{{true}}">
+                <li style="display: flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 16px; height: 8px; border-radius: 999px; box-sizing: border-box; border: 1px solid {{warn}}; background: {{rc.pauseBg}}"></span>{{rc.pauseLegend}}</li>
+              </sc-if>
+            </ul>
+          </div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{showDial}}" hint-placeholder-val="{{true}}">
+      <div style="position: relative; width: {{boxW}}; height: {{boxH}}">
+        <sc-if value="{{final}}" hint-placeholder-val="{{false}}">
+          <div aria-hidden="true" class="at-breathe" style="position: absolute; inset: -9%; border-radius: 50%; background: radial-gradient(closest-side, {{finalGlow}} 0%, transparent 100%); pointer-events: none"></div>
+        </sc-if>
+        <div style="position: absolute; left: 0; top: 0; width: 358px; height: 340px; transform: scale({{scale}}); transform-origin: 0 0">
+
+          <sc-if value="{{isRing}}" hint-placeholder-val="{{true}}">
+            <div class="at-in" style="position: absolute; inset: 0; display: grid; place-items: center">
+              <div style="position: relative; width: 320px; height: 320px">
+                <div aria-hidden="true" style="position: absolute; inset: 0; border-radius: 50%; background: repeating-conic-gradient(from -0.6deg, {{t.tick}} 0deg 1.2deg, transparent 1.2deg 6deg); -webkit-mask: radial-gradient(circle, transparent 125px, #000 126px, #000 132px, transparent 133px); mask: radial-gradient(circle, transparent 125px, #000 126px, #000 132px, transparent 133px)"></div>
+                <sc-if value="{{live}}" hint-placeholder-val="{{true}}">
+                  <div aria-hidden="true" class="at-sweep" style="position: absolute; inset: 28px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg 240deg, {{toneFaint}} 360deg)"></div>
+                </sc-if>
+                <svg width="320" height="320" viewBox="0 0 320 320" aria-hidden="true" style="position: absolute; inset: 0; overflow: visible">
+                  <defs><filter id="ringGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"></feGaussianBlur></filter></defs>
+                  <circle cx="160" cy="160" r="146" fill="none" stroke="{{t.track}}" stroke-width="6" stroke-dasharray="{{trackDash}}"></circle>
+                  <g transform="rotate(-90 160 160)">
+                    <circle class="at-arc" cx="160" cy="160" r="146" fill="none" stroke="{{faceColor}}" stroke-opacity="{{glowOp}}" stroke-width="14" stroke-linecap="round" filter="url(#ringGlow)" style="stroke-dasharray: {{arcDash}}"></circle>
+                    <circle class="at-arc" cx="160" cy="160" r="146" fill="none" stroke="{{faceColor}}" stroke-opacity="{{arcOp}}" stroke-width="6" stroke-linecap="round" style="stroke-dasharray: {{arcDash}}"></circle>
+                  </g>
+                  <g class="at-lin" style="transform: rotate({{tipDeg}}); transform-origin: 160px 160px; opacity: {{tipOp}}">
+                    <circle class="at-halo" cx="160" cy="14" r="7" fill="{{faceColor}}"></circle>
+                    <circle class="{{igTip}}" cx="160" cy="14" r="9" fill="{{faceColor}}"></circle>
+                    <circle cx="160" cy="14" r="5.5" fill="{{t.ink}}"></circle>
+                  </g>
+                </svg>
+                <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px">
+                  <sc-if value="{{showKicker}}" hint-placeholder-val="{{true}}"><div style="font-size: {{fk}}; line-height: 1.3; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{kickerInk}}">{{kicker}}</div></sc-if>
+                  <div role="timer" aria-label="{{timerAria}}" style="font-weight: 300; font-size: {{ringSize}}; white-space: nowrap; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; color: {{numColor}}; transition: color .6s">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
+                  <div style="max-width: 240px; font-size: {{fm}}; line-height: 1.35; text-align: center; color: {{t.ink2}}">{{metaA}} <span style="color: {{t.ink}}; font-weight: 500">{{metaB}}</span></div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{isBold}}" hint-placeholder-val="{{false}}">
+            <div class="at-in" style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 20px; padding: 0 8px">
+              <sc-if value="{{showKicker}}" hint-placeholder-val="{{true}}"><div style="font-size: {{fk}}; line-height: 1.3; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{kickerInk}}">{{kicker}}</div></sc-if>
+              <div role="timer" aria-label="{{timerAria}}" style="font-weight: 600; font-size: {{boldSize}}; line-height: 0.9; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{numColor}}; transition: color .6s">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
+              <div aria-hidden="true" style="position: relative; height: 12px; border-radius: 999px; background: {{t.track}}; overflow: hidden">
+                <div class="at-lin" style="position: absolute; inset: 0; border-radius: 999px; overflow: hidden; background: {{faceColor}}; transform-origin: left center; transform: scaleX({{p}}); box-shadow: 0 0 18px {{toneGlow}}">
+                  <sc-if value="{{live}}" hint-placeholder-val="{{true}}"><div class="at-shim" style="position: absolute; top: 0; bottom: 0; width: 26%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)"></div></sc-if>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; gap: 12px; font-size: {{fb}}; line-height: 1.4; font-weight: 500; color: {{t.ink2}}"><span>{{metaA}} {{metaB}}</span><span>{{ofTotal}}</span></div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{isHorizon}}" hint-placeholder-val="{{false}}">
+            <div class="at-in" style="position: absolute; inset: 0; border-radius: 28px; overflow: hidden; background: {{hz.sky}}; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08)">
+              <div aria-hidden="true" class="at-lin" style="position: absolute; inset: 0; background: linear-gradient(180deg, transparent 25%, {{hz.warm}} 100%); opacity: {{warmOp}}"></div>
+              <sc-if value="{{hz.stars}}" hint-placeholder-val="{{false}}">
+                <div aria-hidden="true" class="at-tw" style="position: absolute; left: 0; top: 0; width: 2px; height: 2px; border-radius: 50%; box-shadow: {{stars1}}"></div>
+                <div aria-hidden="true" class="at-tw2" style="position: absolute; left: 0; top: 0; width: 2px; height: 2px; border-radius: 50%; box-shadow: {{stars2}}"></div>
+              </sc-if>
+              <sc-if value="{{hz.clouds}}" hint-placeholder-val="{{true}}">
+                <div aria-hidden="true" class="at-cloud" style="position: absolute; left: 0; top: 48px; width: 160px; height: 30px; border-radius: 50%; background: {{hz.cloud}}; filter: blur(9px)"></div>
+                <div aria-hidden="true" class="at-cloud2" style="position: absolute; left: 0; top: 112px; width: 110px; height: 22px; border-radius: 50%; background: {{hz.cloud}}; filter: blur(8px)"></div>
+              </sc-if>
+              <div aria-hidden="true" class="at-lin" style="position: absolute; left: 0; top: 0; width: 64px; height: 64px; border-radius: 50%; background: {{hz.orb}}; box-shadow: {{hz.orbShadow}}; transform: translate({{orbX}}, {{orbY}})"></div>
+              <svg aria-hidden="true" width="358" height="26" viewBox="0 0 358 26" style="position: absolute; left: 0; top: 206px; display: block"><path d="M0 26V16C30 8 58 6 92 12C130 19 150 6 196 8C240 10 262 18 300 13C322 10 342 9 358 12V26Z" fill="{{hz.hill}}"></path></svg>
+              <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 230px; bottom: 0; background: {{hz.water}}"></div>
+              <div aria-hidden="true" class="at-lin" style="position: absolute; left: 0; top: 231px; width: 64px; height: 100px; transform: translateX({{orbX}})">
+                <div class="at-glint" style="opacity: 0.5; width: 64px; height: 100px; background: linear-gradient(180deg, {{hz.glint}}, transparent 80%); filter: blur(5px)"></div>
+              </div>
+              <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 230px; height: 1px; background: rgba(255,255,255,0.22)"></div>
+              <div style="position: absolute; left: 20px; right: 20px; bottom: 16px; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; color: {{t.horizonInk}}; text-shadow: 0 1px 16px rgba(4,7,12,0.4)">
+                <div role="timer" aria-label="{{timerAria}}" style="font-weight: {{thinW}}; font-size: {{hzSize}}; line-height: 0.9; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; white-space: nowrap">{{bigA}}<span style="color: {{hzSecs}}">{{bigB}}</span></div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-bottom: 4px; font-size: {{fh}}; line-height: 1.35; text-align: end">
+                  <sc-if value="{{showHzName}}" hint-placeholder-val="{{true}}"><span>{{hz.name}} · {{nowTime}}</span></sc-if>
+                  <span style="font-weight: 500">{{metaA}} {{metaB}}</span>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{isTide}}" hint-placeholder-val="{{false}}">
+            <div class="at-in" style="position: absolute; inset: 0; border-radius: 28px; overflow: hidden; background: {{t.tideBg}}; box-shadow: inset 0 0 0 1px {{t.line}}">
+              <div class="at-lin" style="position: absolute; left: 0; top: 0; width: 358px; height: 340px; transform: translateY({{tideY}})">
+                <svg class="at-wave2" aria-hidden="true" width="716" height="28" viewBox="0 0 716 28" style="position: absolute; left: 0; top: -22px; display: block"><path d="{{wave2}}" fill="{{faceColor}}" fill-opacity="0.4"></path></svg>
+                <svg class="at-wave" aria-hidden="true" width="716" height="28" viewBox="0 0 716 28" style="position: absolute; left: 0; top: -16px; display: block"><path d="{{wave1}}" fill="{{faceColor}}"></path></svg>
+                <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 10px; height: 340px; background: linear-gradient(180deg, {{faceColor}} 0%, {{tideDeep}} 100%)"></div>
+                <sc-if value="{{live}}" hint-placeholder-val="{{true}}">
+                  <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; height: 340px">
+                    <sc-for list="{{bubbles}}" as="b" hint-placeholder-count="5">
+                      <span class="at-bub" style="position: absolute; left: {{b.x}}; top: {{b.y}}; width: {{b.s}}; height: {{b.s}}; border-radius: 50%; border: 1px solid rgba(255,255,255,0.7); animation-delay: {{b.d}}"></span>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: {{t.tideInkTop}}">
+                <sc-if value="{{showKicker}}" hint-placeholder-val="{{true}}"><div style="font-size: {{fk}}; line-height: 1.3; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase">{{kicker}}</div></sc-if>
+                <div role="timer" aria-label="{{timerAria}}" style="font-weight: {{thinW}}; font-size: {{tideSize}}; white-space: nowrap; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums">{{bigA}}{{bigB}}</div>
+                <div style="font-size: {{fm}}; line-height: 1.35; font-weight: 500">{{metaA}} {{metaB}}</div>
+              </div>
+              <div aria-hidden="true" class="at-lin" style="position: absolute; inset: 0; clip-path: inset({{tideClip}} 0 0 0); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: {{tideInkWater}}">
+                <sc-if value="{{showKicker}}" hint-placeholder-val="{{true}}"><div style="font-size: {{fk}}; line-height: 1.3; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase">{{kicker}}</div></sc-if>
+                <div style="font-weight: {{thinW}}; font-size: {{tideSize}}; white-space: nowrap; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums">{{bigA}}{{bigB}}</div>
+                <div style="font-size: {{fm}}; line-height: 1.35; font-weight: 500">{{metaA}} {{metaB}}</div>
+              </div>
+            </div>
+          </sc-if>
+
+        </div>
+      </div>
+      </sc-if>
+      <span aria-hidden="true" class="{{igFace}}" style="position: absolute; left: 50%; top: 50%; width: {{boxW}}; height: {{boxH}}; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(closest-side, {{lampGlow}} 0%, {{lampFaint}} 55%, transparent 100%)"></span>
+      <span aria-hidden="true" class="{{lampOffCls}}" style="{{offStyle}}"></span>
+    </div>
+
+    <div style="grid-area: note; min-width: 0; text-align: {{textAlign}}">
+      <sc-if value="{{isBlocked}}" hint-placeholder-val="{{false}}">
+        <div class="at-rise" role="alert" style="display: flex; flex-direction: column; gap: 8px; padding: {{cardPad}}; border-radius: 16px; background: {{redSoft}}; border: 1px solid {{redLine}}; text-align: start">
+          <h2 style="font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}">Your browser said no</h2>
+          <sc-if value="{{causeKnown}}" hint-placeholder-val="{{true}}"><p style="font-size: {{cardFont}}; line-height: {{cardLH}}; font-weight: 500; color: {{t.ink}}; text-wrap: pretty">{{causeLine}}</p></sc-if>
+          <ul style="display: flex; flex-direction: column; gap: 4px; font-size: {{cardFont}}; line-height: {{cardLH}}; color: {{t.ink2}}">
+            <sc-for list="{{causes}}" as="c" hint-placeholder-count="3">
+              <li style="display: grid; grid-template-columns: 12px minmax(0, 1fr); column-gap: 8px"><span aria-hidden="true" style="width: 4px; height: 4px; margin-top: 8px; border-radius: 50%; background: {{t.ink2}}"></span><span style="text-wrap: pretty"><span style="font-weight: 600; color: {{t.ink}}">{{c.who}}</span> {{c.fix}}</span></li>
+            </sc-for>
+          </ul>
+          <sc-if value="{{causeUnknown}}" hint-placeholder-val="{{false}}"><p style="font-size: {{cardFont}}; line-height: {{cardLH}}; color: {{t.ink2}}; text-wrap: pretty">Then tap Retry.</p></sc-if>
+          <p style="font-size: {{cardFont}}; line-height: {{cardLH}}; color: {{t.ink2}}; text-wrap: pretty">Or use the fallback: it needs this tab visible and uses a little more battery.</p>
+        </div>
+      </sc-if>
+      <sc-if value="{{isLowBatt}}" hint-placeholder-val="{{false}}">
+        <div class="at-rise" role="status" style="display: flex; flex-direction: column; gap: 8px; padding: {{cardPad}}; border-radius: 16px; background: {{warnSoft}}; border: 1px solid {{warnLine}}; text-align: start">
+          <h2 style="display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{warn}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><rect x="2.5" y="7" width="17" height="10" rx="2.5"></rect><path d="M21.5 10.5v3"></path><path d="M5.5 10v4" stroke-width="2.6"></path></svg>Stopped to save battery</h2>
+          <p style="font-size: {{cardFont}}; line-height: {{cardLH}}; color: {{t.ink2}}; text-wrap: pretty">Stopped at {{battLevel}} % battery to save power. Plug in and start again, or choose Start anyway to keep this screen on regardless.</p>
+        </div>
+      </sc-if>
+      <sc-if value="{{showNote}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: {{noteJustify}}; gap: 0 12px">
+          <p class="at-rise" style="font-size: {{noteFont}}; line-height: 20px; color: {{t.ink2}}; font-variant-numeric: tabular-nums; text-wrap: pretty">{{note}}</p>
+          <sc-if value="{{whyInNote}}" hint-placeholder-val="{{false}}">
+            <button aria-expanded="{{whyOpen}}" aria-controls="at-why" onClick="{{toggleWhy}}" style="min-height: 44px; margin: -12px 0; padding: 0; border: 0; background: transparent; font-size: 14px; line-height: 20px; font-weight: 600; color: {{t.ink}}; text-decoration: underline; text-decoration-color: {{lamp}}; text-underline-offset: 5px; white-space: nowrap">How do we know?</button>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+
+    <section aria-label="Notifications" style="grid-area: toast; align-self: {{toastAlign}}; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+      <sc-for list="{{toasts}}" as="c" hint-placeholder-count="0">
+        <div role="status" class="at-in" style="display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 4px 4px 4px 16px; box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{c.line}}; box-shadow: {{t.elev}}">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{c.tone}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{c.icon}}"></path></svg>
+          <p style="flex: 1; min-width: 0; font-size: {{toastFont}}; line-height: 20px; color: {{t.ink}}; text-wrap: pretty">{{c.text}}</p>
+          <button onClick="{{c.dismiss}}" aria-label="Dismiss" style="width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        </div>
+      </sc-for>
+    </section>
+
+    <div style="grid-area: dock; position: relative; isolation: isolate; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+      <span aria-hidden="true" class="{{igDock}}" style="position: absolute; z-index: -1; left: 10%; right: 10%; bottom: -12px; height: 96px; border-radius: 50%; background: radial-gradient(closest-side, {{lampGlow}} 0%, transparent 100%)"></span>
+      <sc-if value="{{showLength}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <sc-if value="{{useBar}}" hint-placeholder-val="{{false}}">
+            <div role="group" aria-label="Session length" style="position: relative; display: grid; grid-template-columns: repeat({{presetN}}, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+              <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / {{presetN}}); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{lampSoft}}; border: 1px solid {{lampLine}}; opacity: {{chipIndOp}}; transform: translateX({{presetX}})"></div>
+              <sc-for list="{{presets}}" as="c" hint-placeholder-count="7">
+                <button aria-pressed="{{c.sel}}" aria-label="{{c.aria}}" onClick="{{c.pick}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: {{presetFont}}; line-height: 20px; font-weight: {{c.weight}}; color: {{c.color}}; white-space: nowrap">{{c.label}}</button>
+              </sc-for>
+            </div>
+            <div style="display: flex; justify-content: {{chipsJustify}}; gap: 8px">
+              <button aria-pressed="{{untilSel}}" onClick="{{openUntil}}" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px {{untilStyle}} {{untilBorder}}; background: {{untilBg}}; font-size: 14px; line-height: 20px; font-weight: {{untilWeight}}; color: {{untilInk}}; white-space: nowrap">{{untilChip}}</button>
+              <button aria-pressed="{{customSel}}" onClick="{{openCustom}}" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px {{customStyle}} {{customBorder}}; background: {{customBg}}; font-size: 14px; line-height: 20px; font-weight: {{customWeight}}; color: {{customInk}}; white-space: nowrap">{{customChip}}</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{useGrid}}" hint-placeholder-val="{{true}}">
+            <div role="group" aria-label="Session length" style="display: grid; grid-template-columns: repeat({{gridCols}}, minmax(0, 1fr)); gap: 8px">
+              <sc-for list="{{gridItems}}" as="c" hint-placeholder-count="9">
+                <button aria-pressed="{{c.sel}}" aria-label="{{c.aria}}" onClick="{{c.pick}}" class="at-slide" style="grid-column: {{c.col}}; height: 44px; min-width: 0; padding: 0 4px; border-radius: 999px; border: 1px {{c.bs}} {{c.bc}}; background: {{c.bg}}; font-size: 14px; line-height: 20px; font-weight: {{c.weight}}; color: {{c.color}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.label}}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{panelMore}}" hint-placeholder-val="{{false}}">
+            <div class="at-in" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-inline-start: 4px">
+                <span id="at-more-title" style="font-size: 14px; line-height: 20px; font-weight: 600">More lengths</span>
+                <button onClick="{{closePanel}}" aria-label="Close" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+              </div>
+              <div role="group" aria-labelledby="at-more-title" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+                <button aria-pressed="{{untilSel}}" onClick="{{openUntil}}" style="height: 44px; padding: 0 8px; border-radius: 999px; border: 1px {{untilStyle}} {{untilBorder}}; background: {{untilBg}}; font-size: 14px; line-height: 20px; font-weight: {{untilWeight}}; color: {{untilInk}}; white-space: nowrap">{{untilChip}}</button>
+                <button aria-pressed="{{customSel}}" onClick="{{openCustom}}" style="height: 44px; padding: 0 8px; border-radius: 999px; border: 1px {{customStyle}} {{customBorder}}; background: {{customBg}}; font-size: 14px; line-height: 20px; font-weight: {{customWeight}}; color: {{customInk}}; white-space: nowrap">{{customChip}}</button>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{panelUntil}}" hint-placeholder-val="{{false}}">
+            <div class="at-in" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-inline-start: 4px">
+                <label for="at-until-time" style="font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap">Stay awake until</label>
+                <div style="display: flex; align-items: center; gap: 4px">
+                  <sc-if value="{{untilInputInline}}" hint-placeholder-val="{{true}}">
+                    <input id="at-until-time" class="at-time" type="time" value="{{untilInput}}" onChange="{{setUntilTime}}" aria-describedby="at-until-hint" style="height: 48px; box-sizing: border-box; padding: 0 12px; border-radius: 8px; border: 1px solid {{untilInputLine}}; background: {{t.sunken}}; font-size: 15px; font-variant-numeric: tabular-nums; color: {{t.ink}}">
+                  </sc-if>
+                  <button onClick="{{closePanel}}" aria-label="Close" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+                </div>
+              </div>
+              <sc-if value="{{untilInputStacked}}" hint-placeholder-val="{{false}}">
+                <input id="at-until-time" class="at-time" type="time" value="{{untilInput}}" onChange="{{setUntilTime}}" aria-describedby="at-until-hint" style="height: 48px; box-sizing: border-box; padding: 0 12px; border-radius: 8px; border: 1px solid {{untilInputLine}}; background: {{t.sunken}}; font-size: 15px; font-variant-numeric: tabular-nums; color: {{t.ink}}">
+              </sc-if>
+              <span id="at-until-hint" class="at-sr">Type any time. A time that has already passed today means tomorrow.</span>
+              <sc-if value="{{untilPast}}" hint-placeholder-val="{{false}}">
+                <div class="at-in" role="status" style="display: flex; flex-direction: column; gap: 8px; padding: 12px 8px 8px 12px; border-radius: 12px; background: {{lampSoft}}; text-align: start">
+                  <p style="font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; text-wrap: pretty">{{pastQ}}</p>
+                  <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+                    <span style="font-size: 13px; line-height: 18px; color: {{t.ink2}}">{{pastIn}}</span>
+                    <button onClick="{{changeTime}}" style="height: 44px; flex-shrink: 0; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 14px; line-height: 20px; font-weight: 600; color: {{t.ink}}">Change time</button>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{untilSlotsOn}}" hint-placeholder-val="{{true}}">
+              <div style="display: grid; grid-template-columns: repeat({{untilCols}}, minmax(0, 1fr)); gap: 8px">
+                <sc-for list="{{untilOpts}}" as="u" hint-placeholder-count="4">
+                  <button aria-pressed="{{u.sel}}" onClick="{{u.pick}}" style="height: {{slotH}}; padding: 0; border-radius: 12px; border: 1px solid {{u.border}}; background: {{u.bg}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; font-size: 14px; line-height: 20px; font-weight: {{u.weight}}; font-variant-numeric: tabular-nums; color: {{t.ink}}; white-space: nowrap">{{u.label}}<span style="font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink2}}">{{u.sub}}</span></button>
+                </sc-for>
+              </div>
+              </sc-if>
+            </div>
+          </sc-if>
+          <sc-if value="{{panelCustom}}" hint-placeholder-val="{{false}}">
+            <div class="at-in" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-inline-start: 4px">
+                <span style="font-size: 14px; line-height: 20px; font-weight: 600">How long?</span>
+                <button onClick="{{closePanel}}" aria-label="Close" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+              </div>
+              <div style="display: grid; grid-template-columns: 64px minmax(0, 1fr) 64px; align-items: center; gap: 8px">
+                <button onClick="{{less}}" aria-label="{{lessAria}}" style="height: 52px; padding: 0; border-radius: 20px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.ink}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+                <output style="text-align: center; font-weight: 300; font-size: {{customFont}}; line-height: 32px; font-variant-numeric: tabular-nums; white-space: nowrap">{{customWords}}</output>
+                <button onClick="{{more}}" aria-label="{{moreAria}}" style="height: 52px; padding: 0; border-radius: 20px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.ink}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5v14"></path></svg></button>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{dockSetup}}" hint-placeholder-val="{{true}}">
+          <button class="at-rise" onClick="{{start}}" aria-label="{{primaryAria}}" aria-keyshortcuts="{{keysAttr}}" style="width: 100%; height: {{ctaH}}; padding: 0 16px; border-radius: 20px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}">
+            <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true" style="flex-shrink: 0"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>
+            {{primaryLabel}}
+            <sc-if value="{{kbdOn}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="display: inline-flex"><kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; box-shadow: inset 0 -1px 0 {{t.line2}}; background: {{t.raised}}; font-family: ui-monospace, 'Geist Mono', monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">Space</kbd></span></sc-if>
+          </button>
+      </sc-if>
+
+      <sc-if value="{{dockBatt}}" hint-placeholder-val="{{false}}">
+        <div class="at-rise" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+          <button onClick="{{openSettings}}" style="height: {{ctaH}}; padding: 0 8px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.ink}}">Battery settings</button>
+          <button onClick="{{start}}" style="height: {{ctaH}}; padding: 0 8px; border-radius: 20px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; box-shadow: 0 10px 30px -8px {{lampGlow}}">Start anyway</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{dockRun}}" hint-placeholder-val="{{false}}">
+        <div class="at-rise" style="display: grid; grid-template-columns: {{runCols}}; gap: 12px">
+          <sc-if value="{{canExtend}}" hint-placeholder-val="{{true}}">
+            <button onClick="{{extend}}" style="height: {{ctaH}}; padding: 0 8px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.ink}}">+15 min</button>
+          </sc-if>
+          <button onClick="{{stop}}" aria-keyshortcuts="{{keysAttr}}" style="height: {{ctaH}}; padding: 0 8px; border-radius: 20px; border: 0; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}; display: flex; align-items: center; justify-content: center; gap: 8px">Stop<sc-if value="{{kbdOn}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="display: inline-flex"><kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; box-shadow: inset 0 -1px 0 {{t.line2}}; background: {{t.raised}}; font-family: ui-monospace, 'Geist Mono', monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">Space</kbd></span></sc-if></button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{dockAsk}}" hint-placeholder-val="{{false}}">
+        <div class="at-rise" role="group" aria-labelledby="at-ask-title" style="display: flex; flex-direction: column; gap: 12px; padding: {{askPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{lampLine}}; box-shadow: 0 18px 40px -24px {{lampGlow}}">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px; padding-inline: 4px">
+            <p id="at-ask-title" role="status" style="font-size: 18px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; color: {{t.ink}}">Time's up. Keep going?</p>
+            <span role="timer" aria-label="{{askAria}}" style="font-size: 14px; line-height: 20px; font-variant-numeric: tabular-nums; color: {{t.ink2}}; white-space: nowrap">Stops in {{askLeft}} s</span>
+          </div>
+          <div aria-hidden="true" style="height: 4px; border-radius: 999px; background: {{t.track}}; overflow: hidden">
+            <div class="at-lin" style="height: 100%; border-radius: 999px; background: {{lamp}}; transform-origin: left center; transform: scaleX({{askP}})"></div>
+          </div>
+          <div style="display: grid; grid-template-columns: {{askCols}}; gap: 8px">
+            <sc-for list="{{askOpts}}" as="c" hint-placeholder-count="3">
+              <button onClick="{{c.pick}}" aria-label="{{c.aria}}" style="height: 52px; padding: 0; border-radius: 20px; border: 1px solid {{lampLine}}; background: {{lampSoft}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">{{c.label}}</button>
+            </sc-for>
+            <sc-if value="{{askStopInline}}" hint-placeholder-val="{{false}}">
+              <button onClick="{{askStop}}" style="height: 52px; padding: 0; border-radius: 20px; border: 1px solid {{t.line2}}; background: transparent; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">Stop</button>
+            </sc-if>
+          </div>
+          <sc-if value="{{askStopRow}}" hint-placeholder-val="{{true}}">
+            <button onClick="{{askStop}}" style="height: 52px; padding: 0; border-radius: 20px; border: 1px solid {{t.line2}}; background: transparent; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">Stop</button>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{dockBlocked}}" hint-placeholder-val="{{false}}">
+        <div class="at-rise" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+          <button onClick="{{useFallback}}" style="height: {{ctaH}}; padding: 0 8px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.ink}}">Use fallback</button>
+          <button onClick="{{start}}" style="height: {{ctaH}}; padding: 0 8px; border-radius: 20px; border: 0; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}">Retry</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{dockTap}}" hint-placeholder-val="{{false}}">
+        <div class="at-rise" style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px">
+          <button onClick="{{stop}}" style="height: {{ctaH}}; padding: 0 8px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.ink}}">Stop</button>
+          <button onClick="{{useFallback}}" class="at-float" style="height: {{ctaH}}; padding: 0 8px; border-radius: 20px; border: 0; background: {{lamp}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{lampInk}}; box-shadow: 0 10px 30px -8px {{lampGlow}}">Tap to start</button>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{sheetOpen}}" hint-placeholder-val="{{false}}">
+    <div aria-hidden="true" class="at-scrim" onClick="{{closeSheet}}" style="position: absolute; inset: 0; z-index: 20; background: {{scrim}}"></div>
+    <div role="dialog" aria-modal="true" aria-labelledby="at-sheet-title" class="{{sheetClass}}" style="{{sheetStyle}}">
+      <div style="position: sticky; top: 0; z-index: 2; display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: {{sheetHeadPad}}; background: {{t.surface}}; border-bottom: 1px solid {{t.line}}">
+        <sc-if value="{{isPhone}}" hint-placeholder-val="{{true}}">
+          <div aria-hidden="true" style="align-self: center; width: 40px; height: 4px; border-radius: 999px; background: {{t.line2}}"></div>
+        </sc-if>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+          <h2 id="at-sheet-title" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; color: {{t.ink}}">{{sheetTitle}}</h2>
+          <button onClick="{{closeSheet}}" aria-label="{{closeAria}}" style="width: 44px; height: 44px; margin-inline-end: -12px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+        </div>
+      </div>
+
+      <sc-if value="{{sheetSettings}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; flex-direction: column; gap: 32px; padding: {{sheetPad}}">
+
+          <section aria-labelledby="st-appearance" style="display: flex; flex-direction: column; gap: 20px">
+            <h3 id="st-appearance" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Appearance</h3>
+
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span id="lb-theme" style="font-size: 15px; line-height: 22px; font-weight: 500">Theme</span>
+              <div role="radiogroup" aria-labelledby="lb-theme" style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.sunken}}; border: 1px solid {{t.line}}">
+                <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 4); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{segChip}}; box-shadow: {{t.elev}}; transform: translateX({{sg.theme.x}})"></div>
+                <sc-for list="{{sg.theme.opts}}" as="c" hint-placeholder-count="4">
+                  <button role="radio" aria-checked="{{c.sel}}" onClick="{{c.pick}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: {{segFont}}; line-height: 16px; font-weight: {{c.weight}}; color: {{c.color}}; white-space: {{segWs}}">{{c.label}}</button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+                <span id="lb-lamp" style="font-size: 15px; line-height: 22px; font-weight: 500">Lamp colour</span>
+                <span style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{lampNote}}</span>
+              </div>
+              <div role="radiogroup" aria-labelledby="lb-lamp" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+                <sc-for list="{{lamps}}" as="u" hint-placeholder-count="4">
+                  <button role="radio" aria-checked="{{u.sel}}" aria-label="{{u.aria}}" onClick="{{u.pick}}" style="height: 52px; box-sizing: border-box; padding: 0 12px; border-radius: 16px; border: 1px solid {{u.ring}}; background: {{u.bg}}; display: flex; align-items: center; gap: 12px; font-size: 14px; line-height: 20px; font-weight: {{u.weight}}; color: {{t.ink}}; text-align: start">
+                    <span aria-hidden="true" style="flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; background: {{u.color}}; box-shadow: 0 0 0 4px {{u.halo}}"></span>
+                    <span style="flex: 1; min-width: 0">{{u.name}}</span>
+                    <sc-if value="{{u.pro}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink2}}; white-space: nowrap">Pro</span></sc-if>
+                  </button>
+                </sc-for>
+              </div>
+              <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">Mint and Sky come with Pro. Tap one to preview it on the clock.</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span id="lb-face" style="font-size: 15px; line-height: 22px; font-weight: 500">Clock face</span>
+              <div role="radiogroup" aria-labelledby="lb-face" style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.sunken}}; border: 1px solid {{t.line}}">
+                <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 4); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{segChip}}; box-shadow: {{t.elev}}; transform: translateX({{sg.face.x}})"></div>
+                <sc-for list="{{sg.face.opts}}" as="c" hint-placeholder-count="4">
+                  <button role="radio" aria-checked="{{c.sel}}" onClick="{{c.pick}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: {{segFont}}; line-height: 16px; font-weight: {{c.weight}}; color: {{c.color}}; white-space: {{segWs}}">{{c.label}}</button>
+                </sc-for>
+              </div>
+            </div>
+          </section>
+
+          <section aria-labelledby="st-time" style="display: flex; flex-direction: column; gap: 20px">
+            <h3 id="st-time" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Time</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span id="lb-fmt" style="font-size: 15px; line-height: 22px; font-weight: 500">Clock format</span>
+              <div role="radiogroup" aria-labelledby="lb-fmt" style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.sunken}}; border: 1px solid {{t.line}}">
+                <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 3); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{segChip}}; box-shadow: {{t.elev}}; transform: translateX({{sg.fmt.x}})"></div>
+                <sc-for list="{{sg.fmt.opts}}" as="c" hint-placeholder-count="3">
+                  <button role="radio" aria-checked="{{c.sel}}" onClick="{{c.pick}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: {{segFont2}}; line-height: 16px; font-weight: {{c.weight}}; color: {{c.color}}; white-space: {{segWs}}">{{c.label}}</button>
+                </sc-for>
+              </div>
+              <span style="font-size: 13px; line-height: 18px; font-variant-numeric: tabular-nums; color: {{t.muted}}">Now shows {{nowTime}}</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 8px 0; box-sizing: border-box">
+              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span id="sw-secs" style="font-size: 15px; line-height: 22px; font-weight: 500">Show clock seconds</span><span style="font-size: 13px; line-height: 18px; color: {{t.muted}}">Adds seconds to the clock at the top.</span></span>
+              <button role="switch" aria-checked="{{sw.secs.on}}" aria-labelledby="sw-secs" onClick="{{sw.secs.toggle}}" style="position: relative; flex-shrink: 0; width: 52px; height: 44px; padding: 0; border: 0; background: transparent"><span aria-hidden="true" class="at-slide" style="position: absolute; left: 0; top: 6px; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{sw.secs.track}}; border: 1px solid {{sw.secs.line}}"></span><span aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 10px; width: 24px; height: 24px; border-radius: 50%; background: {{sw.secs.knob}}; transform: translateX({{sw.secs.x}})"></span></button>
+            </div>
+          </section>
+
+          <section aria-labelledby="st-end" style="display: flex; flex-direction: column; gap: 20px">
+            <h3 id="st-end" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">When time is up</h3>
+            <div role="radiogroup" aria-labelledby="st-end" style="position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.sunken}}; border: 1px solid {{t.line}}">
+              <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 2); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{segChip}}; box-shadow: {{t.elev}}; transform: translateX({{sg.end.x}})"></div>
+              <sc-for list="{{sg.end.opts}}" as="c" hint-placeholder-count="2">
+                <button role="radio" aria-checked="{{c.sel}}" onClick="{{c.pick}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: {{segFont}}; line-height: 16px; font-weight: {{c.weight}}; color: {{c.color}}; white-space: {{segWs}}">{{c.label}}</button>
+              </sc-for>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <span id="lb-sound" style="font-size: 15px; line-height: 22px; font-weight: 500">End sound</span>
+              <div role="radiogroup" aria-labelledby="lb-sound" style="position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.sunken}}; border: 1px solid {{t.line}}">
+                <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 2); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{segChip}}; box-shadow: {{t.elev}}; transform: translateX({{sg.sound.x}})"></div>
+                <sc-for list="{{sg.sound.opts}}" as="c" hint-placeholder-count="2">
+                  <button role="radio" aria-checked="{{c.sel}}" onClick="{{c.pick}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: {{segFont}}; line-height: 16px; font-weight: {{c.weight}}; color: {{c.color}}; white-space: {{segWs}}">{{c.label}}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 8px 0; box-sizing: border-box">
+              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span id="sw-notify" style="font-size: 15px; line-height: 22px; font-weight: 500">Notify me when time is up</span><span style="font-size: 13px; line-height: 18px; color: {{t.muted}}">Your browser asks for permission the first time.</span></span>
+              <button role="switch" aria-checked="{{sw.notify.on}}" aria-labelledby="sw-notify" onClick="{{sw.notify.toggle}}" style="position: relative; flex-shrink: 0; width: 52px; height: 44px; padding: 0; border: 0; background: transparent"><span aria-hidden="true" class="at-slide" style="position: absolute; left: 0; top: 6px; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{sw.notify.track}}; border: 1px solid {{sw.notify.line}}"></span><span aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 10px; width: 24px; height: 24px; border-radius: 50%; background: {{sw.notify.knob}}; transform: translateX({{sw.notify.x}})"></span></button>
+            </div>
+          </section>
+
+          <section aria-labelledby="st-batt" style="display: flex; flex-direction: column; gap: 12px">
+            <h3 id="st-batt" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Battery</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 8px 0; box-sizing: border-box">
+              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span id="sw-batt" style="font-size: 15px; line-height: 22px; font-weight: 500">Stop automatically on low battery</span><span style="font-size: 13px; line-height: 18px; color: {{t.muted}}">Ends the session so your device can sleep.</span></span>
+              <button role="switch" aria-checked="{{sw.batt.on}}" aria-labelledby="sw-batt" onClick="{{sw.batt.toggle}}" style="position: relative; flex-shrink: 0; width: 52px; height: 44px; padding: 0; border: 0; background: transparent"><span aria-hidden="true" class="at-slide" style="position: absolute; left: 0; top: 6px; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{sw.batt.track}}; border: 1px solid {{sw.batt.line}}"></span><span aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 10px; width: 24px; height: 24px; border-radius: 50%; background: {{sw.batt.knob}}; transform: translateX({{sw.batt.x}})"></span></button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+                <label for="at-batt" style="font-size: 15px; line-height: 22px; font-weight: 500; color: {{battInk}}">Stop at</label>
+                <output for="at-batt" style="font-size: 15px; line-height: 22px; font-weight: 500; font-variant-numeric: tabular-nums; color: {{battInk}}">{{battLevel}}%</output>
+              </div>
+              <input id="at-batt" type="range" min="5" max="30" step="1" value="{{battLevel}}" disabled="{{battOff}}" aria-describedby="at-batt-hint" onChange="{{setBatt}}" style="width: 100%; height: 44px; margin: 0; accent-color: {{lamp}}">
+              <span id="at-batt-hint" style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{battHint}}</span>
+            </div>
+          </section>
+
+          <section aria-labelledby="st-priv" style="display: flex; flex-direction: column; gap: 8px">
+            <h3 id="st-priv" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Privacy and keys</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 8px 0; box-sizing: border-box">
+              <span id="sw-tele" style="font-size: 15px; line-height: 22px; font-weight: 500">Share anonymous usage data</span>
+              <button role="switch" aria-checked="{{sw.tele.on}}" aria-labelledby="sw-tele" onClick="{{sw.tele.toggle}}" style="position: relative; flex-shrink: 0; width: 52px; height: 44px; padding: 0; border: 0; background: transparent"><span aria-hidden="true" class="at-slide" style="position: absolute; left: 0; top: 6px; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{sw.tele.track}}; border: 1px solid {{sw.tele.line}}"></span><span aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 10px; width: 24px; height: 24px; border-radius: 50%; background: {{sw.tele.knob}}; transform: translateX({{sw.tele.x}})"></span></button>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 8px 0; box-sizing: border-box">
+              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span id="sw-keys" style="font-size: 15px; line-height: 22px; font-weight: 500">Single-key shortcuts</span><span style="font-size: 13px; line-height: 24px; color: {{t.muted}}"><kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; box-shadow: inset 0 -1px 0 {{t.line2}}; background: {{t.raised}}; font-family: ui-monospace, 'Geist Mono', monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">Space</kbd> starts or stops, <kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; box-shadow: inset 0 -1px 0 {{t.line2}}; background: {{t.raised}}; font-family: ui-monospace, 'Geist Mono', monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">1</kbd> to <kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; box-shadow: inset 0 -1px 0 {{t.line2}}; background: {{t.raised}}; font-family: ui-monospace, 'Geist Mono', monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">6</kbd> pick a length, <kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; box-shadow: inset 0 -1px 0 {{t.line2}}; background: {{t.raised}}; font-family: ui-monospace, 'Geist Mono', monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">?</kbd> lists them all.</span></span>
+              <button role="switch" aria-checked="{{sw.keys.on}}" aria-labelledby="sw-keys" onClick="{{sw.keys.toggle}}" style="position: relative; flex-shrink: 0; width: 52px; height: 44px; padding: 0; border: 0; background: transparent"><span aria-hidden="true" class="at-slide" style="position: absolute; left: 0; top: 6px; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{sw.keys.track}}; border: 1px solid {{sw.keys.line}}"></span><span aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 10px; width: 24px; height: 24px; border-radius: 50%; background: {{sw.keys.knob}}; transform: translateX({{sw.keys.x}})"></span></button>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 56px; padding: 8px 0; box-sizing: border-box">
+              <span id="sw-hints" style="font-size: 15px; line-height: 22px; font-weight: 500">Show keyboard hints on buttons</span>
+              <button role="switch" aria-checked="{{sw.hints.on}}" aria-labelledby="sw-hints" onClick="{{sw.hints.toggle}}" style="position: relative; flex-shrink: 0; width: 52px; height: 44px; padding: 0; border: 0; background: transparent"><span aria-hidden="true" class="at-slide" style="position: absolute; left: 0; top: 6px; width: 52px; height: 32px; box-sizing: border-box; border-radius: 999px; background: {{sw.hints.track}}; border: 1px solid {{sw.hints.line}}"></span><span aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 10px; width: 24px; height: 24px; border-radius: 50%; background: {{sw.hints.knob}}; transform: translateX({{sw.hints.x}})"></span></button>
+            </div>
+          </section>
+
+          <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 20px; border-top: 1px solid {{t.line}}">
+            <div style="display: flex; flex-wrap: wrap; gap: 0 24px">
+              <sc-if value="{{isPhone}}" hint-placeholder-val="{{true}}">
+                <button onClick="{{openStats}}" style="min-height: 44px; padding: 0; border: 0; background: transparent; font-size: 15px; line-height: 22px; font-weight: 500; color: {{lampText}}; text-decoration: underline; text-underline-offset: 4px">Your stats</button>
+              </sc-if>
+              <a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; font-size: 15px; line-height: 22px; font-weight: 500; color: {{lampText}}; text-underline-offset: 4px">Pro</a>
+              <a href="#" style="display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; font-size: 15px; line-height: 22px; font-weight: 500; color: {{lampText}}; text-underline-offset: 4px">Manage devices</a>
+            </div>
+            <button onClick="{{resetAll}}" style="height: 52px; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">Reset to defaults</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{sheetStats}}" hint-placeholder-val="{{false}}">
+        <div style="display: flex; flex-direction: column; gap: 32px; padding: {{sheetPad}}">
+          <dl style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; border-top: 1px solid {{t.line}}">
+            <sc-for list="{{figs}}" as="f" hint-placeholder-count="4">
+              <div style="display: flex; flex-direction: column; gap: 4px; padding: 16px 0; border-bottom: 1px solid {{t.line}}">
+                <dt style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{f.label}}</dt>
+                <dd style="font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; color: {{t.ink}}">{{f.a}}<span style="font-size: 15px; font-weight: 500; letter-spacing: 0; color: {{t.ink2}}">{{f.ua}}</span>{{f.b}}<span style="font-size: 15px; font-weight: 500; letter-spacing: 0; color: {{t.ink2}}">{{f.ub}}</span></dd>
+              </div>
+            </sc-for>
+          </dl>
+
+          <section aria-labelledby="st-heat" style="display: flex; flex-direction: column; gap: 12px">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+              <h3 id="st-heat" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Last 12 weeks</h3>
+              <span style="font-size: 13px; line-height: 18px; color: {{t.muted}}">time awake per day</span>
+            </div>
+            <div role="img" aria-label="{{hmAria}}" style="position: relative; display: grid; grid-template-columns: 24px repeat(12, minmax(0, 1fr)); gap: 4px">
+              <sc-for list="{{hmDays}}" as="c" hint-placeholder-count="3">
+                <span aria-hidden="true" style="grid-column: 1; grid-row: {{c.row}}; align-self: center; font-size: 12px; line-height: 16px; color: {{t.muted}}">{{c.label}}</span>
+              </sc-for>
+              <sc-for list="{{cells}}" as="b" hint-placeholder-count="84">
+                <span title="{{b.title}}" style="grid-column: {{b.col}}; grid-row: {{b.row}}; aspect-ratio: 1; box-sizing: border-box; border-radius: 4px; background: {{b.bg}}; box-shadow: inset 0 0 0 1px {{b.ring}}; opacity: {{b.op}}; display: grid; place-items: center"><span aria-hidden="true" style="width: {{b.dotW}}; height: 4px; background: radial-gradient(circle at 2px 2px, {{b.ink}} 1.6px, transparent 2px) 0 0 / 6px 4px repeat-x"></span></span>
+              </sc-for>
+              <div style="grid-column: 2 / 12; grid-row: 1 / 8; place-self: center; z-index: 1; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; box-sizing: border-box; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line2}}; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; white-space: nowrap">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+                Locked — Pro keeps 12 weeks
+              </div>
+            </div>
+            <div aria-hidden="true" style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-size: 12px; line-height: 16px; color: {{t.muted}}">
+              <span style="margin-inline-end: 4px">Less</span>
+              <sc-for list="{{legend}}" as="b" hint-placeholder-count="5">
+                <span style="width: 16px; height: 16px; border-radius: 4px; background: {{b.bg}}; box-shadow: inset 0 0 0 1px {{b.ring}}"></span>
+              </sc-for>
+              <span style="margin-inline-start: 4px">More</span>
+            </div>
+          </section>
+
+          <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 20px; border-top: 1px solid {{t.line}}">
+            <button aria-describedby="st-csv-note" style="height: 52px; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>
+              Export CSV
+              <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink2}}; white-space: nowrap">Pro</span>
+            </button>
+            <p id="st-csv-note" style="font-size: 13px; line-height: 18px; color: {{t.muted}}">One row per day: date, minutes, sessions. <a href="#" style="color: {{lampText}}; text-underline-offset: 3px">See what's in Pro</a></p>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"status":{"editor":"enum","options":["ready","starting","awake","paused","blocked","needtap","fallback","timesup","ended"],"default":"ready"},"face":{"editor":"enum","options":["ring","bold","horizon","tide"],"default":"ring"},"theme":{"editor":"enum","options":["auto","light","dark","oled"],"default":"auto"},"phase":{"editor":"enum","options":["auto","dawn","day","dusk","night"],"default":"auto"},"layout":{"editor":"enum","options":["phone","small","landscape","tablet","tabletLandscape","desktop","xl"],"default":"phone"},"panel":{"editor":"enum","options":["none","until","custom","more"],"default":"none"},"sheet":{"editor":"enum","options":["none","settings","stats"],"default":"none"},"edge":{"editor":"enum","options":["none","lastminute","multiday","untilpassed","longnolimit","deferred","offline","lowbattery","hiddenreturn","firstvisit"],"default":"none"},"accent":{"editor":"color","default":"#5BE0E8","options":["#5BE0E8","#A594FF","#7EF0B8","#7CB8FF"]},"$preview":{"width":390,"height":844}}'>
+// AT-PRIMITIVES v1 (fix batch 1b): DESIGN.md §2.1 tokens and §11 geometry. Keep identical across files.
+const AT_TOK = {
+  dark: { raised: '#26324B', sunken: '#0D131F', horizonInk: '#F6F2EA', line2: '#33405C', inputBorder: '#5A6781', groundEnd: '#070A11' },
+  light: { raised: '#E3E9F1', sunken: '#F6F9FC', horizonInk: '#F6F2EA', line2: '#C3CDDA', inputBorder: '#8C98AA', groundEnd: '#EEF3F8' }
+};
+const AT_NIGHT = { ground: '#000000', ink: '#FF5A3C', ink2: '#E8563C', muted: '#A89690', line: '#3A2E2A' };
+const AT_SCRIM = 'rgba(4,7,12,.55)';
+const AT_HDR = { phone: { h: '60px', pad: '0 16px' }, tablet: { h: '68px', pad: '0 32px' }, desktop: { h: '68px', pad: '0 80px' }, xl: { h: '68px', pad: '0 120px' } };
+const AT_FOOT = { phone: '24px 16px 32px', tablet: '24px 32px', desktop: '24px 80px', xl: '24px 120px' };
+const AT_CARD_PAD = { phone: '20px', tablet: '24px', desktop: '24px', xl: '24px' };
+const AT_TYPE = {
+  phone: { h1: '34px', h1lh: '42px', h2: '24px', h2lh: '32px', gutter: '16px', section: '48px' },
+  tablet: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '32px', section: '64px' },
+  desktop: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '80px', section: '96px' }
+};
+const C = 2 * Math.PI * 146;
+// DESIGN.md §2.1 tokens (+ raised / sunken / horizon-ink from AT_TOK). Light and dark grounds end on the ground token.
+const DARK = Object.assign({
+  bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16',
+  surface: '#111826', line: '#1F2940', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE',
+  track: '#1A2336', tick: '#2A3752', primaryBg: '#EAF0F7', primaryInk: '#0A0E16', elev: 'none', inputBorder: '#5A6781',
+  tideBg: 'radial-gradient(90% 80% at 50% 15%, #13203A 0%, #0A0E16 100%)', tideInkTop: '#EAF0F7'
+}, AT_TOK.dark);
+const LIGHT = Object.assign({
+  bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA',
+  surface: '#FFFFFF', line: '#DCE3EC', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779',
+  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#0E1726', primaryInk: '#FFFFFF', elev: '0 1px 2px rgba(14,23,38,.06)', inputBorder: '#8C98AA',
+  tideBg: 'radial-gradient(90% 80% at 50% 15%, #FFFFFF 0%, #F2F6FA 100%)', tideInkTop: '#0E1726'
+}, AT_TOK.light);
+const OLED = Object.assign({}, DARK, { bg: '#000000', ground: '#000000', surface: '#0A0A0A', sunken: '#000000', tideBg: '#000000' });
+// Horizon skies are illustration (aria-hidden art), exempt from the palette rule (DESIGN.md §11.2).
+const SKIES = {
+  dawn:  { name: 'Dawn',  sky: 'linear-gradient(180deg,#2B3560 0%,#9A6A8A 50%,#F2B48A 100%)', warm: 'rgba(255,150,110,0.55)', orb: '#FFE7C2', orbShadow: '0 0 60px 20px rgba(255,200,150,0.55)', glint: 'rgba(255,215,170,0.7)', hill: '#3A3552', water: 'linear-gradient(180deg,#3A3552 0%,#1B1C33 100%)', cloud: 'rgba(255,225,215,0.45)', stars: true, clouds: true },
+  day:   { name: 'Day',   sky: 'linear-gradient(180deg,#3F7FCC 0%,#8FC0EC 60%,#D8EAF7 100%)', warm: 'rgba(255,170,120,0.6)', orb: '#FFF8E6', orbShadow: '0 0 70px 26px rgba(255,244,210,0.75)', glint: 'rgba(255,250,230,0.75)', hill: '#2C5E8C', water: 'linear-gradient(180deg,#2A649C 0%,#153A61 100%)', cloud: 'rgba(255,255,255,0.7)', stars: false, clouds: true },
+  dusk:  { name: 'Dusk',  sky: 'linear-gradient(180deg,#1B2140 0%,#6B3F66 55%,#E6875E 100%)', warm: 'rgba(255,120,80,0.5)', orb: '#FFC08A', orbShadow: '0 0 64px 22px rgba(255,150,90,0.55)', glint: 'rgba(255,170,110,0.75)', hill: '#2A2238', water: 'linear-gradient(180deg,#2A2238 0%,#100D1B 100%)', cloud: 'rgba(255,190,170,0.35)', stars: false, clouds: true },
+  night: { name: 'Night', sky: 'linear-gradient(180deg,#03050C 0%,#0B1330 65%,#1A2447 100%)', warm: 'rgba(0,0,0,0)', orb: '#ECE7DA', orbShadow: 'inset -14px 6px 0 0 rgba(10,16,38,0.92), 0 0 44px 10px rgba(200,212,255,0.22)', glint: 'rgba(220,228,255,0.35)', hill: '#070B18', water: 'linear-gradient(180deg,#0A1024 0%,#03050C 100%)', cloud: 'rgba(0,0,0,0)', stars: true, clouds: false }
+};
+// Presets: en.json tool.preset.* labels; ∞ reads "Until I stop" (tool.preset.pinf.sr).
+const PRESETS = [['p15', '15 min', '15 minutes', 900], ['p30', '30 min', '30 minutes', 1800], ['p45', '45 min', '45 minutes', 2700], ['p60', '1 h', '1 hour', 3600], ['p120', '2 h', '2 hours', 7200], ['p240', '4 h', '4 hours', 14400], ['pinf', '∞', 'Until I stop', 0]];
+// Lamp colours (DESIGN.md §2.2): id, name, dark, light (ring and fills), light accent-text, Pro.
+const LAMPS = [['aqua', 'Aqua', '#5BE0E8', '#087B87', '#087B87', false], ['violet', 'Violet', '#A594FF', '#5A47CF', '#5A47CF', false], ['mint', 'Mint', '#7EF0B8', '#167A50', '#167A50', true], ['sky', 'Sky', '#7CB8FF', '#255FBD', '#255FBD', true]];
+const LAMP_LIGHT = { '#5BE0E8': '#087B87', '#A594FF': '#5A47CF', '#7EF0B8': '#167A50', '#7CB8FF': '#255FBD' };
+// Real defaults from packages/core DEFAULT_SETTINGS.
+const DEFAULTS = { theme: 'auto', lampId: 'aqua', face: 'ring', clockFmt: 'lang', showSecs: false, endAsk: true, sound: 'chime', notify: false, battAuto: false, battLevel: 15, telemetry: true, singleKey: true, keyHints: true };
+const ASK_SECS = 60; // Time's up grace (decision O-08, docs/05).
+const CUSTOM_MAX = 10080; // 7 days, in minutes (docs/05 custom limit).
+const GRANT_MS = 420; // demo latency between the ask and the browser's answer
+// Offline copy per decision O-75; return copy per O-20 (en.json tool.toast.reacquiring / tool.toast.reacquired).
+const OFFLINE_TEXT = "You're offline. The tool still works; guides may not load.";
+const BACK_TEXT = 'Screen awake again';
+const REACQ_TEXT = 'Re-acquiring the wake lock';
+const TOAST_ICON = {
+  success: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM8 12.2l2.8 2.8L16 9.6',
+  info: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 11v5M12 7.8v.1',
+  offline: 'M2.5 8.8a14 14 0 0 1 5-3M11 5a14 14 0 0 1 10.5 3.8M5.6 12.2a9.5 9.5 0 0 1 3.9-2.3M14.8 10.1a9.5 9.5 0 0 1 3.6 2.1M9 15.6a4.5 4.5 0 0 1 6 0M12 19.2v.1M3.5 3.5l17 17'
+};
+// Type sizes allowed by DESIGN.md §11.5 (used to keep scaled face text >= 12 px on screen).
+const TYPE_STEPS = [12, 13, 14, 15, 16, 18, 20, 24, 28, 34];
+// Geometry per layout (DESIGN.md §5, §11). box = [width, height, scale] of the 358 x 340 face.
+// kind: which page gutter / header row applies (AT_HDR key).
+const GEO = {
+  phone: { W: 390, H: 844, kind: 'phone', box: [358, 340, 1], ctaH: 60, noteFont: 14, cardFont: 14, lineFont: 15, lineLH: 22, toastFont: 14 },
+  small: { W: 320, H: 568, kind: 'phone', box: [205, 196, 0.576], ctaH: 52, noteFont: 13, cardFont: 13, lineFont: 13, lineLH: 18, toastFont: 13 },
+  landscape: { W: 844, H: 390, kind: 'phone', box: [322, 306, 0.9], ctaH: 52, noteFont: 13, cardFont: 13, lineFont: 13, lineLH: 18, toastFont: 13 },
+  tablet: { W: 820, H: 1180, kind: 'tablet', box: [483, 459, 1.35], ctaH: 60, noteFont: 14, cardFont: 14, lineFont: 15, lineLH: 22, toastFont: 14 },
+  tabletLandscape: { W: 1180, H: 820, kind: 'desktop', box: [537, 510, 1.5], ctaH: 60, noteFont: 15, cardFont: 15, lineFont: 16, lineLH: 24, toastFont: 15 },
+  desktop: { W: 1280, H: 800, kind: 'desktop', box: [555, 527, 1.55], ctaH: 60, noteFont: 14, cardFont: 14, lineFont: 15, lineLH: 22, toastFont: 14 },
+  xl: { W: 1920, H: 1080, kind: 'xl', box: [680, 646, 1.9], ctaH: 60, noteFont: 16, cardFont: 16, lineFont: 18, lineLH: 28, toastFont: 16 }
+};
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.wave1 = this.wave(6, 0);
+    this.wave2 = this.wave(8, 1.6);
+    this.stars1 = this.starList(7, 26);
+    this.stars2 = this.starList(91, 18);
+    this.tt = {};
+    this.state = Object.assign({}, DEFAULTS, { lampId: null, face: props.face ?? 'ring', theme: props.theme ?? 'auto', panel: props.panel ?? 'none', sheet: props.sheet ?? 'none', sysDark: this.sys(), now: Date.now(), custom: 45, untilAt: 0, receiptSeen: false }, this.seed(props.status ?? 'ready', props.edge ?? 'none'));
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  // Seed a lock state, then layer an edge case (props.edge) on top of it. Seeded states never play
+  // ignition, lamp off or the first-visit receipt: those fire only on real transitions.
+  seed(status, edge) {
+    const now = Date.now();
+    const total = 1800;
+    const left = status === 'ready' ? total : status === 'ended' || status === 'timesup' ? 0 : 1458;
+    const startedAt = now - (total - left) * 1000;
+    const base = { cause: 'safari', auto: false, mode: status, preset: 'p30', total, left, el: 0, startedAt, endedAt: now, askLeft: ASK_SECS, askFrom: 'awake', deferred: false, stopReason: null, untilPast: false, hiddenFrom: null, hiddenAt: 0, toasts: [], askedAt: 0, okAt: startedAt, receipt: false, ignite: false, lampOff: false, why: false, log: [] };
+    const liveMode = status === 'fallback' ? 'fallback' : 'awake';
+    if (['awake', 'fallback', 'timesup', 'starting'].includes(status)) base.log = [{ k: 'held', from: startedAt }];
+    if (status === 'paused') { base.hiddenAt = now - 45000; base.log = [{ k: 'held', from: startedAt, to: base.hiddenAt }, { k: 'paused', from: base.hiddenAt }]; }
+    if (status === 'blocked' || status === 'needtap') base.okAt = 0;
+    if (status === 'ended') {
+      // Sample finished session: 30 min, the tab was hidden once for 2 min.
+      const s0 = now - total * 1000, m = 60000;
+      Object.assign(base, { startedAt: s0, okAt: s0, log: [{ k: 'held', from: s0, to: s0 + 11 * m }, { k: 'paused', from: s0 + 11 * m, to: s0 + 13 * m }, { k: 'held', from: s0 + 13 * m, to: now }] });
+    }
+    if (edge === 'lastminute') return Object.assign(base, { mode: liveMode, left: 47, startedAt: now - (total - 47) * 1000, log: [{ k: 'held', from: now - (total - 47) * 1000 }] });
+    if (edge === 'multiday') {
+      const tot = 26 * 3600, lf = tot - 15 * 60;
+      return Object.assign(base, { mode: status === 'paused' ? 'paused' : liveMode, preset: 'custom', custom: 1560, total: tot, left: lf, startedAt: now - 900000, log: [{ k: 'held', from: now - 900000 }] });
+    }
+    if (edge === 'untilpassed') return Object.assign(base, { mode: 'ready', preset: 'until', untilAt: this.pastTarget(now), untilPast: true, panel: 'until', log: [] });
+    if (edge === 'longnolimit') {
+      const el = 27 * 3600 + 14 * 60 + 8;
+      return Object.assign(base, { mode: liveMode, preset: 'pinf', total: 0, left: 0, el, startedAt: now - el * 1000, okAt: now - el * 1000, log: [{ k: 'held', from: now - el * 1000 }] });
+    }
+    if (edge === 'deferred') return Object.assign(base, { mode: 'ready', deferred: true, left: total, log: [] });
+    if (edge === 'offline') return Object.assign(base, { toasts: [{ id: 'offline', kind: 'offline', text: OFFLINE_TEXT }] });
+    if (edge === 'lowbattery') {
+      const st = now - (total - 1122) * 1000 - 180000;
+      return Object.assign(base, { mode: 'ended', stopReason: 'battery', battAuto: true, left: 1122, endedAt: now - 180000, startedAt: st, okAt: st, log: [{ k: 'held', from: st, to: now - 180000 }] });
+    }
+    if (edge === 'hiddenreturn') return Object.assign(base, { mode: liveMode, toasts: [{ id: 'back', kind: 'success', text: BACK_TEXT, ttl: 9000 }] });
+    // First visit where the browser allows it (O-70): started for you, with the receipt. On mount it replays for real.
+    if (edge === 'firstvisit') return Object.assign(base, { mode: 'awake', auto: true, receipt: true, receiptSeen: true, askedAt: now - 1400, okAt: now - 1000, startedAt: now - 1000, left: total - 1, log: [{ k: 'held', from: now - 1000 }] });
+    return base;
+  }
+  // A clock time that has already passed today, so it lands tomorrow (7:00 AM unless it is still early).
+  pastTarget(now) {
+    const d = new Date(now);
+    const h = d.getHours();
+    d.setHours(h >= 8 ? 7 : Math.max(0, h - 1), 0, 0, 0);
+    let at = d.getTime();
+    if (at <= now) at += 86400000;
+    return at;
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => this.tick(), 1000);
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+    // Real page lifecycle: hiding the tab pauses (the browser drops the lock); coming back resumes with a short toast.
+    try {
+      this.onVis = () => {
+        const s = this.state;
+        const now = Date.now();
+        if (document.visibilityState === 'hidden') {
+          if (s.mode === 'awake' || s.mode === 'fallback') this.setState({ mode: 'paused', hiddenFrom: s.mode, hiddenAt: now, log: this.close(s.log, now).concat({ k: 'paused', from: now }) });
+        } else if (s.mode === 'paused' && s.hiddenFrom) {
+          const away = now - (s.hiddenAt || 0);
+          // docs/05: nothing to say when back within 2 s; otherwise say it is re-acquiring, then that it is held again.
+          if (away < 2000) this.setState({ mode: s.hiddenFrom, hiddenFrom: null, log: this.close(s.log, now).concat({ k: 'held', from: now }) });
+          else { this.setState({ mode: 'starting', resumeTo: s.hiddenFrom, hiddenFrom: null }); this.toast('back', 'info', REACQ_TEXT, 0); clearTimeout(this.boot); this.boot = setTimeout(() => this.reacquired(), GRANT_MS); }
+        }
+      };
+      document.addEventListener('visibilitychange', this.onVis);
+    } catch (e) {}
+    try {
+      this.onOffline = () => this.toast('offline', 'offline', OFFLINE_TEXT, 0);
+      this.onOnline = () => this.dismiss('offline');
+      window.addEventListener('offline', this.onOffline);
+      window.addEventListener('online', this.onOnline);
+    } catch (e) {}
+    this.armToasts();
+    if (this.state.auto) setTimeout(() => this.start(true), 600);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    clearTimeout(this.boot);
+    Object.keys(this.tt).forEach((k) => clearTimeout(this.tt[k]));
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+    try { document.removeEventListener('visibilitychange', this.onVis); } catch (e) {}
+    try { window.removeEventListener('offline', this.onOffline); window.removeEventListener('online', this.onOnline); } catch (e) {}
+  }
+  componentDidUpdate(prev) {
+    const p = this.props;
+    if (prev.status !== p.status || prev.edge !== p.edge) { this.setState(this.seed(p.status ?? 'ready', p.edge ?? 'none')); setTimeout(() => this.armToasts(), 0); }
+    if (prev.face !== p.face && p.face) this.setState({ face: p.face });
+    if (prev.theme !== p.theme && p.theme) this.setState({ theme: p.theme });
+    if (prev.panel !== p.panel) this.setState({ panel: p.panel ?? 'none' });
+    if (prev.sheet !== p.sheet) this.setState({ sheet: p.sheet ?? 'none' });
+    if (prev.accent !== p.accent) this.setState({ lampId: null });
+  }
+  toast(id, kind, text, ttl) {
+    const list = (this.state.toasts || []).filter((x) => x.id !== id).concat({ id, kind, text });
+    this.setState({ toasts: list.slice(-3) });
+    if (ttl) this.arm(id, ttl);
+  }
+  arm(id, ms) { clearTimeout(this.tt[id]); this.tt[id] = setTimeout(() => this.dismiss(id), ms); }
+  armToasts() { (this.state.toasts || []).forEach((x) => { if (x.ttl) this.arm(x.id, x.ttl); }); }
+  dismiss(id) { clearTimeout(this.tt[id]); this.setState({ toasts: (this.state.toasts || []).filter((x) => x.id !== id) }); }
+  // Session log: close the open stretch at `at`.
+  close(log, at) { return (log || []).map((g) => (g.to ? g : Object.assign({}, g, { to: at }))); }
+  // One-shot moments (ignition, lamp off) clear themselves; reduced motion shows nothing extra.
+  flag(key, ms) { clearTimeout(this.tt[key]); this.tt[key] = setTimeout(() => this.setState({ [key]: false }), ms); }
+  // Real end of a session: close the log, dim the lamp and show the receipt.
+  finish(patch) {
+    const now = Date.now();
+    this.setState(Object.assign({ mode: 'ended', endedAt: now, askLeft: 0, panel: 'none', log: this.close(this.state.log, now), lampOff: true, receipt: false }, patch || {}));
+    this.flag('lampOff', 1800);
+  }
+  tick() {
+    const s = this.state;
+    const next = { now: Date.now() };
+    if (s.mode === 'awake' || s.mode === 'fallback') {
+      if (s.total === 0) next.el = s.el + 1;
+      else if (s.left <= 1) {
+        next.left = 0; next.endedAt = Date.now();
+        if (s.endAsk) Object.assign(next, { mode: 'timesup', askLeft: ASK_SECS, askFrom: s.mode });
+        else { this.finish({ left: 0, now: next.now }); return; }
+      }
+      else next.left = s.left - 1;
+    } else if (s.mode === 'timesup') {
+      if (s.askLeft <= 1) { this.finish({ now: next.now }); return; }
+      next.askLeft = s.askLeft - 1;
+    }
+    this.setState(next);
+  }
+  wave(amp, ph) {
+    let d = 'M0 28L0 ' + (14 + amp * Math.sin(ph)).toFixed(1);
+    for (let x = 4; x <= 716; x += 4) d += 'L' + x + ' ' + (14 + amp * Math.sin(ph + (x * 2 * Math.PI) / 179)).toFixed(1);
+    return d + 'L716 28Z';
+  }
+  starList(seed, n) {
+    let x = seed;
+    const r = () => (x = (x * 16807) % 2147483647) / 2147483647;
+    const out = [];
+    for (let i = 0; i < n; i++) out.push(Math.round(r() * 354) + 'px ' + Math.round(r() * 196) + 'px 0 ' + (r() > 0.8 ? '1px' : '0') + ' rgba(255,255,255,' + (0.45 + r() * 0.55).toFixed(2) + ')');
+    return out.join(', ');
+  }
+  rgba(hex, a) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  rgb(hex) { const n = parseInt(hex.replace('#', ''), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  lum(c) { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); }
+  ratio(a, b) { const x = this.lum(a), y = this.lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  // Whichever of two inks reads better on `hex` blended at alpha `a` over `under`.
+  inkOn(hex, a, under, inkA, inkB) {
+    const f = this.rgb(hex), u = this.rgb(under);
+    const bg = [0, 1, 2].map((i) => f[i] * a + u[i] * (1 - a));
+    return this.ratio(this.rgb(inkA), bg) >= this.ratio(this.rgb(inkB), bg) ? inkA : inkB;
+  }
+  // Clock format: 'lang' follows the page language (en: 12-hour), '12' or '24' override it.
+  hm(ms, secs) {
+    const f = this.state ? this.state.clockFmt : 'lang';
+    const o = { hour: 'numeric', minute: '2-digit' };
+    if (secs) o.second = '2-digit';
+    if (f === '24') return new Date(ms).toLocaleTimeString('en-GB', Object.assign(o, { hour: '2-digit', hourCycle: 'h23' }));
+    return new Date(ms).toLocaleTimeString('en-US', Object.assign(o, { hour12: true }));
+  }
+  nextDay(ms) { return new Date(ms).toDateString() !== new Date().toDateString(); }
+  dayDiff(ms) {
+    const a = new Date(ms), b = new Date();
+    return Math.round((new Date(a.getFullYear(), a.getMonth(), a.getDate()) - new Date(b.getFullYear(), b.getMonth(), b.getDate())) / 86400000);
+  }
+  weekday(ms) { return new Date(ms).toLocaleDateString('en-GB', { weekday: 'long' }); }
+  // Today: "10:30 PM"; tomorrow: "10:30 PM tomorrow"; further out: "Monday 10:30 PM".
+  when(ms) {
+    const d = this.dayDiff(ms);
+    if (d >= 2 || d < 0) return this.weekday(ms) + ' ' + this.hm(ms);
+    return this.hm(ms) + (d === 1 ? ' tomorrow' : '');
+  }
+  since(ms) {
+    const d = this.dayDiff(ms);
+    return d === 0 ? this.hm(ms) : d === -1 ? 'yesterday ' + this.hm(ms) : this.weekday(ms) + ' ' + this.hm(ms);
+  }
+  // "Sunday, 27 September · 10:30 AM"
+  fullDate(ms) {
+    const d = new Date(ms);
+    return this.weekday(ms) + ', ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long' }) + ' · ' + this.hm(ms);
+  }
+  dateLong(ms) {
+    const d = new Date(ms);
+    return d.toLocaleDateString('en-GB', { weekday: 'long' }) + ', ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  // Digits: "24:18", "2:15:00", and from a full day "1d 02:15:00" (docs/05 §3.6).
+  split(sec) {
+    const d = Math.floor(sec / 86400), h = Math.floor((sec % 86400) / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+    const p = (n) => String(n).padStart(2, '0');
+    if (d) return [d + 'd ' + p(h) + ':' + p(m), ':' + p(s)];
+    return h ? [h + ':' + p(m), ':' + p(s)] : [p(m), ':' + p(s)];
+  }
+  words(sec) {
+    if (!sec) return 'no limit';
+    const d = Math.floor(sec / 86400), h = Math.floor((sec % 86400) / 3600), m = Math.round((sec % 3600) / 60);
+    if (d) return d + (d === 1 ? ' day' : ' days') + (h ? ' ' + h + ' h' : '') + (m ? ' ' + m + ' min' : '');
+    if (h && m) return h + ' h ' + m + ' min';
+    if (h) return h === 1 ? '1 hour' : h + ' hours';
+    return m + ' min';
+  }
+  mins(m) {
+    if (!m) return '0 min';
+    const h = Math.floor(m / 60), r = m % 60;
+    return h ? h + ' h' + (r ? ' ' + r + ' min' : '') : r + ' min';
+  }
+  // "2 h 9 min" -> digits and units apart, so the number reads large and the unit small.
+  parts(m) {
+    const h = Math.floor(m / 60), r = m % 60;
+    if (!h) return { a: String(r), ua: ' min', b: '', ub: '' };
+    return r ? { a: String(h), ua: ' h ', b: String(r), ub: ' min' } : { a: String(h), ua: ' h', b: '', ub: '' };
+  }
+  secsFor(s) {
+    if (s.preset === 'custom') return s.custom * 60;
+    if (s.preset === 'until') return Math.max(60, Math.round((s.untilAt - Date.now()) / 1000));
+    const f = PRESETS.find((x) => x[0] === s.preset);
+    return f ? f[3] : 1800;
+  }
+  untilSlots() {
+    const out = [];
+    let t = Math.ceil((Date.now() + 20 * 60000) / 1800000) * 1800000;
+    for (let i = 0; i < 4; i++) { out.push(t); t += i < 1 ? 1800000 : 3600000; }
+    return out;
+  }
+  hhmm(ms) { const d = new Date(ms); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+  // Real start: ask, then the browser answers. Ignition plays on the answer only.
+  start(auto) {
+    const sec = this.secsFor(this.state);
+    const now = Date.now();
+    clearTimeout(this.boot);
+    this.setState({ mode: 'starting', total: sec, left: sec, el: 0, panel: 'none', startedAt: now, askedAt: now, okAt: 0, deferred: false, stopReason: null, untilPast: false, log: [], receipt: false, why: false, auto: !!auto, resumeTo: null });
+    this.boot = setTimeout(() => this.grant(), GRANT_MS);
+  }
+  // The browser answered after a return: held again (no ignition, that is for a new session).
+  reacquired() {
+    const s = this.state;
+    if (s.mode !== 'starting' || !s.resumeTo) return;
+    const now = Date.now();
+    this.setState({ mode: s.resumeTo, resumeTo: null, log: this.close(s.log, now).concat({ k: 'held', from: now }) });
+    this.toast('back', 'success', BACK_TEXT, 6000);
+  }
+  grant() {
+    const s = this.state;
+    if (s.mode !== 'starting') return;
+    const now = Date.now();
+    this.setState({ mode: 'awake', okAt: now, startedAt: now, log: [{ k: 'held', from: now }], ignite: true, receipt: !s.receiptSeen || s.auto, receiptSeen: true });
+    this.flag('ignite', 1600);
+  }
+  // Demo stats: deterministic sample minutes per calendar day, so the layout shows realistic data.
+  sampleDay(d, offset) {
+    const key = d.getFullYear() * 400 + d.getMonth() * 32 + d.getDate();
+    let x = Math.sin(key * 12.9898) * 43758.5453; x -= Math.floor(x);
+    if (offset <= 5) return Math.round(35 + x * 120);
+    if (offset === 6 || x < 0.24) return 0;
+    const wk = d.getDay() === 0 || d.getDay() === 6;
+    return Math.round((wk ? 20 : 45) + x * (wk ? 110 : 200));
+  }
+  stats(t, lamp, lampInk) {
+    const today = new Date(this.state.now);
+    const wd = (today.getDay() + 6) % 7;
+    const LV = [0, 0.2, 0.4, 0.65, 0.9];
+    const level = (m) => (m === 0 ? 0 : m < 45 ? 1 : m < 90 ? 2 : m < 150 ? 3 : 4);
+    const hatch = 'repeating-linear-gradient(135deg, ' + t.track + ' 0 3px, transparent 3px 6px)';
+    // Level dots are drawn (not glyphs), in whichever ink reads best on that tint.
+    const dotInk = LV.map((a, i) => (i ? this.inkOn(lamp, a, t.surface, t.ink, lampInk) : t.ink));
+    const cells = [];
+    let week = 0, all = 0, last7 = 0;
+    for (let col = 0; col < 12; col++) {
+      for (let row = 0; row < 7; row++) {
+        const offset = (11 - col) * 7 + (wd - row);
+        const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - offset);
+        const base = { col: col + 2, row: row + 1 };
+        if (offset < 0) { cells.push(Object.assign(base, { title: 'Later this week', bg: 'transparent', ring: t.line, op: 1, dotW: '0px', ink: t.ink })); continue; }
+        const m = this.sampleDay(d, offset);
+        all += m;
+        if (offset <= wd) week += m;
+        const label = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+        if (offset > 6) { cells.push(Object.assign(base, { title: label + ': locked', bg: hatch, ring: t.line, op: 1, dotW: '0px', ink: t.ink })); continue; }
+        last7 += m;
+        const lv = level(m);
+        cells.push(Object.assign(base, { title: label + ': ' + this.mins(m), bg: lv ? this.rgba(lamp, LV[lv]) : t.track, ring: lv ? 'transparent' : t.line, op: 1, dotW: lv ? lv * 6 - 2 + 'px' : '0px', ink: dotInk[lv] }));
+      }
+    }
+    let streak = 0;
+    while (this.sampleDay(new Date(today.getFullYear(), today.getMonth(), today.getDate() - streak), streak) > 0 && streak < 84) streak++;
+    const todayMin = this.sampleDay(today, 0);
+    const figs = [
+      Object.assign({ label: 'Today' }, this.parts(todayMin)),
+      Object.assign({ label: 'This week' }, this.parts(week)),
+      { label: 'Streak', a: String(streak), ua: streak === 1 ? ' day' : ' days', b: '', ub: '' },
+      { label: 'All time', a: String(Math.round((all + 7740) / 60)), ua: ' h', b: '', ub: '' }
+    ];
+    const legend = LV.map((a, i) => ({ bg: i ? this.rgba(lamp, a) : t.track, ring: i ? 'transparent' : t.line }));
+    const hmDays = [['Mon', 1], ['Wed', 3], ['Fri', 5]].map(([label, row]) => ({ label: label.slice(0, 1), row }));
+    return { cells, figs, legend, hmDays, hmAria: 'Time awake per day for the last 12 weeks. Last 7 days: ' + this.mins(last7) + '. Older weeks are locked without Pro.' };
+  }
+  // The Done receipt: held and paused stretches from the session log.
+  receiptVals(s, lamp, amber, g, small) {
+    const end = s.endedAt || s.now;
+    const log = (s.log || []).length ? s.log : [{ k: 'held', from: s.startedAt, to: end }];
+    const segs = [];
+    let held = 0, paused = 0, pauses = 0;
+    const pauseBg = 'repeating-linear-gradient(135deg, ' + this.rgba(amber, 0.55) + ' 0 3px, transparent 3px 6px)';
+    for (const x of log) {
+      const ms = Math.max(0, (x.to || end) - x.from);
+      if (x.k === 'paused') { paused += ms; pauses++; segs.push({ grow: Math.max(1, Math.round(ms / 1000)), bg: pauseBg, border: '1px solid ' + amber }); }
+      else { held += ms; segs.push({ grow: Math.max(1, Math.round(ms / 1000)), bg: lamp, border: '0' }); }
+    }
+    const from = log[0].from;
+    const heldMin = Math.round(held / 60000), pausedMin = Math.round(paused / 60000), totalMin = Math.round((end - from) / 60000);
+    const short = held < 60000;
+    const box = g.box, sc = box[2];
+    return {
+      segs, pauseBg,
+      big: short ? String(Math.round(held / 1000)) : String(heldMin), unit: short ? ' s' : ' min',
+      words: pausedMin ? 'kept awake, of a ' + this.mins(totalMin) + ' session' : 'kept awake, the whole ' + this.mins(Math.max(1, totalMin)),
+      showWords: !small,
+      from: this.hm(from), to: this.hm(end),
+      aria: 'Timeline from ' + this.hm(from) + ' to ' + this.hm(end) + ': held ' + this.mins(heldMin) + (pausedMin ? ', paused ' + this.mins(pausedMin) : ''),
+      heldLegend: 'Held · ' + (short ? Math.round(held / 1000) + ' s' : this.mins(heldMin)),
+      hasPause: paused > 0,
+      pauseLegend: 'Paused · ' + this.mins(pausedMin) + (small ? '' : ', tab hidden ' + (pauses === 1 ? 'once' : pauses === 2 ? 'twice' : pauses + ' times')),
+      bigSize: (sc >= 1.8 ? 128 : sc >= 1.3 ? 96 : sc >= 0.8 ? 64 : 48) + 'px',
+      unitSize: (sc >= 1.3 ? 28 : sc >= 0.8 ? 24 : 20) + 'px',
+      gap: (sc >= 1.3 ? 20 : small ? 8 : 16) + 'px', padX: small ? '4px' : '16px'
+    };
+  }
+  // "How AwakeTab knows": what the tab can read right now, per state (GrowthTrust copy).
+  checks(mode, s, lamp, amber, red, t) {
+    const dot = (c, solid) => ({ fill: solid ? c : 'transparent', line: c });
+    const ok = dot(lamp, true), warn = dot(amber, true), bad = dot(red, true), info = dot(t.muted, false);
+    const c = (title, detail, d) => Object.assign({ title, detail }, d);
+    const timer = c('Timer', 'Counts on your system clock, so a laptop that slept comes back with an honest number, not a stale one.', info);
+    const power = c('Power settings', 'Browsers do not report them. On iPhone, Low Power Mode forces a 30-second Auto-Lock even while the pill says awake.', info);
+    const tab = c('This tab', 'Visible. If you switch away, the browser takes the lock back and the pill says so.', ok);
+    const okAt = this.hm(s.okAt || s.startedAt, true);
+    if (mode === 'ready') return [c('Wake lock', 'Not requested yet. Nothing is keeping the screen on until you tap Keep awake.', info), c('This tab', 'Browsers grant a wake lock only to a visible tab.', info), timer];
+    if (mode === 'ended') return [c('Wake lock', 'Released at ' + this.hm(s.endedAt) + ' when the session ended. The screen can sleep now.', info), timer];
+    if (mode === 'starting') return [c('Wake lock', 'Asked your browser at ' + this.hm(s.askedAt || s.startedAt, true) + '. Waiting for its answer.', dot(lamp, false)), tab, timer];
+    if (mode === 'paused') return [c('Wake lock', 'Released by the browser at ' + this.hm(s.hiddenAt || s.now) + ', when this tab was hidden. The screen may sleep.', warn), c('This tab', 'Hidden. Come back and AwakeTab asks for the lock again by itself.', warn), timer];
+    if (mode === 'blocked') return [c('Wake lock', 'Refused by the browser at ' + this.hm(s.startedAt) + '. Nothing is keeping the screen on right now.', bad), c('Usual causes', 'The tab was not in front, Safari needs one tap first, or Firefox is on 5 % battery or less. The fix is below.', info), timer];
+    if (mode === 'needtap') return [c('Wake lock', 'This browser has no Screen Wake Lock API, so there is nothing to ask for.', info), c('Video fallback', 'Ready, but it needs one tap before it can play. It needs this tab visible and uses a little more battery.', dot(lamp, false))];
+    const fb = mode === 'fallback' || (mode === 'timesup' && s.askFrom === 'fallback');
+    if (fb) return [c('Wake lock', 'This browser has no Screen Wake Lock API, so there is nothing to ask for.', info), c('Video fallback', 'A muted one-frame video is playing, which keeps the screen on. It needs this tab visible and uses a little more battery.', ok), c('This tab', 'Visible. The video stops when the tab is hidden, and the pill will say so.', ok)];
+    return [c('Wake lock', 'Held. Your browser confirmed it at ' + okAt + ' and has not taken it back since.', ok), tab, timer, power];
+  }
+  renderVals() {
+    const s = this.state;
+    const layout = GEO[this.props.layout] ? this.props.layout : 'phone';
+    const g = GEO[layout];
+    const phone = layout === 'phone', small = layout === 'small', tab = layout === 'tablet', desk = layout === 'desktop';
+    const land = layout === 'landscape', tabL = layout === 'tabletLandscape', xl = layout === 'xl';
+    const handheld = phone || small; // bottom sheet, grabber, stats link inside settings
+    const side = desk || tabL || xl; // two columns with the site nav
+    const hdr = AT_HDR[g.kind];
+    const oled = s.theme === 'oled';
+    const dark = oled || s.theme === 'dark' || (s.theme === 'auto' && s.sysDark);
+    const t = oled ? OLED : dark ? DARK : LIGHT;
+    const lampRow = s.lampId ? LAMPS.find((l) => l[0] === s.lampId) : null;
+    const acc = (lampRow ? lampRow[2] : (this.props.accent ?? '#5BE0E8')).toUpperCase();
+    const accRow = LAMPS.find((l) => l[2] === acc);
+    const lamp = dark ? acc : (LAMP_LIGHT[acc] ?? acc);
+    const lampText = dark ? acc : accRow ? accRow[4] : lamp;
+    const lampInk = dark ? '#04232A' : '#FFFFFF';
+    const amber = dark ? '#F2B34C' : '#B7791F';
+    const red = dark ? '#FF7A7A' : '#D14343';
+    const mode = s.mode;
+    const ask = mode === 'timesup';
+    const setup = mode === 'ready' || mode === 'ended';
+    const live = mode === 'awake' || mode === 'fallback' || mode === 'starting';
+    const held = mode === 'awake' || mode === 'fallback';
+    const lowBatt = mode === 'ended' && s.stopReason === 'battery';
+    const deferred = mode === 'ready' && !!s.deferred;
+    const total = lowBatt ? s.total : setup ? this.secsFor(s) : s.total;
+    const noLimit = total === 0;
+    const left = lowBatt ? s.left : setup ? (mode === 'ended' ? 0 : total) : s.left;
+    const p = lowBatt ? left / total : mode === 'ended' || ask ? 0 : noLimit ? 1 : left / total;
+    const final = held && !noLimit && left > 0 && left <= 60;
+    const tone = { ready: t.muted, ended: t.muted, starting: lamp, awake: lamp, fallback: lamp, needtap: lamp, timesup: lamp, paused: amber, blocked: red }[mode] ?? lamp;
+    const faceColor = mode === 'ready' ? lamp : tone;
+
+    const shown = noLimit ? (live ? s.el : null) : left;
+    const [bigA, bigB] = shown === null ? ['∞', ''] : this.split(shown);
+    const hours = shown !== null && shown >= 3600;
+    const multi = shown !== null && shown >= 86400;
+    const endMs = Math.round((s.now + left * 1000) / 60000) * 60000;
+
+    // Pill strings are a contract: exactly these seven.
+    const LABEL = { ready: 'Ready', ended: 'Ready', starting: 'Starting…', awake: 'Screen awake', paused: 'Paused — tab hidden', blocked: "Blocked — here's the fix", needtap: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
+    LABEL.timesup = s.askFrom === 'fallback' ? LABEL.fallback : LABEL.awake;
+    const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+    const GLYPH = { ready: DOT, ended: DOT, starting: DOT, awake: DOT, needtap: DOT, timesup: DOT, paused: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z', blocked: 'M6 1L11.2 10.5H.8z', fallback: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z' };
+    if (ask && s.askFrom === 'fallback') GLYPH.timesup = GLYPH.fallback;
+    const hollow = setup || mode === 'starting';
+
+    let kicker = 'Time left', metaA = 'until', metaB = this.when(endMs);
+    if (mode === 'ready') { kicker = 'Keeps awake for'; metaA = noLimit ? 'until you stop' : 'ends at'; metaB = noLimit ? '' : this.when(endMs); }
+    if (mode === 'ended') { kicker = 'Session complete'; metaA = 'ended at'; metaB = this.hm(s.endedAt); }
+    if (lowBatt) { kicker = 'Stopped with'; metaA = 'at'; metaB = s.battLevel + '% battery'; }
+    if (mode === 'starting') kicker = 'Starting';
+    if (live && noLimit) { kicker = 'Awake for'; metaA = 'since'; metaB = this.since(s.startedAt); }
+    if (mode === 'paused') { kicker = 'Paused'; metaA = 'resumes when you return'; metaB = ''; }
+    if (mode === 'blocked') { kicker = 'Not keeping awake'; metaA = 'see the fix below'; metaB = ''; }
+    if (mode === 'needtap') { kicker = 'One tap needed'; metaA = 'tap the button below'; metaB = ''; }
+    if (ask) { kicker = "Time's up"; metaA = 'reached zero at'; metaB = this.hm(s.endedAt); }
+    if (final) kicker = 'Final minute';
+
+    const NOTE = {
+      ready: 'Keeps this screen on while this tab stays visible.',
+      starting: 'Asking your browser to keep the screen on…',
+      awake: 'Started ' + this.hm(s.startedAt) + ' · keep this tab visible',
+      fallback: 'Using a muted video to keep the screen on. It needs this tab visible and uses a little more battery.',
+      paused: 'You switched away, so the screen may sleep. Come back and it resumes by itself.',
+      needtap: 'Your browser needs one tap before the video fallback can play.',
+      timesup: 'The screen stays on while you decide.',
+      ended: 'The screen can sleep now. Nothing else is running.'
+    };
+    let note = NOTE[mode] ?? '';
+    if (deferred) note = 'Opened in the background. Nothing is held yet.';
+    if (live && multi && !noLimit && mode !== 'starting') note = 'Until ' + this.fullDate(endMs);
+    if (live && noLimit && s.el >= 86400) note = 'On for over a day. It runs until you stop it.';
+    if (final) note = s.endAsk ? "Under a minute left. We'll ask before it stops." : 'Under a minute left. Then the screen can sleep.';
+    // First-visit receipt (after a real start only): what was asked and when the browser answered.
+    const showRcpt = !!s.receipt && mode === 'awake' && !final && s.askedAt > 0 && s.okAt > 0;
+    if (showRcpt) note = (s.auto ? 'Started for you · asked at ' : 'Asked at ') + this.hm(s.askedAt, true) + ' · confirmed ' + ((s.okAt - s.askedAt) / 1000).toFixed(1) + ' s later';
+
+    // ∞ is the visible label for no limit (decision O-87); the accessible name says "until I stop".
+    const lenWord = noLimit ? '∞' : this.words(total);
+    let primaryLabel = (deferred ? 'Start now · ' : 'Keep awake · ') + lenWord;
+    let primaryAria = noLimit ? (deferred ? 'Start now, until I stop' : 'Keep awake until I stop') : primaryLabel;
+    if (s.preset === 'until') primaryAria = primaryLabel = 'Keep awake until ' + this.when(s.untilAt);
+    if (mode === 'ended') { primaryLabel = 'Again · ' + (s.preset === 'until' ? 'until ' + this.when(s.untilAt) : lenWord); primaryAria = noLimit ? 'Again, until I stop' : primaryLabel; }
+
+    const running = live || mode === 'paused';
+    const apply = (patch) => {
+      if (running) {
+        const sec = this.secsFor(Object.assign({}, s, patch));
+        Object.assign(patch, { total: sec, left: sec, el: 0, startedAt: Date.now() });
+      }
+      this.setState(patch);
+    };
+    const sel = (on, c) => ({ weight: on ? 600 : 500, color: on ? t.ink : c });
+    const faceIds = [['ring', 'Ring'], ['bold', 'Bold'], ['horizon', 'Horizon'], ['tide', 'Tide']];
+    const fi = Math.max(0, faceIds.findIndex((f) => f[0] === s.face));
+    const faces = faceIds.map(([id, label]) => Object.assign({ label, sel: s.face === id ? 'true' : 'false', pick: () => this.setState({ face: id }) }, sel(s.face === id, t.ink2)));
+
+    // Length block. All seven presets everywhere (PRODUCT.md: phones never hide presets).
+    // Tablet, desktop and landscape: one segmented bar + Until… / Custom…. Phone: a 10-unit grid in two rows
+    // (five presets, then 4 h · ∞ · Until… · Custom…). Small (320): four columns, two rows; More… opens Until / Custom.
+    const onUntil = s.preset === 'until', onCustom = s.preset === 'custom';
+    const chipOf = (on) => ({ bs: on ? 'solid' : 'dashed', bc: on ? this.rgba(lamp, 0.45) : t.line2, bg: on ? this.rgba(lamp, 0.14) : 'transparent', weight: on ? 600 : 500, color: on ? t.ink : t.ink2 });
+    const presetRows = PRESETS.map(([id, label, aria]) => Object.assign({ label, aria, sel: s.preset === id ? 'true' : 'false', pick: () => apply({ preset: id }) }, sel(s.preset === id, t.ink2)));
+    const pi = PRESETS.findIndex((x) => x[0] === s.preset);
+    const customWords = this.words(s.custom * 60);
+    const untilShort = onUntil ? 'Until ' + this.hm(s.untilAt) : 'Until…';
+    const openUntil = () => { const first = this.untilSlots()[0]; this.setState(running ? { panel: 'until' } : { panel: 'until', preset: 'until', untilAt: onUntil ? s.untilAt : first }); };
+    const openCustom = () => this.setState(running ? { panel: 'custom' } : { panel: 'custom', preset: 'custom' });
+    const gridPreset = (r, col) => Object.assign({}, r, { col, bs: 'solid', bc: r.sel === 'true' ? this.rgba(lamp, 0.45) : t.line, bg: r.sel === 'true' ? this.rgba(lamp, 0.14) : 'transparent' });
+    let gridItems = [], gridCols = 10;
+    if (phone) {
+      gridItems = presetRows.map((r) => gridPreset(r, 'span 2'));
+      gridItems.push(Object.assign({ label: untilShort, aria: onUntil ? 'Until ' + this.when(s.untilAt) + ', change' : 'Until a time', sel: onUntil ? 'true' : 'false', pick: openUntil, col: 'span 3' }, chipOf(onUntil)));
+      gridItems.push(Object.assign({ label: onCustom ? customWords : 'Custom…', aria: onCustom ? 'Custom length, ' + customWords + ', change' : 'Custom length', sel: onCustom ? 'true' : 'false', pick: openCustom, col: 'span 3' }, chipOf(onCustom)));
+    } else if (small) {
+      gridCols = 4;
+      gridItems = presetRows.map((r) => gridPreset(r, 'span 1'));
+      const off = onUntil || onCustom;
+      const curWords = onUntil ? 'until ' + this.when(s.untilAt) : this.words(this.secsFor(s));
+      gridItems.push(Object.assign({ label: onUntil ? 'Until' : onCustom ? 'Custom' : 'More…', aria: off ? 'Until a time or custom length, now ' + curWords : 'Until a time or custom length', sel: off ? 'true' : 'false', pick: () => this.setState({ panel: 'more' }), col: 'span 1' }, chipOf(off)));
+    }
+    const presets = presetRows;
+    const untilOpts = this.untilSlots().map((ms) => {
+      const on = onUntil && s.untilAt === ms;
+      return { label: this.hm(ms), sub: this.nextDay(ms) ? 'tomorrow' : 'today', sel: on ? 'true' : 'false', weight: on ? 600 : 500, border: on ? this.rgba(lamp, 0.45) : t.line, bg: on ? this.rgba(lamp, 0.14) : 'transparent', pick: () => apply(running ? { preset: 'until', untilAt: ms, panel: 'none', untilPast: false } : { preset: 'until', untilAt: ms, untilPast: false }) };
+    });
+    const untilPast = s.panel === 'until' && onUntil && !!s.untilPast;
+    const setUntilTime = (e) => {
+      const m = String(e && e.target ? e.target.value : '').match(/^(\d{1,2}):(\d{2})/);
+      if (!m) return;
+      const d = new Date();
+      d.setHours(Number(m[1]), Number(m[2]), 0, 0);
+      let at = d.getTime();
+      const past = at <= Date.now();
+      if (past) at += 86400000;
+      apply({ preset: 'until', untilAt: at, untilPast: past });
+    };
+
+    const phaseProp = this.props.phase ?? 'auto';
+    const hr = new Date(s.now).getHours();
+    const phase = phaseProp !== 'auto' ? phaseProp : hr >= 5 && hr < 8 ? 'dawn' : hr >= 8 && hr < 17 ? 'day' : hr >= 17 && hr < 20 ? 'dusk' : 'night';
+    const hz = SKIES[phase] ?? SKIES.dusk;
+    const tt = 1 - p;
+    const phi = ((110 * (1 - tt)) * Math.PI) / 180;
+    const orbCX = 179 + 140 * Math.cos(phi);
+    const orbCY = 230 - 172 * Math.sin(phi);
+
+    const tideTop = Math.round(340 * (1 - p));
+    const DASH = { paused: '18 12', blocked: '1 13' };
+    // Tide: the copy of the digits under the water uses whichever ink reads on that water.
+    const tideDeepA = dark ? 0.85 : 1;
+    const tideInkWater = this.inkOn(faceColor, tideDeepA, oled ? '#000000' : dark ? '#0A0E16' : '#F2F6FA', dark ? '#04232A' : '#0E1726', '#FFFFFF');
+
+    // Settings sheet controls.
+    const seg = (opts, cur, set) => {
+      const i = Math.max(0, opts.findIndex((o) => o[0] === cur));
+      return { x: i * 100 + '%', opts: opts.map(([id, label]) => Object.assign({ label, sel: cur === id ? 'true' : 'false', pick: () => set(id) }, sel(cur === id, t.ink2))) };
+    };
+    const sg = {
+      theme: seg([['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark'], ['oled', 'OLED black']], s.theme, (v) => this.setState({ theme: v })),
+      face: seg(faceIds, s.face, (v) => this.setState({ face: v })),
+      fmt: seg([['lang', 'Follow language'], ['12', '12-hour'], ['24', '24-hour']], s.clockFmt, (v) => this.setState({ clockFmt: v })),
+      end: seg([['ask', 'Ask to extend'], ['stop', 'Just stop']], s.endAsk ? 'ask' : 'stop', (v) => this.setState({ endAsk: v === 'ask' })),
+      sound: seg([['chime', 'Chime'], ['none', 'None']], s.sound, (v) => this.setState({ sound: v }))
+    };
+    const toggle = (key) => () => this.setState({ [key]: !this.state[key] });
+    const swi = (on, key) => ({ on: on ? 'true' : 'false', toggle: toggle(key), track: on ? lamp : t.track, line: on ? lamp : t.line2, knob: on ? lampInk : t.muted, x: on ? '20px' : '0px' });
+    const sw = { secs: swi(s.showSecs, 'showSecs'), notify: swi(s.notify, 'notify'), batt: swi(s.battAuto, 'battAuto'), tele: swi(s.telemetry, 'telemetry'), keys: swi(s.singleKey, 'singleKey'), hints: swi(s.keyHints, 'keyHints') };
+    const curLamp = accRow ? accRow[0] : null;
+    const lamps = LAMPS.map(([id, name, dk, lt, , pro]) => {
+      const on = curLamp === id;
+      const c = dark ? dk : lt;
+      return { name, pro, sel: on ? 'true' : 'false', aria: name + (pro ? ', Pro' : ''), color: c, halo: this.rgba(c, 0.18), ring: on ? this.rgba(c, 0.45) : t.line, bg: on ? this.rgba(c, 0.14) : 'transparent', weight: on ? 600 : 500, pick: () => this.setState({ lampId: id }) };
+    });
+    const sheet = s.sheet === 'settings' || s.sheet === 'stats' ? s.sheet : 'none';
+    const st = sheet === 'stats' ? this.stats(t, lamp, lampInk) : { cells: [], figs: [], legend: [], hmDays: [], hmAria: '' };
+    const sheetShadow = '0 24px 64px -24px rgba(0,0,0,.45)';
+    const sheetBase = 'box-sizing: border-box; z-index: 21; overflow-y: auto; overscroll-behavior: contain; background: ' + t.surface + '; color: ' + t.ink + '; box-shadow: ' + sheetShadow + '; ';
+    const sheetW = xl ? 480 : side ? 440 : 400;
+    const sheetStyle = handheld
+      ? sheetBase + 'position: absolute; left: 0; right: 0; bottom: 0; height: ' + (small ? '88%' : '80%') + '; border-radius: 28px 28px 0 0; border-top: 1px solid ' + t.line
+      : sheetBase + 'position: absolute; top: 0; bottom: 0; inset-inline-end: 0; width: ' + sheetW + 'px; border-start-start-radius: 28px; border-end-start-radius: 28px; border-inline-start: 1px solid ' + t.line;
+    const askLeft = Math.max(0, s.askLeft);
+    const extendTo = (sec) => () => this.setState({ mode: s.askFrom === 'fallback' ? 'fallback' : 'awake', total: sec, left: sec, el: 0, startedAt: Date.now(), askLeft: ASK_SECS });
+
+    // Composition per size.
+    const toastList = s.toasts || [];
+    const hasToast = toastList.length > 0;
+    const showLength = (setup || running) && !lowBatt;
+    const panel = showLength && ['until', 'custom', 'more'].includes(s.panel) ? s.panel : 'none';
+    const isMini = small && (panel !== 'none' || (mode === 'blocked' && !s.why));
+    const why = !!s.why && !isMini;
+    const smallCompact = ask || mode === 'blocked' || mode === 'needtap' || mode === 'fallback' || lowBatt || deferred || hasToast;
+    const phoneCompact = phone && (panel !== 'none' || deferred || hasToast || mode === 'blocked');
+    const box = small && smallCompact ? [179, 170, 0.5] : phoneCompact ? [308, 292, 0.86] : g.box;
+    const sc = box[2];
+    const noteHidden = (land && panel !== 'none') || (small && (panel === 'until' || hasToast)) || (phone && untilPast);
+    const px = (n) => n + 'px';
+    // Text inside the scaled face never renders below 12 px: pick the smallest §11.5 size that survives the scale.
+    const fz = (base) => (sc >= 1 ? base : TYPE_STEPS.find((x) => x >= Math.max(base, 12 / sc)) ?? 34) + 'px';
+    const ended = mode === 'ended' && !lowBatt;
+    const showReceipt = ended && !why && !isMini;
+    const showDial = !isMini && !why && !showReceipt;
+    const rc = this.receiptVals(s, lamp, amber, { box }, small);
+    // One-shot moments: ignition on a real grant, lamp off on a real end.
+    const ig = !!s.ignite;
+    const single = !side && !land;
+    const bodyH = g.H - parseInt(hdr.h, 10) - (land ? 0 : g.lineLH);
+    const pillY = phone ? 12 + 54 + 12 + 19 : small ? 8 + 19 : tab ? 24 + 54 + 20 + 19 : 0;
+    const travelFrom = 20 + g.ctaH / 2;
+    const offSz = Math.round(Math.min(box[0], box[1]) * (s.face === 'ring' ? 0.86 : 1));
+    const offStyle = 'position: absolute; left: 50%; top: 50%; width: ' + (s.face === 'ring' ? offSz : box[0]) + 'px; height: ' + (s.face === 'ring' ? offSz : box[1]) + 'px; margin: -' + (s.face === 'ring' ? offSz : box[1]) / 2 + 'px 0 0 -' + (s.face === 'ring' ? offSz : box[0]) / 2 + 'px; box-sizing: border-box; border-radius: ' + (s.face === 'ring' ? '50%' : '28px') + '; box-shadow: inset 0 0 0 4px ' + lamp + ', 0 0 28px ' + this.rgba(lamp, 0.55) + '; opacity: 0; pointer-events: none';
+
+    const BODY = {
+      phone: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto ' + box[1] + 'px auto 1fr auto; grid-template-areas: "tabs" "pill" "face" "note" "toast" "dock"; row-gap: 12px; padding: 12px 16px 20px',
+      small: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto ' + (isMini ? 'auto' : box[1] + 'px') + ' auto 1fr auto; grid-template-areas: "pill" "face" "note" "toast" "dock"; row-gap: 8px; padding: 8px 16px 20px',
+      tablet: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 520px); justify-content: center; grid-template-rows: auto auto ' + box[1] + 'px auto 1fr auto; grid-template-areas: "tabs" "pill" "face" "note" "toast" "dock"; row-gap: 20px; padding: 24px 32px 48px',
+      desktop: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: 620px minmax(0, 1fr); grid-template-rows: 1fr auto auto auto auto 1fr; grid-template-areas: "face ." "face pill" "face note" "face dock" "face tabs" "face toast"; column-gap: 64px; row-gap: 20px; padding: 8px 80px 40px',
+      landscape: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: 322px auto minmax(0, 1fr); grid-template-rows: auto auto 1fr auto; grid-template-areas: "face pill tabs" "face note note" "face toast toast" "face dock dock"; column-gap: 20px; row-gap: 8px; padding: 0 16px 20px',
+      tabletLandscape: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: 537px minmax(0, 1fr); grid-template-rows: 1fr auto auto auto auto 1fr; grid-template-areas: "face ." "face pill" "face note" "face dock" "face tabs" "face toast"; column-gap: 48px; row-gap: 24px; padding: 8px 80px 32px',
+      xl: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: 680px 456px; justify-content: center; grid-template-rows: 1fr auto auto auto auto 1fr; grid-template-areas: "face ." "face pill" "face note" "face dock" "face tabs" "face toast"; column-gap: 64px; row-gap: 24px; padding: 8px 120px 64px'
+    };
+    const toastTone = { success: lamp, offline: t.ink2, info: t.ink2 };
+    const toasts = toastList.map((x) => ({ text: x.text, icon: TOAST_ICON[x.kind] ?? TOAST_ICON.success, tone: toastTone[x.kind] ?? t.ink2, line: t.line, dismiss: () => this.dismiss(x.id) }));
+    const cStep = (m, up) => (up ? (m < 720 ? 5 : 60) : (m <= 720 ? 5 : 60));
+    const themeNext = { auto: 'light', light: 'dark', dark: 'auto', oled: 'auto' };
+    const haloA = held || ask ? (dark ? 0.18 : 0.1) : 0.06;
+    const haloAt = side ? '30% 50%' : '50% 30%';
+    const stop = () => {
+      clearTimeout(this.boot);
+      const heldMs = (s.log || []).reduce((a, x) => a + (x.k === 'held' ? (x.to || Date.now()) - x.from : 0), 0);
+      if ((held || mode === 'paused') && heldMs >= 60000) this.finish({ stopReason: null });
+      else this.setState({ mode: 'ready', panel: 'none', stopReason: null, receipt: false, log: [] });
+    };
+    // Blocked card (decision O-76): the detected cause alone; the list only when the cause is unknown.
+    const CAUSE = { safari: 'Safari needs one tap to start. Tap Retry.', hidden: 'This tab was in the background. Bring it to the front, then tap Retry.', battery: 'Battery is very low. Plug in, then tap Retry.' };
+    const blockedCauses = CAUSE[s.cause] ? [] : [
+      { who: 'Safari:', fix: 'it needs one tap first.' },
+      { who: 'Hidden tab:', fix: 'bring this tab to the front.' },
+      { who: 'Firefox:', fix: 'it stops at 5 % battery or less. Plug in.' }
+    ];
+    const causeLine = CAUSE[s.cause] ?? 'Then tap Retry.';
+
+    return {
+      W: px(g.W), H: px(g.H), hdr, isDesk: side, isPhone: handheld, showStatsBtn: !handheld,
+      showLine: !land, lineInHdr: land, compactTheme: small, fullTheme: !small,
+      linePad: '0 ' + hdr.pad.split(' ')[1], lineFont: px(g.lineFont), lineLH: px(g.lineLH),
+      bodyStyle: BODY[layout],
+      showTabs: !small && !(land && (mode === 'blocked' || hasToast || panel !== 'none')), tabsAlign: side ? 'start' : land ? 'end' : 'center', tabsW: side ? '360px' : land ? '100%' : tab ? '440px' : '100%', tabFont: land ? '13px' : '14px',
+      tabIndBg: this.rgba(tone, 0.14), tabIndLine: this.rgba(tone, 0.45),
+      pillAlign: side || land ? 'start' : 'center', pillItems: side || land ? 'flex-start' : 'center', pillJustify: side || land ? 'flex-start' : 'center',
+      pillM: !xl, pillL: xl, sparkX: xl ? '6px' : '2px',
+      whyText: !small && !land, whyIcon: small, whyInNote: land, whyOpen: s.why ? 'true' : 'false',
+      toggleWhy: () => this.setState({ why: !this.state.why }),
+      boxW: px(box[0]), boxH: px(box[1]), scale: sc, isMini, showDial, showWhy: why, showReceipt,
+      whyPad: sc >= 1.3 ? '24px' : small ? '12px' : '20px', whyChecks: this.checks(mode, s, lamp, amber, red, t), rc,
+      t, tone, faceColor, lamp, lampInk, lampText, warn: amber,
+      lampSoft: this.rgba(lamp, 0.14), lampLine: this.rgba(lamp, 0.45), lampGlow: this.rgba(lamp, 0.55), lampFaint: this.rgba(lamp, 0.08),
+      toneSoft: this.rgba(tone, 0.12), toneLine: this.rgba(tone, 0.38), toneGlow: live || ask ? this.rgba(tone, 0.8) : 'transparent', toneFaint: this.rgba(faceColor, dark ? 0.16 : 0.12),
+      halo: oled ? 'transparent' : 'radial-gradient(60% 50% at ' + haloAt + ', ' + this.rgba(faceColor, haloA) + ' 0%, ' + this.rgba(faceColor, 0) + ' 100%)',
+      redSoft: this.rgba(red, 0.08), redLine: this.rgba(red, 0.32), warnSoft: this.rgba(amber, 0.08), warnLine: this.rgba(amber, 0.32),
+      glyph: GLYPH[mode] ?? DOT, glyphFill: hollow ? 'transparent' : tone, statusLabel: LABEL[mode],
+      deferred,
+      igBead: ig ? 'at-ig at-ig-bead' : 'at-ig', beadX: 'calc(' + hdr.pad.split(' ')[1] + ' + 1px)',
+      igPill: ig ? 'at-ig at-ig-pill' : 'at-ig', igFace: ig ? 'at-ig at-ig-face' : 'at-ig', igTip: ig ? 'at-ig at-ig-tip' : 'at-ig', igDock: ig ? 'at-ig at-ig-dock' : 'at-ig',
+      igTravel: ig && single ? 'at-ig at-ig-travel' : 'at-ig', travelFrom: px(travelFrom), travelTy: '-' + Math.max(0, bodyH - travelFrom - pillY - 48) + 'px',
+      lampOffCls: s.lampOff ? 'at-off' : '', offStyle,
+      dateLong: this.dateLong(s.now), nowTime: this.hm(s.now, s.showSecs),
+      themeLabel: s.theme === 'auto' ? 'Auto' : s.theme === 'light' ? 'Light' : s.theme === 'oled' ? 'OLED black' : 'Dark',
+      themeAria: 'Theme: ' + (s.theme === 'auto' ? 'follows your system' : s.theme === 'oled' ? 'OLED black' : s.theme) + '. Change theme',
+      themeAuto: s.theme === 'auto', themeLight: s.theme === 'light', themeDark: s.theme === 'dark' || oled,
+      themeX: (s.theme === 'light' ? 0 : s.theme === 'dark' || oled ? 44 : 88) + 'px',
+      themeLightInk: s.theme === 'light' ? t.ink : t.ink2, themeDarkInk: s.theme === 'dark' || oled ? t.ink : t.ink2, themeAutoInk: s.theme === 'auto' ? t.ink : t.ink2,
+      setLight: () => this.setState({ theme: 'light' }), setDark: () => this.setState({ theme: 'dark' }), setAuto: () => this.setState({ theme: 'auto' }),
+      cycleTheme: () => this.setState({ theme: themeNext[s.theme] ?? 'auto' }),
+      faces, faceX: fi * 100 + '%', isRing: s.face === 'ring', isBold: s.face === 'bold', isHorizon: s.face === 'horizon', isTide: s.face === 'tide',
+      live, p: p.toFixed(4), bigA, bigB, kicker, metaA, metaB,
+      kickerInk: final ? t.ink : t.ink2,
+      showKicker: sc >= 0.7, showHzName: sc >= 0.7, fk: fz(12), fm: fz(15), fb: fz(16), fh: fz(13),
+      final, finalGlow: this.rgba(lamp, dark ? 0.24 : 0.16), announce: final ? '1 minute left' : deferred ? 'Ready. Starts when you open this tab.' : '',
+      ringW: 300, boldW: 600, thinW: final ? 300 : 200,
+      numColor: final ? lampText : live || ask ? t.ink : t.ink2, hzSecs: this.rgba('#F6F2EA', 0.8),
+      timerAria: shown === null ? 'No limit' : (lowBatt ? 'Stopped with ' : '') + (multi ? this.words(shown) : bigA + bigB) + ' ' + (live && noLimit ? 'awake so far' : 'left'),
+      ofTotal: noLimit ? 'no limit' : 'of ' + this.words(total),
+      ringSize: multi ? '42px' : hours ? '60px' : '76px', boldSize: multi ? '62px' : hours ? '96px' : '128px', hzSize: multi ? '34px' : hours ? '48px' : '64px', tideSize: multi ? '50px' : hours ? '64px' : '84px',
+      arcDash: DASH[mode] ?? (p <= 0 ? '0.01 ' + C : (C * p).toFixed(1) + ' ' + C.toFixed(1)),
+      arcOp: mode === 'ready' || lowBatt ? 0.45 : mode === 'ended' ? 0 : 1, glowOp: live ? 0.45 : 0,
+      trackDash: mode === 'fallback' || (ask && s.askFrom === 'fallback') ? '3 9' : 'none',
+      tipDeg: (360 * p).toFixed(2) + 'deg', tipOp: live && !noLimit && p > 0 ? 1 : 0,
+      hz, orbX: (orbCX - 32).toFixed(1) + 'px', orbY: (orbCY - 32).toFixed(1) + 'px',
+      warmOp: phase === 'night' ? 0 : phase === 'dusk' ? (0.35 + 0.5 * tt).toFixed(3) : (0.7 * tt).toFixed(3),
+      stars1: this.stars1, stars2: this.stars2,
+      wave1: this.wave1, wave2: this.wave2, tideY: tideTop + 'px', tideClip: (tideTop + 4) + 'px', tideDeep: this.rgba(faceColor, tideDeepA), tideInkWater,
+      bubbles: [{ x: '40px', y: '300px', s: '8px', d: '0s' }, { x: '112px', y: '320px', s: '5px', d: '-2.5s' }, { x: '196px', y: '310px', s: '10px', d: '-5s' }, { x: '262px', y: '325px', s: '6px', d: '-1.2s' }, { x: '318px', y: '305px', s: '7px', d: '-6.8s' }],
+      isBlocked: mode === 'blocked', causes: blockedCauses, causeKnown: !!CAUSE[s.cause], causeUnknown: !CAUSE[s.cause], causeLine, isLowBatt: lowBatt,
+      showNote: mode !== 'blocked' && !lowBatt && !noteHidden, note, noteFont: px(g.noteFont), cardFont: px(g.cardFont), cardLH: g.cardFont <= 13 ? '18px' : '20px', cardPad: sc >= 1.3 || tab ? '24px' : '20px',
+      textAlign: side || land ? 'start' : 'center', noteJustify: side || land ? 'flex-start' : 'center',
+      dockSetup: setup && !lowBatt, dockBatt: lowBatt, dockRun: live || mode === 'paused', dockBlocked: mode === 'blocked', dockTap: mode === 'needtap', dockAsk: ask,
+      ctaH: px(g.ctaH),
+      // Keyboard hints (DESIGN.md §11.4 kbd): hover-capable layouts only, never phone / small / landscape.
+      kbdOn: (tab || desk || xl || tabL) && s.singleKey && s.keyHints, keysAttr: s.singleKey ? 'Space' : false,
+      panelNone: panel === 'none', panelUntil: panel === 'until', panelCustom: panel === 'custom', panelMore: panel === 'more',
+      useBar: panel === 'none' && !handheld, useGrid: panel === 'none' && handheld, gridItems, gridCols,
+      presets, presetN: presets.length, presetFont: '14px',
+      presetX: Math.max(0, pi) * 100 + '%', chipIndOp: pi < 0 ? 0 : 1,
+      chipsJustify: land || side ? 'flex-start' : 'center',
+      untilChip: onUntil ? 'Until ' + this.when(s.untilAt) : 'Until…', untilSel: onUntil ? 'true' : 'false',
+      untilStyle: onUntil ? 'solid' : 'dashed', untilBorder: onUntil ? this.rgba(lamp, 0.45) : t.line2, untilBg: onUntil ? this.rgba(lamp, 0.14) : 'transparent', untilWeight: onUntil ? 600 : 500, untilInk: onUntil ? t.ink : t.ink2,
+      customChip: onCustom ? customWords : 'Custom…', customSel: onCustom ? 'true' : 'false',
+      customStyle: onCustom ? 'solid' : 'dashed', customBorder: onCustom ? this.rgba(lamp, 0.45) : t.line2, customBg: onCustom ? this.rgba(lamp, 0.14) : 'transparent', customWeight: onCustom ? 600 : 500, customInk: onCustom ? t.ink : t.ink2,
+      untilOpts, customWords, customFont: customWords.length > 12 ? '20px' : '24px',
+      untilCols: small ? 2 : 4, slotH: px(small || land ? 48 : 52), untilInputInline: !small, untilInputStacked: small,
+      untilInput: this.hhmm(onUntil && s.untilAt ? s.untilAt : this.untilSlots()[0]), untilInputLine: untilPast ? lamp : t.inputBorder, setUntilTime,
+      untilPast, untilSlotsOn: !untilPast,
+      pastQ: this.hm(s.untilAt) + ' is tomorrow. Keep awake until then?',
+      pastIn: 'That is ' + this.mins(Math.max(1, Math.round((s.untilAt - s.now) / 60000))) + ' from now.',
+      changeTime: () => this.setState({ untilPast: false, untilAt: this.untilSlots()[0] }),
+      openUntil, openCustom,
+      closePanel: () => this.setState({ panel: 'none' }),
+      less: () => apply({ custom: Math.max(5, s.custom - cStep(s.custom, false)), preset: 'custom' }),
+      more: () => apply({ custom: Math.min(CUSTOM_MAX, s.custom + cStep(s.custom, true)), preset: 'custom' }),
+      lessAria: cStep(s.custom, false) === 60 ? '1 hour less' : '5 minutes less', moreAria: cStep(s.custom, true) === 60 ? '1 hour more' : '5 minutes more',
+      showLength,
+      primaryLabel, primaryAria, start: () => this.start(),
+      canExtend: !noLimit, runCols: noLimit ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
+      extend: () => this.setState({ left: s.left + 900, total: s.total + 900 }),
+      stop,
+      useFallback: () => { const now = Date.now(); this.setState({ mode: 'fallback', total: s.total || 1800, left: s.left || 1800, startedAt: now, okAt: now, log: [{ k: 'held', from: now }], ignite: true, receipt: false }); this.flag('ignite', 1600); },
+      askLeft, askP: (askLeft / ASK_SECS).toFixed(4), askAria: 'Stops in ' + askLeft + ' seconds',
+      askOpts: [[900, '+15 min', 'Add 15 minutes'], [1800, '+30 min', 'Add 30 minutes'], [3600, '+1 h', 'Add 1 hour']].map(([sec, label, aria]) => ({ label, aria, pick: extendTo(sec) })),
+      askStop: () => this.finish(),
+      askStopInline: land, askStopRow: !land, askCols: land ? 'repeat(4, minmax(0, 1fr))' : 'repeat(3, minmax(0, 1fr))', askPad: land ? '12px' : '16px',
+      toasts, toastFont: px(g.toastFont), toastAlign: side ? 'start' : 'end',
+      sheetOpen: sheet !== 'none', sheetSettings: sheet === 'settings', sheetStats: sheet === 'stats',
+      settingsOpen: sheet === 'settings', statsOpen: sheet === 'stats',
+      settingsBtnBg: sheet === 'settings' ? t.raised : 'transparent', statsBtnBg: sheet === 'stats' ? t.raised : 'transparent',
+      sheetTitle: sheet === 'stats' ? 'Your stats' : 'Settings', closeAria: sheet === 'stats' ? 'Close stats' : 'Close settings',
+      sheetClass: handheld ? 'at-sheet-body at-sheet-up' : 'at-sheet-body at-sheet-side', sheetStyle,
+      sheetHeadPad: handheld ? '8px 20px 12px' : '20px 24px 16px', sheetPad: handheld ? '24px 20px 40px' : '24px 24px 40px',
+      scrim: AT_SCRIM,
+      openSettings: () => this.setState({ sheet: 'settings' }), openStats: () => this.setState({ sheet: 'stats' }), closeSheet: () => this.setState({ sheet: 'none' }),
+      segChip: dark ? t.raised : t.surface, sg, sw, lamps,
+      segFont: small ? '12px' : '14px', segFont2: small ? '12px' : '13px', segWs: small ? 'normal' : 'nowrap',
+      lampNote: accRow ? accRow[1] + (accRow[5] ? ' · Pro preview' : '') : 'Custom',
+      battLevel: s.battLevel, battOff: !s.battAuto, battInk: t.ink,
+      battHint: s.battAuto ? 'AwakeTab stops the session at this level.' : 'Turn on the switch above to choose a level.',
+      setBatt: (e) => this.setState({ battLevel: Math.min(30, Math.max(5, Number(e && e.target ? e.target.value : s.battLevel) || 15)) }),
+      resetAll: () => this.setState(Object.assign({}, DEFAULTS)),
+      figs: st.figs, cells: st.cells, legend: st.legend, hmDays: st.hmDays, hmAria: st.hmAria
+    };
+  }
+}
+</script>
+</body>
+</html>
