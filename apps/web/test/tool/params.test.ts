@@ -5,7 +5,10 @@ const at = (pathname: string, search = '') => parseToolParams({ pathname, search
 
 describe('parseToolParams canonicalPath (history.replaceState target, docs/05 §10)', () => {
   it('keeps the locale prefix so a reload stays in the reader’s language', () => {
-    expect(at('/es/').canonicalPath).toBe('/es');
+    // A locale home's served and canonical URL keeps its slash (es/index.html → /es/, docs/14 §2.1).
+    expect(at('/es/').canonicalPath).toBe('/es/');
+    expect(at('/es').canonicalPath).toBe('/es/');
+    expect(at('/pt-br/').canonicalPath).toBe('/pt-br/');
     expect(at('/es/for/cocinar', '?autostart=1').canonicalPath).toBe('/es/for/cocinar');
     expect(at('/pt-br/on/iphone-safari/').canonicalPath).toBe('/pt-br/on/iphone-safari');
   });

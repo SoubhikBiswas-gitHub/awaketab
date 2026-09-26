@@ -177,6 +177,8 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 | `/404` | Offers the tool |
 | `/api/*` | Pages Functions (see §9) |
 
+Spelling: page URLs have no trailing slash (`/30m`, `/for/cooking`, `/es/for/cocinar`), except `/` and the locale homes `/{lang}/` (`/es/`). Canonicals, hreflang, sitemaps and links use exactly these spellings. The build writes each page where Cloudflare Pages serves it without a redirect (`x.html`, and `{lang}/index.html` for the homes; `14-devops.md` §2.1).
+
 Query params (all optional): `autostart=1`, `mode=`, `msg=` (≤ 80 chars), `theme=`, `preset=`, `until=HH-MM`, `ref=` (attribution source; never stored beyond the event).
 
 Locales and folders: `en` (root), `es`, `pt-br`, `de`, `fr`, `ja`, `zh` (Simplified), `hi`. `x-default` → root. Phase 2 locales: `id`, `tr`, `ko`, `it`, `ru`, `vi`, `ar`.
@@ -509,7 +511,7 @@ Accepted on 2026-09-26 with the M8 implementation. Specs: `11-embed-spec.md` §1
 | `apps/web/scripts/library.mjs` | Copies `packages/wake/dist/awaketab-wake.iife.js` (building the package if needed) to `public/library/` (git-ignored) for the `/library` demo |
 | `apps/web/scripts/support-matrix.mts` | The support-matrix update hook: `matrix:check` (build step) validates `docs/metrics/device-matrix.json` and that every row names a `support-matrix.json` id; `matrix:sync` writes `lastUpdated` and per-row `lastVerified` only when the run is `complete` |
 | `docs/metrics/device-matrix.json` | `{ version: 1, status: 'pending' \| 'complete', updatedAt, method[], rows[] }`; row = `{ id, device, os, browser (support-matrix id), version, power ('plugged' \| 'battery' \| 'battery-saver'), mode, case, expected, observed, evidence, date, verdict ('pending' \| 'pass' \| 'partial' \| 'fail') }`; validated by `src/lib/device-matrix.ts` `parseDeviceMatrix()` (a recorded verdict needs date, version, observed and evidence) |
-| `scripts/size.mjs` gates | `criticalJs` ≤ 15,360 (static closure of `index.html`'s module entries) · `totalJs` ≤ 40,960 (static + dynamic closure of the same entries; replaces "every `dist/_astro/*.js`") · `embedJs` ≤ 25,600 (full closure from `embed/cook/index.html`) · `loaderJs` ≤ 3,072 (`dist/embed.js`) · `totalCss` · `hydrated` · `reactChunks` unchanged. Report fields `files` (critical), `lazyFiles`, `embedFiles`. Closure helpers in `scripts/size-lib.mjs` |
+| `scripts/size.mjs` gates | `criticalJs` ≤ 15,360 (static closure of `index.html`'s module entries) · `totalJs` ≤ 40,960 (static + dynamic closure of the same entries; replaces "every `dist/_astro/*.js`") · `embedJs` ≤ 25,600 (full closure from `embed/cook.html`) · `loaderJs` ≤ 3,072 (`dist/embed.js`) · `totalCss` · `hydrated` · `reactChunks` unchanged. Report fields `files` (critical), `lazyFiles`, `embedFiles`. Closure helpers in `scripts/size-lib.mjs` |
 | `_headers` | `/embed` and `/embed/` (the landing page, which `/embed/*` also matches) re-apply the default CSP, `X-Frame-Options: DENY` and drop `X-Robots-Tag`; `/embed.js` `Cache-Control: public, max-age=3600`. Every rule that sets `Cache-Control` or re-sets `X-Frame-Options` now detaches the `/*` value first (`! Header`), because Cloudflare joins a header set by two matching rules. `resolveHeaders(text, path)` in `scripts/headers.mjs` evaluates the file for tests |
 | Ads | `pages/embed/**`, `pages/kiosk.astro`, `pages/library.astro` are in the ESLint no-ad-imports list; none of them uses `ContentLayout` |
 
@@ -577,11 +579,24 @@ Accepted on 2026-09-26. Specs: `09-monetization-impl.md` §2.2, §2.3a; `10-exte
 | `/embed/assets/app.<hash>.js` | The `/embed/cook` iframe app in production. `node scripts/embed-loader.mjs --fingerprint` (right after `astro build`) moves `dist/embed/app.js` to `/embed/assets/app.<first 10 hex of sha256>.js` and rewrites every built page that loaded `"/embed/app.js"`; it fails when no page does. `astro dev` still serves `/embed/app.js`. `/embed.js` (the host loader) is never hashed |
 | `_headers` `/embed/assets/*` | `Cache-Control: public, max-age=31536000, immutable` (detaches the `/*` value). `/embed/cook` and `/embed.js` keep their caches (`max-age=0, must-revalidate` and `max-age=3600`) |
 | SW `at-embed-assets` | `src/sw.ts` serves `/embed/assets/*` cache-first (4 entries, 30 d); other `/embed/*` stays network-first `at-embed`. Nothing under `/embed` is precached |
-| `scripts/size.mjs` `embedHashed` | New report field and gate: `embed/cook/index.html` must load exactly one module entry matching `HASHED_APP_RE` (`scripts/embed-loader.mjs`); `embedEntryHashed()` in `size-lib.mjs` |
+| `scripts/size.mjs` `embedHashed` | New report field and gate: `embed/cook.html` must load exactly one module entry matching `HASHED_APP_RE` (`scripts/embed-loader.mjs`); `embedEntryHashed()` in `size-lib.mjs` |
 
 **i18n**
 
 3 new keys, English in all 8 locales like the rest of `page.pro.activate.*` (the page is English-only): `page.pro.activate.ext.title`, `page.pro.activate.ext.lead`, `page.pro.activate.ext.submit`.
+
+### 13.13 Served URLs and build output format
+
+Accepted on 2026-09-26 (M9, `LAUNCH-AUDIT.md` N-13). Spec: `14-devops.md` §2.1. The routes in §7 are unchanged. The locale-home canonical changes from `https://awaketab.com/es` to `https://awaketab.com/es/`, its served URL.
+
+| Identifier | Decision |
+|---|---|
+| `build.format: 'preserve'` | `apps/web/astro.config.mjs`. `x.astro` → `x.html` (served at `/x`), `x/index.astro` → `x/index.html` (served at `/x/`). Was the default `'directory'` (`x/index.html` for every page) |
+| Hub page files | `src/pages/{for,on,vs,guides,learn,pro,embed}.astro` (were `…/index.astro`). Only `index.astro` and `[lang]/index.astro` are directory indexes |
+| `scripts/served.mjs` | `servedFile(pathname)`, `servedPath(file)`, `isServedPath(pathname)`, `LOCALES`: the one URL ↔ file mapping, used by `sw.mjs`, `size.mjs` and the SEO tests |
+| `canonicalPathname()` | `src/tool/params.ts`. `parseToolParams().canonicalPath` keeps a locale home's slash (`/es/`) and strips it everywhere else |
+| `_headers` `/embed/` rule | Removed: `/embed/` only 308-redirects to `/embed` now |
+| `test/seo/served-urls.test.ts` | Sitemaps, canonicals, hreflang, `og:url`, JSON-LD, internal links and `_headers` / `robots.txt` page routes all use served URLs whose file exists |
 
 ## 14. Writing conventions for these docs
 

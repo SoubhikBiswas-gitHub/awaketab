@@ -21,11 +21,11 @@ async function put(rel: string, body: string) {
 beforeAll(async () => {
   dist = await mkdtemp(path.join(tmpdir(), 'awaketab-sw-'));
   await put('index.html', '<!doctype html><title>home</title>');
-  await put('pip/index.html', '<!doctype html><title>pip</title>');
-  for (const p of PRESETS) await put(`${p}/index.html`, `<!doctype html><title>${p}</title>`);
+  await put('pip.html', '<!doctype html><title>pip</title>');
+  for (const p of PRESETS) await put(`${p}.html`, `<!doctype html><title>${p}</title>`);
   for (const l of LOCALES) {
     await put(`${l}/index.html`, `<!doctype html><title>${l}</title>`);
-    await put(`${l}/pip/index.html`, `<!doctype html><title>${l} pip</title>`);
+    await put(`${l}/pip.html`, `<!doctype html><title>${l} pip</title>`);
     await put(`${l}/manifest.webmanifest`, `{"lang":"${l}"}`);
   }
   await put('favicon.svg', '<svg/>');
@@ -35,9 +35,9 @@ beforeAll(async () => {
   await put('_astro/x.css', 'a{}');
   await put('_astro/font.woff2', 'woff2');
   // Content pages ship too but are not part of the offline shell.
-  await put('learn/index.html', '<!doctype html><title>learn</title>');
+  await put('learn.html', '<!doctype html><title>learn</title>');
   // So does the embed iframe and its fingerprinted app: runtime-cached by src/sw.ts, never precached.
-  await put('embed/cook/index.html', '<script type="module" src="/embed/assets/app.0123456789.js"></script>');
+  await put('embed/cook.html', '<script type="module" src="/embed/assets/app.0123456789.js"></script>');
   await put('embed/assets/app.0123456789.js', 'export{};');
   await put('embed.js', '/*! loader */');
 });
@@ -52,12 +52,20 @@ describe('precacheManifest (docs/05 §8.2)', () => {
     const urls = entries.map((e) => e.url);
     for (const u of ['/', '/pip', '/es/pip', '/zh/pip', '/15m', '/8h', '/es/', '/pt-br/', '/hi/']) expect(urls).toContain(u);
     expect(urls).not.toContain('/index.html');
-    expect(urls).not.toContain('/learn/');
+    expect(urls).not.toContain('/learn');
     expect(urls.some((u) => u.startsWith('/learn'))).toBe(false);
     for (const [url] of SHELL_PAGES) {
       const entry = entries.find((e) => e.url === url);
       expect(entry?.revision, url).toMatch(/^[0-9a-f]{12}$/u);
     }
+  });
+
+  it('keys each shell page by the URL Cloudflare Pages serves it at, without a redirect (docs/14 §2.1)', () => {
+    expect(SHELL_PAGES).toContainEqual(['/', 'index.html']);
+    expect(SHELL_PAGES).toContainEqual(['/30m', '30m.html']);
+    expect(SHELL_PAGES).toContainEqual(['/pip', 'pip.html']);
+    expect(SHELL_PAGES).toContainEqual(['/es/', 'es/index.html']);
+    expect(SHELL_PAGES).toContainEqual(['/es/pip', 'es/pip.html']);
   });
 
   it('gives different pages different revisions', async () => {
@@ -97,9 +105,9 @@ describe('precacheManifest (docs/05 §8.2)', () => {
   });
 
   it('fails loudly when a shell page is missing', async () => {
-    await rm(path.join(dist, 'pip/index.html'));
+    await rm(path.join(dist, 'pip.html'));
     await expect(precacheManifest(dist)).rejects.toThrow();
-    await put('pip/index.html', '<!doctype html><title>pip</title>');
+    await put('pip.html', '<!doctype html><title>pip</title>');
   });
 });
 

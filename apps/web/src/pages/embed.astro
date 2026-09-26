@@ -2,12 +2,12 @@
 // /embed — AwakeTab Embed sales and install page (docs/11 §10, docs/09 §7.3, E12-T02). No ads (docs/00 §8.3):
 // BaseLayout, never ContentLayout. Zero hydration (docs/03 ADR-013): shadcn renders at build time; the snippet
 // generator is one vanilla <script>. The two live demos are the real loader tag, exactly as a site pastes it.
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { t } from '../../i18n/load';
-import { articleSchema } from '../../lib/seo';
-import { CHECKOUT_LINKS, PLAN_PRICES } from '../../lib/license';
-import { DEFAULT_SNIPPET, iframeSnippet, loaderSnippet } from '../../tool/embed/snippet';
-import { EMBED_LOCALES, EMBED_MODES, EMBED_THEMES } from '../../tool/embed/protocol';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t } from '../i18n/load';
+import { articleSchema } from '../lib/seo';
+import { CHECKOUT_LINKS, PLAN_PRICES } from '../lib/license';
+import { DEFAULT_SNIPPET, iframeSnippet, loaderSnippet } from '../tool/embed/snippet';
+import { EMBED_LOCALES, EMBED_MODES, EMBED_THEMES } from '../tool/embed/protocol';
 import { cn } from 'cn';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -244,8 +244,8 @@ const code = 'block overflow-x-auto rounded-lg border bg-card p-4 text-sm leadin
     </nav>
   </main>
   <script>
-    import { DEFAULT_SNIPPET, loaderSnippet, type ISnippetOptions } from '../../tool/embed/snippet';
-    import { EMBED_LOCALES, EMBED_MODES, EMBED_PRESETS, EMBED_SIZES, EMBED_THEMES, pick } from '../../tool/embed/protocol';
+    import { DEFAULT_SNIPPET, loaderSnippet, type ISnippetOptions } from '../tool/embed/snippet';
+    import { EMBED_LOCALES, EMBED_MODES, EMBED_PRESETS, EMBED_SIZES, EMBED_THEMES, pick } from '../tool/embed/protocol';
 
     const form = document.querySelector<HTMLFormElement>('[data-snippet-form]');
     const out = document.querySelector<HTMLElement>('[data-snippet]');

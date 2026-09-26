@@ -3,6 +3,8 @@ import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
+import { servedFile } from '../../scripts/served.mjs';
+
 /*
  * Security checks over the built site (docs/19 §E, docs/17 §2, docs/14 §3):
  * 1. no secret — by name or by its .dev.vars.example value — and no private key material in any file that
@@ -248,9 +250,9 @@ describe('inline boot script (docs/05 §11)', () => {
     const headers = await readFile(path.join(dist, '_headers'), 'utf8');
     const allowed = new Set([...headers.matchAll(/'sha256-[A-Za-z0-9+/]+=*'/gu)].map((m) => m[0]));
     expect(allowed.size).toBe(1);
-    const pages = ['index.html', '30m/index.html', 'for/cooking/index.html', 'es/index.html', 'embed/cook/index.html', 'pro/index.html'];
+    const pages = ['/', '/30m', '/for/cooking', '/es/', '/embed/cook', '/pro'];
     for (const page of pages) {
-      const html = await readFile(path.join(dist, page), 'utf8');
+      const html = await readFile(path.join(dist, servedFile(page)), 'utf8');
       // Executable inline scripts only: JSON data blocks are not scripts and need no hash.
       const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*type="application\/(?:ld\+)?json")[^>]*>([\s\S]*?)<\/script>/gu)];
       expect(inline.length, page).toBe(1);

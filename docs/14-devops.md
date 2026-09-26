@@ -32,6 +32,30 @@ Preview deployments send `X-Robots-Tag: noindex` via `_headers` keyed on the `*.
 8. Cloudflare Web Analytics is **not** enabled (no third-party script by design); Cloudflare's built-in zone analytics (requests, status codes, cache ratio) is used for traffic and errors.
 9. Turnstile widget (optional) for `/pro/activate` if abuse appears.
 
+### 2.1 Build output format and served URLs
+
+Cloudflare Pages serves each static HTML file at exactly one URL and 308-redirects the other spellings ("route matching"): `x.html` is served at `/x` (`/x/` and `/x.html` redirect to `/x`); `x/index.html` is served at `/x/` (`/x` redirects to `/x/`). Every page URL in `00-conventions.md` §7 has no trailing slash, except `/` and the locale homes `/{lang}/`. So the file layout in `dist/` must match those URLs exactly, or every canonical, hreflang, sitemap entry and internal link would point at a redirect, and `_headers` / `robots.txt` rules written for `/embed` or `/pip` would not match the URL that answers.
+
+| URL | Built file | Source |
+|---|---|---|
+| `/` | `index.html` | `src/pages/index.astro` |
+| `/{lang}/` (locale homes) | `{lang}/index.html` | `src/pages/[lang]/index.astro` |
+| `/30m`, `/pip`, `/about`, … | `30m.html`, `pip.html`, `about.html` | `[preset].astro`, `pip.astro`, `about.astro` |
+| Hubs `/for` `/on` `/vs` `/guides` `/learn`, `/pro`, `/embed` | `for.html`, …, `pro.html`, `embed.html` | `for.astro`, …, `pro.astro`, `embed.astro` (not `for/index.astro`) |
+| `/for/cooking`, `/es/for/cocinar`, `/embed/cook`, `/until/17-30` | `for/cooking.html`, `es/for/cocinar.html`, … | `for/[slug].astro`, `[lang]/[kind]/[slug].astro`, … |
+| `/404` | `404.html` | `404.astro` |
+
+How: `build.format: 'preserve'` in `apps/web/astro.config.mjs` writes `x.astro` as `x.html` and `x/index.astro` as `x/index.html`. The pages directory therefore decides the URL shape. **Rule:** a page whose URL has no trailing slash is `x.astro`, never `x/index.astro`; only the locale homes are directory indexes.
+
+Alternatives rejected: `'directory'` (Astro's default, used until M9) wrote every page as `x/index.html`, served only at `/x/`. `'file'` writes the locale homes as `es.html`, served at `/es`, while their documented URL is `/es/`. It also gives `Astro.url.pathname` a `.html` suffix during the build.
+
+`apps/web/scripts/served.mjs` holds the mapping in one place: `servedFile('/30m')` → `30m.html`, `servedPath('es/index.html')` → `/es/`, `isServedPath()`. The service-worker precache keys (`sw.mjs` `SHELL_PAGES`), the size gate (`size.mjs`) and the SEO tests use it. `apps/web/test/seo/served-urls.test.ts` (in `pnpm test:seo`) checks, over the real build:
+
+- the only directory indexes are `/` and the seven locale homes;
+- every sitemap `<loc>` and alternate, every canonical, hreflang, `og:url` and JSON-LD URL, every internal `<a href>`, and every exact page route in `_headers` and `robots.txt` is a served URL whose file exists.
+
+`astro preview` (local e2e and Lighthouse) answers both spellings with a 200 and does not redirect, so it accepts more than Pages does. The e2e specs therefore navigate only to the production spellings (`/es/`, `/30m`). A 308 shows up only on a deployed preview (`LAUNCH-AUDIT.md` N-13).
+
 ---
 
 ## 3. `_headers`
@@ -68,9 +92,8 @@ Preview deployments send `X-Robots-Tag: noindex` via `_headers` keyed on the `*.
   ! X-Frame-Options
   X-Robots-Tag: noindex
 
-# The /embed landing page also matches /embed/* — make it an ordinary, indexable, unframeable page again
+# The /embed landing page (embed.html) — an ordinary, indexable, unframeable page
 /embed
-/embed/
   ! Content-Security-Policy
   Content-Security-Policy: <the /* policy>
   ! X-Frame-Options
@@ -117,9 +140,9 @@ Preview deployments send `X-Robots-Tag: noindex` via `_headers` keyed on the `*.
   X-Robots-Tag: noindex
 ```
 
-(`/embed` and `/embed/` are two identical rules in the generated file.) Content-route CSPs are generated at build from a single template plus the active network's host list (`apps/web/scripts/headers.mjs`) so the five families never drift. `/api/csp` collects CSP reports into Analytics Engine (`client_error {code:'csp'}`) — PROPOSED code value; accepted.
+Routes are the URLs Pages serves with a 200 (§2.1): `/embed`, not `/embed/`, which only 308-redirects to `/embed`. The `/embed/` rule that M8 added was removed at M9 when the build moved to `build.format: 'preserve'`. Content-route CSPs are generated at build from a single template plus the active network's host list (`apps/web/scripts/headers.mjs`) so the five families never drift. `/api/csp` collects CSP reports into Analytics Engine (`client_error {code:'csp'}`) — PROPOSED code value; accepted.
 
-**M8 changes.** Cloudflare applies *every* matching rule and joins a header set twice with ", " — so `/_astro/*` used to ship `Cache-Control: public, max-age=0, must-revalidate, public, max-age=31536000, immutable`. Every specific rule now detaches the `/*` value first (`! Cache-Control`, `! X-Frame-Options`, `! Content-Security-Policy`). The `/embed/*` rule matches the landing page too, hence the `/embed` + `/embed/` rules. Tool-route `img-src` gains `https:` for the Kiosk licence's operator logo (`logo=`, `09-monetization-impl.md` §7.2) — scripts, styles, fonts and connections stay `'self'`, and no default tool page loads a third-party image (decision under `19-master-build-prompt.md` C4, `00-conventions.md` §13.10; needs owner sign-off). `scripts/headers.mjs` exports `resolveHeaders(text, path)`, which evaluates these semantics; `headers.test.ts` runs it over the generated and the shipped `public/_headers`.
+**M8 changes.** Cloudflare applies *every* matching rule and joins a header set twice with ", " — so `/_astro/*` used to ship `Cache-Control: public, max-age=0, must-revalidate, public, max-age=31536000, immutable`. Every specific rule now detaches the `/*` value first (`! Cache-Control`, `! X-Frame-Options`, `! Content-Security-Policy`). The `/embed` rule restores the tool policy on the landing page, so a `/embed/*` match could never make it frameable. Tool-route `img-src` gains `https:` for the Kiosk licence's operator logo (`logo=`, `09-monetization-impl.md` §7.2) — scripts, styles, fonts and connections stay `'self'`, and no default tool page loads a third-party image (decision under `19-master-build-prompt.md` C4, `00-conventions.md` §13.10; needs owner sign-off). `scripts/headers.mjs` exports `resolveHeaders(text, path)`, which evaluates these semantics; `headers.test.ts` runs it over the generated and the shipped `public/_headers`.
 
 ---
 
@@ -156,7 +179,7 @@ Commit messages: Conventional Commits (`feat(engine): …`, `fix(seo): …`, `co
 
 `lighthouse.yml` (PR, `deployment_status`, manual): LHCI with `lighthouserc.cjs` (`13-testing-strategy.md` §7). On a successful Pages preview deployment (`deployment_status` from the Cloudflare Pages GitHub integration) or a manual run with `base_url`, `LHCI_BASE_URL` is the preview origin and nothing is built; on a plain PR it builds and LHCI starts `pnpm --filter web preview` on 127.0.0.1:4321. Reports upload to temporary public storage and as the `lighthouse-reports` artifact; set the `LHCI_GITHUB_APP_TOKEN` secret to get status checks on the PR. Locally: `pnpm build && pnpm lighthouse`.
 
-**Build pipeline and size gate (M8).** `pnpm -F web build` now starts `scripts/headers.mjs` → `scripts/embed-loader.mjs` (esbuild: `public/embed.js`, the committed ≤ 3 KB loader, and `public/embed/app.js`, the git-ignored `/embed/cook` app) → `scripts/library.mjs` (copies `packages/wake/dist/awaketab-wake.iife.js` to the git-ignored `public/library/`, building the package first if its dist is missing) → `pnpm exec tsx scripts/support-matrix.mts` (validates `docs/metrics/device-matrix.json` against `src/data/support-matrix.json`; `pnpm -F web matrix:sync` writes results once the run is complete) → the steps above. `pnpm -F web dev` runs the two embed/library steps before `astro dev`. The embed app is bundled outside Astro on purpose: as an Astro `<script>` it shared `@awaketab/wake`/`@awaketab/core` with the tool entry and Rollup split those modules into chunks on the tool's critical path (measured 15,353 B gz against the 15,360 budget). **Size gate change (M8):** `totalJs` is now the closure over static and dynamic `import()` edges from `index.html`'s module entries — everything the tool page can load — instead of every `dist/_astro/*.js`; new gates `embedJs` ≤ 25,600 B gz (closure from `embed/cook/index.html`) and `loaderJs` ≤ 3,072 B gz (`dist/embed.js`). At M8 close: `criticalJs` 14,508, `totalJs` 39,111 (37,877 for the pre-M8 build under the new rule; 39,805 under the old), `embedJs` 13,843, `loaderJs` 2,356, `totalCss` 12,679. **Embed app fingerprint (2026-09-26):** `node scripts/embed-loader.mjs --fingerprint` runs between `astro build` and `prune-unreferenced.mjs`; it moves `dist/embed/app.js` to `dist/embed/assets/app.<hash>.js`, rewrites the built `/embed/cook` HTML and prints `{ embedApp: { url, pages } }` (honours `AT_DIST`). `pnpm size` adds `embedHashed` and fails when the embed page's module entry is not fingerprinted (`11-embed-spec.md` §11.6).
+**Build pipeline and size gate (M8).** `pnpm -F web build` now starts `scripts/headers.mjs` → `scripts/embed-loader.mjs` (esbuild: `public/embed.js`, the committed ≤ 3 KB loader, and `public/embed/app.js`, the git-ignored `/embed/cook` app) → `scripts/library.mjs` (copies `packages/wake/dist/awaketab-wake.iife.js` to the git-ignored `public/library/`, building the package first if its dist is missing) → `pnpm exec tsx scripts/support-matrix.mts` (validates `docs/metrics/device-matrix.json` against `src/data/support-matrix.json`; `pnpm -F web matrix:sync` writes results once the run is complete) → the steps above. `pnpm -F web dev` runs the two embed/library steps before `astro dev`. The embed app is bundled outside Astro on purpose: as an Astro `<script>` it shared `@awaketab/wake`/`@awaketab/core` with the tool entry and Rollup split those modules into chunks on the tool's critical path (measured 15,353 B gz against the 15,360 budget). **Size gate change (M8):** `totalJs` is now the closure over static and dynamic `import()` edges from `index.html`'s module entries — everything the tool page can load — instead of every `dist/_astro/*.js`; new gates `embedJs` ≤ 25,600 B gz (closure from `embed/cook.html`) and `loaderJs` ≤ 3,072 B gz (`dist/embed.js`). At M8 close: `criticalJs` 14,508, `totalJs` 39,111 (37,877 for the pre-M8 build under the new rule; 39,805 under the old), `embedJs` 13,843, `loaderJs` 2,356, `totalCss` 12,679. **Embed app fingerprint (2026-09-26):** `node scripts/embed-loader.mjs --fingerprint` runs between `astro build` and `prune-unreferenced.mjs`; it moves `dist/embed/app.js` to `dist/embed/assets/app.<hash>.js`, rewrites the built `/embed/cook` HTML and prints `{ embedApp: { url, pages } }` (honours `AT_DIST`). `pnpm size` adds `embedHashed` and fails when the embed page's module entry is not fingerprinted (`11-embed-spec.md` §11.6).
 
 `release.yml` (main, `workflow_dispatch`): job `version` runs `changesets/action` (version PR while changesets are pending); when none are pending, job `publish-wake` (GitHub environment `npm`) runs the library tests, build and size-limit, skips if `@awaketab/wake@<version>` is already on npm, prints `npm pack --dry-run`, then `npm publish --provenance --access public` from `packages/wake` and pushes the tag `@awaketab/wake@<version>`. Auth is npm trusted publishing over GitHub OIDC (no long-lived token; the job installs npm 11.6.2 because trusted publishing needs ≥ 11.5.1) with an optional `NPM_TOKEN` secret as the fallback — configure one of the two before the first run (`12-library-spec.md` §10.2).
 

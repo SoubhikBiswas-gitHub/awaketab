@@ -3,14 +3,15 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { HASHED_APP_RE } from './embed-loader.mjs';
 import { embedEntryHashed, gz, pageJs } from './size-lib.mjs';
+import { servedFile } from './served.mjs';
 
 // AT_DIST lets parallel verification builds target their own output directory.
 const DIST = process.env.AT_DIST
   ? `${path.resolve(process.env.AT_DIST)}/`
   : fileURLToPath(new URL('../dist/', import.meta.url));
 
-// docs/00 §11 and §13.10. Tool page = dist/index.html; embed page = the /embed/cook iframe app; loader = the
-// host-page script at /embed.js that sites paste (docs/11 §1).
+// docs/00 §11 and §13.10. Tool page = `/`; embed page = the /embed/cook iframe app; loader = the host-page script at
+// /embed.js that sites paste (docs/11 §1). Pages are read from the file Cloudflare Pages serves them from (served.mjs).
 const limits = {
   css: 20 * 1024,
   criticalJs: 15 * 1024,
@@ -34,12 +35,12 @@ async function walk(dir) {
 // `totalJs` is everything the page can ever load — the closure over static AND dynamic `import()` edges.
 // Before M8 `totalJs` summed every dist/_astro/*.js, which charged other pages' chunks (the embed app, /pro
 // scripts) to the tool page's 40 KB budget.
-const tool = await pageJs(DIST, 'index.html');
+const tool = await pageJs(DIST, servedFile('/'));
 const criticalJs = tool.criticalBytes;
 const totalJs = tool.totalBytes;
 
 // Embed iframe app (docs/11 §2, ≤ 25 KB gz): same full closure, from its own page.
-const embed = await pageJs(DIST, 'embed/cook/index.html');
+const embed = await pageJs(DIST, servedFile('/embed/cook'));
 const embedJs = embed.totalBytes;
 // The app must ship fingerprinted (embed-loader.mjs --fingerprint) so /embed/assets/* can be served immutable; an
 // empty closure would also make embedJs read 0 and pass.

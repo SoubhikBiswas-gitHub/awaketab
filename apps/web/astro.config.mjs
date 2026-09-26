@@ -19,6 +19,14 @@ export default defineConfig({
   },
   build: {
     inlineStylesheets: 'always',
+    // The file layout IS the URL shape Cloudflare Pages serves with no redirect (docs/14 §2.1):
+    //   src/pages/30m.astro, for/[slug].astro, for.astro → dist/30m.html, for/cooking.html, for.html → /30m, /for/cooking, /for
+    //   src/pages/index.astro, [lang]/index.astro        → dist/index.html, es/index.html        → /, /es/
+    // Pages serves `x.html` at `/x` and `x/index.html` at `/x/`, and 308-redirects the other spelling. So a page
+    // whose URL has no trailing slash must be `x.astro`, never `x/index.astro`; only the locale homes are
+    // directory indexes. 'directory' (the default) wrote every page as `x/index.html`, and 'file' writes the
+    // locale homes as `es.html` (and gives Astro.url a `.html` suffix). test/seo/served-urls.test.ts guards it.
+    format: 'preserve',
   },
   vite: {
     plugins: [tailwindcss()],
