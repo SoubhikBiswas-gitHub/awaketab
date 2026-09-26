@@ -1,0 +1,41 @@
+---
+import { cn } from 'cn';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { buttonVariants } from '@/components/ui/button';
+import { catalogFor, createT } from '../i18n/load';
+import { localePath, type TLocale } from '../i18n/locales';
+
+interface Props {
+  locale: TLocale;
+}
+
+// The /pip popup (docs/05 §9): the fallback floating timer for browsers without Document Picture-in-Picture.
+// It mirrors the owning tab over BroadcastChannel('awaketab') — no engine, no wake lock, no cards, no ads.
+// Served at /pip (en) and /{lang}/pip; tool/pip.ts opens the one matching the opener's language. Everything
+// static is rendered here; the page embeds only the strings pip-mirror.ts looks up at runtime (the pill
+// states and the idle timer), not the whole catalog.
+const { locale } = Astro.props;
+const t = createT(locale);
+const runtimeKeys = Object.keys(catalogFor('en')).filter((k) => k.startsWith('tool.pill.') || k === 'tool.timer.indefiniteIdle');
+const catalogJson = JSON.stringify(Object.fromEntries(runtimeKeys.map((k) => [k, t(k)]))).replaceAll('<', '\\u003c');
+const btn = cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'min-h-11 cursor-pointer');
+---
+
+<BaseLayout title={t('page.pip.title')} description={t('page.home.description')} locale={locale} noindex bare>
+  <main id="awaketab-pip" class="at-pip-body">
+    <h1 class="sr-only">{t('page.pip.title')}</h1>
+    <script is:inline type="application/json" data-i18n-catalog set:html={catalogJson}></script>
+    <output class="at-pill" data-pill data-lock="idle" aria-live="polite" aria-atomic="true">
+      <span data-pill-text>{t('tool.pill.idle')}</span>
+    </output>
+    <div class="at-timer" data-timer role="timer" aria-live="off">
+      <div class="at-timer-digits is-muted" data-timer-digits>{t('tool.timer.indefiniteIdle')}</div>
+    </div>
+    <div class="at-pip-actions">
+      <button class={btn} type="button" data-pip-add hidden aria-label={t('pip.add15.label')}>{t('pip.add15')}</button>
+      <button class={btn} type="button" data-pip-stop hidden>{t('tool.ring.stop')}</button>
+    </div>
+    <p class="at-pip-empty" data-pip-empty>{t('pip.empty')} <a href={localePath(locale, '/')} target="_blank">{t('app.name')}</a></p>
+  </main>
+</BaseLayout>
+<script src="../tool/pip-mirror.ts"></script>

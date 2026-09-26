@@ -68,8 +68,10 @@ ${content}
   ! X-Frame-Options
   X-Robots-Tag: noindex
 
-/pip
-  X-Robots-Tag: noindex
+${['/pip', ...LOCALES.map((locale) => `/${locale}/pip`)]
+  .map((route) => `${route}
+  X-Robots-Tag: noindex`)
+  .join('\n\n')}
 
 /config/*
   Cache-Control: public, max-age=300

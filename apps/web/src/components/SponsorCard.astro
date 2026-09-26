@@ -1,0 +1,22 @@
+---
+import { badgeVariants } from '@/components/ui/badge';
+import { buttonVariants } from '@/components/ui/button';
+
+interface Props {
+  /** `idle`: below the chips; `extend`: inside the ExtendPrompt (docs/05 §3.23). */
+  placement: 'idle' | 'extend';
+  /** Disclosure label, already translated (`sponsor.label`). */
+  label: string;
+}
+
+const { placement, label } = Astro.props;
+// SponsorCard slot: a fixed 300 × 100 box reserved at build time (CLS 0). The island (tool/sponsor.ts) fills
+// it from /config/sponsor.json; it stays empty and invisible until then. The caller renders it only behind
+// PUBLIC_SPONSOR_ENABLED=1.
+---
+
+<aside class="at-sponsor" data-sponsor={placement} data-state="hidden" aria-label={label}>
+  <span class={badgeVariants({ variant: 'outline' })}>{label}</span>
+  <a class={buttonVariants({ variant: 'link', size: 'sm' })} data-sponsor-link rel="sponsored noopener" target="_blank" href="/pro">{label}</a>
+  <p data-sponsor-text></p>
+</aside>

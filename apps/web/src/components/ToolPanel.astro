@@ -6,6 +6,7 @@ import { badgeVariants } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Kbd } from '@/components/ui/kbd';
 import { toggleVariants } from '@/components/ui/toggle';
+import SponsorCard from './SponsorCard.astro';
 
 interface Props {
   locale?: TLocale;
@@ -36,7 +37,6 @@ const chip = cn(
   'at-chip min-h-11 cursor-pointer text-center leading-tight whitespace-normal wrap-anywhere hyphens-auto aria-pressed:border-primary aria-pressed:bg-accent aria-pressed:font-semibold aria-pressed:text-accent-foreground',
 );
 const proTag = cn(badgeVariants({ variant: 'secondary' }), 'ms-1');
-const sponsorTag = badgeVariants({ variant: 'outline' });
 // SponsorCard slot (docs/05 §3.23): rendered only when the flag is on at build time, so CLS stays 0 when off.
 const sponsorEnabled = import.meta.env.PUBLIC_SPONSOR_ENABLED === '1';
 const accents = [
@@ -137,11 +137,7 @@ const shortcuts = [
   <button class:list={['at-stop', btnDanger]} type="button" data-stop hidden>{t('tool.ring.stop')}</button>
   {
     sponsorEnabled && (
-      <aside class="at-sponsor" data-sponsor data-state="hidden" aria-label={t('sponsor.label')}>
-        <span class={sponsorTag}>{t('sponsor.label')}</span>
-        <a class={inlineLink} data-sponsor-link rel="sponsored noopener" target="_blank" href="/pro">{t('sponsor.label')}</a>
-        <p data-sponsor-text></p>
-      </aside>
+      <SponsorCard placement="idle" label={t('sponsor.label')} />
     )
   }
   <section class="at-toasts" data-toasts aria-label={t('tool.notifications')}></section>
@@ -287,6 +283,7 @@ const shortcuts = [
       <button class={btnOutline} type="button" data-extend-60>{t('tool.extend.add60')}</button>
       <button class={btnDanger} type="button" data-extend-stop>{t('tool.extend.stop')}</button>
     </div>
+    {sponsorEnabled && <SponsorCard placement="extend" label={t('sponsor.label')} />}
   </dialog>
   <dialog data-dialog="pro" aria-labelledby="pro-sheet-title">
     <h2 id="pro-sheet-title">{t('pro.title')}</h2>

@@ -2,6 +2,13 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /pip
+Disallow: /es/pip
+Disallow: /pt-br/pip
+Disallow: /de/pip
+Disallow: /fr/pip
+Disallow: /ja/pip
+Disallow: /zh/pip
+Disallow: /hi/pip
 Disallow: /embed/
 
 Sitemap: https://awaketab.com/sitemap-index.xml
