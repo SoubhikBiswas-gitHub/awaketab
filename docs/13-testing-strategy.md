@@ -88,6 +88,13 @@ Valid token → features; expired → none; tampered payload → none; unknown `
 
 Missing-key parity across 8 locales; placeholder parity; frontmatter zod schemas accept fixtures and reject bad `lastVerified`; `slugs.json` uniqueness per locale.
 
+E6 additions (as built, 2026-09-26):
+
+| File | Covers |
+|---|---|
+| `apps/web/scripts/translations.test.ts` | `frontmatterScalars` (top-level scalars only), `publicSlug`/`contentPath` with the EN-slug fallback, `ogImagePath`, `isIndexable` (EN always; translations only with `reviewed: true`; `noindex` wins), `alternatesFor` reciprocity on a fixture (every indexable member lists the same set incl. self; an unreviewed page emits nothing and is never listed), BCP 47 hreflang (`pt-BR`, `zh-Hans`), `readContentIndex` over a temp tree |
+| `apps/web/test/i18n/rtl.test.ts` | RTL readiness for phase-2 `ar` (07 §6): `textDirection()` → `rtl` for `ar`/`he`/`fa`/`ur`, `ltr` for all 8 launch locales; `BaseLayout.astro` plumbs `dir` through `textDirection(htmlLang)` and no page renders its own `<html>`; no physical-direction Tailwind utilities (`ml-`/`pr-`/`left-`/`border-l`/`rounded-r`/`text-left`…) in `src/components`, `src/layouts`, `src/pages`, `src/tool` (CSS files are covered by stylelint `liberty/use-logical-spec`); the `[dir="rtl"]` icon-mirroring rule exists in `tokens.css` |
+
 ---
 
 ## 4. DOM/component tests (happy-dom)
@@ -142,6 +149,14 @@ M6 journeys (`apps/web/test/e2e/m6.spec.ts`; a `dialog` listener fails any test 
 19. **Offline** (chromium only, service workers allowed) — after the worker controls the page and `/30m` is precached, `context.setOffline(true)` → `/30m` loads, the pill reads "Screen awake", and the offline toast shows.
 20. **axe on M6 surfaces** — ambient clock mode, stats dialog and settings dialog in each theme: zero violations.
 
+i18n QA (E6-T07, `apps/web/test/e2e/i18n.spec.ts`, chromium on every PR):
+
+21. **Per-locale smoke** — for each of `es` `pt-br` `de` `fr` `ja` `zh` `hi`: the locale home has `lang` = the BCP 47 tag and `dir="ltr"`, the localized `h1`, and autostarts to the locale's `tool.pill.held`; the translated `/on/iphone-safari` page has one `h1`, `noindex`, the "translation pending" badge, a locale-switcher link to its English version, and a preset chip starts the lock (pill = localized held copy). Zero console errors and page errors throughout. An English top-10 page links its translations in the switcher and emits only self + `x-default` hreflang while no translation is reviewed.
+22. **Pseudo-locale overflow at 320 px** — the HTML response's `data-i18n-catalog` JSON is rewritten so every string is accented and ~40 % longer (ICU arguments untouched), then every static text node is expanded the same way; on `/`, `/15m`, `/on/iphone-safari` and `/es/on/iphone-safari`, idle and after starting a session: no horizontal page scroll, no text-bearing element outside the viewport (unless inside a horizontal scroller) and no element that hides overflowing text (`overflow: hidden|clip` or `text-overflow: ellipsis` with `scrollWidth > clientWidth`). The same checks run without pseudo text on each locale home and its translated cooking page.
+23. **RTL readiness** — `/es/for/cocinar` at 320 px with `document.documentElement.dir = 'rtl'`: no overflow, the breadcrumb chevron mirrors (`matrix(-1, 0, 0, 1, 0, 0)`), the honest-limit bar is on the right (`border-inline-start`), `h1` computes `direction: rtl`.
+
+Findings the pseudo-locale test caught and fixed in E6-T07: related-link and hub-link chips (shadcn `buttonVariants` carries `h-9 shrink-0`) overflowed at 320 px once anchors were translated `h1`s → `h-auto max-w-full shrink whitespace-normal`; inline `code` (`navigator.wakeLock.request('screen')`) overflowed CJK/Devanagari pages → `overflow-wrap: anywhere` in `content.css`.
+
 Visual regression (nightly): screenshots of the awake screen in each ambient mode × theme at 390 px and 1280 px; threshold 0.2%. Implemented in `apps/web/test/e2e/visual.spec.ts`: 6 modes × `light`/`dark`/`oled` × 2 widths = 36 shots with a frozen clock, taken once the controls have auto-hidden (`maxDiffPixelRatio: 0.002`, animations disabled). The file runs only with `VISUAL=1` (skipped on PRs); `nightly.yml` runs it on chromium with `--update-snapshots=missing` and uploads the snapshots and `test-results` as the `visual-snapshots` artifact. Baselines are not committed yet, so the first nightly run records them.
 
 ---
@@ -165,6 +180,8 @@ axe-core on every template (home, preset page, one per collection, `/pro`, `/emb
 ## 8. SEO build checks (run over `dist/`)
 
 Every indexable HTML file has exactly one `<h1>`; `<title>` ≤ 60 chars (CJK ≤ 30), description 50–155; one canonical; hreflang set is reciprocal and includes self + `x-default`; JSON-LD parses and matches `schema-dts` types for the page type; `aggregateRating` present only when `data/ratings.json` has ≥ 25 ratings; `sitemap-index.xml` lists every indexable URL and no `noindex` URL; `robots.txt` has the Sitemap line; no page links to a 404 (internal link check); `/until/*` canonicalises to `/`; `/pip`, `/embed/*` carry `noindex`.
+
+Translated content (E6-T05/T06, `apps/web/test/seo/i18n-content.test.ts`): 70 localized pages exist — the 10 top pages × 7 locales at the `slugs.json` slugs, and no other `/{lang}/{collection}/*` page; each has `lang`/`dir`, one `h1`, a self canonical, a title ≤ 60 ending " — AwakeTab" (ja/zh display width ≤ 60, full-width = 2), a description of 70–155 characters (ja/zh ≤ 80) that is unique within the locale and differs from the English page; while `reviewed: false` it is `noindex`, emits no hreflang and is absent from every sitemap; its `og:image` is `/og/{lang}/{collection}/{slug}.png`, exists in `dist/` and is a 1200 × 630 PNG, with `og:image:alt`; the JSON-LD `Article` has `inLanguage` = the page's BCP 47 tag and `image` = the OG URL; the tool embed carries `data-preset`, the honest-limit `role="note"` callout and ≥ 3 FAQs render; every internal link resolves, and links marked English (`hreflang="en"`) only point at pages with no same-locale translation. Every localized page (homes included) sets `inLanguage` to its own tag; each `/{lang}/manifest.webmanifest` has the locale `lang`, a localized `name`/`description`, `id`/`scope`/`start_url` under `/{lang}/`, and is linked from the locale home; no font file (`.woff`, `.woff2`, `.ttf`, `.otf`) exists anywhere in `dist/`. Across every indexable page the hreflang graph is reciprocal (each alternate lists exactly the same set, self included) and every sitemap `<url>` is an indexable page whose `xhtml:link` set equals the page's HTML.
 
 ---
 
