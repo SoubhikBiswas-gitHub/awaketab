@@ -68,7 +68,7 @@ Polar's API surface changes; pin `@polar-sh/sdk` (or the raw paths below) at imp
 1. `/pro` renders the price table (§2.11) and one button per plan. Click → `pro_checkout_click {plan}` → open the checkout link. Desktop: `window.open(url, 'awaketab-checkout', 'popup,width=520,height=760')`; if the popup is blocked (`window.open` returns `null`) or on mobile viewports (`< 768px`), same-tab `location.assign(url)`. COOP `same-origin-allow-popups` (see `14-devops.md`) keeps the opener relationship intact.
 2. Polar shows the hosted checkout, collects tax by buyer location, charges, emails the receipt and the licence key, and shows the key on its confirmation page.
 3. Polar redirects to `/pro/activate?checkout_id=…`. In popup mode the popup navigates there; the page detects `window.opener` and posts `{ type: 'awaketab:checkout-complete', checkoutId }` to the opener, then closes itself; the opener navigates to `/pro/activate?checkout_id=…`.
-4. `/pro/activate` runs the activation flow (§2.3). With `checkout_id` present it first tries auto-fill: `POST /api/license/activate { checkoutId, deviceId, deviceLabel }` (field `checkoutId` is an alternative to `key`, **PROPOSED** addition to the request schema). The function reads the checkout from Polar, confirms `status === 'succeeded'`, finds the granted licence key for that customer and benefit, and activates it. If auto-fill fails for any reason the page falls back to the paste field with copy "Your key is in the email from Polar and on the receipt page." The paste path is the contract; auto-fill is a convenience.
+4. `/pro/activate` runs the activation flow (§2.3). With `checkout_id` present it first tries auto-fill: `POST /api/license/activate { checkoutId, deviceId, deviceLabel }` (field `checkoutId` is an alternative to `key`, **PROPOSED** addition to the request schema). The function reads the checkout from Polar, confirms `status === 'succeeded'`, finds the granted licence key for that customer and benefit, and activates it. If auto-fill fails for any reason the page falls back to the paste field with copy "Your key is in the email from Polar and on the receipt page." The paste path is the contract; auto-fill is a convenience. With `ext=1` (the extension hand-off) the page never activates the browser: auto-fill uses the non-activating lookup of §2.3a instead, and a pasted key is only checked for shape client-side before the copy panel shows it.
 
 ```mermaid
 sequenceDiagram
@@ -110,6 +110,16 @@ Server steps:
 9. For `pro_yearly` and `biz_embed_site_yearly`, fetch `current_period_end` → `periodEnd`.
 10. Write the merged record (§2.5), append `keyHash` to `cus:{customerId}`, and for embed licences write `embed:{domain}` (§7.1).
 11. Mint the token (§2.4) and respond.
+
+### 2.3a Checkout lookup without activation (as built, 2026-09-26)
+
+`/pro/activate?ext=1` used to activate the key for the browser before showing the copy panel, so pasting it into the extension spent a second of the five activations. The page now never activates in `ext=1` mode, and a `checkout_id` there is resolved by a non-activating mode of the same function (no new route, so the CORS allow-list and route contract are unchanged):
+
+Request `{ checkoutId, lookup: true }` → `200 { key, plan }`. Steps: rate limit (same `license` bucket, 10/min/IP hash) → `checkoutId` must match `^[A-Za-z0-9_-]{1,80}$` (else 400 `bad_request`, no Polar call) → `GET /v1/checkouts/{id}`; not found, not `succeeded` or no licence key → 404 `invalid_key` (one answer for all three, so the endpoint cannot tell a caller whether a checkout ID exists) → KV `lic:{keyHash}` `revoked`/`refunded` → 403 with that code → Polar validate (read-only): not granted → 403 `revoked`; benefit not in `POLAR_BENEFIT_MAP` → 404 `invalid_key` → respond. No `deviceId` is read, nothing is written to KV (other than the rate-limit counter) and Polar activate is never called. `Cache-Control: no-store`.
+
+Why returning the key is acceptable: the checkout ID already authorises activating that key through the activating path (up to the five-device limit), and Polar shows the same key on its receipt page and in the receipt email, so returning it to the holder of the checkout ID grants nothing new. Checkout IDs are Polar UUIDs (not enumerable at 10 requests per minute), the success URL is only known to the buyer, and `Referrer-Policy: strict-origin-when-cross-origin` keeps the query string out of cross-origin referrers.
+
+Client: `lookupCheckoutKey()` and `normaliseLicenseKey()` in `apps/web/src/lib/license-lookup.ts`; `activate-page.ts` calls the lookup only when `ext=1` and `checkout_id` are both present, and never calls `activateLicense()` in `ext=1` mode. Tests: `functions/api/license/activate.test.ts` (lookup block), `test/lib/activate-page.test.ts`, `test/lib/license-revalidate.test.ts`, e2e `tool.spec.ts` ("pro activate with ext=1 …", asserting no activate request).
 
 ### 2.4 Token
 

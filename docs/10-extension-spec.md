@@ -86,7 +86,7 @@ Storage: `chrome.storage.local` for `at.v1.settings`, `at.v1.session`, `at.v1.li
 
 ## 7. Pro licence reuse
 
-1. User pastes the key in Options, or clicks "Activate in extension" on `/pro/activate?ext=1` (the page shows the key with a copy button; there is no cross-origin hand-off because extensions cannot read the page without host permission).
+1. User pastes the key in Options, or clicks "Activate in extension" on `/pro/activate?ext=1` (the page shows the key with a copy button; there is no cross-origin hand-off because extensions cannot read the page without host permission). As built (2026-09-26): with `ext=1` the page does **not** activate the browser — it checks the key's shape client-side (or resolves `checkout_id` through the non-activating lookup, `09-monetization-impl.md` §2.3a) and only shows the copy panel, so the extension's own activation in step 2 is the only one spent.
 2. Options calls `POST https://awaketab.com/api/license/activate` with `{ key, deviceId, deviceLabel: 'Chrome extension on <OS>' }`; `deviceId` is a UUID generated once per browser profile and stored in `chrome.storage.local`. This counts as one of the five activations.
 3. Token verified offline with `verifyLicenseToken()` from `@awaketab/core` (`LICENSE_PUBLIC_KEYS`), stored in `at.v1.license`; features read via `hasFeature()`.
 4. Re-validation cadence and grace identical to the web (`08-data-storage.md` §2.4). Offline → features stay on until `exp`.

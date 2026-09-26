@@ -305,7 +305,7 @@ The identifiers below were proposed while writing the other documents and are no
 | `/support-matrix`, `/how-we-tested` | 301 → `/learn/browser-support-matrix`, `/learn/how-we-tested` (one indexable URL per topic) |
 | `source=` query param | Same handling as `ref=` (PWA `start_url`, shortcuts) |
 | `logo=` query param (https URL) and `#lic=<token>` hash | Kiosk licence unlocks; hash verified offline, stored to `at.v1.license`, then stripped |
-| `/pro/activate?ext=1` | Hand-off from the extension |
+| `/pro/activate?ext=1` | Hand-off from the extension (shows the key to copy; never activates this browser, §13.12) |
 | `src/i18n/slugs.json` | Translated slug map keyed by collection + EN slug |
 | `src/data/support-matrix.json` | Single source for every browser/OS support claim (site, docs, tests) |
 | `data/ratings.json` | Build input for `aggregateRating` (≥ 25 real ratings); exported from KV by a scheduled Worker |
@@ -320,7 +320,7 @@ The identifiers below were proposed while writing the other documents and are no
 | Identifier | Decision |
 |---|---|
 | `POST /api/rating` | `{ stars 1–5, text?, locale, ver }` → KV `rating:{id}`; feeds `data/ratings.json` |
-| Activate request/response | adds `checkoutId?`, `embed?: { domain }`; validate response includes `activations` |
+| Activate request/response | adds `checkoutId?`, `embed?: { domain }`; validate response includes `activations`; `{ checkoutId, lookup: true }` → `{ key, plan }` without activating (§13.12) |
 | API error codes | `invalid_key` · `activation_limit` · `revoked` · `refunded` · `polar_unavailable` · `rate_limited` · `bad_token` · `bad_request` |
 | KV keys | `lic:{keyHash}` · `cus:{customerId}` · `wh:{eventId}` (TTL 30 d) · `ord:{orderId}` · `embed:{domain}` · `rl:{route}:{ipHash}:{bucket}` (TTL 120 s) · `rating:{id}` |
 | Kiosk token expiry | `exp = now + 365 d`, re-validate every 30 d when online |
@@ -504,7 +504,7 @@ Accepted on 2026-09-26 with the M8 implementation. Specs: `11-embed-spec.md` §1
 
 | Identifier | Decision |
 |---|---|
-| `apps/web/scripts/embed-loader.mjs` | esbuild: `src/tool/embed/loader-entry.ts` → `public/embed.js` (IIFE, committed, `__AT_FRAME_TITLES__` = the 8 `embed.frame.title` strings) and `src/tool/embed/app.ts` → `public/embed/app.js` (ESM, git-ignored). First step of `pnpm -F web build` and `dev`. The iframe app is **not** an Astro `<script>`: sharing `@awaketab/core`/`wake` with the tool entry made Rollup split shared chunks onto the tool's critical path (+900 B gz) |
+| `apps/web/scripts/embed-loader.mjs` | esbuild: `src/tool/embed/loader-entry.ts` → `public/embed.js` (IIFE, committed, `__AT_FRAME_TITLES__` = the 8 `embed.frame.title` strings) and `src/tool/embed/app.ts` → `public/embed/app.js` (ESM, git-ignored). First step of `pnpm -F web build` and `dev`; `--fingerprint` runs after `astro build` and ships the app as `/embed/assets/app.<hash>.js` (§13.12). The iframe app is **not** an Astro `<script>`: sharing `@awaketab/core`/`wake` with the tool entry made Rollup split shared chunks onto the tool's critical path (+900 B gz) |
 | `apps/web/scripts/library.mjs` | Copies `packages/wake/dist/awaketab-wake.iife.js` (building the package if needed) to `public/library/` (git-ignored) for the `/library` demo |
 | `apps/web/scripts/support-matrix.mts` | The support-matrix update hook: `matrix:check` (build step) validates `docs/metrics/device-matrix.json` and that every row names a `support-matrix.json` id; `matrix:sync` writes `lastUpdated` and per-row `lastVerified` only when the run is `complete` |
 | `docs/metrics/device-matrix.json` | `{ version: 1, status: 'pending' \| 'complete', updatedAt, method[], rows[] }`; row = `{ id, device, os, browser (support-matrix id), version, power ('plugged' \| 'battery' \| 'battery-saver'), mode, case, expected, observed, evidence, date, verdict ('pending' \| 'pass' \| 'partial' \| 'fail') }`; validated by `src/lib/device-matrix.ts` `parseDeviceMatrix()` (a recorded verdict needs date, version, observed and evidence) |
@@ -562,6 +562,25 @@ Accepted on 2026-09-26 with the M6 follow-up work. Specs: `05-frontend-spec.md` 
 **i18n**
 
 1 new key, present in all 8 locales: `ambient.focus.today` (`{n, plural, …}`).
+
+### 13.12 Extension licence hand-off and embed app caching
+
+Accepted on 2026-09-26. Specs: `09-monetization-impl.md` §2.2, §2.3a; `10-extension-spec.md` §5; `11-embed-spec.md` §11.3, §11.6; `14-devops.md` §3, §6.
+
+| Identifier | Decision |
+|---|---|
+| `POST /api/license/activate { checkoutId, lookup: true }` | Non-activating lookup → `{ key, plan }`. No `deviceId`, no KV write, no Polar activation; same `license` rate-limit bucket (10/min/IP hash). `checkoutId` must match `^[A-Za-z0-9_-]{1,80}$` (also on the activating path). Unknown, unpaid and keyless checkouts all answer 404 `invalid_key` (Polar's checkout 404 now maps to `invalid_key`, not `polar_unavailable`); KV `revoked`/`refunded` → 403 with that code; Polar not granted → 403 `revoked`; unmapped benefit → 404 |
+| `/pro/activate?ext=1` | Never activates the browser. A pasted key is normalised (`trim().toUpperCase()`) and checked against `^[A-Z0-9-]{20,80}$` client-side, then shown in `[data-ext-panel]`; with `checkout_id` the page calls the lookup above instead of activate. Without `ext=1` the page is unchanged (activates this browser; `checkout_id` auto-activates) |
+| `src/lib/license-lookup.ts` | `LICENSE_KEY_RE`, `normaliseLicenseKey()`, `lookupCheckoutKey()` — kept out of `license.ts`, whose chunk the tool page loads lazily (so `totalJs` does not pay for a page-only flow) |
+| `[data-activate-mode="web" \| "ext"]` | Mode-specific copy on `/pro/activate`, pre-rendered for both modes; `activate-page.ts` hides `web` and shows `ext` when `ext=1` |
+| `/embed/assets/app.<hash>.js` | The `/embed/cook` iframe app in production. `node scripts/embed-loader.mjs --fingerprint` (right after `astro build`) moves `dist/embed/app.js` to `/embed/assets/app.<first 10 hex of sha256>.js` and rewrites every built page that loaded `"/embed/app.js"`; it fails when no page does. `astro dev` still serves `/embed/app.js`. `/embed.js` (the host loader) is never hashed |
+| `_headers` `/embed/assets/*` | `Cache-Control: public, max-age=31536000, immutable` (detaches the `/*` value). `/embed/cook` and `/embed.js` keep their caches (`max-age=0, must-revalidate` and `max-age=3600`) |
+| SW `at-embed-assets` | `src/sw.ts` serves `/embed/assets/*` cache-first (4 entries, 30 d); other `/embed/*` stays network-first `at-embed`. Nothing under `/embed` is precached |
+| `scripts/size.mjs` `embedHashed` | New report field and gate: `embed/cook/index.html` must load exactly one module entry matching `HASHED_APP_RE` (`scripts/embed-loader.mjs`); `embedEntryHashed()` in `size-lib.mjs` |
+
+**i18n**
+
+3 new keys, English in all 8 locales like the rest of `page.pro.activate.*` (the page is English-only): `page.pro.activate.ext.title`, `page.pro.activate.ext.lead`, `page.pro.activate.ext.submit`.
 
 ## 14. Writing conventions for these docs
 
