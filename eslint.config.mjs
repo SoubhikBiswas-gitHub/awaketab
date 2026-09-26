@@ -63,7 +63,7 @@ export default tseslint.config(
     ...tseslint.configs.disableTypeChecked,
   },
   {
-    files: ['**/*.mjs', '**/*.config.ts', '**/wxt.config.ts'],
+    files: ['**/*.mjs', '**/*.cjs', '**/*.config.ts', '**/wxt.config.ts'],
     ...tseslint.configs.disableTypeChecked,
   },
   {
