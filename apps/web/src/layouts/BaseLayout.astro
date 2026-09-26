@@ -1,6 +1,7 @@
 ---
 import '../styles/tokens.css';
 import '../styles/tool.css';
+import bootJs from '../boot/boot.js?raw';
 import SeoHead from '../components/SeoHead.astro';
 import LocaleNav from '../components/LocaleNav.astro';
 import { cn } from 'cn';
@@ -74,7 +75,7 @@ const footerLink = cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'min-h-1
       schema={schema}
       alternates={alternates}
     />
-    <script is:inline src="/theme-boot.js"></script>
+    <script is:inline set:html={bootJs} />
   </head>
   <body>
     {

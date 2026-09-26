@@ -22,10 +22,28 @@ import { mountRing } from './ui/ring.js';
 import { mountTimer } from './ui/timer.js';
 import { mountToasts as mountToastRegion, toast as pushToast } from './ui/toast.js';
 
+// Non-urgent chunks (analytics, licence re-check, PWA, suggestions) wait for load + idle so nothing they fetch
+// sits on the first-paint path (LCP lab ≤ 1.2 s, docs/00 §11). The wake-lock request never waits for this.
+const later = new Promise<void>((resolve) => {
+  const go = () => {
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => {
+        resolve();
+      });
+    } else {
+      setTimeout(resolve, 1);
+    }
+  };
+  if (document.readyState === 'complete') go();
+  else addEventListener('load', go, { once: true });
+});
+
 function track(store: IStore, event: string, params?: Record<string, string | number | boolean>): void {
-  void import('./extras.js').then((mod) => {
-    mod.track(store, event, params);
-  });
+  void later
+    .then(() => import('./extras.js'))
+    .then((mod) => {
+      mod.track(store, event, params);
+    });
 }
 
 function sessionSource(source: string | null): 'web' | 'pwa' | 'pip' | 'ext' | 'embed' {
@@ -214,8 +232,8 @@ export function boot(root: HTMLElement): () => void {
       void import('./ambient/shell.js').then((m) => unsubs.push(m.mountAmbient(ctx)));
     }),
   );
-  if (root.querySelector('[data-sponsor]')) void import('./sponsor.js').then((m) => m.mountSponsor(ctx).then((u) => unsubs.push(u)));
-  void import('./extras.js').then((mod) => {
+  if (root.querySelector('[data-sponsor]')) void later.then(() => import('./sponsor.js')).then((m) => m.mountSponsor(ctx).then((u) => unsubs.push(u)));
+  void later.then(() => import('./extras.js')).then((mod) => {
     unsubs.push(mod.mountExtras(store, storage));
   });
   const ring = root.querySelector<HTMLElement>('[data-ring]');
@@ -400,7 +418,7 @@ export function boot(root: HTMLElement): () => void {
     });
   });
 
-  void import('./pwa.js').then(({ mountPwa }) => {
+  void later.then(() => import('./pwa.js')).then(({ mountPwa }) => {
     mountPwa(root, store, () => engine.session?.status, () => {
       track(store, 'pwa_install');
     });
@@ -412,7 +430,7 @@ export function boot(root: HTMLElement): () => void {
     track(store, 'resume_shown');
   }
 
-  void import('./ui/lang-suggest.js').then(({ mountLangSuggest }) => {
+  void later.then(() => import('./ui/lang-suggest.js')).then(({ mountLangSuggest }) => {
     mountLangSuggest(root, storage);
   });
 
@@ -445,6 +463,8 @@ export function boot(root: HTMLElement): () => void {
   }
 
   syncLock();
+  // Marks the island interactive: it boots after first paint (src/boot/boot.js), and tests wait on this.
+  root.dataset.booted = '';
   return () => {
     for (const u of unsubs) u();
     offLock();

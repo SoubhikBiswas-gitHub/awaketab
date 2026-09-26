@@ -13,3 +13,4 @@ export interface IHeaderRule {
 }
 export function parseHeaderRules(text: string): IHeaderRule[];
 export function resolveHeaders(text: string, pathname: string): Map<string, string>;
+export const BOOT_HASH: string;

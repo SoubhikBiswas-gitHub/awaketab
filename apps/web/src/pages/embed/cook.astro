@@ -7,6 +7,7 @@ import '../../styles/embed.css';
 import { catalogFor, t } from '../../i18n/load';
 import { LOCALES, textDirection } from '../../i18n/locales';
 import { embedCatalog } from '../../tool/embed/catalog';
+import bootJs from '../../boot/boot.js?raw';
 
 const catalogs = JSON.stringify(Object.fromEntries(LOCALES.map((l) => [l, embedCatalog(catalogFor(l))]))).replaceAll(
   '<',
@@ -22,7 +23,7 @@ const catalogs = JSON.stringify(Object.fromEntries(LOCALES.map((l) => [l, embedC
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#FAF7F2" />
     <title>{t('embed.frame.title')}</title>
-    <script is:inline src="/theme-boot.js"></script>
+    <script is:inline set:html={bootJs} />
   </head>
   <body class="at-embed-body">
     <main id="awaketab-embed" class="at-embed" data-size="compact" data-mode="cook">

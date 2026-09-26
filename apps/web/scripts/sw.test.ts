@@ -29,7 +29,6 @@ beforeAll(async () => {
     await put(`${l}/manifest.webmanifest`, `{"lang":"${l}"}`);
   }
   await put('favicon.svg', '<svg/>');
-  await put('theme-boot.js', '(()=>{})();');
   await put('manifest.webmanifest', '{"name":"AwakeTab"}');
   await put('icons/a.png', 'png');
   await put('_astro/x.js', 'export{};');
@@ -71,7 +70,7 @@ describe('precacheManifest (docs/05 §8.2)', () => {
   it('includes static files, locale manifests and icons', async () => {
     const entries = await precacheManifest(dist);
     const byUrl = new Map(entries.map((e) => [e.url, e.revision]));
-    for (const u of ['/favicon.svg', '/theme-boot.js', '/manifest.webmanifest', '/es/manifest.webmanifest', '/icons/a.png']) {
+    for (const u of ['/favicon.svg', '/manifest.webmanifest', '/es/manifest.webmanifest', '/icons/a.png']) {
       expect(byUrl.get(u), u).toMatch(/^[0-9a-f]{12}$/u);
     }
   });
@@ -92,8 +91,9 @@ describe('precacheManifest (docs/05 §8.2)', () => {
     const urls = (await precacheManifest(dist)).map((e) => e.url);
     expect(urls).toEqual([...urls].sort((a, b) => a.localeCompare(b)));
     expect(new Set(urls).size).toBe(urls.length);
-    // 1 home + pip + 7 presets + 7 locale homes + 7 locale pips; 3 static + 7 locale manifests; 1 icon; 2 hashed assets.
-    expect(urls).toHaveLength(23 + 10 + 1 + 2);
+    // 1 home + pip + 7 presets + 7 locale homes + 7 locale pips; 2 static (favicon, manifest) + 7 locale
+    // manifests (the theme boot script is inline now); 1 icon; 2 hashed assets.
+    expect(urls).toHaveLength(23 + 9 + 1 + 2);
   });
 
   it('fails loudly when a shell page is missing', async () => {

@@ -1,6 +1,6 @@
 ---
 import { cn } from 'cn';
-import { catalogFor, createT } from '../i18n/load';
+import { createT, islandCatalog } from '../i18n/load';
 import type { TLocale } from '../i18n/locales';
 import { badgeVariants } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
@@ -14,7 +14,7 @@ interface Props {
 
 const { locale = 'en' } = Astro.props;
 const t = createT(locale);
-const catalogJson = JSON.stringify(catalogFor(locale)).replaceAll('<', '\\u003c');
+const catalogJson = JSON.stringify(islandCatalog(locale)).replaceAll('<', '\\u003c');
 const chips = [
   ['p15', t('tool.preset.p15')],
   ['p30', t('tool.preset.p30')],

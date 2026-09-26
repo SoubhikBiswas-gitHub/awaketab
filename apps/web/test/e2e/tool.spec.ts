@@ -12,6 +12,14 @@ test.beforeEach(async ({ page }) => {
 test('journey 1 autostart shows Screen awake', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake', { timeout: 4000 });
+  // The island starts after first paint (LCP budget) but must still request the lock within 300 ms of
+  // DOMContentLoaded (docs/00 §11).
+  const gap = await page.evaluate(() => {
+    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+    const at = (window as Window & { __at: { firstRequestAt: number | null } }).__at.firstRequestAt ?? Infinity;
+    return at - nav.domContentLoadedEventStart;
+  });
+  expect(gap).toBeLessThanOrEqual(300);
 });
 
 test('journey 2 preset 2 h writes a duration session', async ({ page }) => {
@@ -145,6 +153,7 @@ test('journey 8 pip requests a 280×120 document window', async ({ page }) => {
     });
   });
   await page.goto('/?autostart=0');
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
   await page.keyboard.press('p');
   await expect
     .poll(async () =>

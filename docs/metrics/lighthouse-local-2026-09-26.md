@@ -56,3 +56,20 @@ Experiments on copies of `dist/` (same machine and settings, one run each):
 | Without the island module (theme-boot kept) | 0.90 s | **1.05 s** |
 
 So LCP reaches the budget only when the island's module is not evaluated before the first paint. That means a change to the boot sequence in `src/tool/main.ts`, which is out of scope for this change. For example: start `boot()` after the first frame, move the dynamic imports that do not affect the first paint (`extras`, `pwa`, `lang-suggest`) to idle, or load the module after first paint while keeping the wake-lock request ≤ 300 ms after DOMContentLoaded (NFR). `theme-boot.js` is not the LCP driver. Inlining it would need a CSP hash and saves only about 150 ms of FCP. The LCP assertion stays at `error` in `lighthouserc.cjs`. The budget was not weakened.
+
+
+## Update — LCP fixed (same day, after M7/M8 merge)
+
+Cause confirmed by A/B on built copies: Lighthouse's simulated LCP counted the tool module (and its lazy chain) because they were requested before the observed first paint (~40 ms), and the render-blocking external `theme-boot.js` cost one simulated round trip (~150 ms).
+
+Changes: inline hashed boot script (`src/boot/boot.js`, CSP `sha256-`), tool entry started on the first-contentful-paint entry with a 150 ms cap (`scripts/defer-main.mjs`), non-urgent chunks (extras, analytics, PWA, language suggestion, sponsor) after load + idle, and tool pages embed only the island's i18n families (`islandCatalog`, 493 → island keys).
+
+| URL | LCP (3 runs, simulated mobile) | Median |
+|---|---|---|
+| `/` | 1051 / 1051 / 1051 | 1.05 s ✓ |
+| `/30m` | 1051 / 1051 / 1051 | 1.05 s ✓ |
+| `/for/cooking` | 1051 / 1051 / 1051 | 1.05 s ✓ |
+| `/guides/lock-screen-vs-sleep` | 1051 / 1051 / 1051 | 1.05 s ✓ |
+| `/es/` | 901 / 1051 / 1051 | 1.05 s ✓ |
+
+CLS 0 everywhere; wake lock requested ≤ 300 ms after `DOMContentLoaded` (e2e journey 1, all engines). Budgets: critical JS 14,784 B gz, tool total 40,199 B gz.

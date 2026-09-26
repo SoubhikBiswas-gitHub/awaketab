@@ -39,6 +39,33 @@ export function catalogFor(locale: TLocale): TCatalog {
   return catalogs[locale];
 }
 
+/**
+ * Key families the tool island reads at runtime (src/tool/**, src/lib/license*.ts). Tool pages embed only
+ * these, not the whole catalog: page copy, content and extension strings are rendered at build time and would
+ * only add bytes to every page's HTML (docs/00 §11 LCP). test/i18n/island-catalog.test.ts keeps this in sync.
+ */
+export const ISLAND_PREFIXES = [
+  'tool.',
+  'ambient.',
+  'stats.',
+  'settings.',
+  'rating.',
+  'pip.',
+  'end.',
+  'pro.',
+  'license.',
+
+  'pwa.',
+  'i18n.',
+  'kiosk.',
+] as const;
+
+export function islandCatalog(locale: TLocale): TCatalog {
+  return Object.fromEntries(
+    Object.entries(catalogs[locale]).filter(([key]) => ISLAND_PREFIXES.some((prefix) => key.startsWith(prefix))),
+  );
+}
+
 export function t(key: string, vars?: TVars, locale: TLocale = 'en'): string {
   const catalog = catalogs[locale];
   return interpolate(catalog[key] ?? catalogs.en[key] ?? key, vars);

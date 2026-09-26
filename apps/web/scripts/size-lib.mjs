@@ -11,15 +11,18 @@ export const DYNAMIC_IMPORT = /\bimport\s*\(\s*["'](\.{1,2}\/[^"']+\.js)["']\s*\
 export const gz = (buf) => gzipSync(buf, { level: 9 }).byteLength;
 
 /**
- * The same-origin module entry scripts a page loads with `<script type="module" src>` — Astro's `/_astro/*`
- * chunks on the tool page, `/embed/assets/app.<hash>.js` (esbuild, fingerprinted post-build) on /embed/cook.
- * Classic scripts (theme-boot.js) and JSON blocks are not part of the island budgets.
+ * The same-origin module entry scripts a page loads — `<script type="module" src>` (the /embed/cook app,
+ * `/embed/assets/app.<hash>.js`) and the tool island's entry, which scripts/defer-main.mjs moves onto
+ * `#awaketab-tool[data-main]` for the inline boot script to start after first paint. It is still the page's
+ * critical path, so it counts here. The inline boot script and JSON blocks are not part of the island budgets.
  */
 export function entryScripts(html) {
   const tags = [...html.matchAll(/<script\b[^>]*>/gu)].map((m) => m[0]);
   const srcs = tags
     .filter((tag) => /\btype="module"/u.test(tag))
     .map((tag) => /\bsrc="(?<src>[^"]+)"/u.exec(tag)?.groups?.src ?? '');
+  const deferred = /<div id="awaketab-tool"[^>]*\bdata-main="(?<src>[^"]+)"/u.exec(html)?.groups?.src;
+  if (deferred) srcs.push(deferred);
   return [...new Set(srcs.filter((s) => s.startsWith('/') && !s.startsWith('//') && s.endsWith('.js')))];
 }
 

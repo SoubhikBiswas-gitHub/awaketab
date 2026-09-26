@@ -188,7 +188,8 @@ describe('security headers per route class (docs/14 §3)', async () => {
     expectCommon(h, p);
     const csp = directives(h.get('content-security-policy') ?? '');
     expect(csp.get('default-src')).toBe("'self'");
-    expect(csp.get('script-src')).toBe("'self'");
+    // 'self' plus exactly one hash: the inline boot script (src/boot/boot.js). Never 'unsafe-inline'.
+    expect(csp.get('script-src')).toMatch(/^'self' 'sha256-[A-Za-z0-9+/]+=*'$/u);
     expect(csp.get('connect-src')).toBe("'self'");
     expect(csp.get('frame-ancestors')).toBe("'none'");
     expect(csp.has('upgrade-insecure-requests')).toBe(true);
@@ -238,5 +239,25 @@ describe('security headers per route class (docs/14 §3)', async () => {
     const h = effective(rules, '/api/e');
     expect(h.get('cache-control')).toBe('no-store');
     expect(h.get('x-robots-tag')).toBe('noindex');
+  });
+});
+
+describe('inline boot script (docs/05 §11)', () => {
+  it('every built page carries only inline scripts whose sha256 the route CSP allows', async () => {
+    const { createHash } = await import('node:crypto');
+    const headers = await readFile(path.join(dist, '_headers'), 'utf8');
+    const allowed = new Set([...headers.matchAll(/'sha256-[A-Za-z0-9+/]+=*'/gu)].map((m) => m[0]));
+    expect(allowed.size).toBe(1);
+    const pages = ['index.html', '30m/index.html', 'for/cooking/index.html', 'es/index.html', 'embed/cook/index.html', 'pro/index.html'];
+    for (const page of pages) {
+      const html = await readFile(path.join(dist, page), 'utf8');
+      // Executable inline scripts only: JSON data blocks are not scripts and need no hash.
+      const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*type="application\/(?:ld\+)?json")[^>]*>([\s\S]*?)<\/script>/gu)];
+      expect(inline.length, page).toBe(1);
+      for (const [, body = ''] of inline) {
+        const hash = `'sha256-${createHash('sha256').update(body).digest('base64')}'`;
+        expect(allowed.has(hash), `${page}: inline script hash not in CSP`).toBe(true);
+      }
+    }
   });
 });

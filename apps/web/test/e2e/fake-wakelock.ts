@@ -13,6 +13,8 @@ export async function installFakeWakeLock(page: Page): Promise<void> {
     const sentinels: FakeSentinel[] = [];
     const api = {
       rejectNext: null as string | null,
+      /** performance.now() of the first wake-lock request (docs/00 §11: ≤ 300 ms after DOMContentLoaded). */
+      firstRequestAt: null as number | null,
       releaseAll() {
         for (const s of sentinels) void s.release();
       },
@@ -27,6 +29,7 @@ export async function installFakeWakeLock(page: Page): Promise<void> {
       configurable: true,
       value: {
         request: async () => {
+          api.firstRequestAt ??= performance.now();
           if (api.rejectNext) {
             const name = api.rejectNext;
             api.rejectNext = null;

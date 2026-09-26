@@ -22,7 +22,7 @@ export const SHELL_PAGES = [
   ...LOCALES.map((l) => [`/${l}/pip`, `${l}/pip/index.html`]),
 ];
 
-const STATIC = ['favicon.svg', 'theme-boot.js', 'manifest.webmanifest', ...LOCALES.map((l) => `${l}/manifest.webmanifest`)];
+const STATIC = ['favicon.svg', 'manifest.webmanifest', ...LOCALES.map((l) => `${l}/manifest.webmanifest`)];
 
 async function files(dir) {
   const out = [];

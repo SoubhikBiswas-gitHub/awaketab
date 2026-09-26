@@ -23,6 +23,12 @@ interface IFocus {
 }
 
 /** Describes document.activeElement and whether it (or, for a visually hidden input, its label) shows focus. */
+/** The island boots after first paint (src/boot/boot.js); keys pressed before that would go nowhere. */
+async function open(page: Page, url: string): Promise<void> {
+  await page.goto(url);
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
+}
+
 async function focusInfo(page: Page): Promise<IFocus | null> {
   return page.evaluate(() => {
     const el = document.activeElement;
@@ -115,7 +121,7 @@ test('journey 1 (keyboard): autostart, skip link, and the whole page tabs throug
   browserName,
 }) => {
   const keys = keysFor(browserName);
-  await page.goto('/');
+  await open(page, '/');
   await expect(pill(page)).toHaveText('Screen awake', { timeout: 4000 });
 
   // First stop is the skip link; Enter moves to the main heading.
@@ -160,7 +166,7 @@ test('journey 2 (keyboard): Tab to the 2 h chip, Enter starts a 2 h session; the
   browserName,
 }) => {
   const keys = keysFor(browserName);
-  await page.goto('/?autostart=0');
+  await open(page, '/?autostart=0');
   await expect(pill(page)).toHaveText('Ready');
   await tabTo(page, keys, '#awaketab-tool [data-chips] [data-preset="p120"]');
   await page.keyboard.press('Enter');
@@ -181,7 +187,7 @@ test('journey 3 (keyboard): U opens the until picker with focus inside; Enter on
   browserName,
 }) => {
   const keys = keysFor(browserName);
-  await page.goto('/?autostart=0');
+  await open(page, '/?autostart=0');
   await expect(pill(page)).toHaveText('Ready');
   await page.keyboard.press('u');
   const dlg = page.locator('dialog[data-dialog="until"]');
@@ -198,7 +204,7 @@ test('journey 3 (keyboard): U opens the until picker with focus inside; Enter on
 
 test('journey 4 (keyboard): hide → Paused, show → Screen awake again, focus stays put', async ({ page, browserName }) => {
   const keys = keysFor(browserName);
-  await page.goto('/');
+  await open(page, '/');
   await expect(pill(page)).toHaveText('Screen awake');
   await tabTo(page, keys, '#awaketab-tool [data-chips] [data-preset="p30"]');
   await page.evaluate(() => (window as Window & { __at: { setVisibility: (s: string) => void } }).__at.setVisibility('hidden'));
@@ -212,7 +218,7 @@ test('journey 4 (keyboard): hide → Paused, show → Screen awake again, focus 
 
 test('journey 5 (keyboard): denied → notice; Tab to Retry, Enter re-requests the lock', async ({ page, browserName }) => {
   const keys = keysFor(browserName);
-  await page.goto('/?autostart=0');
+  await open(page, '/?autostart=0');
   await page.evaluate(() => {
     (window as Window & { __at: { rejectNext: string | null } }).__at.rejectNext = 'NotAllowedError';
   });
@@ -232,7 +238,7 @@ test('journey 5 (keyboard): denied → notice; Tab to Retry, Enter re-requests t
 test.describe('journey 6 (keyboard): custom timer end → extend prompt', () => {
   async function runOneMinute(page: Page, keys: TKeys): Promise<void> {
     await page.clock.install();
-    await page.goto('/?autostart=0');
+    await open(page, '/?autostart=0');
     await expect(pill(page)).toHaveText('Ready');
     await tabTo(page, keys, '#awaketab-tool [data-chips] [data-preset="custom"]');
     await page.keyboard.press('Enter');
@@ -287,10 +293,11 @@ test.describe('journey 6 (keyboard): custom timer end → extend prompt', () => 
 
 test('journey 7 (keyboard): reload mid-session → Tab to Resume, Enter re-requests the lock', async ({ page, browserName }) => {
   const keys = keysFor(browserName);
-  await page.goto('/?autostart=0');
+  await open(page, '/?autostart=0');
   await page.keyboard.press('0');
   await expect(pill(page)).toHaveText('Screen awake');
   await page.reload();
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
   await expect(page.locator('[data-resume]')).toBeVisible();
   await expect(pill(page)).toHaveText('Ready');
   await tabTo(page, keys, '[data-resume-accept]');
@@ -323,7 +330,7 @@ test('shortcuts: 1–6 and 0 pick presets, D cycles the theme, F asks for fullsc
       },
     });
   });
-  await page.goto('/?autostart=0');
+  await open(page, '/?autostart=0');
   await expect(pill(page)).toHaveText('Ready');
   const presets: Array<[string, string]> = [
     ['1', 'p15'],
@@ -369,7 +376,7 @@ test('ambient mode (M): controls take focus with a visible ring, Tab stays in th
   browserName,
 }) => {
   const keys = keysFor(browserName);
-  await page.goto('/');
+  await open(page, '/');
   await expect(pill(page)).toHaveText('Screen awake', { timeout: 4000 });
   await page.keyboard.press('m');
   const layer = page.locator('dialog[data-ambient]');
@@ -404,7 +411,7 @@ test('settings dialog: every control shows focus, Esc closes and focus returns t
   browserName,
 }) => {
   const keys = keysFor(browserName);
-  await page.goto('/?autostart=0');
+  await open(page, '/?autostart=0');
   await tabTo(page, keys, '#awaketab-tool header [data-open-settings]');
   await page.keyboard.press('Enter');
   const dlg = page.locator('dialog[data-dialog="settings"]');
@@ -427,7 +434,7 @@ test('settings dialog: every control shows focus, Esc closes and focus returns t
 
 test('stats dialog: opens from the keyboard, Tab reaches Close, Esc closes and restores focus', async ({ page, browserName }) => {
   const keys = keysFor(browserName);
-  await page.goto('/?autostart=0');
+  await open(page, '/?autostart=0');
   await tabTo(page, keys, '#awaketab-tool header [data-open-stats]');
   await page.keyboard.press('Enter');
   const dlg = page.locator('dialog[data-dialog="stats"]');

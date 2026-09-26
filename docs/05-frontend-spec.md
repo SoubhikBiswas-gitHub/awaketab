@@ -34,7 +34,7 @@ State-tinted surfaces are derived, never hand-picked: `color-mix(in srgb, var(--
 
 ### 1.1a Accent palettes
 
-`settings.accent` stores the light-theme hex (`08-data-storage.md` §2.1); `apps/web/src/tool/accent.ts` maps it to a palette id set as `data-accent` on `<html>` (amber, the default, sets no attribute), and `tokens.css` overrides four tokens per palette. `public/theme-boot.js` mirrors the map so the accent is applied before first paint; the island re-checks pack palettes against the licence and falls back to amber when `ambient.packs` is missing or lapsed.
+`settings.accent` stores the light-theme hex (`08-data-storage.md` §2.1); `apps/web/src/tool/accent.ts` maps it to a palette id set as `data-accent` on `<html>` (amber, the default, sets no attribute), and `tokens.css` overrides four tokens per palette. the inline boot script (`src/boot/boot.js`, §11) mirrors the map so the accent is applied before first paint; the island re-checks pack palettes against the licence and falls back to amber when `ambient.packs` is missing or lapsed.
 
 | Id | `settings.accent` | Gate | `light`: `--at-accent` · `--at-accent-text` · `--at-on-accent` · `--at-focus` | `dark` / `oled`: same four |
 |---|---|---|---|---|
@@ -465,7 +465,7 @@ Locale manifests set `id`/`start_url`/`scope` to `/{lang}/…` so each locale in
 
 | Scope | Strategy | Cache | Notes |
 |---|---|---|---|
-| App shell: `/`, `/pip`, `/15m`…`/8h`, the seven locale homes `/{lang}/`, `favicon.svg`, `theme-boot.js`, the eight manifests, `/icons/*`, every hashed `_astro/*.js` and `*.css` | Precache (`precacheAndRoute`) | Workbox precache | Manifest built from `dist/` after the prune step (58 entries at M6 close). Pages and static files carry an MD5 revision; hashed assets use `revision: null`. Query strings are ignored when matching (`ignoreURLParametersMatching: [/.*/]`) because the island reads them. The fallback video is inline base64, so there is no file to cache |
+| App shell: `/`, `/pip`, `/15m`…`/8h`, the seven locale homes `/{lang}/`, `favicon.svg`, the eight manifests, `/icons/*`, every hashed `_astro/*.js` and `*.css` | Precache (`precacheAndRoute`) | Workbox precache | Manifest built from `dist/` after the prune step (58 entries at M6 close). Pages and static files carry an MD5 revision; hashed assets use `revision: null`. Query strings are ignored when matching (`ignoreURLParametersMatching: [/.*/]`) because the island reads them. The fallback video is inline base64, so there is no file to cache |
 | Content navigations `/for/*` `/on/*` `/vs/*` `/guides/*` `/learn/*`, `/about`, `/privacy`, `/terms`, `/changelog`, `/pro*` (all locales) | `StaleWhileRevalidate` | `at-content`, max 80 entries, 30 days | Same-origin only; third-party ad scripts are cross-origin and never match a route |
 | Images under `/og/`, `/screens/`, `/img/` | `CacheFirst` | `at-img`, max 60, 30 days | |
 | `/api/*` | `NetworkOnly` | — | Never cached; events queue in memory and retry |
@@ -522,7 +522,7 @@ Routes: `/15m` → `p15`, `/30m` → `p30`, `/45m` → `p45`, `/1h` → `p60`, `
 
 ## 11. Theme handling
 
-- `<html data-theme="light|dark|oled">`; `auto` is resolved at boot by an inline 300-byte script in `<head>` that reads `at.v1.settings.theme` and `prefers-color-scheme` before first paint (no flash), and by a `matchMedia` listener afterwards.
+- `<html data-theme="light|dark|oled">`; `auto` is resolved at boot by an inline script in `<head>` that reads `at.v1.settings.theme` and `prefers-color-scheme` before first paint (no flash), and by a `matchMedia` listener afterwards. **As built:** `apps/web/src/boot/boot.js`, inlined by `BaseLayout` and `/embed/cook` with `set:html` (the file is the single source; `public/theme-boot.js` is gone) and allowed by a CSP `sha256-` hash that `scripts/headers.mjs` computes from the same file (`BOOT_HASH`; never `'unsafe-inline'`; `test/seo/security.test.ts` hashes the built pages' inline scripts against `_headers`). The same script starts the tool island: `scripts/defer-main.mjs` (post-build) moves the entry `<script type="module">` onto `#awaketab-tool[data-main]`, and `boot.js` imports it on the first-contentful-paint entry (PerformanceObserver `paint`), capped at 150 ms after `DOMContentLoaded` so the wake lock is still requested within 300 ms (asserted in e2e journey 1). `#awaketab-tool[data-booted]` marks the island interactive.
 - `color-scheme: light` or `dark` is set on `:root` per theme (`oled` → `dark`) so form controls and scrollbars match.
 - Three `<meta name="theme-color">` tags: `media="(prefers-color-scheme: light)"` `#FAF7F2`, `media="(prefers-color-scheme: dark)"` `#14161C`, and one without `media` that JS rewrites to the active ground (`#000000` for `oled`).
 - `D` cycles and persists `settings.theme`; `theme=` param overrides for the view only.

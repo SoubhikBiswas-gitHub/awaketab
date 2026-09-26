@@ -74,7 +74,9 @@ describe('Cloudflare generated rules', () => {
 
   it('keeps tool routes to first-party scripts and connections; only kiosk logos may be https images', () => {
     const csp = headerTools.resolveHeaders(headerTools.generateHeaders(), '/').get('content-security-policy') ?? '';
-    expect(csp).toContain("script-src 'self';");
+    // First-party scripts plus the one hashed inline boot script (src/boot/boot.js); never 'unsafe-inline'.
+    expect(csp).toContain(`script-src 'self' ${headerTools.BOOT_HASH};`);
+    expect(csp.match(/script-src[^;]*/u)?.[0]).not.toContain('unsafe-inline');
     expect(csp).toContain("connect-src 'self';");
     expect(csp).toContain("img-src 'self' data: https:;");
   });
