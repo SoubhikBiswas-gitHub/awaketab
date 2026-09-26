@@ -146,7 +146,7 @@
   "tool.advice.firefox_old": "Firefox 126 ou une version ultérieure garde nativement l’écran allumé. Mettez-le à jour ou touchez Démarrer pour utiliser la solution de secours.",
   "tool.advice.iframe_no_allow": "Intégration sans autorisation. Ouvrez plutôt AwakeTab directement.",
   "tool.advice.retry": "Réessayer",
-  "tool.advice.learn": "En savoir plus",
+  "tool.advice.learn": "Pourquoi cela arrive et comment le corriger",
   "tool.fallback.consent.title": "Utiliser la vidéo de secours ?",
   "tool.fallback.consent.body": "Une minuscule vidéo silencieuse garde l’écran allumé. Elle consomme plus de batterie que le Wake Lock natif.",
   "tool.fallback.consent.accept": "Utiliser la solution de secours",

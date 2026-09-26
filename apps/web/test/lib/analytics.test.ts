@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   analyticsLimits,
   bindClientErrors,
+  flush,
   queuedEvents,
   resetAnalyticsForTests,
   sampleClientError,
@@ -57,6 +58,16 @@ describe('analytics client', () => {
     track('lock_state', { from: 'idle', to: 'held', pad: 'x'.repeat(8_200) }, opts);
     expect(beacon).toHaveBeenCalledTimes(1);
     expect(analyticsLimits.MAX_BYTES).toBe(8 * 1024);
+  });
+
+  it('a failed timer flush (offline, blocked) resolves instead of raising an unhandled rejection', async () => {
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 Chrome/128.0.0.0' });
+    const fetchMock = vi.fn(() => Promise.reject(new TypeError('Failed to fetch')));
+    vi.stubGlobal('fetch', fetchMock);
+    track('page_view', {}, opts);
+    await expect(flush(false)).resolves.toBeUndefined();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(queuedEvents()).toHaveLength(0);
   });
 
   it('samples client_error deterministically at 10%', () => {

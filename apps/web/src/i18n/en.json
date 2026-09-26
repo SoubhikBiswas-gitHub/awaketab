@@ -157,7 +157,7 @@
   "tool.advice.firefox_old": "Firefox 126 or later keeps the screen awake natively. Update, or tap Start for the fallback.",
   "tool.advice.iframe_no_allow": "Embedded without permission. Open AwakeTab directly instead.",
   "tool.advice.retry": "Retry",
-  "tool.advice.learn": "Learn more",
+  "tool.advice.learn": "Why this happens and how to fix it",
 
   "tool.fallback.consent.title": "Use the video fallback?",
   "tool.fallback.consent.body": "A tiny silent video keeps the screen on. It uses more battery than the native wake lock.",

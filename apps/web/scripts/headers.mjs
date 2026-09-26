@@ -46,6 +46,9 @@ const contentRoutes = [
   ),
 ];
 
+// Cloudflare Pages applies every matching rule and joins a header set twice with ", ". Rules that replace
+// a /* default (CSP on content routes, Cache-Control on assets) detach it first with `! Name`; otherwise
+// /_astro/* would ship "public, max-age=0, must-revalidate, public, max-age=31536000, immutable".
 export function generateHeaders() {
   const content = contentRoutes
     .map(

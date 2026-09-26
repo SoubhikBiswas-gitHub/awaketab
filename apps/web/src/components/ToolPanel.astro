@@ -30,6 +30,8 @@ const btnPrimary = cn(buttonVariants(), 'min-h-11 cursor-pointer');
 const btnOutline = cn(buttonVariants({ variant: 'outline' }), 'min-h-11 cursor-pointer');
 const btnDanger = cn(btnOutline, 'text-destructive hover:text-destructive');
 const btnLink = cn(buttonVariants({ variant: 'link' }), 'min-h-11 px-2');
+// The advice link carries a full phrase (Lighthouse link-text); it wraps instead of overflowing at 320 px.
+const btnLinkWrap = cn(btnLink, 'h-auto whitespace-normal');
 const inlineLink = buttonVariants({ variant: 'link', size: 'sm' });
 // shadcn Toggle keys its pressed look on data-[state=on]; the island toggles aria-pressed instead.
 const chip = cn(
@@ -116,7 +118,7 @@ const shortcuts = [
     <div class="at-notice-actions">
       <button class={btnPrimary} type="button" data-notice-retry>{t('tool.advice.retry')}</button>
       <button class={btnOutline} type="button" data-notice-fallback>{t('tool.fallback.consent.accept')}</button>
-      <a class={btnLink} data-notice-learn href="/learn">{t('tool.advice.learn')}</a>
+      <a class={btnLinkWrap} data-notice-learn href="/learn">{t('tool.advice.learn')}</a>
     </div>
   </div>
   <div class="at-chips" data-chips role="group" aria-label={t('tool.presets')}>
@@ -134,7 +136,9 @@ const shortcuts = [
     <button class={chip} type="button" data-preset="custom" aria-pressed="false">{t('tool.preset.custom')}</button>
     <button class={chip} type="button" data-preset="until" aria-pressed="false">{t('tool.preset.until')}</button>
   </div>
-  <button class:list={['at-stop', btnDanger]} type="button" data-stop hidden>{t('tool.ring.stop')}</button>
+  <div class="at-stop-slot">
+    <button class:list={['at-stop', btnDanger]} type="button" data-stop hidden>{t('tool.ring.stop')}</button>
+  </div>
   {
     sponsorEnabled && (
       <SponsorCard placement="idle" label={t('sponsor.label')} />

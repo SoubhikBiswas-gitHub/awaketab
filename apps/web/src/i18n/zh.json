@@ -146,7 +146,7 @@
   "tool.advice.firefox_old": "Firefox 126 及以上版本可原生让屏幕保持常亮。请更新，或点按“开始”使用备用方案。",
   "tool.advice.iframe_no_allow": "嵌入时未获得权限。请直接打开 AwakeTab。",
   "tool.advice.retry": "重试",
-  "tool.advice.learn": "了解更多",
+  "tool.advice.learn": "查看原因和解决方法",
   "tool.fallback.consent.title": "使用视频备用方案？",
   "tool.fallback.consent.body": "一段极小的静音视频会让屏幕保持点亮。它比原生 Wake Lock 更耗电。",
   "tool.fallback.consent.accept": "使用备用方案",

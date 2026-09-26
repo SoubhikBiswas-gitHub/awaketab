@@ -146,7 +146,7 @@
   "tool.advice.firefox_old": "O Firefox 126 ou posterior mantém a tela ligada de forma nativa. Atualize ou toque em Iniciar para usar a alternativa.",
   "tool.advice.iframe_no_allow": "Incorporado sem permissão. Abra o AwakeTab diretamente.",
   "tool.advice.retry": "Tentar novamente",
-  "tool.advice.learn": "Saiba mais",
+  "tool.advice.learn": "Por que isso acontece e como resolver",
   "tool.fallback.consent.title": "Usar o vídeo alternativo?",
   "tool.fallback.consent.body": "Um pequeno vídeo silencioso mantém a tela ligada. Ele consome mais bateria do que o Wake Lock nativo.",
   "tool.fallback.consent.accept": "Usar alternativa",

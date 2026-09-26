@@ -146,7 +146,7 @@
   "tool.advice.firefox_old": "Firefox 126 o posterior mantiene la pantalla despierta de forma nativa. Actualiza, o toca Iniciar para el respaldo.",
   "tool.advice.iframe_no_allow": "Incrustado sin permiso. Abre AwakeTab directamente.",
   "tool.advice.retry": "Reintentar",
-  "tool.advice.learn": "Más información",
+  "tool.advice.learn": "Por qué ocurre y cómo solucionarlo",
   "tool.fallback.consent.title": "¿Usar el video de respaldo?",
   "tool.fallback.consent.body": "Un video silencioso diminuto mantiene la pantalla encendida. Usa más batería que el Wake Lock nativo.",
   "tool.fallback.consent.accept": "Usar respaldo",

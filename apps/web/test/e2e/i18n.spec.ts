@@ -43,6 +43,9 @@ function collectErrors(page: Page): string[] {
 
 test.beforeEach(async ({ page }) => {
   await installFakeWakeLock(page);
+  // `astro preview` serves no Pages Functions: answer the first-party beacon like /api/e does (204), or
+  // WebKit logs the pagehide sendBeacon's 404 as a console error and the zero-errors check fails there.
+  await page.route('**/api/e', (route) => route.fulfill({ status: 204, body: '' }));
 });
 
 test.describe('per-locale smoke', () => {

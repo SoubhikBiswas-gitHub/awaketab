@@ -1,14 +1,31 @@
 name: Lighthouse
 
+# One config (lighthouserc.cjs) for both modes:
+# - a deployed Cloudflare Pages preview (deployment_status from the Pages GitHub integration, or a manual
+#   run with a base URL) → LHCI_BASE_URL is set and nothing is built or served here;
+# - a pull request without a preview → build and let LHCI start `pnpm --filter web preview` on 127.0.0.1:4321.
+
 on:
   pull_request:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Origin to audit, e.g. https://abc123.awaketab.pages.dev (empty = local preview build)'
+        required: false
+        default: ''
 
 permissions:
   contents: read
 
 jobs:
   audit:
+    # deployment_status fires for every state; only audit successful deployments.
+    if: github.event_name != 'deployment_status' || github.event.deployment_status.state == 'success'
     runs-on: ubuntu-24.04
+    env:
+      LHCI_BASE_URL: ${{ github.event.deployment_status.environment_url || github.event.deployment_status.target_url || inputs.base_url || '' }}
+      LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -19,5 +36,13 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-      - run: pnpm exec lhci autorun
+      - name: Build (local preview mode only)
+        if: env.LHCI_BASE_URL == ''
+        run: pnpm build
+      - name: Lighthouse CI
+        run: pnpm lighthouse
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci
