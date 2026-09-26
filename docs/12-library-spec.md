@@ -1,6 +1,6 @@
 # 12 · Library specification — `@awaketab/wake`
 
-Status: v1.0 · 2026-09-07 · Owner: Soubhik
+Status: v1.1 · 2026-09-26 (as built in M8, §10) · Owner: Soubhik
 
 **Purpose.** `@awaketab/wake` is the low-level Screen Wake Lock layer that the web app, the PiP window, the embed and the extension share — published as a standalone, MIT-licensed npm package. It is the maintained replacement for NoSleep.js (last release December 2020) and the developer-facing asset that earns the links a tool site needs. This document is its contract.
 
@@ -175,3 +175,29 @@ Native: Chrome/Edge ≥ 84, Firefox ≥ 126, Safari ≥ 16.4 (iOS Home-Screen we
 ## 9. Contributing summary
 
 Issues use templates (bug with browser/OS/version, feature request); PRs require a changeset, tests for any transition change, and a passing size check. Code of conduct: Contributor Covenant. Security issues via `security@awaketab.com`.
+
+---
+
+## 10. As built (M8, 2026-09-26)
+
+Identifiers are canonical in `00-conventions.md` §13.10.
+
+### 10.1 Package fixes made before the first publish
+
+- **IIFE name.** tsup emitted `dist/awaketab-wake.iife.global.js`; the contract (§1, README, CDN URLs, `/library`) is `dist/awaketab-wake.iife.js`. `tsup.config.ts` now sets `outExtension` for that build.
+- **Adapters.** Each adapter imported the core through `../index.js` and so bundled a full second copy of the state machine (≈ 3 KB gz each, a separate lock instance). An esbuild plugin now resolves that import to the external `@awaketab/wake`: react 271 B, preact 277 B, vue 237 B gz. Adapters also gained CJS builds and `.d.ts`/`.d.cts` types (the §3 `exports` pointed at `.d.ts` files that did not exist).
+- **`exports`.** Nested `import`/`require` conditions, each with its own `types` (`.d.ts` / `.d.cts`), plus `"./iife"` and `"./package.json"`; `unpkg` and `jsdelivr` point at the IIFE.
+- **Metadata.** `author`, `bugs`, `funding` (GitHub Sponsors), `publishConfig: { access: 'public', provenance: true, registry }`; `files` adds `CHANGELOG.md`.
+- **Changesets.** `.changeset/config.json` `access` is `public`. The two pending wake changesets (`wake-lock-layer` patch, and the wake half of `type-name-prefixes` major) are folded into `CHANGELOG.md` → `## 1.0.0`, so `changeset version` does not bump the never-published package to 2.0.0. The `@awaketab/core` half stays pending (core is private).
+- **size-limit.** `dist/index.js` ≤ 3.4 kB (3.21 kB), the IIFE ≤ 3.6 kB (3.45 kB), each adapter ≤ 400 B.
+
+### 10.2 Release (`.github/workflows/release.yml`)
+
+Job `version` runs `changesets/action` (opens the "version packages" PR while changesets are pending). When none are pending, job `publish-wake` (environment `npm`) tests, builds and size-checks the package, skips if `@awaketab/wake@<version>` is already on npm, prints `npm pack --dry-run`, runs `npm publish --provenance --access public` from `packages/wake`, and pushes the tag `@awaketab/wake@<version>`. Auth: npm trusted publishing (GitHub OIDC; the job installs npm 11.6.2 because trusted publishing needs ≥ 11.5.1 and Node 22 bundles npm 10), with an `NPM_TOKEN` automation-token secret as the fallback. Nothing is published from a laptop: `publishConfig.provenance` makes a local `npm publish` fail outside CI.
+
+`npm pack --dry-run` for 1.0.0 (23 files, 12.9 kB packed, 55.8 kB unpacked): `CHANGELOG.md`, `LICENSE`, `README.md`, `package.json`, `dist/index.{js,cjs,d.ts,d.cts}`, `dist/types-*.d.{ts,cts}`, `dist/awaketab-wake.iife.js`, `dist/adapters/{react,preact,vue}.{js,cjs,d.ts,d.cts}`. `packages/wake/test/pack.test.ts` asserts this list, that every `exports`/`unpkg` target is packed, and that no `src/`, `test/` or config file is.
+
+### 10.3 README and `/library`
+
+The README follows §5 (badges: npm version, gzip size, CI, provenance, licence; CDN usage; the seven-state diagram; options; adapters; caveats; the "cannot do" note; iframes; support; NoSleep.js comparison). `/library` runs the **published** IIFE: `scripts/library.mjs` copies `dist/awaketab-wake.iife.js` to `/library/awaketab-wake.iife.js` at build (same origin — tool-route CSP allows only `'self'` scripts). The demo (`src/lib/library-demo.ts`) offers four scenarios so all seven states are reachable in any browser: this browser's API (`idle → requesting → held`), a simulated device whose "tab hidden" releases the sentinel via an injected `documentLike` + wake-lock API (`lost`, then re-acquired), a simulated battery-saver denial (`denied` + `battery_saver`), and no API (`unsupported`, then a click starts the real inlined video → `fallback`). The page also carries ESM, CDN and React samples, the §4 comparison and the honesty note; no ads.
+

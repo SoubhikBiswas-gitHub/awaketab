@@ -26,6 +26,8 @@ export interface IIncomingEvent {
   addedMin?: unknown;
   stars?: unknown;
   count?: unknown;
+  host?: unknown;
+  target?: unknown;
 }
 
 export interface IAePoint {
@@ -43,7 +45,17 @@ function num(value: unknown): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : 0;
 }
 
+// Embed analytics (docs/11 §8): the embedding page's hostname rides on the widget's page_view in blob6; the
+// share_click target (`attribution` = the widget's credit link) in blob7. Hostname only — never a path or query.
+const HOST_RE = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/u;
+const SHARE_TARGETS = new Set(['attribution']);
+
+function hostOf(value: unknown): string {
+  return typeof value === 'string' && HOST_RE.test(value) ? value : '';
+}
+
 function attr1(event: TEventName, row: IIncomingEvent): string {
+  if (event === 'page_view' && row.source === 'embed') return hostOf(row.host);
   if (event === 'session_start') return str(row.planType);
   if (event === 'session_end' || event === 'lock_denied') return str(row.reason);
   if (event === 'lock_state') return str(row.from);
@@ -55,6 +67,7 @@ function attr1(event: TEventName, row: IIncomingEvent): string {
 }
 
 function attr2(event: TEventName, row: IIncomingEvent): string {
+  if (event === 'share_click') return typeof row.target === 'string' && SHARE_TARGETS.has(row.target) ? row.target : '';
   if (event === 'session_start') return str(row.presetId);
   if (event === 'lock_state') return str(row.to);
   if (event === 'pro_checkout_click') return str(row.sku);

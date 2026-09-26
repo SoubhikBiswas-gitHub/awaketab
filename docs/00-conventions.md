@@ -250,7 +250,8 @@ Common fields: `ts`, `path` (no query string), `locale`, `ua` class (browser fam
 
 | Budget | Value |
 |---|---|
-| Tool pages JS (gz) | ≤ 40 KB total; ≤ 15 KB in the critical path |
+| Tool pages JS (gz) | ≤ 40 KB total; ≤ 15 KB in the critical path. *Critical* = the page's module entry scripts plus their static-import closure; *total* = the closure over static **and** dynamic `import()` edges from those entries — everything the tool page can ever load, and nothing another page loads (§13.10) |
+| Embed widget JS (gz) | `/embed/cook` iframe app ≤ 25 KB (same full-closure rule); loader `/embed.js` ≤ 3 KB |
 | Tool pages CSS (gz) | ≤ 20 KB, critical inlined |
 | Third-party requests on tool pages | 0 |
 | Hydrated framework islands on any page | 0 (`<astro-island>` in built HTML, or a React runtime chunk in `dist/_astro/`, fails the size gate) |
@@ -419,6 +420,64 @@ Accepted on 2026-09-26 with the M6 implementation. Specs: `04-engine-spec.md` §
 
 55 new keys, present in all 8 locales: groups `ambient.*` (titles, focus, message, cook timers), `stats.*`, `rating.*`, `end.*` (`end.notify.title`, `end.notify.body`, `end.titleFlash`), `settings.accent.*`, `settings.ambient.*` additions, `settings.notifications.unavailable`, `pip.add15.label`, `pip.empty`, `tool.toast.batteryLow`, `tool.toast.proMessage`.
 
+### 13.10 M8 — embed widget, library publish, `/library`, research page (E12)
+
+Accepted on 2026-09-26 with the M8 implementation. Specs: `11-embed-spec.md` §11 (as built), `12-library-spec.md` §10 (as built), `09-monetization-impl.md` §7, `13-testing-strategy.md` §5 journey 10 and §7, `14-devops.md` §3 and §6.
+
+**Embed (`apps/web/src/tool/embed/`)**
+
+| Identifier | Decision |
+|---|---|
+| `protocol.ts` | The page ↔ widget contract shared by the loader and the iframe app: allow-lists `EMBED_MODES` (`cook` `standard` `clock` `minimal`) · `EMBED_THEMES` · `EMBED_SIZES` · `EMBED_PRESETS` (`p15`…`pinf`, `until`) · `EMBED_LOCALES`; `EMBED_BOX` (compact 320 × 96, full 100 % × 240); `EMBED_MIN_HEIGHT` 64 / `EMBED_MAX_HEIGHT` 640 (resize clamp); `EMBED_MAX_MS` 7 days (= `CUSTOM_MAX_MS`); `EMBED_PATH` `/embed/cook`; `EMBED_VERSION` `'1'` (sent in `awaketab:ready`) |
+| Loader attributes | `data-mode` `data-theme` `data-lang` (else the host page's `<html lang>`, BCP 47 → one of the 8 locales) `data-size` `data-preset`, plus `data-until="HH:MM"` with `data-preset="until"`. `data-license` from docs/11 §1 is not read: licensing is decided by the verified domain, and a key never travels in a URL |
+| Message shape | `{ type: 'awaketab:<name>', ...payload }` for all six messages of docs/11 §3; anything else is dropped on both sides |
+| Origin checks | Loader: accepts a message only when `event.source` is an iframe it created **and** `event.origin` is the loader's own origin (derived from the `<script src>`, so preview deployments work); posts with that origin as `targetOrigin`. Widget: accepts only from `window.parent`, only when `event.origin` equals the verified parent origin (`location.ancestorOrigins[0]`, else the referrer — the loader sets `referrerpolicy="strict-origin"`) **and** that hostname equals the declared `host=` param when one is present; posts to that exact origin, never `*` |
+| `EMBED_SANDBOX` | `allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox`. The fourth token (C4 decision) lets the attribution/"How to fix" links open awaketab.com as a normal tab rather than inheriting the sandbox; it widens nothing for the host page |
+| Resize rule | The loader applies `awaketab:resize` but never below the reserved box height, so a widget can grow (notice, timers) and never shift the host page by shrinking |
+| `at.v1.embed.settings` | `{ v: 1, cookTimers: ICookTimer[] }` (≤ 3, same shape as §13.8) — the widget's only persistent key. The widget's session engine runs on `memoryAdapter()` and a no-op `BroadcastChannel`, so it never writes `at.v1.session`/`at.v1.stats` or joins the app's tab election (`08-data-storage.md` §2.10) |
+| Licence lookup | `GET /api/embed/config?domain=<verified parent hostname>` only — never the `host=` param. Unknown/failed/timed-out (`EMBED_CONFIG_TIMEOUT_MS` 4000) → free rendering with attribution |
+| `--at-embed-brand` · `--at-embed-on-brand` | Private custom properties set on the widget root only for licensed sites: the Start button fill and its black/white label (`onAccent()` picks the higher-contrast one, ≥ 4.5:1 for any colour). Default = the AA primary pair `--at-accent-text` / `--at-on-accent` |
+| iframe_no_allow detection | `policy.ts`: `document.permissionsPolicy ?? document.featurePolicy` `.allowsFeature('screen-wake-lock')` → the "Ask the site owner" notice shows at load in a frame the policy blocks; `embedAdvice()` turns the library's `iframe_no_allow` into `battery_saver`/`low_power_ios` when the policy is known to allow the lock |
+| Catalog subset | `catalog.ts` `isEmbedKey()`: `/embed/cook` inlines only `embed.*`, `tool.pill.*`, `tool.advice.*` and a few `ambient.cook.*` keys for all 8 locales (one static page serves every `lang=`) |
+| `snippet.ts` | `loaderSnippet()` · `iframeSnippet()` · `kioskUrl()` · `kioskMsg()` — the /embed and /kiosk generators; `DEFAULT_SNIPPET` renders the tag documented in docs/11 §11 |
+| `kiosk.ts` | Tool-side Kiosk licence unlocks (lazy, loaded by `main.ts` only when the URL has `#lic=` or `logo=`): `readLicHash` · `applyKioskHash` (offline verify with no device binding, kiosk plans only — `KIOSK_PLANS` `biz_kiosk_site` `biz_kiosk_5` — store to `at.v1.license` with `deviceId: ''`, `deviceLabel: 'kiosk'`, strip the hash first) · `parseLogo` (https, no credentials, ≤ `KIOSK_LOGO_MAX` 512 chars) · `applyKioskBranding` (`ambient.logo` → logo above the timer and in the ambient dialog; `kiosk.branding` → `<html data-kiosk>` hides the wordmark and `ui/rating.ts` never prompts) |
+| Kiosk plan features | `biz_kiosk_site` / `biz_kiosk_5` now include `ambient.message` (docs/09 §7.2 already said so; `PLAN_FEATURES` in `functions/_lib/license.ts` and `src/lib/license.ts` lacked it) |
+| Tool-route CSP `img-src` | `'self' data: https:` — the operator's `logo=` image is the only cross-origin resource a tool route may load, and only on a licensed kiosk URL. `script-src`, `connect-src`, `style-src`, `font-src` stay `'self'`; the zero-third-party budget still holds for every default tool page (C4 decision — needs owner sign-off) |
+
+**Build, budgets and headers**
+
+| Identifier | Decision |
+|---|---|
+| `apps/web/scripts/embed-loader.mjs` | esbuild: `src/tool/embed/loader-entry.ts` → `public/embed.js` (IIFE, committed, `__AT_FRAME_TITLES__` = the 8 `embed.frame.title` strings) and `src/tool/embed/app.ts` → `public/embed/app.js` (ESM, git-ignored). First step of `pnpm -F web build` and `dev`. The iframe app is **not** an Astro `<script>`: sharing `@awaketab/core`/`wake` with the tool entry made Rollup split shared chunks onto the tool's critical path (+900 B gz) |
+| `apps/web/scripts/library.mjs` | Copies `packages/wake/dist/awaketab-wake.iife.js` (building the package if needed) to `public/library/` (git-ignored) for the `/library` demo |
+| `apps/web/scripts/support-matrix.mts` | The support-matrix update hook: `matrix:check` (build step) validates `docs/metrics/device-matrix.json` and that every row names a `support-matrix.json` id; `matrix:sync` writes `lastUpdated` and per-row `lastVerified` only when the run is `complete` |
+| `docs/metrics/device-matrix.json` | `{ version: 1, status: 'pending' \| 'complete', updatedAt, method[], rows[] }`; row = `{ id, device, os, browser (support-matrix id), version, power ('plugged' \| 'battery' \| 'battery-saver'), mode, case, expected, observed, evidence, date, verdict ('pending' \| 'pass' \| 'partial' \| 'fail') }`; validated by `src/lib/device-matrix.ts` `parseDeviceMatrix()` (a recorded verdict needs date, version, observed and evidence) |
+| `scripts/size.mjs` gates | `criticalJs` ≤ 15,360 (static closure of `index.html`'s module entries) · `totalJs` ≤ 40,960 (static + dynamic closure of the same entries; replaces "every `dist/_astro/*.js`") · `embedJs` ≤ 25,600 (full closure from `embed/cook/index.html`) · `loaderJs` ≤ 3,072 (`dist/embed.js`) · `totalCss` · `hydrated` · `reactChunks` unchanged. Report fields `files` (critical), `lazyFiles`, `embedFiles`. Closure helpers in `scripts/size-lib.mjs` |
+| `_headers` | `/embed` and `/embed/` (the landing page, which `/embed/*` also matches) re-apply the default CSP, `X-Frame-Options: DENY` and drop `X-Robots-Tag`; `/embed.js` `Cache-Control: public, max-age=3600`. Every rule that sets `Cache-Control` or re-sets `X-Frame-Options` now detaches the `/*` value first (`! Header`), because Cloudflare joins a header set by two matching rules. `resolveHeaders(text, path)` in `scripts/headers.mjs` evaluates the file for tests |
+| Ads | `pages/embed/**`, `pages/kiosk.astro`, `pages/library.astro` are in the ESLint no-ad-imports list; none of them uses `ContentLayout` |
+
+**Library (`packages/wake`)**
+
+| Identifier | Decision |
+|---|---|
+| IIFE file name | `dist/awaketab-wake.iife.js` (tsup `outExtension`; it was emitting `.global.js`). `package.json` `unpkg`/`jsdelivr` and `exports["./iife"]` point at it |
+| Adapters | Built with `../index.js` external → `@awaketab/wake` (they no longer bundle a second state machine: 271 / 277 / 237 B gz), with `.d.ts`/`.d.cts` types and CJS builds; `exports` uses nested `import`/`require` conditions with matching types |
+| Publishing | `publishConfig: { access: 'public', provenance: true }`; `.changeset/config.json` `access: 'public'`; the pre-release wake changesets are folded into `packages/wake/CHANGELOG.md` 1.0.0 so `changeset version` does not bump past 1.0.0. `release.yml` job `publish-wake` runs `npm publish --provenance --access public` when the version is not on npm yet (trusted publishing via OIDC with npm ≥ 11.5.1; `NPM_TOKEN` secret as fallback) and tags `@awaketab/wake@<version>` |
+| `size-limit` | Adds the IIFE (≤ 3.6 kB) and each adapter (≤ 400 B) |
+
+**Pages and analytics**
+
+| Identifier | Decision |
+|---|---|
+| `/embed`, `/kiosk`, `/library` | Indexable English landing pages on `BaseLayout` (no ads), in `sitemap-en.xml`, with OG images `embed-en.png` · `kiosk-en.png` · `library-en.png`. `/embed/cook` stays `noindex` |
+| `/learn/how-we-tested` | `ArticlePage` gains a named slot `after` (outside `.at-prose`, so it never counts toward the word band); the learn route fills it with `DeviceMatrix.astro` on this slug |
+| Embed analytics | Widget events carry `source: 'embed'`, `path: '/embed/cook'`. `page_view` from the widget sends `host` (hostname) → `blob6`; `share_click` sends `target: 'attribution'` → `blob7` (allow-listed in `functions/_lib/events.ts`) |
+| `/api/embed/config` | Unknown domain → `{ licensed: false, attribution: true, theme: null, expiresAt: null }` (was `theme: 'auto'`). Looks up the host and each parent domain down to two labels (so `www.`/`staging.` resolve to `embed:{registrable domain}`), treats an expired `expiresAt` or a non-`active` `lic:{keyHash}` as unlicensed, and returns `theme` only as a validated `{ accent: '#rrggbb' \| null, scheme }`. Helpers in `functions/_lib/embed.ts` |
+
+**i18n** — 56 new keys in all 8 locales: `embed.*` (widget), `page.embed.*` · `page.kiosk.*` · `page.library.*`, `builder.*` (generators), `library.demo.*`, `research.*` (device matrix), `kiosk.license.invalid`.
+
+---
+
 ### 13.11 M6 follow-ups
 
 Accepted on 2026-09-26 with the M6 follow-up work. Specs: `05-frontend-spec.md` §3.14, §3.17, §3.23, §9; `08-data-storage.md` §2.2, §2.3, §6; `04-engine-spec.md` §10, §13.
@@ -450,8 +509,6 @@ Accepted on 2026-09-26 with the M6 follow-up work. Specs: `05-frontend-spec.md` 
 **i18n**
 
 1 new key, present in all 8 locales: `ambient.focus.today` (`{n, plural, …}`).
-
----
 
 ## 14. Writing conventions for these docs
 

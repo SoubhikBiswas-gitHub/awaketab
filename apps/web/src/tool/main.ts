@@ -58,6 +58,7 @@ export function boot(root: HTMLElement): () => void {
   });
 
   applyTheme(params.theme ?? settings.theme, store.get().ui.mode === 'night');
+  const bootSearch = location.search;
   history.replaceState(null, '', `${params.canonicalPath}${location.hash}`);
 
   if (!storage.persistent) pushToast(store, { kind: 'info', text: t('tool.toast.storage'), id: 'storage' });
@@ -200,6 +201,9 @@ export function boot(root: HTMLElement): () => void {
     },
     audio: () => audio,
   };
+
+  // Kiosk licence unlocks (docs/09 §7.2): lazy, only when the URL asks for them.
+  if (location.hash.startsWith('#lic=') || bootSearch.includes('logo=')) void import('./embed/kiosk.js').then((m) => m.mountKiosk(ctx, bootSearch));
 
   const unsubs: Array<() => void> = [];
   let ambient = false;

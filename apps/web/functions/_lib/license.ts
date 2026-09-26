@@ -56,8 +56,8 @@ export const PLAN_FEATURES: Record<TPlanId, TFeatureId[]> = {
   pro_yearly: PRO_GATES,
   pro_lifetime: PRO_GATES,
   biz_embed_site_yearly: ['embed.noattrib', 'ads.free'],
-  biz_kiosk_site: ['kiosk.branding', 'ambient.logo', 'ads.free'],
-  biz_kiosk_5: ['kiosk.branding', 'ambient.logo', 'ads.free'],
+  biz_kiosk_site: ['kiosk.branding', 'ambient.message', 'ambient.logo', 'ads.free'],
+  biz_kiosk_5: ['kiosk.branding', 'ambient.message', 'ambient.logo', 'ads.free'],
 };
 
 const TE = new TextEncoder();

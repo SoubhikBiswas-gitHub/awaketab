@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import ArticlePage from '../../components/ArticlePage.astro';
+import DeviceMatrix from '../../components/DeviceMatrix.astro';
 
 export async function getStaticPaths() {
   const pages = await getCollection('learn', ({ data }) => data.locale === 'en');
@@ -11,6 +12,9 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+const slug = entry.id.replace(/^en\//u, '');
 ---
 
-<ArticlePage kind="learn" entry={entry} />
+<ArticlePage kind="learn" entry={entry}>
+  {slug === 'how-we-tested' && <DeviceMatrix slot="after" />}
+</ArticlePage>

@@ -1,5 +1,4 @@
 ---
-"@awaketab/wake": major
 "@awaketab/core": major
 ---
 

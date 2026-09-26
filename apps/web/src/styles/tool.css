@@ -1162,4 +1162,19 @@
       border: 1px solid CanvasText;
     }
   }
+
+  /* Kiosk licence (docs/09 §7.2, src/tool/embed/kiosk.ts): `kiosk.branding` hides the wordmark; the
+     operator's `logo=` image sits above the timer and at the top of the ambient screen. */
+  [data-kiosk] .at-wordmark {
+    visibility: hidden;
+  }
+
+  .at-kiosk-logo {
+    display: block;
+    max-block-size: 72px;
+    max-inline-size: min(240px, 60vw);
+    margin-inline: auto;
+    margin-block-end: var(--at-s-4);
+    object-fit: contain;
+  }
 }

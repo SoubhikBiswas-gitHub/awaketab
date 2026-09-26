@@ -1,0 +1,200 @@
+---
+// /kiosk — kiosk and signage landing with the URL builder (docs/09 §7.2–§7.3, E12-T02). No ads (docs/00 §8.3).
+// Free params: autostart, preset, mode, msg (≤ 80), theme. Kiosk licence extras: `logo=` (https) and the
+// `#lic=<token>` hash, verified offline by the tool (src/tool/embed/kiosk.ts) and stripped from the address bar.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t } from '../i18n/load';
+import { articleSchema } from '../lib/seo';
+import { CHECKOUT_LINKS, PLAN_PRICES } from '../lib/license';
+import { KIOSK_MODES, kioskUrl } from '../tool/embed/snippet';
+import { cn } from 'cn';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { buttonVariants } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const canonical = `${site}/kiosk`;
+const title = t('page.kiosk.title');
+const description = t('page.kiosk.description');
+const initial = kioskUrl({ preset: 'pinf', mode: 'message', theme: 'dark', msg: 'Welcome — please ring the bell', autostart: true, logo: '', token: '' });
+const presets = ['pinf', 'p60', 'p120', 'p240'] as const;
+const themes = ['auto', 'light', 'dark', 'oled'] as const;
+
+const ctaClass = cn(buttonVariants({ size: 'lg' }), 'min-h-11 w-full text-base');
+const outlineClass = cn(buttonVariants({ variant: 'outline' }), 'min-h-11 cursor-pointer');
+const navClass = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11');
+const h2 = 'mt-10 mb-3 text-xl font-semibold leading-tight';
+const field = 'grid gap-1 text-sm font-medium';
+const control =
+  'min-h-11 rounded-md border border-input bg-background px-3 text-base text-foreground focus-visible:outline-2 focus-visible:outline-ring';
+const code = 'block overflow-x-auto rounded-lg border bg-card p-4 text-sm leading-relaxed break-all whitespace-pre-wrap';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogImage="/og/kiosk-en.png"
+  schema={articleSchema({
+    canonical,
+    title: t('page.kiosk.h1'),
+    description,
+    locale: 'en',
+    published: '2026-09-26',
+    breadcrumbs: [
+      { name: 'AwakeTab', url: site },
+      { name: t('page.kiosk.h1'), url: canonical },
+    ],
+  })}
+>
+  <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
+  <main class="mx-auto mt-8 max-w-[45rem] leading-normal">
+    <h1 class="text-3xl font-bold leading-tight tracking-tight text-balance">{t('page.kiosk.h1')}</h1>
+    <p class="mt-3 text-lg">
+      Point a kiosk browser, a lobby dashboard or a shop-window screen at one AwakeTab URL. It starts by itself, shows
+      your message or a clock, and keeps the display on for as long as the page is in front — no install, no account.
+    </p>
+
+    <section aria-labelledby="builder">
+      <h2 id="builder" class={h2}>{t('builder.url')}</h2>
+      <form class="grid gap-4 rounded-lg border p-4 sm:grid-cols-2" data-kiosk-form>
+        <label class={field}>
+          {t('builder.mode')}
+          <select class={control} name="mode">
+            {KIOSK_MODES.map((m) => <option value={m} selected={m === 'message'}>{t(`ambient.mode.${m}`)}</option>)}
+          </select>
+        </label>
+        <label class={field}>
+          {t('settings.theme')}
+          <select class={control} name="theme">
+            {themes.map((th) => <option value={th} selected={th === 'dark'}>{t(`settings.theme.${th}`)}</option>)}
+          </select>
+        </label>
+        <label class={field}>
+          {t('tool.presets')}
+          <select class={control} name="preset">
+            {presets.map((p) => <option value={p}>{p === 'pinf' ? t('tool.preset.pinf.sr') : t(`tool.preset.${p}`)}</option>)}
+          </select>
+        </label>
+        <label class="flex min-h-11 items-center gap-2 self-end text-sm font-medium">
+          <input type="checkbox" name="autostart" checked class="size-5" />
+          {t('builder.autostart')}
+        </label>
+        <label class={cn(field, 'sm:col-span-2')}>
+          {t('builder.msg')}
+          <input class={control} name="msg" maxlength="80" value="Welcome — please ring the bell" autocomplete="off" />
+        </label>
+        <label class={cn(field, 'sm:col-span-2')}>
+          {t('builder.logo')}
+          <input class={control} name="logo" type="url" inputmode="url" placeholder="https://example.com/logo.png" autocomplete="off" />
+        </label>
+        <label class={cn(field, 'sm:col-span-2')}>
+          {t('builder.token')}
+          <input class={control} name="token" autocomplete="off" spellcheck="false" />
+        </label>
+        <div class="sm:col-span-2">
+          <pre><code class={code} data-kiosk-url>{initial}</code></pre>
+          <div class="mt-3 flex items-center gap-3">
+            <button class={outlineClass} type="button" data-kiosk-copy>{t('tool.share.copy')}</button>
+            <span class="text-sm text-muted-foreground" role="status" data-kiosk-status data-copied={t('builder.copied')}></span>
+          </div>
+        </div>
+      </form>
+      <p class="mt-3 text-sm text-muted-foreground">
+        If you activated a Kiosk licence in this browser, the token field fills itself in. The token travels in the
+        <code>#lic=</code> part of the URL, which browsers never send to a server; AwakeTab checks it offline and removes
+        it from the address bar.
+      </p>
+    </section>
+
+    <section aria-labelledby="free">
+      <h2 id="free" class={h2}>Free for every screen</h2>
+      <ul class="list-disc space-y-2 ps-5">
+        <li><code>autostart=1</code> — the lock is requested as soon as the page is visible.</li>
+        <li><code>mode=</code> — <code>message</code>, <code>clock</code>, <code>minimal</code>, <code>night</code> or <code>standard</code>.</li>
+        <li><code>msg=</code> — up to 80 characters on the message screen (a shared link previews it; the licence keeps it on).</li>
+        <li><code>theme=</code> — <code>auto</code>, <code>light</code>, <code>dark</code> or <code>oled</code>.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="licensed">
+      <h2 id="licensed" class={h2}>With a Kiosk licence</h2>
+      <ul class="list-disc space-y-2 ps-5">
+        <li>Your logo from <code>logo=</code> (an https image) above the timer and on the ambient screen.</li>
+        <li>No AwakeTab wordmark, and no rating or upgrade prompts, ever.</li>
+        <li>The message screen stays on permanently.</li>
+        <li>Works offline: the token is verified on the device and re-checked quietly when it is online.</li>
+      </ul>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <Card>
+          <CardHeader><CardTitle className="text-2xl" id="kiosk-one">${PLAN_PRICES.biz_kiosk_site} one-time · 1 site</CardTitle></CardHeader>
+          <CardContent>
+            <a class={ctaClass} href={CHECKOUT_LINKS.biz_kiosk_site} rel="noopener" aria-describedby="kiosk-one">Buy for one site</a>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader><CardTitle className="text-2xl" id="kiosk-five">${PLAN_PRICES.biz_kiosk_5} one-time · 5 sites</CardTitle></CardHeader>
+          <CardContent>
+            <a class={ctaClass} href={CHECKOUT_LINKS.biz_kiosk_5} rel="noopener" aria-describedby="kiosk-five">Buy for five sites</a>
+          </CardContent>
+        </Card>
+      </div>
+      <p class="mt-4"><a class={navClass} href="/pro/activate">Activate a Kiosk key</a></p>
+    </section>
+
+    <Alert role="note" className="mt-8 border-l-4 border-l-warning">
+      <AlertDescription>
+        A web page can keep the display on only while it is the visible tab. Set the kiosk browser to open this URL
+        full-screen, keep the device plugged in, and leave the OS lid and sleep settings to the device's own power
+        plan — no web page can override those.
+      </AlertDescription>
+    </Alert>
+
+    <nav aria-label="Related" class="mt-8 flex flex-wrap gap-2">
+      <a class={navClass} href="/for/kiosk">Kiosk setup guide</a>
+      <a class={navClass} href="/embed">Embed widget</a>
+      <a class={navClass} href="/terms">Licence terms</a>
+    </nav>
+  </main>
+  <script>
+    import { KIOSK_MODES, kioskUrl, type IKioskUrlOptions } from '../tool/embed/snippet';
+    import { pick } from '../tool/embed/protocol';
+
+    const form = document.querySelector<HTMLFormElement>('[data-kiosk-form]');
+    const out = document.querySelector<HTMLElement>('[data-kiosk-url]');
+    const status = document.querySelector<HTMLElement>('[data-kiosk-status]');
+    const tokenInput = form?.querySelector<HTMLInputElement>('input[name="token"]');
+
+    // Prefill from a Kiosk licence activated in this browser (at.v1.license, docs/08). Read-only.
+    try {
+      const lic = JSON.parse(localStorage.getItem('at.v1.license') ?? 'null') as { plan?: string; token?: string } | null;
+      if (tokenInput && lic?.token && (lic.plan === 'biz_kiosk_site' || lic.plan === 'biz_kiosk_5')) tokenInput.value = lic.token;
+    } catch {
+      // storage unavailable: leave the field empty
+    }
+
+    const read = (): IKioskUrlOptions => {
+      const data = new FormData(form ?? undefined);
+      return {
+        mode: pick(KIOSK_MODES, data.get('mode'), 'message'),
+        theme: pick(['auto', 'light', 'dark', 'oled'] as const, data.get('theme'), 'dark'),
+        preset: pick(['pinf', 'p15', 'p30', 'p45', 'p60', 'p120', 'p240'] as const, data.get('preset'), 'pinf'),
+        autostart: data.get('autostart') !== null,
+        msg: String(data.get('msg') ?? ''),
+        logo: String(data.get('logo') ?? ''),
+        token: String(data.get('token') ?? ''),
+      };
+    };
+    const render = () => {
+      if (out) out.textContent = kioskUrl(read(), location.origin);
+      if (status) status.textContent = '';
+    };
+    form?.addEventListener('input', render);
+    render();
+    document.querySelector('[data-kiosk-copy]')?.addEventListener('click', () => {
+      void navigator.clipboard.writeText(out?.textContent ?? '').then(() => {
+        if (status) status.textContent = status.dataset.copied ?? '';
+      });
+    });
+  </script>
+</BaseLayout>

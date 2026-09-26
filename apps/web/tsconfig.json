@@ -26,6 +26,9 @@
     "dist",
     "dist-*",
     "test",
-    "functions"
+    "functions",
+    "public/embed.js",
+    "public/embed",
+    "public/library"
   ]
 }

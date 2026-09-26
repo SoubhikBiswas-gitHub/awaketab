@@ -76,6 +76,9 @@ export default tseslint.config(
       'apps/web/src/pages/until/**',
       'apps/web/src/pages/pip.astro',
       'apps/web/src/pages/404.astro',
+      'apps/web/src/pages/embed/**',
+      'apps/web/src/pages/kiosk.astro',
+      'apps/web/src/pages/library.astro',
     ],
     rules: {
       'no-restricted-imports': [

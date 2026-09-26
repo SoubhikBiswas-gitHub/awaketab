@@ -211,4 +211,26 @@ describe('built site SEO', () => {
       expect(sitemap, locale).not.toContain('/pip');
     }
   });
+  it('keeps /embed/cook out of the index and the M8 landing pages in it (docs/00 §7, E12)', async () => {
+    const [widget, english] = await Promise.all([
+      readFile(new URL('embed/cook/index.html', dist), 'utf8'),
+      readFile(new URL('sitemap-en.xml', dist), 'utf8'),
+    ]);
+    expect(meta(widget, 'robots')).toContain('noindex');
+    expect(english).not.toContain('/embed/cook');
+    for (const route of ['/embed', '/kiosk', '/library']) {
+      expect(english).toContain(`<loc>${site}${route}</loc>`);
+      const html = await readFile(new URL(`${route.slice(1)}/index.html`, dist), 'utf8');
+      expect(meta(html, 'robots'), route).not.toContain('noindex');
+      expect(html, route).not.toMatch(/googlesyndication|adsbygoogle|data-ad-slot/u);
+    }
+  });
+
+  it('renders /learn/how-we-tested from the device matrix, marked "Results pending" (E12-T06)', async () => {
+    const html = await readFile(new URL('learn/how-we-tested/index.html', dist), 'utf8');
+    expect(html).toContain('data-device-matrix');
+    expect(html).toContain('data-status="pending"');
+    expect(html).toContain('Results pending');
+    expect(html.match(/<tr[^>]*data-row=/gu)).toHaveLength(14);
+  });
 });
