@@ -1,10 +1,10 @@
 import type { IEnv } from '../_lib/env';
-import { jsonError, jsonOk } from '../_lib/http';
+import { jsonError, jsonOk, rateLimited } from '../_lib/http';
 import { clientIp, rateLimit } from '../_lib/ratelimit';
 
 export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   const { env, request } = context;
-  if (!(await rateLimit(env, 'rating', await clientIp(request), 10))) return jsonError('rate_limited', 429);
+  if (!(await rateLimit(env, 'rating', await clientIp(request), 10))) return rateLimited();
   let stars: number;
   let text: string;
   let locale: string;

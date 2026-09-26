@@ -1,6 +1,5 @@
 import type { IEnv } from '../../_lib/env';
-import { jsonError, jsonOk, parseActivateBody } from '../../_lib/http';
-import { signES256, parseSigningKey } from '../../_lib/jwt';
+import { jsonError, jsonOk, parseActivateBody, rateLimited } from '../../_lib/http';
 import {
   encryptUtf8,
   PLAN_FEATURES,
@@ -9,25 +8,17 @@ import {
   sha256Hex,
   writeLicense,
   type ILicenseRecord,
-  type TPlanId,
 } from '../../_lib/license';
 import { PolarError, createPolar, planFromBenefit } from '../../_lib/polar';
 import { clientIp, rateLimit } from '../../_lib/ratelimit';
+import { mintToken, tokenExp } from '../../_lib/token';
 
 const STALE_MS = 90 * 86_400_000;
-
-function tokenExp(plan: TPlanId, periodEnd: number | null, nowSec: number): number {
-  if (plan === 'pro_yearly' || plan === 'biz_embed_site_yearly') {
-    return (periodEnd ?? nowSec + 30 * 86_400) + 7 * 86_400;
-  }
-  if (plan === 'pro_lifetime') return nowSec + 90 * 86_400;
-  return nowSec + 365 * 86_400;
-}
 
 export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   const { env, request } = context;
   const ip = await clientIp(request);
-  if (!(await rateLimit(env, 'license', ip, 10))) return jsonError('rate_limited', 429);
+  if (!(await rateLimit(env, 'license', ip, 10))) return rateLimited();
   let body: unknown;
   try {
     body = await request.json();
@@ -71,7 +62,7 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
       same.label = parsed.deviceLabel;
       existing.updatedAt = now;
       await writeLicense(kv, keyHash, existing);
-      return mint(env, existing, keyHash, parsed.deviceId, nowSec);
+      return mint(env, existing, keyHash, devHash, nowSec);
     }
   }
 
@@ -88,6 +79,7 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   const plan = planFromBenefit(env, polarLicense.benefit_id);
   if (!plan) return jsonError('invalid_key', 404);
 
+  const exp = tokenExp(plan, polarLicense.expires_at ? Date.parse(polarLicense.expires_at) / 1000 : null, nowSec);
   const record: ILicenseRecord = existing ?? {
     plan,
     status: 'active',
@@ -96,12 +88,14 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
     customerId: polarLicense.customer_id,
     activations: [],
     limit: polarLicense.limit_activations || 5,
-    exp: tokenExp(plan, polarLicense.expires_at ? Date.parse(polarLicense.expires_at) / 1000 : null, nowSec),
+    exp,
     createdAt: now,
     updatedAt: now,
   };
   record.plan = plan;
   record.limit = polarLicense.limit_activations || record.limit;
+  // Polar just told us the current period; a record written by an earlier webhook or activation may be stale.
+  record.exp = exp;
 
   if (record.activations.length >= record.limit) {
     const stale = record.activations.find((row) => now - row.at > STALE_MS);
@@ -146,28 +140,16 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
     customerKeys.push(keyHash);
     await kv.put(`cus:${record.customerId}`, JSON.stringify(customerKeys));
   }
-  return mint(env, record, keyHash, parsed.deviceId, nowSec);
+  return mint(env, record, keyHash, devHash, nowSec);
 };
 
-async function mint(env: IEnv, record: ILicenseRecord, keyHash: string, deviceId: string, nowSec: number): Promise<Response> {
-  const ver = Number(env.LICENSE_SIGNING_VER ?? '1');
-  const token = await signES256(
-    {
-      sub: keyHash,
-      plan: record.plan,
-      features: PLAN_FEATURES[record.plan],
-      dev: await sha256Hex(deviceId),
-      iat: nowSec,
-      exp: record.exp,
-      ver,
-    },
-    parseSigningKey(env.LICENSE_SIGNING_KEY),
-  );
+async function mint(env: IEnv, record: ILicenseRecord, keyHash: string, devHash: string, nowSec: number): Promise<Response> {
+  const { token, exp } = await mintToken(env, record, keyHash, devHash, nowSec);
   return jsonOk({
     token,
     plan: record.plan,
     features: PLAN_FEATURES[record.plan],
-    exp: record.exp,
+    exp,
     activations: publicActivations(record),
   });
 }

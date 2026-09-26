@@ -1,9 +1,20 @@
+import { RATE_WINDOW_S } from './env';
+
 export function jsonOk(data: unknown, status = 200, extra: HeadersInit = {}): Response {
   return Response.json(data, { status, headers: { 'cache-control': 'no-store', ...extra } });
 }
 
 export function jsonError(error: string, status: number, extra: Record<string, unknown> = {}): Response {
   return Response.json({ error, ...extra }, { status, headers: { 'cache-control': 'no-store' } });
+}
+
+/** 429 with `Retry-After` = seconds left in the current fixed rate-limit bucket (docs/09 §2.10). */
+export function rateLimited(now = Date.now()): Response {
+  const retryAfter = RATE_WINDOW_S - (Math.floor(now / 1000) % RATE_WINDOW_S);
+  return Response.json(
+    { error: 'rate_limited' },
+    { status: 429, headers: { 'cache-control': 'no-store', 'retry-after': String(retryAfter) } },
+  );
 }
 
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;

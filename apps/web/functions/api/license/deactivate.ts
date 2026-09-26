@@ -1,5 +1,5 @@
 import type { IEnv } from '../../_lib/env';
-import { jsonError, jsonOk } from '../../_lib/http';
+import { jsonError, jsonOk, rateLimited } from '../../_lib/http';
 import { parseSigningKey, verifyES256 } from '../../_lib/jwt';
 import { decryptUtf8, publicActivations, readLicense, sha256Hex, writeLicense } from '../../_lib/license';
 import { PolarError, createPolar } from '../../_lib/polar';
@@ -7,7 +7,7 @@ import { clientIp, rateLimit } from '../../_lib/ratelimit';
 
 export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   const { env, request } = context;
-  if (!(await rateLimit(env, 'license', await clientIp(request), 10))) return jsonError('rate_limited', 429);
+  if (!(await rateLimit(env, 'license', await clientIp(request), 10))) return rateLimited();
   let token: string;
   let deviceId: string;
   try {

@@ -83,7 +83,8 @@ export function createPolar(env: IEnv, fetchFn: typeof fetch = fetch) {
         { key, organization_id: org, activation_id: activationId },
         fetchFn,
       );
-      if (!res.ok && res.status !== 204) throw new PolarError('polar_unavailable', `status ${res.status}`);
+      // 404: Polar no longer has this activation (removed in the customer portal); nothing left to undo.
+      if (!res.ok && res.status !== 204 && res.status !== 404) throw new PolarError('polar_unavailable', `status ${res.status}`);
     },
     async checkout(checkoutId: string): Promise<{ status: string; license_key?: string }> {
       const token = env.POLAR_ACCESS_TOKEN;

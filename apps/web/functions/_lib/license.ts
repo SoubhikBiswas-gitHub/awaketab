@@ -5,7 +5,8 @@ export interface ILicenseActivation {
   polarActivationId?: string;
 }
 
-export type TLicenseStatus = 'active' | 'revoked' | 'refunded' | 'expired';
+/** `canceled` = subscription will not renew; features continue until `exp` (docs/09 §2.7). */
+export type TLicenseStatus = 'active' | 'canceled' | 'revoked' | 'refunded' | 'expired';
 
 export type TPlanId = 'pro_yearly' | 'pro_lifetime' | 'biz_embed_site_yearly' | 'biz_kiosk_site' | 'biz_kiosk_5';
 
