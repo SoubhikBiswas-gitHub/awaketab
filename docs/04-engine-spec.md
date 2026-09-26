@@ -471,7 +471,7 @@ engine.on('ended', ({ reason }) => reason !== 'user' && store.set(s => ({ ui: { 
 startButton.onclick = () => engine.start(planFromPreset('p30'), { presetId: 'p30', mode: 'standard', source: 'button' });
 ```
 
-Extension: the background service worker implements `WakeLock` over `chrome.power.requestKeepAwake('display')` / `releaseKeepAwake()` (always `held` after request; `unsupported` when `chrome.power` is absent) and passes it to `createSession()` with a `chrome.storage.local`-backed `IStorageAdapter`, `channel: null`, and `notify` via `chrome.notifications`.
+Extension: the background service worker implements `WakeLock` over `chrome.power.requestKeepAwake('display')` / `releaseKeepAwake()` (always `held` after request; `unsupported` when `chrome.power` is absent) and passes it to `createSession()` with a `chrome.storage.local`-backed `IStorageAdapter`, `channel: null`, and `notify` via `chrome.notifications`. As built (M7): `resumeIndefiniteMs: Infinity` (new `ISessionOptions` field, default 12 h) so the frequently restarted worker can resume a long indefinite session; `channel: null` now really disables the tab protocol (it previously still opened the channel); `IStorageAdapter` is exported. End notifications are sent by the extension controller on `ended`, not through `notify` (see `10-extension-spec.md` §13).
 
 ### 17. Test hooks
 

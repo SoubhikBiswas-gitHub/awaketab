@@ -20,3 +20,4 @@ apps/web/dist-*
 apps/web/public/library/
 # Built by scripts/embed-loader.mjs (the /embed/cook iframe app bundle)
 apps/web/public/embed/
+apps/extension/.output-test/

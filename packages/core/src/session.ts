@@ -20,6 +20,11 @@ export interface ISessionOptions {
   notify?: (title: string, body: string) => Promise<void>;
   track?: (event: string, params?: Record<string, string | number | boolean>) => void;
   timeZone?: string;
+  /**
+   * How long an `indefinite` session stays resumable after a reload (default 12 h, the web resume banner).
+   * The extension worker restarts many times per session and passes `Infinity`.
+   */
+  resumeIndefiniteMs?: number;
 }
 
 export interface ISessionEvents extends Record<string, unknown> {
@@ -80,6 +85,7 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
   const st = opts.setTimeout ?? setTimeout;
   const ct = opts.clearTimeout ?? clearTimeout;
   const lostMs = opts.lostTimeoutMs ?? LOST_TIMEOUT_MS;
+  const resumeIndefiniteMs = opts.resumeIndefiniteMs ?? 12 * 3_600_000;
   const emitter = createEmitter<ISessionEvents>();
   let session: ISession | null = null;
   let timer: ReturnType<typeof setTimeout> | null = null;
@@ -403,7 +409,7 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
       if (!stored) return null;
       const now = nowFn();
       if (stored.status !== 'active' && stored.status !== 'paused') return null;
-      const okEnds = stored.endsAt === null ? stored.plan.type === 'indefinite' && now - stored.startedAt < 12 * 3_600_000 : stored.endsAt > now;
+      const okEnds = stored.endsAt === null ? stored.plan.type === 'indefinite' && now - stored.startedAt < resumeIndefiniteMs : stored.endsAt > now;
       if (okEnds) return stored;
       return null;
     },

@@ -1,0 +1,251 @@
+.op {
+  display: grid;
+  gap: var(--at-s-4);
+  inline-size: min(100% - 2 * var(--at-s-4), 44rem);
+  margin-inline: auto;
+  padding-block: var(--at-s-6) var(--at-s-8);
+}
+
+.op-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--at-s-2);
+}
+
+.op-title {
+  margin: 0;
+  font-size: var(--at-t-2xl);
+  letter-spacing: -0.02em;
+}
+
+.op-saved {
+  min-block-size: 1.5em;
+  margin: 0;
+  color: var(--at-good);
+  font-size: var(--at-t-sm);
+  font-weight: 600;
+}
+
+.op-card {
+  display: grid;
+  gap: var(--at-s-3);
+  padding: var(--at-s-4);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-r-md);
+  background: var(--at-surface);
+}
+
+.op-card h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--at-s-2);
+  margin: 0;
+  font-size: var(--at-t-lg);
+}
+
+.op-card h3 {
+  margin: var(--at-s-2) 0 0;
+  font-size: var(--at-t-md);
+}
+
+.op-card p {
+  margin: 0;
+}
+
+.op-badge {
+  padding: 2px var(--at-s-2);
+  border: 1px solid var(--at-accent);
+  border-radius: var(--at-r-pill);
+  color: var(--at-accent-text);
+  font-size: var(--at-t-xs);
+  font-weight: 700;
+}
+
+.op-field {
+  display: grid;
+  gap: var(--at-s-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.op-field legend {
+  margin-block-end: var(--at-s-2);
+  padding: 0;
+  font-weight: 600;
+}
+
+.op-sr {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.op-radio,
+.op-check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--at-s-2);
+  min-block-size: 44px;
+  padding-block: var(--at-s-2);
+  cursor: pointer;
+}
+
+.op-radio input,
+.op-check input {
+  inline-size: 20px;
+  block-size: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--at-accent-text);
+  flex: none;
+}
+
+.op-row,
+.op-inline,
+.op-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--at-s-2);
+  font-weight: 600;
+}
+
+.op-block {
+  display: grid;
+}
+
+.op-row {
+  justify-content: space-between;
+}
+
+.op select,
+.op input[type="time"],
+.op input[type="text"] {
+  min-block-size: 44px;
+  padding-inline: var(--at-s-2);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-r-sm);
+  background: var(--at-ground);
+  font-weight: 400;
+}
+
+.op input[type="text"] {
+  inline-size: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.op-grow {
+  flex: 1 1 14rem;
+}
+
+.op-grow input {
+  flex: 1;
+}
+
+.op-help {
+  color: var(--at-muted);
+  font-size: var(--at-t-sm);
+  font-weight: 400;
+}
+
+.op-warn,
+.op-error {
+  color: var(--at-bad);
+  font-size: var(--at-t-sm);
+}
+
+.op-ok {
+  color: var(--at-good);
+  font-weight: 700;
+}
+
+.op-locked {
+  padding: var(--at-s-2) var(--at-s-3);
+  border-radius: var(--at-r-sm);
+  background: color-mix(in srgb, var(--at-accent) 12%, var(--at-surface));
+  font-size: var(--at-t-sm);
+}
+
+.op-card[data-locked="1"] :is(.op-list, .op-form, .op-check) {
+  opacity: 0.6;
+}
+
+.op-list {
+  display: grid;
+  gap: var(--at-s-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.op-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--at-s-2);
+  padding: var(--at-s-2) var(--at-s-3);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-r-sm);
+}
+
+.op-form {
+  display: grid;
+  gap: var(--at-s-3);
+}
+
+.op-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--at-s-3);
+}
+
+.op-days {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.op-days legend {
+  margin-block-end: var(--at-s-2);
+  padding: 0;
+  font-weight: 600;
+}
+
+.op-days-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--at-s-1);
+}
+
+.op-day {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--at-s-1);
+  min-block-size: 44px;
+  padding-inline: var(--at-s-3);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-r-sm);
+  cursor: pointer;
+}
+
+.op-day:has(input:checked) {
+  border-color: var(--at-accent);
+  background: color-mix(in srgb, var(--at-accent) 12%, var(--at-surface));
+}
+
+.op-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--at-s-2);
+}
+
+a.pp-btn {
+  color: inherit;
+  text-decoration: none;
+}

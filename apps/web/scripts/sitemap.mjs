@@ -32,6 +32,7 @@ const ENGLISH_PATHS = [
   '/embed',
   '/kiosk',
   '/library',
+  '/extension',
 ];
 
 async function lastModified() {

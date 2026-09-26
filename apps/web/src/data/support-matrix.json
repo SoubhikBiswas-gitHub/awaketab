@@ -50,6 +50,15 @@
       "notes": "Chromium-based support; the tab must remain visible."
     }
   ],
+  "extension": {
+    "id": "extension",
+    "name": "AwakeTab for Chrome",
+    "api": "chrome.power",
+    "minimumChromeVersion": "116",
+    "browsers": ["Chrome", "Edge", "Brave", "Arc", "Opera"],
+    "unsupported": ["Firefox", "Safari"],
+    "notes": "Works while the browser is running, including hidden tabs and minimised windows. Does not prevent sleep when a laptop lid is closed. Firefox and Safari have no power API for extensions."
+  },
   "contexts": [
     {
       "id": "ios-pwa",

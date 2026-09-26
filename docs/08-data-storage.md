@@ -198,6 +198,19 @@ Read defensively (blocked storage, corrupt JSON and bad entries → defaults). T
 
 `chrome.storage.local`: the same `ISettings`, `ISession` (extension-scoped, `source:'ext'`), `ILicenseRecord` and `IMeta` shapes under keys `at.v1.*`. `chrome.storage.sync` (≤ 100 KB): `ISettings` and the list of auto-start domains and schedules only; never the licence token. See `10-extension-spec.md`.
 
+As built in M7 (`00-conventions.md` §13.9, `10-extension-spec.md` §13):
+
+| Key (`chrome.storage.local`) | Contents | Synced |
+|---|---|---|
+| `at.v1.settings` | `ISettings`; extension defaults `telemetry: false`, `notifications: false` | yes |
+| `at.v1.ext` | `IExtSettings { v: 1, level, schedules: ISchedule[] (≤ 20), autostart: { browserStart, sites: IAutostartSite[] (≤ 50) } }` — sanitised on every read (synced data is untrusted) | yes |
+| `at.v1.session` | `ISession` with `source: 'ext'` and `modeState { level, origin, dismissed? }` | no |
+| `at.v1.stats` | `IStats` (the worker counts seconds only while it runs) | no |
+| `at.v1.license` | `ILicenseRecord`, `deviceLabel` "AwakeTab for Chrome · {OS}" | **never** |
+| `at.v1.device` | `{ v: 1, id }` random UUID per profile (the licence device id) | **never** |
+
+Values are stored as objects, not JSON strings. `chrome.storage.sync` receives only `at.v1.settings` and `at.v1.ext` (debounced 2 s); a fresh profile is seeded from sync, and sync changes from another device are adopted. The test build also writes `chrome.storage.session['at.test.power']` (the recorded `chrome.power` calls); production never does.
+
 ---
 
 ## 4. Server storage (Cloudflare KV, namespace `LICENSES`)

@@ -3,12 +3,175 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AwakeTab options</title>
+    <title>AwakeTab</title>
   </head>
   <body>
-    <main>
-      <h1>AwakeTab options</h1>
-      <p>Extension foundation</p>
+    <main class="op" data-root hidden>
+      <header class="op-head">
+        <h1 class="op-title" data-i18n="ext.options.title"></h1>
+        <p class="op-saved" data-saved role="status" aria-live="polite"></p>
+      </header>
+
+      <section class="op-card" aria-labelledby="h-defaults">
+        <h2 id="h-defaults" data-i18n="ext.options.defaults"></h2>
+        <fieldset class="op-field">
+          <legend data-i18n="ext.level.label"></legend>
+          <label class="op-radio"><input type="radio" name="level" value="display" /><span><strong data-i18n="ext.level.display"></strong> <span class="op-help" data-i18n="ext.level.display.help"></span></span></label>
+          <label class="op-radio"><input type="radio" name="level" value="system" /><span><strong data-i18n="ext.level.system"></strong> <span class="op-help" data-i18n="ext.level.system.help"></span></span></label>
+        </fieldset>
+        <label class="op-row"><span data-i18n="settings.defaultPreset"></span>
+          <select name="defaultPreset">
+            <option value="p15" data-i18n="tool.preset.p15"></option>
+            <option value="p30" data-i18n="tool.preset.p30"></option>
+            <option value="p45" data-i18n="tool.preset.p45"></option>
+            <option value="p60" data-i18n="tool.preset.p60"></option>
+            <option value="p120" data-i18n="tool.preset.p120"></option>
+            <option value="p240" data-i18n="tool.preset.p240"></option>
+            <option value="pinf" data-i18n="tool.preset.pinf.sr"></option>
+          </select>
+        </label>
+      </section>
+
+      <section class="op-card" aria-labelledby="h-end">
+        <h2 id="h-end" data-i18n="settings.endBehaviour"></h2>
+        <fieldset class="op-field">
+          <legend class="op-sr" data-i18n="settings.endBehaviour"></legend>
+          <label class="op-radio"><input type="radio" name="endBehaviour" value="prompt_extend" /><span data-i18n="settings.endBehaviour.prompt_extend"></span></label>
+          <label class="op-radio"><input type="radio" name="endBehaviour" value="stop" /><span data-i18n="settings.endBehaviour.stop"></span></label>
+        </fieldset>
+        <label class="op-check"><input type="checkbox" name="notifications" /><span data-i18n="settings.notifications"></span></label>
+        <p class="op-help" data-notify-help data-i18n="ext.options.notifications.help"></p>
+        <p class="op-help op-warn" data-notify-blocked hidden data-i18n="settings.notifications.blocked"></p>
+        <label class="op-row"><span data-i18n="settings.sound"></span>
+          <select name="sound">
+            <option value="chime" data-i18n="settings.sound.chime"></option>
+            <option value="none" data-i18n="settings.sound.none"></option>
+          </select>
+        </label>
+        <p class="op-help" data-i18n="ext.options.sound.help"></p>
+      </section>
+
+      <section class="op-card" aria-labelledby="h-battery">
+        <h2 id="h-battery" data-i18n="ext.options.battery"></h2>
+        <label class="op-check"><input type="checkbox" name="batteryAutoStop" disabled aria-describedby="battery-help" /><span data-i18n="settings.battery.autoStop"></span></label>
+        <p class="op-help" id="battery-help" data-i18n="ext.options.battery.unavailable"></p>
+      </section>
+
+      <section class="op-card" aria-labelledby="h-look">
+        <h2 id="h-look" data-i18n="ext.options.appearance"></h2>
+        <label class="op-row"><span data-i18n="settings.theme"></span>
+          <select name="theme">
+            <option value="auto" data-i18n="settings.theme.auto"></option>
+            <option value="light" data-i18n="settings.theme.light"></option>
+            <option value="dark" data-i18n="settings.theme.dark"></option>
+            <option value="oled" data-i18n="settings.theme.oled"></option>
+          </select>
+        </label>
+        <label class="op-row"><span data-i18n="settings.locale"></span>
+          <select name="locale" data-locales>
+            <option value="" data-i18n="ext.options.locale.auto"></option>
+          </select>
+        </label>
+      </section>
+
+      <section class="op-card" aria-labelledby="h-keys">
+        <h2 id="h-keys" data-i18n="ext.options.keyboard"></h2>
+        <label class="op-check"><input type="checkbox" name="keyboardShortcuts" /><span data-i18n="settings.shortcuts"></span></label>
+        <p class="op-help" data-shortcut></p>
+        <p><button class="pp-btn" type="button" data-shortcut-change data-i18n="ext.options.shortcut.change"></button></p>
+      </section>
+
+      <section class="op-card" aria-labelledby="h-sched" data-gated="ext.schedules">
+        <h2 id="h-sched"><span data-i18n="ext.schedules.title"></span> <span class="op-badge" data-i18n="pro.badge"></span></h2>
+        <p class="op-help" data-i18n="ext.schedules.help"></p>
+        <p class="op-locked" data-locked hidden><span data-i18n="ext.pro.locked"></span> <a href="https://awaketab.com/pro" target="_blank" rel="noopener" data-i18n="pro.see"></a></p>
+        <ul class="op-list" data-schedules></ul>
+        <p class="op-help" data-schedules-empty data-i18n="ext.schedules.empty"></p>
+        <form class="op-form" data-schedule-form novalidate>
+          <fieldset class="op-days">
+            <legend data-i18n="ext.schedules.days"></legend>
+            <div class="op-days-row" data-days></div>
+          </fieldset>
+          <div class="op-form-row">
+            <label class="op-inline"><span data-i18n="ext.schedules.from"></span> <input type="time" name="start" value="09:00" required /></label>
+            <label class="op-inline"><span data-i18n="ext.schedules.to"></span> <input type="time" name="end" value="18:00" required /></label>
+            <label class="op-inline"><span data-i18n="ext.level.label"></span>
+              <select name="level">
+                <option value="display" data-i18n="ext.level.display"></option>
+                <option value="system" data-i18n="ext.level.system"></option>
+              </select>
+            </label>
+          </div>
+          <p class="op-error" data-schedule-error role="alert" hidden></p>
+          <p><button class="pp-btn" type="submit" data-i18n="ext.schedules.add"></button></p>
+        </form>
+      </section>
+
+      <section class="op-card" aria-labelledby="h-auto" data-gated="ext.autostart">
+        <h2 id="h-auto"><span data-i18n="ext.autostart.title"></span> <span class="op-badge" data-i18n="pro.badge"></span></h2>
+        <p class="op-locked" data-locked hidden><span data-i18n="ext.pro.locked"></span> <a href="https://awaketab.com/pro" target="_blank" rel="noopener" data-i18n="pro.see"></a></p>
+        <label class="op-check"><input type="checkbox" name="browserStart" /><span data-i18n="ext.autostart.browser"></span></label>
+        <h3 data-i18n="ext.autostart.sites"></h3>
+        <p class="op-help" data-i18n="ext.autostart.sites.help"></p>
+        <ul class="op-list" data-sites></ul>
+        <p class="op-help" data-sites-empty data-i18n="ext.autostart.empty"></p>
+        <form class="op-form" data-site-form novalidate>
+          <div class="op-form-row">
+            <label class="op-inline op-grow"><span data-i18n="ext.autostart.site"></span> <input type="text" name="host" inputmode="url" autocomplete="off" spellcheck="false" maxlength="253" /></label>
+            <label class="op-inline"><span data-i18n="ext.level.label"></span>
+              <select name="duration">
+                <option value="" data-i18n="ext.autostart.duration.open"></option>
+                <option value="30" data-i18n="tool.preset.p30"></option>
+                <option value="60" data-i18n="tool.preset.p60"></option>
+                <option value="120" data-i18n="tool.preset.p120"></option>
+                <option value="240" data-i18n="tool.preset.p240"></option>
+              </select>
+            </label>
+          </div>
+          <p class="op-error" data-site-error role="alert" hidden></p>
+          <p><button class="pp-btn" type="submit" data-i18n="ext.autostart.add"></button></p>
+        </form>
+      </section>
+
+      <section class="op-card" aria-labelledby="h-license">
+        <h2 id="h-license" data-i18n="ext.license.title"></h2>
+        <div data-license-active hidden>
+          <p class="op-ok" data-i18n="pro.activated"></p>
+          <p class="op-help" data-license-plan></p>
+          <p class="op-actions">
+            <button class="pp-btn" type="button" data-license-remove data-i18n="ext.license.remove"></button>
+            <a class="pp-btn pp-ghost" href="https://awaketab.com/pro/manage" target="_blank" rel="noopener" data-i18n="settings.pro.manage"></a>
+          </p>
+        </div>
+        <form class="op-form" data-license-form novalidate>
+          <label class="op-block"><span data-i18n="pro.activate"></span>
+            <input type="text" name="key" autocomplete="off" spellcheck="false" minlength="20" maxlength="80" aria-describedby="license-error license-devices" />
+          </label>
+          <p class="op-help" id="license-devices" data-i18n="ext.license.devices"></p>
+          <p class="op-error" id="license-error" data-license-error role="alert" hidden></p>
+          <p class="op-actions">
+            <button class="pp-btn" type="submit" data-license-submit data-i18n="ext.license.activate"></button>
+            <a class="pp-btn pp-ghost" href="https://awaketab.com/pro/activate?ext=1" target="_blank" rel="noopener" data-i18n="ext.license.get"></a>
+          </p>
+        </form>
+        <p class="op-help" data-license-status role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="op-card" aria-labelledby="h-privacy">
+        <h2 id="h-privacy" data-i18n="ext.privacy.title"></h2>
+        <label class="op-check"><input type="checkbox" name="telemetry" aria-describedby="telemetry-help" /><span data-i18n="settings.telemetry"></span></label>
+        <p class="op-help" id="telemetry-help" data-i18n="ext.privacy.telemetry.help"></p>
+        <p class="op-help" data-i18n="ext.privacy.stored"></p>
+        <p><a href="https://awaketab.com/privacy#extension" target="_blank" rel="noopener" data-i18n="ext.privacy.policy"></a></p>
+      </section>
+
+      <section class="op-card" aria-labelledby="h-about">
+        <h2 id="h-about" data-i18n="ext.about.title"></h2>
+        <p data-version></p>
+        <p class="op-help" data-i18n="ext.popup.limits"></p>
+        <p><a href="https://awaketab.com/changelog" target="_blank" rel="noopener" data-i18n="ext.about.changelog"></a></p>
+      </section>
     </main>
+    <script type="module" src="./main.ts"></script>
   </body>
 </html>

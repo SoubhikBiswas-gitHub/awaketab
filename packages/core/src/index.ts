@@ -8,6 +8,7 @@ export type { ILicenseState } from './license.js';
 export { createSession, planFromPreset, planUntil } from './session.js';
 export type { ISessionEngine, ISessionEvents, ISessionOptions } from './session.js';
 export { computeStreaks, countDay, creditMinutes, dayKey, exportStatsCsv, pruneDays } from './stats.js';
+export type { IStorageAdapter } from './storage.js';
 export {
   clearAllData,
   createStorage,

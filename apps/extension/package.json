@@ -6,8 +6,15 @@
   "scripts": {
     "dev": "wxt",
     "build": "node scripts/icons.mjs && wxt build",
-    "zip": "node scripts/icons.mjs && wxt zip",
-    "typecheck": "tsc --noEmit"
+    "build:test": "node scripts/icons.mjs && AT_EXT_TEST=1 wxt build",
+    "zip": "node scripts/icons.mjs && wxt build && node scripts/zip.mjs",
+    "zip:check": "node scripts/reproducible.mjs",
+    "store:assets": "node scripts/icons.mjs && tsx scripts/store-assets.mts",
+    "typecheck": "wxt prepare && tsc --noEmit"
+  },
+  "dependencies": {
+    "@awaketab/core": "workspace:*",
+    "@awaketab/wake": "workspace:*"
   },
   "devDependencies": {
     "typescript": "5.9.3",

@@ -1,0 +1,124 @@
+/*
+ * Shared extension page styles. Colours come only from the `--at-*` tokens (and their shadcn aliases)
+ * generated from apps/web/src/styles/tokens.css — docs/05 §1.1, §1.5. Logical properties only (RTL-ready).
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--at-font);
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  background: var(--at-ground);
+  color: var(--at-ink);
+  line-height: 1.45;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 3px solid var(--at-focus);
+  outline-offset: 2px;
+}
+
+a {
+  color: var(--at-accent-text);
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Status pill — same look as the web tool's .at-pill (docs/05 §3.2), 12 % state tints. */
+.at-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--at-s-2);
+  min-block-size: 36px;
+  padding-inline: var(--at-s-4);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-r-pill);
+  background: var(--at-surface);
+  font-size: var(--at-t-sm);
+  font-weight: 600;
+}
+
+.at-pill[data-lock="requesting"] {
+  color: var(--at-muted);
+}
+
+.at-pill[data-lock="held"] {
+  border-color: var(--at-accent);
+  background: color-mix(in srgb, var(--at-accent) 12%, var(--at-surface));
+}
+
+.at-pill[data-lock="lost"] {
+  border-color: var(--at-warn);
+  background: color-mix(in srgb, var(--at-warn) 12%, var(--at-surface));
+}
+
+.at-pill[data-lock="denied"] {
+  border-color: var(--at-bad);
+  background: color-mix(in srgb, var(--at-bad) 12%, var(--at-surface));
+}
+
+.at-pill[data-lock="fallback"] {
+  border-color: color-mix(in srgb, var(--at-accent) 60%, transparent);
+  background: color-mix(in srgb, var(--at-accent) 8%, var(--at-surface));
+  color: var(--at-muted);
+}
+
+.pp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 44px;
+  padding-inline: var(--at-s-4);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-r-sm);
+  background: var(--at-surface);
+  font-size: var(--at-t-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pp-btn:hover {
+  background: color-mix(in srgb, var(--at-accent) 12%, var(--at-surface));
+}
+
+.pp-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pp-ghost {
+  border-color: transparent;
+  background: transparent;
+}
+
+.pp-help {
+  margin: 0;
+  color: var(--at-muted);
+  font-size: var(--at-t-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
