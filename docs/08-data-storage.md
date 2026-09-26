@@ -173,6 +173,19 @@ Writes are debounced 250 ms except `session.status` changes (immediate). If `loc
 
 Settings → "Delete all local data": removes every `at.*` key and `sessionStorage['at.tabId']`, unregisters the service worker's caches, reloads. The licence is included (the user is warned and shown the key-recovery link — keys are recoverable from the Polar receipt email).
 
+### 2.10 `at.v1.embed.settings` (embed widget, M8)
+
+The `/embed/cook` iframe's only persistent key (`11-embed-spec.md` §7, `00-conventions.md` §13.10). It lives in the awaketab.com origin's storage *as partitioned by the embedding site* in current browsers, so one recipe blog's widget never sees another's.
+
+```ts
+interface IEmbedSettings {
+  v: 1;
+  cookTimers: ICookTimer[]; // ≤ 3; same shape as ISession.modeState.cookTimers (§2.2)
+}
+```
+
+Read defensively (blocked storage, corrupt JSON and bad entries → defaults). The widget's session engine uses an in-memory adapter, so it never writes `at.v1.session`, `at.v1.stats` or any other `at.v1.*` key, and it does not join `BroadcastChannel('awaketab')`. It reads `at.v1.settings.telemetry` (read-only) so a visitor who turned telemetry off in the app is respected by a widget on awaketab.com itself.
+
 ---
 
 ## 3. Extension storage
@@ -211,8 +224,8 @@ Written by `POST /api/e` (batch ≤ 20 events, ≤ 8 KB). No PII by construction
 | `blob3` | string | `ua` class, e.g. `chrome-128/mac`, `safari-17/ios`, `firefox-129/win` |
 | `blob4` | string | `source` (`web`,`pwa`,`pip`,`ext`,`embed`) |
 | `blob5` | string | `sid` (per-tab random id; used for funnels within a tab, never persisted) |
-| `blob6` | string | event attribute 1 (`planType` / `reason` / `from` / `plan` / `action` / `code` / `page`) |
-| `blob7` | string | event attribute 2 (`presetId` / `to` / `sku` / `sponsorId`) |
+| `blob6` | string | event attribute 1 (`planType` / `reason` / `from` / `plan` / `action` / `code` / `page`; `host` — the embedding hostname — on the embed widget's `page_view`, M8) |
+| `blob7` | string | event attribute 2 (`presetId` / `to` / `sku` / `sponsorId`; `target` on `share_click`, e.g. `attribution`) |
 | `blob8` | string | `viewport` class (`sm`,`md`,`lg`) |
 | `blob9` | string | `ver` (site version) |
 | `double1` | number | numeric attribute (`durationMin`, `addedMin`, `stars`, `count`) |

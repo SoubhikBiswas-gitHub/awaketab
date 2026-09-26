@@ -1,6 +1,6 @@
 # 11 · Embed widget specification — AwakeTab Embed (Cook Mode)
 
-Status: v1.0 · 2026-09-07 · Owner: Soubhik
+Status: v1.1 · 2026-09-26 (as built in M8, §11) · Owner: Soubhik
 
 **Purpose.** Recipe blogs, dashboards and documentation sites can drop one script tag on a page and give their readers a "keep my screen on" control. The widget is a sandboxed iframe of our own app, so it inherits the engine, the honest status and the locales. Free embeds carry an attribution link (a contextual backlink from the pages that rank for the use case); a Business licence removes it and unlocks branding.
 
@@ -118,3 +118,72 @@ Events from the widget carry `source: 'embed'` and `blob1 = '/embed/cook'`; `hos
 ## 10. Sales page `/embed`
 
 Live demo of both sizes, the one-line install, the "why the allow attribute" explainer, the licence pitch (remove attribution, brand colours, priority support — $29/year per site), FAQ (does it slow my page? no third-party requests; does it work on AMP? no), and the WordPress plugin link when live.
+
+---
+
+## 11. As built (M8, 2026-09-26)
+
+Identifiers are canonical in `00-conventions.md` §13.10. Source: `apps/web/src/tool/embed/` (`protocol.ts` shared contract, `loader.ts` + `loader-entry.ts`, `app.ts`, `bridge.ts`, `policy.ts`, `config.ts`, `settings.ts`, `timers.ts`, `catalog.ts`, `snippet.ts`), `apps/web/src/pages/embed/cook.astro`, `apps/web/src/pages/embed/index.astro`, `apps/web/scripts/embed-loader.mjs`, `apps/web/functions/api/embed/config.ts`.
+
+### 11.1 The snippet, exactly as users paste it
+
+The §1 block shows every attribute with inline comments (not valid inside a tag). What `/embed` renders and what sites paste:
+
+```html
+<script async src="https://awaketab.com/embed.js" data-mode="cook" data-theme="auto" data-size="compact"></script>
+```
+
+Optional attributes: `data-lang="de"` (default: the host page's `<html lang>`, mapped to one of the 8 locales; `pt-BR` → `pt-br`, `zh-CN`/`zh-Hans` → `zh`, anything unknown → `en`), `data-preset="p60"` (default `pinf`), `data-preset="until" data-until="18:30"`. Unknown values fall back to the defaults. `data-license` is **not** read: licensing is decided by the verified embedding domain (§11.4), and a licence key never travels in a URL.
+
+For platforms that strip `<script>` (the `#allow` section of `/embed`):
+
+```html
+<iframe src="https://awaketab.com/embed/cook?mode=cook&theme=auto&lang=en&size=compact&preset=pinf"
+  title="Keep screen awake"
+  allow="screen-wake-lock"
+  loading="lazy"
+  referrerpolicy="strict-origin"
+  sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+  style="width:320px;max-width:100%;height:96px;border:0;border-radius:12px"></iframe>
+```
+
+### 11.2 Loader (`/embed.js`, 2,356 B gz)
+
+- Built by esbuild from `loader.ts` into `apps/web/public/embed.js` (committed; a unit test fails when it is stale). No dependencies, no `import`, IIFE; the iframe `title` comes from the 8 `embed.frame.title` strings inlined at build.
+- Replaces its own tag with the iframe (a tag in `<head>` is moved to `<body>`); the iframe origin is the loader's own origin, so preview deployments embed themselves. `host=` is `location.hostname`.
+- `sandbox` adds `allow-popups-to-escape-sandbox` to §7's three tokens (docs/19 C4): without it the attribution and "How to fix" links open awaketab.com as a sandboxed tab where forms (checkout) are blocked.
+- `awaketab:resize` is applied but never below the reserved box (96 / 240 px), so the widget can grow for a notice or timers without ever shifting the host page by shrinking.
+- `window.AwakeTabEmbed` = `{ version, on('ready' | 'state', cb) → off, start(opts), stop(), setTheme(theme) }`; one registry for every tag on the page. Commands issued before a widget is ready are queued and flushed on `awaketab:ready`. `start()` should be called from a click in the page (the video fallback needs a gesture; without one the widget shows "Tap Start to keep the screen awake.").
+- Origin checks: a message counts only when `event.source` is an iframe this loader created **and** `event.origin` is the loader's origin; every command is re-validated (`parsePageMessage`) and posted with that origin as `targetOrigin`.
+
+### 11.3 Widget (`/embed/cook`, 13,843 B gz)
+
+- Its script is `public/embed/app.js`, an esbuild bundle of `app.ts` (not an Astro `<script>`, so it shares no Rollup chunk with the tool island — `14-devops.md` §6). It runs the real `@awaketab/wake` lock and `@awaketab/core` session engine (in-memory storage, no `BroadcastChannel`), and projects the lock state onto the pill; the digits run only while the lock is `held`/`fallback` and the clock is not paused.
+- Modes: `cook` (Start/Stop, tap the timer = `pause({ keepLock: true })`, "Tap the timer to pause" hint; in `full` size up to three kitchen timers — quick-add 5/10/15/30/60 min — persisted in `at.v1.embed.settings`, chime on finish via `signal.ts`), `standard` (remaining or elapsed), `clock` (wall clock), `minimal` (pill and Start only).
+- `iframe_no_allow`: when `document.permissionsPolicy`/`featurePolicy` says the frame may not use `screen-wake-lock`, the notice "Ask the site owner to allow screen wake lock for this widget." + "How to fix" (`https://awaketab.com/embed#allow`) shows at load; a Start then yields the honest `denied` pill with the same notice. Where the policy is known to allow the lock, a denial shows the power advice instead (`embedAdvice`).
+- Every visible string comes from the page's inlined catalog subset for the `lang=` locale; `<html lang>` and `document.title` follow it.
+- The attribution line is server-rendered (free by default, so a failed lookup never hides it) and hidden only for `{ licensed: true, attribution: false }`.
+
+### 11.4 Licence lookup
+
+`GET /api/embed/config?domain=` is called with the **verified** parent hostname (`location.ancestorOrigins[0]`, else the referrer origin) — never the `host=` param, which the embedding page controls. No verified parent → no request, attribution shown. The function walks from the hostname up to its registrable domain (`www.`/`staging.` covered), ignores records whose `expiresAt` (grace included) has passed or whose `lic:{keyHash}` is not `active` (webhook revocation takes effect within the 5-minute cache), and returns `theme` only as a validated `{ accent: '#rrggbb' | null, scheme }`. The widget applies a licensed accent to the Start button with a computed black/white label (≥ 4.5:1) and to the pill border/focus ring; text keeps `--at-accent-text`.
+
+### 11.5 postMessage as built
+
+| Direction | Message | Payload / rule |
+|---|---|---|
+| widget → page | `awaketab:ready` | `{ version: '1' }` once booted |
+| widget → page | `awaketab:state` | `{ lock, status, endsAt, mode }` whenever lock, status or `endsAt` changes (not every tick) |
+| widget → page | `awaketab:resize` | `{ height }` from a `ResizeObserver` on the widget root; clamped 64–640 by the loader and never below the reserved box |
+| page → widget | `awaketab:start` | `{ preset?: 'p15'…'pinf', ms?: integer 60,000–604,800,000, until?: 'HH:MM' \| 'HH-MM' }`; `ms` wins, then `until`, then `preset`, then the widget's `data-preset` |
+| page → widget | `awaketab:stop` | — |
+| page → widget | `awaketab:theme` | `{ theme: 'auto' \| 'light' \| 'dark' \| 'oled' }` |
+
+The widget accepts a command only from `window.parent`, only when `event.origin` equals the verified parent origin, and — when the loader declared `host=` — only when that hostname matches it. It posts to that exact origin, never `*`; unembedded (opened directly) it posts nothing.
+
+### 11.6 Headers, analytics, tests
+
+- `_headers`: `/embed/*` keeps `frame-ancestors *`, no `X-Frame-Options`, `X-Robots-Tag: noindex`; because `/embed/*` also matches the landing page, `/embed` and `/embed/` re-apply the default CSP (`frame-ancestors 'none'`), `X-Frame-Options: DENY` and drop `noindex`. `/embed.js` is `Cache-Control: public, max-age=3600`.
+- Analytics: `source: 'embed'`, `path: '/embed/cook'`; the widget's `page_view` carries `host` (→ `blob6`), the attribution click is `share_click { target: 'attribution' }` (→ `blob7`). Telemetry follows `at.v1.settings.telemetry` when readable.
+- Tests: `apps/web/test/tool/embed-*.test.ts`, `apps/web/scripts/embed-loader.test.ts` (freshness and the 3 KB gate), `apps/web/scripts/headers.test.ts`, `apps/web/functions/api/embed/config.test.ts`, e2e `apps/web/test/e2e/m8.spec.ts` (journey 10 cross-origin with and without `allow`, origin rejection both ways, licensed branding, kitchen timers, axe) — `13-testing-strategy.md` §5, §7.
+- Not built yet: the WordPress plugin (§5) and the §9 manual host matrix (WordPress, Squarespace, Webflow, Ghost, AMP, Mobile Safari) — both need real accounts/devices.

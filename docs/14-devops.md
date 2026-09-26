@@ -39,7 +39,7 @@ Preview deployments send `X-Robots-Tag: noindex` via `_headers` keyed on the `*.
 ```
 # Tool routes (strict; zero third parties). Applies to everything by default.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://polar.sh https://*.polar.sh; upgrade-insecure-requests; report-to csp
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self' data:; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://polar.sh https://*.polar.sh; upgrade-insecure-requests; report-to csp
   Permissions-Policy: screen-wake-lock=(self), picture-in-picture=(self), camera=(), microphone=(), geolocation=(), payment=()
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
@@ -61,11 +61,26 @@ Preview deployments send `X-Robots-Tag: noindex` via `_headers` keyed on the `*.
 /learn/*
   Content-Security-Policy: <same as /for/*>
 
-# Embeddable widget
+# Embeddable widget (the iframe app /embed/cook)
 /embed/*
+  ! Content-Security-Policy
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; frame-ancestors *
-  X-Frame-Options:
+  ! X-Frame-Options
   X-Robots-Tag: noindex
+
+# The /embed landing page also matches /embed/* — make it an ordinary, indexable, unframeable page again
+/embed
+/embed/
+  ! Content-Security-Policy
+  Content-Security-Policy: <the /* policy>
+  ! X-Frame-Options
+  X-Frame-Options: DENY
+  ! X-Robots-Tag
+
+# The loader sites paste
+/embed.js
+  ! Cache-Control
+  Cache-Control: public, max-age=3600
 
 # PiP document
 /pip
@@ -73,26 +88,33 @@ Preview deployments send `X-Robots-Tag: noindex` via `_headers` keyed on the `*.
 
 # Remote flags
 /config/*
+  ! Cache-Control
   Cache-Control: public, max-age=300
 
 # Service worker (built by scripts/sw.mjs; must revalidate so updates are seen)
 /sw.js
+  ! Cache-Control
   Cache-Control: no-cache
   Service-Worker-Allowed: /
 
 # Hashed assets
 /_astro/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 /assets/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
 # API
 /api/*
+  ! Cache-Control
   Cache-Control: no-store
   X-Robots-Tag: noindex
 ```
 
-Content-route CSPs are generated at build from a single template plus the active network's host list (`apps/web/scripts/headers.mjs`) so the five families never drift. `/api/csp` collects CSP reports into Analytics Engine (`client_error {code:'csp'}`) — PROPOSED code value; accepted.
+(`/embed` and `/embed/` are two identical rules in the generated file.) Content-route CSPs are generated at build from a single template plus the active network's host list (`apps/web/scripts/headers.mjs`) so the five families never drift. `/api/csp` collects CSP reports into Analytics Engine (`client_error {code:'csp'}`) — PROPOSED code value; accepted.
+
+**M8 changes.** Cloudflare applies *every* matching rule and joins a header set twice with ", " — so `/_astro/*` used to ship `Cache-Control: public, max-age=0, must-revalidate, public, max-age=31536000, immutable`. Every specific rule now detaches the `/*` value first (`! Cache-Control`, `! X-Frame-Options`, `! Content-Security-Policy`). The `/embed/*` rule matches the landing page too, hence the `/embed` + `/embed/` rules. Tool-route `img-src` gains `https:` for the Kiosk licence's operator logo (`logo=`, `09-monetization-impl.md` §7.2) — scripts, styles, fonts and connections stay `'self'`, and no default tool page loads a third-party image (decision under `19-master-build-prompt.md` C4, `00-conventions.md` §13.10; needs owner sign-off). `scripts/headers.mjs` exports `resolveHeaders(text, path)`, which evaluates these semantics; `headers.test.ts` runs it over the generated and the shipped `public/_headers`.
 
 ---
 
@@ -129,7 +151,9 @@ Commit messages: Conventional Commits (`feat(engine): …`, `fix(seo): …`, `co
 
 `lighthouse.yml` (PR): LHCI against the preview URL with `lighthouserc.json` budgets; comment on the PR.
 
-`release.yml` (main): changesets → version PR → on merge publish `@awaketab/wake` with `npm publish --provenance --access public` (OIDC; no long-lived npm token).
+**Build pipeline and size gate (M8).** `pnpm -F web build` now starts `scripts/headers.mjs` → `scripts/embed-loader.mjs` (esbuild: `public/embed.js`, the committed ≤ 3 KB loader, and `public/embed/app.js`, the git-ignored `/embed/cook` app) → `scripts/library.mjs` (copies `packages/wake/dist/awaketab-wake.iife.js` to the git-ignored `public/library/`, building the package first if its dist is missing) → `pnpm exec tsx scripts/support-matrix.mts` (validates `docs/metrics/device-matrix.json` against `src/data/support-matrix.json`; `pnpm -F web matrix:sync` writes results once the run is complete) → the steps above. `pnpm -F web dev` runs the two embed/library steps before `astro dev`. The embed app is bundled outside Astro on purpose: as an Astro `<script>` it shared `@awaketab/wake`/`@awaketab/core` with the tool entry and Rollup split those modules into chunks on the tool's critical path (measured 15,353 B gz against the 15,360 budget). **Size gate change (M8):** `totalJs` is now the closure over static and dynamic `import()` edges from `index.html`'s module entries — everything the tool page can load — instead of every `dist/_astro/*.js`; new gates `embedJs` ≤ 25,600 B gz (closure from `embed/cook/index.html`) and `loaderJs` ≤ 3,072 B gz (`dist/embed.js`). At M8 close: `criticalJs` 14,508, `totalJs` 39,111 (37,877 for the pre-M8 build under the new rule; 39,805 under the old), `embedJs` 13,843, `loaderJs` 2,356, `totalCss` 12,679.
+
+`release.yml` (main, `workflow_dispatch`): job `version` runs `changesets/action` (version PR while changesets are pending); when none are pending, job `publish-wake` (GitHub environment `npm`) runs the library tests, build and size-limit, skips if `@awaketab/wake@<version>` is already on npm, prints `npm pack --dry-run`, then `npm publish --provenance --access public` from `packages/wake` and pushes the tag `@awaketab/wake@<version>`. Auth is npm trusted publishing over GitHub OIDC (no long-lived token; the job installs npm 11.6.2 because trusted publishing needs ≥ 11.5.1) with an optional `NPM_TOKEN` secret as the fallback — configure one of the two before the first run (`12-library-spec.md` §10.2).
 
 `extension-release.yml` (tag `ext-v*`): `pnpm -F extension zip` → upload to Chrome Web Store via the Web Store API (refresh-token secret) as a draft → manual "publish" in the dashboard; Edge submission via the Partner Center API similarly.
 
