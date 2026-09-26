@@ -3,33 +3,62 @@
   "version": "1.0.0",
   "description": "Screen Wake Lock with an honest state machine and a tiny video fallback. Maintained replacement for NoSleep.js.",
   "license": "MIT",
+  "author": "Soubhik Biswas (https://awaketab.com/about)",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "unpkg": "./dist/awaketab-wake.iife.js",
+  "jsdelivr": "./dist/awaketab-wake.iife.js",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./react": {
-      "types": "./dist/adapters/react.d.ts",
-      "import": "./dist/adapters/react.js"
+      "import": {
+        "types": "./dist/adapters/react.d.ts",
+        "default": "./dist/adapters/react.js"
+      },
+      "require": {
+        "types": "./dist/adapters/react.d.cts",
+        "default": "./dist/adapters/react.cjs"
+      }
     },
     "./preact": {
-      "types": "./dist/adapters/preact.d.ts",
-      "import": "./dist/adapters/preact.js"
+      "import": {
+        "types": "./dist/adapters/preact.d.ts",
+        "default": "./dist/adapters/preact.js"
+      },
+      "require": {
+        "types": "./dist/adapters/preact.d.cts",
+        "default": "./dist/adapters/preact.cjs"
+      }
     },
     "./vue": {
-      "types": "./dist/adapters/vue.d.ts",
-      "import": "./dist/adapters/vue.js"
-    }
+      "import": {
+        "types": "./dist/adapters/vue.d.ts",
+        "default": "./dist/adapters/vue.js"
+      },
+      "require": {
+        "types": "./dist/adapters/vue.d.cts",
+        "default": "./dist/adapters/vue.cjs"
+      }
+    },
+    "./iife": "./dist/awaketab-wake.iife.js",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "keywords": [
@@ -46,6 +75,18 @@
     "directory": "packages/wake"
   },
   "homepage": "https://awaketab.com/library",
+  "bugs": {
+    "url": "https://github.com/awaketab/awaketab/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/awaketab"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "https://registry.npmjs.org/"
+  },
   "peerDependencies": {
     "preact": ">=10",
     "react": ">=17",
@@ -66,6 +107,7 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "size": "size-limit",
+    "pack:check": "npm pack --dry-run --json",
     "test": "vitest run --config ../../vitest.config.ts"
   },
   "devDependencies": {
@@ -80,6 +122,30 @@
       "name": "@awaketab/wake core",
       "path": "dist/index.js",
       "limit": "3.4 kB",
+      "gzip": true
+    },
+    {
+      "name": "@awaketab/wake IIFE (CDN)",
+      "path": "dist/awaketab-wake.iife.js",
+      "limit": "3.6 kB",
+      "gzip": true
+    },
+    {
+      "name": "@awaketab/wake/react",
+      "path": "dist/adapters/react.js",
+      "limit": "400 B",
+      "gzip": true
+    },
+    {
+      "name": "@awaketab/wake/preact",
+      "path": "dist/adapters/preact.js",
+      "limit": "400 B",
+      "gzip": true
+    },
+    {
+      "name": "@awaketab/wake/vue",
+      "path": "dist/adapters/vue.js",
+      "limit": "400 B",
       "gzip": true
     }
   ]

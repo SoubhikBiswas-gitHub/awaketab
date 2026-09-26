@@ -1,17 +1,59 @@
 name: Release
 
+# docs/12 §7, docs/14 §6. On every push to main:
+#   1. changesets/action opens (or updates) a "version packages" PR while changesets are pending;
+#   2. once none are pending, the publish job publishes @awaketab/wake if its package.json version is not on
+#      npm yet — `npm publish --provenance --access public` from this workflow (GitHub OIDC). Nothing else in
+#      the monorepo is published (web, extension and @awaketab/core are private / changeset-ignored).
+# Auth: prefer npm trusted publishing (npmjs.com → @awaketab/wake → Settings → Trusted publisher →
+# GitHub Actions, repo awaketab/awaketab, workflow release.yml), which needs npm ≥ 11.5.1 and no secret.
+# Until that is configured, an automation token in the NPM_TOKEN secret works too (provenance still applies).
+
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
   id-token: write
   pull-requests: write
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  changesets:
+  version:
     runs-on: ubuntu-24.04
+    outputs:
+      hasChangesets: ${{ steps.changesets.outputs.hasChangesets }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset version
+          title: "chore(release): version packages"
+          commit: "chore(release): version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-wake:
+    needs: version
+    if: needs.version.outputs.hasChangesets == 'false'
+    runs-on: ubuntu-24.04
+    environment: npm
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -22,11 +64,37 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
           cache: pnpm
+      # Trusted publishing (OIDC, no long-lived token) needs npm ≥ 11.5.1; Node 22 bundles npm 10.
+      - run: npm install -g npm@11.6.2
       - run: pnpm install --frozen-lockfile
-      - run: pnpm test && pnpm build
-      - uses: changesets/action@v1
-        with:
-          publish: pnpm changeset publish
+      - name: Test the library
+        run: pnpm vitest run --config vitest.config.ts packages/wake
+      - name: Build and size-check the library
+        run: pnpm -F @awaketab/wake build && pnpm -F @awaketab/wake size
+      - name: Check whether this version is already on npm
+        id: check
+        run: |
+          VERSION=$(node -p "require('./packages/wake/package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if npm view "@awaketab/wake@$VERSION" version > /dev/null 2>&1; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "@awaketab/wake@$VERSION is already on npm; nothing to publish."
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Pack (dry run) — the exact file list that will be published
+        if: steps.check.outputs.published == 'false'
+        working-directory: packages/wake
+        run: npm pack --dry-run
+      - name: Publish with provenance
+        if: steps.check.outputs.published == 'false'
+        working-directory: packages/wake
+        run: npm publish --provenance --access public
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_CONFIG_PROVENANCE: "true"
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Tag the release
+        if: steps.check.outputs.published == 'false'
+        run: |
+          TAG="@awaketab/wake@${{ steps.check.outputs.version }}"
+          git tag "$TAG"
+          git push origin "$TAG"
