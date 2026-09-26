@@ -72,6 +72,59 @@ test.describe('no cookies on tool routes', () => {
   });
 });
 
+/*
+ * Zero third-party requests on tool routes (docs/00 §11, docs/02 NFR). The tool-route CSP allows `img-src https:`
+ * only so a licensed kiosk's `logo=` image can load (docs/00 §13.10, LAUNCH-AUDIT D-01): the policy is wider
+ * than the behaviour, so the behaviour is asserted here — every request a default tool route makes, through a
+ * started session, stays on the page's own origin, and an unlicensed `logo=` URL fetches nothing.
+ */
+test.describe('no third-party requests on tool routes (D-01)', () => {
+  const external = (page: Page, baseURL: string | undefined, sink: string[]) => {
+    const own = new URL(baseURL ?? 'http://127.0.0.1:4321').origin;
+    page.on('request', (req) => {
+      const url = new URL(req.url());
+      if ((url.protocol === 'http:' || url.protocol === 'https:') && url.origin !== own) sink.push(req.url());
+    });
+  };
+
+  for (const route of TOOL_ROUTES) {
+    test(`${route} requests nothing from another origin`, async ({ baseURL, page }) => {
+      const requests: string[] = [];
+      external(page, baseURL, requests);
+      await page.goto(route);
+      await expect(page.locator('#awaketab-tool, #awaketab-pip').first()).toBeAttached();
+      await page.waitForLoadState('networkidle');
+      expect(requests).toEqual([]);
+    });
+  }
+
+  test('a started session with ambient and theme changes stays first-party', async ({ baseURL, page }) => {
+    const requests: string[] = [];
+    external(page, baseURL, requests);
+    await page.goto('/');
+    await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake', { timeout: 4000 });
+    await page.keyboard.press('2');
+    await page.keyboard.press('d');
+    await page.keyboard.press('m');
+    await expect(page.locator('dialog[data-ambient]')).toBeVisible();
+    await page.waitForLoadState('networkidle');
+    expect(requests).toEqual([]);
+  });
+
+  test('an unlicensed logo= URL loads no image and makes no request to its host', async ({ page }) => {
+    const logoRequests: string[] = [];
+    await page.route('https://cdn.example.com/**', async (route) => {
+      logoRequests.push(route.request().url());
+      await route.fulfill({ status: 204, body: '' });
+    });
+    await page.goto(`/?autostart=0&logo=${encodeURIComponent('https://cdn.example.com/logo.png')}`);
+    await expect(page.locator('#awaketab-tool')).toBeAttached();
+    await page.waitForLoadState('networkidle');
+    await expect(page.locator('[data-kiosk-logo]')).toHaveCount(0);
+    expect(logoRequests).toEqual([]);
+  });
+});
+
 test.describe('PWA', () => {
   test.use({ serviceWorkers: 'allow' });
 
