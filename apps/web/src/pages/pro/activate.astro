@@ -51,7 +51,8 @@ const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balan
   <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
   <main class="mx-auto mt-8 max-w-[45rem] leading-normal" data-activate-root>
     <h1 class={headingClass}>{t('page.pro.activate.h1')}</h1>
-    <p class="mt-3 text-lg">{t('page.pro.activate.lead')}</p>
+    <p class="mt-3 text-lg" data-activate-mode="web">{t('page.pro.activate.lead')}</p>
+    <p class="mt-3 text-lg" data-activate-mode="ext" hidden>{t('page.pro.activate.ext.lead')}</p>
 
     <Card className="mt-6">
       <CardContent>
@@ -67,7 +68,10 @@ const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balan
             aria-describedby="activate-error"
             className="min-h-11 font-mono"
           />
-          <Button type="submit" className="min-h-11 sm:w-fit">{t('page.pro.activate.submit')}</Button>
+          <Button type="submit" className="min-h-11 sm:w-fit">
+            <span data-activate-mode="web">{t('page.pro.activate.submit')}</span>
+            <span data-activate-mode="ext" hidden>{t('page.pro.activate.ext.submit')}</span>
+          </Button>
         </form>
       </CardContent>
     </Card>
@@ -94,7 +98,7 @@ const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balan
 
     <Card data-ext-panel="" hidden className="mt-6">
       <CardHeader>
-        <CardTitle>{t('pro.activated')}</CardTitle>
+        <CardTitle>{t('page.pro.activate.ext.title')}</CardTitle>
         <CardDescription id="ext-copy">{t('page.pro.activate.ext')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-2">

@@ -1,5 +1,5 @@
 import type { IEnv } from '../../_lib/env';
-import { jsonError, jsonOk, parseActivateBody, rateLimited } from '../../_lib/http';
+import { isLookupBody, jsonError, jsonOk, KEY_RE, parseActivateBody, parseLookupBody, rateLimited } from '../../_lib/http';
 import {
   encryptUtf8,
   PLAN_FEATURES,
@@ -25,6 +25,10 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   } catch {
     return jsonError('bad_request', 400);
   }
+  if (isLookupBody(body)) {
+    const lookup = parseLookupBody(body);
+    return lookup ? lookupCheckout(env, lookup.checkoutId) : jsonError('bad_request', 400);
+  }
   const parsed = parseActivateBody(body);
   if (!parsed) return jsonError('bad_request', 400);
   const kv = env.LICENSES;
@@ -39,8 +43,7 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
       if (checkout.status !== 'succeeded' || !checkout.license_key) return jsonError('invalid_key', 404);
       key = checkout.license_key.trim().toUpperCase();
     } catch (err) {
-      if (err instanceof PolarError) return jsonError(err.code, err.code === 'polar_unavailable' ? 502 : 400);
-      return jsonError('polar_unavailable', 502);
+      return polarFailure(err);
     }
   }
   if (!key) return jsonError('bad_request', 400);
@@ -70,10 +73,7 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   try {
     polarLicense = await polar.validate(key);
   } catch (err) {
-    if (err instanceof PolarError) {
-      return jsonError(err.code, err.code === 'polar_unavailable' ? 502 : err.code === 'invalid_key' ? 404 : 403);
-    }
-    return jsonError('polar_unavailable', 502);
+    return polarFailure(err);
   }
   if (polarLicense.status !== 'granted') return jsonError('revoked', 403);
   const plan = planFromBenefit(env, polarLicense.benefit_id);
@@ -152,4 +152,45 @@ async function mint(env: IEnv, record: ILicenseRecord, keyHash: string, devHash:
     exp,
     activations: publicActivations(record),
   });
+}
+
+function polarFailure(err: unknown): Response {
+  if (!(err instanceof PolarError)) return jsonError('polar_unavailable', 502);
+  if (err.code === 'polar_unavailable') return jsonError(err.code, 502);
+  return jsonError(err.code, err.code === 'invalid_key' ? 404 : 403);
+}
+
+/**
+ * `{ checkoutId, lookup: true }` → `{ key, plan }` without activating anything (docs/09 §2.3a). Used by
+ * `/pro/activate?ext=1&checkout_id=…` so the browser that finished checkout does not spend one of the five
+ * activations before the extension activates itself. Same rate-limit bucket as activation (checked by the
+ * caller); unknown, unpaid and keyless checkouts all answer 404 `invalid_key`. Holding the checkout ID already
+ * authorises activating its key through this endpoint, so returning the key to that holder grants nothing new
+ * (Polar shows the same key on its receipt page). No KV write, no Polar activation.
+ */
+async function lookupCheckout(env: IEnv, checkoutId: string): Promise<Response> {
+  const kv = env.LICENSES;
+  if (!kv) return jsonError('polar_unavailable', 502);
+  const polar = createPolar(env);
+  let key: string;
+  try {
+    const checkout = await polar.checkout(checkoutId);
+    if (checkout.status !== 'succeeded' || !checkout.license_key) return jsonError('invalid_key', 404);
+    key = checkout.license_key.trim().toUpperCase();
+  } catch (err) {
+    return polarFailure(err);
+  }
+  if (!KEY_RE.test(key)) return jsonError('invalid_key', 404);
+  const existing = await readLicense(kv, await sha256Hex(key));
+  if (existing && (existing.status === 'revoked' || existing.status === 'refunded')) return jsonError(existing.status, 403);
+  let license;
+  try {
+    license = await polar.validate(key);
+  } catch (err) {
+    return polarFailure(err);
+  }
+  if (license.status !== 'granted') return jsonError('revoked', 403);
+  const plan = planFromBenefit(env, license.benefit_id);
+  if (!plan) return jsonError('invalid_key', 404);
+  return jsonOk({ key, plan });
 }

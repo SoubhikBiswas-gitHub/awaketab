@@ -1,4 +1,5 @@
 import { activateLicense, deviceId } from './license';
+import { lookupCheckoutKey, normaliseLicenseKey } from './license-lookup';
 
 const ERR_KEY: Record<string, string> = {
   invalid_key: 'license.error.invalid',
@@ -12,6 +13,12 @@ const ERR_KEY: Record<string, string> = {
   bad_request: 'license.error.invalid',
 };
 
+/**
+ * `/pro/activate` (docs/09 §2.3). Without `ext=1` the page activates THIS browser as a device. With `ext=1`
+ * (the hand-off from AwakeTab for Chrome, docs/10 §5) it never activates anything: a pasted key is checked for
+ * shape client-side and a `checkout_id` is resolved through the non-activating lookup (docs/09 §2.3a), then the
+ * copy panel shows the key so the extension performs the single activation the purchase spends.
+ */
 export function bootActivatePage(root: HTMLElement): void {
   const form = root.querySelector<HTMLFormElement>('[data-activate]');
   const error = root.querySelector<HTMLElement>('[data-activate-error]');
@@ -21,10 +28,14 @@ export function bootActivatePage(root: HTMLElement): void {
   const params = new URLSearchParams(location.search);
   const checkoutId = params.get('checkout_id');
   const ext = params.get('ext') === '1';
-  const id = deviceId();
-  const label = navigator.userAgent.slice(0, 40) || 'This browser';
 
   const input = form.querySelector<HTMLInputElement>('input[name="key"]');
+
+  // Copy that differs between the two modes is pre-rendered once per mode; the ext variants start hidden.
+  if (ext) {
+    for (const node of root.querySelectorAll<HTMLElement>('[data-activate-mode="web"]')) node.hidden = true;
+    for (const node of root.querySelectorAll<HTMLElement>('[data-activate-mode="ext"]')) node.hidden = false;
+  }
 
   // The page pre-renders a shadcn <Alert> (wrapper) with an <AlertDescription> (text target);
   // writing into the description keeps the alert's grid intact. Falls back to the wrapper.
@@ -39,10 +50,21 @@ export function bootActivatePage(root: HTMLElement): void {
     input?.setAttribute('aria-invalid', 'true');
   };
 
-  const run = async (key?: string) => {
+  const clearError = () => {
+    if (error) error.hidden = true;
+    input?.removeAttribute('aria-invalid');
+  };
+
+  const showKey = (key: string) => {
+    clearError();
+    if (extKey) extKey.value = key;
+    if (extPanel) extPanel.hidden = false;
+  };
+
+  const activate = async (key?: string) => {
     const payload: { deviceId: string; deviceLabel: string; key?: string; checkoutId?: string } = {
-      deviceId: id,
-      deviceLabel: label,
+      deviceId: deviceId(),
+      deviceLabel: navigator.userAgent.slice(0, 40) || 'This browser',
     };
     if (key) payload.key = key;
     if (checkoutId) payload.checkoutId = checkoutId;
@@ -51,26 +73,33 @@ export function bootActivatePage(root: HTMLElement): void {
       fail(result.error);
       return;
     }
-    if (error) error.hidden = true;
-    input?.removeAttribute('aria-invalid');
+    clearError();
     void import('./analytics.js').then((mod) => {
-      mod.track('pro_activated', { plan: result.plan }, { telemetry: true, source: ext ? 'ext' : 'web', locale: 'en', path: '/pro/activate' });
+      mod.track('pro_activated', { plan: result.plan }, { telemetry: true, source: 'web', locale: 'en', path: '/pro/activate' });
     });
-    if (ext) {
-      if (extPanel) extPanel.hidden = false;
-      if (extKey) extKey.value = key ?? '';
-      return;
-    }
     location.assign('/');
   };
 
-  if (checkoutId && !ext) void run();
+  if (ext && checkoutId) {
+    void lookupCheckoutKey(checkoutId).then((result) => {
+      if (result.ok) showKey(result.key);
+      else fail(result.error);
+    });
+  } else if (checkoutId) {
+    void activate();
+  }
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const raw = new FormData(form).get('key');
-    const key = typeof raw === 'string' ? raw : '';
-    void run(key);
+    const typed = typeof raw === 'string' ? raw : '';
+    if (!ext) {
+      void activate(typed);
+      return;
+    }
+    const key = normaliseLicenseKey(typed);
+    if (key) showKey(key);
+    else fail('invalid_key');
   });
 
   root.querySelector('[data-ext-copy]')?.addEventListener('click', () => {

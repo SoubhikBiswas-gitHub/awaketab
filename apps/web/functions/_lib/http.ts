@@ -18,7 +18,9 @@ export function rateLimited(now = Date.now()): Response {
 }
 
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
-const KEY_RE = /^[A-Z0-9-]{20,80}$/u;
+export const KEY_RE = /^[A-Z0-9-]{20,80}$/u;
+// Polar checkout IDs are UUIDs; the looser shape still refuses anything that could reshape the upstream path.
+const CHECKOUT_RE = /^[A-Za-z0-9_-]{1,80}$/u;
 
 export function parseActivateBody(body: unknown): { key: string; deviceId: string; deviceLabel: string; checkoutId?: string } | null {
   if (!body || typeof body !== 'object') return null;
@@ -31,7 +33,23 @@ export function parseActivateBody(body: unknown): { key: string; deviceId: strin
   const checkoutId = typeof row.checkoutId === 'string' ? row.checkoutId : undefined;
   const key = typeof row.key === 'string' ? row.key.trim().toUpperCase() : '';
   if (!UUID_V4.test(deviceId) || !deviceLabel) return null;
-  if (checkoutId) return { key, deviceId, deviceLabel, checkoutId };
+  if (checkoutId) return CHECKOUT_RE.test(checkoutId) ? { key, deviceId, deviceLabel, checkoutId } : null;
   if (!KEY_RE.test(key)) return null;
   return { key, deviceId, deviceLabel };
+}
+
+/**
+ * `{ checkoutId, lookup: true }` — resolve a paid checkout to its licence key without activating a device
+ * (docs/09 §2.3a: the `/pro/activate?ext=1&checkout_id=…` hand-off, so the extension spends the only activation).
+ */
+export function parseLookupBody(body: unknown): { checkoutId: string } | null {
+  if (!body || typeof body !== 'object') return null;
+  const row = body as Record<string, unknown>;
+  if (row.lookup !== true) return null;
+  const checkoutId = typeof row.checkoutId === 'string' ? row.checkoutId : '';
+  return CHECKOUT_RE.test(checkoutId) ? { checkoutId } : null;
+}
+
+export function isLookupBody(body: unknown): boolean {
+  return !!body && typeof body === 'object' && 'lookup' in body;
 }

@@ -234,22 +234,40 @@ test('first-party beacon includes page_view, session_start and lock_state', asyn
 });
 
 test('pro activate with ext=1 shows the copy panel', async ({ page }) => {
-  await page.route('**/api/license/activate', async (route) => {
-    await route.fulfill({
-      json: {
-        token: 'header.payload.sig',
-        plan: 'pro_yearly',
-        features: ['ambient.packs', 'ads.free'],
-        exp: Math.floor(Date.now() / 1000) + 86_400,
-        activations: [],
-      },
-    });
+  // docs/09 §2.3a: the hand-off must not spend an activation on this browser; the extension activates itself.
+  const licenceCalls: string[] = [];
+  await page.route('**/api/license/**', async (route) => {
+    licenceCalls.push(route.request().url());
+    await route.fulfill({ status: 500, json: { error: 'polar_unavailable' } });
   });
   await page.goto('/pro/activate?ext=1');
-  await page.locator('input[name="key"]').fill('ATAB-TEST-KEY-1234567890');
+  // Long enough for the input's minlength, so the page's own key-shape check is what rejects it.
+  await page.locator('input[name="key"]').fill('not a licence key at all');
+  await page.locator('[data-activate] button[type="submit"]').click();
+  await expect(page.locator('[data-activate-error]')).toBeVisible();
+  await expect(page.locator('[data-ext-panel]')).toBeHidden();
+
+  await page.locator('input[name="key"]').fill(' atab-test-key-1234567890 ');
   await page.locator('[data-activate] button[type="submit"]').click();
   await expect(page.locator('[data-ext-panel]')).toBeVisible();
+  await expect(page.locator('[data-ext-key]')).toHaveValue('ATAB-TEST-KEY-1234567890');
+  await expect(page.locator('[data-activate-error]')).toBeHidden();
   await expect(page).toHaveURL(/ext=1/u);
+  expect(licenceCalls).toEqual([]);
+  expect(await page.evaluate(() => localStorage.getItem('at.v1.license'))).toBeNull();
+});
+
+test('pro activate with ext=1 and checkout_id looks the key up without activating', async ({ page }) => {
+  const bodies: unknown[] = [];
+  await page.route('**/api/license/**', async (route) => {
+    bodies.push(route.request().postDataJSON());
+    await route.fulfill({ json: { key: 'ATAB-TEST-KEY-1234567890', plan: 'pro_yearly' } });
+  });
+  await page.goto('/pro/activate?ext=1&checkout_id=chk_e2e');
+  await expect(page.locator('[data-ext-panel]')).toBeVisible();
+  await expect(page.locator('[data-ext-key]')).toHaveValue('ATAB-TEST-KEY-1234567890');
+  expect(bodies).toEqual([{ checkoutId: 'chk_e2e', lookup: true }]);
+  expect(await page.evaluate(() => localStorage.getItem('at.v1.license'))).toBeNull();
 });
 
 test('axe zero on home light and dark', async ({ page }) => {

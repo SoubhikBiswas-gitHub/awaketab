@@ -97,6 +97,8 @@ export function createPolar(env: IEnv, fetchFn: typeof fetch = fetch) {
       } catch {
         throw new PolarError('polar_unavailable', 'network');
       }
+      // Unknown and unpaid checkouts must look the same to the caller (no checkout-ID probing).
+      if (res.status === 404) throw new PolarError('invalid_key', 'not found');
       if (!res.ok) throw new PolarError('polar_unavailable', `status ${res.status}`);
       return (await res.json()) as { status: string; license_key?: string };
     },

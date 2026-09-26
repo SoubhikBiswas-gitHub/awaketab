@@ -330,4 +330,114 @@ describe('POST /api/license/activate', () => {
     expect(open.status).toBe(404);
     expect(await open.json()).toEqual({ error: 'invalid_key' });
   });
+
+  it('answers an unknown checkoutId like an unpaid one (404 invalid_key, no probing)', async () => {
+    const h = harness();
+    const res = await activate(h, { checkoutId: 'chk_missing' });
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: 'invalid_key' });
+  });
+
+  it('rejects a checkoutId that could reshape the Polar path', async () => {
+    const h = harness();
+    const res = await activate(h, { checkoutId: '../license-keys/validate' });
+    expect(res.status).toBe(400);
+    expect(h.polar.calls).toEqual([]);
+  });
+});
+
+// docs/09 §2.3a: `/pro/activate?ext=1&checkout_id=…` resolves the key without activating the browser, so the
+// extension's own activation is the only one the purchase spends.
+describe('POST /api/license/activate { checkoutId, lookup: true }', () => {
+  function lookup(h: IHarness, body: Record<string, unknown>) {
+    return invoke(onActivate, h.env, jsonRequest('/api/license/activate', { lookup: true, ...body }));
+  }
+
+  it('returns the normalised key and plan with no activation, KV record or Polar activate call', async () => {
+    const h = harness();
+    const polarKey = h.polar.addKey(KEY);
+    h.polar.checkouts.set('chk_ok', { status: 'succeeded', license_key: ` ${KEY.toLowerCase()} ` });
+    const res = await lookup(h, { checkoutId: 'chk_ok' });
+    expect(res.status).toBe(200);
+    expect(res.headers.get('cache-control')).toBe('no-store');
+    expect(await res.json()).toEqual({ key: KEY, plan: 'pro_yearly' });
+    expect(h.polar.calls.map((call) => call.path)).toEqual(['/v1/checkouts/chk_ok', '/v1/customer-portal/license-keys/validate']);
+    expect(polarKey.activations.size).toBe(0);
+    expect(h.kv.writes.filter((row) => !row.key.startsWith('rl:'))).toEqual([]);
+    expect(await ipTraces(TEST_IP, h.kv, h.ae)).toEqual([]);
+  });
+
+  it('needs no deviceId and ignores one that is sent', async () => {
+    const h = harness();
+    h.polar.addKey(KEY);
+    h.polar.checkouts.set('chk_ok', { status: 'succeeded', license_key: KEY });
+    const res = await lookup(h, { checkoutId: 'chk_ok', deviceId: device(1), deviceLabel: 'Chrome · macOS' });
+    expect(res.status).toBe(200);
+    expect(await record(h)).toBeNull();
+  });
+
+  it.each([
+    ['unknown', null],
+    ['open', { status: 'open' }],
+    ['keyless', { status: 'succeeded' }],
+  ] as const)('answers an %s checkout with the same 404 invalid_key', async (_name, checkout) => {
+    const h = harness();
+    if (checkout) h.polar.checkouts.set('chk_x', { ...checkout });
+    const res = await lookup(h, { checkoutId: 'chk_x' });
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: 'invalid_key' });
+  });
+
+  it('refuses a key that KV marks refunded, and one Polar no longer grants', async () => {
+    const h = harness();
+    h.polar.addKey(KEY);
+    h.polar.checkouts.set('chk_ok', { status: 'succeeded', license_key: KEY });
+    h.kv.seed(`lic:${await sha256Hex(KEY)}`, { status: 'refunded', activations: [] });
+    const refunded = await lookup(h, { checkoutId: 'chk_ok' });
+    expect(refunded.status).toBe(403);
+    expect(await refunded.json()).toEqual({ error: 'refunded' });
+
+    const other = 'AWAKETAB-PRO-TEST-0002-ABCD';
+    h.polar.addKey(other, { status: 'revoked' });
+    h.polar.checkouts.set('chk_revoked', { status: 'succeeded', license_key: other });
+    const res = await lookup(h, { checkoutId: 'chk_revoked' });
+    expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({ error: 'revoked' });
+  });
+
+  it('returns 404 when the key maps to no plan', async () => {
+    const h = harness();
+    h.polar.addKey(KEY, { benefitId: BENEFITS.unmapped });
+    h.polar.checkouts.set('chk_ok', { status: 'succeeded', license_key: KEY });
+    expect((await lookup(h, { checkoutId: 'chk_ok' })).status).toBe(404);
+  });
+
+  it.each([{}, { checkoutId: '' }, { checkoutId: 'a/b' }, { checkoutId: 'x'.repeat(81) }, { checkoutId: 'chk_ok', lookup: 'yes' }])(
+    'returns 400 bad_request for %j without calling Polar',
+    async (body) => {
+      const h = harness();
+      const res = await lookup(h, body);
+      expect(res.status).toBe(400);
+      expect(h.polar.calls).toEqual([]);
+    },
+  );
+
+  it.each(['http', 'network'] as const)('returns 502 polar_unavailable on a Polar %s outage', async (outage) => {
+    const h = harness();
+    h.polar.outage = outage;
+    const res = await lookup(h, { checkoutId: 'chk_ok' });
+    expect(res.status).toBe(502);
+    expect(await res.json()).toEqual({ error: 'polar_unavailable' });
+  });
+
+  it('shares the /api/license/* rate-limit bucket (11th call is 429)', async () => {
+    const h = harness();
+    h.polar.addKey(KEY);
+    h.polar.checkouts.set('chk_ok', { status: 'succeeded', license_key: KEY });
+    for (let i = 0; i < 5; i += 1) expect((await activate(h, { key: KEY })).status).toBe(200);
+    for (let i = 0; i < 5; i += 1) expect((await lookup(h, { checkoutId: 'chk_ok' })).status).toBe(200);
+    const res = await lookup(h, { checkoutId: 'chk_ok' });
+    expect(res.status).toBe(429);
+    expect(res.headers.get('retry-after')).toBeTruthy();
+  });
 });
