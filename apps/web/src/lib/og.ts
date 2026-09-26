@@ -11,7 +11,20 @@ export interface IOgInput {
   title: string;
   eyebrow: string;
   locale: string;
+  /** Bottom line; defaults to `awaketab.com · {locale}`. Locale pages pass the language's own name. */
+  footer?: string;
   fonts: IOgFont[];
+}
+
+const FULL_WIDTH = /[\u1100-\u115F\u2E80-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFF60\uFFE0-\uFFE6]/u;
+
+/** Display width with full-width (CJK) characters counted twice, so long titles step down in size. */
+export function titleFontSize(title: string): number {
+  let width = 0;
+  for (const char of title) width += FULL_WIDTH.test(char) ? 2 : 1;
+  if (width <= 36) return 68;
+  if (width <= 56) return 58;
+  return 50;
 }
 
 export async function renderOgPng(input: IOgInput): Promise<Uint8Array> {
@@ -45,13 +58,13 @@ export async function renderOgPng(input: IOgInput): Promise<Uint8Array> {
               {
                 type: 'div',
                 props: {
-                  style: { fontSize: '68px', fontWeight: 700, lineHeight: 1.08, letterSpacing: '-0.03em' },
+                  style: { fontSize: `${String(titleFontSize(input.title))}px`, fontWeight: 700, lineHeight: 1.08, letterSpacing: '-0.03em', textWrap: 'balance' },
                   children: input.title,
                 },
               },
               {
                 type: 'div',
-                props: { style: { color: '#5B6475', fontSize: '28px' }, children: `awaketab.com · ${input.locale}` },
+                props: { style: { color: '#5B6475', fontSize: '28px' }, children: input.footer ?? `awaketab.com · ${input.locale}` },
               },
             ],
           },
