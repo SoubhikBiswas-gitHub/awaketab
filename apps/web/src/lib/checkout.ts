@@ -10,12 +10,14 @@ declare const __AT_POLAR_SERVER__: string | undefined;
 
 export type TPolarServer = 'sandbox' | 'production';
 
+// Polar sandbox org `awaketab` (created 2026-09-26 via the API); each link's success URL is
+// https://awaketab.pages.dev/pro/activate?checkout_id={CHECKOUT_ID}.
 export const CHECKOUT_LINKS_SANDBOX: Readonly<Record<TPlanId, string>> = {
-  pro_yearly: 'https://sandbox.polar.sh/checkout/awaketab-pro-yearly',
-  pro_lifetime: 'https://sandbox.polar.sh/checkout/awaketab-pro-lifetime',
-  biz_embed_site_yearly: 'https://sandbox.polar.sh/checkout/awaketab-embed',
-  biz_kiosk_site: 'https://sandbox.polar.sh/checkout/awaketab-kiosk',
-  biz_kiosk_5: 'https://sandbox.polar.sh/checkout/awaketab-kiosk-5',
+  pro_yearly: 'https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_hl19dM6c6AmehBiuzDYFRg5lurRsDwJkxbQAU0liBMl/redirect',
+  pro_lifetime: 'https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_BxpdJ71IEheYkbOuqrdrKVDLi4wNhhjEyhmTo23rT1R/redirect',
+  biz_embed_site_yearly: 'https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_Atyk10vf6DIQD9ICnFuvKN2Z01A9lNUFZjZM113Rwsj/redirect',
+  biz_kiosk_site: 'https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_15TOjnz6iwUVlIRJS6jUNvP3sSUkllwxOZmlQ42ezr2/redirect',
+  biz_kiosk_5: 'https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_lpGZ6htk6dAFL9EhOD3N8m4ryk7v6z5irdum41Bk9qT/redirect',
 };
 
 /** Marks a production link that has not been created in Polar yet. `check-keys.mts` fails a production build on it. */
