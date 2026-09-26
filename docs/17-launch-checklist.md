@@ -55,7 +55,7 @@ Related docs: `15-implementation-plan.md` (phases, gates) · `13-testing-strateg
 
 **Ops**
 - [ ] Uptime check on `/` and `/api/health`; alert email received in a test.
-- [ ] KV backup cron ran once; restore dry-run succeeded.
+- [ ] KV backup cron ran once; restore dry-run succeeded. Add the `kv-backup.yml` secrets, then Actions → KV backup → Run workflow. Download the artifact, then `pnpm kv:restore <file>` and `pnpm kv:restore <file> --namespace-id <LICENSES_PREVIEW id>` (dry run) (`14-devops.md` §11).
 - [ ] Changelog entry "1.0 — launch" written.
 
 ---

@@ -110,7 +110,7 @@ Every path has `Permissions-Policy: screen-wake-lock=(self), picture-in-picture=
 | P1-18 | OG images render in the X / LinkedIn / Slack debuggers; favicon in result previews | MANUAL | Per-page OG images exist and are asserted by `holding-page.test.ts` and `i18n-content.test.ts`. The debuggers need a public URL (N-13) |
 | P1-19 | `/until/*` canonical `/`; `/pip` `noindex` | PASS | `holding-page.test.ts` "keeps nonindexable routes honest" and "/pip popup in every locale, noindex…"; §1.3 |
 | P1-20 | Uptime check on `/` and `/api/health`; alert email received | EXTERNAL | N-16 |
-| P1-21 | KV backup cron ran once; restore dry-run succeeded | FAIL | **F-02**: no `backup-kv` Worker, no `pnpm kv:restore` or `kv:reencrypt` (`14-devops.md` §10–§11) |
+| P1-21 | KV backup cron ran once; restore dry-run succeeded | PASS (code) / EXTERNAL (run) | **F-02 fixed**: `.github/workflows/kv-backup.yml` + `pnpm kv:backup` / `kv:restore` / `kv:reencrypt` (`14-devops.md` §10–§11). The backup → restore drill passes against a fake Cloudflare API (`apps/web/scripts/kv/test/`). The first real run and dry-run restore need the secrets: N-18 |
 | P1-22 | Changelog entry "1.0 — launch" | PASS | `changelog/2026-09-1.0-launch.md` (this commit) |
 
 ---
@@ -158,7 +158,7 @@ Every path has `Permissions-Policy: screen-wake-lock=(self), picture-in-picture=
 | E-07b | Pro flow end-to-end against the Polar sandbox, including revocation via webhook | PASS (mocked) / EXTERNAL (live) | Function suites with a mocked Polar API: activate / validate / deactivate / webhook (LIC-02…LIC-12, `wh:` idempotency, refund → `refunded`), journey 9 (mocked activation → revoke). A live run against the sandbox needs the Polar account and a deployed preview (N-04). Webhooks that carry no licence key: decision D-06 |
 | E-07c | Offline verification works with the network off | PASS | `packages/core/test/license.test.ts` (WebCrypto ES256 verify, expiry, grace, tampered fixture); extension licence e2e verifies offline |
 | E-08a | Uptime check on `/` and `/api/health` | EXTERNAL | N-16 (`health.test.ts` covers the endpoint) |
-| E-08b | KV backup cron deployed | FAIL | F-02 |
+| E-08b | KV backup cron deployed | PASS (code) / EXTERNAL (secrets) | F-02 fixed: `kv-backup.yml` (weekly + manual, encrypted 12-week artifact); N-18 |
 | E-08c | Rollback documented (docs/14 §11) and tested once on a preview | PASS (doc) / EXTERNAL (test) | `14-devops.md` §11–§12; rollback drill N-17 |
 | E-09a | axe zero on all templates in both themes | PASS | P1-08a |
 | E-09b | Keyboard-only run of journeys 1–7 recorded here | PASS | `keyboard.spec.ts`, 3 engines, 12 / 12 each: J1 autostart + skip link + whole page tabs without a trap; J2 Tab to 2 h chip + Enter, and the `5` key; J3 `U` opens the until picker with focus inside; J4 hide → Paused, show → Screen awake, focus kept; J5 denied → Tab to Retry → Enter; J6 extend prompt (Stop focused, Esc stops; Shift+Tab to +30, Enter extends); J7 reload → Tab to Resume → Enter; shortcuts 1–6 / 0 / D / F / P / ?; ambient (M) focus trap and Esc; settings and stats dialogs restore focus |
@@ -177,18 +177,18 @@ Every path has `Permissions-Policy: screen-wake-lock=(self), picture-in-picture=
 | EXTERNAL | 7 | 9 | 2 | **18** |
 | **Rows** | 32 | 18 | 20 | **70** |
 
-Rows marked "PASS (local)" count as PASS, and "PASS (mocked) / EXTERNAL (live)" and "PASS (doc) / EXTERNAL (test)" also count as PASS; the EXTERNAL half of each is tracked in Needs Soubhik. Every automatable item passes except the 8 FAIL rows. Those rows trace to 5 defects: F-01 (P1-12b, E-03b), F-02 (P1-21, E-08b), F-04 (P1-15, E-04c), F-05 (P1-17b) and F-06 (P1-13b). Two more defects have no row. F-03 comes from `14-devops.md` §1, and F-07 (`/changelog` rendering) turned up while writing the 1.0 entry, so P1-22 stays PASS. Both are listed under Fails with the others.
+Rows marked "PASS (local)" count as PASS, and "PASS (mocked) / EXTERNAL (live)" and "PASS (doc) / EXTERNAL (test)" also count as PASS; the EXTERNAL half of each is tracked in Needs Soubhik. Every automatable item passes except the 6 FAIL rows. Those rows trace to 4 defects: F-01 (P1-12b, E-03b), F-04 (P1-15, E-04c), F-05 (P1-17b) and F-06 (P1-13b). F-02 (P1-21, E-08b) has since been fixed in code; its first live run is N-18. Two more defects have no row. F-03 comes from `14-devops.md` §1, and F-07 (`/changelog` rendering) turned up while writing the 1.0 entry, so P1-22 stays PASS. Both are listed under Fails with the others.
 
 ---
 
 ## Fails
 
-None of these was fixed in this pass, which changed docs only.
+None of these was fixed in this pass, which changed docs only. F-02 has been fixed in code since then; its row is marked.
 
 | ID | Defect | Evidence | Severity / blocks |
 |---|---|---|---|
 | **F-01** | `POST /api/csp` has no rate limit and no body cap. Every request writes one Analytics Engine point (`client_error {code:'csp'}`), and `request.text()` reads the whole body | `apps/web/functions/api/csp.ts` (no `rateLimit()` call; compare `api/e.ts`, which enforces `MAX_BODY_BYTES` and `rateLimit`). `grep -l rateLimit functions/api` → `e.ts`, `rating.ts`, `license/{activate,validate,deactivate}.ts` only | Low. It can inflate AE usage and cost. `/api/embed/config` (read-only, cached 5 min), `/api/health` and the HMAC webhook are unlimited by design |
-| **F-02** | KV backup and restore are not built: no `backup-kv` Worker cron, no R2 export, no `pnpm kv:restore` / `kv:reencrypt` | `14-devops.md` §10–§11; `grep -r "backup-kv\|kv:restore\|kv:reencrypt"` finds only docs; no Worker or `wrangler.toml` in the repo | Medium. Blocks §E Ops. KV holds licence records once Pro sells (G2) |
+| **F-02** · **PASS (code)** | KV backup and restore were not built: no `backup-kv` Worker cron, no R2 export, no `pnpm kv:restore` / `kv:reencrypt` | **Fixed:** `.github/workflows/kv-backup.yml` (GitHub Actions instead of a Worker cron, encrypted artifact instead of R2; the reasons are in `14-devops.md` §11) and `pnpm kv:backup` / `kv:restore` (dry run by default, `--apply`, `--yes-production` for production, keeps `expiration` and metadata) / `kv:reencrypt` (dry run by default, idempotent, resumable, progress output). Code is in `apps/web/scripts/kv/`, with 37 unit tests and a functions interop test, no network. The secrets and the first run are owner steps: N-18 | Was Medium, blocked §E Ops. Nothing blocks now in code; E-08b waits on N-18 |
 | **F-03** | Preview deployments are not `noindex`. `14-devops.md` §1 specifies a middleware that adds `X-Robots-Tag: noindex` when `CF_PAGES_BRANCH !== 'main'`, but the only middleware is `functions/api/_middleware.ts` (CORS, `/api/*` only) | `find apps/web/functions` shows no root `_middleware.ts`; `grep -r CF_PAGES_BRANCH` → nothing | Low. Canonicals point to `https://awaketab.com`, which limits the damage, but `*.pages.dev` previews can still be crawled |
 | **F-04** | `/about` has no contact. `/privacy` leaves out three `08-data-storage.md` §7 rows: the 90-day retention of anonymous events in Analytics Engine; ratings (stars + optional text in KV); and the licence record in KV, including how to ask for deletion (`14-devops.md` §10: "delete my licence data… documented on /privacy"). The ads section says only "remains disabled until its documented launch gate", which is not enough for AdSense | `apps/web/src/pages/about.astro` (no `mailto:` / `support@`); `apps/web/src/pages/privacy.astro` (no "90", "rating", "delet", "support@") | Medium. Legal copy. Must be fixed before launch and before applying to AdSense |
 | **F-05** | IndexNow is not built: no key file in `public/`, no ping after deploy | `grep -ri indexnow apps/web/scripts apps/web/src .github` → nothing | Low. Bing / Yandex discover pages more slowly |
@@ -227,7 +227,7 @@ The steps are in order. Anything that changes code is marked **(code change, PR)
    | `POLAR_API_BASE` | **Production: `https://api.polar.sh`**; Preview: `https://sandbox-api.polar.sh`. Undocumented (F-06); without it the functions call the sandbox |
    | `ALERT_WEBHOOK_URL` | optional Slack webhook (`14-devops.md` §9) |
    Plain (non-secret) variables for both environments: `PUBLIC_SITE_URL=https://awaketab.com`, `PUBLIC_ADS_ENABLED=0`, `PUBLIC_SPONSOR_ENABLED=0`, `PUBLIC_POLAR_SERVER=production` (Preview: `sandbox`). The last one is read nowhere yet (F-06).
-6. **R2** bucket `awaketab-backups` for the weekly KV export, once F-02 is built.
+6. **KV backup.** No R2 bucket is needed. The backup is a GitHub Actions artifact (F-02, as built). Set it up with N-18.
 7. **Email.** Cloudflare Email Routing: forward `support@awaketab.com` (used on `/pro`, the refund runbook and the store listing) to your inbox and send a test message.
 8. **GitHub secrets.** `LHCI_GITHUB_APP_TOKEN` (optional status checks on PRs), and `NPM_TOKEN` only as the fallback for N-06.
 
@@ -347,6 +347,27 @@ Cloudflare Health Checks (or UptimeRobot / Better Stack free): `GET https://awak
 
 Deploy a trivial change to a preview branch, then Pages → Deployments → pick the previous deployment → "Rollback to this deployment". Confirm `/api/health` `version` changes back. Note the time taken in `docs/metrics/`.
 
+
+### N-18 · KV backup secrets and first run (F-02)
+
+1. **Encryption key.** Run `openssl rand -base64 32`. Store the value in the password manager as "AwakeTab BACKUP_ENCRYPTION_KEY". **Without it no backup can be restored**, and it cannot be recovered from GitHub.
+2. **Cloudflare API token (read-only).** Dashboard → My Profile → API Tokens → Create → Custom token "awaketab-kv-backup". Permission: **Account → Workers KV Storage → Read**, for your account only, with no zone permissions. Copy your **Account ID** from Workers & Pages → Overview (right sidebar).
+3. **Namespace ids.** Run `pnpm dlx wrangler kv namespace list`, or open Workers & Pages → KV. You need the ids of `LICENSES` and, optionally, `LICENSES_PREVIEW`.
+4. **GitHub secrets.** Repository → Settings → Secrets and variables → Actions → New repository secret. Add these:
+   | Name | Value |
+   |---|---|
+   | `CLOUDFLARE_API_TOKEN` | the token from step 2 |
+   | `CLOUDFLARE_ACCOUNT_ID` | the account id |
+   | `KV_LICENSES_ID` | the id of `LICENSES` |
+   | `KV_LICENSES_PREVIEW_ID` | optional: the id of `LICENSES_PREVIEW` |
+   | `BACKUP_ENCRYPTION_KEY` | the value from step 1 |
+   If the repository is private, check Settings → Actions → General → Artifact and log retention: it must be at least 84 days.
+5. **First run (P1-21, E-08b).** Actions → KV backup → Run workflow. It must be green and show the artifact `kv-backup-<run id>` containing `LICENSES-<date>.jsonl.enc`. A run with the notice "KV backup skipped" means no secret is visible to the job. A red run that names missing secrets means some are set and some are not.
+6. **Restore dry run.** Download and unzip the artifact. Then:
+   - `BACKUP_ENCRYPTION_KEY=… pnpm kv:restore LICENSES-<date>.jsonl.enc` must print the header and counts.
+   - `CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… BACKUP_ENCRYPTION_KEY=… pnpm kv:restore LICENSES-<date>.jsonl.enc --namespace-id <LICENSES_PREVIEW id>` must print `dryRun: true` and write nothing.
+   Note the date in `docs/metrics/` and tick docs/17 §2 "KV backup cron ran once; restore dry-run succeeded".
+7. **Later.** A failed scheduled run emails you. Once a month, download one artifact and keep it offline, because artifacts expire after 12 weeks. To rotate `LICENSE_KEY_ENC_KEY`, follow `14-devops.md` §10 (`pnpm kv:reencrypt`, dry run first). It needs a separate short-lived token with KV **Edit**.
 ---
 
 ## Owner decisions pending

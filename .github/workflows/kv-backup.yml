@@ -1,0 +1,83 @@
+# Weekly encrypted export of the Workers KV namespaces (docs/14-devops.md §11).
+#
+# Repository secrets (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN     API token with Account → Workers KV Storage → Read only
+#   CLOUDFLARE_ACCOUNT_ID    Cloudflare account id
+#   KV_LICENSES_ID           id of the production LICENSES namespace
+#   KV_LICENSES_PREVIEW_ID   optional: id of LICENSES_PREVIEW (exported too when set)
+#   BACKUP_ENCRYPTION_KEY    `openssl rand -base64 32`; keep a copy in the password manager —
+#                            without it no backup can be restored
+#
+# With none of the required secrets set (forks, a fresh clone) the job logs a notice and succeeds.
+# With only some of them set it fails: a half-configured backup must not look green.
+name: KV backup
+
+on:
+  schedule:
+    - cron: "17 3 * * 1" # Mondays 03:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kv-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      KV_LICENSES_ID: ${{ secrets.KV_LICENSES_ID }}
+      KV_LICENSES_PREVIEW_ID: ${{ secrets.KV_LICENSES_PREVIEW_ID }}
+      BACKUP_ENCRYPTION_KEY: ${{ secrets.BACKUP_ENCRYPTION_KEY }}
+    steps:
+      - name: Check configuration
+        id: config
+        shell: bash
+        run: |
+          required=(CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID KV_LICENSES_ID BACKUP_ENCRYPTION_KEY)
+          missing=()
+          for name in "${required[@]}"; do
+            [ -n "${!name}" ] || missing+=("$name")
+          done
+          if [ "${#missing[@]}" -eq "${#required[@]}" ]; then
+            echo "::notice title=KV backup skipped::No backup secrets are configured in this repository, so nothing was exported. Add ${required[*]} (docs/14-devops.md §11)."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          elif [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error title=KV backup misconfigured::Missing repository secrets: ${missing[*]} (docs/14-devops.md §11)."
+            exit 1
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.config.outputs.enabled == 'true'
+        uses: actions/checkout@v4
+      - if: steps.config.outputs.enabled == 'true'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - if: steps.config.outputs.enabled == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - if: steps.config.outputs.enabled == 'true'
+        run: pnpm install --frozen-lockfile
+
+      # Lists lic:*, cus:*, embed:*, ord:*, rating:*, encrypts (AES-256-GCM) and verifies each file decrypts
+      # back to the same records before writing it. Any API error exits non-zero and fails the run.
+      - if: steps.config.outputs.enabled == 'true'
+        run: pnpm kv:backup --out kv-backups
+
+      - if: steps.config.outputs.enabled == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: kv-backup-${{ github.run_id }}
+          path: kv-backups/*.jsonl.enc
+          if-no-files-found: error
+          retention-days: 84 # 12 weeks
+          compression-level: 0 # ciphertext does not compress
