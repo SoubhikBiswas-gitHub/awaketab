@@ -143,7 +143,7 @@
   "tool.advice.firefox_old": "Firefox 126 以降ならネイティブに画面をオンに保てます。アップデートするか、「開始」をタップして代替方式を使ってください。",
   "tool.advice.iframe_no_allow": "許可なしで埋め込まれています。AwakeTab を直接開いてください。",
   "tool.advice.retry": "再試行",
-  "tool.advice.learn": "詳しく見る",
+  "tool.advice.learn": "原因と対処法を見る",
   "tool.fallback.consent.title": "動画の代替方式を使いますか？",
   "tool.fallback.consent.body": "無音の小さな動画で画面をオンに保ちます。ネイティブの Wake Lock よりバッテリーを消費します。",
   "tool.fallback.consent.accept": "代替方式を使う",

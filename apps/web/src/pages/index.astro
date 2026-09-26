@@ -423,6 +423,12 @@ const learn: ILink[] = [
     max-inline-size: 42rem;
   }
 
+  /* Card links are the card's tap target: at least 24 px tall (WCAG 2.2 target-size, Lighthouse a11y 100). */
+  .at-links a {
+    display: block;
+    min-block-size: 24px;
+  }
+
   /* The focusable wrapper is the single scroll region; shadcn's inner table container must not scroll too
      (axe: scrollable-region-focusable). */
   .at-matrix-scroll :global([data-slot='table-container']) {

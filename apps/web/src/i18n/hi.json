@@ -143,7 +143,7 @@
   "tool.advice.firefox_old": "Firefox 126 या उसके बाद का वर्शन स्क्रीन को खुद ऑन रखता है। अपडेट करें, या फ़ॉलबैक के लिए “शुरू करें” पर टैप करें।",
   "tool.advice.iframe_no_allow": "अनुमति के बिना एम्बेड किया गया है। इसके बजाय AwakeTab को सीधे खोलें।",
   "tool.advice.retry": "फिर कोशिश करें",
-  "tool.advice.learn": "और जानें",
+  "tool.advice.learn": "ऐसा क्यों होता है और इसे कैसे ठीक करें",
   "tool.fallback.consent.title": "वीडियो फ़ॉलबैक इस्तेमाल करें?",
   "tool.fallback.consent.body": "एक छोटा-सा बिना आवाज़ वाला वीडियो स्क्रीन को ऑन रखता है। यह नेटिव Wake Lock से ज़्यादा बैटरी खर्च करता है।",
   "tool.fallback.consent.accept": "फ़ॉलबैक इस्तेमाल करें",

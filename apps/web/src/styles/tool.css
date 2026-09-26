@@ -111,9 +111,19 @@
     border-inline-start-color: var(--warning);
   }
 
-  /* Form controls inside native <dialog> — shadcn Input / Label class strings. */
+  /* Form controls inside native <dialog> — shadcn Input / Label class strings. The ring keys on :focus-within,
+     not :focus-visible: while Tab walks the segments of <input type="time"> (the until picker) Chromium drops
+     :focus-visible and even :focus on the AM/PM field, and WebKit never sets :focus-visible on a field opened
+     by showModal(), which left those fields with no focus indicator. Text entry always shows focus anyway. */
   .at-input {
-    @apply h-11 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base text-foreground shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30;
+    @apply h-11 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base text-foreground shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30;
+  }
+
+  /* WebKit paints no box-shadow on a native <select> (computed `none`), so the ring above never showed on
+     the settings selects in Safari; an outline does, in every engine. */
+  select.at-input:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 
   .at-fields {
@@ -279,9 +289,15 @@
     font-weight: 700;
   }
 
+  /* The row fills the rest of its header line and packs its controls to the end, so when the install button
+     or the Pro badge appears at its start after load neither the row nor any existing control moves
+     (CLS 0, docs/00 §11), whether or not the header has wrapped (it does at 390 px). */
   .at-header-actions {
     display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-end;
     gap: var(--at-s-1);
   }
 
@@ -429,6 +445,63 @@
     margin-block-start: var(--at-s-2);
     color: var(--muted-foreground);
     font-size: var(--at-t-sm);
+  }
+
+  /* The slot spans the panel so a wider pill or caption after autostart never re-centres it (CLS 0). Only
+     in its home position: ambient modes move the slot into their own layer and style it there. */
+  .at-tool > [data-pip-slot] {
+    display: grid;
+    justify-items: center;
+    justify-self: stretch;
+  }
+
+  /* The timer spans the slot and its caption line is reserved before the session starts, so neither the
+     timer nor the chips below move when the caption fills. */
+  .at-tool > [data-pip-slot] > .at-timer {
+    justify-self: stretch;
+  }
+
+  /* Ring-wide pill: "Ready" → "Starting…" → "Screen awake" fit in every locale (widest: de, 168 px), so autostart
+     changes the words, not the pill's box. Longer states (lost, denied, fallback) may still widen it. */
+  .at-tool > [data-pip-slot] > .at-pill {
+    justify-content: center;
+    min-inline-size: 12rem;
+  }
+
+  .at-tool > [data-pip-slot] > .at-pill > [data-pill-text] {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  .at-tool > [data-pip-slot] .at-timer-caption {
+    min-block-size: 1lh;
+  }
+
+  /* Stop appears when a session starts; on the full tool its row is reserved so the article below the
+     tool does not move on autostart. Embedded tools start on a click, which CLS already excludes. */
+  .at-stop-slot {
+    display: grid;
+    justify-items: center;
+    inline-size: min(100%, 36rem);
+    min-block-size: 44px;
+  }
+
+  .at-tool-embed .at-stop-slot {
+    min-block-size: 0;
+  }
+
+  /* The one-time language suggestion (docs/07 §2) arrives after load, so it floats above the page bottom
+     instead of pushing the tool down. */
+  .at-tool > .at-banner[data-lang-suggest] {
+    position: fixed;
+    inset-inline: var(--at-s-4);
+    inset-block-end: var(--at-s-4);
+    z-index: 31;
+    inline-size: auto;
+    max-inline-size: 36rem;
+    margin-inline: auto;
+
+    @apply shadow-lg;
   }
 
   /* Preset chips — docs/05 §3.3: nothing is ever hidden at any width. */

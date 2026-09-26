@@ -143,7 +143,7 @@
   "tool.advice.firefox_old": "Firefox 126 oder neuer hält den Bildschirm nativ eingeschaltet. Aktualisieren Sie Firefox oder tippen Sie für die Ersatzlösung auf „Starten“.",
   "tool.advice.iframe_no_allow": "Ohne Berechtigung eingebettet. Öffnen Sie stattdessen AwakeTab direkt.",
   "tool.advice.retry": "Erneut versuchen",
-  "tool.advice.learn": "Mehr erfahren",
+  "tool.advice.learn": "Warum das passiert und wie Sie es beheben",
   "tool.fallback.consent.title": "Video-Ersatzlösung verwenden?",
   "tool.fallback.consent.body": "Ein winziges stummes Video hält den Bildschirm eingeschaltet. Es verbraucht mehr Akkuleistung als der native Wake Lock.",
   "tool.fallback.consent.accept": "Ersatzlösung verwenden",
