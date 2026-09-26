@@ -325,7 +325,7 @@ The identifiers below were proposed while writing the other documents and are no
 | `POST /api/rating` | `{ stars 1–5, text?, locale, ver }` → KV `rating:{id}`; feeds `data/ratings.json` |
 | Activate request/response | adds `checkoutId?`, `embed?: { domain }`; validate response includes `activations`; `{ checkoutId, lookup: true }` → `{ key, plan }` without activating (§13.12) |
 | API error codes | `invalid_key` · `activation_limit` · `revoked` · `refunded` · `polar_unavailable` · `rate_limited` · `bad_token` · `bad_request` |
-| KV keys | `lic:{keyHash}` · `cus:{customerId}` · `wh:{eventId}` (TTL 30 d) · `ord:{orderId}` · `embed:{domain}` · `rl:{route}:{ipHash}:{bucket}` (TTL 120 s) · `rating:{id}` |
+| KV keys | `lic:{keyHash}` · `cus:{customerId}` · `wh:{eventId}` (TTL 30 d) · `ord:{orderId}` · `embed:{domain}` · `rl:{route}:{ipHash}:{bucket}` (TTL 120 s) · `rating:{id}` · D-06: `lk:{polarLicenseKeyId}` · `grant:{benefitGrantId}` · `sub:{subscriptionId}` (§13.15) |
 | Kiosk token expiry | `exp = now + 365 d`, re-validate every 30 d when online |
 | Secrets (Pages Functions) | `POLAR_ACCESS_TOKEN` · `POLAR_WEBHOOK_SECRET` · `POLAR_ORGANIZATION_ID` · `POLAR_BENEFIT_MAP` (JSON benefit-id → plan) · `LICENSE_SIGNING_KEY` (private JWK, ES256) · `LICENSE_SIGNING_VER` (integer `ver` claim) · `LICENSE_KEY_ENC_KEY` (32-byte base64, AES-GCM for raw key at rest) · `RATE_LIMIT_SALT` · `TURNSTILE_SECRET_KEY` (optional) |
 | Bindings | KV `LICENSES` · Analytics Engine `EVENTS` (dataset `awaketab_events`) |
@@ -619,6 +619,23 @@ Accepted on 2026-09-26 (`LAUNCH-AUDIT.md`). Specs: `08-data-storage.md` §7, `09
 | `scripts/check-keys.mts` · `pnpm keys:check` | Only with `PUBLIC_POLAR_SERVER=production`. Source check (first web build step): fails on no production key, the dev key listed, a private or non-P-256 JWK, or a placeholder or sandbox checkout link. `--dist <dir>` (last web build step; `pnpm -F extension zip`): fails on the dev key's `x` or `y` in any output file, or a production key missing from every file. `AT_ALLOW_MISSING_PRODUCTION_KEY=1` waives only "no production key" and "placeholder link" (CI's production-mode bundle check) |
 | `pnpm keys:prod` | `scripts/keys-prod.mts`: prints a fresh ES256 pair (the public JWK line for `PRODUCTION_LICENSE_PUBLIC_KEYS[ver]`, the private JWK for the `LICENSE_SIGNING_KEY` secret, and `LICENSE_SIGNING_VER`). Writes nothing |
 | `pnpm -F extension zip` | Builds with `PUBLIC_POLAR_SERVER=production` and runs `check-keys.mts` before and after the build |
+
+### 13.15 Polar ids on licence records (D-06)
+
+Accepted on 2026-09-26 (owner decision D-06, `LAUNCH-AUDIT.md`). Specs: `08-data-storage.md` §4, `09-monetization-impl.md` §2.7 and §2.7.1 (Polar payloads, verified against Polar's OpenAPI 2026-04 / 2026-10).
+
+| Identifier | Decision |
+|---|---|
+| `lic:{keyHash}` fields | Optional `polarLicenseKeyId` (Polar `LicenseKeyRead.id` = `properties.license_key_id`), `polarSubscriptionId`, `polarGrantId` (benefit grant `id`), `benefitId`. `polarOrderId` is `''` until known; it no longer holds the licence-key id |
+| `lk:{polarLicenseKeyId}` | `ILicenseLink` `{ keyHashes, grantId?, orderId?, subscriptionId?, customerId?, benefitId?, pending?, at }`, TTL `LINK_TTL_S` (3 years, restarted on each write). `pending`: a status that arrived before any activation, applied and cleared by `/api/license/activate` |
+| `grant:{benefitGrantId}` | Polar licence-key id (string), TTL `LINK_TTL_S` |
+| `sub:{subscriptionId}` | `string[]` of Polar licence-key ids, TTL `LINK_TTL_S` |
+| `ord:{orderId}.lks` | `string[]` of Polar licence-key ids on the existing order record (`IOrderRecord`, TTL `ORDER_TTL_S` = 2 years); every `ord:` field is now optional |
+| `functions/_lib/links.ts` | `linkLicenseKey()`, `applyIds()`, `transition()`, `readLink()`, `mergeOrder()`, `licenseKeyIdsFor()`, `SUBSCRIPTION_PLANS` (`pro_yearly`, `biz_embed_site_yearly`) |
+| Webhook resolution order | raw `data.license_key.key` → licence-key id → grant id → subscription id → order id → `cus:{customerId}` fan-out (exact id match wins; else plan kind + benefit filter; all matches changed) |
+| Webhook events | Adds `refund.updated` and `benefit_grant.updated` to the subscription list. `order.refunded` with `status: 'partially_refunded'` changes nothing; `refund.*` refunds only when `status === 'succeeded'` and `revoke_benefits` |
+| `BACKUP_PREFIXES` | Adds `lk:`, `grant:`, `sub:` (`scripts/kv/lib/format.ts`) |
+| Test helper | `polarEvents.{order, subscription, refund, benefitGrant}` in `test/functions/harness.ts`; `IPolarKey` gains `orderId`, `subscriptionId`, `grantId` |
 
 ## 14. Writing conventions for these docs
 

@@ -217,19 +217,24 @@ Values are stored as objects, not JSON strings. `chrome.storage.sync` receives o
 
 | Key | Value | TTL / lifecycle |
 |---|---|---|
-| `lic:{keyHash}` | `{ plan, status: 'active'|'canceled'|'revoked'|'refunded'|'expired', keyEnc, polarOrderId, customerId, activations: [{ devHash, label, at }], limit, exp, createdAt, updatedAt }` | until `exp + 1 y`, then expire |
+| `lic:{keyHash}` | `{ plan, status: 'active'|'canceled'|'revoked'|'refunded'|'expired', keyEnc, polarOrderId, customerId, polarLicenseKeyId?, polarSubscriptionId?, polarGrantId?, benefitId?, activations: [{ devHash, label, at, polarActivationId? }], limit, exp, createdAt, updatedAt }` | until `exp + 1 y`, then expire |
 | `cus:{customerId}` | `string[]` of keyHashes | with the licences |
 | `wh:{eventId}` | `{ at }` | 30 days (idempotency) |
-| `ord:{orderId}` | `{ plan, amountCents, currency, customerId, at }` | 2 years (reporting) |
+| `ord:{orderId}` | `{ plan, amountCents, currency, customerId, at, lks? }` — `lks`: Polar licence-key ids granted by the order (D-06). Every field is optional: a benefit grant can create the record before `order.created` | 2 years from the last write (reporting) |
+| `lk:{polarLicenseKeyId}` | `{ keyHashes: string[], grantId?, orderId?, subscriptionId?, customerId?, benefitId?, pending?, at }` — the D-06 hub joining a Polar licence key to its activated key hashes and Polar ids; `pending` = a status that arrived before any activation | 3 years from the last write |
+| `grant:{benefitGrantId}` | Polar licence-key id (plain string) | 3 years from the last write |
+| `sub:{subscriptionId}` | `string[]` of Polar licence-key ids | 3 years from the last write |
 | `embed:{domain}` | `{ keyHash, attribution: false, theme: { accent, scheme }, expiresAt }` | until `expiresAt + 30 d` |
 | `rl:{route}:{ipHash}:{bucket}` | counter | 120 s |
 | `rating:{id}` | `{ stars, text?, locale, ver, at }` | 2 years; exported nightly to `data/ratings.json` (aggregate only) |
 
-`canceled` = the subscription will not renew; tokens keep working until `exp` (docs/09 §2.7). `revoked` and `refunded` are terminal. `activations[].at` is the device's last-seen time (refreshed by `/api/license/validate`); activate evicts a device unseen for 90 days. `wh:{eventId}` is written after the event is handled, so a failed delivery is re-processed on Polar's retry.
+`canceled` = the subscription will not renew; tokens keep working until `exp` (docs/09 §2.7). `revoked` and `refunded` are terminal.
+
+**Polar ids (D-06, 2026-09-26).** Polar's order, refund and subscription webhooks carry ids, never the licence key (docs/09 §2.7.1). Activation writes `polarLicenseKeyId` (Polar validate `id`), `benefitId`, `customerId` and, from a checkout, `polarSubscriptionId`; a `benefit_grant.*` webhook adds `polarGrantId`, `polarOrderId` and `polarSubscriptionId` through `lk:`. `polarOrderId` is `''` until known (before D-06, activation wrongly stored the licence-key id there; re-activation clears it). The index keys hold licence-key ids, not key hashes, because a grant usually arrives before anyone activates; `lk:` is the only place a hash meets Polar's ids. The webhook resolves by raw key, then licence-key id, grant id, subscription id, order id, then the `cus:` fan-out (docs/09 §2.7). The 3-year TTL restarts on every write; a licence whose index has expired is still found through `cus:`, where the ids on `lic:` must match exactly. Records written before D-06 have no ids and keep working through the key path and the `cus:` fan-out until their next activation fills them in (backfill note in docs/09 §2.7). `activations[].at` is the device's last-seen time (refreshed by `/api/license/validate`); activate evicts a device unseen for 90 days. `wh:{eventId}` is written after the event is handled, so a failed delivery is re-processed on Polar's retry.
 
 `keyHash = sha256(licenceKey)` hex; `devHash = sha256(deviceId)`; `ipHash = sha256(RATE_LIMIT_SALT + ip)` — the salt rotates quarterly so hashes cannot be joined across quarters. The raw key is stored only as `keyEnc` (AES-256-GCM with `LICENSE_KEY_ENC_KEY`) because Polar's deactivate endpoint needs it.
 
-Backups: the weekly GitHub Actions job `kv-backup.yml` exports `lic:*`, `cus:*`, `embed:*`, `ord:*` and `rating:*` (values, `expiration`, metadata), encrypted with AES-256-GCM (`BACKUP_ENCRYPTION_KEY`), as a 12-week artifact. Restore with `pnpm kv:restore`; rotate `LICENSE_KEY_ENC_KEY` with `pnpm kv:reencrypt` (`14-devops.md` §10–§11).
+Backups: the weekly GitHub Actions job `kv-backup.yml` exports `lic:*`, `cus:*`, `embed:*`, `ord:*`, `lk:*`, `grant:*`, `sub:*` and `rating:*` (values, `expiration`, metadata), encrypted with AES-256-GCM (`BACKUP_ENCRYPTION_KEY`), as a 12-week artifact. Restore with `pnpm kv:restore`; rotate `LICENSE_KEY_ENC_KEY` with `pnpm kv:reencrypt` (`14-devops.md` §10–§11).
 
 ---
 

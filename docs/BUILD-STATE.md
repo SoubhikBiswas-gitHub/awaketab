@@ -212,7 +212,8 @@ Contract and island work has a single writer. Parallel subagents in git worktree
 - **Total tool JS headroom is 832 B gz** (40,128 / 40,960). The next lazy feature on the tool page needs a size plan (move something out of the tool closure, or split it off to its own page).
 - **E12-T05 device research:** `docs/metrics/device-matrix.json` has 14 rows, all `pending`; `/learn/how-we-tested` reads "Results pending"; `support-matrix.json` has no `lastVerified` from a real run.
 - **WordPress plugin** (`11-embed-spec.md` §5) is not built. The embed host matrix (WordPress, Squarespace, Webflow, Ghost, AMP, Mobile Safari; §9) has not been run.
-- **Polar webhooks without a licence key** (`subscription.revoked` / `order.refunded` carrying only customer, subscription or order ids) do not match a licence yet (`polar.test.ts` `it.todo`; `13-testing-strategy.md` §9). Owner decision D-06.
+- **Polar webhooks without a licence key:** resolved by D-06 (2026-09-26). Key-less payloads are matched through Polar ids (`lk:`, `grant:`, `sub:`, `ord:.lks`, then `cus:`; `09-monetization-impl.md` §2.7); only a live sandbox purchase + refund remains (LAUNCH-AUDIT N-04 step 7).
+- **Checkout auto-fill (F-08, open):** Polar's `Checkout` has no licence key, so `{ checkoutId }` activation and lookup will 404 in production and `/pro/activate` falls back to the paste field. Proposed fix in LAUNCH-AUDIT F-08.
 - **Validate after a key rotation:** `/api/license/validate` verifies only against the current signing key. Old-`ver` tokens get `401` and the client re-activates, which is not the 90-day overlap `14-devops.md` §10 describes.
 - **Coverage:** no `@vitest/coverage-*` package is installed, so "core ≥ 90 % lines" is not measured. Transition-row coverage is by named test (T01–T16).
 - **Tests:** `sponsor.test.ts` and `actions.test.ts` cover the pure helpers only. The sponsor slot DOM and the dialog binders are covered by e2e.
@@ -228,13 +229,13 @@ All of these are in `docs/LAUNCH-AUDIT.md` → Needs Soubhik with exact steps:
 - Chrome Web Store and Edge Add-ons submission; npm trusted publishing for `@awaketab/wake` (`release.yml`, environment `npm`); Search Console and Bing + sitemap.
 - AdSense + Funding Choices CMP (G1); native-speaker review; the real-device matrix + `pnpm -F web matrix:sync`.
 - The first nightly (visual baselines); LHCI on a preview URL; `curl -sI` header checks on a deployed preview; uptime monitor; rollback drill.
-- Owner decisions D-01…D-06 (kiosk `img-src https:`, extension System-level wording, romanised `ja` / `zh` / `hi` slugs, PROPOSED identifiers, content CSP enforce vs report-only, Polar ids on licence records).
+- Owner decisions D-01…D-05 (kiosk `img-src https:`, extension System-level wording, romanised `ja` / `zh` / `hi` slugs, PROPOSED identifiers, content CSP enforce vs report-only). D-06 (Polar ids on licence records) is decided and implemented; its live check is N-04 step 7.
 
 ## Next
 
 **Launch — owner actions in `docs/LAUNCH-AUDIT.md`.** The suggested order:
 
-1. D-01…D-06.
+1. D-01…D-05 (D-06 done), and F-08.
 2. Fix F-04, F-06, F-07, F-01, F-03, F-05 and F-02, plus the N-03 key rotation, in one PR.
 3. N-01 Cloudflare, then N-13 / N-12 on the first preview.
 4. N-05 stores and N-06 npm.

@@ -49,7 +49,7 @@ Benefit names `lk_*` are **PROPOSED** labels for the Polar dashboard. One Licens
 
 `?ref=` on `/pro` is our attribution param (conventions §7). It is read once, emitted in `pro_view` and `pro_checkout_click {plan}` as `source`, and never forwarded to Polar or stored.
 
-**Webhook endpoint.** `https://awaketab.com/api/webhooks/polar`, secret stored as `POLAR_WEBHOOK_SECRET`. Subscribed events: `order.created`, `order.paid`, `order.refunded`, `refund.created`, `subscription.active`, `subscription.updated`, `subscription.canceled`, `subscription.uncanceled`, `subscription.revoked`, `benefit_grant.created`, `benefit_grant.revoked`.
+**Webhook endpoint.** `https://awaketab.com/api/webhooks/polar`, secret stored as `POLAR_WEBHOOK_SECRET`. Subscribed events: `order.created`, `order.paid`, `order.refunded`, `refund.created`, `refund.updated`, `subscription.active`, `subscription.updated`, `subscription.canceled`, `subscription.uncanceled`, `subscription.revoked`, `benefit_grant.created`, `benefit_grant.updated`, `benefit_grant.revoked`. `benefit_grant.*` are required, not optional: they are the only events that name the licence key (by id), so without them key-less refunds and revocations fall back to the customer (§2.7, D-06).
 
 **Organization access token.** `POLAR_ACCESS_TOKEN` with scopes `checkouts:read`, `license_keys:read`, `license_keys:write`, `subscriptions:read`, `orders:read`, `customer_portal:read`, `customer_portal:write`. Rotation schedule is in `14-devops.md`.
 
@@ -61,7 +61,7 @@ Polar's API surface changes; pin `@polar-sh/sdk` (or the raw paths below) at imp
 | Activate a device | `POST /v1/customer-portal/license-keys/activate` `{ key, organization_id, label, meta }` → activation `{ id, license_key: { id, customer_id, benefit_id, status, limit_activations, expires_at } }` |
 | Deactivate a device | `POST /v1/customer-portal/license-keys/deactivate` `{ key, organization_id, activation_id }` → 204 |
 | Subscription period end | `GET /v1/subscriptions?customer_id=&active=true` → `current_period_end` |
-| Checkout lookup (auto-fill after purchase) | `GET /v1/checkouts/{id}` → `status`, `customer_id`, `product_id` |
+| Checkout lookup (auto-fill after purchase) | `GET /v1/checkouts/{id}` → `status`, `customer_id`, `product_id`, `subscription_id`. Polar's `Checkout` schema has **no licence key and no order id** (§2.7.1); the as-built route reads `license_key` from it, which production will not send (`LAUNCH-AUDIT.md` F-08) |
 
 ### 2.2 Purchase flow
 
@@ -230,6 +230,8 @@ interface ILicenseRecord {
 // rl:{route}:{ipHash}:{bucket} → count, expirationTtl 120 s                            (PROPOSED)
 ```
 
+**As built (D-06, 2026-09-26).** The record is flat, not the `polar: {…}` object above: `lic:{keyHash}` carries `polarOrderId`, `customerId` and the optional `polarLicenseKeyId`, `polarSubscriptionId`, `polarGrantId`, `benefitId`, and the Polar ids are indexed in `lk:{polarLicenseKeyId}`, `grant:{benefitGrantId}`, `sub:{subscriptionId}` and `ord:{orderId}.lks`. The schemas and TTLs are in `08-data-storage.md` §4; how the webhook uses them is §2.7.
+
 `keyEnc` exists because Polar's deactivate call needs the raw key and we do not want the raw key in the token or in `at.v1.license`. `LICENSE_KEY_ENC_KEY` is a 32-byte base64 secret (**PROPOSED**).
 
 ### 2.6 Client storage and cadence
@@ -284,17 +286,35 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 };
 ```
 
+As built (D-06, 2026-09-26; `functions/api/webhooks/polar.ts`, `functions/_lib/links.ts`):
+
 | Polar event | Handler action |
 |---|---|
-| `order.created`, `order.paid` | write `ord:{orderId}`; append customer to `cus:{customerId}` index if absent; write an Analytics Engine datapoint `index1 = 'order'` (server-side; not a client event) |
-| `subscription.active`, `subscription.updated` | for each key in `cus:{customerId}` with that `subscriptionId`: `periodEnd = current_period_end`, `status = 'active'` |
+| `order.created`, `order.paid` | merge `ord:{orderId}` = `{ plan, amountCents, currency, customerId, at }` (plan from `metadata.plan` or `product.metadata.plan`; `amountCents` = `net_amount`), keeping its `lks` |
+| `benefit_grant.created`, `benefit_grant.updated`, `benefit_grant.revoked` | **link**: `lk:{properties.license_key_id}` gains the grant, order, subscription, customer and benefit ids; write `grant:{id}`, `sub:{subscription_id}`, `ord:{order_id}.lks`; copy the ids onto every `lic:` the link already names |
 | `subscription.canceled` | `status = 'canceled'` (features continue until `periodEnd + 7 d`) |
-| `subscription.uncanceled` | `status = 'active'` |
-| `subscription.revoked` | `status = 'revoked'` |
-| `benefit_grant.created` | record `polar.licenseKeyId` from `properties.license_key_id` if a record exists (usually none yet) |
-| `benefit_grant.revoked` | key whose `polar.licenseKeyId === properties.license_key_id` → `status = 'revoked'` |
-| `order.refunded`, `refund.created` | keys with `polar.orderId === order_id` → `status = 'refunded'` |
-| anything else | 200, ignored |
+| `subscription.uncanceled` | `status = 'active'`, only from `canceled` |
+| `subscription.revoked`, `benefit_grant.revoked` | `status = 'revoked'` |
+| `order.refunded` | `status = 'refunded'`, unless `data.status === 'partially_refunded'` (policy §2.11: a refund ends the licence; a partial refund is a credit) |
+| `refund.created`, `refund.updated` | `status = 'refunded'` when `status === 'succeeded'` and `revoke_benefits` is true (`refund.created` fires "regardless of status") |
+| `subscription.created`, `.active`, `.updated`, anything else | 200, no change |
+
+**Finding the licence (D-06).** Production payloads never carry the key (§2.7.1), so each status change is resolved in this order, and the first step that finds anything wins:
+
+1. `data.license_key.key` → `lic:{sha256(key)}` (tests and any key-bearing payload);
+2. the licence-key id (`properties.license_key_id`) → `lk:{id}`;
+3. the grant id → `grant:{id}` → `lk:`;
+4. the subscription id (`data.id` on `subscription.*`, `subscription_id` elsewhere) → `sub:{id}` → `lk:`;
+5. the order id (`data.id` on `order.*`, `order_id` on `refund.*`) → `ord:{id}.lks` → `lk:`;
+6. the customer id → every `lic:` in `cus:{customerId}` that fits: a record holding the same kind of id as the event must hold the same value, and if any record matches an id exactly only exact matches count. Otherwise (records without ids, written before D-06) the plan must fit the event (`subscription.*` and orders with a `subscription_id` → `pro_yearly` / `biz_embed_site_yearly`; orders with `subscription_id: null` → one-time plans) and the record's `benefitId` must be among the event's benefits. All that fit are changed: a customer can hold several licences. A raw key that matches no licence never falls back to the customer.
+
+`lk:{id}` names the key hashes of every activation of that Polar licence key. If it names none yet (the grant arrived, nobody activated), the change waits in `lk:{id}.pending` (`revoked`/`refunded` never replaced by `canceled`/`active`), the customer's pre-D-06 records are tried as in step 6, and activation applies it: a `revoked`/`refunded` pending status answers 403 with that code before Polar activate is called, a `canceled` one activates as `canceled`, and the pending value is then cleared because `lic:` is authoritative. Unknown ids resolve to nothing: 200, no licence write. `revoked` and `refunded` stay terminal, whichever order the events arrive in; `wh:{webhook-id}` is still written last, so a failed delivery is re-run and a replay is not.
+
+**Activation side.** `POST /api/license/activate` stores `polarLicenseKeyId` (validate `id`), `benefitId`, `customerId` and, on the checkout path, `polarSubscriptionId` (checkout `subscription_id`) on `lic:`, merges any ids a grant already linked in `lk:`, and writes `lk:{id}` with the key hash. Before D-06 it stored the licence-key id in `polarOrderId`; a re-activation clears that value, and the customer fallback ignores `polarOrderId` on records without `polarLicenseKeyId`.
+
+**Records written before D-06 (backfill).** They keep working through the key path and the customer fallback, and are linked for good the next time any device on the key activates (validate response → `polarLicenseKeyId`, `lk:`). Only sandbox or preview data can predate D-06 (production was not live), so there is no backfill script: if one is ever needed, list `lic:*`, decrypt `keyEnc`, call Polar validate for each key and write the fields and `lk:` as activation does (`pnpm kv:reencrypt` is the pattern for a dry-run-first KV script).
+
+Limits to know: KV writes are last-writer-wins, so two webhooks for the same subscription landing at the same moment can drop one index entry (the ids also sit on `lic:`, which the customer fallback matches exactly). Polar key rotation keeps the licence-key id and changes the key; the new key's first activation adds its hash to `lk:`, so revocation reaches both records.
 
 Any 5xx from us makes Polar retry with backoff; the idempotency key makes retries safe. Because Polar also flips the key's own `status` to `revoked`, the periodic client validate would catch revocation even if the webhook were lost; the webhook is the fast path and what powers `/pro/manage`.
 
@@ -309,7 +329,7 @@ sequenceDiagram
   P->>W: subscription.revoked + webhook-id/-timestamp/-signature
   W->>W: HMAC-SHA256 with POLAR_WEBHOOK_SECRET; reject |skew| > 300 s
   W->>K: get wh:{eventId} — present? return 200
-  W->>K: cus:{customerId} → each lic:{keyHash}.status = revoked
+  W->>K: sub:{subscriptionId} → lk:{licenceKeyId} → each lic:{keyHash}.status = revoked (else cus:{customerId}, §2.7)
   W->>K: put wh:{eventId} (TTL 30 d)
   W-->>P: 200
   Note over C: next cadence tick (≤ 7 d yearly)
@@ -318,6 +338,38 @@ sequenceDiagram
   V-->>C: { revoked: true, reason: 'revoked' }
   C->>C: clearLicense(); toast; features off
 ```
+
+### 2.7.1 Polar event payloads (verified 2026-09-26)
+
+Read from Polar's published OpenAPI specs, which the docs' webhook pages render: `https://polar.sh/docs/openapi/2026-04.openapi.json` and `https://polar.sh/docs/openapi/2026-10.openapi.json` (the two API versions listed in `https://polar.sh/docs/llms.txt`). For every schema below the two versions are identical, except that `LicenseKeyRead` / `ValidatedLicenseKey` gain `member_id` and `member` in 2026-10. `docs.polar.sh/…` URLs now 301-redirect to `polar.sh/docs/…`; every page cited here was reachable. `https://api.polar.sh/openapi.json` answers 404.
+
+Every webhook body is `{ type, timestamp, api_version, data }`; there is no top-level event id, so the `webhook-id` header stays the idempotency key.
+
+| Events | `data` schema | Ids in `data` | Licence key? |
+|---|---|---|---|
+| `order.created`, `order.paid`, `order.updated`, `order.refunded` ([order.refunded](https://polar.sh/docs/api-reference/webhooks/order.refunded)) | `Order` | `id` (order), `customer_id`, `product_id`, `subscription_id` (null for one-time purchases), `checkout_id`, `discount_id`; also `status` (`paid`, `refunded`, `partially_refunded`, …), `billing_reason` (`purchase`, `subscription_create`, `subscription_cycle`, …), nested `customer`, `product` (`OrderProduct`: `metadata`, **no** `benefits`), `subscription` | No |
+| `refund.created`, `refund.updated` | `Refund` | `id` (refund), `order_id`, `subscription_id` (nullable), `customer_id`, `organization_id`; also `status` (`pending`, `succeeded`, `failed`, `canceled`), `amount`, `revoke_benefits` | No |
+| `subscription.created`, `.updated`, `.active`, `.canceled`, `.uncanceled`, `.revoked` (and `.cycled`, `.past_due`, `.paused`, `.resumed`, `.migrated`) | `Subscription` | `id` (subscription), `customer_id`, `product_id`, `checkout_id`, `discount_id`; nested `product` (`Product`, with `benefits[].id`) | No |
+| `benefit_grant.created`, `.updated`, `.revoked` (and `.cycled`) | `BenefitGrantLicenseKeysWebhook` (for a License Keys benefit) | `id` (benefit grant), `benefit_id`, `customer_id`, `subscription_id` (nullable), `order_id` (nullable), `member_id`; `properties.license_key_id`, `properties.display_key`, `properties.user_provided_key` (all optional), `previous_properties` | **No**: only the licence-key id and a masked `display_key` |
+| `POST /v1/customer-portal/license-keys/validate` → 200 | `ValidatedLicenseKey` | `id` (licence key), `customer_id`, `benefit_id`, `organization_id`, optional `activation` | echoes `key`; no order or subscription id |
+| `POST /v1/customer-portal/license-keys/activate` → 200 | `LicenseKeyActivationCreated` | `id` (activation), `license_key_id`, `license_key` (`GrantedLicenseKey`, same ids as validate) | echoes `key` |
+| `GET /v1/checkouts/{id}` → 200 | `Checkout` | `id`, `customer_id`, `subscription_id`, `product_id`, `discount_id` | **No** (and no order id): see `LAUNCH-AUDIT.md` F-08 |
+
+So no production webhook carries the key, and the benefit grant is the only event that joins a licence-key id to its order or subscription. The activate and validate responses give the licence-key, customer and benefit ids, never the order or subscription.
+
+Behaviour from the prose docs that the handler relies on:
+
+- **Cancellation** ([events](https://polar.sh/docs/integrate/webhooks/events)): end-of-period cancel sends `subscription.updated` + `subscription.canceled` at once (status still `active`, `cancel_at_period_end: true`), then `subscription.updated` + `subscription.revoked` at period end, when "benefits are revoked". Immediate revocation sends `updated`, `canceled`, `revoked` together. `subscription.uncanceled` undoes a pending cancel.
+- **Refunds** ([refunds](https://polar.sh/docs/features/refunds)): `order.refunded` is "sent when an order is fully or partially refunded"; `refund.created` is sent "regardless of status". For one-time purchases, revoking benefits is selected by default on a full refund and can be switched off. "You can't revoke access by refunding an order tied to a subscription"; access ends when the subscription is revoked. Polar may refund within 60 days on its own to head off a chargeback, cancelling the subscription and revoking benefits.
+- **Licence keys** ([license keys](https://polar.sh/docs/features/benefits/license-keys)): keys are revoked automatically when a subscription is cancelled. Rotation "generates a new key string on the same license key record"; the old key stops validating and activations are kept.
+- **Pause** ([events](https://polar.sh/docs/integrate/webhooks/events)): when a scheduled pause takes effect, "benefits are revoked until the subscription resumes". AwakeTab products do not offer pausing; if they ever do, `benefit_grant.revoked` would end the licence for good under the terminal-status rule.
+
+Not answerable from the docs; check with a sandbox purchase + refund (`LAUNCH-AUDIT.md` N-04 step 6):
+
+- whether `benefit_grant.created` already carries `properties.license_key_id`, or only a later `benefit_grant.updated` does (the handler links on both);
+- whether a subscription's grant has `order_id` set or null (both work);
+- whether a full refund of a one-time order with "revoke benefits" sends `benefit_grant.revoked` as well (any one of the three events is enough);
+- the delivery order of `order.*`, `benefit_grant.*` and the buyer's activation (any order works; see §2.7).
 
 ### 2.8 Deactivation and `/pro/manage`
 
@@ -718,7 +770,7 @@ Assumptions: 1.3 pv/visit, 35% content pageviews, 1.6 visits/unique, Pro 0.06–
 |---|---|---|
 | Polar labels | benefits `lk_pro_yearly`, `lk_pro_lifetime`, `lk_embed`, `lk_kiosk_site`, `lk_kiosk_5`; discount code `LAUNCH19`; product `sponsor_month` | §2.1, §4 |
 | Secrets / env | `POLAR_BENEFIT_MAP`, `POLAR_ORGANIZATION_ID`, `LICENSE_SIGNING_KEY`, `LICENSE_SIGNING_VER`, `LICENSE_KEY_ENC_KEY`, `TURNSTILE_SECRET_KEY`, `PUBLIC_POLAR_SERVER`, `PUBLIC_ADS_ENABLED`, `PUBLIC_SPONSOR_ENABLED` | §2, §3, §4 |
-| KV keys | `lic:{keyHash}`, `cus:{customerId}`, `wh:{eventId}`, `ord:{orderId}`, `embed:{domain}`, `rl:{route}:{ipHash}:{bucket}` | §2.5 |
+| KV keys | `lic:{keyHash}`, `cus:{customerId}`, `wh:{eventId}`, `ord:{orderId}`, `embed:{domain}`, `rl:{route}:{ipHash}:{bucket}`; D-06 (accepted, `00-conventions.md` §13.15): `lk:{polarLicenseKeyId}`, `grant:{benefitGrantId}`, `sub:{subscriptionId}` | §2.5, §2.7 |
 | Code constants | `CHECKOUT_LINKS`, `PLAN_PRICES`, `PLAN_FEATURES`, `PRO_LAUNCH_END`, `LICENSE_PUBLIC_KEYS`, `AD_UNITS`, `AD_CLIENT` (build flag `PUBLIC_ADS_ENABLED`) | §2, §3 |
 | API additions | `checkoutId` and `embed{}` fields on activate; `activations` in validate response; error codes `invalid_key`, `activation_limit`, `revoked`, `refunded`, `polar_unavailable`, `rate_limited`, `bad_token`, `bad_request` | §2.3, §2.6, §2.10 |
 | Files / paths | `functions/_lib/`, `/config/ads.json`, `/config/sponsor.json`, `/sponsors/*`, `/affiliates/*`, `docs/metrics/` | §2.4, §3.5, §4, §6, §8.3 |
