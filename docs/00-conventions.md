@@ -234,7 +234,8 @@ Ad rules (non-negotiable): Google ads never on the awake screen, `/pip`, `/embed
 | `POST /api/license/deactivate` | `{ token, deviceId }` | token |
 | `POST /api/webhooks/polar` | Polar events (`order.created`, `subscription.*`, `benefit_grant.*`) → KV | HMAC signature |
 | `GET /api/embed/config?domain=` | `{ licensed, attribution, theme, expiresAt }` for the widget | none (public, cached 5 min) |
-| `GET /api/health` | `{ ok, version }` | none |
+| `GET /api/health` | `{ ok, version, polar }` (`polar`: `sandbox` \| `production`, §13.14) | none |
+| `POST /api/csp` | CSP violation reports (Reporting API or legacy `report-uri` body, ≤ 8 KB) → `client_error {code:'csp'}` | none; rate-limited by IP hash (§13.14) |
 
 Token: JWT, `alg: ES256`, claims `{ sub, plan, features, dev, iat, exp, ver }`; public key shipped in `@awaketab/core`; verified offline in the browser and the extension.
 
@@ -329,8 +330,8 @@ The identifiers below were proposed while writing the other documents and are no
 | Secrets (Pages Functions) | `POLAR_ACCESS_TOKEN` · `POLAR_WEBHOOK_SECRET` · `POLAR_ORGANIZATION_ID` · `POLAR_BENEFIT_MAP` (JSON benefit-id → plan) · `LICENSE_SIGNING_KEY` (private JWK, ES256) · `LICENSE_SIGNING_VER` (integer `ver` claim) · `LICENSE_KEY_ENC_KEY` (32-byte base64, AES-GCM for raw key at rest) · `RATE_LIMIT_SALT` · `TURNSTILE_SECRET_KEY` (optional) |
 | Bindings | KV `LICENSES` · Analytics Engine `EVENTS` (dataset `awaketab_events`) |
 | KV ops (F-02, 2026-09-26) | Workflow `.github/workflows/kv-backup.yml` (weekly, artifact `kv-backup-<run id>` with `{namespace}-YYYY-MM-DD.jsonl.enc`, 84 days) · root scripts `pnpm kv:backup` · `pnpm kv:restore <file>` · `pnpm kv:reencrypt` (code in `apps/web/scripts/kv/`) · GitHub Actions secrets `CLOUDFLARE_API_TOKEN` (KV Read) · `CLOUDFLARE_ACCOUNT_ID` · `KV_LICENSES_ID` · `KV_LICENSES_PREVIEW_ID` (optional) · `BACKUP_ENCRYPTION_KEY` (32-byte base64) · operator-only env for rotation `OLD_LICENSE_KEY_ENC_KEY` · `NEW_LICENSE_KEY_ENC_KEY` · backup format `awaketab-kv-backup` v1 (`14-devops.md` §10–§11) |
-| Public build vars | `PUBLIC_SITE_URL` · `PUBLIC_ADS_ENABLED` (`'0'`/`'1'`) · `PUBLIC_SPONSOR_ENABLED` · `PUBLIC_POLAR_SERVER` (`production`/`sandbox`) |
-| Code constants | `LICENSE_PUBLIC_KEYS: Record<number, JsonWebKey>` (in `@awaketab/core`) · `PLAN_PRICES` · `PLAN_FEATURES` · `CHECKOUT_LINKS` · `PRO_LAUNCH_END` · `AD_UNITS` · `AD_CLIENT` |
+| Public build vars | `PUBLIC_SITE_URL` · `PUBLIC_ADS_ENABLED` (`'0'`/`'1'`) · `PUBLIC_SPONSOR_ENABLED` · `PUBLIC_POLAR_SERVER` (`production`/`sandbox`, default `sandbox`; the Functions read the same variable at run time, §13.14) · `INDEXNOW_KEY` (optional, §13.14) |
+| Code constants | `LICENSE_PUBLIC_KEYS: Record<number, JsonWebKey>` (in `@awaketab/core`; `PRODUCTION_LICENSE_PUBLIC_KEYS` plus the dev key in sandbox builds only, §13.14) · `PLAN_PRICES` · `PLAN_FEATURES` · `CHECKOUT_LINKS` (`src/lib/checkout.ts`, §13.14) · `PRO_LAUNCH_END` · `AD_UNITS` · `AD_CLIENT` |
 | Polar labels | benefits `lk_pro_yearly`, `lk_pro_lifetime`, `lk_embed`, `lk_kiosk_site`, `lk_kiosk_5`; discount `LAUNCH19` ($10 off `pro_lifetime`, 90 days); product `sponsor_month` |
 | CMP | Google-certified CMP (Funding Choices) on content pages only, EEA/UK/CH visitors; tool pages never load a CMP or set cookies |
 
@@ -597,6 +598,27 @@ Accepted on 2026-09-26 (M9, `LAUNCH-AUDIT.md` N-13). Spec: `14-devops.md` §2.1.
 | `canonicalPathname()` | `src/tool/params.ts`. `parseToolParams().canonicalPath` keeps a locale home's slash (`/es/`) and strips it everywhere else |
 | `_headers` `/embed/` rule | Removed: `/embed/` only 308-redirects to `/embed` now |
 | `test/seo/served-urls.test.ts` | Sitemaps, canonicals, hreflang, `og:url`, JSON-LD, internal links and `_headers` / `robots.txt` page routes all use served URLs whose file exists |
+
+### 13.14 Launch-audit fixes (M9: F-01, F-03 to F-07, N-03)
+
+Accepted on 2026-09-26 (`LAUNCH-AUDIT.md`). Specs: `08-data-storage.md` §7, `09-monetization-impl.md` §1 and §2.4, `14-devops.md` §1, §2, §7 and §10, `06-content-seo-spec.md` §15, `17-launch-checklist.md` §2.
+
+| Identifier | Decision |
+|---|---|
+| `POST /api/csp` limits | `rateLimit(env, 'csp', ip)` (KV `rl:csp:{ipHash}:{bucket}`, `RATE_MAX` per `RATE_WINDOW_S`) → 429 `rate_limited` + `Retry-After`. A body over `MAX_BODY_BYTES` (8 KB) → 413 `too_large`: refused from `Content-Length` before reading, and cut off at the cap when streamed (`readCappedText()` in `functions/_lib/events.ts`) |
+| Preview `noindex` | `PREVIEW_HOST_RULES` in `scripts/headers.mjs`: `_headers` rules `https://:project.pages.dev/*` and `https://:version.:project.pages.dev/*` → `X-Robots-Tag: noindex`, last in the file. `functions/api/_middleware.ts` sets `X-Robots-Tag: noindex` on every `/api/*` response, because Pages does not apply `_headers` to Functions. No root `functions/_middleware.ts`: it would run Functions for every static file |
+| `CONTACT_EMAIL` | `support@awaketab.com` in `src/lib/contact.ts` (with `CONTACT_MAILTO`). Used on `/about#contact`, `/privacy#delete` and `/privacy#contact` |
+| `/privacy` anchors | `#server-data` (events 90 days, ratings 2 years, licence record until `exp` + 1 year), `#delete`, `#ads` (the docs/09 §3.7 text, marked "not yet active"), `#contact`. `#extension` is unchanged |
+| `changelog` content collection | `src/content.config.ts`: `glob('*.md', base: '../../changelog')`, strict front matter `{ title, date, release? }`. `/changelog` renders each fragment with Astro's Markdown pipeline at build time. `sortChangelog()` (`src/lib/changelog.ts`): `date` descending, then fragments with `release` first, then entry id descending |
+| `INDEXNOW_KEY` | Build variable (Cloudflare Pages, Production) and GitHub Actions secret, 8–128 characters of `[A-Za-z0-9-]`. Set: the build writes `dist/{key}.txt`, served at `/{key}.txt`. Unset: a build warning, no file, no ping |
+| `scripts/indexnow.mjs` | `write-key` (last web build step) and `ping` (`pnpm -F web indexnow [--base <ref>] [--all] [--from live\|dist] [--dry-run]`). URLs come from the sitemaps only and are filtered again by `selectUrls()`. It checks that `/{key}.txt` is live, then sends `POST https://api.indexnow.org/indexnow` in batches of 10,000. Never part of a build |
+| `.github/workflows/indexnow.yml` | Runs on a successful production `deployment_status` reported by Cloudflare Pages, or by hand (`all`). Skipped with a notice when the secret is unset |
+| `PUBLIC_POLAR_SERVER` | The one Polar switch. Build: `polarServer()` in `scripts/polar-server.mjs` (unset → `sandbox`; any value but `sandbox` or `production` fails the build) → `define` of `__AT_POLAR_SERVER__` and `__AT_LICENSE_DEV_KEY__` in `astro.config.mjs`, `scripts/embed-loader.mjs` and `apps/extension/wxt.config.ts`. Run time: `polarServer(env)` / `apiBase(env)` in `functions/_lib/polar.ts` (`POLAR_API_BASES`: `https://sandbox-api.polar.sh`, `https://api.polar.sh`; only `production` reaches production). `POLAR_API_BASE` is removed |
+| `CHECKOUT_LINKS_SANDBOX` · `CHECKOUT_LINKS_PRODUCTION` · `CHECKOUT_PLACEHOLDER` | `src/lib/checkout.ts`; `CHECKOUT_LINKS = checkoutLinks(POLAR_SERVER)`. The production links are PROPOSED placeholders (`https://buy.polar.sh/PROPOSED-REPLACE-…`) until N-04 |
+| `PRODUCTION_LICENSE_PUBLIC_KEYS` · `DEV_LICENSE_KEY_VER` (1) · `TRUSTS_DEV_LICENSE_KEY` | `@awaketab/core`. `LICENSE_PUBLIC_KEYS` adds the dev key (its private half is in `.dev.vars.example`) only when the bundler defines `__AT_LICENSE_DEV_KEY__` as true: sandbox, dev and test builds. Production bundles contain no trace of it. Production keys start at `ver` 2 |
+| `scripts/check-keys.mts` · `pnpm keys:check` | Only with `PUBLIC_POLAR_SERVER=production`. Source check (first web build step): fails on no production key, the dev key listed, a private or non-P-256 JWK, or a placeholder or sandbox checkout link. `--dist <dir>` (last web build step; `pnpm -F extension zip`): fails on the dev key's `x` or `y` in any output file, or a production key missing from every file. `AT_ALLOW_MISSING_PRODUCTION_KEY=1` waives only "no production key" and "placeholder link" (CI's production-mode bundle check) |
+| `pnpm keys:prod` | `scripts/keys-prod.mts`: prints a fresh ES256 pair (the public JWK line for `PRODUCTION_LICENSE_PUBLIC_KEYS[ver]`, the private JWK for the `LICENSE_SIGNING_KEY` secret, and `LICENSE_SIGNING_VER`). Writes nothing |
+| `pnpm -F extension zip` | Builds with `PUBLIC_POLAR_SERVER=production` and runs `check-keys.mts` before and after the build |
 
 ## 14. Writing conventions for these docs
 

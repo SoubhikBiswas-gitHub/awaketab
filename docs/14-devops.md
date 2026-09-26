@@ -16,7 +16,7 @@ Related docs: `03-architecture.md` (config, security model) · `08-data-storage.
 | Preview | `https://<branch>.awaketab.pages.dev` | every PR | KV `LICENSES_PREVIEW`, AE dataset `awaketab_events_preview`, Polar sandbox, ads off, `noindex` header |
 | Production | `https://awaketab.com` | `main` | KV `LICENSES`, AE `awaketab_events`, Polar production |
 
-Preview deployments send `X-Robots-Tag: noindex` via `_headers` keyed on the `*.pages.dev` host (Pages supports per-environment env vars; the header is added by a tiny middleware function when `CF_PAGES_BRANCH !== 'main'`).
+Preview deployments send `X-Robots-Tag: noindex` from two host-keyed `_headers` rules, `https://:project.pages.dev/*` and `https://:version.:project.pages.dev/*` (`PREVIEW_HOST_RULES` in `scripts/headers.mjs`, last in the file so no path rule can detach them). They cover per-commit previews, branch aliases and the `awaketab.pages.dev` production alias, and cost nothing per request. `awaketab.com` is unaffected. Pages never applies `_headers` to Functions responses, so `functions/api/_middleware.ts` marks every `/api/*` response `noindex` itself. (The earlier plan, a root `functions/_middleware.ts` keyed on `CF_PAGES_BRANCH`, was dropped at M9, F-03: a root middleware makes every static file a Functions invocation.)
 
 ---
 
@@ -27,7 +27,7 @@ Preview deployments send `X-Robots-Tag: noindex` via `_headers` keyed on the `*.
 3. KV namespaces `LICENSES` and `LICENSES_PREVIEW` bound to production/preview.
 4. Analytics Engine datasets `awaketab_events`, `awaketab_events_preview` bound as `EVENTS`.
 5. Secrets (production and preview separately) via `wrangler pages secret put`: `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `POLAR_ORGANIZATION_ID`, `POLAR_BENEFIT_MAP`, `LICENSE_SIGNING_KEY`, `LICENSE_SIGNING_VER`, `LICENSE_KEY_ENC_KEY`, `RATE_LIMIT_SALT`, optional `TURNSTILE_SECRET_KEY`.
-6. Public build vars: `PUBLIC_SITE_URL`, `PUBLIC_ADS_ENABLED`, `PUBLIC_SPONSOR_ENABLED`, `PUBLIC_POLAR_SERVER`.
+6. Public build vars: `PUBLIC_SITE_URL`, `PUBLIC_ADS_ENABLED`, `PUBLIC_SPONSOR_ENABLED`, `PUBLIC_POLAR_SERVER` (`production` on Production, `sandbox` on Preview), and optional `INDEXNOW_KEY` (Production only, §6). `PUBLIC_POLAR_SERVER` is the one Polar switch: the build reads it (checkout links, and whether the bundles trust the dev licence key) and so do the Functions at run time (Polar API base). A production build fails until `@awaketab/core` has a production licence key and real checkout links (`scripts/check-keys.mts`, `LAUNCH-AUDIT.md` N-03, N-04). There is no `POLAR_API_BASE`.
 7. KV backups: GitHub repository secrets for the weekly `kv-backup.yml` job (§11). No R2 bucket is needed (as built, 2026-09-26).
 8. Cloudflare Web Analytics is **not** enabled (no third-party script by design); Cloudflare's built-in zone analytics (requests, status codes, cache ratio) is used for traffic and errors.
 9. Turnstile widget (optional) for `/pro/activate` if abuse appears.
@@ -138,9 +138,15 @@ Alternatives rejected: `'directory'` (Astro's default, used until M9) wrote ever
   ! Cache-Control
   Cache-Control: no-store
   X-Robots-Tag: noindex
+
+# Previews and the pages.dev alias are never indexed (§1). Last, so no path rule can detach them.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex
 ```
 
-Routes are the URLs Pages serves with a 200 (§2.1): `/embed`, not `/embed/`, which only 308-redirects to `/embed`. The `/embed/` rule that M8 added was removed at M9 when the build moved to `build.format: 'preserve'`. Content-route CSPs are generated at build from a single template plus the active network's host list (`apps/web/scripts/headers.mjs`) so the five families never drift. `/api/csp` collects CSP reports into Analytics Engine (`client_error {code:'csp'}`) — PROPOSED code value; accepted.
+Routes are the URLs Pages serves with a 200 (§2.1): `/embed`, not `/embed/`, which only 308-redirects to `/embed`. The `/embed/` rule that M8 added was removed at M9 when the build moved to `build.format: 'preserve'`. Content-route CSPs are generated at build from a single template plus the active network's host list (`apps/web/scripts/headers.mjs`) so the five families never drift. `/api/csp` collects CSP reports into Analytics Engine (`client_error {code:'csp'}`) — PROPOSED code value; accepted. Like `/api/e` it is rate-limited by salted IP hash (429 + `Retry-After`) and refuses bodies over 8 KB with 413 (`00-conventions.md` §13.14).
 
 **M8 changes.** Cloudflare applies *every* matching rule and joins a header set twice with ", " — so `/_astro/*` used to ship `Cache-Control: public, max-age=0, must-revalidate, public, max-age=31536000, immutable`. Every specific rule now detaches the `/*` value first (`! Cache-Control`, `! X-Frame-Options`, `! Content-Security-Policy`). The `/embed` rule restores the tool policy on the landing page, so a `/embed/*` match could never make it frameable. Tool-route `img-src` gains `https:` for the Kiosk licence's operator logo (`logo=`, `09-monetization-impl.md` §7.2) — scripts, styles, fonts and connections stay `'self'`, and no default tool page loads a third-party image (decision under `19-master-build-prompt.md` C4, `00-conventions.md` §13.10; needs owner sign-off). `scripts/headers.mjs` exports `resolveHeaders(text, path)`, which evaluates these semantics; `headers.test.ts` runs it over the generated and the shipped `public/_headers`.
 
@@ -187,6 +193,10 @@ Commit messages: Conventional Commits (`feat(engine): …`, `fix(seo): …`, `co
 
 `kv-backup.yml` (Mondays 03:17 UTC, `workflow_dispatch`): weekly encrypted KV export, uploaded as a 12-week artifact (§11). It is a no-op with a notice when none of its secrets are set (forks, fresh clones) and fails when only some are.
 
+**Launch guards (M9, `LAUNCH-AUDIT.md` F-05, F-06, N-03).** `pnpm -F web build` now starts with `pnpm exec tsx scripts/check-keys.mts` and ends with `node scripts/indexnow.mjs write-key` and `check-keys.mts --dist dist`. Both key checks are no-ops unless `PUBLIC_POLAR_SERVER=production`; then the build fails on no production licence key, the dev key in `LICENSE_PUBLIC_KEYS`, a placeholder or sandbox checkout link, or the dev key's coordinates anywhere in `dist/`. `ci.yml` ends with a production-mode build (`PUBLIC_POLAR_SERVER=production AT_ALLOW_MISSING_PRODUCTION_KEY=1 pnpm -F web build && pnpm test:seo`): the waiver lets the build finish before N-03, but the dist scan and `test/seo/launch-audit.test.ts` still fail on any trace of the dev key. `release.yml` job `launch-guard` runs `PUBLIC_POLAR_SERVER=production pnpm keys:check` without the waiver, so it stays red until N-03 and N-04 are done; it does not block `publish-wake`.
+
+`indexnow.yml` (`deployment_status`, `workflow_dispatch`): after a successful production deployment, `node apps/web/scripts/indexnow.mjs ping --base HEAD^1` submits the indexable URLs whose sources changed in the deployed commit (a template, style, string-catalog or engine change submits all of them), read from the live sitemaps. It checks that `/{INDEXNOW_KEY}.txt` is live, then sends `POST https://api.indexnow.org/indexnow` (Bing, Yandex and the other IndexNow engines share it). A manual run with `all` submits every indexable URL (launch day, `17-launch-checklist.md` §6). It needs the repository secret `INDEXNOW_KEY` equal to the Pages variable, and is skipped with a notice without it. The URL list comes only from the sitemaps (never `/pip`, `/until/*`, `/embed/*`, noindex or unreviewed pages) and is filtered again in the script. The same command runs locally as `pnpm -F web indexnow [--dry-run]`; no build ever pings.
+
 ---
 
 ## 7. Local development
@@ -207,7 +217,7 @@ pnpm -F extension dev   # WXT dev with a temporary Chromium profile
 
 To build while another build may be running (parallel agents, a second terminal): `cd apps/web && node scripts/locked.mjs -- pnpm build`. When a verification build was written somewhere other than `dist/`, set `AT_DIST=<that dir>` so `size.mjs`, `prune-unreferenced.mjs`, `sitemap.mjs` and the SEO tests read it (§6).
 
-`.dev.vars.example` lists every secret with a dummy value; the ES256 dev keypair is generated by `pnpm keys:dev` (never committed). `isSecureContext` is true on `localhost`, so the native wake lock works locally.
+`.dev.vars.example` lists every secret with a dummy value. Its `LICENSE_SIGNING_KEY` is the committed dev pair (`LICENSE_PUBLIC_KEYS[1]`), which only sandbox, dev and test bundles trust; `pnpm keys:dev` makes another throwaway pair, and `pnpm keys:prod` the production one (§10). `isSecureContext` is true on `localhost`, so the native wake lock works locally.
 
 ---
 
@@ -238,12 +248,20 @@ Alerts go to a single email and an optional Slack webhook (secret `ALERT_WEBHOOK
 
 ## 10. Security operations
 
-- Secret rotation: `RATE_LIMIT_SALT` quarterly; `LICENSE_KEY_ENC_KEY` never rotated without re-encrypting KV (`pnpm kv:reencrypt`, runbook below); ES256 key rotation yearly: generate new keypair → add public key to `LICENSE_PUBLIC_KEYS[ver+1]` and ship the app first → set `LICENSE_SIGNING_KEY`/`LICENSE_SIGNING_VER` → keep the old public key for 90 days → remove.
+- Secret rotation: `RATE_LIMIT_SALT` quarterly; `LICENSE_KEY_ENC_KEY` never rotated without re-encrypting KV (`pnpm kv:reencrypt`, runbook below); ES256 key rotation yearly (runbook below): generate a new pair with `pnpm keys:prod` → add the public key to `PRODUCTION_LICENSE_PUBLIC_KEYS[ver+1]` and ship the app (and the extension) first → set `LICENSE_SIGNING_KEY`/`LICENSE_SIGNING_VER` → keep the old public key for 90 days → remove.
 - Dependencies: Renovate weekly PRs, grouped; `pnpm audit` in nightly; lockfile committed.
 - CSP report-only for two weeks after any header change, then enforce.
 - Webhook endpoint verifies HMAC and rejects timestamps older than 5 minutes; idempotency keys 30 days.
 - Access: GitHub org 2FA required; Cloudflare account 2FA + API tokens scoped per workflow; Polar org owner only.
 - Data requests: "delete my licence data" handled manually from KV by `keyHash` within 7 days (documented on `/privacy`).
+
+**ES256 licence signing key (as built, 2026-09-26; `LAUNCH-AUDIT.md` N-03).** The dev pair (`ver` 1) has its private half in `apps/web/.dev.vars.example`, so production must never trust it. `@awaketab/core` adds it to `LICENSE_PUBLIC_KEYS` only when the bundler defines `__AT_LICENSE_DEV_KEY__` as true, which `scripts/polar-server.mjs` does for every build except `PUBLIC_POLAR_SERVER=production`; production bundles then contain `PRODUCTION_LICENSE_PUBLIC_KEYS` only. `scripts/check-keys.mts` enforces it (§6).
+
+1. On a trusted machine: `pnpm keys:prod`. It prints the next `ver` (2 for the first production key), the public JWK as a ready line, and the private JWK. Nothing is written to disk; do not redirect it into the repository.
+2. **(code change, PR)** Paste the public line into `PRODUCTION_LICENSE_PUBLIC_KEYS` in `packages/core/src/license.ts`. `PUBLIC_POLAR_SERVER=production pnpm keys:check` must now report only placeholder checkout links, if any (N-04). Merge and deploy the web app, and rebuild the extension zip (`pnpm -F extension zip`) before a store upload.
+3. Pages → Production → secrets: `LICENSE_SIGNING_KEY` = the private JWK line (`printf '%s' '<line>' | pnpm dlx wrangler pages secret put LICENSE_SIGNING_KEY --project-name awaketab`), `LICENSE_SIGNING_VER` = the printed `ver`. Redeploy. Store the private line in the password manager and clear the terminal scrollback.
+4. Check: activate a test licence on production; the token header's `ver` is the new one and the app shows Pro offline.
+5. Next rotation: the same steps with `ver + 1`, keeping the previous public key for 90 days. Known gap: `/api/license/validate` verifies only against the current signing key, so tokens of the old `ver` get `401 bad_token` and the client re-activates (same device, no extra activation).
 
 **`LICENSE_KEY_ENC_KEY` rotation (as built, 2026-09-26).** `pnpm kv:reencrypt` (`apps/web/scripts/kv/`) re-encrypts `keyEnc` on every `lic:*` record from the old key to the new one over the Cloudflare REST API. It changes nothing else in the record (same key, value fields, `expiration` and metadata). Keys come from the environment, never from arguments, so they stay out of shell history.
 

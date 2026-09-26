@@ -286,6 +286,8 @@ Columns: `date,awake_minutes,sessions` (one row per local day, ISO dates; the ro
 | Ratings | KV → aggregate | Show a real rating in search results | Stars + optional text; no identity |
 | Ad cookies (content pages only, with consent) | Google / network | Ads fund the free content pages | Governed by the CMP; never on the tool |
 
+`/privacy` states every row (as built, M9 F-04): browser storage and the extension in their own sections; `#server-data` has the three server rows with their retention (events 90 days, ratings up to 2 years, the licence record until `exp` + 1 year, §4); `#delete` says how to ask for licence-data deletion (email `CONTACT_EMAIL`, `support@awaketab.com`, with the key or receipt; done by `keyHash` within 7 days, `14-devops.md` §10); `#ads` carries the ad-cookie text from `09-monetization-impl.md` §3.7, marked "not yet active" until G1. `test/seo/launch-audit.test.ts` checks each of these in the built page.
+
 ---
 
 ## 8. Test fixtures

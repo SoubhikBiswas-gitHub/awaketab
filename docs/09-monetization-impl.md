@@ -29,7 +29,7 @@ Identifiers not present in `00-conventions.md` are marked **PROPOSED** and colle
 
 Polar.sh is the merchant of record (MoR): it charges the buyer, handles VAT/GST, issues receipts and invoices, generates licence keys, sends webhooks, and pays out to an Indian individual via Stripe Connect Express. We hold no card data and issue no invoices ourselves.
 
-**Organization.** Slug `awaketab`, support email `support@awaketab.com`, website `https://awaketab.com`. Two environments: Polar **sandbox** (`sandbox.polar.sh`, API `sandbox-api.polar.sh`) for local and preview deployments, **production** for `awaketab.com`.
+**Organization.** Slug `awaketab`, support email `support@awaketab.com`, website `https://awaketab.com`. Two environments: Polar **sandbox** (`sandbox.polar.sh`, API `sandbox-api.polar.sh`) for local and preview deployments, **production** for `awaketab.com`. One variable switches between them (as built, M9 F-06): `PUBLIC_POLAR_SERVER` (`sandbox` by default, `production` on the Production environment). The build reads it to pick `CHECKOUT_LINKS` and to decide whether the bundles trust the dev licence key (§2.4); the Pages Functions read the same variable at run time to pick the API base (`functions/_lib/polar.ts`, `POLAR_API_BASES`). Only the exact value `production` reaches production; a build with any value other than `sandbox` or `production` fails. `/api/health` reports `polar: "sandbox" | "production"`.
 
 **Products.** One product per plan ID from conventions §8.1. Product `metadata.plan` carries our plan ID so dashboards and webhooks can be mapped without a lookup table.
 
@@ -45,7 +45,7 @@ Benefit names `lk_*` are **PROPOSED** labels for the Polar dashboard. One Licens
 
 **Launch discount.** Discount "Pro launch", fixed amount $10 off, restricted to the `pro_lifetime` product, `ends_at` = Pro launch date + 90 days, unlimited redemptions, code `LAUNCH19` (**PROPOSED**). It is pre-attached to the lifetime checkout link so buyers never type it; the `/pro` page shows `$29` struck through and `$19` while `Date.now() < PRO_LAUNCH_END` (build-time constant, **PROPOSED**). After 90 days the discount expires server-side even if a stale page is open.
 
-**Checkout links.** One Polar Checkout Link per product (`https://buy.polar.sh/polar_cl_…`), each with success URL `https://awaketab.com/pro/activate?checkout_id={CHECKOUT_ID}` (Polar substitutes the placeholder). Business links use `/pro/activate?checkout_id={CHECKOUT_ID}&plan=embed|kiosk` so the activation page can show the domain / site form. Link IDs live in `apps/web/src/lib/license.ts` as `CHECKOUT_LINKS: Record<PlanId, string>` (**PROPOSED**), sandbox IDs in preview via `PUBLIC_POLAR_SERVER` (**PROPOSED**, `sandbox` | `production`).
+**Checkout links.** One Polar Checkout Link per product (`https://buy.polar.sh/polar_cl_…`), each with success URL `https://awaketab.com/pro/activate?checkout_id={CHECKOUT_ID}` (Polar substitutes the placeholder). Business links use `/pro/activate?checkout_id={CHECKOUT_ID}&plan=embed|kiosk` so the activation page can show the domain / site form. Links live in `apps/web/src/lib/checkout.ts` (as built, M9): `CHECKOUT_LINKS_SANDBOX`, `CHECKOUT_LINKS_PRODUCTION`, and `CHECKOUT_LINKS = checkoutLinks(POLAR_SERVER)` picked at build time by `PUBLIC_POLAR_SERVER`. Only the `.astro` pages import it, so it adds no tool-page JS. The production links are **PROPOSED** placeholders (`https://buy.polar.sh/PROPOSED-REPLACE-…`) until the production products exist (`LAUNCH-AUDIT.md` N-04 step 4); a production build refuses to ship them (`scripts/check-keys.mts`).
 
 `?ref=` on `/pro` is our attribution param (conventions §7). It is read once, emitted in `pro_view` and `pro_checkout_click {plan}` as `source`, and never forwarded to Polar or stored.
 
@@ -172,6 +172,8 @@ export async function signES256(claims: LicenseClaims, privateJwk: JsonWebKey): 
 ```
 
 The private key is the secret `LICENSE_SIGNING_KEY` (JWK JSON, **PROPOSED**) and its version `LICENSE_SIGNING_VER` (**PROPOSED**). Public keys ship in `@awaketab/core` as `LICENSE_PUBLIC_KEYS: Record<number, JsonWebKey>` (**PROPOSED**); rotation is in `14-devops.md` §10.
+
+**Production never trusts the dev key (as built, M9, `LAUNCH-AUDIT.md` N-03).** The dev pair (`ver` 1) has its private half committed in `apps/web/.dev.vars.example`, so anyone could sign a Pro token with it. `LICENSE_PUBLIC_KEYS` is `PRODUCTION_LICENSE_PUBLIC_KEYS` plus the dev key only when the bundler defines `__AT_LICENSE_DEV_KEY__` as true: dev, test and `PUBLIC_POLAR_SERVER=sandbox` builds. Web, embed and extension bundles built with `PUBLIC_POLAR_SERVER=production` contain no trace of it. `scripts/check-keys.mts` fails a production build that has no production key, lists the dev key, or ships its coordinates anywhere in the output. `pnpm keys:prod` prints a fresh pair (next `ver`, 2 for the first) without writing it to disk: the public JWK goes into `PRODUCTION_LICENSE_PUBLIC_KEYS`, the private JWK into the `LICENSE_SIGNING_KEY` secret, the `ver` into `LICENSE_SIGNING_VER` (steps in `14-devops.md` §10).
 
 Offline verification (`@awaketab/core/license.ts`, shared by web and extension):
 

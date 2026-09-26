@@ -49,7 +49,11 @@ Related docs: `15-implementation-plan.md` (phases, gates) · `13-testing-strateg
 - [ ] Donate links live (Buy Me a Coffee; GitHub Sponsors on the library README).
 
 **Search**
-- [ ] Sitemap index submitted in Search Console and Bing; IndexNow ping on deploy verified.
+- [ ] Sitemap index submitted in Search Console and Bing; IndexNow ping on deploy verified (`INDEXNOW_KEY` set in Pages Production and as a GitHub secret; the `IndexNow` workflow run after a deploy shows "submitted N URLs").
+
+**Licence keys and Polar (before any public build with `PUBLIC_POLAR_SERVER=production`)**
+- [ ] Production ES256 pair made with `pnpm keys:prod`; its public JWK in `PRODUCTION_LICENSE_PUBLIC_KEYS` (`packages/core/src/license.ts`), the private JWK in the `LICENSE_SIGNING_KEY` secret, `LICENSE_SIGNING_VER` set (`14-devops.md` §10). The dev key (private half in `.dev.vars.example`) is never trusted by a production bundle; `PUBLIC_POLAR_SERVER=production pnpm keys:check` passes.
+- [ ] `CHECKOUT_LINKS_PRODUCTION` (`apps/web/src/lib/checkout.ts`) holds the real Polar production links; `curl -s https://awaketab.com/api/health` shows `"polar":"production"`.
 - [ ] OG images render correctly in the X/LinkedIn/Slack debuggers; favicon shows in results preview tools.
 - [ ] `/until/*` canonicalises to `/`; `/pip` `noindex`.
 

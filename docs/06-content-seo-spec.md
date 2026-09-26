@@ -438,7 +438,7 @@ A page whose `lastVerified` is older than 180 days shows "Last verified over 6 m
 - [ ] Verify `awaketab.com` as a Domain property in Google Search Console (DNS TXT); add Soubhik's account as owner.
 - [ ] Submit `sitemap-index.xml`; check each per-locale sitemap reports "Success".
 - [ ] Bing Webmaster Tools: import from Search Console; submit the same index.
-- [ ] IndexNow: generate a key, serve `/{key}.txt`, and on every deploy `POST https://api.indexnow.org/indexnow` with changed URLs (`14-devops.md` step); Bing and Yandex share the endpoint.
+- [ ] IndexNow: generate a key, serve `/{key}.txt`, and on every deploy `POST https://api.indexnow.org/indexnow` with changed URLs (`14-devops.md` step); Bing and Yandex share the endpoint. As built (M9, F-05): set `INDEXNOW_KEY` (8–128 characters of `A–Z a–z 0–9 -`, e.g. `openssl rand -hex 16`) as a Pages Production variable, so the build writes `/{key}.txt`, and as the GitHub secret of the same name, so `.github/workflows/indexnow.yml` pings after each production deploy (`scripts/indexnow.mjs`; only URLs the sitemaps list, i.e. indexable pages, never `noindex` or unreviewed translations). Launch day: run the workflow by hand with `all`.
 - [ ] Set the international targeting to none (hreflang handles it).
 - [ ] Request indexing manually for `/` and the first 10 pages at launch.
 - [ ] Enable Core Web Vitals report review weekly; CrUX API key for the dashboard.
