@@ -1,6 +1,6 @@
 # 17 · Launch checklists and runbooks
 
-Status: v1.0 · 2026-09-07 · Owner: Soubhik
+Status: v1.1 · 2026-09-26 · Owner: Soubhik · Evidence per item for §2, §3 and `19-master-build-prompt.md` §E: `LAUNCH-AUDIT.md`
 
 **Purpose.** The lists to tick before each phase exit and each monetization gate, plus the timed launch-day runbook and the first-week watch. Nothing here is aspirational: every item is checkable, and Cursor prompt U3 (`16-cursor-prompts.md`) can verify most of them automatically.
 
@@ -30,7 +30,7 @@ Related docs: `15-implementation-plan.md` (phases, gates) · `13-testing-strateg
 - [ ] Stats "Today" rolls over at local midnight (test in `Asia/Kolkata`).
 
 **Performance and quality**
-- [ ] Lighthouse mobile on `/`, `/30m`: ≥ 95 / 100 / 100 / 100; LCP lab ≤ 1.2 s; CLS 0; zero third-party requests (network assertion). Automated: `pnpm build && pnpm lighthouse` locally or `LHCI_BASE_URL=<preview> pnpm lighthouse` (`lighthouserc.cjs`, `lighthouse.yml`) over the five docs/19 §E URLs, third-party count asserted on tool routes. Latest local run: `docs/metrics/lighthouse-local-2026-09-26.md` — everything green except LCP (≈ 1.8 s simulated mobile; needs a `src/tool/main.ts` boot change).
+- [ ] Lighthouse mobile on `/`, `/30m`: ≥ 95 / 100 / 100 / 100; LCP lab ≤ 1.2 s; CLS 0; zero third-party requests (network assertion). Automated: `pnpm build && pnpm lighthouse` locally or `LHCI_BASE_URL=<preview> pnpm lighthouse` (`lighthouserc.cjs`, `lighthouse.yml`) over the five docs/19 §E URLs, third-party count asserted on tool routes. Latest local run: `docs/metrics/lighthouse-local-2026-09-26.md` and `LAUNCH-AUDIT.md` §1.2: LCP 1.05 s, CLS 0, Perf/A11y/SEO 100 on all five URLs. Best Practices is 100 in local mode; it drops to 96 on any origin without Pages Functions, because the `/api/e` beacon 404s there.
 - [ ] `size-limit` green: critical chunk ≤ 15 KB gz, total ≤ 40 KB gz.
 - [ ] axe: zero violations on every template in both themes; keyboard-only run of journeys 1–7 done; VoiceOver + NVDA smoke checklist done. Automated: `apps/web/test/e2e/a11y.spec.ts` (every template light + dark, every tool surface light + dark + oled) and `apps/web/test/e2e/keyboard.spec.ts` (journeys 1–7, shortcuts, ambient, settings/stats/extend dialogs, visible focus, no trap), all three engines. The screen-reader smoke stays manual.
 - [ ] Visual check of every ambient-ready layout at 320 px, 390 px, 768 px, 1280 px.
