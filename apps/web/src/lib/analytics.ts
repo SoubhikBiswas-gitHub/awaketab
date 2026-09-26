@@ -158,7 +158,11 @@ export async function flush(useBeacon: boolean): Promise<void> {
     navigator.sendBeacon('/api/e', new Blob([body], { type: 'application/json' }));
     return;
   }
-  await fetch('/api/e', { method: 'POST', headers: { 'content-type': 'application/json' }, body, keepalive: true });
+  // Offline or blocked: drop the batch quietly. An unhandled rejection here would be reported as a
+  // client_error, queue another flush and fail again.
+  await fetch('/api/e', { method: 'POST', headers: { 'content-type': 'application/json' }, body, keepalive: true }).catch(
+    () => undefined,
+  );
 }
 
 export const analyticsLimits = { MAX_BATCH, MAX_BYTES };
