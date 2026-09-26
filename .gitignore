@@ -16,3 +16,4 @@ apps/web/.lighthouseci/
 .lighthouseci/
 apps/web/.build-lock
 apps/web/dist-*
+apps/extension/.output-test/

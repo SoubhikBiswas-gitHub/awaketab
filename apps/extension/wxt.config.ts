@@ -1,14 +1,31 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'wxt';
+import { awaketabExtension, localeMessages } from './scripts/i18n.mjs';
+
+const TEST_BUILD = process.env.AT_EXT_TEST === '1';
+const here = (relative: string) => fileURLToPath(new URL(relative, import.meta.url));
+
+// FR-EXT-05 / docs/19 B7: the minimum version comes from the one support data file.
+const matrix = JSON.parse(readFileSync(here('../web/src/data/support-matrix.json'), 'utf8')) as {
+  extension: { minimumChromeVersion: string };
+};
 
 export default defineConfig({
   manifestVersion: 3,
+  // Explicit imports only: every module says where `browser`/`defineBackground` come from.
+  imports: false,
+  // The Playwright suite builds into its own folder so it never overwrites the release build.
+  outDir: process.env.AT_EXT_OUT ?? (TEST_BUILD ? '.output-test' : '.output'),
   manifest: {
-    name: 'AwakeTab for Chrome',
+    name: '__MSG_ext_name__',
     short_name: 'AwakeTab',
-    description:
-      'Keep your screen (or your whole computer) awake from a click — with an honest status you can trust.',
+    description: '__MSG_ext_description__',
+    default_locale: 'en',
     version: '1.0.0',
-    minimum_chrome_version: '116',
+    minimum_chrome_version: matrix.extension.minimumChromeVersion,
+    // docs/10 §2, FR-EXT-03: no host permissions by default; per-site access is requested only for Pro
+    // auto-start rules, one site at a time.
     permissions: ['power', 'storage', 'alarms'],
     optional_permissions: ['notifications'],
     host_permissions: [],
@@ -16,6 +33,7 @@ export default defineConfig({
     action: {
       default_popup: 'popup.html',
       default_title: 'AwakeTab',
+      default_icon: { 16: 'icon-16.png', 32: 'icon-32.png' },
     },
     options_page: 'options.html',
     background: {
@@ -25,7 +43,7 @@ export default defineConfig({
     commands: {
       toggle: {
         suggested_key: { default: 'Alt+Shift+A' },
-        description: 'Toggle keep-awake',
+        description: '__MSG_ext_command_toggle__',
       },
     },
     icons: {
@@ -35,12 +53,29 @@ export default defineConfig({
       128: 'icon-128.png',
     },
   },
+  vite: () => ({
+    plugins: [awaketabExtension()],
+    define: { __AT_TEST__: JSON.stringify(TEST_BUILD) },
+    resolve: {
+      // Build from source like the unit tests do: the extension never depends on a stale package dist.
+      alias: {
+        '@awaketab/core': here('../../packages/core/src/index.ts'),
+        '@awaketab/wake': here('../../packages/wake/src/index.ts'),
+      },
+    },
+    build: {
+      // Extension pages load from disk; the modulepreload polyfill is dead weight there.
+      modulePreload: { polyfill: false },
+    },
+  }),
   hooks: {
     'build:manifestGenerated': (_wxt, manifest) => {
-      if (manifest.background !== undefined) {
-        manifest.background.type = 'module';
-      }
+      const background = manifest.background as { type?: string } | undefined;
+      if (background) background.type = 'module';
       delete manifest.options_ui;
+    },
+    'build:publicAssets': (_wxt, files) => {
+      for (const file of localeMessages()) files.push(file);
     },
   },
 });

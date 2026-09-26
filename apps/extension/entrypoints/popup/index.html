@@ -6,9 +6,83 @@
     <title>AwakeTab</title>
   </head>
   <body>
-    <main>
-      <h1>AwakeTab</h1>
-      <p>Extension foundation</p>
+    <main class="pp" data-root hidden>
+      <header class="pp-head">
+        <h1 class="pp-word" data-i18n="app.name"></h1>
+        <button class="pp-icon" type="button" data-options data-i18n-aria="settings.title">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+            <path
+              fill="currentColor"
+              d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm8.1 4.6.02-1.1-.02-1.1 2.1-1.6a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.47 1a7.6 7.6 0 0 0-1.9-1.1L14.98 2.4a.5.5 0 0 0-.5-.4h-4a.5.5 0 0 0-.5.4l-.37 2.63c-.68.28-1.32.65-1.9 1.1l-2.47-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64l2.1 1.6L4.84 12l.02 1.1-2.1 1.6a.5.5 0 0 0-.12.64l2 3.46c.13.22.39.3.6.22l2.47-1c.58.45 1.22.82 1.9 1.1l.37 2.63c.04.24.25.4.5.4h4c.25 0 .46-.16.5-.4l.37-2.63c.68-.28 1.32-.65 1.9-1.1l2.47 1c.22.08.48 0 .6-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.1-1.6Z"
+            />
+          </svg>
+        </button>
+      </header>
+
+      <div class="pp-status">
+        <svg class="pp-ring" viewBox="0 0 192 192" aria-hidden="true" focusable="false">
+          <circle class="pp-ring-track" data-ring-track cx="96" cy="96" r="88"></circle>
+          <circle class="pp-ring-progress" data-ring-progress cx="96" cy="96" r="88"></circle>
+          <circle class="pp-ring-dot" data-ring-dot cx="96" cy="8" r="6"></circle>
+        </svg>
+        <div class="pp-center">
+          <div class="pp-timer" data-timer></div>
+          <div class="pp-caption" data-caption></div>
+        </div>
+      </div>
+
+      <div class="pp-pill-wrap" role="status" aria-live="polite" aria-atomic="true">
+        <span class="at-pill" data-pill data-lock="idle"><span data-pill-text></span></span>
+        <span class="pp-extra" data-pill-extra hidden></span>
+      </div>
+      <p class="pp-advice" data-advice hidden></p>
+
+      <section class="pp-extend" data-extend hidden>
+        <p class="pp-extend-title" data-i18n="tool.extend.title"></p>
+        <div class="pp-extend-row">
+          <button class="pp-btn" type="button" data-extend-ms="900000" data-i18n="tool.extend.add15"></button>
+          <button class="pp-btn" type="button" data-extend-ms="1800000" data-i18n="tool.extend.add30"></button>
+          <button class="pp-btn" type="button" data-extend-ms="3600000" data-i18n="tool.extend.add60"></button>
+          <button class="pp-btn pp-ghost" type="button" data-dismiss data-i18n="tool.extend.stop"></button>
+        </div>
+      </section>
+
+      <button class="pp-primary" type="button" data-toggle></button>
+
+      <fieldset class="pp-levels" data-levels>
+        <legend class="pp-legend" data-i18n="ext.level.label"></legend>
+        <div class="pp-seg">
+          <label class="pp-seg-item"><input type="radio" name="level" value="display" /><span data-i18n="ext.level.display"></span></label>
+          <label class="pp-seg-item"><input type="radio" name="level" value="system" /><span data-i18n="ext.level.system"></span></label>
+        </div>
+        <p class="pp-help" data-level-help></p>
+      </fieldset>
+
+      <div class="pp-chips" role="group" data-chips data-i18n-aria="tool.presets">
+        <button class="pp-chip" type="button" data-preset="p15" data-i18n="tool.preset.p15"></button>
+        <button class="pp-chip" type="button" data-preset="p30" data-i18n="tool.preset.p30"></button>
+        <button class="pp-chip" type="button" data-preset="p45" data-i18n="tool.preset.p45"></button>
+        <button class="pp-chip" type="button" data-preset="p60" data-i18n="tool.preset.p60"></button>
+        <button class="pp-chip" type="button" data-preset="p120" data-i18n="tool.preset.p120"></button>
+        <button class="pp-chip" type="button" data-preset="p240" data-i18n="tool.preset.p240"></button>
+        <button class="pp-chip" type="button" data-preset="pinf" data-i18n="tool.preset.pinf" data-i18n-aria="tool.preset.pinf.sr"></button>
+        <button class="pp-chip" type="button" data-until-open data-i18n="tool.preset.until"></button>
+      </div>
+
+      <form class="pp-until" data-until hidden>
+        <label class="pp-until-label"><span data-i18n="tool.until.title"></span> <input type="time" name="wall" required data-until-input /></label>
+        <p class="pp-help" data-until-summary aria-live="polite"></p>
+        <div class="pp-until-row">
+          <button class="pp-btn" type="submit" data-i18n="tool.until.start"></button>
+          <button class="pp-btn pp-ghost" type="button" data-until-cancel data-i18n="tool.until.cancel"></button>
+        </div>
+      </form>
+
+      <footer class="pp-foot">
+        <a class="pp-link" href="https://awaketab.com/?source=ext" target="_blank" rel="noopener" data-i18n="ext.popup.open"></a>
+        <p class="pp-limits" data-i18n="ext.popup.limits"></p>
+      </footer>
     </main>
+    <script type="module" src="./main.ts"></script>
   </body>
 </html>

@@ -10,6 +10,7 @@ export default tseslint.config(
       '**/dist-*/**',
       '**/.astro/**',
       '**/.output/**',
+      '**/.output-test/**',
       '**/.wxt/**',
       '**/node_modules/**',
       'apps/web/public/**',
