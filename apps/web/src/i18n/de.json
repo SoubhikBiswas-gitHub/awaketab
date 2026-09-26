@@ -274,13 +274,13 @@
   "footer.donate": "Kaffee spendieren",
   "footer.shortcuts": "Tastenkombinationen",
   "footer.terms": "Nutzungsbedingungen",
-  "content.verified": "Last verified: {date}",
-  "content.stale": "Last verified over 6 months ago — re-testing",
-  "content.faq": "Questions",
-  "content.related": "Related",
-  "content.start": "Start this session",
-  "content.author.role": "Builds and tests AwakeTab.",
-  "content.author.about": "About AwakeTab",
+  "content.verified": "Zuletzt geprüft: {date}",
+  "content.stale": "Zuletzt vor über 6 Monaten geprüft — wird neu getestet",
+  "content.faq": "Fragen",
+  "content.related": "Weitere Seiten",
+  "content.start": "Diese Sitzung starten",
+  "content.author.role": "Entwickelt und testet AwakeTab.",
+  "content.author.about": "Über AwakeTab",
 
   "end.notify.title": "AwakeTab",
   "end.notify.body": "Ihre Sitzung für {label} ist beendet",
@@ -336,5 +336,8 @@
   "settings.ambient.clock12h": "12-Stunden-Anzeige",
   "settings.notifications.unavailable": "Auf iPhone und iPad benötigen Benachrichtigungen die installierte App.",
   "pip.add15.label": "15 Minuten hinzufügen",
-  "pip.empty": "Starten Sie eine Sitzung in"
+  "pip.empty": "Starten Sie eine Sitzung in",
+  "content.breadcrumb": "Brotkrümelnavigation",
+  "content.translation.pending": "Aus dem Englischen übersetzt — muttersprachliche Prüfung ausstehend.",
+  "content.translation.original": "Englisches Original lesen"
 }

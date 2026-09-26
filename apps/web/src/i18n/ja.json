@@ -274,13 +274,13 @@
   "footer.donate": "コーヒーで応援",
   "footer.shortcuts": "キーボードショートカット",
   "footer.terms": "利用規約",
-  "content.verified": "Last verified: {date}",
-  "content.stale": "Last verified over 6 months ago — re-testing",
-  "content.faq": "Questions",
-  "content.related": "Related",
-  "content.start": "Start this session",
-  "content.author.role": "Builds and tests AwakeTab.",
-  "content.author.about": "About AwakeTab",
+  "content.verified": "最終確認：{date}",
+  "content.stale": "最終確認から6か月以上経過 — 再テスト中",
+  "content.faq": "よくある質問",
+  "content.related": "関連ページ",
+  "content.start": "このセッションを開始",
+  "content.author.role": "AwakeTabを開発・テストしています。",
+  "content.author.about": "AwakeTabについて",
 
   "end.notify.title": "AwakeTab",
   "end.notify.body": "{label}のセッションが終了しました",
@@ -336,5 +336,8 @@
   "settings.ambient.clock12h": "12時間表示",
   "settings.notifications.unavailable": "iPhone と iPad で通知を使うには、インストールしたアプリが必要です。",
   "pip.add15.label": "15分追加",
-  "pip.empty": "セッションの開始はこちら："
+  "pip.empty": "セッションの開始はこちら：",
+  "content.breadcrumb": "パンくずリスト",
+  "content.translation.pending": "英語からの翻訳です（ネイティブレビュー待ち）。",
+  "content.translation.original": "英語の原文を読む"
 }

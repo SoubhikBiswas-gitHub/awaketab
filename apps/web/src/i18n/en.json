@@ -363,5 +363,8 @@
   "settings.ambient.clock12h": "12-hour clock",
   "settings.notifications.unavailable": "Notifications need the installed app on iPhone and iPad.",
   "pip.add15.label": "Add 15 minutes",
-  "pip.empty": "Start a session in"
+  "pip.empty": "Start a session in",
+  "content.breadcrumb": "Breadcrumb",
+  "content.translation.pending": "Translated from English — native review pending.",
+  "content.translation.original": "Read the English original"
 }

@@ -15,14 +15,23 @@ import {
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from 'cn';
-import { t } from '../i18n/load';
+import { createT } from '../i18n/load';
+import { LOCALE_META } from '../i18n/locales';
 import { articleSchema } from '../lib/seo';
-
-type TKind = 'for' | 'on' | 'vs' | 'guides' | 'learn';
+import {
+  contentIndex,
+  pageAlternates,
+  pageIndexable,
+  pageOgImage,
+  pagePath,
+  pageTranslations,
+  splitEntryId,
+  type TContentKind,
+} from '../lib/content-i18n';
 
 interface Props {
-  kind: TKind;
-  entry: CollectionEntry<TKind>;
+  kind: TContentKind;
+  entry: CollectionEntry<TContentKind>;
 }
 
 const PRESET_HREF = {
@@ -41,56 +50,123 @@ const { kind, entry } = Astro.props;
 const data = entry.data;
 const { Content } = await render(entry);
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
-const slug = entry.id.replace(/^en\//u, '');
-const canonical = `${site}/${kind}/${slug}`;
+const { locale, enSlug } = splitEntryId(entry.id);
+const english = locale === 'en';
+const t = createT(locale);
+const meta = LOCALE_META[locale];
+const index = await contentIndex();
+const path = pagePath(kind, enSlug, locale);
+const canonical = `${site}${path}`;
+// Unreviewed translations are `noindex` and carry no hreflang until a native reviewer sets
+// `reviewed: true` — the same rule the locale homes follow (docs/07 §2, §5).
+const indexable = pageIndexable({ locale, reviewed: data.reviewed, noindex: data.noindex });
+const alternates = indexable ? pageAlternates(index, kind, enSlug, locale, site) : undefined;
+const translations = pageTranslations(index, kind, enSlug);
 const hubH1 = t(`page.hub.${kind}.h1`);
+// Locale homes are canonical without a trailing slash (`${site}/${locale}`, src/pages/[lang]/index.astro).
+const homeHref = english ? '/' : `/${locale}`;
 const published = data.published.toISOString().slice(0, 10);
 const verified = data.lastVerified
-  ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeZone: 'UTC' }).format(data.lastVerified)
+  ? new Intl.DateTimeFormat(english ? 'en-GB' : meta.htmlLang, {
+      dateStyle: 'long',
+      timeZone: 'UTC',
+      numberingSystem: 'latn',
+    }).format(data.lastVerified)
   : null;
 const stale =
   data.lastVerified !== undefined && Date.now() - data.lastVerified.getTime() > 180 * 86_400_000;
-const startHref = PRESET_HREF[data.preset];
+// Locale pages start the session on the locale home (the tool routes are not duplicated per locale),
+// carrying the scenario preset and mode as the documented query params (docs/00 §7).
+const startHref = english
+  ? PRESET_HREF[data.preset]
+  : `${homeHref}?preset=${data.preset}${data.mode === 'standard' ? '' : `&mode=${data.mode}`}`;
+const ogImage = english ? `/og/${kind}-en.png` : pageOgImage(kind, enSlug, locale);
+const breadcrumbs = english
+  ? [
+      { name: 'AwakeTab', url: site },
+      { name: hubH1, url: `${site}/${kind}` },
+      { name: data.h1, url: canonical },
+    ]
+  : [
+      { name: 'AwakeTab', url: `${site}${homeHref}` },
+      { name: data.h1, url: canonical },
+    ];
+
+// Related links: English pages keep their slug labels; translations link the same-locale page when it
+// exists (its h1 as anchor text, docs/06 §10), otherwise the English page, marked as English.
+interface IRelatedLink {
+  href: string;
+  label: string;
+  lang?: string;
+}
+const related: IRelatedLink[] = data.related.map((href) => {
+  if (english) {
+    return { href, label: href.replace(/^\//u, '').replaceAll('/', ' · ').replaceAll('-', ' ') };
+  }
+  const [, targetKind = '', targetSlug = ''] = href.split('/');
+  const sameLocale = index.find(
+    (page) => page.kind === targetKind && page.enSlug === targetSlug && page.locale === locale,
+  );
+  if (sameLocale) return { href: pagePath(sameLocale.kind, targetSlug, locale), label: sameLocale.h1 };
+  const source = index.find((page) => page.kind === targetKind && page.enSlug === targetSlug && page.locale === 'en');
+  return { href, label: `${source?.h1 ?? targetSlug} (${LOCALE_META.en.label})`, lang: 'en' };
+});
+const englishHref = translations.en;
 
 // 44 px targets throughout; related links may wrap because slugs become multi-word labels.
 // Ghost (not link) keeps these as secondary chips, not accent-coloured competitors to the page's
 // one primary action; it also lets the `.at-prose nav a` chip rule in tool.css take effect.
 const crumbLink = 'inline-flex min-h-11 items-center';
-const relatedLink = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11 px-4 text-start whitespace-normal');
+// h-auto + shrink + max-w-full: translated h1 anchors are long; buttonVariants' fixed h-9 and shrink-0 would
+// push them past a 320 px viewport (E6-T07 overflow test).
+const relatedLink = cn(
+  buttonVariants({ variant: 'ghost' }),
+  'h-auto min-h-11 max-w-full shrink px-4 py-2 text-start whitespace-normal',
+);
 ---
 
 <ContentLayout
   title={data.title}
   description={data.description}
   canonical={canonical}
-  ogImage={`/og/${kind}-en.png`}
+  locale={locale}
+  noindex={!indexable}
+  ogImage={ogImage}
+  ogImageAlt={data.h1}
+  alternates={alternates}
+  localeLinks={translations}
   schema={articleSchema({
     canonical,
     title: data.h1,
     description: data.description,
-    locale: 'en',
+    locale,
     published,
+    image: `${site}${ogImage}`,
     ...(data.updated ? { updated: data.updated.toISOString().slice(0, 10) } : {}),
-    breadcrumbs: [
-      { name: 'AwakeTab', url: site },
-      { name: hubH1, url: `${site}/${kind}` },
-      { name: data.h1, url: canonical },
-    ],
+    breadcrumbs,
   })}
 >
   <header slot="header" class="at-page-header">
-    <a class="at-wordmark" href="/">AwakeTab</a>
+    <a class="at-wordmark" href={homeHref}>AwakeTab</a>
   </header>
-  <Breadcrumb aria-label="Breadcrumb">
+  <Breadcrumb aria-label={english ? 'Breadcrumb' : t('content.breadcrumb')}>
     <BreadcrumbList>
       <BreadcrumbItem>
-        <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
+        <BreadcrumbLink className={crumbLink} href={homeHref}>{t('app.name')}</BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbSeparator />
-      <BreadcrumbItem>
-        <BreadcrumbLink className={crumbLink} href={`/${kind}`}>{hubH1}</BreadcrumbLink>
-      </BreadcrumbItem>
-      <BreadcrumbSeparator />
+      {
+        english && (
+          <>
+            <BreadcrumbItem>
+              <BreadcrumbLink className={crumbLink} href={`/${kind}`}>
+                {hubH1}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+          </>
+        )
+      }
       <BreadcrumbItem>
         <BreadcrumbPage>{data.h1}</BreadcrumbPage>
       </BreadcrumbItem>
@@ -99,7 +175,7 @@ const relatedLink = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11 px-4 text
   <header class="mt-4">
     <h1 class="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">{data.h1}</h1>
     {
-      (verified || stale) && (
+      (verified || stale || (!english && !data.reviewed)) && (
         <div class="mt-3 flex flex-wrap items-center gap-2">
           {verified && (
             <Badge variant="outline" className="whitespace-normal">
@@ -111,15 +187,25 @@ const relatedLink = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11 px-4 text
               {t('content.stale')}
             </Badge>
           )}
+          {!english && !data.reviewed && (
+            <Badge variant="outline" className="whitespace-normal" data-translation-pending>
+              {t('content.translation.pending')}
+              {englishHref && (
+                <a class="ms-1 underline underline-offset-4" href={englishHref} hreflang="en" lang="en">
+                  {t('content.translation.original')}
+                </a>
+              )}
+            </Badge>
+          )}
         </div>
       )
     }
   </header>
-  <Alert role="note" className="mt-6 border-l-4 border-l-warning">
+  <Alert role="note" className="mt-6 border-s-4 border-s-warning">
     <AlertDescription className="text-foreground">{data.honestLimit}</AlertDescription>
   </Alert>
   <Card className="my-6 gap-0 py-0">
-    <ToolIsland embed heading={data.h1} autostart="0" preset={data.preset} mode={data.mode} />
+    <ToolIsland embed heading={data.h1} autostart="0" preset={data.preset} mode={data.mode} locale={locale} />
   </Card>
   <div class="at-prose">
     <Content />
@@ -140,11 +226,11 @@ const relatedLink = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11 px-4 text
     </section>
     <nav aria-label={t('content.related')} class="mt-6 flex flex-wrap gap-x-6 gap-y-1">
       <a class={relatedLink} href={startHref}>{t('content.start')}</a>
-      <a class={relatedLink} href={`/${kind}`}>{hubH1}</a>
+      {english && <a class={relatedLink} href={`/${kind}`}>{hubH1}</a>}
       {
-        data.related.map((href) => (
-          <a class={relatedLink} href={href}>
-            {href.replace(/^\//u, '').replaceAll('/', ' · ').replaceAll('-', ' ')}
+        related.map((link) => (
+          <a class={relatedLink} href={link.href} hreflang={link.lang} lang={link.lang}>
+            {link.label}
           </a>
         ))
       }
