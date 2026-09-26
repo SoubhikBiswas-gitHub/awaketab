@@ -114,8 +114,12 @@ export function createStorage(adapter?: IStorageAdapter): {
     },
     writeSession: (s) => { write(STORAGE_KEYS.session, s); },
     stats: () => {
-      const s = read(STORAGE_KEYS.stats, DEFAULT_STATS);
+      const { daySessions, dayFocus, ...rest }: IStats = read(STORAGE_KEYS.stats, DEFAULT_STATS);
+      const s: IStats = rest;
       s.days = pruneDays(s.days);
+      // Optional per-day counters (M6 follow-ups): absent in older data, pruned with `days`, dropped if corrupt.
+      if (daySessions && typeof daySessions === 'object') s.daySessions = pruneDays(daySessions);
+      if (dayFocus && typeof dayFocus === 'object') s.dayFocus = pruneDays(dayFocus);
       const streaks = computeStreaks(s.days);
       s.currentStreakDays = streaks.currentStreakDays;
       s.longestStreakDays = Math.max(s.longestStreakDays, streaks.longestStreakDays);

@@ -7,7 +7,7 @@ export { hasFeature, LICENSE_PUBLIC_KEYS, needsRevalidation, sha256Hex, verifyLi
 export type { ILicenseState } from './license.js';
 export { createSession, planFromPreset, planUntil } from './session.js';
 export type { ISessionEngine, ISessionEvents, ISessionOptions } from './session.js';
-export { computeStreaks, creditMinutes, dayKey, exportStatsCsv, pruneDays } from './stats.js';
+export { computeStreaks, countDay, creditMinutes, dayKey, exportStatsCsv, pruneDays } from './stats.js';
 export {
   clearAllData,
   createStorage,

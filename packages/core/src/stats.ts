@@ -64,9 +64,18 @@ function shiftDay(iso: string, delta: number): string {
 export function pruneDays(days: Record<string, number>, now = Date.now(), timeZone?: string): Record<string, number> {
   const cutoff = dayKey(now - 365 * 86_400_000, timeZone);
   const next: Record<string, number> = {};
+  // localStorage is user-editable: anything but a number under a day key is dropped here.
   for (const [k, v] of Object.entries(days)) {
-    if (k >= cutoff) next[k] = v;
+    if (k >= cutoff && typeof v === 'number') next[k] = v;
   }
+  return next;
+}
+
+/** Adds one to the local day of `now` in a per-day counter (`IStats.daySessions`, `IStats.dayFocus`). */
+export function countDay(rec: Record<string, number> | undefined, now: number, timeZone?: string): Record<string, number> {
+  const next = rec ?? {};
+  const key = dayKey(now, timeZone);
+  next[key] = (next[key] ?? 0) + 1;
   return next;
 }
 
@@ -82,9 +91,14 @@ export function creditMinutes(
   stats.totalMinutes += minutes;
 }
 
-export function exportStatsCsv(stats: { days: Record<string, number> }, ver = '0.0.0'): string {
-  const rows = Object.keys(stats.days)
+/**
+ * `date,awake_minutes,sessions`, one row per local day with minutes or sessions. The sessions cell is empty
+ * where no per-day count exists (days recorded before `daySessions`), never a guessed 0 (docs/08 §6).
+ */
+export function exportStatsCsv(stats: { days: Record<string, number>; daySessions?: Record<string, number> }, ver = '0.0.0'): string {
+  const per = stats.daySessions ?? {};
+  const rows = [...new Set([...Object.keys(stats.days), ...Object.keys(per)])]
     .sort()
-    .map((date) => `${date},${String(stats.days[date] ?? 0)},`);
+    .map((date) => `${date},${String(stats.days[date] ?? 0)},${String(per[date] ?? '')}`);
   return `date,awake_minutes,sessions\n${rows.join('\n')}\n# exported ${dayKey(Date.now())} from AwakeTab v${ver}\n`;
 }
