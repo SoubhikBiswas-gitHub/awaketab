@@ -1,5 +1,5 @@
 import { chipShortcut } from './ui/chips.js';
-import { nextTheme } from './theme.js';
+import type { TTheme } from '@awaketab/core';
 import type { IStore } from './store.js';
 
 function typingTarget(el: EventTarget | null): boolean {
@@ -15,7 +15,8 @@ export function mountShortcuts(
     startPreset: (id: ReturnType<typeof chipShortcut>) => void;
     openUntil: () => void;
     fullscreen: () => void;
-    cycleTheme: (theme: ReturnType<typeof nextTheme>) => void;
+    /** Called with no theme: the action picks the next one when it runs, after any earlier press has applied. */
+    cycleTheme: (theme?: TTheme) => void;
     cycleMode: () => void;
     exitMode: () => void;
     pip: () => void;
@@ -72,7 +73,9 @@ export function mountShortcuts(
     }
     if (key === 'd' || key === 'D') {
       e.preventDefault();
-      actions.cycleTheme(nextTheme(s.settings.theme));
+      // The theme action loads lazily; computing the next theme here would read stale settings when D is
+      // pressed again before the first press applied, so two quick presses would only advance one step.
+      actions.cycleTheme();
       return;
     }
     if (key === 'm' || key === 'M') {
