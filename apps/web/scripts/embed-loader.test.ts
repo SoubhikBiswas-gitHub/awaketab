@@ -70,17 +70,17 @@ describe('fingerprintApp (post-build, serves the iframe app immutable)', () => {
 
   it('moves the app to a content-hashed /embed/assets URL and rewrites the page that loads it', async () => {
     await put('embed/app.js', 'export const app=1;');
-    await put('embed/cook/index.html', `<script src="/theme-boot.js"></script><script type="module" src="${APP_URL}"></script>`);
+    await put('embed/cook.html', `<script src="/theme-boot.js"></script><script type="module" src="${APP_URL}"></script>`);
     await put('index.html', '<script type="module" src="/_astro/index.js"></script>');
     await put('embed.js', '/*! loader */');
 
     const { url, pages } = await fingerprintApp(dist);
     expect(url).toMatch(HASHED_APP_RE);
     expect(url).toBe(hashedAppUrl('export const app=1;'));
-    expect(pages).toEqual(['embed/cook/index.html']);
+    expect(pages).toEqual(['embed/cook.html']);
     expect(await readFile(path.join(dist, url.slice(1)), 'utf8')).toBe('export const app=1;');
     await expect(stat(path.join(dist, 'embed/app.js'))).rejects.toThrow();
-    const html = await readFile(path.join(dist, 'embed/cook/index.html'), 'utf8');
+    const html = await readFile(path.join(dist, 'embed/cook.html'), 'utf8');
     expect(html).toContain(`<script type="module" src="${url}"></script>`);
     expect(html).not.toContain(APP_URL);
     // The host-page loader keeps its stable URL; other pages are untouched.
@@ -95,7 +95,7 @@ describe('fingerprintApp (post-build, serves the iframe app immutable)', () => {
 
   it('fails loudly when no built page references the app, or the app is missing', async () => {
     await put('embed/app.js', 'export const app=1;');
-    await put('embed/cook/index.html', '<p>no script</p>');
+    await put('embed/cook.html', '<p>no script</p>');
     await expect(fingerprintApp(dist)).rejects.toThrow(/no built page/u);
     await rm(path.join(dist, 'embed/app.js'));
     await expect(fingerprintApp(dist)).rejects.toThrow();

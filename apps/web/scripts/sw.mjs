@@ -6,21 +6,24 @@ import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
+import { LOCALES, servedFile } from './served.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = process.env.AT_DIST ? path.resolve(process.env.AT_DIST) : path.join(ROOT, 'dist');
-const LOCALES = ['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
 const PRESET_ROUTES = ['15m', '30m', '45m', '1h', '2h', '4h', '8h'];
 const MARKER = 'self.__WB_MANIFEST';
 
-/** Shell pages: the tool routes and locale homes, keyed by the URL a navigation requests. */
+/**
+ * Shell pages: the tool routes and locale homes, keyed by the URL a navigation requests — the URL Cloudflare
+ * Pages serves without a redirect (scripts/served.mjs), so the precache key matches the request exactly.
+ */
 export const SHELL_PAGES = [
-  ['/', 'index.html'],
-  ['/pip', 'pip/index.html'],
-  ...PRESET_ROUTES.map((r) => [`/${r}`, `${r}/index.html`]),
-  ...LOCALES.map((l) => [`/${l}/`, `${l}/index.html`]),
-  ...LOCALES.map((l) => [`/${l}/pip`, `${l}/pip/index.html`]),
-];
+  '/',
+  '/pip',
+  ...PRESET_ROUTES.map((r) => `/${r}`),
+  ...LOCALES.map((l) => `/${l}/`),
+  ...LOCALES.map((l) => `/${l}/pip`),
+].map((url) => [url, servedFile(url)]);
 
 const STATIC = ['favicon.svg', 'manifest.webmanifest', ...LOCALES.map((l) => `${l}/manifest.webmanifest`)];
 

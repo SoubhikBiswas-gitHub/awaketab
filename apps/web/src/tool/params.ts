@@ -56,6 +56,12 @@ export function stripLocale(pathname: string): string {
   return parts === '' ? '/' : parts;
 }
 
+/** The pathname spelled the way it is served and canonical: `/30m`, `/es/for/cocinar`, `/`, and `/es/` for a locale home. */
+export function canonicalPathname(pathname: string): string {
+  const trimmed = pathname.replace(/(.)\/+$/u, '$1');
+  return LOCALES.has(trimmed.slice(1)) ? `${trimmed}/` : trimmed;
+}
+
 export function sanitizeMsg(raw: string): string {
   const nfc = raw.normalize('NFC');
   const stripped = Array.from(nfc)
@@ -132,8 +138,9 @@ export function parseToolParams(
     isPip,
     isToolAutostartRoute,
     // The address bar keeps its locale prefix (/es/for/cocinar, not /for/cocinar); only the query and a
-    // trailing slash go, matching the canonical link.
-    canonicalPath: loc.pathname.replace(/(.)\/+$/u, '$1'),
+    // trailing slash go, matching the canonical link — except on a locale home, whose canonical URL is `/es/`
+    // (the one directory index Cloudflare Pages serves; docs/14 §2.1).
+    canonicalPath: canonicalPathname(loc.pathname),
   };
 }
 

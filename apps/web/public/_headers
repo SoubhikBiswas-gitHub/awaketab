@@ -182,13 +182,6 @@
   X-Frame-Options: DENY
   ! X-Robots-Tag
 
-/embed/
-  ! Content-Security-Policy
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-WaMaRXGpIUS0whOYgZBOoKKiI+vEUfdchJwcSMQoLdM='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self' data:; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://polar.sh https://*.polar.sh; upgrade-insecure-requests; report-to csp
-  ! X-Frame-Options
-  X-Frame-Options: DENY
-  ! X-Robots-Tag
-
 /embed.js
   ! Cache-Control
   Cache-Control: public, max-age=3600

@@ -503,7 +503,7 @@ Rules: the PiP window is same-origin and shares the store, so no messaging is ne
 
 ## 10. URL parameters and deep links
 
-Parsed once in `main.ts` from `location`, applied in this order, then removed with `history.replaceState` to the canonical path (so copied links stay clean and `ref` never leaks into analytics paths) — the canonical path is the current pathname without its query and trailing slash, locale prefix kept (`/es/for/cocinar`, never `/for/cocinar`; `parseToolParams().canonicalPath`, fixed at M9 — it used to drop the prefix, so a reload of a locale page landed on English or a 404):
+Parsed once in `main.ts` from `location`, applied in this order, then removed with `history.replaceState` to the canonical path (so copied links stay clean and `ref` never leaks into analytics paths) — the canonical path is the current pathname without its query and trailing slash, locale prefix kept (`/es/for/cocinar`, never `/for/cocinar`; `parseToolParams().canonicalPath`, fixed at M9 — it used to drop the prefix, so a reload of a locale page landed on English or a 404). A locale home keeps its slash, `/es/`: that is its served and canonical URL (`14-devops.md` §2.1):
 
 | Param | Effect | Validation |
 |---|---|---|

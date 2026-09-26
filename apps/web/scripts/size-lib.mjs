@@ -52,7 +52,7 @@ export async function gzTotal(files) {
   return total;
 }
 
-/** Static and full closures for one built page (`rel` like `index.html` or `embed/cook/index.html`). */
+/** Static and full closures for one built page (`rel` like `index.html` or `embed/cook.html`, scripts/served.mjs). */
 export async function pageJs(dist, rel) {
   const html = await readFile(path.join(dist, rel), 'utf8');
   const entries = entryScripts(html).map((src) => path.resolve(dist, src.replace(/^\//u, '')));

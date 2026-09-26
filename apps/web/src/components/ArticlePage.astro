@@ -63,8 +63,8 @@ const indexable = pageIndexable({ locale, reviewed: data.reviewed, noindex: data
 const alternates = indexable ? pageAlternates(index, kind, enSlug, locale, site) : undefined;
 const translations = pageTranslations(index, kind, enSlug);
 const hubH1 = t(`page.hub.${kind}.h1`);
-// Locale homes are canonical without a trailing slash (`${site}/${locale}`, src/pages/[lang]/index.astro).
-const homeHref = english ? '/' : `/${locale}`;
+// Locale homes are the one page URL with a trailing slash, `/es/` (`es/index.html`, docs/14 §2.1).
+const homeHref = english ? '/' : `/${locale}/`;
 const published = data.published.toISOString().slice(0, 10);
 const verified = data.lastVerified
   ? new Intl.DateTimeFormat(english ? 'en-GB' : meta.htmlLang, {

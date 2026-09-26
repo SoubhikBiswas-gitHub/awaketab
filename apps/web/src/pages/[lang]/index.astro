@@ -25,7 +25,8 @@ if (!isLocale(rawLocale) || rawLocale === 'en') {
 const locale: TLocale = rawLocale;
 const t = createT(locale);
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
-const canonical = `${site}/${locale}`;
+// `/es/`, with its slash: the build writes es/index.html, which Cloudflare Pages serves only at /es/ (docs/14 §2.1).
+const canonical = `${site}/${locale}/`;
 const meta = LOCALE_META[locale];
 
 // Draft, unreviewed machine-assisted translations (docs/BUILD-STATE.md "Known gaps" E6-T04).
