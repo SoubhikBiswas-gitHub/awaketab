@@ -412,7 +412,7 @@ class Component extends DCLogic {
       matCols: wide ? (desk ? '184px 64px 152px minmax(0, 1fr)' : '168px 56px 140px minmax(0, 1fr)') : 'minmax(0, 1fr) 44px 92px',
       matrix: MATRIX.map(([name, v, mech, platforms, notes], i) => ({ name, v, platforms, notes, mech: mech === 'native' ? (wide ? 'Native wake lock' : 'Native') : (wide ? 'Video fallback' : 'Fallback'), glyph: mech === 'native' ? DOT : RINGDOT, line: i === MATRIX.length - 1 ? 'transparent' : t.line })),
       hubHref: hub,
-      scenarios: SCENARIOS.map(([slug, label]) => ({ label, href: slug === 'cooking' ? (desk ? (dark ? 'ContentArticleDeskDark.dc.html' : 'ContentArticleDeskLight.dc.html') : (dark ? 'ContentArticlePhoneDark.dc.html' : 'ContentArticlePhoneLight.dc.html')) : '#' })),
+      scenarios: SCENARIOS.map(([slug, label]) => ({ label, href: slug === 'cooking' ? (desk ? (dark ? 'ContentArticleDeskDark.dc.html' : 'ContentArticleDeskLight.dc.html') : (dark ? 'ContentArticle.dc.html' : 'ContentArticlePhoneLight.dc.html')) : '#' })),
       devices: DEVICES.map((label) => ({ label })),
       comparisons: COMPARISONS.map((label) => ({ label })),
       fixes: FIXES.map((label) => ({ label })),

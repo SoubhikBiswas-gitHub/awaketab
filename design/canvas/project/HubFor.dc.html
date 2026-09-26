@@ -263,7 +263,7 @@ class Component extends DCLogic {
     const tone = live ? p.lamp : t.muted;
     const [bigA, bigB] = this.split(s.el);
     const [W, H] = SIZES[layout];
-    const article = desk ? (dark ? 'ContentArticleDeskDark.dc.html' : 'ContentArticleDeskLight.dc.html') : tab ? 'ContentArticleTablet.dc.html' : (dark ? 'ContentArticlePhoneDark.dc.html' : 'ContentArticlePhoneLight.dc.html');
+    const article = desk ? (dark ? 'ContentArticleDeskDark.dc.html' : 'ContentArticleDeskLight.dc.html') : tab ? 'ContentArticleTablet.dc.html' : (dark ? 'ContentArticle.dc.html' : 'ContentArticlePhoneLight.dc.html');
     const ji = Math.max(0, GROUPS.findIndex((g) => g[0] === s.jump));
     return {
       W: W + 'px', H: H + 'px', isDesk: desk, t, p, tone,

@@ -635,7 +635,7 @@ ${limitSection('limit', 'AwakeTab needs Safari 16.4 or later and its tab in fron
 
 ${FAQ}
 
-${related('Start a 30-minute session', [['iPhone Auto-Lock Never is greyed out', 'GuideGuidesPhoneDark.dc.html'], ['Keep an iPhone Home Screen web app awake'], ['Low Power Mode and wake locks'], ['Screen Wake Lock API guide', 'GuideLearnPhoneLight.dc.html']])}
+${related('Start a 30-minute session', [['iPhone Auto-Lock Never is greyed out', 'GuideGuidesPhoneLight.dc.html'], ['Keep an iPhone Home Screen web app awake'], ['Low Power Mode and wake locks'], ['Screen Wake Lock API guide', 'GuideLearnPhoneLight.dc.html']])}
     </article>
 
 ${RAIL}`;
@@ -658,8 +658,8 @@ ${RAIL}`;
     ['AwakeTab browser extension', 'no', 'Not available', 'The extension is for desktop Chrome and Edge. There is no iPhone version.']
   ];
   const BLOCKERS = [
-    ['Low Power Mode', 'It sets Auto-Lock to 30 seconds and greys out the longer choices, including Never.', 'Fix a greyed-out Auto-Lock', 'GuideGuidesPhoneDark.dc.html'],
-    ['A work or school profile', 'A management profile can set a maximum Auto-Lock time that you cannot change.', 'Check for a profile', 'GuideGuidesPhoneDark.dc.html'],
+    ['Low Power Mode', 'It sets Auto-Lock to 30 seconds and greys out the longer choices, including Never.', 'Fix a greyed-out Auto-Lock', 'GuideGuidesPhoneLight.dc.html'],
+    ['A work or school profile', 'A management profile can set a maximum Auto-Lock time that you cannot change.', 'Check for a profile', 'GuideGuidesPhoneLight.dc.html'],
     ['No tap yet', 'After a reload or a restored tab, Safari waits for a fresh tap before it grants the lock again.', '', ''],
     ['An old Home Screen web app', 'Before iOS 18.4, web apps opened from the Home Screen cannot hold a wake lock.', 'Home Screen web apps', '#']
   ];
@@ -1229,7 +1229,7 @@ ${limitSection('limit', 'With Low Power Mode on, iPhone sets Auto-Lock to 30 sec
 
 ${FAQ}
 
-${related('Start a 30-minute session', [['Keep your iPhone screen on in Safari', 'GuideOnPhoneDark.dc.html'], ['Low Power Mode and wake locks'], ['Keep an iPad on for sheet music'], ['Lock screen vs sleep: what a wake lock changes']])}
+${related('Start a 30-minute session', [['Keep your iPhone screen on in Safari', 'GuideOn.dc.html'], ['Low Power Mode and wake locks'], ['Keep an iPad on for sheet music'], ['Lock screen vs sleep: what a wake lock changes']])}
     </div>
 
 ${RAIL}`;

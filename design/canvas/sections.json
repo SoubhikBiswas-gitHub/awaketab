@@ -535,13 +535,6 @@
     true
    ],
    [
-    "ExtrasResume.dc.html",
-    390,
-    844,
-    "Resume banner · phone dark",
-    true
-   ],
-   [
     "ExtrasSecondTab.dc.html",
     390,
     844,
@@ -709,21 +702,14 @@
    [
     "ContentArticle.dc.html",
     390,
-    5232,
+    5212,
     "▶ Article · play me · follows your system",
-    true
-   ],
-   [
-    "ContentArticlePhoneDark.dc.html",
-    390,
-    5232,
-    "/for/cooking · phone · dark",
     true
    ],
    [
     "ContentArticlePhoneLight.dc.html",
     390,
-    5232,
+    5212,
     "/for/cooking · phone · light · awake",
     true
    ],
@@ -756,15 +742,15 @@
    [
     "HubFor.dc.html",
     390,
-    4168,
+    4312,
     "▶ /for hub · play me",
     true
    ],
    [
     "HubForPhone.dc.html",
     390,
-    4168,
-    "/for hub · phone · dark",
+    4312,
+    "/for hub · phone · light",
     true
    ],
    [
@@ -785,7 +771,7 @@
     "HomeBelowPhone.dc.html",
     390,
     7956,
-    "Home below the tool · phone · dark",
+    "Home below the tool · phone · light",
     true
    ],
    [
@@ -805,13 +791,6 @@
     360,
     600,
     "▶ Extension popup · play me",
-    true
-   ],
-   [
-    "ExtPopupAwakeDark.dc.html",
-    360,
-    600,
-    "Popup · Screen awake · dark",
     true
    ],
    [
@@ -836,6 +815,34 @@
     true
    ],
    [
+    "ExtPopupLong2h.dc.html",
+    360,
+    600,
+    "Popup · 2 h session (H:MM:SS) · dark",
+    true
+   ],
+   [
+    "ExtPopupOvernight.dc.html",
+    360,
+    600,
+    "Popup · ends after midnight (tomorrow) · dark",
+    true
+   ],
+   [
+    "ExtPopupMultiDay.dc.html",
+    360,
+    600,
+    "Popup · multi-day session · light",
+    true
+   ],
+   [
+    "ExtPopupUnlimited.dc.html",
+    360,
+    600,
+    "Popup · no limit (∞, counts up) · dark",
+    true
+   ],
+   [
     "ExtBadges.dc.html",
     1280,
     400,
@@ -850,21 +857,21 @@
    [
     "ExtOptions.dc.html",
     1280,
-    3860,
+    3892,
     "▶ Extension settings · play me",
     true
    ],
    [
     "ExtOptionsDark.dc.html",
     1280,
-    3860,
+    3892,
     "Extension settings · dark · Pro",
     true
    ],
    [
     "ExtOptionsLight.dc.html",
     1280,
-    4050,
+    4144,
     "Extension settings · light · no Pro",
     true
    ]
@@ -878,13 +885,6 @@
     360,
     600,
     "▶ Popup edge states (all)",
-    true
-   ],
-   [
-    "ExtEdgeScheduled.dc.html",
-    360,
-    600,
-    "Popup · scheduled",
     true
    ],
    [
@@ -935,16 +935,9 @@
   "Extension · welcome page after install",
   [
    [
-    "WelcomeDark.dc.html",
-    1280,
-    2672,
-    "Welcome · dark",
-    true
-   ],
-   [
     "WelcomeLight.dc.html",
     1280,
-    2672,
+    2760,
     "Welcome · light",
     true
    ]
@@ -956,7 +949,7 @@
    [
     "EmbedCompactLight.dc.html",
     320,
-    96,
+    104,
     "Embed · Compact 320 × 96 · light",
     true
    ],
@@ -977,7 +970,7 @@
    [
     "EmbedShowcase.dc.html",
     1280,
-    1340,
+    1548,
     "Embed · on a recipe page + snippet builder",
     true
    ]
@@ -989,42 +982,35 @@
    [
     "Pro.dc.html",
     390,
-    7360,
+    6180,
     "▶ Pro · play me · follows your system",
-    true
-   ],
-   [
-    "ProPhoneDark.dc.html",
-    390,
-    7360,
-    "Pro · phone · dark",
     true
    ],
    [
     "ProPhoneLight.dc.html",
     390,
-    7360,
+    6180,
     "Pro · phone · light",
     true
    ],
    [
     "ProTablet.dc.html",
     820,
-    5580,
+    4596,
     "Pro · tablet · light",
     true
    ],
    [
     "ProDeskDark.dc.html",
     1280,
-    5140,
+    4148,
     "Pro · desktop · dark",
     true
    ],
    [
     "ProDeskLight.dc.html",
     1280,
-    5140,
+    4148,
     "Pro · desktop · light",
     true
    ]
@@ -1036,42 +1022,42 @@
    [
     "ProActivate.dc.html",
     390,
-    1500,
+    1608,
     "▶ Activate · try the flow",
     true
    ],
    [
     "ProActivatePhone.dc.html",
     390,
-    960,
+    1120,
     "Activate · phone · dark · success",
     true
    ],
    [
     "ProActivateDesk.dc.html",
     1280,
-    880,
+    984,
     "Activate · desktop · light · error",
     true
    ],
    [
     "ProManage.dc.html",
     390,
-    1020,
+    1088,
     "▶ Manage devices · phone",
     true
    ],
    [
     "ProManageDesk.dc.html",
     1280,
-    940,
+    1020,
     "Manage devices · desktop · dark",
     true
    ],
    [
     "ProManagePhoneEmpty.dc.html",
     390,
-    844,
+    960,
     "Manage devices · phone · light · empty",
     true
    ]
@@ -1083,21 +1069,14 @@
    [
     "GuideOn.dc.html",
     390,
-    6760,
+    6810,
     "▶ /on/iphone-safari · follows your system",
-    true
-   ],
-   [
-    "GuideOnPhoneDark.dc.html",
-    390,
-    6760,
-    "/on · phone · dark",
     true
    ],
    [
     "GuideOnStalePhone.dc.html",
     390,
-    6760,
+    6810,
     "/on · phone · light · stale badge",
     true
    ],
@@ -1116,21 +1095,21 @@
    [
     "GuideVs.dc.html",
     390,
-    6020,
+    6250,
     "▶ /vs/nosleep-page · follows your system",
     true
    ],
    [
     "GuideVsPhoneLight.dc.html",
     390,
-    6020,
+    6250,
     "/vs · phone · light",
     true
    ],
    [
     "GuideVsDeskDark.dc.html",
     1280,
-    4760,
+    4840,
     "/vs · desktop · dark",
     true
    ]
@@ -1142,14 +1121,14 @@
    [
     "GuideLearn.dc.html",
     390,
-    7930,
+    7970,
     "▶ /learn · follows your system",
     true
    ],
    [
     "GuideLearnPhoneLight.dc.html",
     390,
-    7930,
+    7970,
     "/learn · phone · light",
     true
    ],
@@ -1168,21 +1147,21 @@
    [
     "GuideGuides.dc.html",
     390,
-    5090,
+    5080,
     "▶ /guides · follows your system",
     true
    ],
    [
-    "GuideGuidesPhoneDark.dc.html",
+    "GuideGuidesPhoneLight.dc.html",
     390,
-    5090,
-    "/guides · phone · dark",
+    5080,
+    "/guides · phone · light",
     true
    ],
    [
     "GuideGuidesDeskLight.dc.html",
     1280,
-    4400,
+    4350,
     "/guides · desktop · light",
     true
    ]
@@ -1199,10 +1178,10 @@
     true
    ],
    [
-    "PresetPhoneDark.dc.html",
+    "PresetPhoneLight.dc.html",
     390,
     2452,
-    "/30m · phone · dark",
+    "/30m · phone · light",
     true
    ],
    [
@@ -1248,22 +1227,22 @@
    [
     "PageKioskDesk.dc.html",
     1280,
-    2926,
-    "Kiosk · desktop dark · URL builder",
+    2992,
+    "Kiosk · desktop light · URL builder",
     true
    ],
    [
     "PageKioskPhone.dc.html",
     390,
-    4296,
+    4360,
     "Kiosk · phone light",
     true
    ],
    [
     "PageLibraryDesk.dc.html",
     1280,
-    3059,
-    "Library · desktop dark · live state machine",
+    3104,
+    "Library · desktop light · live state machine",
     true
    ]
   ]
@@ -1274,29 +1253,29 @@
    [
     "PageExtensionDesk.dc.html",
     1280,
-    3582,
+    3512,
     "Extension · desktop light",
     true
    ],
    [
     "PageExtensionPhone.dc.html",
     390,
-    5680,
+    5544,
     "Extension · phone dark",
     true
    ],
    [
     "PageAboutDesk.dc.html",
     1280,
-    2076,
+    2066,
     "About · desktop light",
     true
    ],
    [
     "PageChangelogPhone.dc.html",
     390,
-    8000,
-    "Changelog · phone dark",
+    7844,
+    "Changelog · phone light",
     true
    ]
   ]
@@ -1307,28 +1286,28 @@
    [
     "PagePrivacyDesk.dc.html",
     1280,
-    4508,
+    4312,
     "Privacy · desktop light",
     true
    ],
    [
     "PageTermsPhone.dc.html",
     390,
-    2341,
+    2236,
     "Terms · phone dark",
     true
    ],
    [
     "Page404Phone.dc.html",
     390,
-    1436,
-    "404 · phone dark · mini tool",
+    1536,
+    "404 · phone light · mini tool",
     true
    ],
    [
     "Page404Desk.dc.html",
     1280,
-    1017,
+    1040,
     "404 · desktop light",
     true
    ]
@@ -1397,13 +1376,6 @@
     true
    ],
    [
-    "EmbedEdgeNoAllow.dc.html",
-    1280,
-    800,
-    "Embed · missing allow attribute + fix",
-    true
-   ],
-   [
     "EmbedEdgeSidebar.dc.html",
     1280,
     800,
@@ -1425,14 +1397,14 @@
    [
     "EmbedEdgeUnsupportedTablet.dc.html",
     820,
-    1120,
+    1100,
     "Embed · unsupported browser · tablet",
     true
    ],
    [
     "EmbedEdgeBatteryPhone.dc.html",
     390,
-    1080,
+    1120,
     "Embed · refused · phone dark",
     true
    ],
@@ -1446,7 +1418,7 @@
    [
     "EmbedCookCompact.dc.html",
     320,
-    96,
+    104,
     "/embed/cook · 320×96 running",
     true
    ],
@@ -1462,13 +1434,6 @@
  [
   "Social share images (1200×630)",
   [
-   [
-    "OgHome.dc.html",
-    1200,
-    630,
-    "OG · home",
-    false
-   ],
    [
     "OgArticle.dc.html",
     1200,
@@ -1509,13 +1474,6 @@
  [
   "Chrome Web Store listing",
   [
-   [
-    "StoreShot1.dc.html",
-    1280,
-    800,
-    "Store 1 · popup over a page",
-    false
-   ],
    [
     "StoreShot2.dc.html",
     1280,
@@ -1583,13 +1541,6 @@
     true
    ],
    [
-    "SysOfflinePhone.dc.html",
-    390,
-    844,
-    "Offline · phone",
-    false
-   ],
-   [
     "SysOfflineDesk.dc.html",
     1280,
     888,
@@ -1625,7 +1576,7 @@
    [
     "SysProLapsed.dc.html",
     1280,
-    1732,
+    2044,
     "Pro lapsed · tool + manage",
     false
    ]
@@ -1637,14 +1588,14 @@
    [
     "SysCheckoutSuccess.dc.html",
     1280,
-    848,
+    948,
     "Checkout · success",
     true
    ],
    [
     "SysCheckoutFailed.dc.html",
     1280,
-    820,
+    912,
     "Checkout · payment failed",
     false
    ],
@@ -1679,13 +1630,6 @@
     390,
     844,
     "▶ First visit · proof in 5 seconds · play me",
-    true
-   ],
-   [
-    "GrowthFirstVisitPhoneDark.dc.html",
-    390,
-    844,
-    "First visit · phone · dark · tap to start",
     true
    ],
    [
@@ -1729,13 +1673,6 @@
     true
    ],
    [
-    "GrowthTrustPhoneDark.dc.html",
-    390,
-    844,
-    "Trust panel · phone · dark · awake",
-    true
-   ],
-   [
     "GrowthTrustPhoneLight.dc.html",
     390,
     844,
@@ -1766,13 +1703,6 @@
     390,
     844,
     "▶ Session done · one gentle next step · play me",
-    true
-   ],
-   [
-    "GrowthDoneInstallPhoneDark.dc.html",
-    390,
-    844,
-    "Done · install after 2nd session · phone · dark",
     true
    ],
    [
@@ -1856,13 +1786,6 @@
     true
    ],
    [
-    "GrowthProLampPhoneDark.dc.html",
-    390,
-    844,
-    "Pro moment · previewing a Pro lamp · phone · dark",
-    true
-   ],
-   [
     "GrowthProLampDeskLight.dc.html",
     1280,
     800,
@@ -1910,13 +1833,6 @@
     true
    ],
    [
-    "GrowthPlanPhoneDark.dc.html",
-    390,
-    2080,
-    "Which plan fits · free is enough · phone · dark",
-    true
-   ],
-   [
     "GrowthPlanPhoneLight.dc.html",
     390,
     2080,
@@ -1954,13 +1870,6 @@
     390,
     844,
     "▶ Tell a friend · share a setup · no referral codes · play me",
-    true
-   ],
-   [
-    "GrowthShareTellPhoneDark.dc.html",
-    390,
-    844,
-    "Tell a friend · after 5 stars · phone · dark",
     true
    ],
    [
@@ -2039,7 +1948,7 @@
    [
     "Brand.dc.html",
     1280,
-    800,
+    932,
     "Logo, colour, type",
     false
    ]
@@ -2051,49 +1960,49 @@
    [
     "PageKiosk.dc.html",
     1280,
-    2926,
+    2992,
     "▶ Kiosk page",
     true
    ],
    [
     "PageLibrary.dc.html",
     1280,
-    3059,
+    3104,
     "▶ Library page",
     true
    ],
    [
     "PageExtension.dc.html",
     1280,
-    3582,
+    3512,
     "▶ Extension page",
     true
    ],
    [
     "PageAbout.dc.html",
     1280,
-    2076,
+    2066,
     "▶ About page",
     true
    ],
    [
     "PageLegal.dc.html",
     1280,
-    4508,
+    4312,
     "▶ Privacy / Terms page",
     true
    ],
    [
     "PageChangelog.dc.html",
     390,
-    8000,
+    7844,
     "▶ Changelog page",
     true
    ],
    [
     "Page404.dc.html",
     390,
-    1436,
+    1536,
     "▶ 404 page",
     true
    ],
@@ -2101,20 +2010,20 @@
     "OgCards.dc.html",
     1200,
     630,
-    "▶ OG card source (kind)",
+    "▶ OG · home (switch kind for the others)",
     true
    ],
    [
     "StoreAssets.dc.html",
     1280,
     800,
-    "▶ Store asset source (kind)",
+    "▶ Store 1 · popup over a page (switch kind)",
     true
    ],
    [
     "Welcome.dc.html",
     1280,
-    2672,
+    2760,
     "▶ Extension welcome page",
     true
    ],

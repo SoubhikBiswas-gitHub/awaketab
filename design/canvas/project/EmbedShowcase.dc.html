@@ -167,7 +167,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   </footer>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["desktop"],"default":"desktop"},"$preview":{"width":1280,"height":1544}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["desktop"],"default":"desktop"},"$preview":{"width":1280,"height":1548}}'>
 /* ── AwakeTab primitives v2 · fix batch 2b · DESIGN.md §2, §3, §11. Byte-identical in every file of the batch; edit prims/prims.js and rebuild, never one copy. ── */
 const AT_TOK = {
   dark: { ground: '#0A0E16', lift: '#13203A', surface: '#111826', raised: '#26324B', sunken: '#0D131F', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', warn: '#F2B34C', bad: '#FF7A7A', lamp: '#5BE0E8', onLamp: '#04232A', stopBg: '#EAF0F7', stopInk: '#0A0E16', horizonInk: '#F6F2EA', violet: '#A594FF', inputLine: '#5A6781', groundEnd: '#0A0E16', elev: 'none' },
@@ -356,7 +356,7 @@ class Component extends DCLogic {
     const group = (id, label, list, key) => { const seg = atSeg(list, s[key], (v) => this.setState({ [key]: v, copied: false }), t, { fs: 14 }); return { id, label, seg, opts: seg.items }; };
     const snip = this.snippet(s);
     return {
-      t, H: (s.size === 'full' ? 1680 : 1544) + 'px', bg: atGround(t), type: AT_TYPE, mono: AT_MONO, digitFont: AT_DIGITS,
+      t, H: (s.size === 'full' ? 1684 : 1548) + 'px', bg: atGround(t), type: AT_TYPE, mono: AT_MONO, digitFont: AT_DIGITS,
       hdr: atHeader(this, t, 'desktop', '', t.muted), ftr: atFooter(t, 'desktop'),
       card: atCard(t, false), tagSoon: atTag(t, t.lamp),
       aura: atRgba(t.lamp, dark ? 0.1 : 0.08),

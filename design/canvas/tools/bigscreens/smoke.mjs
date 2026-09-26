@@ -71,7 +71,7 @@ for (const edge of ['noallow', 'unsupported', 'battery', 'sidebar', 'running']) 
   const d = check('EmbedCook.dc.html', { size: 'full', state: 'timerdone' }).v; console.log('cook done:', d.timers.map((k) => k.left).join(', '), '| announce:', d.announce);
 }
 // Wrappers: each exists, mounts an existing child with props the child declares.
-for (const [file, child, , props, w, h] of WRAPPERS) {
+for (const [file, child, , props, w, h] of WRAPPERS.filter(([f]) => existsSync(new URL(f, dir)))) { // D-R18 removed some wrappers
   const src = readFileSync(new URL(file, dir), 'utf8');
   const childSrc = readFileSync(new URL(child + '.dc.html', dir), 'utf8');
   const declared = JSON.parse(childSrc.split("data-props='")[1].split("'>")[0]);

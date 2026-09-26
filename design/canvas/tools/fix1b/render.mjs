@@ -134,7 +134,7 @@ for (const [file, b] of Object.entries(boards)) {
         if (cs.visibility === 'hidden' || cs.display === 'none') continue;
         const ownText = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join('').trim();
         items.push({
-          tag: el.tagName.toLowerCase(), src: el.getAttribute('data-src') || '', role: el.getAttribute('role') || '', aria: el.getAttribute('aria-label') || '',
+          tag: el.tagName.toLowerCase(), sh: items.length < 2 ? el.scrollHeight : undefined, src: el.getAttribute('data-src') || '', role: el.getAttribute('role') || '', aria: el.getAttribute('aria-label') || '',
           text: (ownText || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 40), own: !!ownText,
           style: (el.getAttribute('style') || '').replace(/\s+/g, ' ').slice(0, 140),
           x: Math.round(r.left - rr.left), y: Math.round(r.top - rr.top), w: Math.round(r.width * 10) / 10, h: Math.round(r.height * 10) / 10,
