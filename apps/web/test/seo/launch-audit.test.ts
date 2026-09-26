@@ -1,4 +1,4 @@
-// Launch-audit fixes checked against the built site (docs/LAUNCH-AUDIT.md F-04, F-05, F-06, F-07, N-03).
+// Launch-audit fixes checked against the built site (docs/LAUNCH-AUDIT.md F-04, F-05, F-06, F-07, N-03, D-03).
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -159,5 +159,88 @@ describe('F-06 / N-03 · Polar server and licence keys in the bundle', () => {
     if ((await mode()) === 'production') expect(hits).toEqual([]);
     // Sandbox builds (local, CI, previews) verify dev-signed tokens; this also proves the scan can find the key.
     else expect(hits.some((file) => file.startsWith('_astro/') && file.endsWith('.js'))).toBe(true);
+  });
+});
+
+describe('D-03 · ja, zh and hi content pages use the English slug (docs/06 §5)', () => {
+  // The romanised slugs these locales carried before D-03. They were never indexed (every ja/zh/hi page
+  // is `reviewed: false` → noindex), so nothing redirects them; nothing may link to them either.
+  const RETIRED: Record<string, Record<string, readonly string[]>> = {
+    ja: {
+      for: ['ryouri', 'purezenteeshon', 'daunroodo', 'ai-ejento', 'dasshuboodo', 'kiosuku', 'gakufu', 'dokusho', 'yoru-tokei', 'akachan-monitor', 'nabi', 'bideo-tsuuwa', 'raibu', 'terepuronputa', 'toreseningu', 'sabu-monitor', 'shigoto-pc', 'shiken'],
+      on: ['ios-home-gamen'],
+      vs: ['caffeinate-meirei', 'mouse-jiggler'],
+      guides: ['windows-11-1-fun-de-gamen-off', 'mac-futa-tojite-suimin-boshi', 'iphone-jido-rokku-never-grey', 'android-gamen-timeout-ichi-app', 'sabu-monitor-kieru', 'lock-gamen-vs-suimin'],
+      learn: ['wake-lock-api-gaido', 'wake-lock-teams-midori', 'low-power-mode-to-wake-lock', 'dou-tesuto-shita-ka'],
+    },
+    zh: {
+      for: ['pengren', 'yanjiang', 'xiazai', 'ai-daili', 'yibiaoban', 'zizhu', 'yuepu', 'yuedu', 'yejian-shizhong', 'yinger-jianshi', 'daohang', 'shipin-tonghua', 'zhibo', 'ti-ci-qi', 'duanlian', 'di-er-ping', 'bangong-bijiben', 'kaoshi'],
+      on: ['ios-zhuoye'],
+      vs: ['caffeinate-mingling', 'shubiao-hudong'],
+      guides: ['windows-11-yi-fenzhong-hei-ping', 'mac-hegai-fangzhi-xiumian', 'iphone-zidong-suoding-yongbu-hui', 'chrome-jieneng', 'android-pingmu-chaoshi-yi-yingyong', 'di-er-ping-xizhen', 'suoping-vs-xiumian'],
+      learn: ['wake-lock-api-zhinan', 'wake-lock-nengfou-baochi-teams-zaixian', 'dihao-moshi-yu-wake-lock', 'liulanqi-zhichi-juzhen', 'women-ruhe-ceshi'],
+    },
+    hi: {
+      for: ['khana-banana', 'prastuti', 'download', 'ai-agent', 'dashboard', 'sangeet-lipi', 'padhna', 'raat-ghadi', 'shishu-monitor', 'video-call', 'live-stream', 'vyayam', 'doosri-screen', 'kaam-laptop', 'pariksha'],
+      vs: ['mouse-jiggler'],
+      guides: ['windows-11-ek-minute-baad-screen-band', 'mac-dhakkan-band-sone-se-rokna', 'iphone-auto-lock-never-grey', 'android-screen-timeout-ek-app', 'doosri-screen-band'],
+      learn: ['wake-lock-api-guide', 'wake-lock-teams-green', 'low-power-mode-aur-wake-lock', 'kaise-test-kiya'],
+    },
+  };
+  // `/{lang}/{kind}/{old slug}` not followed by another slug character: `/hi/for/download` is retired but
+  // `/hi/for/downloads` (the English slug) is not. Also catches `/og/{lang}/{kind}/{old slug}.png`.
+  const retiredPaths = Object.entries(RETIRED).flatMap(([lang, kinds]) =>
+    Object.entries(kinds).flatMap(([kind, list]) => list.map((slug) => `${lang}/${kind}/${slug}`)),
+  );
+  const retired = new RegExp(`/(?:${retiredPaths.join('|')})(?![a-z0-9-])`, 'u');
+
+  async function everyFile(dir: string): Promise<string[]> {
+    const out: string[] = [];
+    for (const entry of await readdir(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) out.push(...(await everyFile(full)));
+      else out.push(full);
+    }
+    return out;
+  }
+
+  it('the pattern finds a retired slug and spares the English one', () => {
+    expect(retiredPaths).toHaveLength(89);
+    expect(retired.test('href="/ja/for/ryouri"')).toBe(true);
+    expect(retired.test('/og/hi/for/download.png')).toBe(true);
+    expect(retired.test('href="/hi/for/downloads"')).toBe(false);
+    expect(retired.test('/hi/guides/iphone-auto-lock-never-greyed-out')).toBe(false);
+  });
+
+  it('serves every ja, zh and hi translation at /{lang}/{kind}/{English slug}', async () => {
+    const all = (await everyFile(dist)).map((file) => path.relative(dist, file).replace(/\\/gu, '/'));
+    const pages = all.filter((file) => /^(?:ja|zh|hi)\/(?:for|on|vs|guides|learn)\/[^/]+\.html$/u.test(file));
+    expect(pages).toHaveLength(30);
+    for (const file of pages) {
+      const [lang = '', kind = '', name = ''] = file.split('/');
+      const enSlug = name.replace(/\.html$/u, '');
+      expect(all, `${file} has no English original`).toContain(servedFile(`/${kind}/${enSlug}`));
+      const html = await page(`/${lang}/${kind}/${enSlug}`);
+      expect(html, file).toContain(`<link rel="canonical" href="${SITE}/${lang}/${kind}/${enSlug}">`);
+      expect(html, file).toContain(`${SITE}/og/${lang}/${kind}/${enSlug}.png`);
+      expect(all, `${file} OG image`).toContain(`og/${lang}/${kind}/${enSlug}.png`);
+    }
+  });
+
+  it('no built file is named after, or references, a retired romanised slug', async () => {
+    const hits: string[] = [];
+    for (const file of await everyFile(dist)) {
+      const relative = path.relative(dist, file).replace(/\\/gu, '/');
+      if (retired.test(`/${relative.replace(/\.(?:html|png)$/u, '')}`)) hits.push(relative);
+      if (!/\.(?:html|js|mjs|json|txt|xml|webmanifest|css)$|^_(?:redirects|headers)$/u.test(path.basename(file))) continue;
+      const match = retired.exec(await readFile(file, 'utf8'));
+      if (match) hits.push(`${relative}: ${match[0]}`);
+    }
+    expect(hits).toEqual([]);
+  });
+
+  it('the IndexNow selection carries no retired slug', async () => {
+    const urls = selectUrls(await readSitemapUrls({ from: 'dist', dist, site: SITE, fetchFn: fetch }));
+    expect(urls.filter((url) => retired.test(url))).toEqual([]);
   });
 });

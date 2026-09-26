@@ -1,6 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { TRANSLATED_SLUG_LOCALES } from '../../scripts/translations.mjs';
 import { LOCALES } from '../../src/i18n/locales';
 
 const I18N = path.resolve('apps/web/src/i18n');
@@ -68,6 +69,18 @@ describe('i18n catalogs', () => {
         const values = Object.values(collection).flatMap((translations) => translations[locale] ?? []);
         expect(new Set(values).size).toBe(values.length);
         for (const value of values) expect(value).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/u);
+      }
+    }
+  });
+
+  it('translates slugs for Latin-script locales only: ja, zh and hi keep the English slug (docs/06 §5, D-03)', async () => {
+    const slugs = JSON.parse(await readFile(path.join(I18N, 'slugs.json'), 'utf8')) as Record<
+      string,
+      Record<string, Record<string, string>>
+    >;
+    for (const [kind, collection] of Object.entries(slugs)) {
+      for (const [enSlug, translations] of Object.entries(collection)) {
+        expect(Object.keys(translations).sort(), `${kind}/${enSlug}`).toEqual([...TRANSLATED_SLUG_LOCALES].sort());
       }
     }
   });

@@ -89,7 +89,11 @@ test.describe('per-locale smoke', () => {
   test('an English top-10 page links its translations in the locale switcher', async ({ page }) => {
     await page.goto('/for/cooking');
     await expect(page.locator('footer nav a[hreflang="es"]')).toHaveAttribute('href', cookingPath('es'));
-    await expect(page.locator('footer nav a[hreflang="zh-Hans"]')).toHaveAttribute('href', cookingPath('zh'));
+    await expect(page.locator('footer nav a[hreflang="es"]')).toHaveAttribute('href', '/es/for/cocinar');
+    // ja, zh and hi keep the English slug (docs/06 §5, LAUNCH-AUDIT D-03).
+    await expect(page.locator('footer nav a[hreflang="ja"]')).toHaveAttribute('href', '/ja/for/cooking');
+    await expect(page.locator('footer nav a[hreflang="zh-Hans"]')).toHaveAttribute('href', '/zh/for/cooking');
+    await expect(page.locator('footer nav a[hreflang="hi"]')).toHaveAttribute('href', '/hi/for/cooking');
     // No reviewed translation yet: the English page lists only itself and x-default.
     await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(2);
   });

@@ -183,7 +183,7 @@ Query params (all optional): `autostart=1`, `mode=`, `msg=` (≤ 80 chars), `the
 
 Locales and folders: `en` (root), `es`, `pt-br`, `de`, `fr`, `ja`, `zh` (Simplified), `hi`. `x-default` → root. Phase 2 locales: `id`, `tr`, `ko`, `it`, `ru`, `vi`, `ar`.
 
-Content slugs (English canonical; translated slugs allowed per locale with hreflang linking):
+Content slugs (English canonical; translated slugs for the Latin-script locales `es`, `pt-br`, `de`, `fr` only, with hreflang linking; `ja`, `zh` and `hi` keep the English slug, e.g. `/ja/for/cooking` — `06-content-seo-spec.md` §5, decision D-03):
 - `/for/`: cooking · presentations · downloads · ai-agents · dashboards · kiosk · sheet-music · reading · night-clock · baby-monitor · navigation · video-calls · live-streams · teleprompter · workouts · second-monitor · work-laptop · exams-proctoring
 - `/on/`: iphone-safari · ios-home-screen · ipad · android-chrome · samsung-internet · chromebook · windows-11 · windows-10 · macos · linux · firefox · edge
 - `/vs/`: caffeine · amphetamine · powertoys-awake · caffeinate-command · nosleep-page · nosleep-js · mouse-jigglers
@@ -309,7 +309,7 @@ The identifiers below were proposed while writing the other documents and are no
 | `source=` query param | Same handling as `ref=` (PWA `start_url`, shortcuts) |
 | `logo=` query param (https URL) and `#lic=<token>` hash | Kiosk licence unlocks; hash verified offline, stored to `at.v1.license`, then stripped |
 | `/pro/activate?ext=1` | Hand-off from the extension (shows the key to copy; never activates this browser, §13.12) |
-| `src/i18n/slugs.json` | Translated slug map keyed by collection + EN slug |
+| `src/i18n/slugs.json` | Translated slug map keyed by collection + EN slug; `es`, `pt-br`, `de`, `fr` keys only (`ja` / `zh` / `hi` use the EN slug) |
 | `src/data/support-matrix.json` | Single source for every browser/OS support claim (site, docs, tests) |
 | `data/ratings.json` | Build input for `aggregateRating` (≥ 25 real ratings); exported from KV by a scheduled Worker |
 | `functions/_lib/` | Shared function code (not a route) |

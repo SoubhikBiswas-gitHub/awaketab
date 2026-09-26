@@ -50,7 +50,7 @@ AwakeTab 在安全（HTTPS）且可见的页面中调用 `navigator.wakeLock.req
 
 ## 手机和平板的自动锁屏设置
 
-- **iPhone**：设置 → 显示与亮度 → 自动锁定。开启低电量模式后，“永不”会变灰，详见[自动锁定“永不”变灰怎么办](/zh/guides/iphone-zidong-suoding-yongbu-hui)。
+- **iPhone**：设置 → 显示与亮度 → 自动锁定。开启低电量模式后，“永不”会变灰，详见[自动锁定“永不”变灰怎么办](/zh/guides/iphone-auto-lock-never-greyed-out)。
 - **安卓**：设置 → 显示 → 屏幕超时（不同品牌名称略有差异）。部分厂商还有“休眠应用”之类的列表，可能在你离开后结束浏览器标签页。
 
 ## 支持哪些浏览器

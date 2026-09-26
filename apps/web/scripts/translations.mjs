@@ -48,14 +48,21 @@ export function frontmatterScalars(text) {
 }
 
 /**
- * Public slug of a page: the translated slug from src/i18n/slugs.json, else the English slug.
+ * Locales whose content slugs are translated (docs/06 §5). `ja`, `zh` and `hi` keep the English slug
+ * — readable when shared, no percent-encoding, no romanisation (decision D-03).
+ */
+export const TRANSLATED_SLUG_LOCALES = /** @type {const} */ (['es', 'pt-br', 'de', 'fr']);
+
+/**
+ * Public slug of a page: the translated slug from src/i18n/slugs.json for a Latin-script locale,
+ * else the English slug.
  * @param {Record<string, Record<string, Record<string, string>>>} slugs
  * @param {string} kind
  * @param {string} enSlug
  * @param {string} locale
  */
 export function publicSlug(slugs, kind, enSlug, locale) {
-  if (locale === 'en') return enSlug;
+  if (!(/** @type {readonly string[]} */ (TRANSLATED_SLUG_LOCALES).includes(locale))) return enSlug;
   return slugs[kind]?.[enSlug]?.[locale] ?? enSlug;
 }
 

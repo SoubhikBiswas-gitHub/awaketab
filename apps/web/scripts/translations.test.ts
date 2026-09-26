@@ -10,6 +10,7 @@ import {
   ogImagePath,
   publicSlug,
   readContentIndex,
+  TRANSLATED_SLUG_LOCALES,
   type IContentIndexEntry,
 } from './translations.mjs';
 
@@ -39,8 +40,19 @@ describe('translated content routing', () => {
     expect(publicSlug(slugs, 'for', 'cooking', 'en')).toBe('cooking');
     expect(publicSlug(slugs, 'for', 'cooking', 'fr')).toBe('cooking');
     expect(contentPath(slugs, 'for', 'cooking', 'en')).toBe('/for/cooking');
-    expect(contentPath(slugs, 'for', 'cooking', 'ja')).toBe('/ja/for/ryouri');
+    expect(contentPath(slugs, 'for', 'cooking', 'ja')).toBe('/ja/for/cooking');
     expect(ogImagePath(slugs, 'for', 'cooking', 'de')).toBe('/og/de/for/kochen.png');
+  });
+
+  it('keeps the English slug for ja, zh and hi even when the map carries one (docs/06 §5, D-03)', () => {
+    expect(TRANSLATED_SLUG_LOCALES).toEqual(['es', 'pt-br', 'de', 'fr']);
+    const stale = { for: { cooking: { ja: 'ryouri', zh: 'pengren', hi: 'khana-banana', es: 'cocinar' } } };
+    for (const locale of ['ja', 'zh', 'hi']) {
+      expect(publicSlug(stale, 'for', 'cooking', locale)).toBe('cooking');
+      expect(contentPath(stale, 'for', 'cooking', locale)).toBe(`/${locale}/for/cooking`);
+      expect(ogImagePath(stale, 'for', 'cooking', locale)).toBe(`/og/${locale}/for/cooking.png`);
+    }
+    expect(publicSlug(stale, 'for', 'cooking', 'es')).toBe('cocinar');
   });
 
   it('indexes English always and translations only once reviewed', () => {
@@ -58,7 +70,7 @@ describe('translated content routing', () => {
     expect(english.map((item) => [item.hreflang, item.href])).toEqual([
       ['en', 'https://x.test/for/cooking'],
       ['es', 'https://x.test/es/for/cocinar'],
-      ['ja', 'https://x.test/ja/for/ryouri'],
+      ['ja', 'https://x.test/ja/for/cooking'],
     ]);
     // Reciprocity: every member lists exactly the same set, itself included.
     expect(spanish).toEqual(english);

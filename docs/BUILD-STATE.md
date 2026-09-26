@@ -125,7 +125,7 @@ After the served-URL build format, KV backups (F-02) and the F-01/F-03…F-07 + 
 ### i18n E6-T05 … E6-T07
 
 - **E6-T05:** OG images per locale page, with CJK and Devanagari rendered by satori (fonts at build only); per-locale manifests asserted; JSON-LD `inLanguage` is BCP 47.
-- **E6-T06:** the top-10 pages × 7 locales = 70 pages at `/{lang}/{collection}/{translated slug}`, from one route `src/pages/[lang]/[kind]/[slug].astro`. All are `reviewed: false`, so they are `noindex`, not in any sitemap and not in hreflang, and show a "native review pending" badge. `alternatesFor()` in `scripts/translations.mjs` feeds both the HTML alternates and the sitemaps. The `ja` / `zh` / `hi` slugs are romanised ASCII (owner decision D-03).
+- **E6-T06:** the top-10 pages × 7 locales = 70 pages at `/{lang}/{collection}/{translated slug}`, from one route `src/pages/[lang]/[kind]/[slug].astro`. All are `reviewed: false`, so they are `noindex`, not in any sitemap and not in hreflang, and show a "native review pending" badge. `alternatesFor()` in `scripts/translations.mjs` feeds both the HTML alternates and the sitemaps. `ja` / `zh` / `hi` use the English slug (`/ja/for/cooking`), as `06-content-seo-spec.md` §5 prescribes (decision D-03, 2026-09-26; the romanised slugs of the first build were retired unindexed).
 - **E6-T07:** a pseudo-locale overflow test at 320 px, RTL readiness (`textDirection()` / `RTL_LANGUAGES`, logical-utility ban test, `.at-flip-rtl`), and a per-locale Playwright smoke. `i18n.spec.ts` passes 27 / 27 per engine.
 - Recorded in `07-i18n.md` §11, `06-content-seo-spec.md` §19; `changelog/2026-09-i18n-content.md`.
 
@@ -229,7 +229,7 @@ All of these are in `docs/LAUNCH-AUDIT.md` → Needs Soubhik with exact steps:
 - Chrome Web Store and Edge Add-ons submission; npm trusted publishing for `@awaketab/wake` (`release.yml`, environment `npm`); Search Console and Bing + sitemap.
 - AdSense + Funding Choices CMP (G1); native-speaker review; the real-device matrix + `pnpm -F web matrix:sync`.
 - The first nightly (visual baselines); LHCI on a preview URL; `curl -sI` header checks on a deployed preview; uptime monitor; rollback drill.
-- Owner decisions D-01…D-05 (kiosk `img-src https:`, extension System-level wording, romanised `ja` / `zh` / `hi` slugs, PROPOSED identifiers, content CSP enforce vs report-only). D-06 (Polar ids on licence records) is decided and implemented; its live check is N-04 step 7.
+- Owner decisions D-01, D-02, D-04, D-05 (kiosk `img-src https:`, extension System-level wording, PROPOSED identifiers, content CSP enforce vs report-only). D-03 (English slugs for `ja` / `zh` / `hi`) is decided and done. D-06 (Polar ids on licence records) is decided and implemented; its live check is N-04 step 7.
 
 ## Next
 
