@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { t } from '../i18n/load';
+import { CONTACT_EMAIL, CONTACT_MAILTO } from '../lib/contact';
 import { articleSchema } from '../lib/seo';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
@@ -29,6 +30,7 @@ const code = 'rounded-sm bg-muted px-1.5 py-0.5 text-[0.9em]';
     description: t('page.privacy.description'),
     locale: 'en',
     published: '2026-09-09',
+    updated: '2026-09-26',
     breadcrumbs: [
       { name: 'AwakeTab', url: site },
       { name: t('page.privacy.h1'), url: canonical },
@@ -50,7 +52,10 @@ const code = 'rounded-sm bg-muted px-1.5 py-0.5 text-[0.9em]';
     </Breadcrumb>
     <section class="mt-4 space-y-4">
       <h1 class="text-3xl font-semibold leading-tight tracking-tight">{t('page.privacy.h1')}</h1>
-      <p><strong class="font-semibold">Effective September 9, 2026.</strong> AwakeTab requires no account and sets no cookies.</p>
+      <p>
+        <strong class="font-semibold">Effective September 9, 2026. Last updated September 26, 2026.</strong> AwakeTab
+        requires no account and sets no cookies.
+      </p>
     </section>
     <Separator className="my-8" />
     <section class="space-y-4">
@@ -79,7 +84,9 @@ const code = 'rounded-sm bg-muted px-1.5 py-0.5 text-[0.9em]';
         <code class={code}>pwa_install</code>, <code class={code}>pip_open</code>, <code class={code}>share_click</code>,
         <code class={code}>pro_view</code>, <code class={code}>pro_checkout_click</code>, <code class={code}>pro_activated</code>,
         <code class={code}>rating_prompt</code>, <code class={code}>extension_click</code>, <code class={code}>ad_slot_loaded</code>,
-        <code class={code}>sponsor_view</code>, <code class={code}>sponsor_click</code> and sampled <code class={code}>client_error</code> events.
+        <code class={code}>sponsor_view</code>, <code class={code}>sponsor_click</code>, <code class={code}>session_extend</code>,
+        <code class={code}>affiliate_click</code>, <code class={code}>rating_submitted</code> and sampled
+        <code class={code}>client_error</code> events.
       </p>
       <p>
         Common fields are timestamp, path without query parameters, locale, coarse browser/OS and viewport
@@ -120,14 +127,73 @@ const code = 'rounded-sm bg-muted px-1.5 py-0.5 text-[0.9em]';
       </p>
     </section>
     <Separator className="my-8" />
+    <section class="space-y-4" id="server-data" aria-labelledby="privacy-server-data">
+      <h2 id="privacy-server-data" class="text-xl font-semibold tracking-tight">Data kept on our servers</h2>
+      <p>AwakeTab runs on Cloudflare. It keeps three kinds of records there, and nothing else:</p>
+      <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-[auto_1fr]">
+        <dt class="font-semibold" id="retention-events">Anonymous usage events</dt>
+        <dd>
+          The telemetry events above, and content-security-policy reports your browser may send to
+          <code class={code}>/api/csp</code> (only the page path is kept). They are stored in Cloudflare Workers
+          Analytics Engine and <strong class="font-semibold">deleted automatically after 90 days</strong>. They carry no
+          IP address and no identifier beyond the per-tab random session id, so they cannot be traced back to you.
+          Turn telemetry off in Settings to stop sending them.
+        </dd>
+        <dt class="font-semibold" id="retention-ratings">Ratings</dt>
+        <dd>
+          If you rate AwakeTab, we store the stars, any text you choose to write (up to 500 characters), the page
+          language, the app version and the time, for up to 2 years. No name, email, IP address or device id is
+          attached. Only the aggregate (average and count) is published.
+        </dd>
+        <dt class="font-semibold" id="retention-licence">Licence record</dt>
+        <dd>
+          If you buy Pro or a Business licence, we keep a record to fulfil the purchase, handle refunds and stop
+          abuse: the plan and its status, your licence key (encrypted), the Polar order and customer ids, and for
+          each activated device a hash of its random device id, its label and when it was last seen. It is kept until
+          the licence expires plus one year, then deleted. Your name, email and payment details stay with Polar, the
+          merchant of record, whose privacy terms apply.
+        </dd>
+      </dl>
+      <p id="delete">
+        <strong class="font-semibold">Deleting your licence data.</strong> Email
+        <a class="text-primary underline underline-offset-4" href={CONTACT_MAILTO}>{CONTACT_EMAIL}</a> from any address with
+        your licence key or Polar receipt, and ask us to delete your licence data. We delete the licence record and
+        its device list within 7 days and confirm by reply. Deleting it ends Pro on every device, and it does not
+        refund the purchase (a refund within 14 days does that, see the terms). Usage events and ratings carry no
+        identity, so no one, including us, can pick out yours; they expire on the schedule above.
+      </p>
+    </section>
+    <Separator className="my-8" />
     <section class="space-y-4">
       <h2 class="text-xl font-semibold tracking-tight">Network and payment data</h2>
       <p>
         API rate limiting uses a salted hash of the source IP transiently; neither the IP nor its hash is
         stored as analytics. Pro purchases are processed by Polar, whose checkout privacy terms apply.
         Licence endpoints receive only the licence key or token, a random device id and a user-visible device
-        label. Content-page advertising remains disabled until its documented launch gate; ads never appear
-        on the awake screen, floating timer, embeds or extension.
+        label.
+      </p>
+    </section>
+    <Separator className="my-8" />
+    <section class="space-y-4" id="ads" aria-labelledby="privacy-ads">
+      <h2 id="privacy-ads" class="text-xl font-semibold tracking-tight">Advertising (not yet active)</h2>
+      <p>
+        <strong class="font-semibold">No page shows ads today.</strong> This section describes what will apply once
+        advertising starts on the articles; the effective date above will change when it does.
+      </p>
+      <p>
+        AwakeTab's tool pages load no third-party scripts and show no ads. Our articles (pages under /for, /on, /vs,
+        /guides and /learn) will show advertisements from Google AdSense. Ad vendors may set cookies and process your
+        IP address and browsing information to show and measure ads. If you are in the EEA, the UK or Switzerland we
+        will ask for your consent first through a certified consent management platform, and you will be able to
+        change your choice any time via “Manage consent” in the footer. AwakeTab Pro removes ads on all pages. We
+        never show ads on the awake screen, in Picture-in-Picture, in embeds or in the browser extension.
+      </p>
+    </section>
+    <Separator className="my-8" />
+    <section class="space-y-4" id="contact" aria-labelledby="privacy-contact">
+      <h2 id="privacy-contact" class="text-xl font-semibold tracking-tight">Contact</h2>
+      <p>
+        Questions about this policy or your data: <a class="text-primary underline underline-offset-4" href={CONTACT_MAILTO}>{CONTACT_EMAIL}</a>.
       </p>
     </section>
   </main>

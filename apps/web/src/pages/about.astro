@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { t } from '../i18n/load';
+import { CONTACT_EMAIL, CONTACT_MAILTO } from '../lib/contact';
 import { personSchema } from '../lib/seo';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
@@ -70,6 +71,15 @@ const inlineLink = 'text-primary underline underline-offset-4';
       <p>
         If AwakeTab is useful, you can <a class={inlineLink} href="https://buymeacoffee.com/awaketab" rel="noopener" target="_blank">buy Soubhik a coffee</a>.
         There is no widget, account, or extra script — just a link.
+      </p>
+    </section>
+    <Separator className="my-8" />
+    <section class="space-y-4" id="contact" aria-labelledby="about-contact">
+      <h2 id="about-contact" class="text-xl font-semibold tracking-tight">Contact</h2>
+      <p>
+        Email <a class={inlineLink} href={CONTACT_MAILTO} data-contact>{CONTACT_EMAIL}</a> for support, refunds,
+        bug reports, device results that differ from the support matrix, or a request to delete your licence data.
+        Messages go to Soubhik directly.
       </p>
     </section>
   </main>
