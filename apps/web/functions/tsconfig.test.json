@@ -1,0 +1,17 @@
+{
+  // The Functions test suites (`pnpm test:functions`) run in Node against in-memory fakes
+  // (test/functions/harness.ts): Workers binding types plus Node, DOM (for @awaketab/core) and vitest.
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["@cloudflare/workers-types", "node"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "skipLibCheck": true,
+    "paths": {
+      "@awaketab/core": ["../../../packages/core/src/index.ts"],
+      "@awaketab/wake": ["../../../packages/wake/src/index.ts"]
+    }
+  },
+  "include": ["**/*.test.ts", "../test/functions/**/*.ts"]
+}

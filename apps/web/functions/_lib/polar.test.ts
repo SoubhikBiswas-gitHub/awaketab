@@ -55,6 +55,6 @@ describe('PUBLIC_POLAR_SERVER picks the Polar API (F-06)', () => {
 
   it('local runs (.dev.vars.example) stay on the sandbox', () => {
     expect(devVars().PUBLIC_POLAR_SERVER).toBe('sandbox');
-    expect(polarServer({ PUBLIC_POLAR_SERVER: devVars().PUBLIC_POLAR_SERVER })).toBe('sandbox');
+    expect(polarServer(env(devVars().PUBLIC_POLAR_SERVER))).toBe('sandbox');
   });
 });

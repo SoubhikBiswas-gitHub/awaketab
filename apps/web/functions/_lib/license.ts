@@ -80,7 +80,7 @@ function b64(bytes: Uint8Array): string {
   return btoa(String.fromCharCode(...bytes));
 }
 
-function unb64(value: string): Uint8Array {
+function unb64(value: string): Uint8Array<ArrayBuffer> {
   return Uint8Array.from(atob(value), (c) => c.charCodeAt(0));
 }
 

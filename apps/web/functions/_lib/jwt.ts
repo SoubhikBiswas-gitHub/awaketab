@@ -20,7 +20,7 @@ const b64u = (buf: ArrayBuffer | Uint8Array): string =>
 
 const b64uJson = (value: unknown): string => b64u(enc.encode(JSON.stringify(value)));
 
-function b64uToBytes(value: string): Uint8Array {
+function b64uToBytes(value: string): Uint8Array<ArrayBuffer> {
   const pad = value.replace(/-/g, '+').replace(/_/g, '/');
   const str = atob(pad.padEnd(pad.length + ((4 - (pad.length % 4)) % 4), '='));
   return Uint8Array.from(str, (c) => c.charCodeAt(0));
@@ -46,7 +46,7 @@ export async function verifyES256(
     const ok = await crypto.subtle.verify(
       { name: 'ECDSA', hash: 'SHA-256' },
       key,
-      b64uToBytes(s) as BufferSource,
+      b64uToBytes(s),
       enc.encode(`${h}.${p}`),
     );
     if (!ok) return null;
@@ -62,4 +62,10 @@ export async function verifyES256(
 export function parseSigningKey(raw: string | undefined): JsonWebKey {
   if (!raw) throw new Error('LICENSE_SIGNING_KEY missing');
   return JSON.parse(raw) as JsonWebKey;
+}
+
+/** The public half of the P-256 signing key (the same point without `d`); null when the JWK has no point. */
+export function publicJwk(priv: JsonWebKey): JsonWebKey | null {
+  if (typeof priv.x !== 'string' || typeof priv.y !== 'string') return null;
+  return { kty: 'EC', crv: 'P-256', x: priv.x, y: priv.y };
 }

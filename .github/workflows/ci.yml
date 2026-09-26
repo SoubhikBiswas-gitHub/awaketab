@@ -22,6 +22,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      # Every workspace's `typecheck`; for apps/web that is `astro check` plus the Pages Functions (Workers types,
+      # functions/tsconfig.json) and their test suites (functions/tsconfig.test.json).
       - run: pnpm typecheck
       - run: pnpm test:unit
       - run: pnpm test:functions

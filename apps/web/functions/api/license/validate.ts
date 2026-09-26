@@ -1,6 +1,6 @@
 import type { IEnv } from '../../_lib/env';
 import { jsonError, jsonOk, rateLimited } from '../../_lib/http';
-import { parseSigningKey, verifyES256 } from '../../_lib/jwt';
+import { parseSigningKey, publicJwk, verifyES256 } from '../../_lib/jwt';
 import { PLAN_FEATURES, publicActivations, readLicense, writeLicense } from '../../_lib/license';
 import { clientIp, rateLimit } from '../../_lib/ratelimit';
 import { mintToken } from '../../_lib/token';
@@ -17,8 +17,8 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   }
   const kv = env.LICENSES;
   if (!kv || !env.LICENSE_SIGNING_KEY) return jsonError('polar_unavailable', 502);
-  const priv = parseSigningKey(env.LICENSE_SIGNING_KEY);
-  const pub: JsonWebKey = { kty: 'EC', crv: 'P-256', x: priv.x, y: priv.y };
+  const pub = publicJwk(parseSigningKey(env.LICENSE_SIGNING_KEY));
+  if (!pub) return jsonError('polar_unavailable', 502);
   const claims = await verifyES256(token, pub, { allowExpired: true });
   if (!claims) return jsonError('bad_token', 401);
   const record = await readLicense(kv, claims.sub);
