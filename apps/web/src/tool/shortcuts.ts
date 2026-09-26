@@ -17,6 +17,7 @@ export function mountShortcuts(
     fullscreen: () => void;
     cycleTheme: (theme: ReturnType<typeof nextTheme>) => void;
     cycleMode: () => void;
+    exitMode: () => void;
     pip: () => void;
     stop: () => void;
     closeDialog: () => void;
@@ -28,12 +29,16 @@ export function mountShortcuts(
     const s = store.get();
     if (!s.settings.keyboardShortcuts && e.key !== 'Escape') return;
     if (typingTarget(e.target)) return;
-    const dialogOpen = s.ui.dialog !== null;
+    // Any open modal counts (the Pro sheet, the rating prompt), not just the ones the store names; the
+    // ambient layer is a <dialog> too but is a mode, not a dialog.
+    const dialogOpen = s.ui.dialog !== null || document.querySelector('dialog[open]:not([data-ambient])') !== null;
     const key = e.key;
 
     if (key === 'Escape') {
       e.preventDefault();
+      // Esc closes the innermost layer first: a dialog, then an ambient mode, then the session (docs/05 §5).
       if (dialogOpen) actions.closeDialog();
+      else if (s.ui.mode !== 'standard') actions.exitMode();
       else actions.stop();
       return;
     }

@@ -11,6 +11,7 @@ export type TDialogName =
   | 'share'
   | 'extend'
   | 'rating'
+  | 'stats'
   | 'fallback'
   | 'ios-install'
   | null;

@@ -164,6 +164,8 @@
   --at-t-2xl: 1.75rem;
   --at-t-3xl: 2.5rem;
   --at-t-timer: clamp(2.5rem, 12vw, 4rem);
+  --at-t-ambient: clamp(4.5rem, 22vw, 15rem);
+  --at-night-digit: #ff5a3c;
   --at-s-1: 4px;
   --at-s-2: 8px;
   --at-s-3: 12px;
@@ -176,6 +178,7 @@
   --at-r-pill: 999px;
   --at-d-fast: 120ms;
   --at-d-base: 200ms;
+  --at-d-slow: 320ms;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -193,4 +196,52 @@
     --at-bad: #ff8a80;
     --at-focus: #ffb84d;
   }
+}
+
+/*
+ * Accent palettes (docs/05 §1.1a). Amber is the default above. `data-accent` goes on <html> next to
+ * data-theme; the dark variants cover dark + oled. Every pair is AA-checked by test/tool/accent.test.ts
+ * (accent ≥ 3:1 on ground, accent-text ≥ 4.5:1 on ground and surface, on-accent ≥ 4.5:1 on accent-text).
+ * Teal and Rose are the first `ambient.packs` palettes.
+ */
+[data-accent="indigo"] {
+  --at-accent: #4f46e5;
+  --at-accent-text: #4338ca;
+  --at-on-accent: #fff;
+  --at-focus: #4f46e5;
+}
+
+[data-accent="teal"] {
+  --at-accent: #0f766e;
+  --at-accent-text: #0f766e;
+  --at-on-accent: #fff;
+  --at-focus: #0f766e;
+}
+
+[data-accent="rose"] {
+  --at-accent: #be123c;
+  --at-accent-text: #be123c;
+  --at-on-accent: #fff;
+  --at-focus: #be123c;
+}
+
+[data-accent="indigo"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #a5b4fc;
+  --at-accent-text: #a5b4fc;
+  --at-on-accent: #0f1233;
+  --at-focus: #a5b4fc;
+}
+
+[data-accent="teal"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #5eead4;
+  --at-accent-text: #5eead4;
+  --at-on-accent: #042f2e;
+  --at-focus: #5eead4;
+}
+
+[data-accent="rose"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #fda4af;
+  --at-accent-text: #fda4af;
+  --at-on-accent: #3f0613;
+  --at-focus: #fda4af;
 }

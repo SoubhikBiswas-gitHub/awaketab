@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/headers.mjs && node scripts/icons.mjs && node scripts/manifests.mjs && pnpm exec tsx scripts/og.mts && astro build && node scripts/prune-unreferenced.mjs && node scripts/sitemap.mjs",
+    "build": "node scripts/headers.mjs && node scripts/icons.mjs && node scripts/manifests.mjs && pnpm exec tsx scripts/og.mts && astro build && node scripts/prune-unreferenced.mjs && node scripts/sw.mjs && node scripts/sitemap.mjs",
     "preview": "astro preview --host 127.0.0.1",
     "typecheck": "astro check",
     "size": "node scripts/size.mjs"
@@ -36,6 +36,11 @@
     "@fontsource/noto-sans-sc": "5.3.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "typescript": "5.9.3"
+    "esbuild": "0.28.2",
+    "typescript": "5.9.3",
+    "workbox-expiration": "7.4.1",
+    "workbox-precaching": "7.4.1",
+    "workbox-routing": "7.4.1",
+    "workbox-strategies": "7.4.1"
   }
 }

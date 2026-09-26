@@ -4,7 +4,7 @@ import type { TLocale } from '../i18n/locales';
 import ToolPanel from './ToolPanel.astro';
 import { badgeVariants } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
-import { CircleHelp, Download, PictureInPicture2, Settings, Share2, SunMoon } from 'lucide-react';
+import { ChartColumn, CircleHelp, Download, PictureInPicture2, Settings, Share2, SunMoon } from 'lucide-react';
 
 interface Props {
   heading: string;
@@ -55,6 +55,9 @@ const proBadge = badgeVariants({ variant: 'secondary' });
             <span class:list={[proBadge, 'at-pro-badge']} data-pro-badge hidden>{t('pro.badge')}</span>
             <button class:list={iconBtn} type="button" data-install hidden aria-label={t('tool.header.install')}>
               <Download aria-hidden="true" className="size-5" />
+            </button>
+            <button class:list={iconBtn} type="button" data-open-stats aria-label={t('stats.open')}>
+              <ChartColumn aria-hidden="true" className="size-5" />
             </button>
             <button class:list={iconBtn} type="button" data-open-share aria-label={t('tool.header.share')}>
               <Share2 aria-hidden="true" className="size-5" />

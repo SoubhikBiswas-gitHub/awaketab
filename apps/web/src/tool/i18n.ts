@@ -1,8 +1,8 @@
-import critical from '../i18n/critical.json';
-
 type TVars = Record<string, string | number>;
 
-let catalog: Record<string, string> = { ...critical };
+// Filled at boot from the page's embedded <script type="application/json" data-i18n-catalog> (ToolPanel.astro
+// renders the full locale catalog server-side), so no strings ship in the critical JS chunk.
+let catalog: Record<string, string> = {};
 
 const PLURAL = /\{(\w+), plural, one \{([^}]*)\} other \{([^}]*)\}\}/g;
 const TOKEN = /\{(\w+)\}/g;

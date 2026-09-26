@@ -22,6 +22,11 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      // No __vitePreload wrapper or deps map: it put a shared helper chunk and a dependency table on the
+      // island's critical path (docs/00 §11: ≤ 15 KB gz). Lazy chunks are small and load on first use.
+      modulePreload: false,
+    },
     resolve: {
       alias: {
         '@awaketab/wake': fileURLToPath(new URL('../../packages/wake/src/index.ts', import.meta.url)),

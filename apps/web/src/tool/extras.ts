@@ -1,4 +1,5 @@
 import type { ILicenseRecord } from '@awaketab/core';
+import { applyAccent } from './accent.js';
 import { t } from './i18n.js';
 import type { IStore } from './store.js';
 import { toast as pushToast } from './ui/toast.js';
@@ -35,8 +36,11 @@ export function mountExtras(
   track(store, 'page_view');
   const proBadge = document.querySelector<HTMLElement>('[data-pro-badge]');
   const syncPro = () => {
-    const lic = store.get().license;
+    const s = store.get();
+    const lic = s.license;
     if (proBadge) proBadge.hidden = !(lic?.features.includes('ads.free') || lic?.features.includes('ambient.packs'));
+    // Pack palettes need `ambient.packs`; a lapsed licence falls back to amber (theme-boot applied it pre-paint).
+    applyAccent(s.settings.accent, lic?.features.includes('ambient.packs') ?? false);
   };
   syncPro();
   void import('../lib/license.js').then(async (mod) => {

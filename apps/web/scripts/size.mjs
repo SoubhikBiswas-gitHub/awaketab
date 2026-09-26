@@ -26,11 +26,21 @@ const initial = [...new Set(srcs.filter((s) => s.endsWith('.js')))];
 const criticalFiles = initial.filter((s) => s.includes('/_astro/'));
 const gz = async (buf) => gzipSync(buf, { level: 9 }).byteLength;
 
-let criticalJs = 0;
-for (const src of criticalFiles) {
-  const target = path.join(DIST, src.replace(/^\//, ''));
-  criticalJs += await gz(await readFile(target));
+// The critical path is each entry script plus everything it imports statically (shared chunks Rollup splits
+// out load before the entry runs). `import("./x.js")` is lazy and excluded; `from"./x.js"` / `import"./x.js"`
+// are static. Counting only <script src> would let a split-out shared chunk escape the 15 KB budget.
+const STATIC_IMPORT = /\b(?:from|import)\s*["'](\.{1,2}\/[^"']+\.js)["']/gu;
+const critical = new Set();
+async function closure(file) {
+  if (critical.has(file)) return;
+  critical.add(file);
+  const code = await readFile(file, 'utf8');
+  for (const m of code.matchAll(STATIC_IMPORT)) await closure(path.resolve(path.dirname(file), m[1]));
 }
+for (const src of criticalFiles) await closure(path.join(DIST, src.replace(/^\//, '')));
+
+let criticalJs = 0;
+for (const file of critical) criticalJs += await gz(await readFile(file));
 
 const astroJs = (await walk(path.join(DIST, '_astro'))).filter((f) => f.endsWith('.js'));
 let totalJs = 0;
@@ -51,7 +61,14 @@ const reactChunks = astroJs
   .map((f) => path.relative(DIST, f))
   .filter((f) => /(^|\/)(react|jsx-runtime|client)\.[A-Za-z0-9_-]+\.js$/u.test(f));
 
-const report = { criticalJs, totalCss, totalJs, files: criticalFiles, hydrated, reactChunks };
+const report = {
+  criticalJs,
+  totalCss,
+  totalJs,
+  files: [...critical].map((f) => `/${path.relative(DIST, f)}`),
+  hydrated,
+  reactChunks,
+};
 process.stdout.write(`${JSON.stringify(report)}\n`);
 if (
   totalJs > limits.totalJs ||

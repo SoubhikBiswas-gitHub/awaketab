@@ -2,6 +2,7 @@
 import { cn } from 'cn';
 import { catalogFor, createT } from '../i18n/load';
 import type { TLocale } from '../i18n/locales';
+import { badgeVariants } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Kbd } from '@/components/ui/kbd';
 import { toggleVariants } from '@/components/ui/toggle';
@@ -34,6 +35,18 @@ const chip = cn(
   toggleVariants({ variant: 'outline', size: 'lg' }),
   'at-chip min-h-11 cursor-pointer text-center leading-tight whitespace-normal wrap-anywhere hyphens-auto aria-pressed:border-primary aria-pressed:bg-accent aria-pressed:font-semibold aria-pressed:text-accent-foreground',
 );
+const proTag = cn(badgeVariants({ variant: 'secondary' }), 'ms-1');
+const sponsorTag = badgeVariants({ variant: 'outline' });
+// SponsorCard slot (docs/05 §3.23): rendered only when the flag is on at build time, so CLS stays 0 when off.
+const sponsorEnabled = import.meta.env.PUBLIC_SPONSOR_ENABLED === '1';
+const accents = [
+  ['#B86E00', t('settings.accent.amber'), false],
+  ['#4F46E5', t('settings.accent.indigo'), false],
+  ['#0F766E', t('settings.accent.teal'), true],
+  ['#BE123C', t('settings.accent.rose'), true],
+] as const;
+const modes = ['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook'] as const;
+const stars = [1, 2, 3, 4, 5] as const;
 const shortcuts = [
   ['Space', t('tool.shortcuts.space')],
   ['1–6', t('tool.shortcuts.presets')],
@@ -122,6 +135,15 @@ const shortcuts = [
     <button class={chip} type="button" data-preset="until" aria-pressed="false">{t('tool.preset.until')}</button>
   </div>
   <button class:list={['at-stop', btnDanger]} type="button" data-stop hidden>{t('tool.ring.stop')}</button>
+  {
+    sponsorEnabled && (
+      <aside class="at-sponsor" data-sponsor data-state="hidden" aria-label={t('sponsor.label')}>
+        <span class={sponsorTag}>{t('sponsor.label')}</span>
+        <a class={inlineLink} data-sponsor-link rel="sponsored noopener" target="_blank" href="/pro">{t('sponsor.label')}</a>
+        <p data-sponsor-text></p>
+      </aside>
+    )
+  }
   <section class="at-toasts" data-toasts aria-label={t('tool.notifications')}></section>
 
   <dialog data-dialog="custom" aria-labelledby="custom-title">
@@ -159,6 +181,20 @@ const shortcuts = [
         <label><input type="radio" name="theme" value="dark" /> {t('settings.theme.dark')}</label>
         <label><input type="radio" name="theme" value="oled" /> {t('settings.theme.oled')}</label>
       </fieldset>
+      <fieldset class="at-accents">
+        <legend>{t('settings.accent')}</legend>
+        {
+          accents.map(([hex, label, pack]) => (
+            <label>
+              <input type="radio" name="accent" value={hex} checked={hex === '#B86E00'} />
+              <span class="at-swatch" style={`--at-swatch:${hex}`} aria-hidden="true"></span>
+              {label}
+              {pack && <span class={proTag}>{t('pro.badge')}</span>}
+            </label>
+          ))
+        }
+        <p data-pack-gate>{t('settings.accent.packs')}</p>
+      </fieldset>
       <label>{t('settings.defaultPreset')}
         <select class="at-input" name="defaultPreset">
           <option value="p15">{t('tool.preset.p15')}</option>
@@ -177,6 +213,7 @@ const shortcuts = [
         </select>
       </label>
       <label><input type="checkbox" name="notifications" /> {t('settings.notifications')}</label>
+      <p data-notifications-note hidden></p>
       <fieldset>
         <legend>{t('settings.endBehaviour')}</legend>
         <label><input type="radio" name="endBehaviour" value="prompt_extend" checked /> {t('settings.endBehaviour.prompt_extend')}</label>
@@ -184,10 +221,31 @@ const shortcuts = [
       </fieldset>
       <div class="at-fields" data-battery-fields>
         <label><input type="checkbox" name="batteryAuto" /> {t('settings.battery.autoStop')}</label>
-        <label>{t('settings.battery.threshold', { percent: 15 })}
+        <label><span data-battery-label>{t('settings.battery.threshold', { percent: 15 })}</span>
           <input type="range" name="batteryThreshold" min="5" max="30" value="15" />
         </label>
       </div>
+      <p data-battery-unavailable hidden>{t('settings.battery.unavailable')}</p>
+      <fieldset>
+        <legend>{t('settings.ambient')}</legend>
+        <label>{t('settings.ambient.mode')}
+          <select class="at-input" name="ambientMode">
+            {modes.map((m) => <option value={m}>{t(`ambient.mode.${m}`)}</option>)}
+          </select>
+        </label>
+        <label>{t('settings.ambient.message')}
+          <input class="at-input" name="ambientMessage" maxlength="80" autocomplete="off" placeholder={t('ambient.message.placeholder')} />
+        </label>
+        <p data-message-gate>{t('tool.toast.proMessage')}</p>
+        <label><input type="checkbox" name="showSeconds" /> {t('settings.ambient.seconds')}</label>
+        <label>{t('settings.ambient.clock')}
+          <select class="at-input" name="clock24h">
+            <option value="auto">{t('settings.ambient.clock.auto')}</option>
+            <option value="24">{t('settings.ambient.clock24h')}</option>
+            <option value="12">{t('settings.ambient.clock12h')}</option>
+          </select>
+        </label>
+      </fieldset>
       <label><input type="checkbox" name="telemetry" checked /> {t('settings.telemetry')}</label>
       <p>{t('settings.telemetry.help')}</p>
       <label><input type="checkbox" name="keyboardShortcuts" checked /> {t('settings.shortcuts')}</label>
@@ -235,6 +293,61 @@ const shortcuts = [
     <p>{t('pro.card')}</p>
     <p><a class={inlineLink} href="/pro">{t('pro.cta')}</a> · <a class={inlineLink} href="/pro/activate">{t('pro.activate')}</a></p>
     <button class={btnOutline} type="button" data-pro-close>{t('settings.close')}</button>
+  </dialog>
+  <dialog data-dialog="stats" aria-labelledby="stats-title">
+    <h2 id="stats-title">{t('stats.open')}</h2>
+    <p data-stats-empty hidden>{t('stats.empty')}</p>
+    <dl class="at-stats">
+      <div><dt>{t('stats.today')}</dt><dd data-stats-today></dd></div>
+      <div><dt>{t('stats.week')}</dt><dd data-stats-week></dd></div>
+      <div><dt>{t('stats.streakLabel')}</dt><dd data-stats-streak></dd></div>
+      <div><dt>{t('stats.total')}</dt><dd data-stats-total></dd></div>
+    </dl>
+    <table class="at-heatmap" data-stats-heatmap>
+      <caption>{t('stats.heatmap.caption')}</caption>
+    </table>
+    <p data-stats-locked hidden>{t('stats.heatmap.pro')} <a class={inlineLink} href="/pro">{t('pro.see')}</a></p>
+    <div class="at-banner-actions">
+      <button class={btnPrimary} type="button" data-stats-export hidden>{t('stats.export')}</button>
+      <button class={btnOutline} type="button" data-stats-close>{t('stats.close')}</button>
+    </div>
+  </dialog>
+  <dialog data-dialog="rating" aria-labelledby="rating-title">
+    <h2 id="rating-title">{t('rating.title')}</h2>
+    <form class="at-fields" data-rating-form>
+      <fieldset class="at-stars">
+        <legend>{t('rating.stars')}</legend>
+        {
+          stars.map((n) => (
+            <label>
+              <input type="radio" name="stars" value={String(n)} />
+              <span aria-hidden="true">★</span>
+              <span class="sr-only">{t('rating.star', { n })}</span>
+            </label>
+          ))
+        }
+      </fieldset>
+      <label>{t('rating.text')}
+        <textarea class="at-input at-textarea" name="text" maxlength="280" rows="3"></textarea>
+      </label>
+      <p class="at-error" data-rating-error role="alert"></p>
+      <div class="at-banner-actions">
+        <button class={btnPrimary} type="submit">{t('rating.send')}</button>
+        <button class={btnOutline} type="button" data-rating-later>{t('rating.later')}</button>
+        <button class={btnOutline} type="button" data-rating-never>{t('rating.never')}</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="at-ambient" data-ambient aria-labelledby="ambient-title">
+    <h2 class="sr-only" id="ambient-title" data-ambient-title>{t('ambient.mode.clock')}</h2>
+    <div class="at-ambient-stage" data-ambient-stage>
+      <div class="at-ambient-content" data-ambient-content></div>
+    </div>
+    <div class="at-ambient-bar" data-ambient-controls>
+      <button class={btnOutline} type="button" data-ambient-next>{t('ambient.next')}</button>
+      <button class={btnOutline} type="button" data-ambient-fullscreen>{t('tool.header.fullscreen')}</button>
+      <button class={btnOutline} type="button" data-ambient-exit>{t('ambient.exit')}</button>
+    </div>
   </dialog>
   <noscript><p>{t('tool.noscript')}</p></noscript>
 </div>

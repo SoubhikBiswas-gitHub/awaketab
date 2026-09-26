@@ -51,42 +51,54 @@ export function bindExtend(
 ): () => void {
   const auto = dialog.querySelector<HTMLElement>('[data-extend-auto]');
   const started = Date.now();
+  // Closing without a choice (Esc, the auto-stop) is a Stop: the grace lock must never outlive the prompt.
+  let chosen = false;
+  const choose = (fn: () => void) => {
+    chosen = true;
+    dialog.close();
+    fn();
+  };
   const tick = () => {
     const left = Math.max(0, Math.ceil((opts.graceMs - (Date.now() - started)) / 1000));
     if (auto) auto.textContent = t('tool.extend.auto', { seconds: left });
-    if (left <= 0) {
-      dialog.close();
-      opts.onStop();
-    }
+    if (left <= 0) dialog.close();
   };
   const id = window.setInterval(tick, 250);
   tick();
-  dialog.querySelector('[data-extend-15]')?.addEventListener('click', () => {
-    dialog.close();
-    opts.onAdd(15 * 60_000);
+  const controller = new AbortController();
+  const on = (sel: string, fn: () => void) => {
+    dialog.querySelector(sel)?.addEventListener('click', fn, { signal: controller.signal });
+  };
+  on('[data-extend-15]', () => {
+    choose(() => {
+      opts.onAdd(15 * 60_000);
+    });
   });
-  dialog.querySelector('[data-extend-30]')?.addEventListener('click', () => {
-    dialog.close();
-    opts.onAdd(30 * 60_000);
+  on('[data-extend-30]', () => {
+    choose(() => {
+      opts.onAdd(30 * 60_000);
+    });
   });
-  dialog.querySelector('[data-extend-60]')?.addEventListener('click', () => {
-    dialog.close();
-    opts.onAdd(60 * 60_000);
+  on('[data-extend-60]', () => {
+    choose(() => {
+      opts.onAdd(60 * 60_000);
+    });
   });
-  const stopBtn = dialog.querySelector<HTMLButtonElement>('[data-extend-stop]');
-  stopBtn?.addEventListener('click', () => {
-    dialog.close();
-    opts.onStop();
+  on('[data-extend-stop]', () => {
+    choose(opts.onStop);
   });
   dialog.addEventListener(
     'close',
     () => {
       window.clearInterval(id);
+      controller.abort();
+      if (!chosen) opts.onStop();
     },
-    { once: true },
+    { once: true, signal: controller.signal },
   );
-  queueMicrotask(() => stopBtn?.focus());
+  queueMicrotask(() => dialog.querySelector<HTMLButtonElement>('[data-extend-stop]')?.focus());
   return () => {
     window.clearInterval(id);
+    controller.abort();
   };
 }

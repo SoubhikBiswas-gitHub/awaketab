@@ -74,6 +74,10 @@ ${content}
 /config/*
   Cache-Control: public, max-age=300
 
+/sw.js
+  Cache-Control: no-cache
+  Service-Worker-Allowed: /
+
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 

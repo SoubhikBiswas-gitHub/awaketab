@@ -20,6 +20,8 @@ interface Props {
   schema?: TSchemaNode | undefined;
   alternates?: Array<{ locale: TLocale; href: string }> | undefined;
   footer?: { privacy: string; terms: string; changelog: string; donate: string };
+  /** Chrome-less page (the 280 × 120 /pip popup): no shell padding, separator or footer. */
+  bare?: boolean;
 }
 
 const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://awaketab.com';
@@ -34,6 +36,7 @@ const {
   schema,
   alternates,
   footer = { privacy: 'Privacy', terms: 'Terms', changelog: 'Changelog', donate: 'Buy me a coffee' },
+  bare = false,
 } = Astro.props;
 const localeMeta = LOCALE_META[locale];
 // Ghost, not link: the footer is utility navigation, not a call to action, so it takes
@@ -68,16 +71,24 @@ const footerLink = cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'min-h-1
     <script is:inline src="/theme-boot.js"></script>
   </head>
   <body>
-    <div class="at-shell">
-      <slot />
-      <Separator className="mt-8 bg-border" />
-      <footer class="at-footer">
-        <a class={footerLink} href="/privacy">{footer.privacy}</a>
-        <a class={footerLink} href="/terms">{footer.terms}</a>
-        <a class={footerLink} href="/changelog">{footer.changelog}</a>
-        <a class={footerLink} href="https://buymeacoffee.com/awaketab" rel="noopener" target="_blank">{footer.donate}</a>
-        <LocaleNav locale={locale} />
-      </footer>
-    </div>
+    {
+      bare ? (
+        <slot />
+      ) : (
+        <div class="at-shell">
+          <slot />
+          <Separator className="mt-8 bg-border" />
+          <footer class="at-footer">
+            <a class={footerLink} href="/privacy">{footer.privacy}</a>
+            <a class={footerLink} href="/terms">{footer.terms}</a>
+            <a class={footerLink} href="/changelog">{footer.changelog}</a>
+            <a class={footerLink} href="https://buymeacoffee.com/awaketab" rel="noopener" target="_blank">
+              {footer.donate}
+            </a>
+            <LocaleNav locale={locale} />
+          </footer>
+        </div>
+      )
+    }
   </body>
 </html>

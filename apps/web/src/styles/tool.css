@@ -656,3 +656,478 @@
     }
   }
 }
+
+/*
+ * M6 engagement layer — ambient modes (docs/05 §3.13–§3.16), stats (§3.17), rating (§3.22), sponsor (§3.23)
+ * and the /pip popup (§9). The ambient layer is a modal <dialog> so the page behind it is inert and focus
+ * stays inside; the ring, pill and timer are re-parented into it (one DOM, one truth).
+ */
+@layer components {
+  .at-ambient {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    inline-size: 100%;
+    max-inline-size: none;
+    block-size: 100dvh;
+    max-block-size: none;
+    margin: 0;
+    padding: var(--at-s-4);
+    overflow: hidden;
+    border: 0;
+    border-radius: 0;
+    background: var(--at-ground);
+    color: var(--at-ink);
+    box-shadow: none;
+  }
+
+  .at-ambient:not([open]) {
+    display: none;
+  }
+
+  .at-ambient::backdrop {
+    background: var(--at-ground);
+  }
+
+  .at-ambient-stage {
+    position: relative;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: var(--at-s-6);
+    min-block-size: 0;
+    text-align: center;
+    transition: translate var(--at-d-slow) ease;
+  }
+
+  .at-ambient-content {
+    display: grid;
+    justify-items: center;
+    gap: var(--at-s-4);
+    transition: opacity var(--at-d-slow) ease;
+  }
+
+  .at-ambient-content:empty {
+    display: none;
+  }
+
+  .at-ambient-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--at-s-2);
+    transition: opacity var(--at-d-slow) ease;
+  }
+
+  .at-ambient[data-controls="hidden"] .at-ambient-bar {
+    opacity: 0;
+  }
+
+  /* The honest status never hides; it steps down to the muted ink (still ≥ 4.5:1) instead of fading. */
+  .at-ambient[data-controls="hidden"] .at-pill {
+    color: var(--muted-foreground);
+  }
+
+  .at-ambient[data-dim] .at-ambient-content {
+    opacity: 0.65;
+  }
+
+  .at-ambient .at-toasts {
+    z-index: 1;
+  }
+
+  .at-ambient-digits {
+    font-size: var(--at-t-ambient);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .at-ambient-seconds {
+    font-size: 0.35em;
+    color: var(--muted-foreground);
+  }
+
+  .at-ambient-sub {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: var(--at-t-lg);
+  }
+
+  .at-ambient-cta {
+    min-inline-size: 12rem;
+  }
+
+  /* clock: the ring shrinks to 96 px in the top corner; the session timer sits small under the date. */
+  .at-ambient[data-mode="clock"] .at-ring,
+  .at-ambient[data-mode="focus"] .at-ring,
+  .at-ambient[data-mode="message"] .at-ring {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    inline-size: 96px;
+  }
+
+  .at-ambient:not([data-mode="cook"]) .at-timer-digits {
+    font-size: var(--at-t-xl);
+  }
+
+  /* night: OLED palette (forced by the shell), red digits preserve night vision, no ring. */
+  .at-ambient[data-mode="night"] .at-ring,
+  .at-ambient[data-mode="minimal"] .at-ring,
+  .at-ambient[data-mode="cook"] .at-ring {
+    display: none;
+  }
+
+  .at-ambient[data-mode="night"] .at-ambient-digits {
+    color: var(--at-night-digit);
+  }
+
+  .at-ambient[data-mode="night"] .at-timer-digits {
+    color: var(--at-night-digit);
+  }
+
+  /* cook shows elapsed time in its own tap card; the session timer would only repeat it. */
+  .at-ambient[data-mode="cook"] [data-timer] {
+    display: none;
+  }
+
+  .at-ambient[data-mode="night"] .at-ambient-sub {
+    color: var(--at-muted);
+  }
+
+  /* minimal: ground only; pill and a small timer in the bottom corner. */
+  .at-ambient[data-mode="minimal"] [data-pip-slot] {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--at-s-3);
+  }
+
+  .at-ambient[data-mode="minimal"] .at-pill {
+    color: var(--muted-foreground);
+  }
+
+  .at-ambient[data-mode="minimal"] .at-timer-digits {
+    font-size: var(--at-t-sm);
+  }
+
+  /* message: one balanced line; free users see it behind a scrim with the Pro card. */
+  .at-ambient-message {
+    max-inline-size: 18ch;
+    margin: 0;
+    font-size: clamp(2.5rem, 10vw, 8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  .at-ambient-content[data-scrim] .at-ambient-message {
+    color: var(--muted-foreground);
+    filter: blur(2px);
+  }
+
+  .at-pro-card {
+    max-inline-size: 22rem;
+    text-align: start;
+  }
+
+  .at-focus-dots {
+    display: flex;
+    gap: var(--at-s-2);
+  }
+
+  .at-focus-dots span {
+    inline-size: 12px;
+    block-size: 12px;
+    border: 2px solid var(--at-accent);
+    border-radius: var(--at-r-pill);
+  }
+
+  .at-focus-dots span[data-state="done"] {
+    background: var(--at-accent);
+  }
+
+  .at-focus-dots span[data-state="now"] {
+    background: color-mix(in srgb, var(--at-accent) 40%, transparent);
+  }
+
+  /* cook: propped-up phone, wet hands — every target ≥ 64 px (docs/05 §3.16). */
+  .at-ambient[data-mode="cook"] .at-ambient-stage {
+    align-content: start;
+    overflow-y: auto;
+  }
+
+  .at-ambient[data-mode="cook"] :is(.at-btn, .at-input) {
+    min-block-size: 64px;
+    font-size: var(--at-t-lg);
+  }
+
+  .at-cook-tap {
+    display: grid;
+    gap: var(--at-s-2);
+    inline-size: min(100%, 36rem);
+    min-block-size: 64px;
+    padding: var(--at-s-6);
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-lg);
+    background: var(--card);
+    color: var(--card-foreground);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  /* HH:MM:SS is twice as wide as the clock's HH:MM: size it to the ≤ 36rem card so it never overflows
+     (an overflowing min-content width widened the whole stage past the viewport at 390 px). */
+  .at-ambient .at-cook-tap .at-ambient-digits {
+    font-size: clamp(2.5rem, 16vw, 7rem);
+  }
+
+  .at-cook-tap[aria-pressed="true"] .at-ambient-digits {
+    color: var(--muted-foreground);
+  }
+
+  .at-cook-timers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: var(--at-s-3);
+    inline-size: min(100%, 48rem);
+  }
+
+  .at-cook-timer h3 {
+    margin: 0;
+    font-size: var(--at-t-lg);
+    font-weight: 600;
+  }
+
+  .at-cook-left {
+    font-size: var(--at-t-2xl);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .at-cook-timer[data-flash] {
+    border-color: var(--success);
+    background: color-mix(in srgb, var(--at-good) 16%, var(--at-surface));
+  }
+
+  .at-cook-add {
+    display: grid;
+    gap: var(--at-s-2);
+    inline-size: min(100%, 36rem);
+    text-align: start;
+  }
+
+  .at-cook-add label {
+    font-size: var(--at-t-sm);
+    font-weight: 500;
+  }
+
+  .at-cook-quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--at-s-2);
+  }
+
+  /* Stats panel (docs/05 §3.17): colour plus a visible dot count, so intensity is never colour-only.
+     Tints stop at 40 % so --at-ink dots stay ≥ 4.5:1 on every palette and theme. */
+  dialog[data-dialog="stats"] {
+    max-inline-size: 40rem;
+  }
+
+  .at-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: var(--at-s-3);
+    margin-block: 0 var(--at-s-4);
+    margin-inline: 0;
+  }
+
+  .at-stats dt {
+    color: var(--muted-foreground);
+    font-size: var(--at-t-sm);
+  }
+
+  .at-stats dd {
+    margin: 0;
+    font-size: var(--at-t-lg);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .at-heatmap {
+    display: block;
+    max-inline-size: 100%;
+    margin-block-end: var(--at-s-3);
+    overflow-x: auto;
+    border-spacing: 3px;
+    font-size: var(--at-t-xs);
+  }
+
+  .at-heatmap caption {
+    padding-block-end: var(--at-s-2);
+    color: var(--muted-foreground);
+    text-align: start;
+  }
+
+  .at-heatmap th {
+    padding-inline-end: var(--at-s-2);
+    color: var(--muted-foreground);
+    font-weight: 400;
+    text-align: start;
+  }
+
+  .at-heatmap td {
+    inline-size: 20px;
+    block-size: 20px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--at-ink);
+    font-size: 8px;
+    line-height: 1;
+    text-align: center;
+  }
+
+  .at-heatmap td[data-level="1"] {
+    background: color-mix(in srgb, var(--at-accent) 10%, var(--at-surface));
+  }
+
+  .at-heatmap td[data-level="2"] {
+    background: color-mix(in srgb, var(--at-accent) 20%, var(--at-surface));
+  }
+
+  .at-heatmap td[data-level="3"] {
+    background: color-mix(in srgb, var(--at-accent) 30%, var(--at-surface));
+  }
+
+  .at-heatmap td[data-level="4"] {
+    background: color-mix(in srgb, var(--at-accent) 40%, var(--at-surface));
+  }
+
+  .at-heatmap td[data-locked] {
+    background: repeating-linear-gradient(45deg, var(--muted), var(--muted) 3px, transparent 3px, transparent 6px);
+  }
+
+  .at-heatmap td[data-future] {
+    border-style: dashed;
+    opacity: 0.4;
+  }
+
+  /* Rating stars — 44 × 44 radio labels (docs/05 §3.22). */
+  .at-stars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--at-s-1);
+  }
+
+  .at-fields .at-stars label {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    inline-size: 44px;
+    min-block-size: 44px;
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-sm);
+    font-size: var(--at-t-lg);
+    cursor: pointer;
+  }
+
+  .at-stars input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .at-stars label:has(input:focus-visible) {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .at-stars label:has(input:checked),
+  .at-stars label:has(~ label input:checked) {
+    border-color: var(--at-accent);
+    background: var(--accent);
+    color: var(--at-accent-text);
+  }
+
+  .at-textarea {
+    block-size: auto;
+    min-block-size: 5rem;
+    resize: vertical;
+  }
+
+  .at-accents .at-swatch {
+    inline-size: 1rem;
+    block-size: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-pill);
+    background: var(--at-swatch);
+  }
+
+  /* SponsorCard slot: fixed 300 × 100, reserved even when empty or hidden (CLS 0). */
+  .at-sponsor {
+    display: grid;
+    align-content: center;
+    gap: var(--at-s-1);
+    inline-size: min(100%, 300px);
+    block-size: 100px;
+    padding: var(--at-s-3);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-md);
+    background: var(--card);
+    font-size: var(--at-t-sm);
+  }
+
+  .at-sponsor[data-state="hidden"] {
+    visibility: hidden;
+  }
+
+  .at-sponsor p {
+    margin: 0;
+    color: var(--muted-foreground);
+  }
+
+  /* /pip popup and the Document PiP window: pill, timer, Stop and +15 only (docs/05 §9). */
+  .at-pip-body {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: var(--at-s-2);
+    min-block-size: 100vh;
+    margin: 0;
+    padding: var(--at-s-2);
+  }
+
+  .at-pip-body [data-timer] .at-timer-digits {
+    font-size: var(--at-t-xl);
+  }
+
+  .at-pip-actions {
+    display: flex;
+    gap: var(--at-s-2);
+  }
+
+  .at-pip-empty {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: var(--at-t-xs);
+    text-align: center;
+  }
+
+  .at-pip-empty[hidden] {
+    display: none;
+  }
+
+  @media (forced-colors: active) {
+    .at-heatmap td,
+    .at-cook-tap,
+    .at-sponsor {
+      border: 1px solid CanvasText;
+    }
+  }
+}

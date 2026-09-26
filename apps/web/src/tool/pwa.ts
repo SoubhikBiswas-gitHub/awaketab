@@ -1,6 +1,58 @@
 import type { IStore } from './store.js';
 import { t } from './i18n.js';
-import { toast as pushToast } from './ui/toast.js';
+import { dismiss, toast as pushToast } from './ui/toast.js';
+
+/** True while a session holds or pauses the screen; an update must never interrupt it (FR-PWA-01). */
+export function sessionBusy(status: string | undefined): boolean {
+  return status === 'active' || status === 'paused';
+}
+
+/**
+ * Service-worker update flow (docs/05 §8.2, `registerType: 'prompt'`): when a new worker is waiting, offer a
+ * sticky "Update available" toast — but only once no session is active. "Reload" posts SKIP_WAITING and
+ * reloads after `controllerchange`, never on its own.
+ */
+export function watchUpdates(
+  reg: Pick<ServiceWorkerRegistration, 'waiting' | 'installing' | 'addEventListener'>,
+  store: IStore,
+  sessionStatus: () => string | undefined,
+  sw: Pick<ServiceWorkerContainer, 'addEventListener'> = navigator.serviceWorker,
+  reload: () => void = () => {
+    location.reload();
+  },
+): () => void {
+  let offered = false;
+  let reloading = false;
+  const offer = () => {
+    if (offered || !reg.waiting || sessionBusy(sessionStatus())) return;
+    offered = true;
+    pushToast(store, {
+      kind: 'info',
+      text: t('tool.toast.update'),
+      sticky: true,
+      id: 'sw',
+      action: {
+        label: t('tool.toast.update.action'),
+        onClick: () => {
+          sw.addEventListener('controllerchange', () => {
+            if (reloading) return;
+            reloading = true;
+            reload();
+          });
+          reg.waiting?.postMessage('SKIP_WAITING');
+        },
+      },
+    });
+  };
+  reg.addEventListener('updatefound', () => {
+    reg.installing?.addEventListener('statechange', offer);
+  });
+  offer();
+  // A waiting worker found mid-session is offered the moment the session ends.
+  return store.subscribe(() => {
+    offer();
+  });
+}
 
 export function mountPwa(
   root: HTMLElement,
@@ -28,31 +80,18 @@ export function mountPwa(
       pushToast(store, { kind: 'info', text: t('pwa.ios.body'), sticky: true, id: 'ios' });
     });
   }
+  // Offline: the tool keeps working from the precached shell; say so once instead of failing silently.
+  const offline = () => {
+    pushToast(store, { kind: 'info', text: t('tool.offline'), sticky: true, id: 'offline' });
+  };
+  window.addEventListener('offline', offline);
+  window.addEventListener('online', () => {
+    dismiss(store, 'offline');
+  });
+  if (!navigator.onLine) offline();
   if ('serviceWorker' in navigator && import.meta.env.PROD) {
     void navigator.serviceWorker.register('/sw.js').then((reg) => {
-      const offer = () => {
-        const st = sessionStatus();
-        if (st === 'active' || st === 'paused') return;
-        pushToast(store, {
-          kind: 'info',
-          text: t('tool.toast.update'),
-          sticky: true,
-          id: 'sw',
-          action: {
-            label: t('tool.toast.update.action'),
-            onClick: () => {
-              reg.waiting?.postMessage('SKIP_WAITING');
-              location.reload();
-            },
-          },
-        });
-      };
-      if (reg.waiting) offer();
-      reg.addEventListener('updatefound', () => {
-        reg.installing?.addEventListener('statechange', () => {
-          if (reg.waiting) offer();
-        });
-      });
+      watchUpdates(reg, store, sessionStatus);
     });
   }
 }

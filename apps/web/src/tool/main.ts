@@ -7,10 +7,11 @@ import {
   type TPresetId,
 } from '@awaketab/core';
 import { createWakeLock } from '@awaketab/wake';
-import { EIGHT_H_MS, EXTEND_AUTO_STOP_MS, parseToolParams } from './params.js';
+import type { IToolCtx } from './ctx.js';
+import type * as TActions from './ui/actions.js';
+import { EIGHT_H_MS, parseToolParams } from './params.js';
 import { planLabel } from './format.js';
 import { setCatalog, t } from './i18n.js';
-import { nextMode } from './modes.js';
 import { mountShortcuts } from './shortcuts.js';
 import { createStore, initialState, type IStore } from './store.js';
 import { applyTheme } from './theme.js';
@@ -96,8 +97,11 @@ export function boot(root: HTMLElement): () => void {
   });
   const offWarn = engine.on('warning', (w) => {
     if (w.code === 'second_tab') store.set({ ui: { secondTab: true } });
+    if (w.code === 'battery_low') {
+      pushToast(store, { kind: 'warn', text: t('tool.toast.batteryLow', { percent: Math.round((w.level ?? 0) * 100) }), id: 'battery' });
+    }
   });
-  const offEnd = engine.on('ended', ({ reason }) => {
+  const offEnd = engine.on('ended', ({ reason, session }) => {
     syncLock();
     const s = store.get();
     if (reason === 'lost_timeout') pushToast(store, { kind: 'warn', text: t('tool.toast.lostTimeout'), id: 'end' });
@@ -109,25 +113,9 @@ export function boot(root: HTMLElement): () => void {
       });
     }
     if (reason === 'error') pushToast(store, { kind: 'error', text: t('tool.toast.error'), id: 'end' });
-    if (reason === 'completed' && s.settings.endBehaviour === 'prompt_extend' && s.ui.mode !== 'cook') {
-      void lock.request();
-      openExtend();
-    }
-    if (reason === 'completed') {
-      const meta = storage.meta();
-      meta.sessionCount += 1;
-      storage.writeMeta(meta);
-      const orig = document.title;
-      let n = 0;
-      const id = window.setInterval(() => {
-        document.title = n % 2 === 0 ? t('tool.timer.complete') : orig;
-        n += 1;
-        if (n > 8) {
-          window.clearInterval(id);
-          document.title = orig;
-        }
-      }, 500);
-    }
+    void import('./end.js').then((m) => {
+      m.onEnded(ctx, reason, session);
+    });
   });
 
   function currentPlan(): { plan: TPlan; presetId: TPresetId } {
@@ -181,7 +169,44 @@ export function boot(root: HTMLElement): () => void {
     }
   };
 
+  // The AudioContext must be created inside a user gesture so the end chime can play later (docs/04 §10).
+  let audio: AudioContext | undefined;
+  const prime = () => {
+    if (!audio && store.get().settings.sound.id !== 'none' && 'AudioContext' in window) audio = new AudioContext();
+    void audio?.resume();
+  };
+  root.addEventListener('pointerdown', prime);
+  root.addEventListener('keydown', prime);
+
+  const ctx: IToolCtx = {
+    root,
+    store,
+    engine,
+    lock,
+    storage,
+    params,
+    startPlan,
+    stop: () => {
+      stop();
+    },
+    syncLock,
+    track: (event, p) => {
+      track(store, event, p);
+    },
+    audio: () => audio,
+  };
+
   const unsubs: Array<() => void> = [];
+  let ambient = false;
+  unsubs.push(
+    store.subscribe((s) => {
+      if (s.ui.mode === 'standard' || ambient) return;
+      ambient = true;
+      void import('./ambient/shell.js').then((m) => unsubs.push(m.mountAmbient(ctx)));
+    }),
+  );
+  const sponsor = root.querySelector<HTMLElement>('[data-sponsor]');
+  if (sponsor) void import('./sponsor.js').then((m) => m.mountSponsor(ctx, sponsor).then((u) => unsubs.push(u)));
   void import('./extras.js').then((mod) => {
     unsubs.push(mod.mountExtras(store, storage));
   });
@@ -194,12 +219,15 @@ export function boot(root: HTMLElement): () => void {
   const toastsEl = root.querySelector<HTMLElement>('[data-toasts]');
   const second = root.querySelector<HTMLElement>('[data-second-tab]');
   const notice = root.querySelector<HTMLElement>('[data-notice]');
-  const customDlg = root.querySelector<HTMLDialogElement>('[data-dialog="custom"]');
-  const untilDlg = root.querySelector<HTMLDialogElement>('[data-dialog="until"]');
-  const settingsDlg = root.querySelector<HTMLDialogElement>('[data-dialog="settings"]');
   const shortcutsDlg = root.querySelector<HTMLDialogElement>('[data-dialog="shortcuts"]');
-  const shareDlg = root.querySelector<HTMLDialogElement>('[data-dialog="share"]');
-  const extendDlg = root.querySelector<HTMLDialogElement>('[data-dialog="extend"]');
+  const act = (fn: (m: typeof TActions) => void) => {
+    void import('./ui/actions.js').then(fn);
+  };
+  const openUntil = () => {
+    act((m) => {
+      m.openUntil(ctx);
+    });
+  };
 
   function openNotice(): void {
     if (!notice) return;
@@ -237,8 +265,12 @@ export function boot(root: HTMLElement): () => void {
     unsubs.push(
       mountChips(chips, store, {
         startPreset,
-        openCustom: () => customDlg?.showModal(),
-        openUntil: () => untilDlg?.showModal(),
+        openCustom: () => {
+          act((m) => {
+            m.openCustom(ctx);
+          });
+        },
+        openUntil,
       }),
     );
   }
@@ -249,7 +281,7 @@ export function boot(root: HTMLElement): () => void {
         accept: () => {
           track(store, 'resume_accepted');
           void engine.resumeSession().then(syncLock);
-          store.set({ ui: { resumeVisible: false } });
+          store.set({ ui: { resumeVisible: false, mode: store.get().session?.mode ?? store.get().ui.mode } });
         },
         dismiss: () => {
           engine.discardResumable();
@@ -274,88 +306,29 @@ export function boot(root: HTMLElement): () => void {
     );
   }
 
-  const clearDialog = () => {
-    store.set({ ui: { dialog: null } });
-  };
-  customDlg?.addEventListener('close', clearDialog);
-  untilDlg?.addEventListener('close', clearDialog);
-  settingsDlg?.addEventListener('close', clearDialog);
-  shortcutsDlg?.addEventListener('close', clearDialog);
-  shareDlg?.addEventListener('close', clearDialog);
-
-  root.querySelector('[data-open-custom]')?.addEventListener('click', () => customDlg?.showModal());
-  customDlg?.addEventListener('toggle', () => undefined);
-
-  const bindCustomOnce = (): void => {
-    if (!customDlg || customDlg.dataset.bound === '1') return;
-    customDlg.dataset.bound = '1';
-    void import('./ui/dialogs.js').then(({ bindCustomDialog }) => {
-      bindCustomDialog(customDlg, {
-        lastCustomMs: store.get().settings.lastCustomMs,
-        onStart: (ms) => {
-          const next = { ...store.get().settings, lastCustomMs: ms };
-          storage.writeSettings(next);
-          store.set({ settings: next, selectedPreset: 'custom', eightHour: ms === EIGHT_H_MS });
-          void startPlan({ type: 'duration', ms }, 'custom');
-        },
-      });
-    });
-  };
-  customDlg?.addEventListener('click', bindCustomOnce);
-  const origCustom = customDlg?.showModal.bind(customDlg);
-  if (customDlg && origCustom) {
-    customDlg.showModal = () => {
-      store.set({ ui: { dialog: 'custom' } });
-      void import('./ui/dialogs.js').then(() => {
-        bindCustomOnce();
-        origCustom();
-      });
-    };
-  }
-
-  const bindUntilOnce = (): void => {
-    if (!untilDlg || untilDlg.dataset.bound === '1') return;
-    untilDlg.dataset.bound = '1';
-    void import('./ui/dialogs.js').then(({ bindUntilDialog }) => {
-      bindUntilDialog(untilDlg, {
-        lastWall: store.get().settings.lastUntilWall,
-        onStart: (wall) => {
-          const next = { ...store.get().settings, lastUntilWall: wall };
-          storage.writeSettings(next);
-          store.set({ settings: next, selectedPreset: 'until' });
-          void startPlan(planUntil(wall), 'until');
-        },
-      });
-    });
-  };
-  if (untilDlg) {
-    const orig = untilDlg.showModal.bind(untilDlg);
-    untilDlg.showModal = () => {
-      store.set({ ui: { dialog: 'until' } });
-      void import('./ui/dialogs.js').then(() => {
-        bindUntilOnce();
-        orig();
-      });
-    };
+  function pip(): void {
+    void import('./pip.js').then(({ togglePip }) =>
+      togglePip(ctx).then((kind) => {
+        if (kind === 'blocked') pushToast(store, { kind: 'info', text: t('tool.toast.pipBlocked'), id: 'pip' });
+        else if (kind !== 'closed') track(store, 'pip_open');
+      }),
+    );
   }
 
   root.querySelector('[data-open-settings]')?.addEventListener('click', () => {
-    if (!settingsDlg) return;
-    store.set({ ui: { dialog: 'settings' } });
-    void import('./ui/settings.js').then(({ bindSettings }) => {
-      bindSettings(settingsDlg, {
-        settings: store.get().settings,
-        hasBattery: 'getBattery' in navigator,
-        onChange: (next) => {
-          storage.writeSettings(next);
-          store.set({ settings: next });
-          applyTheme(next.theme, store.get().ui.mode === 'night');
-        },
-      });
-      settingsDlg.showModal();
+    void import('./ui/settings.js').then((m) => {
+      m.openSettings(ctx);
+    });
+  });
+  root.querySelector('[data-open-stats]')?.addEventListener('click', () => {
+    void import('./stats/panel.js').then((m) => {
+      m.openStats(ctx);
     });
   });
 
+  shortcutsDlg?.addEventListener('close', () => {
+    store.set({ ui: { dialog: null } });
+  });
   root.querySelector('[data-open-shortcuts]')?.addEventListener('click', () => {
     store.set({ ui: { dialog: 'shortcuts' } });
     shortcutsDlg?.showModal();
@@ -365,36 +338,10 @@ export function boot(root: HTMLElement): () => void {
   });
 
   root.querySelector('[data-open-share]')?.addEventListener('click', () => {
-    const url = new URL(sharePath(store), location.origin).toString();
-    const input = shareDlg?.querySelector<HTMLInputElement>('[data-share-url]');
-    if (input) input.value = url;
-    store.set({ ui: { dialog: 'share' } });
-    shareDlg?.showModal();
-    track(store, 'share_click');
-  });
-  shareDlg?.querySelector('[data-share-copy]')?.addEventListener('click', () => {
-    const input = shareDlg.querySelector<HTMLInputElement>('[data-share-url]');
-    if (!input) return;
-    void navigator.clipboard.writeText(input.value).then(() => {
-      pushToast(store, { kind: 'success', text: t('tool.toast.copied'), id: 'copy' });
+    act((m) => {
+      m.openShare(ctx);
     });
   });
-
-  function openExtend(): void {
-    if (!extendDlg) return;
-    store.set({ ui: { dialog: 'extend' } });
-    void import('./ui/notices.js').then(({ bindExtend }) => {
-      bindExtend(extendDlg, {
-        graceMs: EXTEND_AUTO_STOP_MS,
-        onAdd: (ms) => {
-          track(store, 'session_extend', { addedMin: ms / 60_000 });
-          void engine.extend(ms).then(syncLock);
-        },
-        onStop: stop,
-      });
-      if (!extendDlg.open) extendDlg.showModal();
-    });
-  }
 
   unsubs.push(
     mountShortcuts(store, {
@@ -402,44 +349,29 @@ export function boot(root: HTMLElement): () => void {
       startPreset: (id) => {
         if (id) startPreset(id);
       },
-      openUntil: () => untilDlg?.showModal(),
+      openUntil,
       fullscreen: () => {
-        if (!document.fullscreenEnabled) {
-          pushToast(store, { kind: 'info', text: t('tool.toast.fullscreen'), id: 'fs' });
-          return;
-        }
-        if (document.fullscreenElement) void document.exitFullscreen();
-        else {
-          void document.documentElement.requestFullscreen({ navigationUI: 'hide' }).catch(() => {
-            pushToast(store, { kind: 'info', text: t('tool.toast.fullscreen'), id: 'fs' });
-          });
-        }
+        act((m) => {
+          m.toggleFullscreen(store);
+        });
       },
       cycleTheme: (theme) => {
-        const next = { ...store.get().settings, theme };
-        storage.writeSettings(next);
-        store.set({ settings: next });
-        applyTheme(theme, store.get().ui.mode === 'night');
+        act((m) => {
+          m.cycleTheme(ctx, theme);
+        });
       },
       cycleMode: () => {
-        const hasMessage = store.get().license?.features.includes('ambient.message') ?? false;
-        store.set({ ui: { mode: nextMode(store.get().ui.mode, hasMessage) } });
+        void import('./ambient/shell.js').then((m) => {
+          m.cycleMode(ctx);
+        });
       },
-      pip: () => {
-        const slot = root.querySelector<HTMLElement>('[data-pip-slot]') ?? root;
-        void import('./pip.js').then(({ openPip }) =>
-          openPip(slot).then((kind) => {
-            if (kind === 'blocked') pushToast(store, { kind: 'info', text: t('tool.toast.pipBlocked'), id: 'pip' });
-            else {
-              store.set({ ui: { pip: kind } });
-              track(store, 'pip_open');
-            }
-          }),
-        );
+      exitMode: () => {
+        store.set({ ui: { mode: 'standard' } });
       },
+      pip,
       stop,
       closeDialog: () => {
-        const open = root.querySelector('dialog[open]');
+        const open = [...root.querySelectorAll('dialog[open]:not([data-ambient])')].pop();
         if (open instanceof HTMLDialogElement) open.close();
         store.set({ ui: { dialog: null } });
       },
@@ -453,20 +385,11 @@ export function boot(root: HTMLElement): () => void {
     }),
   );
 
-  root.querySelector('[data-open-pip]')?.addEventListener('click', () => {
-    const slot = root.querySelector<HTMLElement>('[data-pip-slot]') ?? root;
-    void import('./pip.js').then(({ openPip }) => {
-      void openPip(slot);
-    });
-  });
+  root.querySelector('[data-open-pip]')?.addEventListener('click', pip);
   root.querySelector('[data-cycle-theme]')?.addEventListener('click', () => {
-    const order = ['auto', 'light', 'dark', 'oled'] as const;
-    const cur = store.get().settings.theme;
-    const theme = order[(order.indexOf(cur) + 1) % order.length] ?? 'auto';
-    const next = { ...store.get().settings, theme };
-    storage.writeSettings(next);
-    store.set({ settings: next });
-    applyTheme(theme, store.get().ui.mode === 'night');
+    act((m) => {
+      m.cycleTheme(ctx);
+    });
   });
 
   void import('./pwa.js').then(({ mountPwa }) => {
@@ -523,24 +446,6 @@ export function boot(root: HTMLElement): () => void {
     engine.destroy();
     lock.destroy();
   };
-}
-
-function sharePath(store: IStore): string {
-  const s = store.get();
-  const preset = s.session?.presetId ?? s.selectedPreset;
-  if (preset === 'until' && s.session?.plan.type === 'until') {
-    return `/until/${s.session.plan.wall.replace(':', '-')}`;
-  }
-  const map: Partial<Record<TPresetId, string>> = {
-    p15: '/15m',
-    p30: '/30m',
-    p45: '/45m',
-    p60: '/1h',
-    p120: '/2h',
-    p240: '/4h',
-    pinf: '/',
-  };
-  return map[preset] ?? '/';
 }
 
 function start(): void {
