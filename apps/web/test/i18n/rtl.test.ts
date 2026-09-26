@@ -39,7 +39,10 @@ describe('RTL readiness', () => {
     const pages = await files(path.join(SRC, 'pages'), /\.astro$/u);
     for (const page of pages) {
       const source = await readFile(page, 'utf8');
-      expect(source.includes('<html'), `${path.relative(SRC, page)} must render through BaseLayout`).toBe(false);
+      // Standalone documents (the /embed/cook iframe app) may own <html> but must still take dir from textDirection().
+      if (source.includes('<html')) {
+        expect(source, `${path.relative(SRC, page)} must plumb dir via textDirection()`).toMatch(/<html [^>]*dir=\{textDirection\(/u);
+      }
     }
   });
 

@@ -4,6 +4,7 @@
  * mode's tap-to-pause (clock paused, lock kept) and — in the `full` size — up to three kitchen timers. The pill
  * is a projection of the lock state only; a running timer shows only while the lock is `held` or `fallback`.
  */
+import { textDirection } from '../../i18n/locales';
 import {
   createSession,
   createStorage,
@@ -105,6 +106,7 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
   setCatalog(catalogs.en ?? {});
   setCatalog(catalogs[params.lang] ?? {});
   doc.documentElement.lang = HTML_LANG[params.lang] ?? params.lang;
+  doc.documentElement.dir = textDirection(doc.documentElement.lang);
   doc.title = t('embed.frame.title');
   root.dataset.size = params.size;
   root.dataset.mode = params.mode;

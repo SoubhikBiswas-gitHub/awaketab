@@ -5,7 +5,7 @@
 import '../../styles/tokens.css';
 import '../../styles/embed.css';
 import { catalogFor, t } from '../../i18n/load';
-import { LOCALES } from '../../i18n/locales';
+import { LOCALES, textDirection } from '../../i18n/locales';
 import { embedCatalog } from '../../tool/embed/catalog';
 
 const catalogs = JSON.stringify(Object.fromEntries(LOCALES.map((l) => [l, embedCatalog(catalogFor(l))]))).replaceAll(
@@ -15,7 +15,7 @@ const catalogs = JSON.stringify(Object.fromEntries(LOCALES.map((l) => [l, embedC
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" dir={textDirection('en')}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
