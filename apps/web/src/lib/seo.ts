@@ -113,3 +113,39 @@ export function personSchema(): TSchemaNode {
     ],
   };
 }
+
+export interface ISoftwareSchemaInput {
+  canonical: string;
+  name: string;
+  description: string;
+  operatingSystem: string;
+  breadcrumbs: Array<{ name: string; url: string }>;
+}
+
+/** Product pages (docs/06 §288): SoftwareApplication with a free offer, never an aggregateRating. */
+export function softwareSchema(input: ISoftwareSchemaInput): TSchemaNode {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'SoftwareApplication',
+        name: input.name,
+        description: input.description,
+        url: input.canonical,
+        applicationCategory: 'UtilitiesApplication',
+        operatingSystem: input.operatingSystem,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@id': `${SITE}/#org` },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: input.breadcrumbs.map((item, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: item.name,
+          item: item.url,
+        })),
+      },
+    ],
+  };
+}

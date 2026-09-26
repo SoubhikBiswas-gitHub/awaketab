@@ -105,6 +105,17 @@ describe('built site SEO', () => {
     expect(english).not.toContain('/pip');
     expect(english).toContain('<lastmod>');
     expect(english).toContain('hreflang="x-default"');
+    expect(english).toContain(`${site}/extension</loc>`);
+  });
+
+  it('publishes the /extension landing page with store links, the Firefox note and no ad code', async () => {
+    const html = await readFile(new URL('extension/index.html', dist), 'utf8');
+    expect(html).toContain('data-store="chrome"');
+    expect(html).toContain('href="/on/firefox"');
+    expect(html).toContain('"@type":"SoftwareApplication"');
+    expect(html).not.toMatch(/googlesyndication|adsbygoogle|data-ad-slot|<astro-island/u);
+    const privacy = await readFile(new URL('privacy/index.html', dist), 'utf8');
+    expect(privacy).toContain('id="extension"');
   });
 
   it('keeps English preset titles free of locale leakage', async () => {

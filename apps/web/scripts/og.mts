@@ -51,7 +51,7 @@ for (const locale of LOCALES) {
 }
 
 const english = JSON.parse(await readFile(path.join(ROOT, 'src/i18n/en.json'), 'utf8')) as Record<string, string>;
-const pages = ['15m', '30m', '45m', '1h', '2h', '4h', '8h', 'for', 'on', 'vs', 'guides', 'learn', 'about', 'privacy', 'terms', 'changelog', 'pro'];
+const pages = ['15m', '30m', '45m', '1h', '2h', '4h', '8h', 'for', 'on', 'vs', 'guides', 'learn', 'about', 'privacy', 'terms', 'changelog', 'pro', 'extension'];
 for (const page of pages) {
   const png = await renderOgPng({
     title: english[`page.${page}.h1`] ?? english['page.home.h1'] ?? 'AwakeTab',

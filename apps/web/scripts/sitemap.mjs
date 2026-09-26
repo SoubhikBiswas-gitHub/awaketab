@@ -29,6 +29,7 @@ const ENGLISH_PATHS = [
   '/terms',
   '/changelog',
   '/pro',
+  '/extension',
 ];
 
 async function lastModified() {

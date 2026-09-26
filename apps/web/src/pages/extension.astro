@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t } from '../i18n/load';
+import { softwareSchema } from '../lib/seo';
+import { EXTENSION_STORE_URLS } from '../lib/extension';
+import matrix from '../data/support-matrix.json';
+// shadcn/ui renders at build time only (docs/03-architecture.md ADR-013): no client:* directives here.
+import { cn } from 'cn';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { buttonVariants } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+// Product page (docs/06 §2 "Product"): BaseLayout, not ContentLayout — no ad code (docs/00 §8.3).
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const canonical = `${site}/extension`;
+const title = t('page.extension.title');
+const description = t('page.extension.description');
+// Every browser claim comes from src/data/support-matrix.json (docs/19 B7).
+const support = matrix.extension;
+const browsers = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(support.browsers);
+
+const ctaClass = cn(buttonVariants({ size: 'lg' }), 'min-h-11 text-base');
+const secondaryClass = cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'min-h-11 text-base');
+const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balance';
+const subheadingClass = 'mt-10 mb-3 text-xl font-semibold leading-tight';
+const crumbLink = 'inline-flex min-h-11 items-center';
+const inlineLink = 'text-primary underline underline-offset-4';
+const permissions = ['power', 'storage', 'alarms', 'notifications', 'sites'] as const;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogImage="/og/extension-en.png"
+  schema={softwareSchema({
+    canonical,
+    name: t('ext.name'),
+    description,
+    operatingSystem: support.browsers.join(', '),
+    breadcrumbs: [
+      { name: 'AwakeTab', url: site },
+      { name: t('page.extension.h1'), url: canonical },
+    ],
+  })}
+>
+  <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
+  <main class="mx-auto mt-6 w-full max-w-[45rem] leading-relaxed" data-extension-root>
+    <Breadcrumb aria-label="Breadcrumb">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{t('page.extension.h1')}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+
+    <h1 class={cn(headingClass, 'mt-4')}>{t('page.extension.h1')}</h1>
+    <p class="mt-3 text-lg">{t('page.extension.lead')}</p>
+
+    <div class="mt-6 flex flex-wrap gap-3" data-install>
+      <a class={ctaClass} href={EXTENSION_STORE_URLS.chrome} rel="noopener" target="_blank" data-store="chrome">
+        {t('page.extension.cta.chrome')}
+      </a>
+      <a class={secondaryClass} href={EXTENSION_STORE_URLS.edge} rel="noopener" target="_blank" data-store="edge">
+        {t('page.extension.cta.edge')}
+      </a>
+    </div>
+    <p class="mt-3 text-sm text-muted-foreground" data-install>
+      {t('page.extension.cta.note', { browsers, version: support.minimumChromeVersion })}
+    </p>
+
+    <Alert className="mt-6" data-unsupported-note>
+      <AlertTitle>{t('page.extension.firefox.title')}</AlertTitle>
+      <AlertDescription>
+        <p>{t('page.extension.firefox.body')}</p>
+        <p><a class={inlineLink} href="/on/firefox">{t('page.extension.firefox.link')}</a></p>
+      </AlertDescription>
+    </Alert>
+
+    <section aria-labelledby="ext-features">
+      <h2 id="ext-features" class={subheadingClass}>{t('page.extension.features.title')}</h2>
+      <ul class="grid list-disc gap-2 ps-6">
+        <li>{t('page.extension.features.levels')}</li>
+        <li>{t('page.extension.features.timers')}</li>
+        <li>{t('page.extension.features.badge')}</li>
+        <li>{t('page.extension.features.pro')} <a class={inlineLink} href="/pro">{t('pro.see')}</a></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="ext-limits">
+      <h2 id="ext-limits" class={subheadingClass}>{t('page.home.limits.title')}</h2>
+      <ul class="grid list-disc gap-2 ps-6">
+        <li>{t('page.extension.limits.running')}</li>
+        <li>{t('page.extension.limits.lid')}</li>
+        <li>{t('page.extension.limits.presence')}</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="ext-permissions">
+      <h2 id="ext-permissions" class={subheadingClass}>{t('page.extension.permissions.title')}</h2>
+      <Card>
+        <CardContent>
+          <ul class="grid gap-2">
+            {permissions.map((name) => <li>{t(`page.extension.permissions.${name}`)}</li>)}
+          </ul>
+        </CardContent>
+      </Card>
+    </section>
+
+    <section aria-labelledby="ext-privacy">
+      <h2 id="ext-privacy" class={subheadingClass}>{t('ext.privacy.title')}</h2>
+      <p>
+        {t('page.extension.privacy')} <a class={inlineLink} href="/privacy#extension">{t('ext.privacy.policy')}</a>
+      </p>
+    </section>
+
+    <Card className="mt-10">
+      <CardHeader>
+        <CardTitle>{t('page.extension.web')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <a class={secondaryClass} href="/">{t('ext.popup.open')}</a>
+      </CardContent>
+    </Card>
+  </main>
+  <script>
+    import { bootExtensionPage } from '../lib/extension';
+    import { track } from '../lib/analytics';
+    const root = document.querySelector<HTMLElement>('[data-extension-root]');
+    // Respects the site's telemetry toggle (docs/08 §2.1); analytics.ts drops everything when it is off.
+    let telemetry = true;
+    try {
+      const raw = localStorage.getItem('at.v1.settings');
+      telemetry = raw ? (JSON.parse(raw) as { telemetry?: boolean }).telemetry !== false : true;
+    } catch {
+      telemetry = true;
+    }
+    if (root) {
+      bootExtensionPage(root, (event, params) => {
+        track(event, params, { telemetry, source: 'web', locale: 'en', path: '/extension' });
+      });
+    }
+  </script>
+</BaseLayout>

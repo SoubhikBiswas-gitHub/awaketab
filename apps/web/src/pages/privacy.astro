@@ -88,6 +88,38 @@ const code = 'rounded-sm bg-muted px-1.5 py-0.5 text-[0.9em]';
       </p>
     </section>
     <Separator className="my-8" />
+    <section class="space-y-4" id="extension" aria-labelledby="privacy-extension">
+      <h2 id="privacy-extension" class="text-xl font-semibold tracking-tight">AwakeTab for Chrome (browser extension)</h2>
+      <p>
+        The extension keeps the same records as the site, in <code class={code}>chrome.storage.local</code> on your
+        computer: <code class={code}>at.v1.settings</code>, <code class={code}>at.v1.session</code>,
+        <code class={code}>at.v1.stats</code>, <code class={code}>at.v1.license</code>
+        (only after you activate Pro), <code class={code}>at.v1.ext</code> (Screen or System level, schedules and
+        auto-start sites) and <code class={code}>at.v1.device</code> (a random device id created once per browser
+        profile, used only to count Pro activations).
+      </p>
+      <p>
+        If Chrome sync is on, your settings, schedules and auto-start sites are also copied through
+        <code class={code}>chrome.storage.sync</code> to your other Chrome profiles. The licence token and the device id
+        never sync.
+      </p>
+      <p>
+        The extension asks for <code class={code}>power</code>, <code class={code}>storage</code> and
+        <code class={code}>alarms</code>. Notifications and access to a website are optional and requested only when
+        you turn on end-of-timer notifications or add an auto-start site; the site permission covers that one site,
+        and the extension never reads page content. Which sites you add is never sent anywhere.
+      </p>
+      <p>
+        Anonymous usage statistics are off by default in the extension. If you turn them on in its settings, it sends
+        at most <code class={code}>session_start</code>, <code class={code}>session_end</code>,
+        <code class={code}>pro_activated</code> and <code class={code}>client_error</code> events to
+        <code class={code}>awaketab.com/api/e</code> with <code class={code}>source: ext</code> and the common fields
+        above — never a URL, tab title or site name. Activating Pro sends the licence key, the random device id and the
+        label “AwakeTab for Chrome · your operating system” to <code class={code}>/api/license/activate</code>. The
+        extension shows no ads, loads no remote code and never simulates keyboard or mouse input.
+      </p>
+    </section>
+    <Separator className="my-8" />
     <section class="space-y-4">
       <h2 class="text-xl font-semibold tracking-tight">Network and payment data</h2>
       <p>
