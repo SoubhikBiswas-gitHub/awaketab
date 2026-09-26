@@ -1,0 +1,72 @@
+---
+title: "Impedir que a tela do Mac desligue — AwakeTab"
+description: "No Mac, Safari 16.4+, Chrome 84+ e Firefox 126+ mantêm a tela ligada numa aba visível. A suspensão do sistema não foi adiada em nossos testes."
+h1: "Impedir que a tela do Mac desligue pelo navegador"
+ogTitle: "Tela do Mac sempre ligada"
+intent: "impedir que a tela do mac desligue"
+secondaryQueries: ["manter tela do mac ligada", "macbook tela apaga sozinha", "mac não deixar a tela apagar sem app", "tela sempre ligada macos"]
+preset: p60
+mode: standard
+locale: pt-br
+reviewed: false
+translationOf: "macos"
+lastVerified: 2026-09-09
+browsers: ["chrome", "safari", "firefox"]
+os: ["macos"]
+faq:
+  - q: "Se eu usar o Mission Control ou mudar de Mesa, a tela continua ligada?"
+    a: "Só enquanto a janela do AwakeTab estiver à vista. Minimizada no Dock, esquecida em outra Mesa ou coberta por outras janelas, ela pode ser tratada como oculta; aí o bloqueio é liberado e o indicador mostra “Pausado — aba oculta” até você voltar."
+  - q: "O Mac também deixa de entrar em repouso?"
+    a: "Não conte com isso. Em nossos testes no macOS, a suspensão do sistema por inatividade não foi adiada, só a da tela. Para manter o Mac acordado com a tela apagada, use o comando caffeinate ou um app nativo."
+  - q: "Dá para usar o MacBook com a tampa fechada e o AwakeTab aberto?"
+    a: "Não. Fechar a tampa sempre coloca o Mac em repouso, e nenhuma aba de navegador muda isso. Para trabalhar com a tampa fechada, você precisa de monitor externo, energia e as ferramentas do próprio sistema."
+  - q: "Isso deixa meu status verde no Slack ou no Teams?"
+    a: "Não. A presença nesses apps segue o teclado e o trackpad, não a tela. O AwakeTab nunca simula entrada, então seu status muda para ausente como sempre."
+honestLimit: "A tela fica ligada, mas em nossos testes a suspensão do sistema por inatividade não foi adiada no macOS. Fechar a tampa sempre coloca o Mac em repouso, e o Modo de Pouca Energia pode encurtar o tempo."
+related:
+  - "/vs/caffeine"
+  - "/vs/caffeinate-command"
+  - "/guides/mac-prevent-sleep-lid-closed"
+  - "/for/presentations"
+  - "/learn/does-a-wake-lock-keep-teams-green"
+author: soubhik
+published: 2026-09-26
+---
+
+## Resposta para quem usa Mac
+
+No Mac, o Safari 16.4+, o Chrome 84+ e o Firefox 126+ conseguem impedir que a tela desligue enquanto a aba do AwakeTab estiver visível. Clique em iniciar: com “Tela ligada” no indicador, o monitor para de escurecer e não vai para a tela bloqueada por inatividade. Mas atenção à diferença: a tela fica acesa, o sistema não necessariamente. Em nossos testes, a suspensão do Mac por inatividade não foi adiada. E fechar a tampa sempre coloca o Mac em repouso. Esta página sugere 1 hora.
+
+## Navegadores no macOS
+
+| Navegador | Versão mínima | Observação |
+|---|---|---|
+| Safari | 16.4 | O Modo de Pouca Energia pode impedir o bloqueio |
+| Chrome | 84 | A aba precisa continuar visível |
+| Firefox | 126 | Abaixo disso, só o vídeo alternativo, com um clique |
+| Edge | 84 | Modo de eficiência pode interferir |
+
+Última verificação: 9 de setembro de 2026.
+
+## Como deixar a janela à vista
+
+1. Abra o AwakeTab numa janela própria, fora da tela cheia de outros apps.
+2. Clique em iniciar ou aperte Espaço. Confira se o indicador chegou a “Tela ligada”.
+3. Trabalhe em outros apps com a janela do AwakeTab aparecendo num canto. Minimizada no Dock, ela deixa de contar como visível.
+4. No Chrome, a “Janela flutuante” fica por cima de tudo e é o jeito mais prático de manter o bloqueio enquanto você usa outro app em tela cheia.
+
+## Ajustes do Sistema, se preferir mexer no Mac
+
+O tempo para a tela desligar fica em Ajustes do Sistema → Tela Bloqueada, e as opções de repouso aparecem em Bateria (MacBook) ou Economia de Energia (Mac de mesa), conforme a versão do macOS. A diferença para o AwakeTab é que o ajuste do sistema vale o tempo todo, inclusive quando você esquece o Mac ligado na mesa; o AwakeTab só segura a tela durante a sessão e devolve o controle ao terminar.
+
+## Quando outra ferramenta é melhor
+
+- **Mac acordado com a tela apagada**: o comando `caffeinate` no Terminal ou um app como o Caffeine. Veja [AwakeTab vs Caffeine](/pt-br/vs/caffeine).
+- **Mac com a tampa fechada**: nenhuma aba de navegador consegue. É preciso monitor externo, energia e os recursos do próprio macOS.
+- **Parecer disponível no chat**: o AwakeTab não é a resposta, porque nunca simula entrada.
+
+## Modo de Pouca Energia no MacBook
+
+Com o Modo de Pouca Energia ativo, o macOS pode encurtar o tempo de tela ou recusar o pedido. Se o indicador mostrar “Bloqueado — veja como corrigir”, ligue o carregador ou desative o modo e tente de novo. Em Chrome e Edge, há ainda a opção de parar automaticamente quando a bateria cair abaixo do limite que você definir.
+
+Para os números de todos os navegadores, veja a [tabela de suporte do Wake Lock](/pt-br/learn/matriz-suporte-navegadores).

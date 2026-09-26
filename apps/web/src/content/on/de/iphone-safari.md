@@ -1,0 +1,67 @@
+---
+title: "iPhone-Bildschirm in Safari anlassen — AwakeTab"
+description: "Safari hält den iPhone-Bildschirm ab Version 16.4 nativ an. Im Stromsparmodus sperrt das iPhone dennoch nach 30 Sekunden, ein App-Wechsel beendet den Lock."
+h1: "iPhone-Bildschirm in Safari anlassen"
+intent: "iphone bildschirm anlassen safari"
+secondaryQueries: ["iphone bildschirm nicht ausschalten", "iphone display dauerhaft an safari", "iphone bildschirm anlassen ohne app", "safari automatische sperre verhindern", "iphone bildschirm geht immer aus"]
+preset: p30
+mode: standard
+locale: de
+reviewed: false
+translationOf: "iphone-safari"
+lastVerified: 2026-09-09
+browsers: ["safari"]
+os: ["ios"]
+faq:
+  - q: "Was passiert, wenn ich kurz zu Nachrichten oder zur Kamera wechsle?"
+    a: "Dann gibt Safari den Wake Lock frei, und die Anzeige zeigt „Pausiert — Tab ausgeblendet“. Der Timer bleibt stehen. Öffnen Sie Safari wieder mit dem AwakeTab-Tab im Vordergrund und warten Sie, bis „Bildschirm bleibt an“ erscheint, bevor Sie das iPhone hinlegen."
+  - q: "Funktioniert AwakeTab auch als App auf dem Home-Bildschirm?"
+    a: "Ja, ab iOS 18.4 erhalten Web-Apps auf dem Home-Bildschirm einen nativen Wake Lock. Auf älteren iOS-Versionen nutzen Sie AwakeTab besser direkt in Safari."
+  - q: "Mein iPhone läuft noch mit einer Version vor iOS 16.4. Geht es trotzdem?"
+    a: "Einen nativen Lock gibt es dort nicht. Aktualisieren Sie iOS oder tippen Sie auf „Starten“, um die Video-Ersatzlösung zu verwenden. Ein winziges stummes Video hält dann den Bildschirm an; das verbraucht mehr Akku als der native Weg."
+  - q: "Hält AwakeTab mein iPhone in Teams oder Slack auf „verfügbar“?"
+    a: "Nein. Die mobilen Apps von Teams und Slack werten Ihre Aktivität aus, nicht, ob in Safari ein Bildschirm an bleibt. AwakeTab tippt oder wischt niemals für Sie."
+honestLimit: "Nur ab Safari 16.4. Der Stromsparmodus erzwingt eine automatische Sperre nach 30 Sekunden, und wer die App wechselt, beendet den Wake Lock."
+related:
+  - "/guides/iphone-auto-lock-never-greyed-out"
+  - "/on/ios-home-screen"
+  - "/on/ipad"
+  - "/for/cooking"
+  - "/vs/powertoys-awake"
+author: soubhik
+published: 2026-09-26
+---
+
+## Die Antwort für Ihr iPhone
+
+Seit Safari 16.4 kann das iPhone eine Webseite um einen nativen Bildschirm-Lock bitten, ganz ohne App aus dem App Store. AwakeTab nutzt genau das: Solange der Tab in Safari vorne ist, bleibt der Bildschirm an, unabhängig davon, was unter „Automatische Sperre“ eingestellt ist. Zwei Dinge schlagen den Lock aber immer: der Stromsparmodus, der nach 30 Sekunden sperrt, und jeder Wechsel in eine andere App.
+
+## So geht es in Safari
+
+1. Öffnen Sie awaketab.com in Safari. Diese Seite startet mit „30 Min.“; tippen Sie auf eine andere Dauer, wenn Sie länger brauchen.
+2. Tippen Sie auf „Bildschirm eingeschaltet lassen“.
+3. Warten Sie, bis die Anzeige „Bildschirm bleibt an“ meldet. Erst dann hält Safari den Lock wirklich.
+4. Legen Sie das iPhone hin, ohne die App zu wechseln. Sobald Sie eine andere App öffnen, ist der Lock weg.
+
+Läuft die gewählte Zeit ab, fragt AwakeTab, ob Sie verlängern möchten. Ohne Antwort endet die Sitzung, und das iPhone folgt wieder der automatischen Sperre.
+
+Praktisch ist das für alles, worauf Sie nur ab und zu blicken: ein Rezept, Noten auf dem Pult, eine Checkliste in der Werkstatt. Die Einstellung in iOS bleibt dabei unangetastet, Sie müssen hinterher also nichts zurückstellen.
+
+## Stromsparmodus: der häufigste Grund für „Blockiert“
+
+Ist der Stromsparmodus aktiv, graut iOS unter Einstellungen → Anzeige & Helligkeit → Automatische Sperre die Option „Nie“ aus und sperrt nach 30 Sekunden. Diese Regel steht über jeder Webseite. AwakeTab zeigt dann „Blockiert — so beheben Sie es“ und den Hinweis, den Modus unter Einstellungen → Batterie auszuschalten und die Seite neu zu laden. Den ganzen Ablauf erklärt die Anleitung [„Nie“ bei der automatischen Sperre ausgegraut](/de/guides/iphone-automatische-sperre-nie-ausgegraut).
+
+## Was die Anzeige auf dem iPhone bedeutet
+
+| Anzeige | Bedeutung |
+|---|---|
+| Bildschirm bleibt an | Safari hält den nativen Lock, der Timer läuft. |
+| Pausiert — Tab ausgeblendet | Sie haben die App oder den Tab gewechselt; der Lock ist freigegeben. |
+| Blockiert — so beheben Sie es | Safari hat abgelehnt, meist wegen des Stromsparmodus. |
+| Tippen für die Ersatzlösung | Kein nativer Lock verfügbar, etwa vor iOS 16.4. |
+
+Tippen Sie bei „Blockiert“ nicht einfach mehrmals auf Starten. Solange sich der Grund nicht ändert, lehnt Safari jedes Mal wieder ab.
+
+## Ehrlich zu den Grenzen
+
+Nur Safari 16.4 und neuer bekommt den nativen Lock; unsere Angaben stammen aus der Support-Matrix vom 9. September 2026. Die Web-App auf dem Home-Bildschirm braucht iOS 18.4. Ein iPhone ist kein Babyfon und kein Sicherheitsmonitor, lassen Sie es also nicht unbeaufsichtigt als Wächter liegen. Ein hell leuchtendes Display kostet Akku; für lange Sitzungen gehört das iPhone ans Ladekabel. Auf OLED-Modellen reduziert die Pixelverschiebung im Nachtmodus das Einbrennen, beseitigt es aber nicht vollständig. Wenn Sie beim Kochen das Rezept im Blick behalten wollen, hilft die Seite [Bildschirm beim Kochen anlassen](/de/for/kochen).
