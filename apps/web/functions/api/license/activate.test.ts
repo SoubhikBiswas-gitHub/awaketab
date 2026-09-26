@@ -321,22 +321,21 @@ describe('POST /api/license/activate', () => {
 
   it('activates from a Polar checkoutId when the checkout succeeded', async () => {
     const h = harness();
-    h.polar.addKey(KEY);
-    h.polar.checkouts.set('chk_ok', { status: 'succeeded', license_key: KEY.toLowerCase() });
-    h.polar.checkouts.set('chk_open', { status: 'open' });
-    const ok = await activate(h, { checkoutId: 'chk_ok' });
+    const polarKey = h.polar.addKey(KEY);
+    const ok = await activate(h, { checkoutId: h.polar.addCheckout(polarKey) });
     expect(ok.status).toBe(200);
     expect(await record(h)).not.toBeNull();
-    const open = await activate(h, { checkoutId: 'chk_open', deviceId: device(2) });
-    expect(open.status).toBe(404);
-    expect(await open.json()).toEqual({ error: 'invalid_key' });
+    expect(polarKey.activations.size).toBe(1);
   });
 
-  it('answers an unknown checkoutId like an unpaid one (404 invalid_key, no probing)', async () => {
+  it('answers an unknown checkoutId like an expired one (404 invalid_key, no probing)', async () => {
     const h = harness();
-    const res = await activate(h, { checkoutId: 'chk_missing' });
-    expect(res.status).toBe(404);
-    expect(await res.json()).toEqual({ error: 'invalid_key' });
+    const expired = h.polar.addCheckout(h.polar.addKey(KEY), { status: 'expired' });
+    for (const checkoutId of ['chk_missing', expired]) {
+      const res = await activate(h, { checkoutId });
+      expect(res.status).toBe(404);
+      expect(await res.json()).toEqual({ error: 'invalid_key' });
+    }
   });
 
   it('rejects a checkoutId that could reshape the Polar path', async () => {
@@ -367,9 +366,9 @@ describe('POST /api/license/activate — Polar ids (D-06)', () => {
   it('takes the subscription id from the checkout and indexes it in sub:', async () => {
     const h = harness();
     const polarKey = h.polar.addKey(KEY, { customerId: 'cus_42' });
-    h.polar.checkouts.set('chk_sub', { status: 'succeeded', license_key: KEY, customer_id: 'cus_42', subscription_id: 'sub_from_checkout' });
-    expect((await activate(h, { checkoutId: 'chk_sub' })).status).toBe(200);
-    expect((await record(h))?.polarSubscriptionId).toBe('sub_from_checkout');
+    polarKey.subscriptionId = 'sub_from_checkout';
+    expect((await activate(h, { checkoutId: h.polar.addCheckout(polarKey) })).status).toBe(200);
+    expect(await record(h)).toMatchObject({ polarSubscriptionId: 'sub_from_checkout', polarGrantId: polarKey.grantId });
     expect(h.kv.json('sub:sub_from_checkout')).toEqual([polarKey.id]);
   });
 
@@ -422,15 +421,22 @@ describe('POST /api/license/activate { checkoutId, lookup: true }', () => {
     return invoke(onActivate, h.env, jsonRequest('/api/license/activate', { lookup: true, ...body }));
   }
 
-  it('returns the normalised key and plan with no activation, KV record or Polar activate call', async () => {
+  it('returns the key and plan with no activation, KV record or Polar activate call', async () => {
     const h = harness();
-    const polarKey = h.polar.addKey(KEY);
-    h.polar.checkouts.set('chk_ok', { status: 'succeeded', license_key: ` ${KEY.toLowerCase()} ` });
-    const res = await lookup(h, { checkoutId: 'chk_ok' });
+    const polarKey = h.polar.addKey(KEY, { benefitId: BENEFITS.lifetime });
+    const checkoutId = h.polar.addCheckout(polarKey);
+    const res = await lookup(h, { checkoutId });
     expect(res.status).toBe(200);
     expect(res.headers.get('cache-control')).toBe('no-store');
-    expect(await res.json()).toEqual({ key: KEY, plan: 'pro_yearly' });
-    expect(h.polar.calls.map((call) => call.path)).toEqual(['/v1/checkouts/chk_ok', '/v1/customer-portal/license-keys/validate']);
+    expect(await res.json()).toEqual({ key: KEY, plan: 'pro_lifetime' });
+    expect(h.polar.calls.map((call) => call.path)).toEqual([
+      `/v1/checkouts/${checkoutId}`,
+      '/v1/orders/',
+      '/v1/benefit-grants/',
+      `/v1/license-keys/${polarKey.id}`,
+      '/v1/customer-portal/license-keys/validate',
+    ]);
+    expect(h.polar.calls.every((call) => call.method === 'GET' || call.path.endsWith('/validate'))).toBe(true);
     expect(polarKey.activations.size).toBe(0);
     expect(h.kv.writes.filter((row) => !row.key.startsWith('rl:'))).toEqual([]);
     expect(await ipTraces(TEST_IP, h.kv, h.ae)).toEqual([]);
@@ -438,47 +444,41 @@ describe('POST /api/license/activate { checkoutId, lookup: true }', () => {
 
   it('needs no deviceId and ignores one that is sent', async () => {
     const h = harness();
-    h.polar.addKey(KEY);
-    h.polar.checkouts.set('chk_ok', { status: 'succeeded', license_key: KEY });
-    const res = await lookup(h, { checkoutId: 'chk_ok', deviceId: device(1), deviceLabel: 'Chrome · macOS' });
+    const checkoutId = h.polar.addCheckout(h.polar.addKey(KEY));
+    const res = await lookup(h, { checkoutId, deviceId: device(1), deviceLabel: 'Chrome · macOS' });
     expect(res.status).toBe(200);
     expect(await record(h)).toBeNull();
   });
 
-  it.each([
-    ['unknown', null],
-    ['open', { status: 'open' }],
-    ['keyless', { status: 'succeeded' }],
-  ] as const)('answers an %s checkout with the same 404 invalid_key', async (_name, checkout) => {
+  it.each(['expired', 'failed'] as const)('answers an unknown and a %s checkout with the same 404 invalid_key', async (status) => {
     const h = harness();
-    if (checkout) h.polar.checkouts.set('chk_x', { ...checkout });
-    const res = await lookup(h, { checkoutId: 'chk_x' });
-    expect(res.status).toBe(404);
-    expect(await res.json()).toEqual({ error: 'invalid_key' });
+    const checkoutId = h.polar.addCheckout(h.polar.addKey(KEY), { status });
+    for (const id of [checkoutId, 'chk_unknown']) {
+      const res = await lookup(h, { checkoutId: id });
+      expect(res.status).toBe(404);
+      expect(await res.json()).toEqual({ error: 'invalid_key' });
+    }
   });
 
   it('refuses a key that KV marks refunded, and one Polar no longer grants', async () => {
     const h = harness();
-    h.polar.addKey(KEY);
-    h.polar.checkouts.set('chk_ok', { status: 'succeeded', license_key: KEY });
+    const checkoutId = h.polar.addCheckout(h.polar.addKey(KEY));
     h.kv.seed(`lic:${await sha256Hex(KEY)}`, { status: 'refunded', activations: [] });
-    const refunded = await lookup(h, { checkoutId: 'chk_ok' });
+    const refunded = await lookup(h, { checkoutId });
     expect(refunded.status).toBe(403);
     expect(await refunded.json()).toEqual({ error: 'refunded' });
 
     const other = 'AWAKETAB-PRO-TEST-0002-ABCD';
-    h.polar.addKey(other, { status: 'revoked' });
-    h.polar.checkouts.set('chk_revoked', { status: 'succeeded', license_key: other });
-    const res = await lookup(h, { checkoutId: 'chk_revoked' });
+    const revokedId = h.polar.addCheckout(h.polar.addKey(other, { status: 'revoked', customerId: 'cus_other' }));
+    const res = await lookup(h, { checkoutId: revokedId });
     expect(res.status).toBe(403);
     expect(await res.json()).toEqual({ error: 'revoked' });
   });
 
   it('returns 404 when the key maps to no plan', async () => {
     const h = harness();
-    h.polar.addKey(KEY, { benefitId: BENEFITS.unmapped });
-    h.polar.checkouts.set('chk_ok', { status: 'succeeded', license_key: KEY });
-    expect((await lookup(h, { checkoutId: 'chk_ok' })).status).toBe(404);
+    const unmapped = h.polar.addKey(KEY, { benefitId: BENEFITS.unmapped });
+    expect((await lookup(h, { checkoutId: h.polar.addCheckout(unmapped) })).status).toBe(404);
   });
 
   it.each([{}, { checkoutId: '' }, { checkoutId: 'a/b' }, { checkoutId: 'x'.repeat(81) }, { checkoutId: 'chk_ok', lookup: 'yes' }])(
@@ -501,12 +501,171 @@ describe('POST /api/license/activate { checkoutId, lookup: true }', () => {
 
   it('shares the /api/license/* rate-limit bucket (11th call is 429)', async () => {
     const h = harness();
-    h.polar.addKey(KEY);
-    h.polar.checkouts.set('chk_ok', { status: 'succeeded', license_key: KEY });
+    const checkoutId = h.polar.addCheckout(h.polar.addKey(KEY));
     for (let i = 0; i < 5; i += 1) expect((await activate(h, { key: KEY })).status).toBe(200);
-    for (let i = 0; i < 5; i += 1) expect((await lookup(h, { checkoutId: 'chk_ok' })).status).toBe(200);
-    const res = await lookup(h, { checkoutId: 'chk_ok' });
+    for (let i = 0; i < 5; i += 1) expect((await lookup(h, { checkoutId })).status).toBe(200);
+    const res = await lookup(h, { checkoutId });
     expect(res.status).toBe(429);
     expect(res.headers.get('retry-after')).toBeTruthy();
   });
 });
+
+// F-08 (docs/09 §2.3b): Polar's checkout has no licence key; the key is found through the checkout's order or
+// subscription, the matching License Keys benefit grant and `GET /v1/license-keys/{id}`.
+describe('checkout auto-fill resolves the key through order → benefit grant → licence key (F-08)', () => {
+  function lookup(h: IHarness, checkoutId: string) {
+    return invoke(onActivate, h.env, jsonRequest('/api/license/activate', { lookup: true, checkoutId }));
+  }
+
+  async function expectSyncing(res: Response): Promise<void> {
+    expect(res.status).toBe(503);
+    expect(res.headers.get('retry-after')).toBe('5');
+    expect(res.headers.get('cache-control')).toBe('no-store');
+    expect(await res.json()).toEqual({ error: 'polar_unavailable' });
+  }
+
+  it('one-time purchase: finds the order by checkout_id, then the grant for that order, then the key', async () => {
+    const h = harness();
+    const polarKey = h.polar.addKey(KEY, { benefitId: BENEFITS.lifetime, customerId: 'cus_42' });
+    const checkoutId = h.polar.addCheckout(polarKey);
+    const res = await activate(h, { checkoutId });
+    expect(res.status).toBe(200);
+    expect(((await res.json()) as { plan: string }).plan).toBe('pro_lifetime');
+    const org = devVars().POLAR_ORGANIZATION_ID;
+    const reads = h.polar.calls.filter((call) => call.method === 'GET');
+    expect(reads.map((call) => [call.path, call.query])).toEqual([
+      [`/v1/checkouts/${checkoutId}`, {}],
+      ['/v1/orders/', { organization_id: org, checkout_id: checkoutId, limit: '10' }],
+      ['/v1/benefit-grants/', { organization_id: org, customer_id: 'cus_42', limit: '100', sorting: '-created_at' }],
+      [`/v1/license-keys/${polarKey.id}`, {}],
+    ]);
+    expect(reads.every((call) => call.auth === `Bearer ${devVars().POLAR_ACCESS_TOKEN ?? ''}`)).toBe(true);
+    expect(polarKey.activations.size).toBe(1);
+    expect(await record(h)).toMatchObject({
+      plan: 'pro_lifetime',
+      polarLicenseKeyId: polarKey.id,
+      polarGrantId: polarKey.grantId,
+      polarOrderId: polarKey.orderId,
+      customerId: 'cus_42',
+    });
+    expect(h.kv.json<ILicenseLink>(`lk:${polarKey.id}`)).toMatchObject({ grantId: polarKey.grantId, orderId: polarKey.orderId });
+  });
+
+  it('subscription: matches the grant by the checkout subscription_id, with no order lookup', async () => {
+    const h = harness();
+    const polarKey = h.polar.addKey(KEY);
+    const res = await activate(h, { checkoutId: h.polar.addCheckout(polarKey, { order: false }) });
+    expect(res.status).toBe(200);
+    expect(h.polar.callsTo('/v1/orders/')).toEqual([]);
+    expect(await record(h)).toMatchObject({ plan: 'pro_yearly', polarSubscriptionId: polarKey.subscriptionId, polarGrantId: polarKey.grantId });
+  });
+
+  it.each(['open', 'confirmed'] as const)('a %s checkout is still syncing (503 + Retry-After), for activate and lookup', async (status) => {
+    const h = harness();
+    const polarKey = h.polar.addKey(KEY);
+    const checkoutId = h.polar.addCheckout(polarKey, { status });
+    await expectSyncing(await activate(h, { checkoutId }));
+    await expectSyncing(await lookup(h, checkoutId));
+    expect(h.polar.calls.map((call) => call.path)).toEqual([`/v1/checkouts/${checkoutId}`, `/v1/checkouts/${checkoutId}`]);
+    expect(polarKey.activations.size).toBe(0);
+    expect(h.kv.writes.filter((row) => !row.key.startsWith('rl:'))).toEqual([]);
+  });
+
+  it.each([
+    ['the order is not created yet', { order: false }, 'ready', BENEFITS.lifetime],
+    ['the benefit grant is not created yet', {}, 'missing', BENEFITS.yearly],
+    ['the grant has no license_key_id yet', {}, 'keyless', BENEFITS.lifetime],
+  ] as const)('succeeded but %s → syncing, then the retry activates', async (_name, checkoutOpts, grant, benefitId) => {
+    const h = harness();
+    const polarKey = h.polar.addKey(KEY, { benefitId, grant });
+    const checkoutId = h.polar.addCheckout(polarKey, checkoutOpts);
+    await expectSyncing(await activate(h, { checkoutId }));
+    await expectSyncing(await lookup(h, checkoutId));
+    expect(await record(h)).toBeNull();
+    expect(h.polar.callsTo('/activate')).toEqual([]);
+
+    // Polar catches up: the order, grant and key exist now.
+    polarKey.grant = 'ready';
+    h.polar.addCheckout(polarKey, { id: checkoutId });
+    expect(await (await lookup(h, checkoutId)).json()).toEqual({ key: KEY, plan: planOf(benefitId) });
+    expect((await activate(h, { checkoutId })).status).toBe(200);
+  });
+
+  it('returns only the key of THIS checkout when the customer holds several purchases', async () => {
+    const h = harness();
+    const older = h.polar.addKey(KEY, { customerId: 'cus_42' });
+    const lifetimeKey = 'AWAKETAB-PRO-TEST-0002-LIFE';
+    const lifetime = h.polar.addKey(lifetimeKey, { customerId: 'cus_42', benefitId: BENEFITS.lifetime });
+    const newest = h.polar.addKey('AWAKETAB-PRO-TEST-0003-NEWEST', { customerId: 'cus_42' });
+    const kioskUnrelated = h.polar.addKey('AWAKETAB-KIOSK-TEST-0004-ABCD', { customerId: 'cus_42', benefitId: BENEFITS.kiosk });
+    const olderCheckout = h.polar.addCheckout(older);
+    const lifetimeCheckout = h.polar.addCheckout(lifetime);
+    h.polar.addCheckout(newest);
+    h.polar.addCheckout(kioskUnrelated);
+
+    expect(await (await lookup(h, olderCheckout)).json()).toEqual({ key: KEY, plan: 'pro_yearly' });
+    expect(await (await lookup(h, lifetimeCheckout)).json()).toEqual({ key: lifetimeKey, plan: 'pro_lifetime' });
+    // The grants list is newest first; the answer still follows the checkout, not the order of the list.
+    const grants = h.polar.callsTo('/v1/benefit-grants/');
+    expect(grants.every((call) => call.query.customer_id === 'cus_42')).toBe(true);
+  });
+
+  it('never returns another customer\'s key, even for the same order id', async () => {
+    const h = harness();
+    const mine = h.polar.addKey(KEY, { customerId: 'cus_me', benefitId: BENEFITS.lifetime, grant: 'missing' });
+    h.polar.addKey('AWAKETAB-PRO-TEST-0009-THEIRS', { customerId: 'cus_them', benefitId: BENEFITS.lifetime, orderId: mine.orderId });
+    await expectSyncing(await lookup(h, h.polar.addCheckout(mine)));
+  });
+
+  it('prefers the live grant when one purchase has a revoked and a re-granted key', async () => {
+    const h = harness();
+    const revoked = h.polar.addKey('AWAKETAB-PRO-TEST-0005-REVOKED', { status: 'revoked', subscriptionId: 'sub_same', customerId: 'cus_42' });
+    const regranted = h.polar.addKey(KEY, { subscriptionId: 'sub_same', customerId: 'cus_42' });
+    revoked.grantedAt = new Date(T0 + 60_000).toISOString(); // the revoked one is even newer
+    const checkoutId = h.polar.addCheckout(regranted);
+    expect(await (await lookup(h, checkoutId)).json()).toEqual({ key: KEY, plan: 'pro_yearly' });
+  });
+
+  it('answers revoked / refunded for a purchase whose key Polar revoked or KV marks refunded', async () => {
+    const h = harness();
+    const revoked = h.polar.addKey(KEY, { status: 'revoked' });
+    const checkoutId = h.polar.addCheckout(revoked);
+    for (const res of [await activate(h, { checkoutId }), await lookup(h, checkoutId)]) {
+      expect(res.status).toBe(403);
+      expect(await res.json()).toEqual({ error: 'revoked' });
+    }
+    expect(revoked.activations.size).toBe(0);
+
+    const refundedKey = 'AWAKETAB-PRO-TEST-0006-REFUND';
+    const refunded = h.polar.addKey(refundedKey, { benefitId: BENEFITS.lifetime, customerId: 'cus_77' });
+    const refundedCheckout = h.polar.addCheckout(refunded);
+    h.kv.seed(`lic:${await sha256Hex(refundedKey)}`, { status: 'refunded', activations: [] });
+    for (const res of [await activate(h, { checkoutId: refundedCheckout, deviceId: device(3) }), await lookup(h, refundedCheckout)]) {
+      expect(res.status).toBe(403);
+      expect(await res.json()).toEqual({ error: 'refunded' });
+    }
+    expect(refunded.activations.size).toBe(0);
+  });
+
+  it.each(['/v1/orders/', '/v1/benefit-grants/'])('a Polar 5xx on %s is 502 polar_unavailable, not syncing', async (path) => {
+    const h = harness();
+    const checkoutId = h.polar.addCheckout(h.polar.addKey(KEY, { benefitId: BENEFITS.lifetime }));
+    h.polar.failPath = path;
+    const res = await activate(h, { checkoutId });
+    expect(res.status).toBe(502);
+    expect(await res.json()).toEqual({ error: 'polar_unavailable' });
+    expect(await record(h)).toBeNull();
+  });
+
+  it('a 5xx on the licence-key read is 502 too', async () => {
+    const h = harness();
+    const polarKey = h.polar.addKey(KEY);
+    const checkoutId = h.polar.addCheckout(polarKey);
+    h.polar.failPath = `/v1/license-keys/${polarKey.id}`;
+    expect((await lookup(h, checkoutId)).status).toBe(502);
+  });
+});
+
+function planOf(benefitId: string): string {
+  return benefitId === BENEFITS.lifetime ? 'pro_lifetime' : 'pro_yearly';
+}

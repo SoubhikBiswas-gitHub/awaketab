@@ -17,6 +17,21 @@ export function rateLimited(now = Date.now()): Response {
   );
 }
 
+/** Seconds a client should wait before re-asking about a paid checkout whose licence key Polar is still creating. */
+export const SYNCING_RETRY_S = 5;
+
+/**
+ * F-08 (docs/09 §2.3b): the checkout is paid or being paid, but Polar has not created its order, benefit grant or
+ * licence key yet. Same code as an outage (`polar_unavailable`, which `/pro/activate` shows as "still syncing"),
+ * but 503 with `Retry-After`: retrying soon is expected to succeed.
+ */
+export function syncing(): Response {
+  return Response.json(
+    { error: 'polar_unavailable' },
+    { status: 503, headers: { 'cache-control': 'no-store', 'retry-after': String(SYNCING_RETRY_S) } },
+  );
+}
+
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 export const KEY_RE = /^[A-Z0-9-]{20,80}$/u;
 // Polar checkout IDs are UUIDs; the looser shape still refuses anything that could reshape the upstream path.

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { bootActivatePage } from '../../src/lib/activate-page';
+import { bootActivatePage, CHECKOUT_RETRY_MS } from '../../src/lib/activate-page';
 import { activateLicense } from '../../src/lib/license';
 import { lookupCheckoutKey } from '../../src/lib/license-lookup';
 import type * as LicenseLookup from '../../src/lib/license-lookup';
@@ -115,7 +115,7 @@ describe('activate page', () => {
 
   it('auto-activates from checkout_id without ext=1 and never uses the lookup', async () => {
     history.replaceState(null, '', '/pro/activate?checkout_id=chk_1');
-    activate.mockResolvedValue({ ok: false, error: 'polar_unavailable' });
+    activate.mockResolvedValue({ ok: false, error: 'invalid_key' });
     const root = mount();
     bootActivatePage(root);
     await flush();
@@ -175,5 +175,64 @@ describe('activate page', () => {
     await flush();
     expect(panel(root)?.hidden).toBe(false);
     expect(activate).not.toHaveBeenCalled();
+  });
+
+  // F-08: Polar creates the licence key a few seconds after the checkout; auto-fill waits for it.
+  describe('while Polar is still syncing the purchase', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ['setTimeout'] });
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    const waitAll = async () => {
+      for (const ms of CHECKOUT_RETRY_MS) await vi.advanceTimersByTimeAsync(ms);
+    };
+
+    it('re-asks the lookup after each wait and shows the key once Polar has it (ext=1)', async () => {
+      history.replaceState(null, '', '/pro/activate?ext=1&checkout_id=chk_1');
+      lookup
+        .mockResolvedValueOnce({ ok: false, error: 'polar_unavailable' })
+        .mockResolvedValueOnce({ ok: false, error: 'polar_unavailable' })
+        .mockResolvedValueOnce({ ok: true, key: 'ATAB-TEST-KEY-1234567890' });
+      const root = mount();
+      bootActivatePage(root);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(lookup).toHaveBeenCalledTimes(1);
+      expect(alertBox(root)?.dataset.code).toBe('polar_unavailable');
+      expect(alertBox(root)?.hidden).toBe(false);
+      await waitAll();
+      expect(lookup).toHaveBeenCalledTimes(3);
+      expect(panel(root)?.hidden).toBe(false);
+      expect(extKey(root)).toBe('ATAB-TEST-KEY-1234567890');
+      expect(alertBox(root)?.hidden).toBe(true);
+      expect(activate).not.toHaveBeenCalled();
+    });
+
+    it('re-asks the activation too, and gives up after the last wait', async () => {
+      history.replaceState(null, '', '/pro/activate?checkout_id=chk_1');
+      activate.mockResolvedValue({ ok: false, error: 'polar_unavailable' });
+      const root = mount();
+      bootActivatePage(root);
+      await vi.advanceTimersByTimeAsync(0);
+      await waitAll();
+      await vi.advanceTimersByTimeAsync(60_000);
+      expect(activate).toHaveBeenCalledTimes(CHECKOUT_RETRY_MS.length + 1);
+      expect(alertBox(root)?.dataset.code).toBe('polar_unavailable');
+      expect(panel(root)?.hidden).toBe(true);
+    });
+
+    it('does not retry any other error, nor a key typed by hand', async () => {
+      history.replaceState(null, '', '/pro/activate?checkout_id=chk_1');
+      activate.mockResolvedValue({ ok: false, error: 'invalid_key' });
+      const root = mount();
+      bootActivatePage(root);
+      await vi.advanceTimersByTimeAsync(0);
+      activate.mockResolvedValue({ ok: false, error: 'polar_unavailable' });
+      submit(root, 'ATAB-TEST-KEY-1234567890');
+      await waitAll();
+      expect(activate).toHaveBeenCalledTimes(2);
+    });
   });
 });

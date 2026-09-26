@@ -14,6 +14,25 @@ const ERR_KEY: Record<string, string> = {
 };
 
 /**
+ * F-08 (docs/09 §2.3b): Polar creates the order, benefit grant and licence key a few seconds after the checkout
+ * succeeds, so the auto-fill that runs right after the redirect is often answered `polar_unavailable` ("still
+ * syncing", HTTP 503). It re-asks after each of these waits: about 21 s and 4 requests in all, well inside the 10
+ * a minute that `/api/license/*` allows.
+ */
+export const CHECKOUT_RETRY_MS: readonly number[] = [3000, 6000, 12000];
+
+async function whileSyncing<T extends { ok: boolean; error?: string }>(attempt: () => Promise<T>, onWait: (code: string) => void): Promise<T> {
+  let result = await attempt();
+  for (const ms of CHECKOUT_RETRY_MS) {
+    if (result.ok || result.error !== 'polar_unavailable') break;
+    onWait(result.error);
+    await new Promise((resolve) => setTimeout(resolve, ms));
+    result = await attempt();
+  }
+  return result;
+}
+
+/**
  * `/pro/activate` (docs/09 §2.3). Without `ext=1` the page activates THIS browser as a device. With `ext=1`
  * (the hand-off from AwakeTab for Chrome, docs/10 §5) it never activates anything: a pasted key is checked for
  * shape client-side and a `checkout_id` is resolved through the non-activating lookup (docs/09 §2.3a), then the
@@ -61,14 +80,15 @@ export function bootActivatePage(root: HTMLElement): void {
     if (extPanel) extPanel.hidden = false;
   };
 
-  const activate = async (key?: string) => {
+  /** `fromCheckout`: the automatic auto-fill after checkout, which waits out Polar's sync (F-08). */
+  const activate = async (key?: string, fromCheckout = false) => {
     const payload: { deviceId: string; deviceLabel: string; key?: string; checkoutId?: string } = {
       deviceId: deviceId(),
       deviceLabel: navigator.userAgent.slice(0, 40) || 'This browser',
     };
     if (key) payload.key = key;
     if (checkoutId) payload.checkoutId = checkoutId;
-    const result = await activateLicense(payload);
+    const result = fromCheckout ? await whileSyncing(() => activateLicense(payload), fail) : await activateLicense(payload);
     if (!result.ok) {
       fail(result.error);
       return;
@@ -81,12 +101,12 @@ export function bootActivatePage(root: HTMLElement): void {
   };
 
   if (ext && checkoutId) {
-    void lookupCheckoutKey(checkoutId).then((result) => {
+    void whileSyncing(() => lookupCheckoutKey(checkoutId), fail).then((result) => {
       if (result.ok) showKey(result.key);
       else fail(result.error);
     });
   } else if (checkoutId) {
-    void activate();
+    void activate(undefined, true);
   }
 
   form.addEventListener('submit', (event) => {

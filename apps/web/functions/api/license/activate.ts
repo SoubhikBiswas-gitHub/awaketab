@@ -1,5 +1,6 @@
+import { resolveCheckoutKey } from '../../_lib/checkout-key';
 import type { IEnv } from '../../_lib/env';
-import { isLookupBody, jsonError, jsonOk, KEY_RE, parseActivateBody, parseLookupBody, rateLimited } from '../../_lib/http';
+import { isLookupBody, jsonError, jsonOk, parseActivateBody, parseLookupBody, rateLimited, syncing } from '../../_lib/http';
 import {
   encryptUtf8,
   PLAN_FEATURES,
@@ -10,7 +11,7 @@ import {
   type ILicenseRecord,
 } from '../../_lib/license';
 import { applyIds, linkLicenseKey, readLink, transition, type IPolarIds } from '../../_lib/links';
-import { PolarError, createPolar, planFromBenefit, type IPolarCheckout } from '../../_lib/polar';
+import { PolarError, createPolar, planFromBenefit } from '../../_lib/polar';
 import { clientIp, rateLimit } from '../../_lib/ratelimit';
 import { mintToken, tokenExp } from '../../_lib/token';
 
@@ -38,15 +39,13 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
 
   const polar = createPolar(env);
   let key = parsed.key;
-  let checkout: IPolarCheckout | null = null;
+  // F-08: the ids a checkout resolved through (docs/09 §2.3b); a pasted key has none.
+  let fromCheckout: IPolarIds = {};
   if (parsed.checkoutId && !key) {
-    try {
-      checkout = await polar.checkout(parsed.checkoutId);
-      if (checkout.status !== 'succeeded' || !checkout.license_key) return jsonError('invalid_key', 404);
-      key = checkout.license_key.trim().toUpperCase();
-    } catch (err) {
-      return polarFailure(err);
-    }
+    const resolved = await checkoutKey(env, polar, parsed.checkoutId);
+    if (resolved instanceof Response) return resolved;
+    key = resolved.key;
+    fromCheckout = resolved.ids;
   }
   if (!key) return jsonError('bad_request', 400);
 
@@ -107,10 +106,17 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
     licenseKeyId: lkId,
     customerId: polarLicense.customer_id,
     benefitId: polarLicense.benefit_id,
-    subscriptionId: checkout?.subscription_id ?? undefined,
+    subscriptionId: fromCheckout.subscriptionId,
+    grantId: fromCheckout.grantId,
+    orderId: fromCheckout.orderId,
   };
   const link = lkId ? await readLink(kv, lkId) : null;
-  applyIds(record, { ...found, grantId: link?.grantId, orderId: link?.orderId, subscriptionId: found.subscriptionId ?? link?.subscriptionId });
+  applyIds(record, {
+    ...found,
+    grantId: found.grantId ?? link?.grantId,
+    orderId: found.orderId ?? link?.orderId,
+    subscriptionId: found.subscriptionId ?? link?.subscriptionId,
+  });
   const pending = link?.pending ? transition(record.status, link.pending) : null;
   if (pending) record.status = pending;
   if (record.status === 'revoked' || record.status === 'refunded') {
@@ -202,10 +208,37 @@ function polarFailure(err: unknown): Response {
 }
 
 /**
+ * F-08: a checkout → its licence key (`_lib/checkout-key.ts`), or the response to send instead. Unknown, expired,
+ * failed and foreign checkouts all answer 404 `invalid_key` (no checkout-ID probing); open or confirmed checkouts
+ * and purchases whose order, grant or key Polar has not created yet answer the retryable 503 (`syncing()`).
+ */
+async function checkoutKey(
+  env: IEnv,
+  polar: ReturnType<typeof createPolar>,
+  checkoutId: string,
+): Promise<Response | { key: string; ids: IPolarIds }> {
+  try {
+    const resolved = await resolveCheckoutKey(env, polar, checkoutId);
+    if (resolved.kind === 'syncing') return syncing();
+    if (resolved.kind === 'invalid') return jsonError('invalid_key', 404);
+    return {
+      key: resolved.key,
+      ids: {
+        subscriptionId: resolved.subscriptionId ?? undefined,
+        orderId: resolved.orderId ?? undefined,
+        grantId: resolved.grantId,
+      },
+    };
+  } catch (err) {
+    return polarFailure(err);
+  }
+}
+
+/**
  * `{ checkoutId, lookup: true }` → `{ key, plan }` without activating anything (docs/09 §2.3a). Used by
  * `/pro/activate?ext=1&checkout_id=…` so the browser that finished checkout does not spend one of the five
  * activations before the extension activates itself. Same rate-limit bucket as activation (checked by the
- * caller); unknown, unpaid and keyless checkouts all answer 404 `invalid_key`. Holding the checkout ID already
+ * caller) and the same checkout resolution as the activating path (`checkoutKey`). Holding the checkout ID already
  * authorises activating its key through this endpoint, so returning the key to that holder grants nothing new
  * (Polar shows the same key on its receipt page). No KV write, no Polar activation.
  */
@@ -213,15 +246,9 @@ async function lookupCheckout(env: IEnv, checkoutId: string): Promise<Response> 
   const kv = env.LICENSES;
   if (!kv) return jsonError('polar_unavailable', 502);
   const polar = createPolar(env);
-  let key: string;
-  try {
-    const checkout = await polar.checkout(checkoutId);
-    if (checkout.status !== 'succeeded' || !checkout.license_key) return jsonError('invalid_key', 404);
-    key = checkout.license_key.trim().toUpperCase();
-  } catch (err) {
-    return polarFailure(err);
-  }
-  if (!KEY_RE.test(key)) return jsonError('invalid_key', 404);
+  const resolved = await checkoutKey(env, polar, checkoutId);
+  if (resolved instanceof Response) return resolved;
+  const { key } = resolved;
   const existing = await readLicense(kv, await sha256Hex(key));
   if (existing && (existing.status === 'revoked' || existing.status === 'refunded')) return jsonError(existing.status, 403);
   let license;

@@ -205,18 +205,41 @@ export interface IPolarKey {
   limit: number;
   expiresAt: string | null;
   activations: Map<string, { label: string; deviceId: string }>;
+  /**
+   * The benefit grant as `GET /v1/benefit-grants/` lists it. Polar creates it asynchronously after the order:
+   * `missing` = not created yet, `keyless` = created before `properties.license_key_id` was filled in.
+   */
+  grant: 'ready' | 'missing' | 'keyless';
+  /** `BenefitGrant.created_at` / `granted_at`. */
+  grantedAt: string;
 }
 
+/**
+ * Polar `Checkout` as `GET /v1/checkouts/{id}` returns it (OpenAPI 2026-10 `Checkout`, the fields that matter):
+ * no licence key and no order id, only the customer and, for a subscription, `subscription_id` (F-08).
+ */
 export interface IPolarCheckout {
-  status: string;
-  license_key?: string;
-  customer_id?: string | null;
-  subscription_id?: string | null;
+  status: 'open' | 'expired' | 'confirmed' | 'succeeded' | 'failed';
+  customer_id: string | null;
+  subscription_id: string | null;
+  product_id: string | null;
+}
+
+/** Polar `Order` (`GET /v1/orders/`), the fields that matter. */
+export interface IPolarOrder {
+  id: string;
+  checkout_id: string | null;
+  customer_id: string;
+  subscription_id: string | null;
+  billing_reason: 'purchase' | 'subscription_create';
+  status: 'paid' | 'refunded';
 }
 
 export interface IPolarCall {
   method: string;
   path: string;
+  /** `URLSearchParams` of the request (list filters such as `checkout_id`, `customer_id`). */
+  query: Record<string, string>;
   body: Record<string, unknown> | null;
   auth: string | null;
 }
@@ -227,8 +250,11 @@ export class FakePolar {
   readonly calls: IPolarCall[] = [];
   readonly keys = new Map<string, IPolarKey>();
   readonly checkouts = new Map<string, IPolarCheckout>();
+  readonly orders = new Map<string, IPolarOrder>();
   /** 'http' → every call answers 500; 'network' → fetch rejects. */
   outage: 'none' | 'http' | 'network' = 'none';
+  /** Calls to exactly this path answer 500 (an outage part-way through a chain of reads). */
+  failPath: string | null = null;
 
   constructor(
     private readonly token: string,
@@ -250,10 +276,36 @@ export class FakePolar {
       limit: 5,
       expiresAt: new Date(Date.now() + 200 * DAY_MS).toISOString(),
       activations: new Map(),
+      grant: 'ready',
+      grantedAt: new Date(Date.now() + polarSeq).toISOString(),
       ...init,
     };
     this.keys.set(key, row);
     return row;
+  }
+
+  /**
+   * The checkout that bought `row`, as Polar stores it: `customer_id`, `subscription_id` (yearly) and, unless
+   * `order: false` (Polar has not created it yet), the order whose `checkout_id` points back at it.
+   */
+  addCheckout(
+    row: IPolarKey,
+    opts: { id?: string; status?: IPolarCheckout['status']; order?: boolean } = {},
+  ): string {
+    polarSeq += 1;
+    const id = opts.id ?? `chk_${String(polarSeq)}`;
+    this.checkouts.set(id, { status: opts.status ?? 'succeeded', customer_id: row.customerId, subscription_id: row.subscriptionId, product_id: 'prod_1' });
+    if (opts.order !== false) {
+      this.orders.set(row.orderId, {
+        id: row.orderId,
+        checkout_id: id,
+        customer_id: row.customerId,
+        subscription_id: row.subscriptionId,
+        billing_reason: row.subscriptionId ? 'subscription_create' : 'purchase',
+        status: 'paid',
+      });
+    }
+    return id;
   }
 
   callsTo(suffix: string): IPolarCall[] {
@@ -275,21 +327,89 @@ export class FakePolar {
     };
   }
 
+  /** `BenefitGrant` for a License Keys benefit: one-time grants carry `order_id`, subscription grants `subscription_id`. */
+  private grantJson(row: IPolarKey): Record<string, unknown> {
+    const granted = row.status === 'granted';
+    return {
+      id: row.grantId,
+      created_at: row.grantedAt,
+      modified_at: null,
+      granted_at: row.grantedAt,
+      is_granted: granted,
+      revoked_at: granted ? null : row.grantedAt,
+      is_revoked: !granted,
+      subscription_id: row.subscriptionId,
+      order_id: row.subscriptionId ? null : row.orderId,
+      customer_id: row.customerId,
+      member_id: null,
+      benefit_id: row.benefitId,
+      error: null,
+      customer: { id: row.customerId },
+      member: null,
+      benefit: { id: row.benefitId, type: 'license_keys' },
+      properties: row.grant === 'keyless' ? {} : { license_key_id: row.id, display_key: `****-${row.key.slice(-6)}` },
+    };
+  }
+
+  /** `ListResource`: `{ items, pagination: { total_count, max_page } }`, one page. */
+  private static list(items: unknown[]): Response {
+    return Response.json({ items, pagination: { total_count: items.length, max_page: 1 } });
+  }
+
+  /** `GET` list endpoints scope to the token's organisation; a foreign `organization_id` lists nothing. */
+  private orgMatches(url: URL): boolean {
+    const org = url.searchParams.get('organization_id');
+    return org === null || org === this.organizationId;
+  }
+
+  private get(url: URL): Response {
+    const checkout = /^\/v1\/checkouts\/([^/]+)$/u.exec(url.pathname);
+    if (checkout) {
+      const id = decodeURIComponent(checkout[1] ?? '');
+      const row = this.checkouts.get(id);
+      return row ? Response.json({ id, organization_id: this.organizationId, ...row }) : Response.json({ error: 'ResourceNotFound' }, { status: 404 });
+    }
+    if (url.pathname === '/v1/orders/') {
+      if (!this.orgMatches(url)) return FakePolar.list([]);
+      const checkoutId = url.searchParams.get('checkout_id');
+      const customerId = url.searchParams.get('customer_id');
+      return FakePolar.list(
+        [...this.orders.values()].filter(
+          (order) => (checkoutId === null || order.checkout_id === checkoutId) && (customerId === null || order.customer_id === customerId),
+        ),
+      );
+    }
+    if (url.pathname === '/v1/benefit-grants/') {
+      if (!this.orgMatches(url)) return FakePolar.list([]);
+      const customerId = url.searchParams.get('customer_id');
+      const isGranted = url.searchParams.get('is_granted');
+      const rows = [...this.keys.values()]
+        .filter((row) => row.grant !== 'missing' && (customerId === null || row.customerId === customerId))
+        .filter((row) => isGranted === null || (row.status === 'granted') === (isGranted === 'true'))
+        .sort((a, b) => (url.searchParams.get('sorting') === '-created_at' ? b.grantedAt.localeCompare(a.grantedAt) : a.grantedAt.localeCompare(b.grantedAt)));
+      return FakePolar.list(rows.map((row) => this.grantJson(row)));
+    }
+    const licenseKey = /^\/v1\/license-keys\/([^/]+)$/u.exec(url.pathname);
+    if (licenseKey) {
+      const row = [...this.keys.values()].find((candidate) => candidate.id === decodeURIComponent(licenseKey[1] ?? ''));
+      if (!row) return Response.json({ error: 'ResourceNotFound' }, { status: 404 });
+      const activations = [...row.activations].map(([id, activation]) => ({ id, license_key_id: row.id, label: activation.label, meta: { deviceId: activation.deviceId } }));
+      return Response.json({ ...this.licenseJson(row), activations });
+    }
+    return new Response('not found', { status: 404 });
+  }
+
   readonly fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
     const url = new URL(input instanceof Request ? input.url : String(input));
     const method = (init?.method ?? 'GET').toUpperCase();
     const headers = new Headers(init?.headers);
     const body = typeof init?.body === 'string' ? (JSON.parse(init.body) as Record<string, unknown>) : null;
-    this.calls.push({ method, path: url.pathname, body, auth: headers.get('authorization') });
+    this.calls.push({ method, path: url.pathname, query: Object.fromEntries(url.searchParams), body, auth: headers.get('authorization') });
     if (this.outage === 'network') throw new TypeError('fetch failed');
-    if (this.outage === 'http') return new Response('upstream error', { status: 500 });
+    if (this.outage === 'http' || this.failPath === url.pathname) return new Response('upstream error', { status: 500 });
     if (headers.get('authorization') !== `Bearer ${this.token}`) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const checkout = /^\/v1\/checkouts\/([^/]+)$/u.exec(url.pathname);
-    if (checkout && method === 'GET') {
-      const row = this.checkouts.get(decodeURIComponent(checkout[1] ?? ''));
-      return row ? Response.json({ id: checkout[1], ...row }) : Response.json({ error: 'ResourceNotFound' }, { status: 404 });
-    }
+    if (method === 'GET') return this.get(url);
     if (method !== 'POST' || !body) return new Response('not found', { status: 404 });
     if (body.organization_id !== this.organizationId) return Response.json({ error: 'ResourceNotFound' }, { status: 404 });
     const row = this.keys.get(String(body.key));

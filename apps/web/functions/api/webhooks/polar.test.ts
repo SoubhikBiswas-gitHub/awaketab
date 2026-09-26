@@ -535,6 +535,8 @@ describe('POST /api/webhooks/polar — key-less Polar payloads (D-06)', () => {
       limit: 5,
       expiresAt: null,
       activations: new Map(),
+      grant: 'ready',
+      grantedAt: new Date(T0).toISOString(),
       ...over,
     });
 
@@ -596,6 +598,8 @@ describe('POST /api/webhooks/polar — key-less Polar payloads (D-06)', () => {
       limit: 5,
       expiresAt: null,
       activations: new Map(),
+      grant: 'ready',
+      grantedAt: new Date(T0).toISOString(),
     };
     for (const payload of [
       polarEvents.subscription('subscription.revoked', row),
