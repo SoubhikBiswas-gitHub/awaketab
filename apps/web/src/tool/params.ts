@@ -131,7 +131,9 @@ export function parseToolParams(
     routeUntil,
     isPip,
     isToolAutostartRoute,
-    canonicalPath: path,
+    // The address bar keeps its locale prefix (/es/for/cocinar, not /for/cocinar); only the query and a
+    // trailing slash go, matching the canonical link.
+    canonicalPath: loc.pathname.replace(/(.)\/+$/u, '$1'),
   };
 }
 
