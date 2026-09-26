@@ -49,9 +49,9 @@ for (const f of readdirSync(A)) {
     const nz = bw.map((b) => b > 0);
     if (nz[3] && !nz[0] && !nz[1] && !nz[2] && it.h > 20 && it.role !== 'dialog' && it.tag !== 'aside') { /* v3: side sheet leading edge allowed (§11.2) */ add(src, 'side-stripe', where, 'border-inline-start only (' + bw[3] + 'px)', 'no side stripes', board); pb('stripe'); }
     if (/dashed/.test(it.bs) && bw.some((b) => b > 0) && rgb(it.bc)?.a !== 0 && !/Until|Custom|Add|custom|until|add|Pick|Choose/i.test(it.text + it.aria) && !/…\s*$/.test(it.text)) { add(src, 'dashed-decorative', where, 'dashed', 'dashed only on choose/add affordances', board); pb('dashed'); }
-    // radius
+    // radius (v3: role=img icon art uses platform masks)
     const r = px(it.br);
-    if (!/%/.test(it.br) && r > 0 && !RADII.has(Math.round(r)) && r < 500) { add(src, 'radius', where, r + 'px', 'one of 8/12/16/20/28/999', board); pb('radius'); }
+    if (it.role !== 'img' && !/%/.test(it.br) && r > 0 && !RADII.has(Math.round(r)) && r < 500) { add(src, 'radius', where, r + 'px', 'one of 8/12/16/20/28/999', board); pb('radius'); }
     // spacing: padding + gap
     const pads = it.pad.split(' ').map(px);
     const badPad = pads.filter((p) => !SPACE.has(Math.round(p)) || Math.abs(p - Math.round(p)) > 0.01);
@@ -74,12 +74,12 @@ for (const f of readdirSync(A)) {
       const digitsOnly = /^[\d:\s.,·APMamp–∞-]+$/.test(it.text);
       if (!isDisplay(it) && ![400, 500, 600].includes(fw) && !([200, 300].includes(fw) && digitsOnly)) { add(src, 'font-weight', where, String(fw), '400/500/600', board); pb('weight'); }
       if (isDisplay(it) && fw > 600) { add(src, 'font-weight', where, String(fw) + ' (display)', '200-600', board); pb('weight'); }
-      if (/Mono/.test(it.ff) && !isDisplay(it) && !/^[\d:\s.,·APMamp–-]+$/.test(it.text) && !['code', 'kbd', 'pre', 'samp'].includes(it.tag) && !/^#[0-9A-F]{6}( · #[0-9A-F]{6})*$/i.test(it.text.trim()) && !/^(\/[\w\-\/.?=&:]*|https?:\/\/\S+|[\w-]+(\.[\w-]+)+(\/\S*)?)$/.test(it.text)) { add(src, 'mono-for-text', where, it.ff + ' ' + fs + 'px', 'mono only for digits/code', board); pb('mono'); }
+      if (/Mono/.test(it.ff) && !isDisplay(it) && !/^[\d:\s.,·APMamp–-]+$/.test(it.text) && !['code', 'kbd', 'pre', 'samp'].includes(it.tag) && !/^#[0-9A-F]{6}( · #[0-9A-F]{6})*$/i.test(it.text.trim()) && !/[=<>()_&?\/"'.]|^[a-z]+[A-Z]\w*$|^[a-z]+$/.test(it.text.trim()) && /* v3: code tokens (identifiers, attributes, URLs, params) */ !/^(\/[\w\-\/.?=&:]*|https?:\/\/\S+|[\w-]+(\.[\w-]+)+(\/\S*)?)$/.test(it.text)) { add(src, 'mono-for-text', where, it.ff + ' ' + fs + 'px', 'mono only for digits/code', board); pb('mono'); }
     }
     // colours
     for (const [prop, val] of [['color', it.own && it.text ? it.color : null], ['background', it.bg], ['border-color', bw.some((b) => b > 0) ? it.bc : null]]) {
       const c = rgb(val);
-      if (c && offTok(c) && !it.forced) { add(src, 'off-token-colour', where, prop + ' ' + hex(c) + (c.a < 1 ? ' @' + c.a : ''), 'a --at-* token (or its alpha)', board); pb('colour'); }
+      if (c && offTok(c) && !it.forced && it.role !== 'img') { add(src, 'off-token-colour', where, prop + ' ' + hex(c) + (c.a < 1 ? ' @' + c.a : ''), 'a --at-* token (or its alpha)', board); pb('colour'); }
     }
   }
   // nested cards

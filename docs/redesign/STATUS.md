@@ -2,7 +2,7 @@
 
 Auto-generated from the canvas status table. Canvas: https://claude.ai/artifact/MArJ4zoZRiYmppEd9hXv5e
 
-Updated Sunday, 27 September 2026 · 4:55 AM
+Updated Sunday, 27 September 2026 · 5:00 AM
 
 | # | Item | Canvas design | Real app |
 |---|---|---|---|
@@ -60,7 +60,7 @@ Updated Sunday, 27 September 2026 · 4:55 AM
 | 44 | Audit B: Pro, extension, embed, brand + cross-board consistency | ✅ on canvas | ⬜ |
 | 46 | Design director critique + system drift report (design-critique.md) | ✅ on canvas | ⬜ |
 | 47 | Apply strict system §11 + critique fixes, batch 1 (1a Main done; 1b follow-up next) | 🔄 building | ⬜ |
-| 48 | Apply strict system §11 + critique fixes, batch 2 (2a done; 2b next) | 🔄 building | ⬜ |
+| 48 | Apply strict system §11 + critique fixes, batch 2 (Pro, ext, embed, pages, assets) | ✅ on canvas | ⬜ |
 | 45 | Final audit: every board incl. wave 3 | ⬜ not started | ⬜ |
 | | **I · Marketing audit (senior marketing leads, docs/research/marketing-*.md)** | | |
 | 49 | Positioning + messaging + page copy rewrites | ✅ on canvas | ⬜ |
@@ -68,4 +68,4 @@ Updated Sunday, 27 September 2026 · 4:55 AM
 | 51 | Pricing, packaging, /pro sales page, CRO copy | ✅ on canvas | ⬜ |
 | 52 | Go-to-market + launch plan + channel copy | ✅ on canvas | ⬜ |
 
-**Canvas:** 49 done · 2 building · 1 not started (of 52). **Real app:** 0 of 26, starts after owner approval.
+**Canvas:** 50 done · 1 building · 1 not started (of 52). **Real app:** 0 of 26, starts after owner approval.

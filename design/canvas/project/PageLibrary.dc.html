@@ -61,7 +61,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
     <div class="at-in" style="display: flex; flex-direction: column; gap: 20px; max-width: 800px">
       <span style="{{ty.kicker}}; color: {{t.muted}}">Open source · MIT · v1.0.0</span>
-      <h1 style="margin: 0; {{ty.h1}}; text-wrap: balance"><code style="{{mono}}; font-weight: 400; letter-spacing: -0.04em">@awaketab/wake</code>: the honest wake lock library</h1>
+      <h1 style="margin: 0; {{ty.h1}}; text-wrap: balance"><code style="{{mono}}; font-weight: 400; letter-spacing: -0.04em">@awaketab/wake</code>: a wake lock that says when it works</h1>
       <p style="margin: 0; {{ty.lead}}; color: {{t.ink2}}; text-wrap: pretty"><code style="{{code}}">@awaketab/wake</code> keeps a web page's screen from dimming and tells you the truth about it: seven states, a reason and an advice code on every change, and <code style="{{code}}">held</code> only while the browser really holds the lock. Zero dependencies, ≤ 3.4 KB gzipped with the fallback videos inlined, MIT. The maintained replacement for NoSleep.js.</p>
       <div style="display: flex; align-items: center; gap: 12px; max-width: 520px; padding: 4px 4px 4px 16px; border-radius: 16px; background: {{p.well}}; border: 1px solid {{t.line}}">
         <code style="flex-grow: 1; min-width: 0; padding-block: 12px; {{mono}}; font-size: 15px; line-height: 22px; color: {{t.ink2}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><span style="color: {{t.muted}}">$ </span>npm install @awaketab/wake</code>
@@ -113,7 +113,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
           <div style="position: absolute; left: 0; top: 0; width: {{g.wpx}}; height: {{g.hpx}}; transform: scale({{g.scale}}); transform-origin: 0 0">
           <sc-for list="{{edges}}" as="e" hint-placeholder-count="7">
             <svg aria-hidden="true" width="{{g.wn}}" height="{{g.hn}}" style="position: absolute; left: 0; top: 0; overflow: visible"><path class="at-slide" d="{{e.d}}" fill="none" stroke="{{e.stroke}}" stroke-width="{{e.sw}}" stroke-linecap="round" stroke-dasharray="{{e.dash}}"></path><path d="{{e.head}}" fill="{{e.stroke}}"></path></svg>
-            <sc-if value="{{e.hasLabel}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="position: absolute; left: {{e.lx}}; top: {{e.ly}}; transform: translate(-50%, -50%); padding: 0 4px; border-radius: 4px; background: {{t.surface}}; {{mono}}; font-size: 12px; line-height: 16px; color: {{e.ink}}; white-space: nowrap">{{e.label}}</span></sc-if>
+            <sc-if value="{{e.hasLabel}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="position: absolute; left: {{e.lx}}; top: {{e.ly}}; transform: translate(-50%, -50%); padding: 0 4px; border-radius: 4px; background: {{t.surface}}; {{e.lblFont}}; font-size: 12px; line-height: 16px; color: {{e.ink}}; white-space: nowrap">{{e.label}}</span></sc-if>
           </sc-for>
           <ol aria-label="The seven lock states" style="margin: 0; padding: 0; list-style: none">
             <sc-for list="{{nodes}}" as="n" hint-placeholder-count="7">
@@ -483,10 +483,10 @@ const CODE = {
 
 const lock = createWakeLock();
 lock.on('change', ({ from, to, reason, advice }) => {
-  pill.textContent = to;            // idle · requesting · held · lost · denied · unsupported · fallback
+  pill.textContent = to;            // one of the seven states
   hint.textContent = advice ?? '';  // e.g. 'iframe_no_allow', 'hidden_document'
 });
-start.addEventListener('click', () => lock.request()); // a gesture keeps the video fallback available
+start.addEventListener('click', () => lock.request()); // a tap allows the fallback
 stop.addEventListener('click', () => lock.release());`, 'ESM, for bundlers. Every change event carries the state it left, the state it entered, a reason and an advice code.'],
   cdn: ['index.html', `<!-- Once the npm package is published -->
 <script src="https://cdn.jsdelivr.net/npm/@awaketab/wake@${MAJOR}/dist/awaketab-wake.iife.js"><\/script>
@@ -524,7 +524,7 @@ const TABS = [['esm', 'ESM'], ['cdn', 'CDN'], ['react', 'React'], ['preact', 'Pr
 const CMP = [
   ['Last release', 'Maintained; semver', '16 December 2020'],
   ['Native Wake Lock', 'Yes, first', 'Yes (when present)'],
-  ['Honest state', 'Seven states + change events with reason and advice', '`isEnabled` boolean'],
+  ['State reporting', 'Seven states + change events with reason and advice', '`isEnabled` boolean'],
   ['Denial diagnosis', '`classifyDenial()` advice codes', 'None'],
   ['Fallback', 'Inlined 1-frame video, gesture-aware, pauses when hidden', 'Looping video, always on'],
   ['Size (gzip)', '≤ 3.4 KB, fallback included', '≈ 3.2 KB'],
@@ -670,7 +670,7 @@ class Component extends DCLogic {
       return {
         d: 'M' + f(x1) + ' ' + f(y1) + 'L' + f(hx) + ' ' + f(hy), head: 'M' + f(x2) + ' ' + f(y2) + 'L' + f(hx + nx) + ' ' + f(hy + ny) + 'L' + f(hx - nx) + ' ' + f(hy - ny) + 'Z',
         stroke: on ? TONE[b] : t.line2, sw: on ? 2.5 : 1.5, dash: on ? 'none' : '4 5',
-        label: G.labels ? label : '', hasLabel: G.labels, lx: f((x1 + x2) / 2) + 'px', ly: f((y1 + y2) / 2) + 'px', ink: on ? t.ink : t.muted
+        label: G.labels ? label : '', hasLabel: G.labels, lblFont: /\(/.test(label) ? AT_MONO : 'font-family: inherit', lx: f((x1 + x2) / 2) + 'px', ly: f((y1 + y2) / 2) + 'px', ink: on ? t.ink : t.muted
       };
     }).filter((e) => e);
     const nodes = STATES.map((id) => {

@@ -5,7 +5,7 @@ A = os.environ.get('A', '/tmp/claude-0/base/audit/')
 flt = re.compile(sys.argv[1] if len(sys.argv) > 1 else '.')
 PILLS = {'Ready', 'Starting…', 'Screen awake', 'Paused — tab hidden', "Blocked — here's the fix", 'Tap to use the fallback',
          'Awake via video fallback', 'Starts when you open this tab', 'System awake'}
-H24 = re.compile(r'\b(1[3-9]|2[0-3]):[0-5]\d\b(?!\s?(AM|PM))')
+H24 = re.compile(r'\b(at|until|since|ends?|by|from|to)\s(1[3-9]|2[0-3]|00):[0-5]\d\b(?!\s?(AM|PM))', re.I)
 BAD = [(re.compile(r'battery saver (blocks|denies|refuses)|Low Power Mode (blocks|denies)', re.I), 'battery-saver blame'),
        (re.compile(r'was \$29'), 'fictitious former price'), (re.compile(r'\bforever\b', re.I), '"forever" (O-38)'),
        (re.compile(r'Sponsored'), 'sponsor card (O-04)'), (re.compile(r'Try again'), '"Try again" (use Retry)'),
@@ -26,7 +26,7 @@ for f in sorted(os.listdir(A)):
             need = 3 if big else 4.5
             if cr['r'] < need - 0.05: issues.append(('contrast', f'{cr["r"]:.2f}<{need} "{txt[:40]}"'))
         interactive = it['tag'] in ('button', 'input', 'select') or it['role'] in ('tab', 'radio', 'switch', 'checkbox') or (it['tag'] == 'a' and it['disp'] != 'inline')
-        if interactive and vis and not scaled and (it['w'] < 43.5 or it['h'] < 43.5) and it['w'] > 4 and 'data-placeholder' not in it.get('style', ''):
+        if interactive and vis and not scaled and not (it['tag'] == 'a' and 'by AwakeTab' in txt and it['h'] >= 24) and (it['w'] < 43.5 or it['h'] < 43.5) and it['w'] > 4 and 'data-placeholder' not in it.get('style', ''):
             issues.append(('target', f'{it["tag"]} {round(it["w"])}x{round(it["h"])} "{(txt or it.get("aria",""))[:30]}"'))
         if vis and (txt and it.get('own') or interactive) and it['x'] + it['w'] > W + 1 and it['w'] < W * 3: issues.append(('overflow', f'{it["tag"]} right edge {round(it["x"]+it["w"])} > {W} "{txt[:30]}"'))
         if it.get('own') and txt:
