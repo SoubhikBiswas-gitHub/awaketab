@@ -16,3 +16,7 @@ apps/web/.lighthouseci/
 .lighthouseci/
 apps/web/.build-lock
 apps/web/dist-*
+# Copied from packages/wake/dist at build (scripts/library.mjs)
+apps/web/public/library/
+# Built by scripts/embed-loader.mjs (the /embed/cook iframe app bundle)
+apps/web/public/embed/

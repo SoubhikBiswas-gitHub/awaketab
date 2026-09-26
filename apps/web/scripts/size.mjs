@@ -1,13 +1,22 @@
-import { readdir, readFile } from 'node:fs/promises';
-import { gzipSync } from 'node:zlib';
+import { readdir, readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { gz, pageJs } from './size-lib.mjs';
 
 // AT_DIST lets parallel verification builds target their own output directory.
 const DIST = process.env.AT_DIST
   ? `${path.resolve(process.env.AT_DIST)}/`
   : fileURLToPath(new URL('../dist/', import.meta.url));
-const limits = { css: 20 * 1024, criticalJs: 15 * 1024, totalJs: 40 * 1024 };
+
+// docs/00 §11 and §13.10. Tool page = dist/index.html; embed page = the /embed/cook iframe app; loader = the
+// host-page script at /embed.js that sites paste (docs/11 §1).
+const limits = {
+  css: 20 * 1024,
+  criticalJs: 15 * 1024,
+  totalJs: 40 * 1024,
+  embedJs: 25 * 1024,
+  loaderJs: 3 * 1024,
+};
 
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -20,34 +29,24 @@ async function walk(dir) {
   return out;
 }
 
-const html = await readFile(path.join(DIST, 'index.html'), 'utf8');
-const srcs = [...html.matchAll(/<script[^>]+src="(?<src>[^"]+)"/g)].map((m) => m.groups?.src ?? '');
-const initial = [...new Set(srcs.filter((s) => s.endsWith('.js')))];
-const criticalFiles = initial.filter((s) => s.includes('/_astro/'));
-const gz = async (buf) => gzipSync(buf, { level: 9 }).byteLength;
+// Tool page: `criticalJs` is the entry scripts plus their static-import closure (loads before the island runs);
+// `totalJs` is everything the page can ever load — the closure over static AND dynamic `import()` edges.
+// Before M8 `totalJs` summed every dist/_astro/*.js, which charged other pages' chunks (the embed app, /pro
+// scripts) to the tool page's 40 KB budget.
+const tool = await pageJs(DIST, 'index.html');
+const criticalJs = tool.criticalBytes;
+const totalJs = tool.totalBytes;
 
-// The critical path is each entry script plus everything it imports statically (shared chunks Rollup splits
-// out load before the entry runs). `import("./x.js")` is lazy and excluded; `from"./x.js"` / `import"./x.js"`
-// are static. Counting only <script src> would let a split-out shared chunk escape the 15 KB budget.
-const STATIC_IMPORT = /\b(?:from|import)\s*["'](\.{1,2}\/[^"']+\.js)["']/gu;
-const critical = new Set();
-async function closure(file) {
-  if (critical.has(file)) return;
-  critical.add(file);
-  const code = await readFile(file, 'utf8');
-  for (const m of code.matchAll(STATIC_IMPORT)) await closure(path.resolve(path.dirname(file), m[1]));
-}
-for (const src of criticalFiles) await closure(path.join(DIST, src.replace(/^\//, '')));
+// Embed iframe app (docs/11 §2, ≤ 25 KB gz): same full closure, from its own page.
+const embed = await pageJs(DIST, 'embed/cook/index.html');
+const embedJs = embed.totalBytes;
 
-let criticalJs = 0;
-for (const file of critical) criticalJs += await gz(await readFile(file));
+// Loader (docs/11 §1, ≤ 3 KB gz): a single classic script, no imports.
+const loaderPath = path.join(DIST, 'embed.js');
+const loaderJs = (await stat(loaderPath).catch(() => null)) ? gz(await readFile(loaderPath)) : Number.POSITIVE_INFINITY;
 
-const astroJs = (await walk(path.join(DIST, '_astro'))).filter((f) => f.endsWith('.js'));
-let totalJs = 0;
-for (const f of astroJs) totalJs += await gz(await readFile(f));
-
-const styles = [...html.matchAll(/<style[^>]*>(?<css>.*?)<\/style>/gsu)].map((m) => m.groups?.css ?? '').join('');
-const totalCss = await gz(Buffer.from(styles));
+const styles = [...tool.html.matchAll(/<style[^>]*>(?<css>.*?)<\/style>/gsu)].map((m) => m.groups?.css ?? '').join('');
+const totalCss = gz(Buffer.from(styles));
 
 // docs/03-architecture.md ADR-013: shadcn/ui renders at build time only. A hydrated
 // framework island (<astro-island>) or a React runtime chunk in dist is a budget breach.
@@ -57,6 +56,7 @@ for (const f of htmlFiles) {
   const doc = await readFile(f, 'utf8');
   if (doc.includes('<astro-island')) hydrated.push(path.relative(DIST, f));
 }
+const astroJs = (await walk(path.join(DIST, '_astro'))).filter((f) => f.endsWith('.js'));
 const reactChunks = astroJs
   .map((f) => path.relative(DIST, f))
   .filter((f) => /(^|\/)(react|jsx-runtime|client)\.[A-Za-z0-9_-]+\.js$/u.test(f));
@@ -65,7 +65,11 @@ const report = {
   criticalJs,
   totalCss,
   totalJs,
-  files: [...critical].map((f) => `/${path.relative(DIST, f)}`),
+  embedJs,
+  loaderJs,
+  files: tool.files(tool.critical),
+  lazyFiles: tool.files(tool.all).filter((f) => !tool.files(tool.critical).includes(f)),
+  embedFiles: embed.files(embed.all),
   hydrated,
   reactChunks,
 };
@@ -74,6 +78,8 @@ if (
   totalJs > limits.totalJs ||
   criticalJs > limits.criticalJs ||
   totalCss > limits.css ||
+  embedJs > limits.embedJs ||
+  loaderJs > limits.loaderJs ||
   hydrated.length > 0 ||
   reactChunks.length > 0
 ) {

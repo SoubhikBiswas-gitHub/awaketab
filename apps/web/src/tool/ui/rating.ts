@@ -1,5 +1,5 @@
 import type { IMeta } from '@awaketab/core';
-import type { IToolCtx } from '../ctx.js';
+import { hasFeature, type IToolCtx } from '../ctx.js';
 import { t } from '../i18n.js';
 import { toast } from './toast.js';
 
@@ -19,7 +19,8 @@ export function ratingEligible(meta: Pick<IMeta, 'sessionCount' | 'ratingPrompt'
 function busy(ctx: IToolCtx): boolean {
   const s = ctx.store.get();
   const live = s.session?.status === 'active' || s.session?.status === 'paused';
-  return live || s.lock === 'held' || s.ui.dialog !== null || s.ui.mode !== 'standard';
+  // A licensed kiosk (`kiosk.branding`) never shows rating or upsell prompts (docs/09 §7.2).
+  return live || s.lock === 'held' || s.ui.dialog !== null || s.ui.mode !== 'standard' || hasFeature(ctx, 'kiosk.branding');
 }
 
 function record(ctx: IToolCtx, action: 'rated' | 'later' | 'never', stars?: number): void {

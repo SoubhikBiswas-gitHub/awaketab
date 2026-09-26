@@ -48,8 +48,8 @@ export const PLAN_FEATURES: Record<TPlanId, TFeatureGate[]> = {
     'ads.free',
   ],
   biz_embed_site_yearly: ['embed.noattrib', 'ads.free'],
-  biz_kiosk_site: ['kiosk.branding', 'ambient.logo', 'ads.free'],
-  biz_kiosk_5: ['kiosk.branding', 'ambient.logo', 'ads.free'],
+  biz_kiosk_site: ['kiosk.branding', 'ambient.message', 'ambient.logo', 'ads.free'],
+  biz_kiosk_5: ['kiosk.branding', 'ambient.message', 'ambient.logo', 'ads.free'],
 };
 
 export const DONATE_URL = 'https://buymeacoffee.com/awaketab';

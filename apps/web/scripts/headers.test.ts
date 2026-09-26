@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import * as headerTools from './headers.mjs';
@@ -20,6 +22,57 @@ describe('Cloudflare generated rules', () => {
     expect(embedRule?.headers).toContain('X-Robots-Tag');
     expect(headers).toContain('/pt-br/learn/*');
     expect(headers).toContain("frame-ancestors *");
+  });
+
+  it('makes only /embed/* frameable, and keeps it noindex (docs/14 §3, docs/11 §7)', () => {
+    const text = headerTools.generateHeaders();
+    const at = (pathname: string) => headerTools.resolveHeaders(text, pathname);
+
+    const widget = at('/embed/cook');
+    expect(widget.get('content-security-policy')).toMatch(/frame-ancestors \*$/u);
+    expect(widget.get('content-security-policy')).not.toContain("frame-ancestors 'none'");
+    expect(widget.has('x-frame-options')).toBe(false);
+    expect(widget.get('x-robots-tag')).toBe('noindex');
+    expect(widget.get('permissions-policy')).toContain('screen-wake-lock=(self)');
+    expect(widget.get('content-security-policy')).toContain("connect-src 'self'");
+
+    // The /embed landing page is an ordinary, indexable, unframeable page even though /embed/* matches it.
+    for (const landing of ['/embed', '/embed/']) {
+      const h = at(landing);
+      expect(h.get('content-security-policy')).toContain("frame-ancestors 'none'");
+      expect(h.get('content-security-policy')).not.toContain('frame-ancestors *');
+      expect(h.get('x-frame-options')).toBe('DENY');
+      expect(h.has('x-robots-tag')).toBe(false);
+    }
+
+    for (const other of ['/', '/30m', '/pip', '/library', '/kiosk', '/for/cooking', '/es/learn/x']) {
+      const h = at(other);
+      expect(h.get('x-frame-options'), other).toBe('DENY');
+      expect(h.get('content-security-policy'), other).toContain("frame-ancestors 'none'");
+      expect(h.get('content-security-policy'), other).not.toContain('frame-ancestors *');
+    }
+
+    // Cloudflare joins a header set by two matching rules; the specific rules detach the /* default first.
+    expect(at('/embed.js').get('cache-control')).toBe('public, max-age=3600');
+    expect(at('/_astro/x.js').get('cache-control')).toBe('public, max-age=31536000, immutable');
+    expect(at('/sw.js').get('cache-control')).toBe('no-cache');
+    expect(at('/api/health').get('cache-control')).toBe('no-store');
+  });
+
+  it('ships the generated rules as public/_headers (what Cloudflare actually reads)', async () => {
+    // vitest runs from the repo root under happy-dom, where import.meta.url is not a file: URL.
+    const shipped = await readFile(path.resolve('apps/web/public/_headers'), 'utf8');
+    expect(shipped).toBe(headerTools.generateHeaders());
+    const widget = headerTools.resolveHeaders(shipped, '/embed/cook');
+    expect(widget.get('content-security-policy')).toMatch(/frame-ancestors \*$/u);
+    expect(widget.has('x-frame-options')).toBe(false);
+  });
+
+  it('keeps tool routes to first-party scripts and connections; only kiosk logos may be https images', () => {
+    const csp = headerTools.resolveHeaders(headerTools.generateHeaders(), '/').get('content-security-policy') ?? '';
+    expect(csp).toContain("script-src 'self';");
+    expect(csp).toContain("connect-src 'self';");
+    expect(csp).toContain("img-src 'self' data: https:;");
   });
 
   it('generates canonical redirects', () => {

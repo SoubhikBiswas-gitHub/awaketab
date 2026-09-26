@@ -9,7 +9,10 @@ const DEFAULT_CSP = [
   "default-src 'self'",
   "script-src 'self'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
+  // `https:` images: the Kiosk licence's operator logo (`logo=`, docs/09 §7.2) is the only image a tool route
+  // may load from another host, and only when a licensed kiosk URL asks for it. Scripts, styles, fonts and
+  // connections stay 'self' (docs/14 §3; decision recorded in docs/00 §13.10).
+  "img-src 'self' data: https:",
   "media-src 'self' data:",
   "connect-src 'self'",
   "font-src 'self'",
@@ -32,6 +35,9 @@ const CONTENT_CSP = [
   "base-uri 'self'",
   'report-to csp',
 ].join('; ');
+
+const EMBED_CSP =
+  "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; frame-ancestors *";
 
 const contentRoutes = [
   ...CONTENT_FAMILIES.map((family) => `/${family}/*`),
@@ -64,27 +70,50 @@ ${content}
 
 /embed/*
   ! Content-Security-Policy
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; frame-ancestors *
+  Content-Security-Policy: ${EMBED_CSP}
   ! X-Frame-Options
   X-Robots-Tag: noindex
+
+/embed
+  ! Content-Security-Policy
+  Content-Security-Policy: ${DEFAULT_CSP}
+  ! X-Frame-Options
+  X-Frame-Options: DENY
+  ! X-Robots-Tag
+
+/embed/
+  ! Content-Security-Policy
+  Content-Security-Policy: ${DEFAULT_CSP}
+  ! X-Frame-Options
+  X-Frame-Options: DENY
+  ! X-Robots-Tag
+
+/embed.js
+  ! Cache-Control
+  Cache-Control: public, max-age=3600
 
 /pip
   X-Robots-Tag: noindex
 
 /config/*
+  ! Cache-Control
   Cache-Control: public, max-age=300
 
 /sw.js
+  ! Cache-Control
   Cache-Control: no-cache
   Service-Worker-Allowed: /
 
 /_astro/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
 /assets/*
+  ! Cache-Control
   Cache-Control: public, max-age=31536000, immutable
 
 /api/*
+  ! Cache-Control
   Cache-Control: no-store
   X-Robots-Tag: noindex
 `;
@@ -97,6 +126,48 @@ export function generateRedirects() {
 /how-we-tested /learn/how-we-tested 301
 /pro/buy /pro 302
 `;
+}
+
+/** Header rules in file order: `{ route, set: [[name, value]], detach: [name] }` (Cloudflare `_headers` syntax). */
+export function parseHeaderRules(text) {
+  const rules = [];
+  for (const line of text.split('\n')) {
+    if (!line.trim() || line.trimStart().startsWith('#')) continue;
+    if (!/^\s/u.test(line)) {
+      rules.push({ route: line.trim(), set: [], detach: [] });
+      continue;
+    }
+    const rule = rules.at(-1);
+    if (!rule) continue;
+    const body = line.trim();
+    if (body.startsWith('!')) rule.detach.push(body.slice(1).trim().toLowerCase());
+    else {
+      const i = body.indexOf(':');
+      rule.set.push([body.slice(0, i).trim().toLowerCase(), body.slice(i + 1).trim()]);
+    }
+  }
+  return rules;
+}
+
+function routeMatches(route, pathname) {
+  if (!route.startsWith('/')) return false;
+  const escaped = route.replace(/[.+?^${}()|[\]\\]/gu, '\\$&').replaceAll('*', '.*');
+  return new RegExp(`^${escaped}$`, 'u').test(pathname);
+}
+
+/**
+ * The headers Cloudflare Pages would send for `pathname`: every matching rule applies in file order; `! Name`
+ * detaches a header set by an earlier (less specific) rule; a header set twice is joined with ", ".
+ * Header names are lower-cased. Used by tests to assert the per-route security contract (docs/14 §3).
+ */
+export function resolveHeaders(text, pathname) {
+  const out = new Map();
+  for (const rule of parseHeaderRules(text)) {
+    if (!routeMatches(rule.route, pathname)) continue;
+    for (const name of rule.detach) out.delete(name);
+    for (const [name, value] of rule.set) out.set(name, out.has(name) ? `${out.get(name)}, ${value}` : value);
+  }
+  return out;
 }
 
 export function parseRules(text) {

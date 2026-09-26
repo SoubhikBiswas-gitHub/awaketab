@@ -6,3 +6,10 @@ export interface IParsedRule {
 export function generateHeaders(): string;
 export function generateRedirects(): string;
 export function parseRules(text: string): IParsedRule[];
+export interface IHeaderRule {
+  readonly route: string;
+  readonly set: ReadonlyArray<readonly [string, string]>;
+  readonly detach: readonly string[];
+}
+export function parseHeaderRules(text: string): IHeaderRule[];
+export function resolveHeaders(text: string, pathname: string): Map<string, string>;

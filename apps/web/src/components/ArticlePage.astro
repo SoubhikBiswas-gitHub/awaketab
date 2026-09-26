@@ -150,6 +150,9 @@ const relatedLink = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11 px-4 text
       }
     </nav>
   </div>
+  {/* Page-specific data after the prose (e.g. the device matrix on /learn/how-we-tested); outside .at-prose so
+      it never counts toward the article word band. */}
+  <slot name="after" />
   <Card className="mt-8 py-4">
     <CardContent className="flex items-center gap-3 px-4 text-sm">
       <span

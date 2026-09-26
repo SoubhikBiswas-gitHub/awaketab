@@ -1,0 +1,230 @@
+/*
+ * AwakeTab Embed widget (/embed/cook) — docs/11 §2. Reads only the --at-* tokens (docs/05 §1.1); logical
+ * properties only. Sizes: compact 320 × 96 (the loader's reserved box), full 100 % × 240; the widget asks the
+ * loader for more height (awaketab:resize) only when a notice or timers need it.
+ */
+
+html,
+body.at-embed-body {
+  margin: 0;
+  background: var(--at-ground);
+  color: var(--at-ink);
+  font-family: var(--at-font);
+}
+
+.at-embed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--at-s-1);
+  padding-block: var(--at-s-2);
+  padding-inline: var(--at-s-3);
+  font-size: var(--at-t-sm);
+  line-height: 1.3;
+}
+
+.at-embed :focus-visible {
+  outline: 2px solid var(--at-focus);
+  outline-offset: 2px;
+}
+
+.at-embed-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--at-s-3);
+}
+
+.at-embed-toggle,
+.at-embed-btn {
+  min-block-size: 44px;
+  min-inline-size: 44px;
+  padding-inline: var(--at-s-4);
+
+  /* --at-embed-brand / --at-embed-on-brand are set only for licensed sites (config.ts applyBranding); the
+     defaults are the AA-checked primary pair (--at-accent-text on --at-on-accent), as in tool.css. */
+  border: 1px solid var(--at-embed-brand, var(--at-accent-text));
+  border-radius: 999px;
+  background: var(--at-embed-brand, var(--at-accent-text));
+  color: var(--at-embed-on-brand, var(--at-on-accent));
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.at-embed-toggle[aria-pressed="true"] {
+  background: var(--at-surface);
+  color: var(--at-ink);
+  border-color: var(--at-line);
+}
+
+.at-embed-status {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--at-s-2);
+  min-inline-size: 0;
+}
+
+/* Pill — mirrors tool.css .at-pill state tints (docs/05 §3.2); an <output>, never a control here. */
+.at-embed-pill {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 28px;
+  padding-inline: var(--at-s-3);
+  border: 1px solid var(--at-line);
+  border-radius: 999px;
+  background: var(--at-surface);
+  font-size: var(--at-t-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.at-embed-pill[data-lock="requesting"] {
+  color: var(--at-muted);
+}
+
+.at-embed-pill[data-lock="held"] {
+  border-color: var(--at-accent);
+  background: color-mix(in srgb, var(--at-accent) 12%, var(--at-surface));
+}
+
+.at-embed-pill[data-lock="lost"] {
+  border-color: var(--at-warn);
+  background: color-mix(in srgb, var(--at-warn) 12%, var(--at-surface));
+}
+
+.at-embed-pill[data-lock="denied"] {
+  border-color: var(--at-bad);
+  background: color-mix(in srgb, var(--at-bad) 12%, var(--at-surface));
+}
+
+.at-embed-pill[data-lock="fallback"] {
+  border-color: color-mix(in srgb, var(--at-accent) 60%, transparent);
+  background: color-mix(in srgb, var(--at-accent) 8%, var(--at-surface));
+  color: var(--at-muted);
+}
+
+.at-embed-clock {
+  min-block-size: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.at-embed-digits {
+  font-size: var(--at-t-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.at-embed-digits.is-muted {
+  color: var(--at-muted);
+}
+
+.at-embed[data-mode="minimal"] .at-embed-clock {
+  display: none;
+}
+
+.at-embed-hint,
+.at-embed-attrib {
+  margin: 0;
+  color: var(--at-muted);
+  font-size: var(--at-t-xs);
+}
+
+.at-embed-attrib a {
+  color: var(--at-accent-text);
+  text-underline-offset: 2px;
+}
+
+.at-embed-notice {
+  padding-block: var(--at-s-1);
+  padding-inline: var(--at-s-2);
+  border-inline-start: 3px solid var(--at-bad);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--at-bad) 8%, var(--at-surface));
+  font-size: var(--at-t-xs);
+}
+
+.at-embed-notice p {
+  margin: 0;
+}
+
+.at-embed-notice a {
+  color: var(--at-accent-text);
+  font-weight: 600;
+}
+
+/* full: 100 % × 240 — bigger digits and the kitchen timers inline. */
+.at-embed[data-size="full"] .at-embed-digits {
+  font-size: var(--at-t-3xl);
+}
+
+.at-embed-timers {
+  display: grid;
+  gap: var(--at-s-2);
+}
+
+.at-embed-timer-list {
+  display: grid;
+  gap: var(--at-s-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.at-embed-timer {
+  display: flex;
+  align-items: center;
+  gap: var(--at-s-2);
+  padding-inline: var(--at-s-2);
+  border: 1px solid var(--at-line);
+  border-radius: 8px;
+  background: var(--at-surface);
+}
+
+.at-embed-timer-name {
+  flex: 1;
+  font-weight: 600;
+}
+
+.at-embed-timer-left {
+  font-variant-numeric: tabular-nums;
+}
+
+.at-embed-timer[data-flash] {
+  border-color: var(--at-good);
+  background: color-mix(in srgb, var(--at-good) 14%, var(--at-surface));
+}
+
+.at-embed-timer .at-embed-btn {
+  background: none;
+  color: var(--at-ink);
+  border-color: transparent;
+}
+
+.at-embed-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--at-s-2);
+}
+
+.at-embed-quick .at-embed-btn {
+  padding-inline: var(--at-s-3);
+  background: var(--at-surface);
+  color: var(--at-ink);
+  border-color: var(--at-line);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .at-embed-timer {
+    transition: background-color var(--at-d-slow, 320ms) ease;
+  }
+}

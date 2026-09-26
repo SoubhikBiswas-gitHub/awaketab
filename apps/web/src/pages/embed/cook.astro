@@ -1,0 +1,63 @@
+---
+// /embed/cook — the AwakeTab Embed iframe app (docs/11 §2, E12-T01). noindex, no ads (docs/00 §8.3), no footer,
+// no fonts, no third-party requests. `_headers` gives /embed/* `frame-ancestors *` and drops X-Frame-Options.
+// Zero hydration (docs/03 ADR-013): one vanilla module, src/tool/embed/app.ts.
+import '../../styles/tokens.css';
+import '../../styles/embed.css';
+import { catalogFor, t } from '../../i18n/load';
+import { LOCALES } from '../../i18n/locales';
+import { embedCatalog } from '../../tool/embed/catalog';
+
+const catalogs = JSON.stringify(Object.fromEntries(LOCALES.map((l) => [l, embedCatalog(catalogFor(l))]))).replaceAll(
+  '<',
+  '\\u003c',
+);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#FAF7F2" />
+    <title>{t('embed.frame.title')}</title>
+    <script is:inline src="/theme-boot.js"></script>
+  </head>
+  <body class="at-embed-body">
+    <main id="awaketab-embed" class="at-embed" data-size="compact" data-mode="cook">
+      <h1 class="sr-only" data-t="embed.frame.title">{t('embed.frame.title')}</h1>
+      <script is:inline type="application/json" data-embed-catalogs set:html={catalogs} />
+      <div class="at-embed-bar">
+        <button class="at-embed-toggle" type="button" data-embed-toggle aria-pressed="false">{t('embed.start')}</button>
+        <div class="at-embed-status">
+          <output class="at-embed-pill" data-pill data-lock="idle" aria-live="polite" aria-atomic="true">
+            <span data-pill-text>{t('tool.pill.idle')}</span>
+          </output>
+          <button class="at-embed-clock" type="button" data-embed-clock aria-pressed="false" aria-describedby="embed-hint">
+            <span class="at-embed-digits is-muted" data-embed-digits role="timer">00:00:00</span>
+          </button>
+        </div>
+      </div>
+      <p class="at-embed-hint" id="embed-hint" data-embed-hint hidden>{t('embed.cook.pause')}</p>
+      <div class="at-embed-notice" data-embed-notice hidden>
+        <p data-embed-notice-text></p>
+        <a data-embed-notice-link href="https://awaketab.com/embed#allow" target="_blank" rel="noopener" data-t="embed.advice.fix" hidden
+          >{t('embed.advice.fix')}</a
+        >
+      </div>
+      <section class="at-embed-timers" data-embed-timers aria-labelledby="embed-timers-title" hidden>
+        <h2 class="sr-only" id="embed-timers-title" data-t="embed.timers.title">{t('embed.timers.title')}</h2>
+        <ul class="at-embed-timer-list" data-embed-timer-list></ul>
+        <div class="at-embed-quick" role="group" aria-labelledby="embed-timers-title" data-embed-quick></div>
+      </section>
+      <p class="sr-only" aria-live="polite" data-embed-live></p>
+      <p class="at-embed-attrib" data-embed-attrib>
+        <a href="https://awaketab.com/?ref=embed&source=embed" target="_blank" rel="noopener" data-t="embed.attribution"
+          >{t('embed.attribution')}</a
+        >
+      </p>
+    </main>
+    <script is:inline type="module" src="/embed/app.js"></script>
+  </body>
+</html>
