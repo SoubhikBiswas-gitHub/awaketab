@@ -95,7 +95,7 @@ ul,ol{margin:0;padding:0;list-style:none}
       <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 8px">
         <sc-for list="{{sizes}}" as="z" hint-placeholder-count="4">
           <div style="display: flex; flex-direction: column; align-items: center; gap: 8px">
-            <div style="width: {{z.box}}; height: {{z.box}}; border-radius: {{z.radius}}; background: {{z.tile}}; display: grid; place-items: center">
+            <div data-placeholder="toolbar or store tile" style="width: {{z.box}}; height: {{z.box}}; border-radius: {{z.radius}}; background: {{z.tile}}; display: grid; place-items: center">
               <svg width="{{z.px}}" height="{{z.px}}" viewBox="0 0 48 48" aria-label="{{z.aria}}"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{z.ring}}" stroke-width="{{z.stroke}}" stroke-linecap="round"></path><circle cx="24" cy="9" r="{{z.bead}}" fill="{{z.lamp}}"></circle></svg>
             </div>
             <span style="display: flex; flex-direction: column; align-items: center; font-size: 12px; line-height: 16px"><span class="at-num" style="color: {{t.ink2}}">{{z.label}}</span><span style="color: {{t.muted}}">{{z.sub}}</span></span>

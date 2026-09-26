@@ -47,6 +47,8 @@ Additional tokens (from the design critique, 27 Sep 2026):
 | `--at-horizon-ink` | `#F6F2EA` | `#F6F2EA` | Digits on the Horizon sky and water |
 | `--at-halo` | lamp 18 % → 0, radial 50 % 26 % | lamp 10 % → 0 | The single status halo behind pill/face on every surface |
 
+Extension toolbar badge (Chrome draws it; white text): Screen level `#087B87` (5.0:1), System level `#2B3A67` (11:1). Replaces the amber display badge in docs/00 `BADGE_COLORS` and docs/10, because amber means paused.
+
 Night mode (OLED, red digits): `--at-night-ink #FF5A3C`, `--at-night-ink-2 #E8563C`, `--at-night-muted #A89690`, `--at-night-line #3A2E2A`; ground `#000`. Scrim is always `rgba(4,7,12,.55)`.
 
 ### 2.2 Lamp colours (user choice — replaces the docs/05 §1.1a amber/indigo/teal/rose set)

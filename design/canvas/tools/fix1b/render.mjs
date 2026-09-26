@@ -110,6 +110,7 @@ for (const [file, b] of Object.entries(boards)) {
       await Promise.all(['200', '300', '400', '500', '600'].map((w) => document.fonts.load(w + ' 16px Geist').catch(() => 0)).concat([document.fonts.load('400 16px "Geist Mono"').catch(() => 0), document.fonts.load('600 16px "Space Grotesk"').catch(() => 0)]));
       await document.fonts.ready;
       await new Promise((r) => setTimeout(r, 500));
+      for (const an of document.getAnimations()) { try { if (an.effect?.getComputedTiming().iterations !== Infinity) an.finish(); } catch {} } // measure the settled state, not mid-fade
       const parseC = (c) => { const m = /rgba?\(([^)]+)\)/.exec(c || ''); if (!m) return null; const p = m[1].split(/[ ,/]+/).filter(Boolean).map(Number); return [p[0], p[1], p[2], p.length > 3 ? p[3] : 1]; };
       const lum = (c) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
       const blend = (top, bot) => { const a = top[3]; return [top[0] * a + bot[0] * (1 - a), top[1] * a + bot[1] * (1 - a), top[2] * a + bot[2] * (1 - a), 1]; };

@@ -353,7 +353,7 @@ function atHeader(c, t, layout, current, bead) {
     navStyle: 'display: flex; align-items: center; gap: 32px',
     nav: AT_NAV.map(([label, href, id]) => ({
       label, href, cur: id === current ? 'page' : 'false',
-      style: 'display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; font-size: 15px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2),
+      style: 'display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; text-decoration: none; font-size: 15px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2),
       dot: 'width: 6px; height: 6px; border-radius: 999px; background: ' + (id === current ? t.lamp : 'transparent')
     })),
     bar: 'position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line,
@@ -362,7 +362,7 @@ function atHeader(c, t, layout, current, bead) {
       sel: id === theme ? 'true' : 'false', aria: id === 'auto' ? 'Auto, follows your system' : id === 'light' ? 'Light' : 'Dark', title: id === 'auto' ? 'Auto: follows your system' : id === 'light' ? 'Light' : 'Dark',
       icon: AT_THEME_ICON[id][0], icon2: AT_THEME_ICON[id][1],
       pick: () => c.setState({ theme: id }),
-      style: 'position: relative; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; display: grid; place-items: center; color: ' + (id === theme ? t.ink : t.muted)
+      style: 'position: relative; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; display: grid; place-items: center; color: ' + (id === theme ? t.ink : t.ink2)
     }))
   };
 }
@@ -374,7 +374,7 @@ function atFooter(t, layout) {
     style: 'flex-shrink: 0; margin-top: ' + AT_SECTION[layout] + 'px; box-sizing: border-box; padding: 24px ' + g + 'px ' + (layout === 'phone' ? 32 : 24) + 'px; border-top: 1px solid ' + t.line + '; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px',
     line: 'margin: 0; font-size: 13px; line-height: 18px; color: ' + t.muted,
     nav: 'display: flex; flex-wrap: wrap; column-gap: 20px',
-    link: 'min-height: 44px; display: inline-flex; align-items: center; font-size: 14px; line-height: 20px; color: ' + t.ink2 + '; text-decoration: none',
+    link: 'min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; font-size: 14px; line-height: 20px; color: ' + t.ink2 + '; text-decoration: none',
     links: AT_FOOT_LINKS.map(([label, href]) => ({ label, href }))
   };
 }
