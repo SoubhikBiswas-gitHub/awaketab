@@ -30,18 +30,19 @@ Related docs: `15-implementation-plan.md` (phases, gates) · `13-testing-strateg
 - [ ] Stats "Today" rolls over at local midnight (test in `Asia/Kolkata`).
 
 **Performance and quality**
-- [ ] Lighthouse mobile on `/`, `/30m`: ≥ 95 / 100 / 100 / 100; LCP lab ≤ 1.2 s; CLS 0; zero third-party requests (network assertion).
+- [ ] Lighthouse mobile on `/`, `/30m`: ≥ 95 / 100 / 100 / 100; LCP lab ≤ 1.2 s; CLS 0; zero third-party requests (network assertion). Automated: `pnpm build && pnpm lighthouse` locally or `LHCI_BASE_URL=<preview> pnpm lighthouse` (`lighthouserc.cjs`, `lighthouse.yml`) over the five docs/19 §E URLs, third-party count asserted on tool routes. Latest local run: `docs/metrics/lighthouse-local-2026-09-26.md` — everything green except LCP (≈ 1.8 s simulated mobile; needs a `src/tool/main.ts` boot change).
 - [ ] `size-limit` green: critical chunk ≤ 15 KB gz, total ≤ 40 KB gz.
-- [ ] axe: zero violations on every template in both themes; keyboard-only run of journeys 1–7 done; VoiceOver + NVDA smoke checklist done.
+- [ ] axe: zero violations on every template in both themes; keyboard-only run of journeys 1–7 done; VoiceOver + NVDA smoke checklist done. Automated: `apps/web/test/e2e/a11y.spec.ts` (every template light + dark, every tool surface light + dark + oled) and `apps/web/test/e2e/keyboard.spec.ts` (journeys 1–7, shortcuts, ambient, settings/stats/extend dialogs, visible focus, no trap), all three engines. The screen-reader smoke stays manual.
 - [ ] Visual check of every ambient-ready layout at 320 px, 390 px, 768 px, 1280 px.
 
 **PWA**
-- [ ] Installable on Chrome desktop, Android Chrome, iOS Safari (Add to Home Screen icon correct); manifest shortcuts work; offline reload serves the tool; update toast appears and never interrupts an active session.
+- [ ] Installable on Chrome desktop, Android Chrome, iOS Safari (Add to Home Screen icon correct); manifest shortcuts work; offline reload serves the tool; update toast appears and never interrupts an active session. Automated for Chromium: `security.spec.ts` asserts `Page.getInstallabilityErrors` is empty on `/` and `/es/` (Lighthouse 12 has no PWA category); offline reload is e2e journey 19; Android and iOS stay manual.
 
 **Security and headers**
-- [ ] `_headers` deployed: CSP (report-only on content routes for 2 weeks, enforced on tool routes), `Permissions-Policy: screen-wake-lock=(self), picture-in-picture=(self)`, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, COOP, `X-Frame-Options: DENY` except `/embed/*`.
+- [ ] `_headers` deployed: CSP (report-only on content routes for 2 weeks, enforced on tool routes), `Permissions-Policy: screen-wake-lock=(self), picture-in-picture=(self)`, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, COOP, `X-Frame-Options: DENY` except `/embed/*`. The generated file is verified per route class by `apps/web/test/seo/security.test.ts` (`pnpm test:seo`); check the deployed response once with `curl -sI` per class.
 - [ ] `/api/*` `no-store`; rate limiting proven with a burst test; no IP stored (KV/AE inspection). Automated in `pnpm test:functions` (burst → 429 + `Retry-After` and `ipTraces()` over every KV/AE write, `13-testing-strategy.md` §9); still spot-check production KV once.
-- [ ] Secrets set in production and preview; `.dev.vars.example` complete.
+- [ ] Secrets set in production and preview; `.dev.vars.example` complete. No secret name, secret value or private key material in any client file: `apps/web/test/seo/security.test.ts` greps `dist/` on every PR.
+- [ ] No cookies on tool routes: `apps/web/test/e2e/security.spec.ts` (every tool route, and after a full session); run it once with `PLAYWRIGHT_BASE_URL` on the production deployment to catch edge-added cookies.
 
 **Pages and legal**
 - [ ] `/about` (real author, testing setup, contact), `/privacy` (matches `08-data-storage.md` §7; extension section; ads section ready but marked "not yet active"), `/terms`, `/changelog` (first entry), `/404` with the tool.
@@ -61,7 +62,7 @@ Related docs: `15-implementation-plan.md` (phases, gates) · `13-testing-strateg
 
 ## 3. P2 — Content + launch (weeks 3–5)
 
-**Content QA (per page, automated by `pnpm test:seo` + manual read)**
+**Content QA (per page, automated by `pnpm test:seo` + manual read; axe and Lighthouse per template by `a11y.spec.ts` / `pnpm lighthouse`)**
 - [ ] 18 `/for`, 12 `/on`, 8 `/guides` published in English; hub pages `/for`, `/on`, `/guides` live.
 - [ ] Each page: one `<h1>` matching intent; title ≤ 60 with the formula; description 50–155; canonical; hreflang set reciprocal; `Article` + `BreadcrumbList` JSON-LD valid; OG image; `lastVerified`; honest-limit callout present; 3–5 FAQs; ≥ 3 related links; no orphan pages; tool embedded with the right preset/mode.
 - [ ] Every browser/OS claim traceable to `src/data/support-matrix.json`.

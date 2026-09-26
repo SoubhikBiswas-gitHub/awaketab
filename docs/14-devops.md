@@ -92,7 +92,9 @@ Preview deployments send `X-Robots-Tag: noindex` via `_headers` keyed on the `*.
   X-Robots-Tag: noindex
 ```
 
-Content-route CSPs are generated at build from a single template plus the active network's host list (`apps/web/scripts/headers.mjs`) so the five families never drift. `/api/csp` collects CSP reports into Analytics Engine (`client_error {code:'csp'}`) — PROPOSED code value; accepted.
+Content-route CSPs are generated at build from a single template plus the active network's host list (`apps/web/scripts/headers.mjs`) so the five families never drift.
+
+**Detach before override.** Cloudflare Pages applies every rule that matches a path and joins a header set by two rules with ", ". Every rule above that replaces a `/*` default therefore starts with `! <Header>` in the generated file: `! Content-Security-Policy` on the content families and `/embed/*`, `! X-Frame-Options` on `/embed/*`, and `! Cache-Control` on `/config/*`, `/sw.js`, `/_astro/*`, `/assets/*` and `/api/*` (added at M9: hashed assets were shipping "public, max-age=0, must-revalidate, public, max-age=31536000, immutable"). `_headers` never applies to Pages Functions responses; `/api/*` handlers set `no-store` themselves. `apps/web/test/seo/security.test.ts` resolves the built `_headers` per route class the same way and asserts every header in this section (`13-testing-strategy.md` §8). `/api/csp` collects CSP reports into Analytics Engine (`client_error {code:'csp'}`) — PROPOSED code value; accepted.
 
 ---
 
@@ -127,7 +129,7 @@ Commit messages: Conventional Commits (`feat(engine): …`, `fix(seo): …`, `co
 
 `nightly.yml` (02:00 UTC): e2e firefox + webkit, visual regression, link check over all locales, CrUX pull (§9), dependency audit. Since M6 the job installs chromium too and runs `VISUAL=1 pnpm exec playwright test apps/web/test/e2e/visual.spec.ts --project=chromium --update-snapshots=missing` (the spec skips itself without `VISUAL=1`), then uploads `visual.spec.ts-snapshots` and `test-results` as the `visual-snapshots` artifact even on failure. Baselines are not committed yet. Playwright blocks service workers in every project (`playwright.config.ts`); only the offline journey allows them.
 
-`lighthouse.yml` (PR): LHCI against the preview URL with `lighthouserc.json` budgets; comment on the PR.
+`lighthouse.yml` (PR, `deployment_status`, manual): LHCI with `lighthouserc.cjs` (`13-testing-strategy.md` §7). On a successful Pages preview deployment (`deployment_status` from the Cloudflare Pages GitHub integration) or a manual run with `base_url`, `LHCI_BASE_URL` is the preview origin and nothing is built; on a plain PR it builds and LHCI starts `pnpm --filter web preview` on 127.0.0.1:4321. Reports upload to temporary public storage and as the `lighthouse-reports` artifact; set the `LHCI_GITHUB_APP_TOKEN` secret to get status checks on the PR. Locally: `pnpm build && pnpm lighthouse`.
 
 `release.yml` (main): changesets → version PR → on merge publish `@awaketab/wake` with `npm publish --provenance --access public` (OIDC; no long-lived npm token).
 
