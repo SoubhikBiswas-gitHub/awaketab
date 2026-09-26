@@ -172,7 +172,7 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 | `/pro` · `/pro/activate` · `/pro/manage` | Pricing, key entry, device list |
 | `/extension` · `/embed` · `/kiosk` · `/library` | Product landing pages |
 | `/embed/cook` | Iframe app for the Cook Mode widget (noindex) |
-| `/pip` | Document Picture-in-Picture content (noindex) |
+| `/pip` · `/{lang}/pip` | Popup fallback for Document Picture-in-Picture, in the opener's language (noindex, `Disallow`ed, not in any sitemap, no cards or ads) |
 | `/about` · `/privacy` · `/terms` · `/changelog` · `/support-matrix` · `/how-we-tested` | Trust and freshness pages |
 | `/404` | Offers the tool |
 | `/api/*` | Pages Functions (see §9) |
@@ -418,6 +418,38 @@ Accepted on 2026-09-26 with the M6 implementation. Specs: `04-engine-spec.md` §
 **i18n**
 
 55 new keys, present in all 8 locales: groups `ambient.*` (titles, focus, message, cook timers), `stats.*`, `rating.*`, `end.*` (`end.notify.title`, `end.notify.body`, `end.titleFlash`), `settings.accent.*`, `settings.ambient.*` additions, `settings.notifications.unavailable`, `pip.add15.label`, `pip.empty`, `tool.toast.batteryLow`, `tool.toast.proMessage`.
+
+### 13.11 M6 follow-ups
+
+Accepted on 2026-09-26 with the M6 follow-up work. Specs: `05-frontend-spec.md` §3.14, §3.17, §3.23, §9; `08-data-storage.md` §2.2, §2.3, §6; `04-engine-spec.md` §10, §13.
+
+**Storage and engine (`@awaketab/core`)**
+
+| Identifier | Decision |
+|---|---|
+| `IStats.daySessions?: Record<string, number>` | Local day key → sessions of ≥ 1 min awake that **ended** that day. It is incremented wherever `IStats.sessions` is. Optional and backward-compatible: records written before it have no field, and readers treat a missing day as unknown, never as a guessed 0. It is pruned with `days` (365 days) |
+| `IStats.dayFocus?: Record<string, number>` | Local day key → focus blocks that **completed** that day. A focus block is a session whose `modeState.focusBlock === true` that ends with reason `completed`. The "N focus blocks today" line reads it. It is kept apart from `daySessions` so that the common record stays one number per day and `dayFocus` stays empty for people who never use focus mode |
+| `ISession.modeState.focusBlock` | `true` on a session started by focus mode's "Start a focus block" (set with `updateSession()`). An extension of a finished block is a plain focus-mode session and does not count |
+| `countDay(rec, now, timeZone?)` | Exported from `stats.ts`: adds one to the local day of `now` and creates the record if it is missing |
+| `pruneDays()` | Keeps only number values (localStorage is user-editable). `storage.stats()` prunes `daySessions`/`dayFocus` too, and drops either one when it is not an object |
+| `exportStatsCsv()` | The header `date,awake_minutes,sessions` is unchanged. Rows are the union of the `days` and `daySessions` keys. The `sessions` cell is `daySessions[date]`, or empty when that day has no count |
+
+**Tool island and pages**
+
+| Identifier | Decision |
+|---|---|
+| `IStatsSummary.todaySessions` (`stats/heatmap.ts`) | `daySessions[today]` or 0. The Stats panel "Today" row reads "42 min · 2 sessions" (reuses `stats.totalValue`) |
+| `[data-focus-today]` | Focus-mode line "N focus blocks today", hidden at 0; re-read from `at.v1.stats` when a block starts or ends |
+| `SponsorCard.astro` · `data-sponsor="idle" \| "extend"` | One build-time component for both slots. Both render only when `PUBLIC_SPONSOR_ENABLED=1`, and both are filled from one `/config/sponsor.json` fetch. `extend` sits inside the ExtendPrompt. It is set to `hidden` (`display: none`) before the dialog can open when there is nothing to show (Pro `ads.free`, or no or invalid config). Otherwise it keeps its 300 × 100 box. `sponsor_view` fires once per page view, from whichever slot shows first |
+| `mountSponsor(ctx)` | Now finds its slots itself; `main.ts` passes only `ctx` |
+| `/{lang}/pip` · `PipPage.astro` | The popup fallback in `es`, `pt-br`, `de`, `fr`, `ja`, `zh`, `hi` (and `/pip` for `en`). The page renders its static text at build time and embeds only the strings `pip-mirror.ts` looks up at runtime (`tool.pill.*`, `tool.timer.indefiniteIdle`), not the whole catalog. `X-Robots-Tag: noindex` per route (`scripts/headers.mjs`), `Disallow` per route in `robots.txt`, precached as shell pages by `sw.mjs` |
+| `pipPath(htmlLang)` (`pip.ts`) | Maps the opener's `<html lang>` to `/pip` or `/{lang}/pip` through an allow-list of the seven locale folders; anything else → `/pip` |
+| `PIP_PRO_SIZE` | 280 × 160 — the Document PiP window size requested with `pip.pro` (free stays `PIP_SIZE` 280 × 120) |
+| `mirrorAmbient(ctx, body)` (`pip.ts`) | `pip.pro` only: clones the page's ambient digits into `.at-pip-ambient` in the PiP window through a `MutationObserver`. That means the clock `[data-clock]` in `clock`/`night`, or `[data-focus-label]` + `[data-focus-digits]` while a focus block runs. `body[data-ambient]` hides the session timer; the pill always stays |
+
+**i18n**
+
+1 new key, present in all 8 locales: `ambient.focus.today` (`{n, plural, …}`).
 
 ---
 

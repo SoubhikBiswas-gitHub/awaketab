@@ -80,7 +80,7 @@ export interface ISession {
   endedAt: number | null;
   endReason: TEndReason | null;
   awakeSeconds: number;     // seconds spent in lock `held` or `fallback`
-  modeState: Record<string, unknown>; // per-mode data merged by engine.updateSession(); today only { cookTimers: ICookTimer[] }
+  modeState: Record<string, unknown>; // per-mode data merged by engine.updateSession(): { cookTimers?: ICookTimer[]; focusBlock?: true }
   source: 'web' | 'pwa' | 'pip' | 'ext' | 'embed';
 }
 ```
@@ -95,6 +95,8 @@ export interface ICookTimer {
   doneAt: number | null;    // epoch ms when it fired, null while counting
 }
 ```
+
+`modeState.focusBlock` (M6 follow-ups) is `true` on a session started by focus mode's "Start a focus block". It is what makes the session count toward `at.v1.stats.dayFocus` when it completes (§2.3).
 
 At most 3 timers. The reader is defensive: a non-array or malformed entry is dropped (localStorage is user-editable). Focus-mode phases are not stored — they are derived from `startedAt`, `pausedMs` and `settings.ambient.focus` on every repaint. Since M6 the session also changes through `addTime(ms)` (an `until` plan may become a `duration` plan with the same deadline) and `pause({ keepLock: true })` (cook mode; `04-engine-spec.md` §9).
 
@@ -111,8 +113,12 @@ export interface IStats {
   longestStreakDays: number;
   currentStreakDays: number;      // recomputed on read
   lastSessionAt: number | null;
+  daySessions?: Record<string, number>; // M6 follow-ups: 'YYYY-MM-DD' (LOCAL) → sessions ≥ 1 min that ENDED that day
+  dayFocus?: Record<string, number>;    // M6 follow-ups: 'YYYY-MM-DD' (LOCAL) → focus blocks completed that day
 }
 ```
+
+**Per-day counters (M6 follow-ups, backward-compatible, no version bump).** `daySessions` goes up wherever `sessions` does, on the local day the session ends. `dayFocus` goes up when a session with `modeState.focusBlock === true` ends with reason `completed` (`04-engine-spec.md` §10). Both are optional. Data written before them has neither field, and `storage.stats()` does not invent them: a missing record or a missing day means "not recorded", which the Stats panel shows as 0 sessions today and the CSV leaves empty. On read, both are pruned with the same 365-day window as `days`. A value that is not an object is dropped, and `pruneDays()` keeps only number values, for `days` too. `dayFocus` is a separate sparse record rather than a second number inside `daySessions`, so the common record stays `Record<string, number>`, and people who never use focus mode store nothing extra.
 
 Day key: `new Intl.DateTimeFormat('en-CA', { year:'numeric', month:'2-digit', day:'2-digit' }).format(date)` — always the user's local date (the nosleep.page UTC bug is a regression test). Minutes are added at each whole awake minute and at session end; a session spanning midnight splits at the local boundary. Retention: prune keys older than 365 days on write. Free users see the last 7 days; `stats.history` unlocks the full 365 and `stats.export` the CSV.
 
@@ -237,7 +243,7 @@ More queries in `18-analytics-kpis.md` §4.
 
 ## 6. CSV export (Pro `stats.export`)
 
-Columns: `date,awake_minutes,sessions` (one row per local day, ISO dates), plus a trailer comment `# exported YYYY-MM-DD from AwakeTab vX.Y`. Generated client-side; nothing is uploaded. `at.v1.stats` stores minutes per day but no per-day session count, so the `sessions` column is written empty (the header is kept for forward compatibility). The download is named `awaketab-stats-YYYY-MM-DD.csv`.
+Columns: `date,awake_minutes,sessions` (one row per local day, ISO dates; the rows are the union of the `days` and `daySessions` keys), plus a trailer comment `# exported YYYY-MM-DD from AwakeTab vX.Y`. Generated client-side; nothing is uploaded. `sessions` is `daySessions[date]`. It is left empty for a day with no per-day count (days recorded before the M6 follow-ups), never filled with a guessed 0. The download is named `awaketab-stats-YYYY-MM-DD.csv`.
 
 ---
 

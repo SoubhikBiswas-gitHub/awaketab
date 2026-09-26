@@ -314,7 +314,7 @@ Properties: a tick that fires late (throttled background tab, long task) compute
 `finish(reason, now)` runs the same ordered steps for every end; steps 3–6 are skipped for `reason === 'user'`.
 
 1. `status = reason === 'completed' ? 'completed' : 'aborted'`; `endReason`, `endedAt` set; tick chain stopped; `lock.release()`.
-2. Persist `at.v1.session`; `stats.finalize(session)` (credit the partial minute if `awakeSeconds % 60 ≥ 30`; increment `sessions`); track `session_end { reason, durationMin }`.
+2. Persist `at.v1.session`; `stats.finalize(session)` (credit the partial minute if `awakeSeconds % 60 ≥ 30`; increment `sessions` and `daySessions[dayKey(now)]`; when `reason === 'completed'` and `modeState.focusBlock === true`, increment `dayFocus[dayKey(now)]`); track `session_end { reason, durationMin }`.
 3. Chime (if `settings.sound.enabled`): the `AudioContext` was created and `resume()`d on the start gesture so it can play now without user interaction; a 600 ms two-tone chime from an oscillator (no audio file). Pro `sounds.custom` replaces it.
 4. Notification (if `settings.notifications` and permission `granted`): `registration.showNotification(t('end.title'), { body, tag: 'at-end', renotify: true, icon: '/icons/192.png' })` through the service worker so it works with the tab in the background. On iOS this is only possible in the installed Home-Screen app; the settings toggle is hidden when `caps.features.notifications === 'unavailable'`.
 5. Title flash: alternate `document.title` between the original and `t('end.titleFlash')` every 1 s until the document is visible *and* focused, then restore. Never `alert()`.
@@ -342,6 +342,8 @@ Written to `at.v1.session` on every status change, on `extend`, and at most ever
 ```ts
 const dayKey = (ms: number) => new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(ms)); // local date, e.g. 2026-09-07
 ```
+
+**M6 follow-ups.** `finish()` also keeps two optional per-day counters (`08-data-storage.md` §2.3), both through `countDay(rec, now, timeZone)` on the local day the session **ends**, so a session that crosses local midnight counts on the new day while its minutes split at the boundary. `daySessions` goes up under the same ≥ 1 min rule as `sessions`. `dayFocus` goes up for a `completed` session carrying `modeState.focusBlock === true`, which focus mode sets on the block it starts. A block stopped early, or an extension of a finished block, is a session but not a focus block.
 
 `creditMinute(now)` adds 1 to `days[dayKey(now)]` and `totalMinutes`, flushing to storage at most every 60 s. `finalize()` increments `sessions` when the session had ≥ 1 credited minute, prunes keys older than 365 days, and recomputes streaks: walk backwards from today; `currentStreak` counts consecutive days with `minutes ≥ 1` starting at today or, if today is empty, at yesterday; `longestStreak = max(longestStreak, currentStreak)`. `currentStreak` is derived on read, not stored. Free tier renders 7 days; `stats.history` unlocks the 365-day heatmap; `stats.export` the CSV — the data is stored for everyone so upgrading reveals history.
 
