@@ -11,8 +11,12 @@
 export const BACKUP_FORMAT = 'awaketab-kv-backup';
 export const BACKUP_VERSION = 1;
 
-/** Durable key families (docs/08 §4). `wh:*` (30-day idempotency) and `rl:*` (120 s counters) are ephemeral. */
-export const BACKUP_PREFIXES = ['lic:', 'cus:', 'embed:', 'ord:', 'rating:'] as const;
+/**
+ * Durable key families (docs/08 §4). `wh:*` (30-day idempotency) and `rl:*` (120 s counters) are ephemeral.
+ * `lk:`, `grant:` and `sub:` are the D-06 Polar id indexes: without them a restored namespace could not
+ * resolve key-less webhooks until each licence's benefit grant or next activation re-linked it.
+ */
+export const BACKUP_PREFIXES = ['lic:', 'cus:', 'embed:', 'ord:', 'lk:', 'grant:', 'sub:', 'rating:'] as const;
 
 export interface IKvRecord {
   key: string;

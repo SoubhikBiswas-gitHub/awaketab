@@ -29,8 +29,17 @@ export interface ILicenseRecord {
   plan: TPlanId;
   status: TLicenseStatus;
   keyEnc: string;
+  /** Polar order id ('' until known: a `benefit_grant.*` or key-bearing `order.created` webhook fills it). */
   polarOrderId: string;
   customerId: string;
+  /**
+   * D-06 (docs/08 §4): Polar ids that key-less webhooks carry instead of the licence key. Optional because
+   * records written before D-06 lack them; those still resolve through the raw key or `cus:{customerId}`.
+   */
+  polarLicenseKeyId?: string;
+  polarSubscriptionId?: string;
+  polarGrantId?: string;
+  benefitId?: string;
   activations: ILicenseActivation[];
   limit: number;
   exp: number;

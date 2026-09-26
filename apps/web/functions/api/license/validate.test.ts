@@ -12,11 +12,14 @@ import {
   invoke,
   ipTraces,
   jsonRequest,
+  polarEvents,
   sha256Hex,
   tamperJwt,
   TEST_IP,
+  webhookRequest,
   type IHarness,
 } from '../../../test/functions/harness';
+import { onRequestPost as onWebhook } from '../webhooks/polar';
 import { signES256 } from '../../_lib/jwt';
 import type { ILicenseRecord } from '../../_lib/license';
 
@@ -205,5 +208,33 @@ describe('POST /api/license/validate', () => {
     await validate(h, { token });
     expect(await ipTraces(TEST_IP, h.kv, h.ae)).toEqual([]);
     expect(JSON.stringify(h.kv.writes)).not.toContain(DEV_A);
+  });
+});
+
+// D-06: production webhooks carry ids, not the key; validate must still see the result.
+describe('POST /api/license/validate after key-less Polar webhooks (D-06)', () => {
+  async function hook(h: IHarness, payload: unknown): Promise<void> {
+    const { request } = await webhookRequest(payload);
+    expect((await invoke(onWebhook, h.env, request)).status).toBe(200);
+  }
+
+  it('answers { revoked: true } after subscription.revoked and keeps a canceled licence working', async () => {
+    const h = harness();
+    const row = h.polar.addKey(KEY, { customerId: 'cus_val' });
+    await hook(h, polarEvents.benefitGrant('benefit_grant.created', row));
+    const token = await activate(h);
+    await hook(h, polarEvents.subscription('subscription.canceled', row));
+    expect(((await (await validate(h, { token })).json()) as IValidateBody).revoked).toBe(false);
+    await hook(h, polarEvents.subscription('subscription.revoked', row));
+    expect(await (await validate(h, { token })).json()).toEqual({ revoked: true, reason: 'revoked' });
+  });
+
+  it('answers { revoked: true, reason: refunded } after a key-less refund of a one-time order', async () => {
+    const h = harness();
+    const row = h.polar.addKey(KEY, { customerId: 'cus_val', benefitId: BENEFITS.lifetime, expiresAt: null });
+    await hook(h, polarEvents.benefitGrant('benefit_grant.created', row));
+    const token = await activate(h);
+    await hook(h, polarEvents.refund('refund.created', row));
+    expect(await (await validate(h, { token })).json()).toEqual({ revoked: true, reason: 'refunded' });
   });
 });

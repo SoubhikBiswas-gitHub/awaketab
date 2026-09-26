@@ -1,6 +1,7 @@
 import type { IEnv } from './env';
 import type { TPlanId } from './license';
 
+/** Polar `LicenseKeyRead` / `ValidatedLicenseKey` (the fields we read). `id` is the licence-key id (D-06). */
 export interface IPolarLicense {
   status: 'granted' | 'revoked' | string;
   benefit_id: string;
@@ -10,9 +11,22 @@ export interface IPolarLicense {
   id?: string;
 }
 
+/** Polar `LicenseKeyActivationCreated`: `license_key_id` = `license_key.id`. */
 export interface IPolarActivation {
   id: string;
+  license_key_id?: string;
   license_key: IPolarLicense;
+}
+
+/**
+ * Polar `Checkout` (the fields we read). Polar's schema (OpenAPI 2026-04 / 2026-10) has `customer_id` and
+ * `subscription_id` but no licence key; `license_key` is what the activate route reads today (LAUNCH-AUDIT F-08).
+ */
+export interface IPolarCheckout {
+  status: string;
+  license_key?: string;
+  customer_id?: string | null;
+  subscription_id?: string | null;
 }
 
 export class PolarError extends Error {
@@ -102,7 +116,7 @@ export function createPolar(env: IEnv, fetchFn: typeof fetch = fetch) {
       // 404: Polar no longer has this activation (removed in the customer portal); nothing left to undo.
       if (!res.ok && res.status !== 204 && res.status !== 404) throw new PolarError('polar_unavailable', `status ${res.status}`);
     },
-    async checkout(checkoutId: string): Promise<{ status: string; license_key?: string }> {
+    async checkout(checkoutId: string): Promise<IPolarCheckout> {
       const token = env.POLAR_ACCESS_TOKEN;
       if (!token) throw new PolarError('polar_unavailable', 'missing token');
       let res: Response;
@@ -116,7 +130,7 @@ export function createPolar(env: IEnv, fetchFn: typeof fetch = fetch) {
       // Unknown and unpaid checkouts must look the same to the caller (no checkout-ID probing).
       if (res.status === 404) throw new PolarError('invalid_key', 'not found');
       if (!res.ok) throw new PolarError('polar_unavailable', `status ${res.status}`);
-      return (await res.json()) as { status: string; license_key?: string };
+      return (await res.json()) as IPolarCheckout;
     },
   };
 }

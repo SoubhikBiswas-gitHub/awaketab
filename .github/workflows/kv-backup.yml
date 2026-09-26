@@ -68,7 +68,7 @@ jobs:
       - if: steps.config.outputs.enabled == 'true'
         run: pnpm install --frozen-lockfile
 
-      # Lists lic:*, cus:*, embed:*, ord:*, rating:*, encrypts (AES-256-GCM) and verifies each file decrypts
+      # Lists lic:*, cus:*, embed:*, ord:*, lk:*, grant:*, sub:*, rating:*, encrypts (AES-256-GCM) and verifies each file decrypts
       # back to the same records before writing it. Any API error exits non-zero and fails the run.
       - if: steps.config.outputs.enabled == 'true'
         run: pnpm kv:backup --out kv-backups

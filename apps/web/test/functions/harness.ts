@@ -191,14 +191,27 @@ export class MemoryAnalytics {
 // ---------------------------------------------------------------------------
 
 export interface IPolarKey {
+  /** Polar licence-key id (`LicenseKeyRead.id`, `properties.license_key_id` on benefit grants). */
   id: string;
   key: string;
   status: 'granted' | 'revoked' | 'disabled';
   benefitId: string;
   customerId: string;
+  /** The purchase that granted the key: a one-time order, or a subscription (then `orderId` is its first order). */
+  orderId: string;
+  subscriptionId: string | null;
+  /** The benefit grant that carries the key. */
+  grantId: string;
   limit: number;
   expiresAt: string | null;
   activations: Map<string, { label: string; deviceId: string }>;
+}
+
+export interface IPolarCheckout {
+  status: string;
+  license_key?: string;
+  customer_id?: string | null;
+  subscription_id?: string | null;
 }
 
 export interface IPolarCall {
@@ -213,7 +226,7 @@ let polarSeq = 0;
 export class FakePolar {
   readonly calls: IPolarCall[] = [];
   readonly keys = new Map<string, IPolarKey>();
-  readonly checkouts = new Map<string, { status: string; license_key?: string }>();
+  readonly checkouts = new Map<string, IPolarCheckout>();
   /** 'http' → every call answers 500; 'network' → fetch rejects. */
   outage: 'none' | 'http' | 'network' = 'none';
 
@@ -224,12 +237,16 @@ export class FakePolar {
 
   addKey(key: string, init: Partial<Omit<IPolarKey, 'key' | 'activations'>> = {}): IPolarKey {
     polarSeq += 1;
+    const n = String(polarSeq);
     const row: IPolarKey = {
-      id: `lk_${String(polarSeq)}`,
+      id: `lk_${n}`,
       key,
       status: 'granted',
       benefitId: BENEFITS.yearly,
       customerId: 'cus_test_1',
+      orderId: `ord_${n}`,
+      subscriptionId: init.benefitId === undefined || init.benefitId === BENEFITS.yearly ? `sub_${n}` : null,
+      grantId: `grant_${n}`,
       limit: 5,
       expiresAt: new Date(Date.now() + 200 * DAY_MS).toISOString(),
       activations: new Map(),
@@ -439,6 +456,127 @@ export async function webhookRequest(
   );
   return { request: new Request(`${SITE}/api/webhooks/polar`, { method: 'POST', headers, body: raw }), id };
 }
+
+// ---------------------------------------------------------------------------
+// Polar webhook payloads (D-06)
+// ---------------------------------------------------------------------------
+
+/**
+ * Key-less webhook bodies shaped like Polar's OpenAPI 2026-04 / 2026-10 schemas (`Order`, `Subscription`,
+ * `Refund`, `BenefitGrantLicenseKeysWebhook`; docs/09 §2.7.1). Only the fields the handler could read plus
+ * enough context to be realistic; none of them carries the licence key, as in production.
+ */
+export const polarEvents = {
+  order(type: 'order.created' | 'order.paid' | 'order.updated' | 'order.refunded', row: IPolarKey, over: Record<string, unknown> = {}) {
+    const refunded = type === 'order.refunded';
+    return {
+      type,
+      timestamp: new Date().toISOString(),
+      data: {
+        id: row.orderId,
+        created_at: new Date().toISOString(),
+        status: refunded ? 'refunded' : 'paid',
+        paid: true,
+        net_amount: 1200,
+        total_amount: 1200,
+        refunded_amount: refunded ? 1200 : 0,
+        currency: 'usd',
+        billing_reason: row.subscriptionId ? 'subscription_create' : 'purchase',
+        customer_id: row.customerId,
+        product_id: 'prod_1',
+        discount_id: null,
+        subscription_id: row.subscriptionId,
+        checkout_id: 'chk_1',
+        metadata: {},
+        customer: { id: row.customerId, email: 'buyer@example.com' },
+        product: { id: 'prod_1', name: 'AwakeTab Pro', metadata: { plan: 'pro_yearly' }, is_recurring: Boolean(row.subscriptionId) },
+        subscription: null,
+        items: [],
+        ...over,
+      },
+    };
+  },
+  subscription(
+    type: 'subscription.created' | 'subscription.active' | 'subscription.updated' | 'subscription.canceled' | 'subscription.uncanceled' | 'subscription.revoked',
+    row: IPolarKey,
+    over: Record<string, unknown> = {},
+  ) {
+    const ended = type === 'subscription.revoked';
+    return {
+      type,
+      timestamp: new Date().toISOString(),
+      data: {
+        id: row.subscriptionId,
+        created_at: new Date().toISOString(),
+        amount: 1200,
+        currency: 'usd',
+        recurring_interval: 'year',
+        status: ended ? 'canceled' : 'active',
+        current_period_start: new Date().toISOString(),
+        current_period_end: new Date(Date.now() + 365 * DAY_MS).toISOString(),
+        cancel_at_period_end: type === 'subscription.canceled',
+        canceled_at: type === 'subscription.canceled' || ended ? new Date().toISOString() : null,
+        ended_at: ended ? new Date().toISOString() : null,
+        customer_id: row.customerId,
+        product_id: 'prod_1',
+        discount_id: null,
+        checkout_id: 'chk_1',
+        metadata: {},
+        customer: { id: row.customerId, email: 'buyer@example.com' },
+        product: { id: 'prod_1', name: 'AwakeTab Pro', metadata: { plan: 'pro_yearly' }, benefits: [{ id: row.benefitId, type: 'license_keys' }] },
+        prices: [],
+        meters: [],
+        ...over,
+      },
+    };
+  },
+  refund(type: 'refund.created' | 'refund.updated', row: IPolarKey, over: Record<string, unknown> = {}) {
+    return {
+      type,
+      timestamp: new Date().toISOString(),
+      data: {
+        id: `refund_${row.orderId}`,
+        created_at: new Date().toISOString(),
+        metadata: {},
+        status: 'succeeded',
+        reason: 'customer_request',
+        amount: 1200,
+        tax_amount: 0,
+        currency: 'usd',
+        organization_id: 'org_1',
+        order_id: row.orderId,
+        subscription_id: row.subscriptionId,
+        customer_id: row.customerId,
+        revoke_benefits: true,
+        dispute: null,
+        ...over,
+      },
+    };
+  },
+  benefitGrant(type: 'benefit_grant.created' | 'benefit_grant.updated' | 'benefit_grant.revoked', row: IPolarKey, over: Record<string, unknown> = {}) {
+    const revoked = type === 'benefit_grant.revoked';
+    return {
+      type,
+      timestamp: new Date().toISOString(),
+      data: {
+        id: row.grantId,
+        created_at: new Date().toISOString(),
+        granted_at: new Date().toISOString(),
+        is_granted: !revoked,
+        revoked_at: revoked ? new Date().toISOString() : null,
+        is_revoked: revoked,
+        subscription_id: row.subscriptionId,
+        order_id: row.subscriptionId ? null : row.orderId,
+        customer_id: row.customerId,
+        benefit_id: row.benefitId,
+        customer: { id: row.customerId, email: 'buyer@example.com' },
+        benefit: { id: row.benefitId, type: 'license_keys', description: 'AwakeTab Pro licence' },
+        properties: { license_key_id: row.id, display_key: `****-${row.key.slice(-6)}` },
+        ...over,
+      },
+    };
+  },
+};
 
 // ---------------------------------------------------------------------------
 // Privacy scan

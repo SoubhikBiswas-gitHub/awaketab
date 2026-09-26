@@ -9,7 +9,8 @@ import {
   writeLicense,
   type ILicenseRecord,
 } from '../../_lib/license';
-import { PolarError, createPolar, planFromBenefit } from '../../_lib/polar';
+import { applyIds, linkLicenseKey, readLink, transition, type IPolarIds } from '../../_lib/links';
+import { PolarError, createPolar, planFromBenefit, type IPolarCheckout } from '../../_lib/polar';
 import { clientIp, rateLimit } from '../../_lib/ratelimit';
 import { mintToken, tokenExp } from '../../_lib/token';
 
@@ -37,9 +38,10 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
 
   const polar = createPolar(env);
   let key = parsed.key;
+  let checkout: IPolarCheckout | null = null;
   if (parsed.checkoutId && !key) {
     try {
-      const checkout = await polar.checkout(parsed.checkoutId);
+      checkout = await polar.checkout(parsed.checkoutId);
       if (checkout.status !== 'succeeded' || !checkout.license_key) return jsonError('invalid_key', 404);
       key = checkout.license_key.trim().toUpperCase();
     } catch (err) {
@@ -84,7 +86,7 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
     plan,
     status: 'active',
     keyEnc: await encryptUtf8(key, encKey),
-    polarOrderId: polarLicense.id ?? '',
+    polarOrderId: '',
     customerId: polarLicense.customer_id,
     activations: [],
     limit: polarLicense.limit_activations || 5,
@@ -96,6 +98,27 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   record.limit = polarLicense.limit_activations || record.limit;
   // Polar just told us the current period; a record written by an earlier webhook or activation may be stale.
   record.exp = exp;
+
+  // D-06: keep the Polar ids key-less webhooks resolve by, and pick up what a benefit-grant webhook already
+  // linked to this licence key (it usually arrives before the buyer activates).
+  const lkId = polarLicense.id;
+  if (lkId && !record.polarLicenseKeyId && record.polarOrderId === lkId) record.polarOrderId = ''; // pre-D-06 records
+  const found: IPolarIds = {
+    licenseKeyId: lkId,
+    customerId: polarLicense.customer_id,
+    benefitId: polarLicense.benefit_id,
+    subscriptionId: checkout?.subscription_id ?? undefined,
+  };
+  const link = lkId ? await readLink(kv, lkId) : null;
+  applyIds(record, { ...found, grantId: link?.grantId, orderId: link?.orderId, subscriptionId: found.subscriptionId ?? link?.subscriptionId });
+  const pending = link?.pending ? transition(record.status, link.pending) : null;
+  if (pending) record.status = pending;
+  if (record.status === 'revoked' || record.status === 'refunded') {
+    // Revoked or refunded before the first activation: remember it and spend no Polar activation.
+    record.updatedAt = now;
+    await saveLicense(kv, keyHash, record);
+    return jsonError(record.status, 403);
+  }
 
   if (record.activations.length >= record.limit) {
     const stale = record.activations.find((row) => now - row.at > STALE_MS);
@@ -134,14 +157,32 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
     polarActivationId: activationId,
   });
   record.updatedAt = now;
-  await writeLicense(kv, keyHash, record);
-  const customerKeys = JSON.parse((await kv.get(`cus:${record.customerId}`)) ?? '[]') as string[];
-  if (!customerKeys.includes(keyHash)) {
-    customerKeys.push(keyHash);
-    await kv.put(`cus:${record.customerId}`, JSON.stringify(customerKeys));
-  }
+  await saveLicense(kv, keyHash, record);
   return mint(env, record, keyHash, devHash, nowSec);
 };
+
+/** Writes `lic:`, the `cus:` index and (D-06) the `lk:` link with its reverse indexes. */
+async function saveLicense(kv: KVNamespace, keyHash: string, record: ILicenseRecord): Promise<void> {
+  await writeLicense(kv, keyHash, record);
+  if (record.customerId) {
+    const customerKeys = JSON.parse((await kv.get(`cus:${record.customerId}`)) ?? '[]') as string[];
+    if (!customerKeys.includes(keyHash)) {
+      customerKeys.push(keyHash);
+      await kv.put(`cus:${record.customerId}`, JSON.stringify(customerKeys));
+    }
+  }
+  if (record.polarLicenseKeyId) {
+    await linkLicenseKey(kv, record.polarLicenseKeyId, {
+      keyHash,
+      grantId: record.polarGrantId,
+      orderId: record.polarOrderId || undefined,
+      subscriptionId: record.polarSubscriptionId,
+      customerId: record.customerId,
+      benefitId: record.benefitId,
+      clearPending: true,
+    });
+  }
+}
 
 async function mint(env: IEnv, record: ILicenseRecord, keyHash: string, devHash: string, nowSec: number): Promise<Response> {
   const { token, exp } = await mintToken(env, record, keyHash, devHash, nowSec);

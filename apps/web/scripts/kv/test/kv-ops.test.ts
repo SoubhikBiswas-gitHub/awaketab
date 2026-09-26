@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { exportNamespace, readBackupFile } from '../lib/backup.ts';
 import { backupTargets, isProductionTarget, runBackup, runReencrypt, runRestore, type ICliDeps, type ITargetStore } from '../lib/cli.ts';
 import { decryptBackup, encryptBackup, encryptKeyEnc, isEncryptedBackup, parseAesKey, tryDecryptKeyEnc } from '../lib/crypto.ts';
-import { backupFileName, countByPrefix, parseBackup, serializeBackup, type IBackup } from '../lib/format.ts';
+import { BACKUP_PREFIXES, backupFileName, countByPrefix, parseBackup, serializeBackup, type IBackup } from '../lib/format.ts';
 import { reencryptNamespace } from '../lib/reencrypt.ts';
 import { applyRestore, planRestore } from '../lib/restore.ts';
 import { MemoryKvStore } from './memory-store.ts';
@@ -85,6 +85,11 @@ describe('backup format', () => {
     expect(() => parseBackup([lines[0], lines[1], '{"key":"x","value":"v","expiration":-1}'].join('\n'))).toThrow(/expiration/u);
     expect(() => parseBackup('')).toThrow(/empty/u);
     expect(() => parseBackup('{"format":"other"}')).toThrow(/Not an/u);
+  });
+
+  it('backs up the D-06 Polar id indexes with the licences', () => {
+    expect(BACKUP_PREFIXES).toEqual(expect.arrayContaining(['lic:', 'cus:', 'ord:', 'lk:', 'grant:', 'sub:']));
+    expect(BACKUP_PREFIXES).not.toContain('wh:');
   });
 
   it('names files per namespace and UTC day, and counts per key family', () => {

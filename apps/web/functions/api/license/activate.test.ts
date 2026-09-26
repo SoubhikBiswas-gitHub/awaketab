@@ -16,6 +16,7 @@ import {
   type IHarness,
 } from '../../../test/functions/harness';
 import { decryptUtf8, type ILicenseRecord } from '../../_lib/license';
+import { LINK_TTL_S, type ILicenseLink } from '../../_lib/links';
 
 const KEY = 'AWAKETAB-PRO-TEST-0001-ABCD';
 const T0 = Date.parse('2026-09-01T10:00:00.000Z');
@@ -343,6 +344,74 @@ describe('POST /api/license/activate', () => {
     const res = await activate(h, { checkoutId: '../license-keys/validate' });
     expect(res.status).toBe(400);
     expect(h.polar.calls).toEqual([]);
+  });
+});
+
+// D-06: activation stores the Polar ids that key-less webhooks resolve by (docs/08 §4, docs/09 §2.7.1).
+describe('POST /api/license/activate — Polar ids (D-06)', () => {
+  it('stores the licence-key, benefit and customer ids and links the key hash in lk:', async () => {
+    const h = harness();
+    const polarKey = h.polar.addKey(KEY, { customerId: 'cus_42' });
+    expect((await activate(h, { key: KEY })).status).toBe(200);
+    const rec = await record(h);
+    expect(rec).toMatchObject({ polarLicenseKeyId: polarKey.id, benefitId: BENEFITS.yearly, customerId: 'cus_42', polarOrderId: '' });
+    expect(h.kv.json<ILicenseLink>(`lk:${polarKey.id}`)).toEqual({
+      keyHashes: [await sha256Hex(KEY)],
+      customerId: 'cus_42',
+      benefitId: BENEFITS.yearly,
+      at: T0,
+    });
+    expect(h.kv.writesTo('lk:')[0]?.expirationTtl).toBe(LINK_TTL_S);
+  });
+
+  it('takes the subscription id from the checkout and indexes it in sub:', async () => {
+    const h = harness();
+    const polarKey = h.polar.addKey(KEY, { customerId: 'cus_42' });
+    h.polar.checkouts.set('chk_sub', { status: 'succeeded', license_key: KEY, customer_id: 'cus_42', subscription_id: 'sub_from_checkout' });
+    expect((await activate(h, { checkoutId: 'chk_sub' })).status).toBe(200);
+    expect((await record(h))?.polarSubscriptionId).toBe('sub_from_checkout');
+    expect(h.kv.json('sub:sub_from_checkout')).toEqual([polarKey.id]);
+  });
+
+  it('picks up grant, order and subscription ids that a benefit_grant webhook linked first', async () => {
+    const h = harness();
+    const polarKey = h.polar.addKey(KEY, { customerId: 'cus_42' });
+    h.kv.seed(`lk:${polarKey.id}`, { keyHashes: [], grantId: 'grant_9', orderId: 'ord_9', subscriptionId: 'sub_9', customerId: 'cus_42', at: T0 });
+    expect((await activate(h, { key: KEY })).status).toBe(200);
+    expect(await record(h)).toMatchObject({ polarGrantId: 'grant_9', polarOrderId: 'ord_9', polarSubscriptionId: 'sub_9' });
+    expect(h.kv.json<ILicenseLink>(`lk:${polarKey.id}`)?.keyHashes).toEqual([await sha256Hex(KEY)]);
+  });
+
+  it.each(['refunded', 'revoked'] as const)('answers 403 %s for a status that arrived before activation, with no Polar activate', async (status) => {
+    const h = harness();
+    const polarKey = h.polar.addKey(KEY, { customerId: 'cus_42' });
+    h.kv.seed(`lk:${polarKey.id}`, { keyHashes: [], pending: status, at: T0 });
+    const res = await activate(h, { key: KEY });
+    expect(res.status).toBe(403);
+    expect(await res.json()).toEqual({ error: status });
+    expect(polarKey.activations.size).toBe(0);
+    expect(await record(h)).toMatchObject({ status, activations: [] });
+    expect(h.kv.json<ILicenseLink>(`lk:${polarKey.id}`)).not.toHaveProperty('pending');
+  });
+
+  it('back-fills a record written before D-06 (licence-key id wrongly stored as polarOrderId)', async () => {
+    const h = harness();
+    const polarKey = h.polar.addKey(KEY, { customerId: 'cus_42' });
+    h.kv.seed(`lic:${await sha256Hex(KEY)}`, {
+      plan: 'pro_yearly',
+      status: 'active',
+      keyEnc: 'unused',
+      polarOrderId: polarKey.id,
+      customerId: 'cus_42',
+      activations: [],
+      limit: 5,
+      exp: T0 / 1000 + 365 * 86_400,
+      createdAt: T0,
+      updatedAt: T0,
+    });
+    expect((await activate(h, { key: KEY })).status).toBe(200);
+    expect(await record(h)).toMatchObject({ polarOrderId: '', polarLicenseKeyId: polarKey.id, benefitId: BENEFITS.yearly });
+    expect(h.kv.json<ILicenseLink>(`lk:${polarKey.id}`)?.keyHashes).toEqual([await sha256Hex(KEY)]);
   });
 });
 
