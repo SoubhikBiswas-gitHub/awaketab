@@ -100,7 +100,8 @@ export interface IMeta {
   v: 1;
   installedAt: number;
   sessionCount: number;
-  ratingPrompt: { shownAt: number | null; action: 'rated' | 'later' | 'never' | null; stars?: number };
+  // rearmAt: sessionCount at which a 'later' answer asks again (docs/05 §3.22: after 10 more sessions).
+  ratingPrompt: { shownAt: number | null; action: 'rated' | 'later' | 'never' | null; stars?: number; rearmAt?: number };
   lastSeenVersion: string;
   pwa: { installed: boolean; promptShownAt: number | null };
   secondTabWarnedAt: number | null;

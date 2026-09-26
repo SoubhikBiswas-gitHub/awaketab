@@ -1,11 +1,25 @@
 import type { TLockState } from '@awaketab/wake';
 import { CHANNEL_NAME } from './constants.js';
-import type { TSessionStatus } from './types.js';
+import type { TPlanType, TSessionStatus } from './types.js';
 
 export type TTabMessage =
   | { type: 'hello'; tabId: string; ts: number }
   | { type: 'lock'; tabId: string; ts: number; state: TLockState }
-  | { type: 'state'; tabId: string; ts: number; status: TSessionStatus; lock: TLockState; startedAt: number | null }
+  | {
+      type: 'state';
+      tabId: string;
+      ts: number;
+      status: TSessionStatus;
+      lock: TLockState;
+      startedAt: number | null;
+      // Timing snapshot so a mirror (the /pip popup) can count locally between messages.
+      endsAt?: number | null;
+      planType?: TPlanType;
+      pausedMs?: number;
+      pausedAt?: number | null;
+      wall?: string | null;
+    }
+  | { type: 'intent'; tabId: string; ts: number; target: string; action: 'stop' | 'add'; ms?: number }
   | { type: 'bye'; tabId: string; ts: number };
 
 export function createTabProtocol(opts: {
@@ -13,7 +27,10 @@ export function createTabProtocol(opts: {
   tabId: string;
   onPeerLock?: (msg: Extract<TTabMessage, { type: 'lock' }>) => void;
   onPeers?: (count: number) => void;
+  onIntent?: (msg: Extract<TTabMessage, { type: 'intent' }>) => void;
   lockState?: () => TLockState;
+  // Answer a peer's hello with a full state snapshot (docs/04 §14 rule 1).
+  snapshot?: () => Extract<TTabMessage, { type: 'state' }> | null;
 }) {
   const peers = new Map<string, number>();
   const ch = opts.channel ?? (typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(CHANNEL_NAME) : null);
@@ -38,7 +55,10 @@ export function createTabProtocol(opts: {
         ts: Date.now(),
         state: lock,
       } satisfies TTabMessage);
+      const snap = opts.snapshot?.();
+      if (snap) ch?.postMessage({ ...snap, tabId: opts.tabId, ts: Date.now() } satisfies TTabMessage);
     }
+    if (msg.type === 'intent' && msg.target === opts.tabId) opts.onIntent?.(msg);
     if (msg.type === 'lock' && (msg.state === 'held' || msg.state === 'fallback')) {
       opts.onPeerLock?.(msg);
     }

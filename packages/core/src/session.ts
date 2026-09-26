@@ -1,10 +1,10 @@
 import type { IChangeEvent, TLockState, IWakeLockHandle } from '@awaketab/wake';
-import { evaluateBattery } from './battery.js';
+import { evaluateBattery, type IBatteryLike } from './battery.js';
 import { CUSTOM_MAX_MS, LOST_TIMEOUT_MS } from './constants.js';
 import { createEmitter } from './emitter.js';
 import { creditMinutes } from './stats.js';
 import type { createStorage } from './storage.js';
-import { createTabProtocol } from './tabs.js';
+import { createTabProtocol, type TTabMessage } from './tabs.js';
 import type { TAmbientMode, TEndReason, TPlan, TPresetId, ISession, TSessionStatus, ISettings } from './types.js';
 import { PRESET_MS } from './types.js';
 
@@ -35,10 +35,15 @@ export interface ISessionEngine {
   readonly session: ISession | null;
   readonly lockState: TLockState;
   start(plan: TPlan, meta: { presetId: TPresetId; mode: TAmbientMode; source?: string }): Promise<TLockState>;
-  pause(): void;
+  /** `keepLock` pauses the clock but keeps the screen awake (cook mode, docs/05 §3.16). */
+  pause(opts?: { keepLock?: boolean }): void;
   resume(): Promise<TLockState>;
   stop(): void;
   extend(ms: number | 'indefinite'): Promise<TLockState>;
+  /** Adds time to the running finite plan without restarting it (PiP `+15`). */
+  addTime(ms: number): void;
+  /** Persists the ambient mode and per-mode data (`modeState.cookTimers`, …) on the live session. */
+  updateSession(patch: { mode?: TAmbientMode; modeState?: Record<string, unknown> }): void;
   getResumable(): ISession | null;
   resumeSession(): Promise<TLockState>;
   discardResumable(): void;
@@ -81,12 +86,22 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
   let lostSince: number | null = null;
   let lastTickAt = nowFn();
   let destroyed = false;
+  let ticks = 0;
+  let batteryRef: IBatteryLike | null | undefined;
+  let batteryWarned = false;
+  let batteryStopArmed = true;
+  let lockKept = false;
   const tabId = crypto.randomUUID();
   const tabs = createTabProtocol({
     tabId,
     onPeerLock: () => { emitter.emit('warning', { code: 'second_tab' }); },
     onPeers: (count) => { emitter.emit('peers', { count }); },
+    onIntent: (msg) => {
+      if (msg.action === 'stop') engine.stop();
+      else if (typeof msg.ms === 'number') engine.addTime(msg.ms);
+    },
     lockState: () => opts.lock.state,
+    snapshot: () => snapshot(),
     ...(opts.channel !== undefined ? { channel: opts.channel } : {}),
   });
 
@@ -103,10 +118,34 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
     if (e.to === 'lost') lostSince = nowFn();
     if (e.to === 'held' || e.to === 'fallback') lostSince = null;
     persist();
+    broadcast();
   });
 
   function persist() {
     if (session) opts.storage.writeSession(session);
+  }
+
+  function snapshot(): Extract<TTabMessage, { type: 'state' }> | null {
+    if (!session) return null;
+    return {
+      type: 'state',
+      tabId,
+      ts: nowFn(),
+      status: session.status,
+      lock: opts.lock.state,
+      startedAt: session.startedAt,
+      endsAt: session.endsAt,
+      planType: session.plan.type,
+      pausedMs: session.pausedMs,
+      pausedAt: session.pausedAt,
+      wall: session.plan.type === 'until' ? session.plan.wall : null,
+    };
+  }
+
+  // Mirrors (the /pip popup) render from these snapshots; posted on every tick, status and lock change.
+  function broadcast() {
+    const snap = snapshot();
+    if (snap) tabs.post(snap);
   }
 
   function setStatus(to: TSessionStatus, reason: TEndReason | null) {
@@ -114,6 +153,7 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
     const from = session.status;
     session.status = to;
     emitter.emit('status', { from, to, reason });
+    broadcast();
   }
 
   function scheduleTick() {
@@ -145,7 +185,8 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
       finish('lost_timeout', now);
       return;
     }
-    checkBattery();
+    if (ticks % 60 === 0) void checkBattery();
+    ticks += 1;
     emitter.emit('tick', {
       now,
       remainingMs: rem,
@@ -153,6 +194,7 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
     });
     lastTickAt = now;
     persist();
+    broadcast();
     scheduleTick();
   }
 
@@ -170,16 +212,50 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
     }
   }
 
-  function checkBattery() {
+  // docs/04 §11: one BatteryManager per engine, evaluated on its events and on every 60th tick.
+  async function battery(): Promise<IBatteryLike | null> {
+    if (batteryRef !== undefined) return batteryRef;
+    const nav = globalThis.navigator as (Navigator & { getBattery?: () => Promise<IBatteryLike> }) | undefined;
+    if (typeof nav?.getBattery !== 'function') {
+      batteryRef = null;
+      return null;
+    }
+    try {
+      batteryRef = await nav.getBattery();
+      batteryRef.addEventListener('levelchange', onBatteryEvent);
+      batteryRef.addEventListener('chargingchange', onBatteryEvent);
+    } catch {
+      batteryRef = null;
+    }
+    return batteryRef;
+  }
+
+  function onBatteryEvent() {
+    void checkBattery();
+  }
+
+  // A function, not an inline check: the session can end while getBattery() is awaited.
+  function isActive(): boolean {
+    return session?.status === 'active';
+  }
+
+  async function checkBattery() {
     const settings = opts.settings();
-    if (!settings.battery.autoStop) return;
-    const nav = globalThis.navigator as Navigator & { getBattery?: () => Promise<{ level: number; charging: boolean }> };
-    if (typeof nav.getBattery !== 'function') return;
-    void nav.getBattery().then((b) => {
-      const ev = evaluateBattery(b, settings.battery.threshold / 100, 0.02);
-      if (ev === 'low') emitter.emit('warning', { code: 'battery_low', level: b.level });
-      if (ev === 'stop' && session?.status === 'active') finish('battery', nowFn());
-    });
+    if (!settings.battery.autoStop || !isActive()) return;
+    const b = await battery();
+    if (!b || !isActive()) return;
+    const threshold = settings.battery.threshold / 100;
+    // Re-arm after an auto-stop only once charging or back above threshold + 5 % (hysteresis).
+    if (!batteryStopArmed && (b.charging || b.level >= threshold + 0.05)) batteryStopArmed = true;
+    const ev = evaluateBattery(b, threshold, 0.02);
+    if ((ev === 'low' || (ev === 'stop' && !batteryStopArmed)) && !batteryWarned) {
+      batteryWarned = true;
+      emitter.emit('warning', { code: 'battery_low', level: b.level });
+    }
+    if (ev === 'stop' && batteryStopArmed) {
+      batteryStopArmed = false;
+      finish('battery', nowFn());
+    }
   }
 
   function finish(reason: TEndReason, now: number) {
@@ -235,20 +311,26 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
         modeState: {},
         source: meta.source === 'pwa' || meta.source === 'pip' || meta.source === 'ext' || meta.source === 'embed' ? meta.source : 'web',
       };
+      ticks = 0;
+      batteryWarned = false;
+      lockKept = false;
       persist();
       opts.track?.('session_start', { planType: plan.type, presetId: meta.presetId, mode: meta.mode });
       const state = await acquire();
       tabs.post({ type: 'lock', state, tabId, ts: nowFn() });
       scheduleTick();
+      void checkBattery();
       return state;
     },
-    pause() {
+    pause(pauseOpts) {
       if (destroyed || !session || session.status !== 'active') return;
       const now = nowFn();
       session.pausedAt = now;
+      lockKept = pauseOpts?.keepLock === true;
       setStatus('paused', null);
-      void opts.lock.release();
+      if (!lockKept) void opts.lock.release();
       if (timer) ct(timer);
+      timer = null;
       persist();
     },
     async resume() {
@@ -261,14 +343,21 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
         return opts.lock.state;
       }
       setStatus('active', null);
-      const state = await acquire();
+      const ls = opts.lock.state;
+      const kept = lockKept && (ls === 'held' || ls === 'fallback');
+      lockKept = false;
+      const state = kept ? ls : await acquire();
       scheduleTick();
       persist();
       return state;
     },
     stop() {
       if (destroyed) return;
-      finish('user', nowFn());
+      const live = session?.status === 'active' || session?.status === 'paused';
+      if (live) finish('user', nowFn());
+      // After completion the UI may re-request the lock for the extend grace period (docs/05 §3.9);
+      // Stop must release it even though the session itself has already ended.
+      else void opts.lock.release();
     },
     async extend(ms) {
       if (ms === 'indefinite') {
@@ -278,6 +367,30 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
         { type: 'duration', ms },
         { presetId: 'custom', mode: session?.mode ?? 'standard', source: 'extend' },
       );
+    },
+    addTime(ms) {
+      if (destroyed || !session || (session.status !== 'active' && session.status !== 'paused')) return;
+      if (!Number.isFinite(ms) || ms <= 0 || session.endsAt === null) return;
+      const remaining = remainingMs(session, nowFn()) ?? 0;
+      if (remaining + ms > CUSTOM_MAX_MS) return;
+      if (session.plan.type === 'until') {
+        // An until target that moved is no longer a wall-clock target; keep the same deadline as a duration.
+        // Duration remaining is endsAt - now + pausedMs, so fold pausedMs out of the new span.
+        session.plan = { type: 'duration', ms: session.plan.endsAt + ms - session.startedAt - session.pausedMs };
+        session.endsAt = session.startedAt + session.plan.ms;
+      } else if (session.plan.type === 'duration') {
+        session.plan = { type: 'duration', ms: session.plan.ms + ms };
+        session.endsAt += ms;
+      }
+      opts.track?.('session_extend', { addedMin: Math.round(ms / 60_000) });
+      persist();
+      broadcast();
+    },
+    updateSession(patch) {
+      if (destroyed || !session) return;
+      if (patch.mode) session.mode = patch.mode;
+      if (patch.modeState) session.modeState = { ...session.modeState, ...patch.modeState };
+      persist();
     },
     getResumable() {
       const stored = opts.storage.session();
@@ -312,6 +425,8 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
     destroy() {
       destroyed = true;
       if (timer) ct(timer);
+      batteryRef?.removeEventListener('levelchange', onBatteryEvent);
+      batteryRef?.removeEventListener('chargingchange', onBatteryEvent);
       offLock();
       tabs.dispose();
       void opts.lock.release();
