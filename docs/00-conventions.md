@@ -573,7 +573,7 @@ Accepted on 2026-09-26. Specs: `09-monetization-impl.md` §2.2, §2.3a; `10-exte
 
 | Identifier | Decision |
 |---|---|
-| `POST /api/license/activate { checkoutId, lookup: true }` | Non-activating lookup → `{ key, plan }`. No `deviceId`, no KV write, no Polar activation; same `license` rate-limit bucket (10/min/IP hash). `checkoutId` must match `^[A-Za-z0-9_-]{1,80}$` (also on the activating path). Unknown, unpaid and keyless checkouts all answer 404 `invalid_key` (Polar's checkout 404 now maps to `invalid_key`, not `polar_unavailable`); KV `revoked`/`refunded` → 403 with that code; Polar not granted → 403 `revoked`; unmapped benefit → 404 |
+| `POST /api/license/activate { checkoutId, lookup: true }` | Non-activating lookup → `{ key, plan }`. No `deviceId`, no KV write, no Polar activation; same `license` rate-limit bucket (10/min/IP hash). `checkoutId` must match `^[A-Za-z0-9_-]{1,80}$` (also on the activating path). Unknown, expired, failed and foreign checkouts all answer 404 `invalid_key` (Polar's checkout 404 now maps to `invalid_key`, not `polar_unavailable`); open / confirmed checkouts and keys Polar has not created yet answer 503 `polar_unavailable` + `Retry-After` (§13.16); KV `revoked`/`refunded` → 403 with that code; Polar not granted → 403 `revoked`; unmapped benefit → 404 |
 | `/pro/activate?ext=1` | Never activates the browser. A pasted key is normalised (`trim().toUpperCase()`) and checked against `^[A-Z0-9-]{20,80}$` client-side, then shown in `[data-ext-panel]`; with `checkout_id` the page calls the lookup above instead of activate. Without `ext=1` the page is unchanged (activates this browser; `checkout_id` auto-activates) |
 | `src/lib/license-lookup.ts` | `LICENSE_KEY_RE`, `normaliseLicenseKey()`, `lookupCheckoutKey()` — kept out of `license.ts`, whose chunk the tool page loads lazily (so `totalJs` does not pay for a page-only flow) |
 | `[data-activate-mode="web" \| "ext"]` | Mode-specific copy on `/pro/activate`, pre-rendered for both modes; `activate-page.ts` hides `web` and shows `ext` when `ext=1` |
@@ -636,6 +636,21 @@ Accepted on 2026-09-26 (owner decision D-06, `LAUNCH-AUDIT.md`). Specs: `08-data
 | Webhook events | Adds `refund.updated` and `benefit_grant.updated` to the subscription list. `order.refunded` with `status: 'partially_refunded'` changes nothing; `refund.*` refunds only when `status === 'succeeded'` and `revoke_benefits` |
 | `BACKUP_PREFIXES` | Adds `lk:`, `grant:`, `sub:` (`scripts/kv/lib/format.ts`) |
 | Test helper | `polarEvents.{order, subscription, refund, benefitGrant}` in `test/functions/harness.ts`; `IPolarKey` gains `orderId`, `subscriptionId`, `grantId` |
+
+### 13.16 Checkout auto-fill through Polar ids (F-08) and Functions typecheck
+
+Accepted on 2026-09-26 (`LAUNCH-AUDIT.md` F-08). Specs: `09-monetization-impl.md` §2.1, §2.2, §2.3a, §2.3b, §2.10; `13-testing-strategy.md` §1, §9; `14-devops.md` §6.
+
+| Identifier | Decision |
+|---|---|
+| `functions/_lib/checkout-key.ts` | `resolveCheckoutKey(env, polar, checkoutId)` → `TCheckoutKey`: `{ kind: 'key', key, subscriptionId, orderId, grantId, licenseKeyId }` \| `{ kind: 'syncing' }` \| `{ kind: 'invalid' }`. Checkout → (one-time) order by `checkout_id` → the benefit grant of that order or subscription → `properties.license_key_id` → `GET /v1/license-keys/{id}` → `key` |
+| `createPolar()` reads | `checkout()` (404 and 422 → `invalid_key`), `ordersForCheckout()`, `benefitGrants()`, `licenseKey()` (404 → `null`); types `IPolarCheckout` (no `license_key`), `IPolarOrder`, `IPolarBenefitGrant`, `IPolarLicenseKey` |
+| Syncing response | `syncing()` in `functions/_lib/http.ts`: HTTP 503, `{ error: 'polar_unavailable' }` (no new error code), `Retry-After: SYNCING_RETRY_S` (5), `no-store` |
+| `CHECKOUT_RETRY_MS` | `[3000, 6000, 12000]` in `src/lib/activate-page.ts`: `/pro/activate` re-asks the checkout auto-fill (activate, or the `ext=1` lookup) after each wait while the answer is `polar_unavailable`; a key typed by hand is never retried |
+| `POLAR_ACCESS_TOKEN` scopes | Adds `benefits:read` (and relies on `orders:read`, `license_keys:read`, `checkouts:read`) |
+| `apps/web/functions/tsconfig.json`, `tsconfig.test.json` | Functions source typechecked with `@cloudflare/workers-types` only (no DOM, no Node); the Functions suites and `test/functions/harness.ts` with Workers + Node + DOM types. Both run in `pnpm -F web typecheck` (`astro check && tsc -p functions/tsconfig.json && tsc -p functions/tsconfig.test.json`) |
+| `publicJwk()` | `functions/_lib/jwt.ts`: the signing key's public half, `null` when the JWK has no `x`/`y` (validate and deactivate then answer 502 `polar_unavailable`, as for a missing key) |
+| Test helper | `FakePolar.addCheckout(row, { id?, status?, order? })`, `FakePolar.orders`, `failPath`; `IPolarKey` gains `grant` (`ready` \| `missing` \| `keyless`) and `grantedAt`; `IPolarCall` gains `query`. The fake checkout has no `license_key` |
 
 ## 14. Writing conventions for these docs
 

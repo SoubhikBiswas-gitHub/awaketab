@@ -51,7 +51,7 @@ Benefit names `lk_*` are **PROPOSED** labels for the Polar dashboard. One Licens
 
 **Webhook endpoint.** `https://awaketab.com/api/webhooks/polar`, secret stored as `POLAR_WEBHOOK_SECRET`. Subscribed events: `order.created`, `order.paid`, `order.refunded`, `refund.created`, `refund.updated`, `subscription.active`, `subscription.updated`, `subscription.canceled`, `subscription.uncanceled`, `subscription.revoked`, `benefit_grant.created`, `benefit_grant.updated`, `benefit_grant.revoked`. `benefit_grant.*` are required, not optional: they are the only events that name the licence key (by id), so without them key-less refunds and revocations fall back to the customer (§2.7, D-06).
 
-**Organization access token.** `POLAR_ACCESS_TOKEN` with scopes `checkouts:read`, `license_keys:read`, `license_keys:write`, `subscriptions:read`, `orders:read`, `customer_portal:read`, `customer_portal:write`. Rotation schedule is in `14-devops.md`.
+**Organization access token.** `POLAR_ACCESS_TOKEN` with scopes `checkouts:read`, `orders:read`, `benefits:read`, `license_keys:read`, `license_keys:write`, `subscriptions:read`, `customer_portal:read`, `customer_portal:write`. `checkouts:read`, `orders:read`, `benefits:read` and `license_keys:read` are what checkout auto-fill needs (§2.3b); without `benefits:read` every auto-fill answers "still syncing" and buyers fall back to pasting the key. Rotation schedule is in `14-devops.md`.
 
 Polar's API surface changes; pin `@polar-sh/sdk` (or the raw paths below) at implementation time and re-verify against docs.polar.sh. The paths used here are:
 
@@ -61,14 +61,17 @@ Polar's API surface changes; pin `@polar-sh/sdk` (or the raw paths below) at imp
 | Activate a device | `POST /v1/customer-portal/license-keys/activate` `{ key, organization_id, label, meta }` → activation `{ id, license_key: { id, customer_id, benefit_id, status, limit_activations, expires_at } }` |
 | Deactivate a device | `POST /v1/customer-portal/license-keys/deactivate` `{ key, organization_id, activation_id }` → 204 |
 | Subscription period end | `GET /v1/subscriptions?customer_id=&active=true` → `current_period_end` |
-| Checkout lookup (auto-fill after purchase) | `GET /v1/checkouts/{id}` → `status`, `customer_id`, `product_id`, `subscription_id`. Polar's `Checkout` schema has **no licence key and no order id** (§2.7.1); the as-built route reads `license_key` from it, which production will not send (`LAUNCH-AUDIT.md` F-08) |
+| Checkout auto-fill: the checkout | `GET /v1/checkouts/{id}` (`checkouts:get`, scope `checkouts:read`) → `status`, `customer_id`, `subscription_id`. Polar's `Checkout` has **no licence key and no order id** (§2.7.1), so the key takes the three reads below (§2.3b, F-08) |
+| Checkout auto-fill: the order | `GET /v1/orders/?organization_id=&checkout_id=&limit=10` (`orders:list`, scope `orders:read`) → `ListResource_Order_`, `items[].id` (one-time purchases only) |
+| Checkout auto-fill: the grant | `GET /v1/benefit-grants/?organization_id=&customer_id=&limit=100&sorting=-created_at` (`benefit-grants:list`, scope `benefits:read`) → `ListResource_BenefitGrant_`, `items[]` with `order_id`, `subscription_id`, `benefit_id`, `is_granted`, `properties.license_key_id` |
+| Checkout auto-fill: the key | `GET /v1/license-keys/{id}` (`license_keys:get`, scope `license_keys:read`) → `LicenseKeyWithActivations`, `key` |
 
 ### 2.2 Purchase flow
 
 1. `/pro` renders the price table (§2.11) and one button per plan. Click → `pro_checkout_click {plan}` → open the checkout link. Desktop: `window.open(url, 'awaketab-checkout', 'popup,width=520,height=760')`; if the popup is blocked (`window.open` returns `null`) or on mobile viewports (`< 768px`), same-tab `location.assign(url)`. COOP `same-origin-allow-popups` (see `14-devops.md`) keeps the opener relationship intact.
 2. Polar shows the hosted checkout, collects tax by buyer location, charges, emails the receipt and the licence key, and shows the key on its confirmation page.
 3. Polar redirects to `/pro/activate?checkout_id=…`. In popup mode the popup navigates there; the page detects `window.opener` and posts `{ type: 'awaketab:checkout-complete', checkoutId }` to the opener, then closes itself; the opener navigates to `/pro/activate?checkout_id=…`.
-4. `/pro/activate` runs the activation flow (§2.3). With `checkout_id` present it first tries auto-fill: `POST /api/license/activate { checkoutId, deviceId, deviceLabel }` (field `checkoutId` is an alternative to `key`, **PROPOSED** addition to the request schema). The function reads the checkout from Polar, confirms `status === 'succeeded'`, finds the granted licence key for that customer and benefit, and activates it. If auto-fill fails for any reason the page falls back to the paste field with copy "Your key is in the email from Polar and on the receipt page." The paste path is the contract; auto-fill is a convenience. With `ext=1` (the extension hand-off) the page never activates the browser: auto-fill uses the non-activating lookup of §2.3a instead, and a pasted key is only checked for shape client-side before the copy panel shows it.
+4. `/pro/activate` runs the activation flow (§2.3). With `checkout_id` present it first tries auto-fill: `POST /api/license/activate { checkoutId, deviceId, deviceLabel }` (field `checkoutId` is an alternative to `key`, **PROPOSED** addition to the request schema). The function reads the checkout from Polar, confirms `status === 'succeeded'`, finds the licence key of that purchase through its order or subscription and benefit grant (§2.3b), and activates it. Polar creates the order, grant and key a few seconds after the checkout succeeds; until then the function answers the retryable 503 `polar_unavailable`, and the page asks again after 3, 6 and 12 s (`CHECKOUT_RETRY_MS` in `src/lib/activate-page.ts`) while showing "Your purchase is still syncing". If auto-fill fails for any reason the page falls back to the paste field with copy "Your key is in the email from Polar and on the receipt page." The paste path is the contract; auto-fill is a convenience. With `ext=1` (the extension hand-off) the page never activates the browser: auto-fill uses the non-activating lookup of §2.3a instead, and a pasted key is only checked for shape client-side before the copy panel shows it.
 
 ```mermaid
 sequenceDiagram
@@ -115,11 +118,33 @@ Server steps:
 
 `/pro/activate?ext=1` used to activate the key for the browser before showing the copy panel, so pasting it into the extension spent a second of the five activations. The page now never activates in `ext=1` mode, and a `checkout_id` there is resolved by a non-activating mode of the same function (no new route, so the CORS allow-list and route contract are unchanged):
 
-Request `{ checkoutId, lookup: true }` → `200 { key, plan }`. Steps: rate limit (same `license` bucket, 10/min/IP hash) → `checkoutId` must match `^[A-Za-z0-9_-]{1,80}$` (else 400 `bad_request`, no Polar call) → `GET /v1/checkouts/{id}`; not found, not `succeeded` or no licence key → 404 `invalid_key` (one answer for all three, so the endpoint cannot tell a caller whether a checkout ID exists) → KV `lic:{keyHash}` `revoked`/`refunded` → 403 with that code → Polar validate (read-only): not granted → 403 `revoked`; benefit not in `POLAR_BENEFIT_MAP` → 404 `invalid_key` → respond. No `deviceId` is read, nothing is written to KV (other than the rate-limit counter) and Polar activate is never called. `Cache-Control: no-store`.
+Request `{ checkoutId, lookup: true }` → `200 { key, plan }`. Steps: rate limit (same `license` bucket, 10/min/IP hash) → `checkoutId` must match `^[A-Za-z0-9_-]{1,80}$` (else 400 `bad_request`, no Polar call) → the checkout's key, resolved exactly as on the activating path (§2.3b): unknown, `expired`, `failed` or not this purchase's key → 404 `invalid_key` (one answer for all of them); `open`, `confirmed`, or order / grant / key not created yet → 503 `polar_unavailable` with `Retry-After: 5` → KV `lic:{keyHash}` `revoked`/`refunded` → 403 with that code → Polar validate (read-only): not granted → 403 `revoked`; benefit not in `POLAR_BENEFIT_MAP` → 404 `invalid_key` → respond. No `deviceId` is read, nothing is written to KV (other than the rate-limit counter) and Polar activate is never called. `Cache-Control: no-store`.
 
 Why returning the key is acceptable: the checkout ID already authorises activating that key through the activating path (up to the five-device limit), and Polar shows the same key on its receipt page and in the receipt email, so returning it to the holder of the checkout ID grants nothing new. Checkout IDs are Polar UUIDs (not enumerable at 10 requests per minute), the success URL is only known to the buyer, and `Referrer-Policy: strict-origin-when-cross-origin` keeps the query string out of cross-origin referrers.
 
 Client: `lookupCheckoutKey()` and `normaliseLicenseKey()` in `apps/web/src/lib/license-lookup.ts`; `activate-page.ts` calls the lookup only when `ext=1` and `checkout_id` are both present, and never calls `activateLicense()` in `ext=1` mode. Tests: `functions/api/license/activate.test.ts` (lookup block), `test/lib/activate-page.test.ts`, `test/lib/license-revalidate.test.ts`, e2e `tool.spec.ts` ("pro activate with ext=1 …", asserting no activate request).
+
+### 2.3b Checkout → licence key (as built, F-08, 2026-09-26)
+
+Polar's `Checkout` has no licence key and no order id, so `functions/_lib/checkout-key.ts` `resolveCheckoutKey()` reaches the key in up to four reads with the organisation token. Both `{ checkoutId }` activation and `{ checkoutId, lookup: true }` use it, then continue exactly as the key path does (KV `revoked`/`refunded` → 403, Polar validate, benefit → plan, and for activation the device activation). Every endpoint, filter and field below was checked against `https://polar.sh/docs/openapi/2026-10.openapi.json` on 2026-09-26 (operation ids in brackets):
+
+| Step | Request | What we read | Outcome |
+|---|---|---|---|
+| 1 | `GET /v1/checkouts/{id}` [`checkouts:get`, scope `checkouts:read`; 404 `ResourceNotFound`, 422 `HTTPValidationError` for a non-UUID] | `Checkout.status` (`CheckoutStatus`: `open`, `expired`, `confirmed`, `succeeded`, `failed`), `customer_id`, `subscription_id` (both nullable) | 404 / 422 / `expired` / `failed` / anything unknown → 404 `invalid_key`. `open` / `confirmed` → 503 syncing. `succeeded` without `customer_id` → 503 syncing |
+| 2 | one-time purchase (`subscription_id` null) only: `GET /v1/orders/?organization_id=…&checkout_id=…&limit=10` [`orders:list`, scope `orders:read`; query `checkout_id` "Filter by checkout ID", uuid4] | `items[]` (`Order`): `id`, `checkout_id`, `customer_id` | Orders whose `checkout_id` and `customer_id` match the checkout. None → 503 syncing |
+| 3 | `GET /v1/benefit-grants/?organization_id=…&customer_id=…&limit=100&sorting=-created_at` [`benefit-grants:list`, scope `benefits:read`; `limit` max 100; `BenefitGrantSortProperty` has `-created_at`] | `items[]` (`BenefitGrant`): `id`, `customer_id`, `benefit_id`, `order_id`, `subscription_id`, `is_granted`, `is_revoked`, `granted_at`, `created_at`, `properties.license_key_id` (`BenefitGrantLicenseKeysProperties`, optional) | Keep grants of the same customer with a `license_key_id` that belong to **this** purchase: `subscription_id` equals the checkout's, or (one-time) `order_id` is one of step 2's orders. None → 503 syncing (grant not created yet, or created before its key). Of those, only benefits in `POLAR_BENEFIT_MAP`; none → 404. Several → a live grant (`is_granted && !is_revoked`) before a revoked one, then the newest (`granted_at`, else `created_at`) |
+| 4 | `GET /v1/license-keys/{license_key_id}` [`license_keys:get`, scope `license_keys:read`; 404 `ResourceNotFound`] | `LicenseKeyWithActivations`: `id`, `key`, `customer_id`, `benefit_id` | 404 → 503 syncing. `id`, `customer_id` or `benefit_id` different from the grant's → 404. `key` is `trim().toUpperCase()`d and must match `^[A-Z0-9-]{20,80}$`, else 404 |
+
+Design notes:
+
+- **No other purchase's key.** The grant is chosen by this checkout's subscription or order, never by "newest grant of the customer", so a buyer with an older yearly key who buys lifetime gets the lifetime key, and the reverse. The `is_granted` filter is deliberately not sent: a purchase refunded or revoked before auto-fill must answer `revoked` / `refunded` (step 4's key then goes through KV and Polar validate), not "still syncing" forever.
+- **Why the orders read.** Polar's `Order` has `checkout_id` and `orders:list` filters by it, so a one-time purchase maps to its order without guessing by customer and time. A subscription checkout already names its subscription, and the subscription's grant carries `subscription_id`, so it needs no order read.
+- **Retryable syncing.** `syncing()` in `functions/_lib/http.ts`: HTTP 503, body `{ "error": "polar_unavailable" }` (the existing code, shown by `/pro/activate` as `license.info.syncing`), `Retry-After: 5` (`SYNCING_RETRY_S`), `Cache-Control: no-store`. A real outage (network error, 5xx, or a missing token scope such as `benefits:read`) is still 502 `polar_unavailable`.
+- **Uniform errors, no enumeration.** Unknown, expired, failed and foreign checkouts all answer the same 404 body; the licence key is only ever returned to the holder of the checkout ID, as before (§2.3a). The rate limit (10 / min / IP hash, `license` bucket) is checked before any Polar call and is unchanged; one request costs at most four Polar reads plus validate.
+- **Ids for webhooks (D-06).** On activation the resolved `grantId`, the one-time `orderId` and the `subscriptionId` are stored on `lic:` and `lk:` straight away, so key-less webhooks match before any `benefit_grant.*` event arrives.
+- **Page 1 only.** Step 3 reads one page of 100 grants, newest first. A customer would need more than 100 benefit grants in the organisation for the purchase's grant to fall off that page; it then answers "still syncing" and the buyer pastes the key.
+
+Tests: `functions/api/license/activate.test.ts` "checkout auto-fill resolves the key through order → benefit grant → licence key (F-08)" (one-time and subscription paths with the exact Polar calls and filters, `open` / `confirmed` / order missing / grant missing / grant without key id → 503 then success on retry, several purchases by one customer, another customer's grant on the same order id, a revoked and a re-granted grant, revoked and refunded keys, 5xx part-way through), plus the existing checkout and lookup blocks, now against a `FakePolar` whose checkout has no key (`addCheckout()`, `orders`, `GET /v1/benefit-grants/`, `GET /v1/license-keys/{id}` in `test/functions/harness.ts`); `test/lib/activate-page.test.ts` (auto-fill retries). Live check: `LAUNCH-AUDIT.md` N-04 step 7 (f).
 
 ### 2.4 Token
 
@@ -353,7 +378,8 @@ Every webhook body is `{ type, timestamp, api_version, data }`; there is no top-
 | `benefit_grant.created`, `.updated`, `.revoked` (and `.cycled`) | `BenefitGrantLicenseKeysWebhook` (for a License Keys benefit) | `id` (benefit grant), `benefit_id`, `customer_id`, `subscription_id` (nullable), `order_id` (nullable), `member_id`; `properties.license_key_id`, `properties.display_key`, `properties.user_provided_key` (all optional), `previous_properties` | **No**: only the licence-key id and a masked `display_key` |
 | `POST /v1/customer-portal/license-keys/validate` → 200 | `ValidatedLicenseKey` | `id` (licence key), `customer_id`, `benefit_id`, `organization_id`, optional `activation` | echoes `key`; no order or subscription id |
 | `POST /v1/customer-portal/license-keys/activate` → 200 | `LicenseKeyActivationCreated` | `id` (activation), `license_key_id`, `license_key` (`GrantedLicenseKey`, same ids as validate) | echoes `key` |
-| `GET /v1/checkouts/{id}` → 200 | `Checkout` | `id`, `customer_id`, `subscription_id`, `product_id`, `discount_id` | **No** (and no order id): see `LAUNCH-AUDIT.md` F-08 |
+| `GET /v1/checkouts/{id}` → 200 | `Checkout` | `id`, `customer_id`, `subscription_id`, `product_id`, `discount_id` | **No** (and no order id): the key is reached through `GET /v1/orders/?checkout_id=`, `GET /v1/benefit-grants/` and `GET /v1/license-keys/{id}` (§2.3b, `LAUNCH-AUDIT.md` F-08, fixed) |
+| `GET /v1/license-keys/{id}` → 200 | `LicenseKeyWithActivations` | `id` (licence key), `customer_id`, `benefit_id`, `organization_id`, `activations[]` | **Yes**, `key`: the one organisation read that returns it |
 
 So no production webhook carries the key, and the benefit grant is the only event that joins a licence-key id to its order or subscription. The activate and validate responses give the licence-key, customer and benefit ids, never the order or subscription.
 
@@ -370,6 +396,7 @@ Not answerable from the docs; check with a sandbox purchase + refund (`LAUNCH-AU
 - whether a subscription's grant has `order_id` set or null (both work);
 - whether a full refund of a one-time order with "revoke benefits" sends `benefit_grant.revoked` as well (any one of the three events is enough);
 - the delivery order of `order.*`, `benefit_grant.*` and the buyer's activation (any order works; see §2.7).
+- for checkout auto-fill (§2.3b, N-04 step 7 (f)): whether Polar redirects to the success URL at `confirmed` or only at `succeeded`, and how many seconds pass before the order, the benefit grant and its `license_key_id` exist (the page retries for about 21 s).
 
 ### 2.8 Deactivation and `/pro/manage`
 
@@ -422,6 +449,7 @@ UI affordances (all in the island, `apps/web/src/tool/ui/pro.ts`):
 | `activation_limit` | 409 | "This key is already active on 5 devices." + device labels (`pro.err.limit`) | Button → `/pro/manage` to remove one |
 | `revoked` / `refunded` | 403 | "This licence is no longer active." (`pro.err.revoked`) | Link to support and to `/pro` |
 | `polar_unavailable` | 502 | "Our licence service is taking a break. Try again in a minute." (`pro.err.unavailable`) | Retry button; nothing is stored |
+| `polar_unavailable` (syncing, as built F-08) | 503 + `Retry-After: 5` | "Your purchase is still syncing — retry in a minute" (`license.info.syncing`, the same copy as the 502) | A paid checkout whose order, grant or key Polar has not created yet (§2.3b). `/pro/activate` auto-fill retries after 3, 6 and 12 s; nothing is stored |
 | `rate_limited` | 429 | "Too many attempts. Wait a minute." (`pro.err.rate`) | Retry after 60 s (`Retry-After`) |
 | `bad_token` | 401 | "This device needs to re-activate." (`pro.err.token`) | Paste key again |
 | offline (client) | — | "You're offline. Pro keeps working until {date}; we'll re-check when you're back." (`pro.err.offline`) | Nothing to do |
@@ -466,6 +494,7 @@ v1: the extension's options page has a "Licence key" field that calls the same `
 | LIC-13 | token verify: tampered payload / wrong key / unknown `ver` / `iat` 10 min ahead | `bad_signature` / `bad_signature` / `unknown_ver` / `future_iat` |
 | LIC-14 | `hasFeature('ambient.packs')` with expired cache | `false`; `hasFeature('ads.free')` same |
 | LIC-15 | rate limit: 11th activate in 60 s | 429 with `Retry-After` |
+| LIC-16 | activate / lookup by `checkoutId` (F-08, §2.3b) | `succeeded` → the key of that checkout's order or subscription; `open` / `confirmed` / grant not yet created → 503 `polar_unavailable` + `Retry-After`; unknown / `expired` / `failed` → 404 `invalid_key`; never another purchase's key |
 
 ---
 
