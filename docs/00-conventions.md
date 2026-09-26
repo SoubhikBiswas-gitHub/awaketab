@@ -419,6 +419,60 @@ Accepted on 2026-09-26 with the M6 implementation. Specs: `04-engine-spec.md` §
 
 55 new keys, present in all 8 locales: groups `ambient.*` (titles, focus, message, cook timers), `stats.*`, `rating.*`, `end.*` (`end.notify.title`, `end.notify.body`, `end.titleFlash`), `settings.accent.*`, `settings.ambient.*` additions, `settings.notifications.unavailable`, `pip.add15.label`, `pip.empty`, `tool.toast.batteryLow`, `tool.toast.proMessage`.
 
+### 13.9 Extension (M7 — E11)
+
+Proposed with the M7 implementation on 2026-09-26 (`10-extension-spec.md` §13); each is marked `PROPOSED — add to 00-conventions.md` in code until accepted.
+
+**Storage and sync**
+
+| Identifier | Decision |
+|---|---|
+| `at.v1.ext` | `IExtSettings { v: 1, level: 'display' \| 'system', schedules: ISchedule[], autostart: { browserStart: boolean, sites: IAutostartSite[] } }` in `chrome.storage.local`, mirrored to `chrome.storage.sync` |
+| `at.v1.device` | `{ v: 1, id }` — random UUID per browser profile, `chrome.storage.local` only; the licence `deviceId` |
+| `SYNC_KEYS` | `at.v1.settings`, `at.v1.ext` — the only keys copied to `chrome.storage.sync` (never `at.v1.license`, `at.v1.device`, `at.v1.session`, `at.v1.stats`) |
+| `EXT_DEFAULT_SETTINGS` | `DEFAULT_SETTINGS` with `telemetry: false`, `notifications: false` (extension defaults) |
+| `SESSION_COALESCE_MS` | 10,000 — session writes that only advance `awakeSeconds` are batched |
+| `ISession.modeState` in the extension | `{ level, origin, dismissed? }`; `TOrigin` = `user` · `command` · `schedule` · `autostart` · `startup` |
+| `ISchedule` | `{ id, days: number[] (0 = Sun … 6 = Sat), start: 'HH:MM', end: 'HH:MM', level }`; `SCHEDULES_MAX` 20 |
+| `IAutostartSite` | `{ host ('docs.example.com' \| '*.example.com'), durationMin: number \| null }`; `AUTOSTART_SITES_MAX` 50 |
+
+**Worker, alarms and UI**
+
+| Identifier | Decision |
+|---|---|
+| Alarm names | `at.tick` (every `TICK_PERIOD_MIN` 0.5 while a session is live) · `at.end` (at the session end) · `at.license` (`LICENSE_PERIOD_MIN` 60) · `at.sched.<id>.start` / `at.sched.<id>.end` (`SCHEDULE_ALARM_PREFIX`) |
+| `EXTEND_WINDOW_MS` | 5 min — the popup's extend prompt after a user session completes; `EXTEND_MS` = 15 / 30 / 60 min |
+| `STALE_NOTIFY_MS` | 5 min — a session that ended while the worker slept is announced only within this window |
+| `SYNC_DEBOUNCE_MS` | 2,000 |
+| Notification id | `at-end` (same tag as the web); buttons `+30 min` (index 0) / `Stop` (index 1) |
+| `BADGE_COLORS` | `display` `#B86E00` · `system` `#2B3A67`; text `#FFFFFF`; text `ON` / `SYS` / `<n>m` / `<n>h` |
+| `TExtRequest` | Popup → worker messages: `state` · `start {presetId}` · `until {wall}` · `stop` · `toggle` · `extend {ms}` · `dismiss` · `level {level}` |
+| `ISessionOptions.resumeIndefiniteMs` | `@awaketab/core`: how long an `indefinite` session stays resumable (default 12 h; the extension passes `Infinity`) |
+| `IStorageAdapter` | Now exported from `@awaketab/core` (docs/04 §16) |
+
+**Build and test**
+
+| Identifier | Decision |
+|---|---|
+| `AT_EXT_TEST` · `__AT_TEST__` | `AT_EXT_TEST=1` builds the Playwright flavour into `apps/extension/.output-test/` with `chrome.power` replaced by a recorder (`src/test-hooks.ts`, `chrome.storage.session['at.test.power']`) |
+| `AT_EXT_OUT` | Alternate WXT output directory (reproducibility check) |
+| `virtual:at-catalog/<locale>` · `virtual:at-catalogs-bg` · `virtual:at-tokens.css` | Build-time modules generated from `apps/web/src/i18n/*.json` and `apps/web/src/styles/tokens.css` (`apps/extension/scripts/i18n.mjs`) |
+| Scripts | `pnpm -F extension zip` → `.output/awaketab-chrome-<version>.zip` · `zip:check` · `store:assets` · `build:test`; root `pnpm test:e2e:ext` |
+| `support-matrix.json` → `extension` | `{ minimumChromeVersion, browsers, unsupported, notes }` — the manifest's `minimum_chrome_version` and `/extension` read it |
+
+**Web**
+
+| Identifier | Decision |
+|---|---|
+| `functions/api/_middleware.ts` · `functions/_lib/cors.ts` | CORS for `chrome-extension://[a-p]{32}` origins on `EXTENSION_CORS_ROUTES` (`/api/e`, `/api/license/activate`, `/api/license/validate`, `/api/license/deactivate`); preflight 204, others 403; no credentials |
+| `EXTENSION_STORE_URLS` (`src/lib/extension.ts`) | Store search URLs until the listing ids exist |
+| `/privacy#extension` | The extension's privacy statement (store listing URL) |
+| `softwareSchema()` (`lib/seo.ts`) | SoftwareApplication + BreadcrumbList for product pages |
+
+**i18n**
+
+93 new keys in all 8 locales: groups `ext.*` (manifest name/description/command, levels, popup, origins, advice, options sections, schedules, auto-start, licence, privacy, about) and `page.extension.*`.
+
 ---
 
 ## 14. Writing conventions for these docs
