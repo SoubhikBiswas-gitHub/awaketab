@@ -46,4 +46,19 @@ describe('extension CORS on /api', () => {
     expect(other.headers.get('access-control-allow-origin')).toBeNull();
     expect(extensionCorsHeaders(req('/api/embed/config', 'GET', EXT))).toEqual({});
   });
+
+  it('marks every /api response noindex (F-03: _headers never reach Functions), keeping status, body and headers', async () => {
+    const upstream = Response.json({ ok: true }, { status: 201, headers: { 'cache-control': 'no-store', 'retry-after': '7' } });
+    const res = await run(req('/api/health', 'GET'), upstream);
+    expect(res.headers.get('x-robots-tag')).toBe('noindex');
+    expect(res.status).toBe(201);
+    expect(res.headers.get('cache-control')).toBe('no-store');
+    expect(res.headers.get('retry-after')).toBe('7');
+    expect(await res.json()).toEqual({ ok: true });
+    const ext = await run(req('/api/e', 'POST', EXT));
+    expect(ext.headers.get('x-robots-tag')).toBe('noindex');
+    expect(ext.headers.get('access-control-allow-origin')).toBe(EXT);
+    // The upstream response is copied, not mutated (a fetch() response's headers are immutable on Workers).
+    expect(upstream.headers.has('x-robots-tag')).toBe(false);
+  });
 });

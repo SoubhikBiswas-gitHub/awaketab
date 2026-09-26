@@ -63,6 +63,26 @@ describe('Cloudflare generated rules', () => {
     expect(at('/api/health').get('cache-control')).toBe('no-store');
   });
 
+  it('marks every *.pages.dev host noindex and leaves the production host indexable (F-03, docs/14 §1)', () => {
+    const text = headerTools.generateHeaders();
+    const PAGES = ['/', '/30m', '/for/cooking', '/es/learn/x', '/embed', '/embed/', '/sitemap-index.xml', '/_astro/x.js'];
+    for (const host of ['awaketab.pages.dev', '3f2a9c1b.awaketab.pages.dev', 'm6-engagement.awaketab.pages.dev']) {
+      for (const pathname of PAGES) {
+        expect(headerTools.resolveHeaders(text, pathname, host).get('x-robots-tag'), `${host}${pathname}`).toMatch(/^noindex(, noindex)?$/u);
+      }
+      // Path rules still apply on preview hosts.
+      expect(headerTools.resolveHeaders(text, '/embed/cook', host).get('content-security-policy')).toMatch(/frame-ancestors \*$/u);
+    }
+    for (const host of ['awaketab.com', 'www.awaketab.com', 'awaketab.pages.dev.evil.example', 'pages.dev']) {
+      for (const pathname of ['/', '/30m', '/for/cooking', '/embed']) {
+        expect(headerTools.resolveHeaders(text, pathname, host).has('x-robots-tag'), `${host}${pathname}`).toBe(false);
+      }
+    }
+    // Last in the file, so a path rule's `! X-Robots-Tag` (the /embed landing page) cannot detach them.
+    const routes = headerTools.parseHeaderRules(text).map((rule) => rule.route);
+    expect(routes.slice(-2)).toEqual([...headerTools.PREVIEW_HOST_RULES]);
+  });
+
   it('ships the generated rules as public/_headers (what Cloudflare actually reads)', async () => {
     // vitest runs from the repo root under happy-dom, where import.meta.url is not a file: URL.
     const shipped = await readFile(path.resolve('apps/web/public/_headers'), 'utf8');

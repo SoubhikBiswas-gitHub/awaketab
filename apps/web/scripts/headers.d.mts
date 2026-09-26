@@ -12,5 +12,6 @@ export interface IHeaderRule {
   readonly detach: readonly string[];
 }
 export function parseHeaderRules(text: string): IHeaderRule[];
-export function resolveHeaders(text: string, pathname: string): Map<string, string>;
+export function resolveHeaders(text: string, pathname: string, host?: string): Map<string, string>;
+export const PREVIEW_HOST_RULES: readonly string[];
 export const BOOT_HASH: string;

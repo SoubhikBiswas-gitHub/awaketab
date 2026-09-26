@@ -54,6 +54,16 @@ const contentRoutes = [
   ),
 ];
 
+/**
+ * F-03 / docs/14 §1: every `*.pages.dev` host — the production alias `awaketab.pages.dev`, per-commit previews
+ * `<hash>.awaketab.pages.dev` and branch aliases `<branch>.awaketab.pages.dev` — answers `X-Robots-Tag: noindex`.
+ * Host-keyed `_headers` rules (Cloudflare's documented recipe) cost nothing per request; a root
+ * `functions/_middleware.ts` would turn every static asset into a Functions invocation. They sit last so a
+ * `! X-Robots-Tag` on a path rule (the /embed landing page) cannot detach them. Pages never applies `_headers`
+ * to Functions responses; `functions/api/_middleware.ts` marks `/api/*` noindex itself.
+ */
+export const PREVIEW_HOST_RULES = ['https://:project.pages.dev/*', 'https://:version.:project.pages.dev/*'];
+
 // Cloudflare Pages applies every matching rule and joins a header set twice with ", ". Rules that replace
 // a /* default (CSP on content routes, Cache-Control on assets) detach it first with `! Name`; otherwise
 // /_astro/* would ship "public, max-age=0, must-revalidate, public, max-age=31536000, immutable".
@@ -133,6 +143,9 @@ ${['/pip', ...LOCALES.map((locale) => `/${locale}/pip`)]
   ! Cache-Control
   Cache-Control: no-store
   X-Robots-Tag: noindex
+
+${PREVIEW_HOST_RULES.map((route) => `${route}
+  X-Robots-Tag: noindex`).join('\n\n')}
 `;
 }
 
@@ -166,21 +179,33 @@ export function parseHeaderRules(text) {
   return rules;
 }
 
-function routeMatches(route, pathname) {
-  if (!route.startsWith('/')) return false;
+function pathMatches(route, pathname) {
   const escaped = route.replace(/[.+?^${}()|[\]\\]/gu, '\\$&').replaceAll('*', '.*');
   return new RegExp(`^${escaped}$`, 'u').test(pathname);
+}
+
+/** `https://:a.:b.pages.dev/*`: a `:placeholder` matches one host label, like Cloudflare's absolute-URL rules. */
+function hostMatches(pattern, host) {
+  const escaped = pattern.replace(/[.+?^${}()|[\]\\]/gu, '\\$&').replace(/:[A-Za-z]\w*/gu, '[^./]+');
+  return new RegExp(`^${escaped}$`, 'iu').test(host);
+}
+
+function routeMatches(route, pathname, host) {
+  if (route.startsWith('/')) return pathMatches(route, pathname);
+  const m = /^https:\/\/([^/]+)(\/.*)$/u.exec(route);
+  return !!m && hostMatches(m[1], host) && pathMatches(m[2], pathname);
 }
 
 /**
  * The headers Cloudflare Pages would send for `pathname`: every matching rule applies in file order; `! Name`
  * detaches a header set by an earlier (less specific) rule; a header set twice is joined with ", ".
+ * Rules written as absolute URLs (`https://:project.pages.dev/*`) apply only when `host` matches.
  * Header names are lower-cased. Used by tests to assert the per-route security contract (docs/14 §3).
  */
-export function resolveHeaders(text, pathname) {
+export function resolveHeaders(text, pathname, host = 'awaketab.com') {
   const out = new Map();
   for (const rule of parseHeaderRules(text)) {
-    if (!routeMatches(rule.route, pathname)) continue;
+    if (!routeMatches(rule.route, pathname, host)) continue;
     for (const name of rule.detach) out.delete(name);
     for (const [name, value] of rule.set) out.set(name, out.has(name) ? `${out.get(name)}, ${value}` : value);
   }
