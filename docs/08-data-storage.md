@@ -229,7 +229,7 @@ Values are stored as objects, not JSON strings. `chrome.storage.sync` receives o
 
 `keyHash = sha256(licenceKey)` hex; `devHash = sha256(deviceId)`; `ipHash = sha256(RATE_LIMIT_SALT + ip)` — the salt rotates quarterly so hashes cannot be joined across quarters. The raw key is stored only as `keyEnc` (AES-256-GCM with `LICENSE_KEY_ENC_KEY`) because Polar's deactivate endpoint needs it.
 
-Backups: a scheduled Worker exports `lic:*`, `embed:*`, `ord:*` to R2 weekly (`14-devops.md` §11).
+Backups: the weekly GitHub Actions job `kv-backup.yml` exports `lic:*`, `cus:*`, `embed:*`, `ord:*` and `rating:*` (values, `expiration`, metadata), encrypted with AES-256-GCM (`BACKUP_ENCRYPTION_KEY`), as a 12-week artifact. Restore with `pnpm kv:restore`; rotate `LICENSE_KEY_ENC_KEY` with `pnpm kv:reencrypt` (`14-devops.md` §10–§11).
 
 ---
 

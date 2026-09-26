@@ -21,3 +21,6 @@ apps/web/public/library/
 # Built by scripts/embed-loader.mjs (the /embed/cook iframe app bundle)
 apps/web/public/embed/
 apps/extension/.output-test/
+# Output of pnpm kv:backup (encrypted, but never committed)
+kv-backups/
+*.jsonl.enc

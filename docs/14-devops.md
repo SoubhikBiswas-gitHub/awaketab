@@ -28,7 +28,7 @@ Preview deployments send `X-Robots-Tag: noindex` via `_headers` keyed on the `*.
 4. Analytics Engine datasets `awaketab_events`, `awaketab_events_preview` bound as `EVENTS`.
 5. Secrets (production and preview separately) via `wrangler pages secret put`: `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `POLAR_ORGANIZATION_ID`, `POLAR_BENEFIT_MAP`, `LICENSE_SIGNING_KEY`, `LICENSE_SIGNING_VER`, `LICENSE_KEY_ENC_KEY`, `RATE_LIMIT_SALT`, optional `TURNSTILE_SECRET_KEY`.
 6. Public build vars: `PUBLIC_SITE_URL`, `PUBLIC_ADS_ENABLED`, `PUBLIC_SPONSOR_ENABLED`, `PUBLIC_POLAR_SERVER`.
-7. R2 bucket `awaketab-backups` for weekly KV exports (Worker cron, §11).
+7. KV backups: GitHub repository secrets for the weekly `kv-backup.yml` job (§11). No R2 bucket is needed (as built, 2026-09-26).
 8. Cloudflare Web Analytics is **not** enabled (no third-party script by design); Cloudflare's built-in zone analytics (requests, status codes, cache ratio) is used for traffic and errors.
 9. Turnstile widget (optional) for `/pro/activate` if abuse appears.
 
@@ -162,7 +162,7 @@ Commit messages: Conventional Commits (`feat(engine): …`, `fix(seo): …`, `co
 
 `extension-release.yml` (tag `ext-v*`): `pnpm -F extension zip` → upload to Chrome Web Store via the Web Store API (refresh-token secret) as a draft → manual "publish" in the dashboard; Edge submission via the Partner Center API similarly.
 
-`backup.yml` is not needed — backups run as a Cloudflare Worker cron (§11).
+`kv-backup.yml` (Mondays 03:17 UTC, `workflow_dispatch`): weekly encrypted KV export, uploaded as a 12-week artifact (§11). It is a no-op with a notice when none of its secrets are set (forks, fresh clones) and fails when only some are.
 
 ---
 
@@ -215,18 +215,41 @@ Alerts go to a single email and an optional Slack webhook (secret `ALERT_WEBHOOK
 
 ## 10. Security operations
 
-- Secret rotation: `RATE_LIMIT_SALT` quarterly; `LICENSE_KEY_ENC_KEY` never rotated without re-encrypting KV (script `pnpm kv:reencrypt`); ES256 key rotation yearly: generate new keypair → add public key to `LICENSE_PUBLIC_KEYS[ver+1]` and ship the app first → set `LICENSE_SIGNING_KEY`/`LICENSE_SIGNING_VER` → keep the old public key for 90 days → remove.
+- Secret rotation: `RATE_LIMIT_SALT` quarterly; `LICENSE_KEY_ENC_KEY` never rotated without re-encrypting KV (`pnpm kv:reencrypt`, runbook below); ES256 key rotation yearly: generate new keypair → add public key to `LICENSE_PUBLIC_KEYS[ver+1]` and ship the app first → set `LICENSE_SIGNING_KEY`/`LICENSE_SIGNING_VER` → keep the old public key for 90 days → remove.
 - Dependencies: Renovate weekly PRs, grouped; `pnpm audit` in nightly; lockfile committed.
 - CSP report-only for two weeks after any header change, then enforce.
 - Webhook endpoint verifies HMAC and rejects timestamps older than 5 minutes; idempotency keys 30 days.
 - Access: GitHub org 2FA required; Cloudflare account 2FA + API tokens scoped per workflow; Polar org owner only.
 - Data requests: "delete my licence data" handled manually from KV by `keyHash` within 7 days (documented on `/privacy`).
 
+**`LICENSE_KEY_ENC_KEY` rotation (as built, 2026-09-26).** `pnpm kv:reencrypt` (`apps/web/scripts/kv/`) re-encrypts `keyEnc` on every `lic:*` record from the old key to the new one over the Cloudflare REST API. It changes nothing else in the record (same key, value fields, `expiration` and metadata). Keys come from the environment, never from arguments, so they stay out of shell history.
+
+1. Take a backup first: GitHub → Actions → KV backup → Run workflow, and download the artifact.
+2. `openssl rand -base64 32` → the new key; save it in the password manager next to the old one.
+3. Set the new `LICENSE_KEY_ENC_KEY` in Pages (Production), then redeploy (Pages reads secrets at deploy time). From here the functions write new-key records; until step 5 finishes, `/api/license/deactivate` cannot open old-key records (Polar deactivation fails and the client retries), so keep steps 3–5 together.
+4. Dry run: `OLD_LICENSE_KEY_ENC_KEY=… NEW_LICENSE_KEY_ENC_KEY=… CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… pnpm kv:reencrypt --namespace-id <LICENSES id>`. Progress per listing page goes to stderr, a JSON summary to stdout (`scanned`, `rotated`, `alreadyNew`, `noKeyEnc`, `expiring`, `changed`, `failed`). `failed` must be empty.
+5. Apply: the same command with `--apply --yes-production`. The API token needs Workers KV Storage **Edit**; use a short-lived personal token, not the backup job's read-only one.
+6. Run step 5 again. It must report `rotated: 0` and every record `alreadyNew`. Then delete the old key.
+
+Behaviour: **dry run by default**; `--apply` on a namespace whose title does not contain "preview" (or whose id equals `KV_LICENSES_ID`) also needs `--yes-production`. **Idempotent and resumable** without a state file: each record is tried with the new key first and skipped if it opens, so a re-run after an interruption touches only what is left, and records the functions wrote with the new key in the meantime are left alone. **Never guesses:** a record neither key opens is listed in `failed` and not written (exit 1). **Lost-update guard:** each batch is re-read just before the write; a record that changed in between (a webhook or activation) is skipped, listed in `changed`, and the command exits 1 so you run it again. Records expiring within 60 s are skipped (`expiring`): KV would reject the write. Exit codes: 0 ok, 1 failures or work left, 2 usage or configuration.
+
 ---
 
 ## 11. Backups and recovery
 
-- Weekly Worker cron (`backup-kv`) lists `lic:*`, `cus:*`, `embed:*`, `ord:*`, `rating:*` and writes a JSONL snapshot to R2 `awaketab-backups/YYYY-MM-DD.jsonl` (retain 12 weeks). Restore: `pnpm kv:restore <date>` (dry-run by default).
+- **Weekly KV backup (as built, 2026-09-26).** `.github/workflows/kv-backup.yml` runs Mondays 03:17 UTC and on demand (`workflow_dispatch`). It runs `pnpm kv:backup`, which lists `lic:*`, `cus:*`, `embed:*`, `ord:*` and `rating:*` (not `wh:*` or `rl:*`: 30-day and 120-second keys) through the Cloudflare REST API, writes one JSONL snapshot per namespace, encrypts it, checks that it decrypts back to the same records, and uploads `LICENSES-YYYY-MM-DD.jsonl.enc` (plus `LICENSES_PREVIEW-…` when configured) as the artifact `kv-backup-<run id>`, kept 84 days (12 weeks). Any API error fails the run, and GitHub emails the owner about failed scheduled runs.
+  - **Changed from the plan** (a `backup-kv` Worker cron writing to R2): the repo has no Worker and no `wrangler.toml`, and Pages projects cannot run crons. A GitHub Actions job needs no second deployable and keeps the copy with a second provider (GitHub, not Cloudflare), which is what a backup is for. No R2 bucket is needed. No wrangler dependency either: `apps/web/scripts/kv/lib/cloudflare.ts` uses `fetch` on five documented KV endpoints (namespace lookup, key listing with `expiration` and metadata, `bulk/get` with a per-key `values/` fallback, `bulk` write), retries 429 / 5xx / network errors with backoff (honouring `Retry-After`), and fails on anything else with the API's error code. A missing namespace or a bad token never reads as an empty KV.
+  - **Format.** Line 1 is a header `{ format: 'awaketab-kv-backup', version: 1, namespace, namespaceId, createdAt, prefixes, count }`, then one `{ key, value, expiration?, metadata? }` per line (`value` = the raw KV string, `expiration` = absolute Unix seconds from the listing). A parse rejects truncated files, duplicate keys and malformed lines.
+  - **Encryption at rest.** AES-256-GCM in Node WebCrypto with `BACKUP_ENCRYPTION_KEY` (32 bytes, base64): the file is `ATKVBK01` ‖ 12-byte IV ‖ ciphertext + tag, with the magic bytes as AAD. No plaintext licence data reaches the runner's disk or the artifact. `keyEnc` inside is still encrypted with `LICENSE_KEY_ENC_KEY` as well. The job logs only file name, size and SHA-256, never record counts, because workflow logs of a public repository are public. **Keep `BACKUP_ENCRYPTION_KEY` in the password manager**: without it no backup can be restored. After a `LICENSE_KEY_ENC_KEY` rotation, older backups still hold old-key `keyEnc`; restore one, then run `pnpm kv:reencrypt` with the old key.
+  - **Secrets** (GitHub → Settings → Secrets and variables → Actions): `CLOUDFLARE_API_TOKEN` (Account → Workers KV Storage → **Read** only), `CLOUDFLARE_ACCOUNT_ID`, `KV_LICENSES_ID`, optional `KV_LICENSES_PREVIEW_ID`, `BACKUP_ENCRYPTION_KEY`. With none of them set the job logs "KV backup skipped" and succeeds (forks, fresh clones). With only some set it fails and names the missing ones.
+  - **Retention.** Artifacts expire after 84 days. For a private repository, the repository or organisation artifact-retention limit must be ≥ 84 days. For a copy that outlives GitHub retention, download an artifact monthly into the password manager or an offline drive.
+- **Restore: `pnpm kv:restore <file>`** (download and unzip the artifact first):
+  - `BACKUP_ENCRYPTION_KEY=… pnpm kv:restore LICENSES-2026-09-28.jsonl.enc` decrypts and validates the file and prints the header and counts per key family. It needs no Cloudflare credentials, so this is the quick integrity check.
+  - Add `--namespace-id <id>` (plus `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) for a **dry run** against a namespace (the default). It prints `create` (missing in the target), `same`, `conflict` (the live value differs), `expired` (past `expiration`, or less than the 60 s KV minimum away) and `willWrite`, and lists up to 20 conflict keys.
+  - `--apply` writes, using bulk writes with each record's original `expiration` and metadata. It creates missing keys only. Conflicts are kept unless you add `--overwrite`, because the live value is usually newer. A restore never deletes. `--prefix lic:` (repeatable) limits the restore to some key families.
+  - A production target (title without "preview", or the `KV_LICENSES_ID` id) refuses `--apply` without `--yes-production`. Restoring into another namespace (e.g. a production backup into `LICENSES_PREVIEW` for a drill) is allowed and noted.
+  - **Drill (docs/17 §2 "KV backup cron ran once; restore dry-run succeeded"):** run the workflow once, download the artifact, run `pnpm kv:restore <file>`, then `pnpm kv:restore <file> --namespace-id <LICENSES_PREVIEW id>`.
+- Code and tests: `apps/web/scripts/kv/{backup,restore,reencrypt}.ts` (entry points) over `lib/` (`format`, `crypto`, `store`, `cloudflare`, `backup`, `restore`, `reencrypt`, `cli`). The unit tests in `apps/web/scripts/kv/test/` run against an in-memory KV store and a fake of the Cloudflare REST API (no network). `apps/web/functions/_lib/kv-ops-interop.test.ts` checks that the script's `keyEnc` format matches `encryptUtf8` / `decryptUtf8` in the functions (`13-testing-strategy.md` §9).
 - Site rollback: Cloudflare Pages → Deployments → "Rollback to this deployment" (instant, static). Functions roll back with the same deployment.
 - Analytics Engine has 90-day retention; monthly KPI snapshots in `docs/metrics/` are the long-term record.
 - Domains: auto-renew on, registrar 2FA, expiry alerts 60 days ahead; DNS in Cloudflare with change history.

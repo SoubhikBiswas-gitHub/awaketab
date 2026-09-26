@@ -21,6 +21,9 @@
     "typecheck": "pnpm -r typecheck",
     "size": "pnpm -r --if-present size",
     "keys:dev": "node apps/web/scripts/keys-dev.mjs",
+    "kv:backup": "tsx apps/web/scripts/kv/backup.ts",
+    "kv:restore": "tsx apps/web/scripts/kv/restore.ts",
+    "kv:reencrypt": "tsx apps/web/scripts/kv/reencrypt.ts",
     "lighthouse": "lhci autorun"
   },
   "devDependencies": {
