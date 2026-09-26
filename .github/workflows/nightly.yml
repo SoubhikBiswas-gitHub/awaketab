@@ -21,7 +21,17 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps firefox webkit
+      - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm build
       - run: pnpm test:e2e --project=firefox --project=webkit
+      # Visual regression of the ambient awake screens (visual.spec.ts skips itself unless VISUAL=1).
+      - run: VISUAL=1 pnpm exec playwright test apps/web/test/e2e/visual.spec.ts --project=chromium --update-snapshots=missing
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-snapshots
+          path: |
+            apps/web/test/e2e/visual.spec.ts-snapshots
+            test-results
+          if-no-files-found: ignore
       - run: pnpm audit --audit-level high

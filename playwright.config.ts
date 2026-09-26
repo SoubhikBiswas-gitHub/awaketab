@@ -9,6 +9,9 @@ export default defineConfig({
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:4321',
     trace: 'on-first-retry',
+    // page.route() cannot see requests a service worker makes, so an active SW would silently bypass every
+    // API mock. The offline journey opts back in with test.use({ serviceWorkers: 'allow' }).
+    serviceWorkers: 'block',
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

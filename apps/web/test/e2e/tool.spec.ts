@@ -55,9 +55,38 @@ test('journey 5 denied shows advice', async ({ page }) => {
   await expect(page.locator('[data-timer]')).toBeHidden();
 });
 
-test('journey 6 timer end opens extend', async ({ page }) => {
+test('journey 6 timer end chimes, flashes the title and opens extend', async ({ page }) => {
+  // Count synthesised chime tones: a stub AudioContext records every createOscillator() call.
+  await page.addInitScript(() => {
+    const w = window as Window & { __chimes: number };
+    w.__chimes = 0;
+    const param = () => ({ value: 0, setValueAtTime() {}, exponentialRampToValueAtTime() {} });
+    const node = () => ({
+      connect(next: unknown) {
+        return next;
+      },
+    });
+    class FakeAudioContext {
+      currentTime = 0;
+      state = 'running';
+      destination = {};
+      resume() {
+        return Promise.resolve();
+      }
+      createOscillator() {
+        w.__chimes += 1;
+        return { ...node(), type: 'sine', frequency: param(), start() {}, stop() {} };
+      }
+      createGain() {
+        return { ...node(), gain: param() };
+      }
+    }
+    Object.defineProperty(window, 'AudioContext', { configurable: true, writable: true, value: FakeAudioContext });
+  });
   await page.clock.install();
   await page.goto('/?autostart=0');
+  // A pointerdown on the island primes the AudioContext (docs/04 §10).
+  await page.locator('#awaketab-tool h1').click();
   await page.getByRole('button', { name: 'Custom…' }).click();
   const dlg = page.locator('dialog[data-dialog="custom"]');
   await expect(dlg).toBeVisible();
@@ -66,7 +95,15 @@ test('journey 6 timer end opens extend', async ({ page }) => {
   await dlg.locator('input[name="minutes"]').fill('1');
   await dlg.locator('[data-custom-start]').click();
   await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake');
+  const titles: string[] = [];
   await page.clock.fastForward(61_000);
+  await expect
+    .poll(async () => {
+      titles.push(await page.title());
+      return titles.includes('Done — AwakeTab');
+    })
+    .toBe(true);
+  await expect.poll(() => page.evaluate(() => (window as Window & { __chimes: number }).__chimes)).toBeGreaterThan(0);
   await expect(page.locator('dialog[data-dialog="extend"]')).toBeVisible({ timeout: 4000 });
   await page.locator('[data-extend-30]').click();
   await expect(page.locator('[data-timer-digits]')).toHaveText(/00:(29|30|31):\d{2}/);
@@ -128,11 +165,19 @@ test('journey 9 mocked Pro activation shows the badge then revokes', async ({ pa
       },
     });
   });
+  // The first page on / revalidates the stored licence too; answer it OK so it cannot consume the
+  // `revoked` mock meant for the reload (the source of the old flake).
+  await page.route('**/api/license/validate', async (route) => {
+    await route.fulfill({ json: {} });
+  });
+  const firstValidate = page.waitForResponse('**/api/license/validate');
   await page.goto('/pro/activate');
   await page.locator('input[name="key"]').fill('ATAB-TEST-KEY-1234567890');
   await page.locator('[data-activate] button[type="submit"]').click();
   await page.waitForURL('**/');
   await expect(page.locator('[data-pro-badge]')).toBeVisible();
+  await firstValidate;
+  await page.unroute('**/api/license/validate');
   await page.route('**/api/license/validate', async (route) => {
     await route.fulfill({ json: { revoked: true } });
   });
@@ -152,13 +197,29 @@ test('journey 11 tool routes ship no ad network code', async ({ page }) => {
 
 test('first-party beacon includes page_view, session_start and lock_state', async ({ page }) => {
   const seen: string[] = [];
+  const record = (raw: string | null) => {
+    if (!raw) return;
+    const body = JSON.parse(raw) as { events?: Array<{ event: string }> };
+    for (const row of body.events ?? []) seen.push(row.event);
+  };
+  // WebKit does not expose sendBeacon Blob bodies to page.route (postData() is null there), so also capture
+  // the payload in the page; both paths feed the same assertion in every engine.
+  await page.exposeFunction('__atBeacon', record);
+  await page.addInitScript(() => {
+    const send = navigator.sendBeacon.bind(navigator);
+    const hook = (window as unknown as { __atBeacon: (raw: string) => void }).__atBeacon;
+    navigator.sendBeacon = (url, data) => {
+      if (data instanceof Blob) void data.text().then(hook);
+      else if (typeof data === 'string') hook(data);
+      return send(url, data);
+    };
+  });
   await page.route('**/api/e', async (route) => {
     if (route.request().method() !== 'POST') {
       await route.continue();
       return;
     }
-    const body = route.request().postDataJSON() as { events?: Array<{ event: string }> };
-    for (const row of body.events ?? []) seen.push(row.event);
+    record(route.request().postData());
     await route.fulfill({ status: 204, body: '' });
   });
   await page.goto('/');
