@@ -1,6 +1,6 @@
 // Build job lists: node gen-jobs.mjs <set> > jobs.json   (set = base | wrappers | main | all)
 import { readFileSync, readdirSync } from 'node:fs';
-const DIR = process.env.DCDIR || '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const DIR = process.env.DCDIR || '/home/user/awaketab/design/canvas/project/';
 globalThis.window = { matchMedia: () => ({ matches: true, addEventListener() {}, removeEventListener() {} }) };
 class DCLogic { constructor(p) { this.props = p || {}; this.state = {}; } setState(u) { this.state = { ...this.state, ...(typeof u === 'function' ? u(this.state) : u) }; } }
 const size = (file, props) => {

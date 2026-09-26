@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
 import { writeFileSync } from 'node:fs';
 import { toPage } from './lib.mjs';
-const require = createRequire('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/');
+const require = createRequire('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/');
 const { chromium } = require('playwright');
 const [file, props, sel] = [process.argv[2], JSON.parse(process.argv[3]), process.argv[4].split(',')];
 const { page: html } = toPage(file, props);

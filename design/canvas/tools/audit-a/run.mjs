@@ -2,11 +2,11 @@
 // jobs: [{id, file, props, patch, W, H, scheme}]
 import { readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
-const require = createRequire('/Users/soubhik/Work/github/awaketab/package.json');
-const { chromium } = require('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright');
-const sharp = require('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/sharp@0.34.5/node_modules/sharp');
+const require = createRequire('/home/user/awaketab/package.json');
+const { chromium } = require('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright');
+const sharp = require('/home/user/awaketab/node_modules/.pnpm/sharp@0.34.5/node_modules/sharp');
 const HERE = new URL('.', import.meta.url).pathname;
-const DIR = process.env.DCDIR || '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const DIR = process.env.DCDIR || '/home/user/awaketab/design/canvas/project/';
 const [jobsFile, outDir] = process.argv.slice(2);
 const noshot = process.argv.includes('--noshot');
 mkdirSync(outDir + '/res', { recursive: true });

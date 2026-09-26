@@ -1,8 +1,8 @@
 // Compose contact sheets. usage: node sheet.mjs out.png segH cols name1 name2 ...
 // Each image is cut into vertical segments of segH px (0 = whole), laid out left to right.
 import { readFileSync } from 'node:fs';
-const { chromium } = await import('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
-const SH = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/director/shots/';
+const { chromium } = await import('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
+const SH = '/home/user/awaketab/design/canvas/tools/director/shots/';
 const [out, segH, cols, ...names] = process.argv.slice(2);
 const size = (p) => { const b = readFileSync(p); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
 const cells = [];

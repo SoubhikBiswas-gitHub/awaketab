@@ -1,5 +1,5 @@
 import { writeFileSync } from 'node:fs';
-const PROJECT = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const PROJECT = '/home/user/awaketab/design/canvas/project/';
 export const WRAPS = [
   ['PageKioskDesk', 'PageKiosk', 'kiosk · desktop dark', { layout: 'desktop', theme: 'dark' }, 1280, 2992],
   ['PageKioskPhone', 'PageKiosk', 'kiosk · phone light', { layout: 'phone', theme: 'light' }, 390, 4360],

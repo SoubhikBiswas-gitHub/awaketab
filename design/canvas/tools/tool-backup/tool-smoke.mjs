@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync } from 'node:fs';
-const dir = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const dir = '/home/user/awaketab/design/canvas/project/';
 const src = readFileSync(dir + 'Main.dc.html', 'utf8');
 const js = src.split('data-dc-script')[1].split("}'>")[1].split('</script>')[0];
 const props = JSON.parse(src.split("data-props='")[1].split("'>")[0]);

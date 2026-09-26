@@ -1,7 +1,7 @@
 // Source-level checks: tokens (colour literals vs palette), motion (reduced-motion coverage, layout animation), nesting balance.
 // usage: node static.mjs File1.dc.html File2.dc.html ...  -> JSON on stdout
 import { readFileSync } from 'node:fs';
-const DIR = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const DIR = '/home/user/awaketab/design/canvas/project/';
 const norm = (h) => { h = h.toUpperCase(); if (h.length === 4) h = '#' + h[1] + h[1] + h[2] + h[2] + h[3] + h[3]; return h.slice(0, 7); };
 const main = readFileSync(DIR + 'Main.dc.html', 'utf8');
 const PALETTE = new Set((main.match(/#[0-9A-Fa-f]{6}\b|#[0-9A-Fa-f]{3}\b/g) || []).map(norm));

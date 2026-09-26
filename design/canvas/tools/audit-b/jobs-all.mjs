@@ -1,6 +1,6 @@
 // Jobs for every board in the project (canvas.json boards + any other .dc.html), at canvas size.
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
-const DIR = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const DIR = '/home/user/awaketab/design/canvas/project/';
 const canvas = JSON.parse(readFileSync(DIR + 'canvas.json', 'utf8')).boards;
 const jobs = [];
 const seen = new Set();

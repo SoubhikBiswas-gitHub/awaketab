@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-const D = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const D = '/home/user/awaketab/design/canvas/project/';
 const SN = JSON.parse(readFileSync(new URL('./snips.json', import.meta.url), 'utf8'));
 const pre = (k, cut) => SN[k].slice(0, SN[k].indexOf(cut) + cut.length);
 const checks = {

@@ -2,7 +2,7 @@
 // into project/Intl.dc.html between the /*L10N*/ ... /*END*/ markers. Idempotent. Reports missing keys.
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const REPO = '/Users/soubhik/Work/github/awaketab/apps/web/src';
+const REPO = '/home/user/awaketab/apps/web/src';
 const file = new URL('./project/Intl.dc.html', import.meta.url);
 const KEYS = [
   'tool.pill.idle', 'tool.pill.requesting', 'tool.pill.held', 'tool.pill.lost', 'tool.pill.denied', 'tool.pill.unsupported', 'tool.pill.fallback',

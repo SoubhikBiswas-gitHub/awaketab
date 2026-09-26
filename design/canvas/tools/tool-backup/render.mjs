@@ -1,10 +1,10 @@
 // Minimal static expander for Main.dc.html (sc-if / sc-for / holes) + Playwright screenshots.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-const require = createRequire('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/');
+const require = createRequire('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/');
 const { chromium } = require('playwright');
-const dir = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
-const out = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/tool-backup/';
+const dir = '/home/user/awaketab/design/canvas/project/';
+const out = '/home/user/awaketab/design/canvas/tools/tool-backup/';
 const src = readFileSync(dir + 'Main.dc.html', 'utf8');
 const js = src.split('data-dc-script')[1].split("}'>")[1].split('</script>')[0];
 globalThis.window = { matchMedia: () => ({ matches: true, addEventListener() {}, removeEventListener() {} }) };

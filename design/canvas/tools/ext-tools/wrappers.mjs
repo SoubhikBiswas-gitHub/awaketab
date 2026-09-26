@@ -1,5 +1,5 @@
 import { writeFileSync } from 'node:fs';
-const dir = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const dir = '/home/user/awaketab/design/canvas/project/';
 const wrap = (file, child, title, props, w, h) => writeFileSync(dir + file, `<!doctype html>
 <html lang="en">
 <head>

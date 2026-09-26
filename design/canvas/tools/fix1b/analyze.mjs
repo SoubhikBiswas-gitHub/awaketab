@@ -1,6 +1,6 @@
 // Check audit dumps against DESIGN.md §11 and group violations by source file.
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
-const A = process.env.A || '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/fix1b/before/audit/';
+const A = process.env.A || '/home/user/awaketab/design/canvas/tools/fix1b/before/audit/';
 const SPACE = new Set([0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 120]); // v2: 80/120 are the §11.1 desktop/xl gutters
 const RADII = new Set([0, 4, 8, 12, 16, 20, 28, 999]);
 const HEIGHTS = new Set([44, 48, 52, 56, 60, 64]); // v2: 56 = §11.4 list row (FAQ/device/guide rows are buttons or links)

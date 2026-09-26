@@ -1,6 +1,6 @@
 // Content agent: writes wrapper boards, then smoke-tests ContentArticle, HubFor and HomeBelow.
 import { readFileSync, writeFileSync } from 'node:fs';
-const D = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const D = '/home/user/awaketab/design/canvas/project/';
 
 // 1. Wrappers (same shape as gen.mjs).
 const wrap = (file, name, title, props, w, h) => writeFileSync(D + file, `<!doctype html>

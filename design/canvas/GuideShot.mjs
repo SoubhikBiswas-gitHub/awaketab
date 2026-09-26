@@ -2,7 +2,7 @@
 import { writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { load, toHtml } from './ProLib.mjs';
-const require = createRequire('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/');
+const require = createRequire('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/');
 const { chromium } = require('playwright');
 const [file, layout, theme, chunk = '1100', props = '{}', patch = '{}'] = process.argv.slice(2);
 const { Component } = load(file);

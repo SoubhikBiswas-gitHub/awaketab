@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'node:fs';
-const dir = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const dir = '/home/user/awaketab/design/canvas/project/';
 const WRITE = process.argv.includes('--write');
 
 globalThis.window = { matchMedia: () => ({ matches: true, addEventListener() {}, removeEventListener() {} }) };
@@ -156,7 +156,7 @@ for (const theme of ['light', 'dark', 'auto']) {
 console.log('TOTAL missing:', missing);
 
 if (WRITE) {
-  const wrap = (file, title, name, props, w, h) => writeFileSync('/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/fix1b/xap/w2/' + file, `<!doctype html>
+  const wrap = (file, title, name, props, w, h) => writeFileSync('/home/user/awaketab/design/canvas/tools/fix1b/xap/w2/' + file, `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -191,7 +191,7 @@ class Component extends DCLogic {
   const pipPair = (file, theme) => {
     const dark = theme === 'dark';
     const bg = dark ? '#0A0E16' : '#F2F6FA', ink = dark ? '#8E9AAE' : '#5B6779', line = dark ? 'rgba(255,255,255,0.10)' : 'rgba(14,23,38,0.14)';
-    writeFileSync('/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/fix1b/xap/w2/' + file, `<!doctype html>
+    writeFileSync('/home/user/awaketab/design/canvas/tools/fix1b/xap/w2/' + file, `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">

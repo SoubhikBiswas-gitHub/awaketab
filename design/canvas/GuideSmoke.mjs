@@ -107,7 +107,7 @@ console.log('combos checked:', combos, 'failures:', bad);
 
 // 3. Optional measurement.
 if (process.argv.includes('--measure')) {
-  const require = createRequire('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/');
+  const require = createRequire('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/');
   const { chromium } = require('playwright');
   const browser = await chromium.launch();
   const out = {};

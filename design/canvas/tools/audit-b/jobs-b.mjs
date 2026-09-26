@@ -1,6 +1,6 @@
 // Generate render jobs for Audit B's assigned boards (base files at each layout x theme, plus wrappers at canvas size).
 import { writeFileSync, readFileSync } from 'node:fs';
-const DIR = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const DIR = '/home/user/awaketab/design/canvas/project/';
 const canvas = JSON.parse(readFileSync(DIR + 'canvas.json', 'utf8')).boards;
 const W = { phone: 390, tablet: 820, desktop: 1280 };
 const jobs = [];

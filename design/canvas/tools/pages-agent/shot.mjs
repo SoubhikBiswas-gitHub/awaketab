@@ -2,7 +2,7 @@
 // Renders statically (root height auto), prints the natural height, optionally screenshots.
 import { load, parse, render } from './dc.mjs';
 import { mkdirSync } from 'node:fs';
-const { chromium } = await import('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
+const { chromium } = await import('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
 
 const OUT = new URL('./shots/', import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });

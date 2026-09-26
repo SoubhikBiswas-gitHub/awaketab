@@ -1,7 +1,7 @@
 // Assembles self-contained Page*.dc.html files from src/<Name>.html + src/<Name>.js + shared parts.
 import { readFileSync, writeFileSync } from 'node:fs';
 const here = (f) => new URL(f, import.meta.url);
-const PROJECT = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const PROJECT = '/home/user/awaketab/design/canvas/project/';
 const style = readFileSync(here('./helmet-style.txt'), 'utf8').trimEnd();
 const EXTRA = `input,select,textarea{font-family:inherit}
 input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid #5BE0E8;outline-offset:2px}

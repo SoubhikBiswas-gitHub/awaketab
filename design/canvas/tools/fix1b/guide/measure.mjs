@@ -1,9 +1,9 @@
 // Measure natural heights of the four Guide boards (max over variants) and check rendered text for '{{'.
 // usage: node measure.mjs [--write]   (--write updates directions/GuideSizes.json Guide entries only)
 import { writeFileSync, readFileSync } from 'node:fs';
-const D = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/';
+const D = '/home/user/awaketab/design/canvas/';
 const { load, toHtml } = await import(D + 'ProLib.mjs');
-const { chromium } = await import('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
+const { chromium } = await import('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
 const FILES = ['GuideOn', 'GuideVs', 'GuideLearn', 'GuideGuides'];
 const LAYOUTS = { phone: 390, tablet: 820, desktop: 1280 };
 const variants = (f) => {

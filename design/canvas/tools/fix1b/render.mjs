@@ -2,9 +2,9 @@
 // and dump a computed-style audit per element for the §11 drift report.
 // usage: node render-all.mjs [filter-regex]
 import { readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs';
-const { chromium } = await import('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
-const DIR = process.env.DIR || '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
-const OUT = process.env.OUT || '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/fix1b/before/';
+const { chromium } = await import('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
+const DIR = process.env.DIR || '/home/user/awaketab/design/canvas/project/';
+const OUT = process.env.OUT || '/home/user/awaketab/design/canvas/tools/fix1b/before/';
 mkdirSync(OUT + 'shots', { recursive: true });
 mkdirSync(OUT + 'audit', { recursive: true });
 const canvas = JSON.parse(readFileSync(DIR + 'canvas.json', 'utf8'));

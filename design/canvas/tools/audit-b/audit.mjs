@@ -3,10 +3,10 @@
 // job: { id, file, props, w, scheme, shot:true|false, actions:[{click:selector}|{wait:ms}] }
 import { readFileSync, readdirSync, writeFileSync, mkdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
-const require = createRequire('/Users/soubhik/Work/github/awaketab/package.json');
-const { chromium } = require('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright');
+const require = createRequire('/home/user/awaketab/package.json');
+const { chromium } = require('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright');
 const HERE = new URL('.', import.meta.url).pathname;
-const DIR = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const DIR = '/home/user/awaketab/design/canvas/project/';
 const [jobsPath, outPath, shotDir = HERE + 'shots/'] = process.argv.slice(2);
 mkdirSync(shotDir, { recursive: true });
 const jobs = JSON.parse(readFileSync(jobsPath, 'utf8'));

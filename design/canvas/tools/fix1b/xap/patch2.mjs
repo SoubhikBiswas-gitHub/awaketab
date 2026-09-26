@@ -1,6 +1,6 @@
 // Follow-up: owner-delegated decisions (O-02, O-09/O-82, O-12, O-56, O-57, O-81, O-83) + PRIMITIVES v1 update.
 import { readFileSync, writeFileSync } from 'node:fs';
-const D = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const D = '/home/user/awaketab/design/canvas/project/';
 const OLD = JSON.parse(readFileSync(new URL('./snips.old.json', import.meta.url), 'utf8'));
 const NEW = JSON.parse(readFileSync(new URL('./snips.json', import.meta.url), 'utf8'));
 let s;

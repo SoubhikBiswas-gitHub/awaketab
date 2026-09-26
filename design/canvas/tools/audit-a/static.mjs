@@ -1,7 +1,7 @@
 // Static source checks: colour tokens, motion rules, copy (em dashes / 24h) in source strings.
 // node static.mjs File1.dc.html File2.dc.html ...
 import { readFileSync } from 'node:fs';
-const DIR = process.env.DCDIR || '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const DIR = process.env.DCDIR || '/home/user/awaketab/design/canvas/project/';
 const hex6 = (h) => { h = h.replace('#', '').toUpperCase(); if (h.length === 3) h = h.split('').map((c) => c + c).join(''); return '#' + h.slice(0, 6); };
 const DESIGN = ['0A0E16', '13203A', '111826', '1F2940', '33405C', 'EAF0F7', 'B7C1D1', '8E9AAE', '1A2336', '2A3752', 'F2B34C', 'FF7A7A', '04232A',
   'F2F6FA', 'FFFFFF', 'DCE3EC', 'C3CDDA', '0E1726', '3A4659', '5B6779', 'E3E9F1', 'CCD5E1', 'B7791F', 'D14343', '000000', '0A0A0A',

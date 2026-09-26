@@ -1,8 +1,8 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
-const require = createRequire('/Users/soubhik/Work/github/awaketab/package.json');
-const { chromium } = require('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright');
-const DIR = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const require = createRequire('/home/user/awaketab/package.json');
+const { chromium } = require('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright');
+const DIR = '/home/user/awaketab/design/canvas/project/';
 const [file, props, W, H, sel] = process.argv.slice(2);
 const files = {}; for (const f of readdirSync(DIR)) if (f.endsWith('.dc.html')) files[f.replace('.dc.html', '')] = readFileSync(DIR + f, 'utf8');
 const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: +W, height: +H } });

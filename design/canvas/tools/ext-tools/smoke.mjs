@@ -1,6 +1,6 @@
 // Smoke test for Ext* and Embed* boards: every {{hole}} resolves across prop combos, handlers work, tags balance.
 import { readFileSync, readdirSync } from 'node:fs';
-const dir = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const dir = '/home/user/awaketab/design/canvas/project/';
 globalThis.window = { matchMedia: () => ({ matches: true, addEventListener() {}, removeEventListener() {} }) };
 Object.defineProperty(globalThis, 'navigator', { value: { clipboard: { writeText: () => Promise.resolve() } }, configurable: true });
 class DCLogic { constructor(p) { this.props = p; } setState(u) { this.state = { ...this.state, ...(typeof u === 'function' ? u(this.state) : u) }; } }

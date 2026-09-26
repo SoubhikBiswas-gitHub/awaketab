@@ -1,6 +1,6 @@
 # Audit brief (design system + overflow)
 
-Base: $D = /private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions. Read $D/BRIEF.md (incl. Wave 3 additions), /Users/soubhik/Work/github/awaketab/DESIGN.md, PRODUCT.md, and the canvas format reference listed in BRIEF.md.
+Base: $D = /home/user/awaketab/design/canvas. Read $D/BRIEF.md (incl. Wave 3 additions), /home/user/awaketab/DESIGN.md, PRODUCT.md, and the canvas format reference listed in BRIEF.md.
 
 ## Render every assigned board for real
 Earlier agents built static renderers you can reuse (template expander for {{holes}}, sc-if, sc-for, dc-import + Playwright screenshots): $D/ProLib.mjs + $D/ProShot.mjs, ../ext-tools/render.mjs, ../content-agent/shot.mjs, ../tool-backup/*.mjs. Pick the most complete one (it must expand dc-import wrappers, run the Component class incl. componentDidMount, and apply the helmet CSS), or improve it. Playwright + Chromium are available (see memory: Node 22 at $HOME/.nvm/versions/node/v22.22.2/bin; browsers installed for the repo). Render each board at its canvas size (take w/h from $D/project/canvas.json boards, or the wrapper's root size) and for base files at each layout × theme.

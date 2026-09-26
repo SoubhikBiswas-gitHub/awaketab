@@ -3,7 +3,7 @@
 Base dir: /private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions  (call it $D)
 
 Read first, fully:
-1. /Users/soubhik/Work/github/awaketab/DESIGN.md (design system: tokens, lamp colours, faces, motion, layout, time format) and /Users/soubhik/Work/github/awaketab/PRODUCT.md.
+1. /home/user/awaketab/DESIGN.md (design system: tokens, lamp colours, faces, motion, layout, time format) and /home/user/awaketab/PRODUCT.md.
 2. $D/INVENTORY.md: real features and copy. Never invent features, prices or claims beyond it.
 3. Canvas file format: /private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/artifact-files/a356d887-6aa5-4892-b761-78b7db615831/artifact-type/reference/format.md (and craft.md there).
 4. Reference implementation: $D/project/Main.dc.html. Reuse its exact DARK/LIGHT token objects, helmet font link and CSS motion classes/keyframes, logo SVG, header, theme switch and segmented-bar pattern so every page looks like one product. Visual language must match Main exactly.
@@ -52,4 +52,4 @@ Full findings: /private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604
 - No em dashes in new copy (only contract pill strings and existing en.json strings keep them).
 
 ## Documentation rule (owner, 26 Sep 2026)
-Read /Users/soubhik/Work/github/awaketab/docs/redesign/README.md and DECISIONS.md first. Record anything you learn or decide that later agents need: open questions go to DECISIONS.md "Open", reports go to docs/research/. Never contradict a Decided item.
+Read /home/user/awaketab/docs/redesign/README.md and DECISIONS.md first. Record anything you learn or decide that later agents need: open questions go to DECISIONS.md "Open", reports go to docs/research/. Never contradict a Decided item.

@@ -1,5 +1,5 @@
 import re
-F='/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/fix1b/'
+F='/home/user/awaketab/design/canvas/tools/fix1b/'
 s=open(F+'orig/UntilPage.dc.html').read()
 def rep(old,new,count=1):
     global s

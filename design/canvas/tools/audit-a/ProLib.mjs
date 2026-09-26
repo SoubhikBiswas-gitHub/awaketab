@@ -2,7 +2,7 @@
 // and expand the template into static HTML (for height measurement and screenshots).
 import { readFileSync } from 'node:fs';
 
-export const dir = new URL(process.env.DCDIR ? 'file://' + process.env.DCDIR : '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/', import.meta.url);
+export const dir = new URL(process.env.DCDIR ? 'file://' + process.env.DCDIR : '/home/user/awaketab/design/canvas/project/', import.meta.url);
 
 globalThis.window = globalThis.window ?? { matchMedia: () => ({ matches: true, addEventListener() {}, removeEventListener() {} }) };
 export class DCLogic {

@@ -1,8 +1,8 @@
 // Assembles self-contained Page*.dc.html files from src/<Name>.html + src/<Name>.js + the fix-batch-2b primitives.
 import { readFileSync, writeFileSync } from 'node:fs';
 const here = (f) => new URL(f, import.meta.url);
-const PROJECT = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
-const prim = (f) => readFileSync('/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/fix2b/prims/' + f, 'utf8').trimEnd();
+const PROJECT = '/home/user/awaketab/design/canvas/project/';
+const prim = (f) => readFileSync('/home/user/awaketab/design/canvas/tools/fix2b/prims/' + f, 'utf8').trimEnd();
 const EXTRA = `.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
 .at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
 .at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}

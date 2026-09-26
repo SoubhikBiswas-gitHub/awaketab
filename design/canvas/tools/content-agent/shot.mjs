@@ -2,10 +2,10 @@
 // Usage: node shot.mjs File.dc.html '{"layout":"phone","theme":"dark"}' out.png [actions-json]
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-const require = createRequire('/Users/soubhik/Work/github/awaketab/package.json');
-const { chromium } = require('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright');
+const require = createRequire('/home/user/awaketab/package.json');
+const { chromium } = require('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright');
 
-const D = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const D = '/home/user/awaketab/design/canvas/project/';
 const [file, propsJson = '{}', out = 'out.png', actionsJson = '[]', scheme = 'dark'] = process.argv.slice(2);
 const src = readFileSync(D + file, 'utf8');
 const helmet = src.split('<helmet>')[1].split('</helmet>')[0];

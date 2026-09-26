@@ -1,7 +1,7 @@
 // Measure natural content height: render NAME with props per layout, report root height minus the flex-grow spacer.
 import { readFileSync, readdirSync } from 'node:fs';
-const { chromium } = await import('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
-const DIR = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const { chromium } = await import('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
+const DIR = '/home/user/awaketab/design/canvas/project/';
 const files = {};
 for (const f of readdirSync(DIR)) if (f.endsWith('.dc.html')) files[f.replace('.dc.html', '')] = readFileSync(DIR + f, 'utf8');
 const name = process.argv[2];

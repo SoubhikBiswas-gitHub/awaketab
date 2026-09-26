@@ -1,6 +1,6 @@
 # Fix batch 1b: shared primitives (copy VERBATIM, byte-identical)
 
-Source of numbers: /Users/soubhik/Work/github/awaketab/DESIGN.md §2.1, §3, §11. Every file in batch 1b that shows one of
+Source of numbers: /home/user/awaketab/DESIGN.md §2.1, §3, §11. Every file in batch 1b that shows one of
 these primitives must contain exactly the markup below (whitespace inside the tag included). Where a primitive needs
 data, the file's renderVals() must expose the hole names used here (add aliases if the file uses other names).
 Indentation before the first `<` may differ; everything from the first `<` to the matching close must match.

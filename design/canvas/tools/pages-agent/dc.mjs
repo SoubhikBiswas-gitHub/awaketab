@@ -1,7 +1,7 @@
 // Tiny .dc.html loader + static renderer used by the smoke test and the measuring/screenshot script.
 import { readFileSync } from 'node:fs';
 
-export const PROJECT = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+export const PROJECT = '/home/user/awaketab/design/canvas/project/';
 
 export function load(file, env = {}) {
   const src = readFileSync(PROJECT + file, 'utf8');

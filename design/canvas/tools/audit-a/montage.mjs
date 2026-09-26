@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
-const require = createRequire('/Users/soubhik/Work/github/awaketab/package.json');
-const sharp = require('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/sharp@0.34.5/node_modules/sharp');
+const require = createRequire('/home/user/awaketab/package.json');
+const sharp = require('/home/user/awaketab/node_modules/.pnpm/sharp@0.34.5/node_modules/sharp');
 const [out, scale, cols, ...files] = process.argv.slice(2);
 const S = +scale, C = +cols;
 const imgs = [];

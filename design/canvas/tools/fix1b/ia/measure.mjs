@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-const { chromium } = await import('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
+const { chromium } = await import('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
 const src = readFileSync(new URL('../../directions/project/Intl.dc.html', import.meta.url), 'utf8');
 const L = JSON.parse(src.match(/\/\*L10N\*\/([\s\S]*?)\/\*END\*\//)[1]);
 const b = await chromium.launch(); const p = await b.newPage();

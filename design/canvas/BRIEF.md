@@ -1,11 +1,11 @@
 # Shared brief for design agents
 
-Base dir: /private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions  (call it $D)
+Base dir: /home/user/awaketab/design/canvas  (call it $D)
 
 Read first, fully:
-1. /Users/soubhik/Work/github/awaketab/DESIGN.md (design system: tokens, lamp colours, faces, motion, layout, time format) and /Users/soubhik/Work/github/awaketab/PRODUCT.md.
+1. /home/user/awaketab/DESIGN.md (design system: tokens, lamp colours, faces, motion, layout, time format) and /home/user/awaketab/PRODUCT.md.
 2. $D/INVENTORY.md: real features and copy. Never invent features, prices or claims beyond it.
-3. Canvas file format: /private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/artifact-files/a356d887-6aa5-4892-b761-78b7db615831/artifact-type/reference/format.md (and craft.md there).
+3. Canvas file format: /home/user/awaketab/design/canvas/tools/artifact-files/a356d887-6aa5-4892-b761-78b7db615831/artifact-type/reference/format.md (and craft.md there).
 4. Reference implementation: $D/project/Main.dc.html. Reuse its exact DARK/LIGHT token objects, helmet font link and CSS motion classes/keyframes, logo SVG, header, theme switch and segmented-bar pattern so every page looks like one product. Visual language must match Main exactly.
 
 Format rules that bite (from format.md): one self-contained .dc.html per board; root div has fixed px size = board size; `{{hole}}` is a dotted lookup only (compute everything in renderVals); `<sc-if value hint-placeholder-val>` / `<sc-for list as hint-placeholder-count>` always with hint attrs; events `onClick="{{fn}}"`; logic is `class Component extends DCLogic` (plain JS, lifecycle allowed, setInterval ok); data-props JSON in single-quoted attribute; `<dc-import name="X" prop="v" hint-size="Wpx,Hpx"></dc-import>` mounts sibling X.dc.html (never self-close); `<script src="./support.js"></script>` in head; `<x-dc><helmet>…</helmet>root</x-dc>`. No fake phone status bar.
@@ -36,7 +36,7 @@ Return (final message): 1) files written, 2) a JSON object of canvas board entri
 - Caffeine for macOS uses a power assertion (no key presses). NoSleep.js uses the Wake Lock API when present, video only as fallback.
 
 ## Copy corrections (canvas copy audit, 26 Sep 2026 — apply in fix batches)
-Full findings: /private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/copy_out.txt and the content agent report docs/research/content-audit.md.
+Full findings: /home/user/awaketab/design/canvas/tools/copy_out.txt and the content agent report docs/research/content-audit.md.
 - Pro price: never "was $29" ($29 was never charged). Use "$19 once. Launch price until 8 December 2026, then $29." Plan buttons "Get yearly Pro" / "Get lifetime Pro". Lifetime value line: "At the launch price, less than two years of the yearly plan."
 - No testing claims we cannot back: say "Support claims come from browser documentation and automated tests. Real-device results appear in the matrix once recorded." Never "a device on a shelf here" or "in our tests".
 - Web pages keep the SCREEN on, never "the computer" (the extension's System level is the exception).
@@ -52,4 +52,4 @@ Full findings: /private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604
 - No em dashes in new copy (only contract pill strings and existing en.json strings keep them).
 
 ## Documentation rule (owner, 26 Sep 2026)
-Read /Users/soubhik/Work/github/awaketab/docs/redesign/README.md and DECISIONS.md first. Record anything you learn or decide that later agents need: open questions go to DECISIONS.md "Open", reports go to docs/research/. Never contradict a Decided item.
+Read /home/user/awaketab/docs/redesign/README.md and DECISIONS.md first. Record anything you learn or decide that later agents need: open questions go to DECISIONS.md "Open", reports go to docs/research/. Never contradict a Decided item.

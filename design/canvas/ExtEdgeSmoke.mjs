@@ -48,7 +48,7 @@ for (const [file, props] of combos) {
 console.log('combos:', jobs.length, 'missing/bad:', bad);
 
 if (shots) {
-  const require = createRequire('/Users/soubhik/Work/github/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/');
+  const require = createRequire('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/');
   const { chromium } = require('playwright');
   const browser = await chromium.launch();
   for (const [file, props] of jobs) {

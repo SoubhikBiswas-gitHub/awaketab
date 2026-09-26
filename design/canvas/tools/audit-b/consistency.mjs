@@ -1,6 +1,6 @@
 // Cross-board consistency matrix vs Main + DESIGN.md §11. usage: node consistency.mjs all.json static-all.json [filterRegex]
 import { readFileSync } from 'node:fs';
-const DIR = '/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad/directions/project/';
+const DIR = '/home/user/awaketab/design/canvas/project/';
 const res = JSON.parse(readFileSync(process.argv[2], 'utf8'));
 const stat = JSON.parse(readFileSync(process.argv[3], 'utf8'));
 const filt = process.argv[4] ? new RegExp(process.argv[4]) : null;
