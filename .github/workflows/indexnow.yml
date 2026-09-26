@@ -1,0 +1,59 @@
+# IndexNow ping after a production deploy (F-05; docs/06 §15, docs/14 §7).
+#
+# Cloudflare Pages deploys `main` through its Git integration and reports a GitHub deployment status; a
+# successful production deployment triggers this job. It submits the indexable URLs whose sources changed in
+# the deployed commit (`--base <sha>^1`; a template, style, string or engine change sends every URL), read
+# from the live sitemaps. Run it by hand with `all` for launch day (docs/17 §6: "IndexNow ping for all URLs").
+#
+# Optional. Needs the repository secret INDEXNOW_KEY, equal to the INDEXNOW_KEY variable of the Cloudflare
+# Pages production environment (which makes the build serve /{key}.txt). Without the secret the job logs a
+# notice and succeeds. Local builds never ping.
+name: IndexNow
+
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      all:
+        description: Submit every indexable URL, not only the changed ones
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       (github.event.deployment.ref == 'main' || contains(github.event.deployment.environment, 'roduction')) &&
+       !contains(github.event.deployment.environment, 'review'))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+    steps:
+      - name: Check configuration
+        if: env.INDEXNOW_KEY == ''
+        run: echo "::notice title=IndexNow skipped::The INDEXNOW_KEY secret is not set, so nothing was submitted (LAUNCH-AUDIT N-07)."
+      - uses: actions/checkout@v4
+        if: env.INDEXNOW_KEY != ''
+        with:
+          ref: ${{ github.event.deployment.sha || github.sha }}
+          fetch-depth: 2
+      # scripts/indexnow.mjs uses Node built-ins only: no install step.
+      - uses: actions/setup-node@v4
+        if: env.INDEXNOW_KEY != ''
+        with:
+          node-version: 22
+      - name: Submit changed URLs
+        if: env.INDEXNOW_KEY != '' && !(github.event_name == 'workflow_dispatch' && inputs.all)
+        run: node apps/web/scripts/indexnow.mjs ping --base HEAD^1
+      - name: Submit every URL
+        if: env.INDEXNOW_KEY != '' && github.event_name == 'workflow_dispatch' && inputs.all
+        run: node apps/web/scripts/indexnow.mjs ping --all

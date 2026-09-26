@@ -11,4 +11,7 @@ PUBLIC_SITE_URL=https://awaketab.com
 PUBLIC_ADS_ENABLED=0
 PUBLIC_SPONSOR_ENABLED=0
 PUBLIC_POLAR_SERVER=sandbox
-# LICENSE_SIGNING_KEY is a local/dev pair matching LICENSE_PUBLIC_KEYS[1] in @awaketab/core. Rotate before production.
+# LICENSE_SIGNING_KEY is the public dev pair: LICENSE_PUBLIC_KEYS[1] in @awaketab/core trusts it only in sandbox
+# builds (PUBLIC_POLAR_SERVER unset or sandbox). Production uses a key from `pnpm keys:prod` (LAUNCH-AUDIT N-03).
+# PUBLIC_POLAR_SERVER is read by the build (checkout links, dev key) and by the Functions (Polar API base).
+# INDEXNOW_KEY (optional, build variable, not needed locally) makes `pnpm build` write dist/{key}.txt (F-05).

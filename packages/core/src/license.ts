@@ -17,19 +17,26 @@ export const PRODUCTION_LICENSE_PUBLIC_KEYS: Readonly<Record<number, JsonWebKey>
 /** `ver` of the dev pair. Its private half is public (`apps/web/.dev.vars.example`), so production never trusts it. */
 export const DEV_LICENSE_KEY_VER = 1;
 
-const DEV_LICENSE_PUBLIC_KEY: JsonWebKey = {
-  kty: 'EC',
-  crv: 'P-256',
-  x: 'jqIeyjT-NfASTfu5XUDoOFE9o8DB6upegCSAJ7ECPIs',
-  y: 'ZijZiX6xHO9FMdzAGKDIItiQr5OTTW9Yvjre15iPEGg',
-};
+/**
+ * The dev key sits inside the conditional on the define itself (no intermediate const), so every minifier folds
+ * `false ? { … } : { … }` and the production bundle never contains its coordinates. esbuild (the embed app) does
+ * not propagate a `const` flag into a later ternary; Rollup does. scripts/check-keys.test.ts bundles both ways.
+ */
+export const LICENSE_PUBLIC_KEYS: Record<number, JsonWebKey> =
+  typeof __AT_LICENSE_DEV_KEY__ !== 'undefined' && __AT_LICENSE_DEV_KEY__
+    ? {
+        ...PRODUCTION_LICENSE_PUBLIC_KEYS,
+        [DEV_LICENSE_KEY_VER]: {
+          kty: 'EC',
+          crv: 'P-256',
+          x: 'jqIeyjT-NfASTfu5XUDoOFE9o8DB6upegCSAJ7ECPIs',
+          y: 'ZijZiX6xHO9FMdzAGKDIItiQr5OTTW9Yvjre15iPEGg',
+        },
+      }
+    : { ...PRODUCTION_LICENSE_PUBLIC_KEYS };
 
-/** Whether this bundle trusts the dev key. Folded to a literal at build time, so production drops the key. */
-export const TRUSTS_DEV_LICENSE_KEY: boolean = typeof __AT_LICENSE_DEV_KEY__ !== 'undefined' && __AT_LICENSE_DEV_KEY__;
-
-export const LICENSE_PUBLIC_KEYS: Record<number, JsonWebKey> = TRUSTS_DEV_LICENSE_KEY
-  ? { ...PRODUCTION_LICENSE_PUBLIC_KEYS, [DEV_LICENSE_KEY_VER]: DEV_LICENSE_PUBLIC_KEY }
-  : { ...PRODUCTION_LICENSE_PUBLIC_KEYS };
+/** Whether this bundle trusts the dev key (read once at load; tests may still overwrite entries afterwards). */
+export const TRUSTS_DEV_LICENSE_KEY: boolean = DEV_LICENSE_KEY_VER in LICENSE_PUBLIC_KEYS;
 
 export interface ILicenseState {
   valid: boolean;

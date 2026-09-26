@@ -24,6 +24,26 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # LAUNCH-AUDIT N-03: the release gate for the web app and the extension. Fails (no waiver) while
+  # @awaketab/core has no production licence key or a production checkout link is still a placeholder. It does
+  # not block publish-wake: the npm library contains no licence code.
+  launch-guard:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Production licence keys and checkout links
+        run: pnpm keys:check
+        env:
+          PUBLIC_POLAR_SERVER: production
+
   version:
     runs-on: ubuntu-24.04
     outputs:

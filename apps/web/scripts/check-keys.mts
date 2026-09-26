@@ -65,7 +65,7 @@ export function keyProblems(keys: Readonly<Record<number, JsonWebKey>>, dev: IPu
 }
 
 export function checkoutProblems(links: Readonly<Record<string, string>>): IProblem[] {
-  return Object.entries(links).flatMap(([plan, url]) => {
+  return Object.entries(links).flatMap(([plan, url]): IProblem[] => {
     if (url.includes(CHECKOUT_PLACEHOLDER)) {
       return [{ message: `CHECKOUT_LINKS_PRODUCTION.${plan} is still a placeholder (LAUNCH-AUDIT N-04 step 4)`, waivable: true }];
     }

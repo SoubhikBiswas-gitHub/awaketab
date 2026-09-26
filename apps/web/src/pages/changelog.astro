@@ -28,14 +28,10 @@ const latest = entries[0]?.date;
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/changelog`;
 const crumbLink = 'inline-flex min-h-11 items-center';
-// The rendered Markdown carries no classes; style its elements from the card (Tailwind, build time only).
-const body = [
-  'space-y-3 px-5 [overflow-wrap:anywhere]',
-  '[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4',
-  '[&_code]:rounded-sm [&_code]:bg-muted [&_code]:px-1 [&_code]:text-[0.9em]',
-  '[&_ul]:list-disc [&_ol]:list-decimal [&_:is(ul,ol)]:ps-6 [&_li+li]:mt-1',
-  '[&_strong]:font-semibold',
-].join(' ');
+// The rendered Markdown carries no classes. `.at-article` (tool.css, already in the stylesheet every page inlines)
+// styles its paragraphs, lists, links and inline code, so no page-specific utilities are added to the CSS the tool
+// pages carry. `mt-0` cancels its top margin inside the card.
+const body = 'at-article mt-0 px-5 break-words';
 ---
 
 <BaseLayout
