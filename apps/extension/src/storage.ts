@@ -2,7 +2,7 @@ import { STORAGE_KEYS, type IStorageAdapter } from '@awaketab/core';
 import type { IStorageAreaApi, IStorageChange } from './api';
 
 /** Time a session write that only advances `awakeSeconds` may wait before it reaches chrome.storage. */
-export const SESSION_COALESCE_MS = 10_000; // PROPOSED — add to 00-conventions.md
+export const SESSION_COALESCE_MS = 10_000;
 
 export interface IChromeStorageAdapter extends IStorageAdapter {
   /** Reads every `at.*` key once; the core storage layer then works synchronously against the cache. */

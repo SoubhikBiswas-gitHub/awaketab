@@ -1,8 +1,8 @@
 # AwakeTab build state
 
-Current milestone: **M9 complete (local) — ready for launch pending external items.** Every milestone M0–M9 is built on `m6-engagement` (head `eec257e` before this docs commit). `docs/LAUNCH-AUDIT.md`: 70 rows — **45 PASS, 0 FAIL**, 7 MANUAL, 18 EXTERNAL. Everything left needs accounts, a deployed URL, real devices, reviewers or an owner decision. Production builds fail on purpose until the production licence key (N-03) and production checkout links (N-04 step 4) are in.
+Current milestone: **M9 complete (local) — ready for launch pending external items.** Every milestone M0–M9 is built on `m6-engagement` (head `eec257e` before this docs commit). `docs/LAUNCH-AUDIT.md`: 70 rows — **46 PASS, 0 FAIL**, 7 MANUAL, 17 EXTERNAL (E-10b passed with D-04). Everything left needs accounts, a deployed URL, real devices, reviewers or an owner decision. Production builds fail on purpose until the production licence key (N-03) and production checkout links (N-04 step 4) are in.
 
-Next: **Launch — owner actions in `docs/LAUNCH-AUDIT.md`** ("Needs Soubhik" N-01…N-19, "Owner decisions pending" D-01…D-06).
+Next: **Launch — owner actions in `docs/LAUNCH-AUDIT.md`** ("Needs Soubhik" N-01…N-19, "Owner decisions" D-01…D-06, all decided 2026-09-26).
 
 ## Final verification (2026-09-26, `eec257e`)
 
@@ -145,7 +145,7 @@ After the served-URL build format, KV backups (F-02) and the F-01/F-03…F-07 + 
 - WXT extension in `apps/extension`. Permissions `power`, `storage`, `alarms`; optional `notifications` and per-site `https://` access (Pro auto-start); no host permissions by default; `minimum_chrome_version` from `support-matrix.json`.
 - The worker runs the `@awaketab/core` session (`source: 'ext'`, `channel: null`, `resumeIndefiniteMs: Infinity`) over `chrome.power` and `chrome.storage.local`. It re-issues keep-awake on start, `onStartup`, `onInstalled` and every 0.5-min alarm. Badge `ON` / `SYS` / minutes; Alt+Shift+A; optional end notification with +30 / Stop.
 - Pro schedules (two alarms each, DST-safe, merged windows) and auto-start (browser start, per-site). Settings mirror to `storage.sync`; the licence and device id never sync.
-- Popup with seven-state pill parity and Screen / System. A held system lock adds `ext.pill.system` "System awake — screen may dim" (owner decision D-02). Options page includes licence activation with a per-profile `at.v1.device` id; telemetry is off by default.
+- Popup with seven-state pill parity and Screen / System. A held system lock shows `ext.pill.systemHeld` "System awake" with the secondary line `ext.pill.system` "Screen may dim or lock", never "Screen awake" (owner decision D-02, 2026-09-26). Options page includes licence activation with a per-profile `at.v1.device` id; telemetry is off by default.
 - i18n reuses the web catalogs (93 `ext.*` / `page.extension.*` keys) and generates `_locales`. `/extension` landing and a `/privacy#extension` section.
 - Reproducible zip (`scripts/zip.mjs`, `zip:check`). Store listing and 5 × 1280×800 screenshots are in `apps/extension/store/`.
 - Tests: unit tests against a fake `chrome.*` (in `pnpm test`), plus the Playwright suite with a recorder `chrome.power` (`pnpm test:e2e:ext`, 11).
@@ -179,15 +179,9 @@ After the served-URL build format, KV backups (F-02) and the F-01/F-03…F-07 + 
 
 Contract and island work has a single writer. Parallel subagents in git worktrees were used from M5 on: content pages, M6 follow-ups, i18n E6-T05…T07, M7, M8 and M9 checks, each merged into `m6-engagement`. `docs/00-conventions.md`, `docs/BUILD-STATE.md`, `src/i18n/en.json` and `apps/web/src/tool/**` stay single-writer.
 
-## Proposed identifiers (owner decision D-04)
+## Proposed identifiers (owner decision D-04 — decided 2026-09-26)
 
-- `00-conventions.md` §13.9 (extension) is still marked **Proposed**; code carries `// PROPOSED` in `apps/extension/src/{status,storage,settings,schedules,controller}.ts`.
-- §13.8, §13.10, §13.11 and §13.12 were written as "Accepted on 2026-09-26" during the build. They need the owner's confirmation.
-- Not yet in docs/00:
-  - the E6-T05…T07 list in `07-i18n.md` §11: translated route and OG paths, `translations.mjs` helpers, `content-i18n.ts`, `RTL_LANGUAGES` / `textDirection()`, `localeLinks`, `ogImageAlt`, `.at-flip-rtl`, `content.breadcrumb`, `content.translation.*`
-  - `EXTENSION_STORE_URLS` (`src/lib/extension.ts`)
-  - `EXTENSION_CORS_ROUTES` (`functions/_lib/cors.ts`)
-  - the embed loader's `allow-popups-to-escape-sandbox` token (`src/tool/embed/loader.ts`)
+Accepted by the lead (delegated by the owner). `00-conventions.md` v1.4: §13.9 is accepted, §13.8 and §13.10–§13.12 are confirmed, and the E6-T05…T07 list from `07-i18n.md` §11 is §13.17 (`EXTENSION_STORE_URLS`, `EXTENSION_CORS_ROUTES` and `EMBED_SANDBOX` were already in §13.9 / §13.10). No `// PROPOSED` identifier marker is left in `apps/` or `packages/`; the `PROPOSED-REPLACE` production checkout placeholders stay until N-04 step 4 (owner data, not identifiers).
 
 ## Known gaps
 
@@ -201,7 +195,7 @@ Contract and island work has a single writer. Parallel subagents in git worktree
 - **F-06:** the Polar production switch is not wired. `PUBLIC_POLAR_SERVER` is unused; `POLAR_API_BASE` is undocumented and defaults to the sandbox; `CHECKOUT_LINKS` are hard-coded sandbox URLs.
 - **F-07:** `/changelog` prints fragment Markdown literally and sorts by file name, not `date`, so "1.0 — launch" appears last.
 
-**Must happen before Pro sales, and should happen before the public launch:** rotate the ES256 key. `LICENSE_PUBLIC_KEYS[1]` in `@awaketab/core` is the dev key, and its private half is committed in `.dev.vars.example` (N-03).
+**Must happen before Pro sales, and should happen before the public launch:** install the production ES256 key. Its public half (`ver` 2) is committed in `PRODUCTION_LICENSE_PUBLIC_KEYS` (`bf43a93`); the private half must become the Production secret `LICENSE_SIGNING_KEY` with `LICENSE_SIGNING_VER=2`, then leave the owner's disk (N-03 steps 1–4). `LICENSE_PUBLIC_KEYS[1]` is the dev key, whose private half is committed in `.dev.vars.example`; production bundles never trust it.
 
 **Platform and product gaps (verified against the code on 2026-09-26):**
 
@@ -229,7 +223,7 @@ All of these are in `docs/LAUNCH-AUDIT.md` → Needs Soubhik with exact steps:
 - Chrome Web Store and Edge Add-ons submission; npm trusted publishing for `@awaketab/wake` (`release.yml`, environment `npm`); Search Console and Bing + sitemap.
 - AdSense + Funding Choices CMP (G1); native-speaker review; the real-device matrix + `pnpm -F web matrix:sync`.
 - The first nightly (visual baselines); LHCI on a preview URL; `curl -sI` header checks on a deployed preview; uptime monitor; rollback drill.
-- Owner decisions D-01…D-05 (kiosk `img-src https:`, extension System-level wording, romanised `ja` / `zh` / `hi` slugs, PROPOSED identifiers, content CSP enforce vs report-only). D-06 (Polar ids on licence records) is decided and implemented; its live check is N-04 step 7.
+- Owner decisions D-01…D-06 are decided (2026-09-26; `docs/LAUNCH-AUDIT.md` → Owner decisions). D-02 (extension System-level pill "System awake") and D-04 (identifiers accepted) are implemented; D-06's live check is N-04 step 7.
 
 ## Next
 

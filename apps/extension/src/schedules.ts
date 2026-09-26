@@ -7,7 +7,7 @@ import type { ISchedule } from './settings';
  * the controller recomputes every alarm when one fires instead of trusting a stored offset.
  */
 
-export const SCHEDULE_ALARM_PREFIX = 'at.sched.'; // PROPOSED — add to 00-conventions.md
+export const SCHEDULE_ALARM_PREFIX = 'at.sched.';
 const LOOKAROUND_DAYS = 8;
 
 export interface IWindow {

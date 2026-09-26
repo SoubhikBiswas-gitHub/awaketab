@@ -20,7 +20,7 @@ import {
 /**
  * `allow-popups-to-escape-sandbox` on top of docs/11 §7's three tokens: the attribution and "how to fix" links
  * open awaketab.com in a new tab, which would otherwise inherit this sandbox (no forms → no checkout).
- * Decision under docs/19 C4; it widens nothing for the host page. PROPOSED — add to 00-conventions.md.
+ * Decision under docs/19 C4; it widens nothing for the host page (docs/00 §13.10).
  */
 export const EMBED_SANDBOX = 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox';
 

@@ -1,7 +1,7 @@
 /**
  * Store links for AwakeTab for Chrome (docs/10 §9). The listing ids exist only after the first store
  * approval, so these point at each store's search for "AwakeTab" until then.
- * PROPOSED — add to 00-conventions.md; replace with the listing URLs once published (Needs Soubhik).
+ * Accepted in docs/00 §13.9; replace with the listing URLs once published (Needs Soubhik).
  */
 export const EXTENSION_STORE_URLS = {
   chrome: 'https://chromewebstore.google.com/search/AwakeTab',

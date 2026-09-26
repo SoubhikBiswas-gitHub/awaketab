@@ -6,7 +6,7 @@
  * the loader.
  */
 
-/** Protocol version sent in `awaketab:ready`. PROPOSED — add to 00-conventions.md (accepted in §13.10). */
+/** Protocol version sent in `awaketab:ready` (docs/00 §13.10). */
 export const EMBED_VERSION = '1';
 
 export const EMBED_MODES = ['cook', 'standard', 'clock', 'minimal'] as const;

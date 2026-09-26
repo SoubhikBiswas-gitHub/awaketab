@@ -6,13 +6,13 @@ import type { TPowerLevel } from './api';
  * `ISettings` has no field for and is mirrored to `chrome.storage.sync`; `at.v1.device` holds the random
  * per-profile device id and is never synced (a synced id would make two profiles one licence activation).
  */
-export const EXT_KEYS = { ext: 'at.v1.ext', device: 'at.v1.device' } as const; // PROPOSED — add to 00-conventions.md
+export const EXT_KEYS = { ext: 'at.v1.ext', device: 'at.v1.device' } as const;
 
 /** Keys mirrored to `chrome.storage.sync` (docs/10 §6). The licence (`at.v1.license`) is never among them. */
 export const SYNC_KEYS: readonly string[] = [STORAGE_KEYS.settings, EXT_KEYS.ext];
 
-export const SCHEDULES_MAX = 20; // PROPOSED — add to 00-conventions.md
-export const AUTOSTART_SITES_MAX = 50; // PROPOSED — add to 00-conventions.md
+export const SCHEDULES_MAX = 20;
+export const AUTOSTART_SITES_MAX = 50;
 
 export interface ISchedule {
   id: string;

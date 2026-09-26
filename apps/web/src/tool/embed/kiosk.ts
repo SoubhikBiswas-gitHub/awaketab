@@ -14,7 +14,7 @@ import { t } from '../i18n.js';
 import { toast } from '../ui/toast.js';
 
 export const KIOSK_PLANS: readonly TPlanId[] = ['biz_kiosk_site', 'biz_kiosk_5'];
-/** Longest accepted `logo=` URL. PROPOSED — add to 00-conventions.md (accepted in §13.10). */
+/** Longest accepted `logo=` URL (docs/00 §13.10). */
 export const KIOSK_LOGO_MAX = 512;
 
 const TOKEN_RE = /^#lic=([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/u;

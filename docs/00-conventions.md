@@ -2,7 +2,7 @@
 
 > **This file is the single source of truth for names, identifiers, states, keys, routes, plans and budgets.** Every other document in `docs/` must use these exact identifiers. If a detail here conflicts with another doc, this file wins and the other doc gets fixed. When a decision changes, change it here first.
 
-Status: v1.3 · 26 Sep 2026 · Owner: Soubhik · Derived from `awaketab-blueprint.md` (strategy) — see that document for the *why*; this set of docs is the *what* and *how*.
+Status: v1.4 · 26 Sep 2026 · Owner: Soubhik · Derived from `awaketab-blueprint.md` (strategy) — see that document for the *why*; this set of docs is the *what* and *how*.
 
 ---
 
@@ -121,6 +121,8 @@ awaketab/
 | `fallback` | Hidden 1-frame video loop active (user gesture given) | "Awake via video fallback" | accent (muted) |
 
 Only `held` and `fallback` may show a running timer. Transitions are specified in `04-engine-spec.md`.
+
+**Extension system level (display copy only, not a state).** The extension's `system` level holds the same `held` state, but `chrome.power` then keeps only the computer awake and the display may still dim, turn off or lock. So a held system-level lock never shows "Screen awake": the popup pill text is the extension-only key `ext.pill.systemHeld` ("System awake") with the secondary line `ext.pill.system` ("Screen may dim or lock"); the badge stays `SYS`. The seven states above, their `tool.pill.*` copy and the web tool are unchanged (owner decision D-02, `10-extension-spec.md` §3, §13.9 below).
 
 ### 5.2 Session (`@awaketab/core`)
 
@@ -364,7 +366,7 @@ Accepted on 2026-09-11 (owner-directed; `03-architecture.md` ADR-013). Proposed 
 
 ### 13.8 Engagement layer (v1.3 — M6: E10 + remaining E4)
 
-Accepted on 2026-09-26 with the M6 implementation. Specs: `04-engine-spec.md` §9, §11, §14, §16; `05-frontend-spec.md` §1.1a, §3.13–§3.24, §8.2, §9, §13; `03-architecture.md` ADR-014.
+Accepted on 2026-09-26 with the M6 implementation; confirmed by owner decision D-04. Specs: `04-engine-spec.md` §9, §11, §14, §16; `05-frontend-spec.md` §1.1a, §3.13–§3.24, §8.2, §9, §13; `03-architecture.md` ADR-014.
 
 **Engine (`@awaketab/core`)**
 
@@ -426,7 +428,7 @@ Accepted on 2026-09-26 with the M6 implementation. Specs: `04-engine-spec.md` §
 
 ### 13.9 Extension (M7 — E11)
 
-Proposed with the M7 implementation on 2026-09-26 (`10-extension-spec.md` §13); each is marked `PROPOSED — add to 00-conventions.md` in code until accepted.
+Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`), as written with the M7 implementation (`10-extension-spec.md` §13). The `// PROPOSED` markers are gone from the code.
 
 **Storage and sync**
 
@@ -451,6 +453,8 @@ Proposed with the M7 implementation on 2026-09-26 (`10-extension-spec.md` §13);
 | `SYNC_DEBOUNCE_MS` | 2,000 |
 | Notification id | `at-end` (same tag as the web); buttons `+30 min` (index 0) / `Stop` (index 1) |
 | `BADGE_COLORS` | `display` `#B86E00` · `system` `#2B3A67`; text `#FFFFFF`; text `ON` / `SYS` / `<n>m` / `<n>h` |
+| System-level pill (D-02) | `status.ts` `pillTextKey(lock, level)`: a held `system` lock → `ext.pill.systemHeld` "System awake" (never `tool.pill.held`), secondary line `pillExtraKey()` → `ext.pill.system` "Screen may dim or lock"; badge tooltip `AwakeTab — System awake · Screen may dim or lock`. Display copy only; the lock state stays `held` (§5.1) |
+| `EXT_KEYS` | `{ ext: 'at.v1.ext', device: 'at.v1.device' }` (`settings.ts`) |
 | `TExtRequest` | Popup → worker messages: `state` · `start {presetId}` · `until {wall}` · `stop` · `toggle` · `extend {ms}` · `dismiss` · `level {level}` |
 | `ISessionOptions.resumeIndefiniteMs` | `@awaketab/core`: how long an `indefinite` session stays resumable (default 12 h; the extension passes `Infinity`) |
 | `IStorageAdapter` | Now exported from `@awaketab/core` (docs/04 §16) |
@@ -476,13 +480,13 @@ Proposed with the M7 implementation on 2026-09-26 (`10-extension-spec.md` §13);
 
 **i18n**
 
-93 new keys in all 8 locales: groups `ext.*` (manifest name/description/command, levels, popup, origins, advice, options sections, schedules, auto-start, licence, privacy, about) and `page.extension.*`.
+94 new keys in all 8 locales (93 with M7, plus `ext.pill.systemHeld` with D-02, when `ext.pill.system` changed from "System awake — screen may dim" to "Screen may dim or lock"): groups `ext.*` (manifest name/description/command, levels, popup, origins, advice, options sections, schedules, auto-start, licence, privacy, about) and `page.extension.*`.
 
 ---
 
 ### 13.10 M8 — embed widget, library publish, `/library`, research page (E12)
 
-Accepted on 2026-09-26 with the M8 implementation. Specs: `11-embed-spec.md` §11 (as built), `12-library-spec.md` §10 (as built), `09-monetization-impl.md` §7, `13-testing-strategy.md` §5 journey 10 and §7, `14-devops.md` §3 and §6.
+Accepted on 2026-09-26 with the M8 implementation; confirmed by owner decision D-04. Specs: `11-embed-spec.md` §11 (as built), `12-library-spec.md` §10 (as built), `09-monetization-impl.md` §7, `13-testing-strategy.md` §5 journey 10 and §7, `14-devops.md` §3 and §6.
 
 **Embed (`apps/web/src/tool/embed/`)**
 
@@ -502,7 +506,7 @@ Accepted on 2026-09-26 with the M8 implementation. Specs: `11-embed-spec.md` §1
 | `snippet.ts` | `loaderSnippet()` · `iframeSnippet()` · `kioskUrl()` · `kioskMsg()` — the /embed and /kiosk generators; `DEFAULT_SNIPPET` renders the tag documented in docs/11 §11 |
 | `kiosk.ts` | Tool-side Kiosk licence unlocks (lazy, loaded by `main.ts` only when the URL has `#lic=` or `logo=`): `readLicHash` · `applyKioskHash` (offline verify with no device binding, kiosk plans only — `KIOSK_PLANS` `biz_kiosk_site` `biz_kiosk_5` — store to `at.v1.license` with `deviceId: ''`, `deviceLabel: 'kiosk'`, strip the hash first) · `parseLogo` (https, no credentials, ≤ `KIOSK_LOGO_MAX` 512 chars) · `applyKioskBranding` (`ambient.logo` → logo above the timer and in the ambient dialog; `kiosk.branding` → `<html data-kiosk>` hides the wordmark and `ui/rating.ts` never prompts) |
 | Kiosk plan features | `biz_kiosk_site` / `biz_kiosk_5` now include `ambient.message` (docs/09 §7.2 already said so; `PLAN_FEATURES` in `functions/_lib/license.ts` and `src/lib/license.ts` lacked it) |
-| Tool-route CSP `img-src` | `'self' data: https:` — the operator's `logo=` image is the only cross-origin resource a tool route may load, and only on a licensed kiosk URL. `script-src`, `connect-src`, `style-src`, `font-src` stay `'self'`; the zero-third-party budget still holds for every default tool page (C4 decision — needs owner sign-off) |
+| Tool-route CSP `img-src` | `'self' data: https:` — the operator's `logo=` image is the only cross-origin resource a tool route may load, and only on a licensed kiosk URL. `script-src`, `connect-src`, `style-src`, `font-src` stay `'self'`; the zero-third-party budget still holds for every default tool page (C4 decision, accepted as shipped by owner decision D-01 on 2026-09-26; `test/e2e/security.spec.ts` asserts that every default tool route, a started session and an unlicensed `logo=` URL make no cross-origin request) |
 
 **Build, budgets and headers**
 
@@ -537,7 +541,7 @@ Accepted on 2026-09-26 with the M8 implementation. Specs: `11-embed-spec.md` §1
 **i18n** — 56 new keys in all 8 locales: `embed.*` (widget), `page.embed.*` · `page.kiosk.*` · `page.library.*`, `builder.*` (generators), `library.demo.*`, `research.*` (device matrix), `kiosk.license.invalid`.
 ### 13.11 M6 follow-ups
 
-Accepted on 2026-09-26 with the M6 follow-up work. Specs: `05-frontend-spec.md` §3.14, §3.17, §3.23, §9; `08-data-storage.md` §2.2, §2.3, §6; `04-engine-spec.md` §10, §13.
+Accepted on 2026-09-26 with the M6 follow-up work; confirmed by owner decision D-04. Specs: `05-frontend-spec.md` §3.14, §3.17, §3.23, §9; `08-data-storage.md` §2.2, §2.3, §6; `04-engine-spec.md` §10, §13.
 
 **Storage and engine (`@awaketab/core`)**
 
@@ -569,7 +573,7 @@ Accepted on 2026-09-26 with the M6 follow-up work. Specs: `05-frontend-spec.md` 
 
 ### 13.12 Extension licence hand-off and embed app caching
 
-Accepted on 2026-09-26. Specs: `09-monetization-impl.md` §2.2, §2.3a; `10-extension-spec.md` §5; `11-embed-spec.md` §11.3, §11.6; `14-devops.md` §3, §6.
+Accepted on 2026-09-26; confirmed by owner decision D-04. Specs: `09-monetization-impl.md` §2.2, §2.3a; `10-extension-spec.md` §5; `11-embed-spec.md` §11.3, §11.6; `14-devops.md` §3, §6.
 
 | Identifier | Decision |
 |---|---|
@@ -614,7 +618,7 @@ Accepted on 2026-09-26 (`LAUNCH-AUDIT.md`). Specs: `08-data-storage.md` §7, `09
 | `scripts/indexnow.mjs` | `write-key` (last web build step) and `ping` (`pnpm -F web indexnow [--base <ref>] [--all] [--from live\|dist] [--dry-run]`). URLs come from the sitemaps only and are filtered again by `selectUrls()`. It checks that `/{key}.txt` is live, then sends `POST https://api.indexnow.org/indexnow` in batches of 10,000. Never part of a build |
 | `.github/workflows/indexnow.yml` | Runs on a successful production `deployment_status` reported by Cloudflare Pages, or by hand (`all`). Skipped with a notice when the secret is unset |
 | `PUBLIC_POLAR_SERVER` | The one Polar switch. Build: `polarServer()` in `scripts/polar-server.mjs` (unset → `sandbox`; any value but `sandbox` or `production` fails the build) → `define` of `__AT_POLAR_SERVER__` and `__AT_LICENSE_DEV_KEY__` in `astro.config.mjs`, `scripts/embed-loader.mjs` and `apps/extension/wxt.config.ts`. Run time: `polarServer(env)` / `apiBase(env)` in `functions/_lib/polar.ts` (`POLAR_API_BASES`: `https://sandbox-api.polar.sh`, `https://api.polar.sh`; only `production` reaches production). `POLAR_API_BASE` is removed |
-| `CHECKOUT_LINKS_SANDBOX` · `CHECKOUT_LINKS_PRODUCTION` · `CHECKOUT_PLACEHOLDER` | `src/lib/checkout.ts`; `CHECKOUT_LINKS = checkoutLinks(POLAR_SERVER)`. The production links are PROPOSED placeholders (`https://buy.polar.sh/PROPOSED-REPLACE-…`) until N-04 |
+| `CHECKOUT_LINKS_SANDBOX` · `CHECKOUT_LINKS_PRODUCTION` · `CHECKOUT_PLACEHOLDER` | `src/lib/checkout.ts`; `CHECKOUT_LINKS = checkoutLinks(POLAR_SERVER)`. The production links are owner-data placeholders (`https://buy.polar.sh/PROPOSED-REPLACE-…`, not identifiers) until N-04 |
 | `PRODUCTION_LICENSE_PUBLIC_KEYS` · `DEV_LICENSE_KEY_VER` (1) · `TRUSTS_DEV_LICENSE_KEY` | `@awaketab/core`. `LICENSE_PUBLIC_KEYS` adds the dev key (its private half is in `.dev.vars.example`) only when the bundler defines `__AT_LICENSE_DEV_KEY__` as true: sandbox, dev and test builds. Production bundles contain no trace of it. Production keys start at `ver` 2 |
 | `scripts/check-keys.mts` · `pnpm keys:check` | Only with `PUBLIC_POLAR_SERVER=production`. Source check (first web build step): fails on no production key, the dev key listed, a private or non-P-256 JWK, or a placeholder or sandbox checkout link. `--dist <dir>` (last web build step; `pnpm -F extension zip`): fails on the dev key's `x` or `y` in any output file, or a production key missing from every file. `AT_ALLOW_MISSING_PRODUCTION_KEY=1` waives only "no production key" and "placeholder link" (CI's production-mode bundle check) |
 | `pnpm keys:prod` | `scripts/keys-prod.mts`: prints a fresh ES256 pair (the public JWK line for `PRODUCTION_LICENSE_PUBLIC_KEYS[ver]`, the private JWK for the `LICENSE_SIGNING_KEY` secret, and `LICENSE_SIGNING_VER`). Writes nothing |
@@ -651,6 +655,21 @@ Accepted on 2026-09-26 (`LAUNCH-AUDIT.md` F-08). Specs: `09-monetization-impl.md
 | `apps/web/functions/tsconfig.json`, `tsconfig.test.json` | Functions source typechecked with `@cloudflare/workers-types` only (no DOM, no Node); the Functions suites and `test/functions/harness.ts` with Workers + Node + DOM types. Both run in `pnpm -F web typecheck` (`astro check && tsc -p functions/tsconfig.json && tsc -p functions/tsconfig.test.json`) |
 | `publicJwk()` | `functions/_lib/jwt.ts`: the signing key's public half, `null` when the JWK has no `x`/`y` (validate and deactivate then answer 502 `polar_unavailable`, as for a missing key) |
 | Test helper | `FakePolar.addCheckout(row, { id?, status?, order? })`, `FakePolar.orders`, `failPath`; `IPolarKey` gains `grant` (`ready` \| `missing` \| `keyless`) and `grantedAt`; `IPolarCall` gains `query`. The fake checkout has no `license_key` |
+
+### 13.17 i18n content identifiers (E6-T05…T07) accepted by D-04
+
+Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`). They were listed as "PROPOSED — add to `00-conventions.md`" in `07-i18n.md` §11. Slug values themselves stay in `src/i18n/slugs.json` (§7; decision D-03 is separate).
+
+| Identifier | Decision |
+|---|---|
+| Translated content route | `/{lang}/{collection}/{translated slug}` (the slug from `src/i18n/slugs.json`) |
+| Translated OG image path | `/og/{lang}/{collection}/{translated slug}.png` |
+| `apps/web/scripts/translations.mjs` | `alternatesFor` · `isIndexable` · `contentPath` · `publicSlug` · `ogImagePath` · `readContentIndex` · `frontmatterScalars` (hreflang and sitemap alternates share `alternatesFor`) |
+| `apps/web/src/lib/content-i18n.ts` | Content-collection helpers for translated pages: `splitEntryId` · `contentIndex` · `pagePath` · `pageSlug` · `pageOgImage` · `pageIndexable` · `pageAlternates` · `pageTranslations` |
+| `RTL_LANGUAGES` · `textDirection()` · `TTextDirection` | `src/i18n/locales.ts`: `ar` `fa` `he` `ur`; `textDirection(htmlLang)` → `ltr` \| `rtl` sets `<html dir>` in `BaseLayout.astro` |
+| `localeLinks` · `ogImageAlt` | Props: `localeLinks` on `BaseLayout` / `ContentLayout` / `ArticlePage` (per-locale URLs for `LocaleNav`), `ogImageAlt` on `BaseLayout` / `ContentLayout` / `ArticlePage` / `SeoHead` |
+| `.at-flip-rtl` | `tokens.css`: mirrors a direction-implying icon under `[dir="rtl"]` |
+| i18n keys | `content.breadcrumb` · `content.translation.pending` · `content.translation.original` |
 
 ## 14. Writing conventions for these docs
 

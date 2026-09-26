@@ -8,8 +8,8 @@
 /** Chrome and Edge extension ids are 32 letters a–p. */
 const EXTENSION_ORIGIN = /^chrome-extension:\/\/[a-p]{32}$/u;
 
-/** Routes the extension calls. Everything else under /api keeps same-origin only. */
-export const EXTENSION_CORS_ROUTES = ['/api/e', '/api/license/activate', '/api/license/validate', '/api/license/deactivate'] as const; // PROPOSED — add to 00-conventions.md
+/** Routes the extension calls (docs/00 §13.9). Everything else under /api keeps same-origin only. */
+export const EXTENSION_CORS_ROUTES = ['/api/e', '/api/license/activate', '/api/license/validate', '/api/license/deactivate'] as const;
 
 export function isExtensionOrigin(origin: string | null): origin is string {
   return origin !== null && EXTENSION_ORIGIN.test(origin);
