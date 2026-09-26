@@ -1,8 +1,12 @@
 # AwakeTab build state
 
-Current milestone: **M9 complete (local) — ready for launch pending external items.** Every milestone M0–M9 is built on `m6-engagement` (head `549bffb` before this docs commit). Every automatable launch check passes except seven repo defects (F-01…F-07 in `docs/LAUNCH-AUDIT.md`). The rest waits on accounts, a deployed URL, real devices or reviewers.
+Current milestone: **M9 complete (local) — ready for launch pending external items.** Every milestone M0–M9 is built on `m6-engagement` (head `eec257e` before this docs commit). `docs/LAUNCH-AUDIT.md`: 70 rows — **45 PASS, 0 FAIL**, 7 MANUAL, 18 EXTERNAL. Everything left needs accounts, a deployed URL, real devices, reviewers or an owner decision. Production builds fail on purpose until the production licence key (N-03) and production checkout links (N-04 step 4) are in.
 
-Next: **Launch — owner actions in `docs/LAUNCH-AUDIT.md`** ("Needs Soubhik" N-01…N-17, "Owner decisions pending" D-01…D-06, then the F-01…F-07 fixes).
+Next: **Launch — owner actions in `docs/LAUNCH-AUDIT.md`** ("Needs Soubhik" N-01…N-19, "Owner decisions pending" D-01…D-06).
+
+## Final verification (2026-09-26, `eec257e`)
+
+After the served-URL build format, KV backups (F-02) and the F-01/F-03…F-07 + N-03 fixes: `pnpm build && pnpm lint && pnpm typecheck && pnpm test && pnpm test:seo && pnpm size` all green — unit **565 / 565**, functions **167 pass + 1 todo**, SEO/security **78 / 78**; Playwright chromium + firefox + webkit **607 passed, 116 skipped** (visual-only / engine-specific), **0 failed**; extension e2e **11 / 11**. Budgets: critical JS **14,802** B gz (15,360) · tool total **40,128** (40,960; **832 B headroom**) · CSS **13,311** (20,480) · embed app **14,063** (25,600) · loader **2,356** (3,072). Lighthouse (local, simulated mobile, 3 runs): LCP median **1.05 s** on all five docs/19 §E URLs, CLS 0, Performance/Accessibility/SEO 100 (`/es/` SEO 66 by design while `noindex`).
 
 ## Baseline (2026-09-26, `549bffb`)
 
@@ -205,7 +209,7 @@ Contract and island work has a single writer. Parallel subagents in git worktree
 - **Document PiP sentinel:** the PiP document requests no sentinel of its own, so its pill reflects the main tab's lock (honest: `lost` when that tab is hidden). The decision waits on the device matrix (`05-frontend-spec.md` §9).
 - **Native review:** 70 translated pages and 7 locale homes are `reviewed: false` (noindex, not in sitemaps or hreflang). The M6 / M7 / M8 strings (55 M6 keys, `ambient.focus.today`, `ext.*`, embed, `content.translation.*`) are unreviewed in every locale, especially `ja` and `hi`. Locale homes are still UI + intro stubs (E6-T04). The stale-translation hash check (`07-i18n.md` §5 step 6) is not built.
 - **Visual-regression baselines** are not committed. The first nightly run records them (`--update-snapshots=missing`, `visual-snapshots` artifact).
-- **Total tool JS headroom is 761 B gz** (40,199 / 40,960). The next lazy feature on the tool page needs a size plan (move something out of the tool closure, or split it off to its own page).
+- **Total tool JS headroom is 832 B gz** (40,128 / 40,960). The next lazy feature on the tool page needs a size plan (move something out of the tool closure, or split it off to its own page).
 - **E12-T05 device research:** `docs/metrics/device-matrix.json` has 14 rows, all `pending`; `/learn/how-we-tested` reads "Results pending"; `support-matrix.json` has no `lastVerified` from a real run.
 - **WordPress plugin** (`11-embed-spec.md` §5) is not built. The embed host matrix (WordPress, Squarespace, Webflow, Ghost, AMP, Mobile Safari; §9) has not been run.
 - **Polar webhooks without a licence key** (`subscription.revoked` / `order.refunded` carrying only customer, subscription or order ids) do not match a licence yet (`polar.test.ts` `it.todo`; `13-testing-strategy.md` §9). Owner decision D-06.
