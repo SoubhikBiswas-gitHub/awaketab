@@ -19,6 +19,7 @@ export const SHELL_PAGES = [
   ['/pip', 'pip/index.html'],
   ...PRESET_ROUTES.map((r) => [`/${r}`, `${r}/index.html`]),
   ...LOCALES.map((l) => [`/${l}/`, `${l}/index.html`]),
+  ...LOCALES.map((l) => [`/${l}/pip`, `${l}/pip/index.html`]),
 ];
 
 const STATIC = ['favicon.svg', 'theme-boot.js', 'manifest.webmanifest', ...LOCALES.map((l) => `${l}/manifest.webmanifest`)];

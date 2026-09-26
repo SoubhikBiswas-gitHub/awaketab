@@ -1,3 +1,4 @@
+import { dayKey } from '@awaketab/core';
 import type { IToolCtx } from '../ctx.js';
 import { formatHms } from '../format.js';
 import { t } from '../i18n.js';
@@ -30,20 +31,33 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   const live = el('p', { class: 'sr-only', 'aria-live': 'polite' });
   const intro = el('p', { class: 'at-ambient-sub' });
   const start = el('button', { type: 'button', class: 'at-btn at-ambient-cta', 'data-focus-start': '' }, t('ambient.focus.start'));
-  stage.append(label, digits, dots, intro, start, live);
+  const today = el('p', { class: 'at-ambient-sub', 'data-focus-today': '' });
+  stage.append(label, digits, dots, intro, start, today, live);
 
   let lastIndex = -1;
   const cfg = () => ctx.store.get().settings.ambient.focus;
 
   start.addEventListener('click', () => {
     lastIndex = -1;
-    void ctx.startPlan({ type: 'duration', ms: focusPlanMs(cfg()) }, 'custom');
+    // The marker is what makes a completed session count as a focus block (at.v1.stats.dayFocus); an
+    // extension of a finished block is a plain focus-mode session and does not count (docs/08 §2.3).
+    void ctx.startPlan({ type: 'duration', ms: focusPlanMs(cfg()) }, 'custom').then(() => {
+      ctx.engine.updateSession({ modeState: { focusBlock: true } });
+    });
   });
 
+  let wasRunning: boolean | null = null;
   const paint = (now: number) => {
     const c = cfg();
     const session = ctx.store.get().session;
     const running = session?.mode === 'focus' && (session.status === 'active' || session.status === 'paused');
+    // Stats are re-read only when a block starts or ends, not every second.
+    if (running !== wasRunning) {
+      wasRunning = running;
+      const n = ctx.storage.stats().dayFocus?.[dayKey(now)] ?? 0;
+      today.hidden = n < 1;
+      today.textContent = t('ambient.focus.today', { n });
+    }
     start.hidden = running;
     intro.hidden = running;
     label.hidden = !running;

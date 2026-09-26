@@ -37,31 +37,42 @@ async function loadSponsor(): Promise<ISponsorConfig | null> {
 }
 
 /**
- * SponsorCard (docs/05 §3.23, docs/09): one disclosed card in a fixed 300 × 100 slot below the chips, shown in
- * `idle` only. The slot is rendered at build time only when PUBLIC_SPONSOR_ENABLED=1 and keeps its size when
- * empty or hidden (visibility, not display), so CLS stays 0. Pro `ads.free` skips it. No third-party request:
- * the config is same-origin and the card is a plain link.
+ * SponsorCard (docs/05 §3.23, docs/09): one disclosed card in fixed 300 × 100 slots rendered at build time only
+ * when PUBLIC_SPONSOR_ENABLED=1 — `[data-sponsor="idle"]` below the chips (visible in `idle` only) and
+ * `[data-sponsor="extend"]` inside the ExtendPrompt. The idle slot keeps its size when empty or hidden
+ * (visibility, not display), so CLS stays 0; the extend slot is collapsed before the dialog can ever open when
+ * there is nothing to show (Pro `ads.free`, no or invalid config). No third-party request: the config is
+ * same-origin and the card is a plain link. `sponsor_view` fires once per page view, whichever slot shows first.
  */
-export async function mountSponsor(ctx: IToolCtx, slot: HTMLElement): Promise<() => void> {
-  if (hasFeature(ctx, 'ads.free')) return () => undefined;
-  const cfg = await loadSponsor();
-  if (!cfg) return () => undefined;
-  const name = slot.querySelector<HTMLAnchorElement>('[data-sponsor-link]');
-  const text = slot.querySelector<HTMLElement>('[data-sponsor-text]');
-  if (!name || !text) return () => undefined;
-  name.href = cfg.url;
-  name.textContent = cfg.name;
-  text.textContent = cfg.text;
+export async function mountSponsor(ctx: IToolCtx): Promise<() => void> {
+  const extend = ctx.root.querySelector<HTMLElement>('[data-sponsor="extend"]');
+  const cfg = hasFeature(ctx, 'ads.free') ? null : await loadSponsor();
+  if (!cfg) {
+    if (extend) extend.hidden = true;
+    return () => undefined;
+  }
   const sponsorId = cfg.id;
-  name.addEventListener('click', () => {
-    ctx.track('sponsor_click', { sponsorId });
-  });
+  for (const slot of ctx.root.querySelectorAll<HTMLElement>('[data-sponsor]')) {
+    const name = slot.querySelector<HTMLAnchorElement>('[data-sponsor-link]');
+    const text = slot.querySelector<HTMLElement>('[data-sponsor-text]');
+    if (!name || !text) continue;
+    name.href = cfg.url;
+    name.textContent = cfg.name;
+    text.textContent = cfg.text;
+    name.addEventListener('click', () => {
+      ctx.track('sponsor_click', { sponsorId });
+    });
+  }
+  if (extend) extend.dataset.state = 'shown';
+  const idleSlot = ctx.root.querySelector<HTMLElement>('[data-sponsor="idle"]');
   let viewed = false;
   return ctx.store.subscribe((s) => {
     const idle = s.lock === 'idle' && !(s.session?.status === 'active' || s.session?.status === 'paused');
-    slot.dataset.state = idle ? 'shown' : 'hidden';
-    slot.inert = !idle;
-    if (idle && !viewed) {
+    if (idleSlot) {
+      idleSlot.dataset.state = idle ? 'shown' : 'hidden';
+      idleSlot.inert = !idle;
+    }
+    if (!viewed && ((idle && idleSlot) || (s.ui.dialog === 'extend' && extend))) {
       viewed = true;
       ctx.track('sponsor_view', { sponsorId });
     }

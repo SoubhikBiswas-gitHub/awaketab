@@ -336,5 +336,6 @@
   "settings.ambient.clock12h": "Relógio de 12 horas",
   "settings.notifications.unavailable": "No iPhone e no iPad, as notificações exigem o app instalado.",
   "pip.add15.label": "Adicionar 15 minutos",
-  "pip.empty": "Inicie uma sessão no"
+  "pip.empty": "Inicie uma sessão no",
+  "ambient.focus.today": "{n, plural, one {# bloco de foco hoje} other {# blocos de foco hoje}}"
 }

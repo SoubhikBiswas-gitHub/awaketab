@@ -177,4 +177,38 @@ describe('built site SEO', () => {
     expect(meta(notFound, 'robots')).toContain('noindex');
     expect(meta(spanish, 'robots')).toContain('noindex');
   });
+
+  it('serves the /pip popup in every locale, noindex, ad-free and out of the sitemaps', async () => {
+    const robots = await readFile(new URL('robots.txt', dist), 'utf8');
+    const headers = await readFile(new URL('_headers', dist), 'utf8');
+    const expectations: Array<[string, string, string]> = [
+      ['pip', 'en', 'Ready'],
+      ['es/pip', 'es', 'Listo'],
+      ['pt-br/pip', 'pt-BR', ''],
+      ['de/pip', 'de', ''],
+      ['fr/pip', 'fr', ''],
+      ['ja/pip', 'ja', ''],
+      ['zh/pip', 'zh-Hans', ''],
+      ['hi/pip', 'hi', ''],
+    ];
+    for (const [route, htmlLang, ready] of expectations) {
+      const html = await readFile(new URL(`${route}/index.html`, dist), 'utf8');
+      expect(meta(html, 'robots'), route).toContain('noindex');
+      expect(html, route).toContain(`<html lang="${htmlLang}"`);
+      expect(html, route).not.toMatch(/adsbygoogle|googlesyndication|data-sponsor|data-ad-slot/u);
+      expect(html, route).not.toContain('hreflang=');
+      // Only the runtime strings the mirror needs are embedded, not the whole catalog.
+      const catalog = /data-i18n-catalog[^>]*>(?<json>[^<]*)</u.exec(html)?.groups?.json ?? '{}';
+      const keys = Object.keys(JSON.parse(catalog) as Record<string, string>);
+      expect(keys.every((k) => k.startsWith('tool.pill.') || k === 'tool.timer.indefiniteIdle'), route).toBe(true);
+      expect(keys.length, route).toBeGreaterThan(5);
+      if (ready) expect(html, route).toContain(`<span data-pill-text>${ready}</span>`);
+      expect(robots, route).toContain(`Disallow: /${route}\n`);
+      expect(headers, route).toMatch(new RegExp(`^/${route}\\n  X-Robots-Tag: noindex`, 'mu'));
+    }
+    for (const locale of ['en', 'es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi']) {
+      const sitemap = await readFile(new URL(`sitemap-${locale}.xml`, dist), 'utf8');
+      expect(sitemap, locale).not.toContain('/pip');
+    }
+  });
 });

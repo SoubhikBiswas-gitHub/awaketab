@@ -76,7 +76,7 @@ export function openStats(ctx: IToolCtx): void {
     const el = dialog.querySelector(sel);
     if (el) el.textContent = text;
   };
-  set('[data-stats-today]', formatMinutes(sum.todayMinutes));
+  set('[data-stats-today]', t('stats.totalValue', { time: formatMinutes(sum.todayMinutes), sessions: sum.todaySessions }));
   set('[data-stats-week]', formatMinutes(sum.weekMinutes));
   set('[data-stats-streak]', t('stats.streak', { days: sum.streakDays }));
   set('[data-stats-total]', t('stats.totalValue', { time: formatMinutes(sum.totalMinutes), sessions: sum.sessions }));

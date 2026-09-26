@@ -2,7 +2,7 @@ import type { IChangeEvent, TLockState, IWakeLockHandle } from '@awaketab/wake';
 import { evaluateBattery, type IBatteryLike } from './battery.js';
 import { CUSTOM_MAX_MS, LOST_TIMEOUT_MS } from './constants.js';
 import { createEmitter } from './emitter.js';
-import { creditMinutes } from './stats.js';
+import { countDay, creditMinutes } from './stats.js';
 import type { createStorage } from './storage.js';
 import { createTabProtocol, type TTabMessage } from './tabs.js';
 import type { TAmbientMode, TEndReason, TPlan, TPresetId, ISession, TSessionStatus, ISettings } from './types.js';
@@ -268,7 +268,13 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
     void opts.lock.release();
     const stats = opts.storage.stats();
     if (session.awakeSeconds % 60 >= 30) creditMinutes(stats, now, 1, opts.timeZone);
-    if (Math.floor(session.awakeSeconds / 60) >= 1) stats.sessions += 1;
+    if (Math.floor(session.awakeSeconds / 60) >= 1) {
+      stats.sessions += 1;
+      stats.daySessions = countDay(stats.daySessions, now, opts.timeZone);
+    }
+    if (reason === 'completed' && session.modeState.focusBlock === true) {
+      stats.dayFocus = countDay(stats.dayFocus, now, opts.timeZone);
+    }
     stats.lastSessionAt = now;
     opts.storage.writeStats(stats);
     persist();

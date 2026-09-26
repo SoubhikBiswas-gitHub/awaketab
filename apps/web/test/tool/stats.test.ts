@@ -111,6 +111,13 @@ describe('summarise', () => {
     expect(sum.empty).toBe(false);
   });
 
+  it('counts today\'s sessions by the local day, not the UTC day', () => {
+    // NOW is 00:15 on 3 Aug in Kolkata and still 2 Aug in UTC.
+    const sum = summarise(stats(DAYS, { daySessions: { '2026-08-03': 1, '2026-08-02': 4 } }), NOW, TZ);
+    expect(sum.todaySessions).toBe(1);
+    expect(summarise(stats(DAYS), NOW, TZ).todaySessions).toBe(0);
+  });
+
   it('is empty only with no minutes and no days', () => {
     expect(summarise(DEFAULT_STATS, NOW, TZ).empty).toBe(true);
     expect(summarise(stats({ '2026-08-03': 0 }), NOW, TZ).empty).toBe(false);
@@ -214,7 +221,14 @@ describe('openStats', () => {
 
   it('free: hides export, shows the locked caption, fills the summary', () => {
     const { ctx, root, storage, store } = makeCtx({ html: STATS_HTML });
-    storage.writeStats({ ...DEFAULT_STATS, days: { [today]: 42, '2026-08-02': 90 }, totalMinutes: 132, sessions: 3, currentStreakDays: 2 });
+    storage.writeStats({
+      ...DEFAULT_STATS,
+      days: { [today]: 42, '2026-08-02': 90 },
+      daySessions: { [today]: 2, '2026-08-02': 1 },
+      totalMinutes: 132,
+      sessions: 3,
+      currentStreakDays: 2,
+    });
     openStats(ctx);
     const q = (sel: string) => root.querySelector<HTMLElement>(sel);
     expect(root.querySelector<HTMLDialogElement>('[data-dialog="stats"]')?.open).toBe(true);
@@ -222,7 +236,7 @@ describe('openStats', () => {
     expect(q('[data-stats-export]')?.hidden).toBe(true);
     expect(q('[data-stats-locked]')?.hidden).toBe(false);
     expect(q('[data-stats-empty]')?.hidden).toBe(true);
-    expect(q('[data-stats-today]')?.textContent).toBe('42 min');
+    expect(q('[data-stats-today]')?.textContent).toBe('42 min · 2 sessions');
     expect(q('[data-stats-week]')?.textContent).toBe('2 h 12 min');
     expect(q('[data-stats-streak]')?.textContent).toBe('2 days streak');
     expect(q('[data-stats-total]')?.textContent).toBe('2 h 12 min · 3 sessions');
@@ -253,6 +267,14 @@ describe('openStats', () => {
     const { ctx, root } = makeCtx({ html: STATS_HTML });
     openStats(ctx);
     expect(root.querySelector<HTMLElement>('[data-stats-empty]')?.hidden).toBe(false);
-    expect(root.querySelector('[data-stats-today]')?.textContent).toBe('0 min');
+    expect(root.querySelector('[data-stats-today]')?.textContent).toBe('0 min · 0 sessions');
+  });
+
+  it('reads today as 0 sessions from stats written before per-day counts', () => {
+    const { ctx, root, storage } = makeCtx({ html: STATS_HTML });
+    // Pre-M6-follow-up record: no daySessions at all.
+    storage.writeStats({ ...DEFAULT_STATS, days: { [today]: 1 }, totalMinutes: 1, sessions: 1 });
+    openStats(ctx);
+    expect(root.querySelector('[data-stats-today]')?.textContent).toBe('1 min · 0 sessions');
   });
 });

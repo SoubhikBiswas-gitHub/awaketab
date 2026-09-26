@@ -205,8 +205,7 @@ export function boot(root: HTMLElement): () => void {
       void import('./ambient/shell.js').then((m) => unsubs.push(m.mountAmbient(ctx)));
     }),
   );
-  const sponsor = root.querySelector<HTMLElement>('[data-sponsor]');
-  if (sponsor) void import('./sponsor.js').then((m) => m.mountSponsor(ctx, sponsor).then((u) => unsubs.push(u)));
+  if (root.querySelector('[data-sponsor]')) void import('./sponsor.js').then((m) => m.mountSponsor(ctx).then((u) => unsubs.push(u)));
   void import('./extras.js').then((mod) => {
     unsubs.push(mod.mountExtras(store, storage));
   });

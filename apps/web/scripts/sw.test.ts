@@ -25,6 +25,7 @@ beforeAll(async () => {
   for (const p of PRESETS) await put(`${p}/index.html`, `<!doctype html><title>${p}</title>`);
   for (const l of LOCALES) {
     await put(`${l}/index.html`, `<!doctype html><title>${l}</title>`);
+    await put(`${l}/pip/index.html`, `<!doctype html><title>${l} pip</title>`);
     await put(`${l}/manifest.webmanifest`, `{"lang":"${l}"}`);
   }
   await put('favicon.svg', '<svg/>');
@@ -46,7 +47,7 @@ describe('precacheManifest (docs/05 §8.2)', () => {
   it('lists the shell pages by navigation URL with content revisions', async () => {
     const entries = await precacheManifest(dist);
     const urls = entries.map((e) => e.url);
-    for (const u of ['/', '/pip', '/15m', '/8h', '/es/', '/pt-br/', '/hi/']) expect(urls).toContain(u);
+    for (const u of ['/', '/pip', '/es/pip', '/zh/pip', '/15m', '/8h', '/es/', '/pt-br/', '/hi/']) expect(urls).toContain(u);
     expect(urls).not.toContain('/index.html');
     expect(urls).not.toContain('/learn/');
     expect(urls.some((u) => u.startsWith('/learn'))).toBe(false);
@@ -82,8 +83,8 @@ describe('precacheManifest (docs/05 §8.2)', () => {
     const urls = (await precacheManifest(dist)).map((e) => e.url);
     expect(urls).toEqual([...urls].sort((a, b) => a.localeCompare(b)));
     expect(new Set(urls).size).toBe(urls.length);
-    // 1 home + pip + 7 presets + 7 locale homes; 3 static + 7 locale manifests; 1 icon; 2 hashed assets.
-    expect(urls).toHaveLength(16 + 10 + 1 + 2);
+    // 1 home + pip + 7 presets + 7 locale homes + 7 locale pips; 3 static + 7 locale manifests; 1 icon; 2 hashed assets.
+    expect(urls).toHaveLength(23 + 10 + 1 + 2);
   });
 
   it('fails loudly when a shell page is missing', async () => {

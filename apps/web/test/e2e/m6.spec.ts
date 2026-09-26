@@ -123,6 +123,7 @@ test('stats panel shows today, a 7-row heatmap and the free-tier limits', async 
         days,
         totalMinutes: 227,
         sessions: 5,
+        daySessions: { [key(0)]: 2, [key(1)]: 1 },
         longestStreakDays: 2,
         currentStreakDays: 2,
         lastSessionAt: Date.now(),
@@ -133,7 +134,7 @@ test('stats panel shows today, a 7-row heatmap and the free-tier limits', async 
   await page.getByRole('button', { name: 'Stats', exact: true }).click();
   const dlg = page.locator('dialog[data-dialog="stats"]');
   await expect(dlg).toBeVisible();
-  await expect(dlg.locator('[data-stats-today]')).toHaveText('42 min');
+  await expect(dlg.locator('[data-stats-today]')).toHaveText('42 min · 2 sessions');
   await expect(dlg.locator('[data-stats-heatmap] tbody tr')).toHaveCount(7);
   await expect(dlg.locator('[data-stats-heatmap] td[data-locked]').first()).toBeAttached();
   await expect(dlg.locator('[data-stats-export]')).toBeHidden();
@@ -216,6 +217,49 @@ test('/pip mirrors the owning tab and its Stop reaches the owner', async ({ cont
   await root.locator('[data-pip-stop]').click();
   await expect(pillText(page)).toHaveText('Ready');
   await pip.close();
+});
+
+test('the /pip popup opens in the page language and mirrors the owner there', async ({ page }) => {
+  // No Document PiP: P falls back to the popup (docs/05 §9).
+  await page.addInitScript(() => {
+    Object.defineProperty(window, 'documentPictureInPicture', { configurable: true, value: undefined });
+  });
+  await page.goto('/es');
+  await page.locator('[data-preset="p30"]').click();
+  await expect(pillText(page)).toHaveText('Pantalla despierta', { timeout: 4000 });
+
+  const [popup] = await Promise.all([page.waitForEvent('popup'), page.keyboard.press('p')]);
+  await popup.waitForLoadState('domcontentloaded');
+  expect(new URL(popup.url()).pathname).toBe('/es/pip');
+  await expect(popup.locator('html')).toHaveAttribute('lang', 'es');
+  const root = popup.locator('#awaketab-pip');
+  await expect(root.locator('[data-pill-text]')).toHaveText('Pantalla despierta', { timeout: 3000 });
+  await expect(root.locator('[data-pip-stop]')).toHaveText('Detener');
+  await root.locator('[data-pip-stop]').click();
+  await expect(pillText(page)).toHaveText('Listo');
+  await popup.close();
+});
+
+test('/ja/pip renders in Japanese, noindex, with no cards or ads', async ({ page }) => {
+  await page.goto('/ja/pip');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
+  await expect(page.locator('[data-pill-text]')).toHaveText('準備完了');
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/u);
+  await expect(page.locator('[data-sponsor], ins.adsbygoogle, [data-ad-slot]')).toHaveCount(0);
+});
+
+test('SponsorCard slots are not rendered, nor the config fetched, with PUBLIC_SPONSOR_ENABLED off', async ({ page }) => {
+  const configRequests: string[] = [];
+  page.on('request', (req) => {
+    if (req.url().includes('/config/sponsor.json')) configRequests.push(req.url());
+  });
+  await page.goto('/?autostart=0');
+  await expect(page.locator('dialog[data-dialog="extend"]')).toHaveCount(1);
+  // Build flag off (the production default until G5): no reserved box anywhere, including the ExtendPrompt.
+  await expect(page.locator('[data-sponsor]')).toHaveCount(0);
+  await expect(page.locator('dialog[data-dialog="extend"] .at-sponsor')).toHaveCount(0);
+  await page.waitForLoadState('networkidle');
+  expect(configRequests).toEqual([]);
 });
 
 test.describe('offline', () => {

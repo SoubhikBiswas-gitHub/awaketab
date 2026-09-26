@@ -1,0 +1,11 @@
+{
+  "v": 1,
+  "days": { "2026-09-07": 19, "2026-09-08": 11 },
+  "totalMinutes": 30,
+  "sessions": 1,
+  "longestStreakDays": 2,
+  "currentStreakDays": 2,
+  "lastSessionAt": 1788805800000,
+  "daySessions": { "2026-09-08": 1 },
+  "dayFocus": { "2026-09-08": 1 }
+}

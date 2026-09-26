@@ -336,5 +336,6 @@
   "settings.ambient.clock12h": "12-घंटे वाली घड़ी",
   "settings.notifications.unavailable": "iPhone और iPad पर नोटिफ़िकेशन के लिए इंस्टॉल किया हुआ ऐप चाहिए।",
   "pip.add15.label": "15 मिनट जोड़ें",
-  "pip.empty": "सेशन शुरू करें:"
+  "pip.empty": "सेशन शुरू करें:",
+  "ambient.focus.today": "{n, plural, one {आज # फ़ोकस ब्लॉक} other {आज # फ़ोकस ब्लॉक}}"
 }

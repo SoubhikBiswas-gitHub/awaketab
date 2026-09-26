@@ -178,6 +178,27 @@
 /pip
   X-Robots-Tag: noindex
 
+/es/pip
+  X-Robots-Tag: noindex
+
+/pt-br/pip
+  X-Robots-Tag: noindex
+
+/de/pip
+  X-Robots-Tag: noindex
+
+/fr/pip
+  X-Robots-Tag: noindex
+
+/ja/pip
+  X-Robots-Tag: noindex
+
+/zh/pip
+  X-Robots-Tag: noindex
+
+/hi/pip
+  X-Robots-Tag: noindex
+
 /config/*
   Cache-Control: public, max-age=300
 

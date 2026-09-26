@@ -1087,6 +1087,15 @@
     visibility: hidden;
   }
 
+  /* ExtendPrompt slot: collapsed (never while the dialog is open) when there is nothing to show. */
+  .at-sponsor[hidden] {
+    display: none;
+  }
+
+  dialog .at-sponsor {
+    margin-block-start: var(--at-s-3);
+  }
+
   .at-sponsor p {
     margin: 0;
     color: var(--muted-foreground);
@@ -1110,6 +1119,29 @@
   .at-pip-actions {
     display: flex;
     gap: var(--at-s-2);
+  }
+
+  /* pip.pro: the ambient mode's digits (cloned from the page) above the pill; the session timer steps aside. */
+  .at-pip-ambient {
+    display: grid;
+    justify-items: center;
+  }
+
+  .at-pip-ambient:empty,
+  .at-pip-body[data-ambient] [data-timer] {
+    display: none;
+  }
+
+  .at-pip-body .at-pip-ambient .at-ambient-sub {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: var(--at-t-xs);
+  }
+
+  .at-pip-body .at-pip-ambient .at-ambient-digits {
+    font-size: var(--at-t-xl);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
   }
 
   .at-pip-empty {
