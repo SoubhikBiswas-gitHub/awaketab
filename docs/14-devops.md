@@ -1,6 +1,6 @@
 # 14 · DevOps, hosting and operations
 
-Status: v1.1 · 2026-09-11 · Owner: Soubhik
+Status: v1.2 · 2026-09-26 · Owner: Soubhik
 
 **Purpose.** How AwakeTab is built, deployed, secured, monitored and recovered — on Cloudflare Pages with Pages Functions, KV and Workers Analytics Engine, from a GitHub monorepo. Written for one operator who also writes the code.
 
@@ -75,6 +75,11 @@ Preview deployments send `X-Robots-Tag: noindex` via `_headers` keyed on the `*.
 /config/*
   Cache-Control: public, max-age=300
 
+# Service worker (built by scripts/sw.mjs; must revalidate so updates are seen)
+/sw.js
+  Cache-Control: no-cache
+  Service-Worker-Allowed: /
+
 # Hashed assets
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
@@ -116,11 +121,11 @@ Commit messages: Conventional Commits (`feat(engine): …`, `fix(seo): …`, `co
 
 `ci.yml` (PR + main): checkout → pnpm install (cache) → `pnpm lint` → `pnpm typecheck` → `pnpm test:unit` → `pnpm test:functions` → `pnpm -F web build` → `pnpm test:seo` (over `dist/`) → `pnpm size` → upload `dist/` artifact.
 
-**Site build pipeline.** `pnpm -F web build` runs, in this order: `scripts/headers.mjs` (generate `_headers` from the CSP template, §3) → `scripts/icons.mjs` → `scripts/manifests.mjs` (per-locale web manifests) → `scripts/og.mts` (satori + resvg OG images) → `astro build` → `scripts/prune-unreferenced.mjs` → `scripts/sitemap.mjs`. The prune step exists because of `03-architecture.md` ADR-013: `@astrojs/react` renders shadcn/ui components at build time only, but the integration still emits its ~224 KB client renderer chunk into `dist/_astro/` even when nothing hydrates; `prune-unreferenced.mjs` deletes every `_astro/*.js` chunk that no HTML, JS, manifest or JSON file in `dist/` references and prints `{ prunedUnreferencedChunks: [...] }`. It must run after `astro build` and before `sitemap.mjs`, and `pnpm size` afterwards asserts `hydrated: []` and `reactChunks: []` (`13-testing-strategy.md` §7). Two helpers keep parallel builds honest: `node scripts/locked.mjs -- <command>` holds a `mkdir` lock at `apps/web/.build-lock` (waits up to 15 min, releases on exit or signal) so concurrent `astro build` runs on one machine never race on `.astro/` or `public/`; `AT_DIST=<dir>` points `size.mjs`, `prune-unreferenced.mjs`, `sitemap.mjs` and the SEO tests at an alternate output directory (`apps/web/dist-*`; both paths are git-ignored).
+**Site build pipeline.** `pnpm -F web build` runs, in this order: `scripts/headers.mjs` (generate `_headers` from the CSP template, §3) → `scripts/icons.mjs` → `scripts/manifests.mjs` (per-locale web manifests) → `scripts/og.mts` (satori + resvg OG images) → `astro build` → `scripts/prune-unreferenced.mjs` → `scripts/sw.mjs` → `scripts/sitemap.mjs`. The prune step exists because of `03-architecture.md` ADR-013: `@astrojs/react` renders shadcn/ui components at build time only, but the integration still emits its ~224 KB client renderer chunk into `dist/_astro/` even when nothing hydrates; `prune-unreferenced.mjs` deletes every `_astro/*.js` chunk that no HTML, JS, manifest or JSON file in `dist/` references and prints `{ prunedUnreferencedChunks: [...] }`. It must run after `astro build` and before `sitemap.mjs`, and `pnpm size` afterwards asserts `hydrated: []` and `reactChunks: []` (`13-testing-strategy.md` §7). `scripts/sw.mjs` (M6, `03-architecture.md` ADR-014) runs right after the prune so the precache manifest lists exactly the files that ship: esbuild bundles `src/sw.ts` with the Workbox runtime modules (`workbox-precaching`, `-routing`, `-strategies`, `-expiration` 7.4.1; `esbuild` 0.28.2 — all dev dependencies of `apps/web`), replaces `self.__WB_MANIFEST` with the manifest built from `dist/`, writes `dist/sw.js` and prints `{ sw: { entries, bytes } }`; it fails the build if the marker is missing. It honours `AT_DIST`. `apps/web/public/sw.js` no longer exists. **Size gate change (M6):** `pnpm size` now counts `criticalJs` as each entry script plus its static-import closure rather than only the `<script src>` files, so a shared chunk Rollup splits out can no longer escape the 15 KB budget; `astro.config.mjs` sets `vite.build.modulePreload: false` so Vite adds no dependency map or modulepreload links for lazy chunks (its ~0.7 KB gz `preload-helper` chunk is still in the closure). At M6 close: `criticalJs` 14,415 B gz, `totalJs` 39,777 B gz (budget 40,960), `totalCss` 12,303 B gz. Two helpers keep parallel builds honest: `node scripts/locked.mjs -- <command>` holds a `mkdir` lock at `apps/web/.build-lock` (waits up to 15 min, releases on exit or signal) so concurrent `astro build` runs on one machine never race on `.astro/` or `public/`; `AT_DIST=<dir>` points `size.mjs`, `prune-unreferenced.mjs`, `sitemap.mjs` and the SEO tests at an alternate output directory (`apps/web/dist-*`; both paths are git-ignored).
 
 `e2e.yml` (PR): waits for the Pages preview deployment (`cloudflare/pages-action` status or the deployment webhook) → `pnpm test:e2e --project=chromium --base-url=$PREVIEW_URL` → axe suite → Playwright report artifact.
 
-`nightly.yml` (02:00 UTC): e2e firefox + webkit, visual regression, link check over all locales, CrUX pull (§9), dependency audit.
+`nightly.yml` (02:00 UTC): e2e firefox + webkit, visual regression, link check over all locales, CrUX pull (§9), dependency audit. Since M6 the job installs chromium too and runs `VISUAL=1 pnpm exec playwright test apps/web/test/e2e/visual.spec.ts --project=chromium --update-snapshots=missing` (the spec skips itself without `VISUAL=1`), then uploads `visual.spec.ts-snapshots` and `test-results` as the `visual-snapshots` artifact even on failure. Baselines are not committed yet. Playwright blocks service workers in every project (`playwright.config.ts`); only the offline journey allows them.
 
 `lighthouse.yml` (PR): LHCI against the preview URL with `lighthouserc.json` budgets; comment on the PR.
 

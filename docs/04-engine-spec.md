@@ -1,6 +1,6 @@
 # 04 · Engine specification
 
-Status: v1.0 · 2026-09-07 · Owner: Soubhik
+Status: v1.1 · 2026-09-26 · Owner: Soubhik
 
 **Purpose.** This is the implementable specification of the two engine layers: the **lock layer** `@awaketab/wake` (seven states, one transition table, video fallback, retry policy, reason/advice codes) and the **session layer** `@awaketab/core` (sessions, plans, the wall-clock tick, pause/resume, end-of-session pipeline, battery monitor, persistence, stats, multi-tab protocol, capability probe). Every state name, status, plan type and storage key is as in `00-conventions.md` §5–§6. Codes introduced here that are not yet in the conventions are marked **PROPOSED — add to 00-conventions.md**. The rule the whole engine serves: *the pill never lies* — UI state is derived only from the promise results and browser events, never from intent.
 
@@ -255,6 +255,8 @@ export interface ISession {
   endedAt: number | null;     // PROPOSED field
   endReason: TEndReason | null;// PROPOSED field
   awakeSeconds: number;       // seconds spent in held|fallback, for stats — PROPOSED field
+  modeState: Record<string, unknown>; // per-mode data, e.g. cookTimers (08-data-storage.md §2.2); written by updateSession()
+  source: 'web' | 'pwa' | 'pip' | 'ext' | 'embed';
 }
 
 export const PRESET_MS: Record<Exclude<TPresetId, 'pinf' | 'custom' | 'until'>, number> = {
@@ -299,6 +301,14 @@ Properties: a tick that fires late (throttled background tab, long task) compute
 
 `pause()` (allowed in `active`): `status = 'paused'`, `pausedAt = now`, `lock.release()` — the screen may sleep while paused, that is the point — tick chain stopped, persist. `resume()` (allowed in `paused`): `pausedMs += now - pausedAt`; for `duration` plans `endsAt += now - pausedAt` (remaining time is preserved); for `until` plans `endsAt` is unchanged (the clock target is what matters — if it has passed, `resume()` finishes with `completed` immediately); `indefinite` unchanged; `status = 'active'`, `await lock.request()`, restart ticks, persist. Pause does not count toward `awakeSeconds`.
 
+**`pause({ keepLock: true })`** (cook mode, `05-frontend-spec.md` §3.16): same as `pause()` except the lock is **not** released — the clock stops, the screen stays awake, and the pill keeps reading the real lock state. `resume()` then reuses the kept lock when it is still `held` or `fallback`, and re-requests it otherwise (e.g. it was `lost` while the tab was hidden). A plain `pause()` still releases.
+
+**`addTime(ms)`** (PiP and popup `+15`): allowed in `active` and `paused` on a finite plan; ignored for `indefinite`, for non-finite or `ms ≤ 0`, and when remaining + `ms` would exceed `CUSTOM_MAX_MS`. A `duration` plan grows in place (`plan.ms += ms`, `endsAt += ms`). An `until` plan whose deadline moved is no longer a wall-clock target, so it becomes `{ type: 'duration', ms: endsAt + ms − startedAt − pausedMs }` with `endsAt = startedAt + plan.ms` — the same moved deadline. Unlike `extend()` it never starts a new session. Tracks `session_extend { addedMin }`, persists, and broadcasts a `state` snapshot (§14).
+
+**`updateSession({ mode?, modeState? })`**: sets `session.mode` and shallow-merges `modeState` on the current session, then persists. The island calls it when the ambient mode changes during a live session and whenever cook-mode kitchen timers change, so a reload resumes both.
+
+**`stop()` after completion**: when the session is already `completed`/`aborted`, `stop()` does not finish it again but still calls `lock.release()`, because the UI may have re-requested the lock for the extend-prompt grace period (§10 step 6). Before M6 that grace lock could outlive a Stop.
+
 ### 10. End-of-session pipeline
 
 `finish(reason, now)` runs the same ordered steps for every end; steps 3–6 are skipped for `reason === 'user'`.
@@ -310,13 +320,16 @@ Properties: a tick that fires late (throttled background tab, long task) compute
 5. Title flash: alternate `document.title` between the original and `t('end.titleFlash')` every 1 s until the document is visible *and* focused, then restore. Never `alert()`.
 6. Extend prompt: if `settings.endBehaviour === 'prompt_extend'` (default) show the `extend` overlay (+15 min, +30 min, +60 min, ∞) with a 60 s auto-dismiss; `extend(ms)` creates a new `duration` session with `presetId: 'custom'` and the same mode (or `indefinite` for ∞). If `stop`, show the summary toast only. For `battery` and `denied` the overlay shows the fix instead of the extend buttons.
 
+As implemented (M6): steps 1–2 run in the engine; steps 3–6 run in the island's lazily loaded `end.ts` on the `ended` event, for every reason except `user` and `denied` (the capability notice already explains a denial). Step 3 plays two Web Audio oscillator tones (660 Hz, then 880 Hz at +0.3 s) through the `AudioContext` primed on the first gesture, silent when `settings.sound.id === 'none'`. Step 4 uses `registration.showNotification()` with tag `at-end` and falls back to `new Notification()`; it never asks for permission (Settings asks when the toggle is turned on). Step 5 flashes at 1 Hz (`TITLE_FLASH_MS`) for at least 3 s (`TITLE_FLASH_MIN_MS`). Step 6 applies only to `completed` and never in `cook` mode; while the prompt is open the island re-requests the lock as a grace period, and closing the prompt without a choice (Esc, or the auto-stop after `EXTEND_AUTO_STOP_MS` = 5 min — this supersedes the 60 s above, per E10-T04) is a Stop. A `completed` session with `awakeSeconds ≥ 300` increments `at.v1.meta.sessionCount`, and the rating prompt is considered 2 s after the prompt closes (`05-frontend-spec.md` §3.22).
+
 ### 11. Battery monitor (Chromium only)
 
-Enabled when `'getBattery' in navigator` and `settings.battery.autoStop`. On start: `const b = await navigator.getBattery()`; subscribe to `levelchange` and `chargingchange`; evaluate on every event and on every 60th tick:
+Enabled when `'getBattery' in navigator` and `settings.battery.autoStop`, and only while the session is `active`. The engine calls `navigator.getBattery()` **once** and caches the `BatteryManager` for its lifetime (listeners on `levelchange` and `chargingchange` are removed in `destroy()`); `null` is cached when the API is absent or rejects. It evaluates on start, on every battery event, and on every 60th tick (the first tick included). `evaluateBattery(b, threshold, 0.02)` returns `ok` when charging, `stop` when `level ≤ threshold` (default `0.15`), `low` when `level ≤ threshold + 0.02`:
 
-- `level ≤ threshold + 0.05` and not charging → once per session emit `warning { code: 'battery_low', level }` (toast).
-- `level ≤ threshold` (default `0.15`) and not charging → `finish('battery')`.
-- Hysteresis: after an auto-stop, a new session can start; the monitor re-arms only when `charging` or `level ≥ threshold + 0.05`, otherwise it emits `warning { code: 'battery_low' }` at start and does not stop the session again within the same charge cycle (`lastBatteryStopAt` in memory).
+- `low` → emit `warning { code: 'battery_low', level }` (toast `tool.toast.batteryLow`), at most **once per session** (the flag resets on `start()`).
+- `stop` while armed → disarm, then `finish('battery')`.
+- Hysteresis: the stop re-arms only once the device is charging or `level ≥ threshold + 0.05`. A session started below the threshold on the same discharge gets the one-time `battery_low` warning instead of being stopped again. The armed flag lives in memory for the engine's lifetime.
+- The active check is re-done after `getBattery()` resolves, so a session that ended meanwhile is never finished twice.
 
 ### 12. Persistence and resume
 
@@ -337,20 +350,25 @@ const dayKey = (ms: number) => new Intl.DateTimeFormat('en-CA', { year: 'numeric
 Channel: `new BroadcastChannel('awaketab')`. `tabId` is `crypto.randomUUID()` kept in `sessionStorage['at.tabId']` (survives reload, not tab duplication — a duplicated tab gets a new id because we also compare `performance.timeOrigin`).
 
 ```ts
-// PROPOSED — add to 00-conventions.md §6a
+// Accepted — 00-conventions.md §13.1, §13.8
 type TTabMessage =
   | { type: 'hello'; tabId: string; ts: number }
   | { type: 'lock';  tabId: string; ts: number; state: TLockState }
-  | { type: 'state'; tabId: string; ts: number; status: TSessionStatus; lock: TLockState; startedAt: number | null }
+  | { type: 'state'; tabId: string; ts: number; status: TSessionStatus; lock: TLockState; startedAt: number | null;
+      // timing snapshot so a mirror (the /pip popup) can count locally between messages
+      endsAt?: number | null; planType?: TPlanType; pausedMs?: number; pausedAt?: number | null; wall?: string | null }
+  | { type: 'intent'; tabId: string; ts: number; target: string; action: 'stop' | 'add'; ms?: number }
   | { type: 'bye';   tabId: string; ts: number };
 ```
 
 Rules:
 
-1. On boot post `hello`. Every peer replies with `state`. Peers are tracked in a map with a 10 s liveness timeout refreshed on any message; `peers` in the store is the map size.
+1. On boot post `hello`. Every peer replies with `lock` (its current lock state) and, when it has a session, a full `state` snapshot. Peers are tracked in a map with a 10 s liveness timeout refreshed on any message; `peers` in the store is the map size.
 2. Before `start()`, if any peer reports `lock ∈ {'held','fallback'}`, the UI shows the `secondTab` overlay: "AwakeTab is already running in another tab" with *Use this tab* / *Keep the other*. In `/embed/*` and `autostart=1` the newest tab takes over without asking.
 3. Election — newest holder wins: whenever a tab transitions to `held`/`fallback` it posts `lock`. A tab that is itself `held`/`fallback` and receives `lock { state: held|fallback }` with `ts > ownAcquiredAt` releases its lock, sets its session to `paused` with a toast "Now running in the other tab", and does not re-request on `visibilitychange` until the user resumes. Because only a visible tab can hold a native lock, this mostly matters for stats double-counting and honest pills.
 4. `bye` on `pagehide` removes the peer immediately.
+5. Snapshots: while it has a session, the engine posts `state` (with `endsAt`, `planType`, `pausedMs`, `pausedAt`, and `wall` for `until` plans) on every tick, on every status change, on every lock change, and after `addTime()`. Mirrors compute the timer locally from the snapshot, so a throttled owner tab never freezes them.
+6. Intents: a tab without an engine (the `/pip` popup, `05-frontend-spec.md` §9) acts through `intent` messages addressed to one owner's `tabId`. The addressed engine runs `stop()` for `action: 'stop'` and `addTime(ms)` for `action: 'add'`; every other tab ignores the message. Intents are commands, never state: the mirror still waits for the owner's next `state` to change its display.
 
 ### 15. Capability probe
 
@@ -418,10 +436,12 @@ export interface ISessionEngine {
   readonly session: ISession | null;
   readonly lockState: TLockState;
   start(plan: TPlan, meta: { presetId: TPresetId; mode: TAmbientMode; source?: string }): Promise<TLockState>;
-  pause(): void;
+  pause(opts?: { keepLock?: boolean }): void;  // keepLock: clock paused, lock kept (cook mode, §9)
   resume(): Promise<TLockState>;
-  stop(): void;                                // endReason 'user'
+  stop(): void;                                // endReason 'user'; after completion only releases the grace lock
   extend(ms: number | 'indefinite'): Promise<TLockState>;
+  addTime(ms: number): void;                   // grow the live finite plan in place (§9)
+  updateSession(patch: { mode?: TAmbientMode; modeState?: Record<string, unknown> }): void;
   getResumable(): ISession | null;
   resumeSession(): Promise<TLockState>;         // accept the resume banner
   discardResumable(): void;

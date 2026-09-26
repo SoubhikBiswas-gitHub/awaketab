@@ -1,6 +1,6 @@
 # 05 · Front-end specification — tokens, tool island, PWA, PiP
 
-Status: v1.1 · 2026-09-11 · Owner: Soubhik
+Status: v1.2 · 2026-09-26 · Owner: Soubhik
 
 **Purpose.** This document specifies everything a developer needs to build the AwakeTab web front end: the design tokens, every component of the vanilla-TypeScript tool island (props, state, behaviour, copy, accessibility), page layout, the lock-state × session-status UI matrix, keyboard and accessibility rules, the PWA and Document Picture-in-Picture behaviour, URL parameter handling, theming, error states and the performance rules the island must meet. Identifiers (states, keys, routes, shortcuts, gates) are used exactly as defined in `00-conventions.md`; anything new is marked **PROPOSED — add to 00-conventions.md** and collected in §15.
 
@@ -10,7 +10,7 @@ Status: v1.1 · 2026-09-11 · Owner: Soubhik
 
 ## 1. Design tokens
 
-Tokens are CSS custom properties declared in `apps/web/src/styles/tokens.css` and consumed by Tailwind v4 (`@theme`) and by hand-written CSS in the island. Token names use the `--at-` prefix (**PROPOSED — add token namespace `--at-*` to 00-conventions.md**). Themes are selected by `data-theme` on `<html>` (§12). `auto` resolves to `light` or `dark` from `prefers-color-scheme`; `oled` is never auto-selected.
+Tokens are CSS custom properties declared in `apps/web/src/styles/tokens.css` and consumed by Tailwind v4 (`@theme`) and by hand-written CSS in the island. Token names use the `--at-` prefix (accepted — `00-conventions.md` §13.1). Themes are selected by `data-theme` on `<html>` (§12). `auto` resolves to `light` or `dark` from `prefers-color-scheme`; `oled` is never auto-selected.
 
 ### 1.1 Colour
 
@@ -24,13 +24,26 @@ Tokens are CSS custom properties declared in `apps/web/src/styles/tokens.css` an
 | `--at-accent` | `#B86E00` | `#FFB84D` | `#FFB84D` | Ring progress, held state, primary buttons, focus ring |
 | `--at-accent-text` | `#8A5200` | `#FFB84D` | `#FFB84D` | Accent-coloured *text* (light amber `#B86E00` is only 3.7:1 on ground — fine for the ring and borders, not for body-size text) |
 | `--at-on-accent` | `#FFFFFF` | `#1A1200` | `#1A1200` | Text on accent-filled buttons (dark: 11:1; light: use only at ≥ 18.66 px bold or with `--at-accent-text` background) |
-| `--at-night` | `#2B3A67` | `#9DB0FF` | `#9DB0FF` | Night mode digits and accents (in `night` ambient mode digits use `#FF5A3C` on `oled`; see §3.16) |
+| `--at-night` | `#2B3A67` | `#9DB0FF` | `#9DB0FF` | Night mode digits and accents (in `night` ambient mode digits use `--at-night-digit` `#FF5A3C` on `oled`; see §3.13) |
 | `--at-good` | `#1E7B4D` | `#5FD39A` | `#5FD39A` | Completed flash, success toasts |
 | `--at-warn` | `#A64B00` | `#FF9F6E` | `#FF9F6E` | `lost` pill, warnings |
 | `--at-bad` | `#B3261E` | `#FF8A80` | `#FF8A80` | `denied` pill, error toasts |
 | `--at-focus` | `#B86E00` | `#FFB84D` | `#FFB84D` | 2 px outline + 2 px offset, ≥ 3:1 against every adjacent colour |
 
 State-tinted surfaces are derived, never hand-picked: `color-mix(in srgb, var(--at-accent) 12%, var(--at-surface))` for the `held` pill, `--at-warn` 12% for `lost`, `--at-bad` 12% for `denied`. Every text/background pair used in the island must be listed in `13-testing-strategy.md`'s contrast test fixture; CI fails below WCAG 2.2 AA (4.5:1 text, 3:1 UI/large text).
+
+### 1.1a Accent palettes
+
+`settings.accent` stores the light-theme hex (`08-data-storage.md` §2.1); `apps/web/src/tool/accent.ts` maps it to a palette id set as `data-accent` on `<html>` (amber, the default, sets no attribute), and `tokens.css` overrides four tokens per palette. `public/theme-boot.js` mirrors the map so the accent is applied before first paint; the island re-checks pack palettes against the licence and falls back to amber when `ambient.packs` is missing or lapsed.
+
+| Id | `settings.accent` | Gate | `light`: `--at-accent` · `--at-accent-text` · `--at-on-accent` · `--at-focus` | `dark` / `oled`: same four |
+|---|---|---|---|---|
+| `amber` | `#B86E00` (default) | free | `#B86E00` · `#8A5200` · `#FFFFFF` · `#B86E00` (§1.1) | `#FFB84D` · `#FFB84D` · `#1A1200` · `#FFB84D` |
+| `indigo` | `#4F46E5` | free | `#4F46E5` · `#4338CA` · `#FFFFFF` · `#4F46E5` | `#A5B4FC` · `#A5B4FC` · `#0F1233` · `#A5B4FC` |
+| `teal` | `#0F766E` | `ambient.packs` | `#0F766E` · `#0F766E` · `#FFFFFF` · `#0F766E` | `#5EEAD4` · `#5EEAD4` · `#042F2E` · `#5EEAD4` |
+| `rose` | `#BE123C` | `ambient.packs` | `#BE123C` · `#BE123C` · `#FFFFFF` · `#BE123C` | `#FDA4AF` · `#FDA4AF` · `#3F0613` · `#FDA4AF` |
+
+Teal and Rose are the first `ambient.packs` palette pack. Contrast rules per pair: accent ≥ 3:1 on ground, accent-text ≥ 4.5:1 on ground and surface, on-accent ≥ 4.5:1 on accent-text. The state tints and shadcn aliases (§1.5) follow the accent automatically because they are derived from `--at-accent`.
 
 ### 1.2 Type
 
@@ -52,7 +65,7 @@ System stack only — tool pages load no web fonts (`00-conventions.md` §3):
 | `--at-t-2xl` | 28 / 36 | Page h1 (mobile) |
 | `--at-t-3xl` | 40 / 48 | Page h1 (≥ md) |
 | `--at-t-timer` | `clamp(40px, 12vw, 64px)` / 1 | The `Timer`; always `font-variant-numeric: tabular-nums` |
-| `--at-t-ambient` | `clamp(72px, 22vw, 240px)` / 1 | Clock/Cook/Focus digits in ambient modes |
+| `--at-t-ambient` | `clamp(72px, 22vw, 240px)` / 1 (`clamp(4.5rem, 22vw, 15rem)` in `tokens.css`) | Clock/Cook/Focus digits in ambient modes |
 
 Weights: 400 body, 600 headings and pill, 700 timer. Letter-spacing 0 except the timer (`-0.02em`).
 
@@ -184,7 +197,7 @@ A `<div role="group" aria-label="Duration">` of `<button aria-pressed>` chips: `
 
 ### 3.4 `CustomDurationDialog`
 
-Native `<dialog>` (modal; `showModal()`), title "Custom duration". Three `<input type="number" inputmode="numeric">` fields: Days 0–30, Hours 0–23, Minutes 0–59, each labelled, with `+`/`−` steppers (44 × 44). Live summary line: "Keeps the screen awake for 1 day 2 h 30 min — until Tue 09:15". Validation on submit: total must be ≥ 1 minute ("Choose at least 1 minute") and ≤ 30 days ("The longest custom session is 30 days"); non-integers are rounded down; empty = 0. Primary button "Start", secondary "Cancel". The last valid value is persisted in `at.v1.settings.lastCustomMs` (**PROPOSED — add field to the Settings schema in 08-data-storage.md**) and pre-filled next time. Starting creates a `duration` plan with `presetId: 'custom'`. Styling: native `<dialog>` with the shadcn `Dialog` look (overlay, `--at-r-lg` panel, header/footer spacing) from `tool.css`; fields use the `Input`/`Label` classes, buttons `Button` `default`/`secondary`.
+Native `<dialog>` (modal; `showModal()`), title "Custom duration". Three `<input type="number" inputmode="numeric">` fields: Days 0–30, Hours 0–23, Minutes 0–59, each labelled, with `+`/`−` steppers (44 × 44). Live summary line: "Keeps the screen awake for 1 day 2 h 30 min — until Tue 09:15". Validation on submit: total must be ≥ 1 minute ("Choose at least 1 minute") and ≤ 30 days ("The longest custom session is 30 days"); non-integers are rounded down; empty = 0. Primary button "Start", secondary "Cancel". The last valid value is persisted in `at.v1.settings.lastCustomMs` (accepted — `00-conventions.md` §13.1) and pre-filled next time. Starting creates a `duration` plan with `presetId: 'custom'`. Styling: native `<dialog>` with the shadcn `Dialog` look (overlay, `--at-r-lg` panel, header/footer spacing) from `tool.css`; fields use the `Input`/`Label` classes, buttons `Button` `default`/`secondary`.
 
 ### 3.5 `UntilTimePicker`
 
@@ -208,7 +221,7 @@ Shown when a `duration`/`until` session reaches `endsAt` and `settings.endBehavi
 
 ### 3.10 `CapabilityNotice`
 
-Inline card that replaces the `Timer` area when `lock` is `denied` or `unsupported`, keyed by an advice code the engine sets (`advice`). Codes (**PROPOSED — add `TAdviceCode` list to 00-conventions.md**): `battery_saver` · `low_power_ios` · `hidden_document` · `permissions_policy` · `insecure_context` · `unsupported_browser` · `ios_safari_old` · `firefox_old` · `iframe_no_allow`. Each code maps to i18n keys `tool.advice.<code>.title`, `.body` and `.steps.<os>` where `<os>` ∈ `windows|macos|android|ios|chromeos|linux|other` chosen from the UA class. Example (`battery_saver`, `windows`): title "Battery saver is blocking the wake lock"; body "Windows and Chrome refuse wake locks while Battery saver is on."; steps "1. Open Settings › System › Power & battery. 2. Turn Battery saver off, or plug in. 3. Tap Retry." Every notice ends with a "Retry" button (re-requests the lock) and a "Learn more" link to the matching `/guides/*` or `/on/*` page. The notice never claims success — after "Retry" the pill speaks. Styling: an `Alert` with `AlertTitle`/`AlertDescription` (state colour from the pill tokens, §3.2, not a new palette); "Retry" is `Button` `default`, "Learn more" `buttonVariants({ variant: 'link' })`.
+Inline card that replaces the `Timer` area when `lock` is `denied` or `unsupported`, keyed by an advice code the engine sets (`advice`). Codes (`TAdviceCode`, accepted — `00-conventions.md` §13.1): `battery_saver` · `low_power_ios` · `hidden_document` · `permissions_policy` · `insecure_context` · `unsupported_browser` · `ios_safari_old` · `firefox_old` · `iframe_no_allow`. Each code maps to i18n keys `tool.advice.<code>.title`, `.body` and `.steps.<os>` where `<os>` ∈ `windows|macos|android|ios|chromeos|linux|other` chosen from the UA class. Example (`battery_saver`, `windows`): title "Battery saver is blocking the wake lock"; body "Windows and Chrome refuse wake locks while Battery saver is on."; steps "1. Open Settings › System › Power & battery. 2. Turn Battery saver off, or plug in. 3. Tap Retry." Every notice ends with a "Retry" button (re-requests the lock) and a "Learn more" link to the matching `/guides/*` or `/on/*` page. The notice never claims success — after "Retry" the pill speaks. Styling: an `Alert` with `AlertTitle`/`AlertDescription` (state colour from the pill tokens, §3.2, not a new palette); "Retry" is `Button` `default`, "Learn more" `buttonVariants({ variant: 'link' })`.
 
 ### 3.11 `FallbackConsent`
 
@@ -222,10 +235,10 @@ A full-width secondary button "Stop" under the chips while `active`/`paused`; hi
 
 Wraps the whole island when `ui.mode !== 'standard'`. Modes: `standard` · `clock` · `focus` · `minimal` · `night` · `message` · `cook`. Behaviour common to all non-standard modes:
 
-- **Auto-hide controls** after 3 s without pointer movement, key press or touch (`controlsHidden: true` → chips, header and Stop fade to 0 and become `inert`; the pill stays visible at 60% opacity because the honest status must never hide). Any pointer/key/touch shows them again for 3 s. Auto-hide is off while a dialog is open or when a screen reader is detected via `forced-colors`/keyboard-only heuristics (first `Tab` press disables auto-hide until reload).
+- **Auto-hide controls** after 3 s (`settings.ambient.autoHideMs`) without pointer movement, key press or touch (`controlsHidden: true` → the ambient control bar fades to 0 and becomes `inert`; the pill stays visible because the honest status must never hide — M6 decision: instead of 60% opacity it steps down to the muted ink `--muted-foreground`, which stays ≥ 4.5:1). Any pointer/key/touch shows them again for 3 s. Auto-hide is off while a dialog is open or when a screen reader is detected via `forced-colors`/keyboard-only heuristics (first `Tab` press disables auto-hide until reload).
 - **Pixel shift**: every 60 s the mode content wrapper translates by a random `(±2px, ±2px)` (`transform`, composited) to guard OLED burn-in. Active in every mode except `standard`; instant under reduced motion.
 - **Fullscreen**: `F` or the fullscreen button calls `documentElement.requestFullscreen({ navigationUI: 'hide' })`; failure (iPhone Safari has no element fullscreen API) toasts "Fullscreen isn't available here — add AwakeTab to your Home Screen for a full-screen clock" with a link to `/on/ios-home-screen`.
-- **Wake on pointer**: in `night`, the digits dim to 35% after 30 s idle and return to 100% on pointer/touch.
+- **Wake on pointer**: in `night`, the mode content dims after 30 s idle (`NIGHT_DIM_AFTER_MS`) and returns to full on pointer/key/touch. M6 decision: the dim is 65% opacity, not 35%, so the red digits stay ≥ 3:1 (E10-T07). **Burn-in guard**: on the `oled` palette every non-`standard` mode dims the same way after 30 min without input (`BURNIN_DIM_AFTER_MS`).
 - The `Ring`, `StatusPill` and `Timer` are re-parented into each mode's layout rather than duplicated, so there is one source of truth for state.
 
 Mode layouts:
@@ -233,29 +246,39 @@ Mode layouts:
 | Mode | Layout | Gate |
 |---|---|---|
 | `clock` | Local time `HH:MM` (`--at-t-ambient`), seconds small, date line; ring shrinks to 96 px top-right | free |
-| `focus` | Pomodoro (§3.14) | free (packs `ambient.packs` Pro) |
-| `minimal` | Ground colour only, pill at 40% and timer at `--at-t-sm` bottom-left | free |
-| `night` | `oled` palette forced, digits in `#FF5A3C` at 40% brightness (red preserves night vision), no ring | free |
+| `focus` | Pomodoro (§3.14) | free |
+| `minimal` | Ground colour only, pill in the muted ink (not 40% opacity, to stay AA) and timer at `--at-t-sm` bottom-left | free |
+| `night` | `oled` palette forced, local-time digits in `--at-night-digit` `#FF5A3C` (red preserves night vision), dimmed to 65% after 30 s idle, no ring | free |
 | `message` | §3.15 | `ambient.message` |
 | `cook` | §3.16 | free (attribution-free embed is Business, §11-embed-spec) |
 
 `M` cycles modes in the order listed (skipping gated modes the user lacks, with a toast "Message mode is a Pro feature" the first time). Theme packs (`ambient.packs`) change palettes and digit faces, not layouts.
 
+**As implemented (M6).** Only `message` is gated (`MODE_GATES` in `ambient/logic.ts`); `ambient.packs` gates the Teal/Rose palettes (§1.1a), never a layout — this table wins over the E10-T01 wording in `15-implementation-plan.md`. A gated mode reached through `mode=`, Settings or a resumed session renders its honest Pro card (§3.15) instead of a broken screen; only `M` skips it. The layer is a modal `<dialog data-ambient>` (the page behind it is inert and focus stays inside); the `[data-pip-slot]` holding pill, ring and timer, and the toast region, are moved into it and back on exit. `ambient/shell.ts` loads on the first non-`standard` mode and each mode is its own lazy chunk (`clock.ts` serves `clock` and `night`; `focus.ts`, `message.ts`, `cook.ts`; `minimal` is CSS only). The control bar has Next mode, Fullscreen and Exit. Pressing `Tab` once disables auto-hide for the rest of the page view; auto-hide never fires while a dialog is open. Pixel shift writes `translate` on the stage when `settings.ambient.pixelShift` is on. `Esc` closes the innermost layer: an open dialog, then the ambient mode (back to `standard`, the session keeps running), then the session (§5). While a session is live, mode changes are persisted with `engine.updateSession({ mode })` and a resumed session restores its mode.
+
 ### 3.14 `FocusMode`
 
 Pomodoro: 25 min focus / 5 min break, four cycles, then a 15 min long break. The wake lock is held through breaks — the "session" is the whole block (`duration` plan of 130 min, `presetId: 'custom'`, `mode: 'focus'`). Display: interval label ("Focus 2 of 4" / "Break"), interval countdown in `--at-t-ambient`, four small dots for cycle progress. Chime at each boundary (respects `settings.sound`); a Web Notification "Break time — 5 min" if permitted. Session count for the day is read from `at.v1.stats` and shown as "3 focus blocks today". Intervals are computed from `startedAt` with `Date.now()`, never from accumulated ticks, so a tab left in the background is still correct when revisited.
 
+**As implemented (M6).** Work/break/cycles come from `settings.ambient.focus` (defaults 25/5/4); the long break is `FOCUS_LONG_BREAK_MIN` (15). "Start focus" starts one `duration` plan of `focusPlanMs()` (130 min with the defaults). The phase is derived on every repaint from *active* elapsed time (wall time minus every pause, including one in progress). A boundary plays the `focus` chime (523/659 Hz), shows a toast, updates a polite live region and sends a notification tagged `at-focus`. The "N focus blocks today" line is **not shown**: `at.v1.stats` records minutes per day, not sessions per day.
+
 ### 3.15 `MessageMode`
 
-Shows one line of user text (≤ 80 chars) centred in `--at-t-ambient` with `text-wrap: balance`, plus the pill. Source: `msg=` URL param or the saved message in `at.v1.settings.ambient.message` (**PROPOSED — field**). Sanitisation: read as a string, `normalize('NFC')`, strip C0/C1 control characters and bidi overrides (`‪-‮`, `⁦-⁩`), collapse whitespace, truncate to 80 code points, render with `textContent` (never `innerHTML`). Gate `ambient.message`: without Pro, choosing the mode from the cycle shows the layout with sample text behind a scrim and the `ProCard`; a shared link with `msg=` renders the message for 60 s (so shared links still delight), then toasts "Custom messages are a Pro feature" and falls back to `clock`.
+Shows one line of user text (≤ 80 chars) centred in `--at-t-ambient` with `text-wrap: balance`, plus the pill. Source: `msg=` URL param or the saved message in `at.v1.settings.ambient.message` (accepted — `00-conventions.md` §13.1). Sanitisation: read as a string, `normalize('NFC')`, strip C0/C1 control characters and bidi overrides (`‪-‮`, `⁦-⁩`), collapse whitespace, truncate to 80 code points, render with `textContent` (never `innerHTML`). Gate `ambient.message`: without Pro, choosing the mode from the cycle shows the layout with sample text behind a scrim and the `ProCard`; a shared link with `msg=` renders the message for 60 s (so shared links still delight), then toasts "Custom messages are a Pro feature" and falls back to `clock`.
+
+**As implemented (M6).** Text is re-sanitised with `sanitizeMsg()` in the mode module and written with `textContent` only, with `dir="auto"`. The 60 s preview (`MESSAGE_PREVIEW_MS`) is spent once per page view; returning to the mode afterwards shows the sample text and Pro card. The Pro card's link tracks `pro_view {from: 'message'}`. With Pro, `msg=` wins over the saved message.
 
 ### 3.16 `CookMode`
 
-Designed for a propped-up phone and wet hands: everything ≥ 64 × 64 px, high contrast, no auto-hide of the pause hint. Elements: big elapsed timer (`--at-t-ambient`, counting up since the session started), caption "Tap anywhere to pause the timer", the pill, and up to three kitchen timers. Tap-anywhere toggles the session between `active` and `paused` — the **lock stays held** while paused (the screen must not go dark mid-recipe; `paused` affects the elapsed count only), and the pill still reads "Screen awake". Kitchen timers: name ≤ 20 chars (defaults "Timer 1"), duration 1 min–12 h via a 5/10/15/30/60-minute quick row plus custom; each shows its own countdown, chimes at zero (distinct from the session chime), flashes its card in `--at-good` for 10 s and triggers a notification "Pasta — done". Timers persist in `at.v1.session.modeState.cookTimers[]` (**PROPOSED — `modeState` field on `ISession`**) so a reload resumes them. Only the `cook` plan default is `pinf`; the `ExtendPrompt` never appears in cook mode.
+Designed for a propped-up phone and wet hands: everything ≥ 64 × 64 px, high contrast, no auto-hide of the pause hint. Elements: big elapsed timer (`--at-t-ambient`, counting up since the session started), caption "Tap anywhere to pause the timer", the pill, and up to three kitchen timers. Tap-anywhere toggles the session between `active` and `paused` — the **lock stays held** while paused (the screen must not go dark mid-recipe; `paused` affects the elapsed count only), and the pill still reads "Screen awake". Kitchen timers: name ≤ 20 chars (defaults "Timer 1"), duration 1 min–12 h via a 5/10/15/30/60-minute quick row plus custom; each shows its own countdown, chimes at zero (distinct from the session chime), flashes its card in `--at-good` for 10 s and triggers a notification "Pasta — done". Timers persist in `at.v1.session.modeState.cookTimers[]` (accepted — `00-conventions.md` §13.1, §13.8) so a reload resumes them. Only the `cook` plan default is `pinf`; the `ExtendPrompt` never appears in cook mode.
+
+**As implemented (M6).** The tap target pauses with `engine.pause({ keepLock: true })` (`04-engine-spec.md` §9), so the lock stays held and the pill keeps reporting the real lock state; with no live session, a tap (or adding a timer) starts an indefinite `pinf` session. Timer shape `{ id, name, durationMs, endsAt, doneAt }` (`08-data-storage.md` §2.2), written through `engine.updateSession({ modeState: { cookTimers } })` and read back defensively (malformed entries dropped, at most `COOK_MAX_TIMERS` = 3). Names are NFC-normalised, stripped of control/format characters and cut to 20 code points; the default is "Timer N". Durations: quick row 5/10/15/30/60 min or a custom 1–720 min field (`COOK_MIN_MS`–`COOK_MAX_MS`); out-of-range input toasts `ambient.cook.timer.invalid`. At zero a timer plays the `timer` chime (three 988 Hz beeps, distinct from the end chime), toasts, notifies with tag `at-cook-{id}`, and its card carries `data-flash` for `COOK_FLASH_MS` (10 s). Kitchen timers count against wall time and keep running while the session clock is paused. Cards are keyed by id so focus on a Remove button survives the per-second repaint; the add form hides at three timers.
 
 ### 3.17 `StatsPanel`
 
-Dynamic import; opened from the header ("Stats"). Reads `at.v1.stats`. Shows: Today (minutes, sessions), This week (last 7 local days), Current streak (consecutive local days with ≥ 1 min; day key from `Intl.DateTimeFormat('en-CA')`), and a 12-week heatmap (`<table>` 7 rows × 12 columns, each cell a `<td>` with `aria-label="Mon 3 Aug: 42 min"`, five intensity steps mapped by quantile, colour plus a visible dot count so intensity is not colour-only). Gates: without `stats.history`, only the last 7 days render; older cells are shown as a blurred placeholder with a lock glyph and the caption "Pro keeps 12 weeks of history". `stats.export` adds "Export CSV" (`date,minutes,sessions`), generated client-side with `Blob` + `<a download>`; in the embed and PiP contexts the button is hidden. Empty state: "No sessions yet — start one and your first day appears here."
+Dynamic import; opened from the header ("Stats"). Reads `at.v1.stats`. Shows: Today (minutes; sessions omitted — see below), This week (last 7 local days), Current streak (consecutive local days with ≥ 1 min; day key from `Intl.DateTimeFormat('en-CA')`), and a 12-week heatmap (`<table>` 7 rows × 12 columns, each cell a `<td>` with `aria-label="Mon 3 Aug: 42 min"`, five intensity steps mapped by quantile, colour plus a visible dot count so intensity is not colour-only). Gates: without `stats.history`, only the last 7 days render; older cells are shown as a blurred placeholder with a lock glyph and the caption "Pro keeps 12 weeks of history". `stats.export` adds "Export CSV" (`date,minutes,sessions`), generated client-side with `Blob` + `<a download>`; in the embed and PiP contexts the button is hidden. Empty state: "No sessions yet — start one and your first day appears here."
+
+**As implemented (M6).** `stats/panel.ts` + `stats/heatmap.ts`, opened by the header Stats button into `<dialog data-dialog="stats">` (`TDialogName` `'stats'`). Rows are Monday first, columns oldest week first (`HEATMAP_WEEKS` 12); cells are keyed by local calendar date. Levels 1–4 are the quartiles of the visible non-zero days; tints are 10/20/30/40% of `--at-accent` over the surface — capped at 40% so the ink dot glyphs (`•` to `••••`, the non-colour cue) stay readable. Without `stats.history` days older than `FREE_HISTORY_DAYS` (7) are hatched, labelled "locked", and the "Pro keeps 12 weeks of history" line shows; future days of the current week are dashed and `aria-hidden`. Summary: today, last 7 local days, current streak, and total time with the lifetime `sessions` count. `at.v1.stats` has no per-day session count, so "today" shows minutes only and the CSV's `sessions` column is left empty (`08-data-storage.md` §6). Export (`stats.export`) downloads `awaketab-stats-YYYY-MM-DD.csv` from `exportStatsCsv()`; hidden in `/pip` and the embed.
 
 ### 3.18 `SettingsSheet`
 
@@ -264,13 +287,13 @@ Bottom sheet (mobile) / right panel 360 px (≥ md), native `<dialog>`, title "S
 | Field | Control | Values / copy |
 |---|---|---|
 | `theme` | segmented | Auto · Light · Dark · OLED (`auto`/`light`/`dark`/`oled`) |
-| `accent` | swatches | Amber (default) · Indigo · packs when `ambient.packs` |
+| `accent` | swatches | Amber (default) · Indigo · Teal · Rose — Teal and Rose disabled with a Pro note unless `ambient.packs` (§1.1a) |
 | `defaultPreset` | select | one of the preset IDs, default `p30` |
 | `sound` | switch + select | "Chime at the end" · one free chime, more with `sounds.custom` |
-| `notifications` | switch | "Notify me when a session ends" → requests permission on enable; explains iOS needs the installed app |
+| `notifications` | switch | "Notify me when a session ends" → requests permission on enable (never otherwise); disabled with `settings.notifications.unavailable` where the API is absent (iOS outside the installed app), and a "blocked" note when permission is denied |
 | `endBehaviour` | segmented | "Ask to extend" (`prompt_extend`, default) · "Just stop" (`stop`) |
 | `battery` | switch + slider | "Stop automatically on low battery" · threshold 5–30 %, default 15 % (Chromium only; hidden elsewhere with note) |
-| `ambient` | group | default mode, message (`ambient.message`), clock seconds on/off, 12/24 h override |
+| `ambient` | group | default mode, message (editable only with `ambient.message`), clock seconds on/off, 12/24 h override (Auto · 24 h · 12 h) |
 | `locale` | select | 8 launch locales; changes the UI strings immediately and links to the localized URL |
 | `telemetry` | switch | "Send anonymous usage events" default on; explains exactly what is sent (link `/privacy`) |
 | `keyboardHints` | switch | "Show keyboard hints on buttons" |
@@ -291,11 +314,15 @@ Opened from the header ("Share"). Builds the shortest equivalent link: preset ro
 
 ### 3.22 `RatingPrompt`
 
-Shown once, after the fifth session that ends with reason `completed` (`at.v1.meta.sessionCount ≥ 5` and `ratingPrompt.action` unset), 2 s after the `ExtendPrompt` closes, never during an active session. Dialog: "Is AwakeTab doing its job?" with five star buttons (radio group, 44 × 44 each, labelled "1 star" … "5 stars"), an optional `<textarea maxlength="280">` "Anything we should fix?", and buttons "Send", "Maybe later", "Don't ask again". Actions map to `rating_prompt {action}` with `rate` / `later` / `never`; `later` re-arms after 10 more completed sessions, `never` is permanent. "Send" posts `{ stars, text, locale, ver }` to `POST /api/rating` (**PROPOSED — add to §9 API surface; stores to KV for the build-time ratings export used by `aggregateRating` in 06-content-seo-spec.md**). Only ratings the user actually submits feed `aggregateRating`; "later"/"never" are never counted. Styling: native `<dialog>` with the `Dialog` look; "Send" is `Button` `default`, "Maybe later" and "Don't ask again" `Button` `ghost`; star buttons keep their own 44 × 44 styling.
+Shown once, after the fifth *counted* session — reason `completed` and ≥ 5 min awake (`COUNTED_SESSION_S`) — (`at.v1.meta.sessionCount ≥ 5` and `ratingPrompt.action` unset), 2 s after the `ExtendPrompt` closes, never during an active session. Dialog: "Is AwakeTab doing its job?" with five star buttons (radio group, 44 × 44 each, labelled "1 star" … "5 stars"), an optional `<textarea maxlength="280">` "Anything we should fix?", and buttons "Send", "Maybe later", "Don't ask again". Actions map to `rating_prompt {action}` with `rate` / `later` / `never`; `later` re-arms after 10 more completed sessions, `never` is permanent. "Send" posts `{ stars, text, locale, ver }` to `POST /api/rating` (accepted — `00-conventions.md` §13.3; stores to KV for the build-time ratings export used by `aggregateRating` in 06-content-seo-spec.md). Only ratings the user actually submits feed `aggregateRating`; "later"/"never" are never counted. Styling: native `<dialog>` with the `Dialog` look; "Send" is `Button` `default`, "Maybe later" and "Don't ask again" `Button` `ghost`; star buttons keep their own 44 × 44 styling.
+
+**As implemented (M6).** `ui/rating.ts` runs `RATING_DELAY_MS` (2 s) after the `ExtendPrompt` closes, or after the completion toast when there is no prompt. It stays silent while a session is `active`/`paused`, while the lock is `held`, while another dialog is open, or while an ambient mode is showing. `later` stores `ratingPrompt.rearmAt = sessionCount + 10` (`RATING_REARM_SESSIONS`); closing with `Esc` counts as `later`; `rated` and `never` are final. Events: `rating_prompt {action: 'rate' | 'later' | 'never', stars?}` and, on Send, `rating_submitted {stars}`. The POST uses `keepalive`; a failed POST shows `rating.failed` and still records `rated`. A missing star choice shows `rating.error.stars` inline.
 
 ### 3.23 `ProCard` and `SponsorCard`
 
 `ProCard` (`09-monetization-impl.md`): a single card "AwakeTab Pro — ambient packs, schedules, 12-week stats. $12/year." with "See what's in Pro" → `/pro` (`pro_view`). Placements: (a) below the chips in `idle` state only; (b) inside the `ExtendPrompt`. It unmounts the moment the lock is `held`/`fallback`. `SponsorCard`: one disclosed "Sponsored" card, fixed 300 × 100 slot (reserved even when empty so CLS is 0), placement (a) only in v1; the G5 awake-screen placement from `00-conventions.md` §8.3 is a later, separately specified placement and ships off by default. Google ads never render inside the island, `/pip` or `/embed/*` — the ads module is not even imported on tool routes. Styling: both are `Card`s rendered at build time; the Pro header badge is `Badge` `secondary`, "See what's in Pro" is `buttonVariants({ variant: 'link' })`, and `SponsorCard` carries a `Badge` `outline` reading "Sponsored".
+
+**As implemented (M6, `sponsor.ts`).** The slot `<aside data-sponsor>` is rendered at build time only when `PUBLIC_SPONSOR_ENABLED=1`; the island then fetches `/config/sponsor.json` (`{ enabled, id, name, text, url }`, validated: `id` `[a-z0-9_-]`, `url` `https:` only; the shipped file is `{ "enabled": false }`). The card is visible only in `idle` with no live session; otherwise it is `visibility: hidden` and `inert`, keeping its 300 × 100 box (CLS 0). Pro `ads.free` skips it. `sponsor_view {sponsorId}` fires once per page view, `sponsor_click {sponsorId}` on the link (`rel="sponsored noopener"`). The `ExtendPrompt` placement is not built.
 
 ### 3.24 `InstallPrompt`
 
@@ -344,7 +371,7 @@ From `00-conventions.md` §5.3, active on web and `/pip`:
 | `D` | Cycle theme `auto → light → dark → oled` | same |
 | `M` | Cycle ambient mode | same |
 | `P` | Toggle PiP | same |
-| `Esc` | Close open dialog/overlay; if none, stop the session | always |
+| `Esc` | Close the innermost layer: an open dialog/overlay, else leave the ambient mode, else stop the session | always |
 | `?` | Toggle `ShortcutsOverlay` | not in inputs |
 
 Rules: shortcuts are letters, so they are disabled while `event.target` is an input, textarea, select or `contenteditable`; they ignore events with `ctrl`/`meta`/`alt` held; they use `event.key` compared case-insensitively so `Shift+/` (`?`) works on every layout. Focus: dialogs use native `<dialog>` focus trapping; on close, focus returns to the element that opened them. Starting a session from a chip keeps focus on that chip; a toast never steals focus; the `ExtendPrompt` moves focus to "Stop". A visible skip link "Skip to content" precedes the header for content pages. Focus is always visible (`:focus-visible` outline `2px solid var(--at-focus)`, offset 2 px), never removed.
@@ -382,7 +409,7 @@ Lock state comes from `@awaketab/wake`; session status from `@awaketab/core`. Co
 - **No colour-only state**: glyph + text on the pill, dashed strokes on the ring, dots on heatmap cells, text labels on every state.
 - **Motion**: §1.4; no content flashes more than 3 times per second (the title flash alternates at 1 Hz; the good-flash is a single 600 ms fade).
 - **Names**: ring `role="img"` + label; timer `role="timer"`; chips `aria-pressed`; icon buttons have `aria-label`; kitchen timers are `<section aria-labelledby>`.
-- **Keyboard**: everything reachable and operable; no keyboard trap; single-key shortcuts can be turned off (`keyboardHints` off also disables letter shortcuts — 2.1.4 Character Key Shortcuts requires a way to turn them off; **PROPOSED**: rename the field to `keyboardShortcuts` in 08-data-storage.md, or add a separate boolean).
+- **Keyboard**: everything reachable and operable; no keyboard trap; single-key shortcuts can be turned off (2.1.4 Character Key Shortcuts requires a way to turn them off: the separate `settings.keyboardShortcuts` boolean, accepted — `00-conventions.md` §13.1; `keyboardHints` only shows hints).
 - **Language**: `<html lang>` per locale; the message mode text gets `lang` from the page.
 - **Zoom**: 400 % zoom and 320 px width lose no content (2 × 2 chip grid; ring scales).
 - **Forced colours**: `@media (forced-colors: active)` sets ring strokes to `CanvasText`/`Highlight` and keeps borders.
@@ -394,7 +421,7 @@ Lock state comes from `@awaketab/wake`; session status from `@awaketab/core`. Co
 
 ### 8.1 Manifest
 
-One manifest per locale at `/{lang}/manifest.webmanifest` (root for `en`), localized strings only; generated by `@vite-pwa/astro`.
+One manifest per locale at `/{lang}/manifest.webmanifest` (root for `en`), localized strings only; generated by `scripts/manifests.mjs` before `astro build`.
 
 ```json
 {
@@ -430,20 +457,20 @@ One manifest per locale at `/{lang}/manifest.webmanifest` (root for `en`), local
 }
 ```
 
-Locale manifests set `id`/`start_url`/`scope` to `/{lang}/…` so each locale installs as its own app. `theme_color` and `background_color` are the `light` ground (the manifest allows one value); runtime theme colour is handled by `<meta name="theme-color">` (§12). `source=pwa` is a query parameter not listed in `00-conventions.md` §7 (**PROPOSED — add `source=` to §7, read into the `source` field of `session_start`/`page_view`, stripped after read like `ref=`**). Also ship `<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">` (180 px) and `<meta name="apple-mobile-web-app-title" content="AwakeTab">`.
+Locale manifests set `id`/`start_url`/`scope` to `/{lang}/…` so each locale installs as its own app. `theme_color` and `background_color` are the `light` ground (the manifest allows one value); runtime theme colour is handled by `<meta name="theme-color">` (§12). `source=pwa` is read into the `source` field of `session_start`/`page_view` and stripped after read like `ref=` (accepted — `00-conventions.md` §13.2). Also ship `<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">` (180 px) and `<meta name="apple-mobile-web-app-title" content="AwakeTab">`.
 
-### 8.2 Service worker (Workbox via `@vite-pwa/astro`, `injectManifest`, `src/sw.ts`)
+### 8.2 Service worker (`src/sw.ts`, Workbox runtime modules, built by `scripts/sw.mjs` — `03-architecture.md` ADR-014)
 
 | Scope | Strategy | Cache | Notes |
 |---|---|---|---|
-| App shell: `/`, `/15m`…`/8h`, `/pip`, `/{lang}/` and locale preset routes, hashed JS/CSS, icons, manifest, fallback video | Precache | `at-shell-<rev>` | Roughly 60 URLs; each tool route is ≤ 30 KB HTML |
-| Content pages `/for/*` `/on/*` `/vs/*` `/guides/*` `/learn/*` and trust pages (all locales) | `StaleWhileRevalidate` | `at-content`, max 80 entries, 30 days | Ads modules are excluded by URL pattern |
+| App shell: `/`, `/pip`, `/15m`…`/8h`, the seven locale homes `/{lang}/`, `favicon.svg`, `theme-boot.js`, the eight manifests, `/icons/*`, every hashed `_astro/*.js` and `*.css` | Precache (`precacheAndRoute`) | Workbox precache | Manifest built from `dist/` after the prune step (58 entries at M6 close). Pages and static files carry an MD5 revision; hashed assets use `revision: null`. Query strings are ignored when matching (`ignoreURLParametersMatching: [/.*/]`) because the island reads them. The fallback video is inline base64, so there is no file to cache |
+| Content navigations `/for/*` `/on/*` `/vs/*` `/guides/*` `/learn/*`, `/about`, `/privacy`, `/terms`, `/changelog`, `/pro*` (all locales) | `StaleWhileRevalidate` | `at-content`, max 80 entries, 30 days | Same-origin only; third-party ad scripts are cross-origin and never match a route |
 | Images under `/og/`, `/screens/`, `/img/` | `CacheFirst` | `at-img`, max 60, 30 days | |
 | `/api/*` | `NetworkOnly` | — | Never cached; events queue in memory and retry |
 | `/embed/*` | `NetworkFirst` (3 s timeout) | `at-embed` | Widget must reflect current licence when online |
-| Navigation fallback | `/` (or `/{lang}/`) | — | `navigateFallbackDenylist: [/^\/api\//, /^\/embed\//, /^\/pip$/]` |
+| Navigation fallback | precached `/{lang}/` (or `/`) | — | `setCatchHandler`; never for `/api/*`, `/embed/*` or `/pip` |
 
-The offline page **is the tool**: an offline navigation to any route renders the cached shell with the pill working normally and a one-line notice "You're offline — the tool works, content pages may be unavailable." Update flow: `registerType: 'prompt'`. When a new SW is `waiting`, the island checks `session.status`; if `active`/`paused` it defers; once `inactive` it shows a sticky info toast "Update available" with action "Reload" (posts `SKIP_WAITING`, then `location.reload()` after `controllerchange`). The update never reloads on its own and never appears during a session. Precache revisioning is content-hash based so an update downloads only changed files.
+The offline page **is the tool**: an offline navigation to any uncached route renders the precached locale home with the pill working normally, and while `navigator.onLine` is false the island shows a sticky toast "You're offline — the tool works, content pages may be unavailable." (`tool.offline`), dismissed on `online`. Update flow (`pwa.ts`, prompt style): the worker never skips waiting on its own. When a new worker is `waiting` and no session is `active`/`paused`, the island shows a sticky info toast "Update available" with action "Reload"; if a session is live it re-checks on every store change and offers the toast as soon as the session ends (FR-PWA-01). "Reload" posts `SKIP_WAITING` and reloads once on `controllerchange`. The worker calls `clients.claim()` on activate, and its `notificationclick` focuses an open AwakeTab tab or opens `/`. The worker is registered only in production builds; `/sw.js` is served `Cache-Control: no-cache` with `Service-Worker-Allowed: /`. `cleanupOutdatedCaches()` removes earlier precaches, and precache revisioning is content-hash based so an update downloads only changed files.
 
 ---
 
@@ -462,6 +489,14 @@ store.subscribe(s => s.ui.mode, applyPipTheme);
 
 Rules: the PiP window is same-origin and shares the store, so no messaging is needed; keyboard shortcuts `Space`, `Esc`, `P` work inside it (`P` closes). The window shows: pill, timer, a 32 px Stop button, and a `+15` button; nothing else. `pip.pro` gates ambient layouts inside PiP (clock/focus digits); the basic pill+timer is free. **Lock behaviour**: when PiP opens, the engine also requests a sentinel from the PiP document (`pip.navigator.wakeLock.request('screen')`), which stays visible when the main tab is backgrounded; when PiP closes that sentinel is released and the main document's sentinel governs. If the test matrix (`13-testing-strategy.md`) shows the PiP sentinel is released on main-tab hide in a given browser, the pill must show `lost` there — the UI never assumes. Fallback when `documentPictureInPicture` is undefined (Firefox, Safari, mobile): `window.open('/pip', 'awaketab-pip', 'popup,width=280,height=120')`; `/pip` renders the pill and timer and syncs state over `BroadcastChannel('awaketab')`, and its buttons post intents back to the owning tab. If the popup is blocked, toast "Allow pop-ups for awaketab.com to use the floating timer." `/pip` is `noindex` and never shows cards or ads.
 
+**As implemented (M6).**
+
+- *Document PiP* (`tool/pip.ts`): `P` or the header button opens a 280 × 120 window (`PIP_SIZE`), copies `<style>`/`<link rel="stylesheet">` nodes, theme and `lang`, and **moves** the pill and timer out of `[data-pip-slot]`, which keeps its height (CLS 0). `+15` calls `engine.addTime(PIP_ADD_MS)` and is shown only for a live finite plan; Stop is shown only for a live session. Inside the window `P` closes it and `Esc`/`Space` stop the session. `pagehide` moves the nodes back and sets `ui.pip = 'closed'`; closing never stops the session. A second `P` from the page closes the window. If `requestWindow()` throws (e.g. no user activation) the popup fallback is used. `pip_open` is tracked for both kinds.
+- *Lock*: v1 does **not** request a sentinel from the PiP document. The pill reflects the main tab's lock, which reads `lost` when that tab is hidden — honest, but less useful than the design above. Known gap until the device matrix confirms per-browser PiP sentinel behaviour.
+- *`pip.pro`*: ambient layouts inside PiP are not built; PiP is pill + timer + two buttons for everyone.
+- *Popup fallback* (`/pip`, `tool/pip-mirror.ts`): a chrome-less page (`BaseLayout bare`) with no engine and no wake lock. It posts `hello`, keeps the latest `state` snapshot per tab, and mirrors the newest live session (`pickOwner`), computing the timer locally each second from `endsAt`/`pausedMs`/`pausedAt` so a throttled owner never freezes it. The pill shows the owner's real lock state; after `MIRROR_STALE_MS` (4 s) without a snapshot it falls back to "Ready" plus a link to open AwakeTab. Stop and `+15` post `intent { target: ownerTabId, action: 'stop' | 'add', ms }` (`04-engine-spec.md` §14); `P` closes the popup and `Esc`/`Space` send Stop. The module is self-contained (only types cross from `@awaketab/core`) so it cannot pull a shared chunk onto the island's critical path. Known gap: the popup UI is English only (it embeds the `en` catalog).
+- Blocked popup → toast `tool.toast.pipBlocked`.
+
 ---
 
 ## 10. URL parameters and deep links
@@ -477,7 +512,7 @@ Parsed once in `main.ts` from `location`, applied in this order, then removed wi
 | `msg=` | Message-mode text (§3.15) | ≤ 80 code points after sanitising |
 | `autostart=1` | Requests the lock immediately when `document.visibilityState === 'visible'`; if `unsupported`, shows `FallbackConsent` with the button labelled "Tap to start" (video needs a gesture) | exactly `1` |
 | `ref=` | Copied into the `source` field of the first `page_view`/`session_start`; never stored | ≤ 32 chars `[a-z0-9_-]` |
-| `source=` | PWA/shortcut origin, same handling as `ref` | **PROPOSED** (§8.1) |
+| `source=` | PWA/shortcut origin, same handling as `ref` | as `ref=` (accepted — `00-conventions.md` §13.2) |
 
 Routes: `/15m` → `p15`, `/30m` → `p30`, `/45m` → `p45`, `/1h` → `p60`, `/2h` → `p120`, `/4h` → `p240`, `/8h` → `custom` 480 min (there is no `p480`; the chip row shows "Custom…" pressed with "8 h" in the summary). `/until/HH-MM` → `until` plan. Content pages pass their scenario via `data-preset`/`data-mode` on `#awaketab-tool` (`06-content-seo-spec.md`), which the island reads with the same precedence as URL params (URL wins). Invalid values are ignored silently and logged as `client_error {code: 'bad_param'}` at the sampled rate.
 
@@ -514,14 +549,16 @@ Routes: `/15m` → `p15`, `/30m` → `p30`, `/45m` → `p45`, `/1h` → `p60`, `
 
 - **Zero hydration.** shadcn/ui components (§1.5) are rendered by Astro at build time — `<Card>`, `<Table>`, … in `.astro` with no `client:*` directive, or their cva class helpers applied to plain HTML in frontmatter. No `client:*` directive exists anywhere in `apps/web`; React never ships to the browser. Interactive shadcn primitives that need client JS (Dialog, Sheet, Tabs, Accordion, Tooltip, Select, DropdownMenu, …) are not used — the island keeps native `<dialog>`, `<details>` and vanilla TS (`03-architecture.md` ADR-002, ADR-013).
 - **The size gate enforces it.** `pnpm size` (`apps/web/scripts/size.mjs`) fails the build if any built HTML contains `<astro-island` or any `dist/_astro/*.js` matches a React runtime chunk name (`react.*`, `jsx-runtime.*`, `client.*`); the report's `hydrated` and `reactChunks` fields must both be `[]`. `scripts/prune-unreferenced.mjs` removes the client renderer that `@astrojs/react` emits regardless, so the gate is meaningful rather than trivially failing (`14-devops.md` §6).
-- No framework in the island; TypeScript compiled by Vite to one `main` chunk containing boot, store, `Ring`, `StatusPill`, `PresetChips`, `Timer`, `Toast`, `ResumeBanner`, URL parsing and the `@awaketab/wake` engine — this is the critical path and must stay ≤ 15 KB gz. Everything else — `ambient/*`, `stats/*`, `pip/*`, `SettingsSheet`, `ShareSheet`, `CustomDurationDialog`, `UntilTimePicker`, `CapabilityNotice` step texts, `RatingPrompt`, the i18n plural formatter — loads by `import()` on first use or on `requestIdleCallback` after the lock request. Total tool-page JS ≤ 40 KB gz.
+- No framework in the island; TypeScript compiled by Vite to one `main` chunk containing boot, store, `Ring`, `StatusPill`, `PresetChips`, `Timer`, `Toast`, `ResumeBanner`, URL parsing and the `@awaketab/wake` engine — this is the critical path and must stay ≤ 15 KB gz. Everything else — `ambient/*` (shell plus one chunk per mode), `stats/*`, `pip.ts`, `end.ts`, `SettingsSheet`, `ShareSheet`, `CustomDurationDialog`, `UntilTimePicker` (`ui/actions.ts`), `CapabilityNotice` step texts, `RatingPrompt`, `sponsor.ts`, `pwa.ts` — loads by `import()` on first use or after boot, receiving one `IToolCtx` (`tool/ctx.ts`). Total tool-page JS ≤ 40 KB gz.
+- **Strings are data, not code.** Each tool page embeds its full locale catalog as `<script type="application/json" data-i18n-catalog>` and `setCatalog()` reads it at boot; the former `src/i18n/critical.json` subset bundled into the critical chunk is removed.
+- **The critical path is the static-import closure.** `scripts/size.mjs` counts each entry script plus every chunk it imports statically (shared chunks Rollup splits out load before the entry runs); `import()` targets are excluded. Before M6 only `<script src>` files were counted, which let split-out shared chunks escape the 15 KB budget. Measured at M6 close: `criticalJs` 14,415 B gz, `totalJs` 39,777 B gz, `totalCss` 12,303 B gz, `hydrated: []`, `reactChunks: []`. Total JS is within ~1.2 KB of the 40 KB budget, so the next lazy feature needs a size plan.
 - Critical CSS (tokens, layout of the first viewport, pill/ring/chips) is inlined in `<head>` ≤ 8 KB; the rest is one `<link rel="stylesheet">` with `media="print" onload="this.media='all'"`.
 - The ring SVG, pill and chips are server-rendered; the island only attaches behaviour. LCP = the ring (inline SVG, no image request).
 - Wake lock time-to-request ≤ 300 ms after `DOMContentLoaded` when `autostart`/resume conditions are met: the engine request is the first statement after store hydration.
 - Zero third-party requests on tool pages; zero layout shift: every slot (banner, stop button, card, toast region) has a reserved height; fonts are system so no swap.
 - `content-visibility: auto` on every below-fold section with `contain-intrinsic-size`.
 - Ticks update text via `textContent` and the ring via one `style.strokeDashoffset` write; no per-second layout reads.
-- `<script type="module" src="/_astro/main.[hash].js">` plus `<link rel="modulepreload">`; no inline `import()` before interaction.
+- `<script type="module" src="/_astro/main.[hash].js">`; `vite.build.modulePreload: false` so Vite adds no dependency map or modulepreload links for lazy chunks (its ~0.7 KB gz `preload-helper` chunk is still imported by the entry and counted in `criticalJs`); no inline `import()` before interaction.
 - Lighthouse mobile: Performance ≥ 95, Accessibility 100, Best Practices 100, SEO 100; CI budgets in `13-testing-strategy.md`/`14-devops.md`.
 
 ---
@@ -539,6 +576,8 @@ Routes: `/15m` → `p15`, `/30m` → `p30`, `/45m` → `p45`, `/1h` → `p60`, `
 
 ## 15. PROPOSED identifiers (add to 00-conventions.md)
 
+All rows below are resolved: accepted in `00-conventions.md` §13.1–§13.3 (v1.1), §13.7 (v1.2) and §13.8 (v1.3, M6).
+
 | Identifier | Where used | Proposal |
 |---|---|---|
 | `--at-*` CSS token namespace | §1 | Add to §2 identifier schemes |
@@ -554,3 +593,6 @@ Routes: `/15m` → `p15`, `/30m` → `p30`, `/45m` → `p45`, `/1h` → `p60`, `
 | `@/*` path alias → `./src/*` | §1.5 | Accepted in 00-conventions.md §13.7 |
 | shadcn semantic variables as `--at-*` aliases; custom `--success`, `--warning`, `--night` | §1.5 | Accepted in 00-conventions.md §13.7; no new hex values |
 | `hydrated: []`, `reactChunks: []` in the `size.mjs` report | §13 | Accepted in 00-conventions.md §11, §13.7 |
+| Accent palettes `amber`/`indigo`/`teal`/`rose`, `data-accent`, `--at-t-ambient`, `--at-night-digit`, `--at-d-slow` | §1.1a, §1.2, §3.13 | Accepted in 00-conventions.md §13.8 |
+| `IToolCtx`, `TDialogName` `'stats'`, ambient/end/rating/heatmap/PiP constants | §3.13–§3.22, §9 | Accepted in 00-conventions.md §13.8 |
+| `src/sw.ts` + `scripts/sw.mjs`, `modulePreload: false`, embedded `data-i18n-catalog`, static-closure `criticalJs` | §8.2, §13 | Accepted in 00-conventions.md §13.8; ADR-014 |

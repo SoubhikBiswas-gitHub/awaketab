@@ -1,6 +1,6 @@
 # 13 · Testing strategy
 
-Status: v1.1 · 2026-09-11 · Owner: Soubhik
+Status: v1.2 · 2026-09-26 · Owner: Soubhik
 
 **Purpose.** The product's one promise is "the pill never lies". This document defines the tests that prove it — from the state machine to real devices — plus the SEO, performance, accessibility and API checks that protect the other goals. Everything here is automated except the device matrix, whose results are published as `/learn/how-we-tested`.
 
@@ -70,6 +70,8 @@ const fakeWakeLock = { request: vi.fn(async () => new FakeSentinel()) };
 
 Lock `lost` → `paused` with `pausedAt`; re-`held` → `active`, `pausedMs` accumulated, `endsAt` unchanged; paused ≥ `LOST_TIMEOUT_MS` → `aborted` `lost_timeout`; `denied` mid-session → `aborted` `denied`; battery threshold crossed (fake `getBattery`) → `battery`, hysteresis prevents flapping at ±2%.
 
+**M6 additions** (`packages/core/test/session-m6.test.ts`): `pause({ keepLock: true })` freezes the clock but keeps the lock `held`, while a plain `pause()` still releases; `addTime` grows a `duration` plan in place, turns an `until` plan into a `duration` with the same moved deadline, and ignores `indefinite`, non-positive and over-`CUSTOM_MAX_MS` values; `updateSession` persists `mode` and `modeState`; `stop()` after completion releases the extend-prompt grace lock; state snapshots are broadcast and an `intent` addressed to the engine's `tabId` is obeyed (others ignored); a `hello` is answered with a snapshot; battery at 14% with a 15% threshold ends the session once, warning first.
+
 ### 3.3 Stats
 
 Fixtures `stats.kolkata-midnight.json` and `stats.la-dst.json`: a session 23:30–00:30 in `Asia/Kolkata` writes 30 min to each local day (never to the UTC day); streak counts consecutive local days with ≥ 1 min; 365-day pruning; CSV export matches columns.
@@ -92,11 +94,27 @@ Missing-key parity across 8 locales; placeholder parity; frontmatter zod schemas
 
 Pill copy for each of the seven states equals `en.json`; ring `stroke-dashoffset` math for 0/50/100% and indefinite; `CustomDurationDialog` validation (0 → error; 7 d + 1 min → max error); `UntilTimePicker` shows "Tomorrow" when the wall time already passed; `ExtendPrompt` default 30 min and auto-stop after 5 min; `SecondTabWarning` appears when a fake `BroadcastChannel` peer says `held`; `RatingPrompt` shows only when `meta.sessionCount ≥ 5` and `ratingPrompt.action` is null.
 
+M6 engagement-layer files (Vitest + happy-dom; `apps/web/test/tool/ctx-helper.ts` builds a fake `IToolCtx`; `vitest.setup.ts` loads the English catalog into `setCatalog()` because the island no longer bundles strings):
+
+| File | Covers |
+|---|---|
+| `apps/web/test/tool/ambient.test.ts` | Gating (only `message`), `M` cycle order and skip toast, focus maths (130 min block, phases, pause-aware elapsed), cook timers (add/limits/name sanitising/settle, defensive read), message resolution, pixel shift bounds, `shouldDim` (night 30 s, OLED 30 min), shell mount/exit |
+| `apps/web/test/tool/stats.test.ts` | Heatmap 7 × 12 Monday-first, local-date keys (not UTC), future and locked cells, quartile levels, `summarise` |
+| `apps/web/test/tool/end.test.ts` | `onEnded` skips `user`/`denied`; completed → chime, notification, title flash, session count only ≥ 5 min; extend prompt and grace lock; `flashTitle` cadence and minimum |
+| `apps/web/test/tool/rating.test.ts` | `ratingEligible` (5 sessions, `later` re-arm at +10, `never`/`rated` final); `maybeShowRating` busy guards, events, `Esc` = later |
+| `apps/web/test/tool/pip-mirror.test.ts` | `PIP_ADD_MS` kept equal in `pip.ts` and `pip-mirror.ts`; `pickOwner`; `mirrorTime` for each plan type and pauses; `mountMirror` stale fallback and `intent` posting |
+| `apps/web/test/tool/accent.test.ts` | `accentId`/`applyAccent` incl. pack fallback; every palette in `tokens.css` meets the §1.1a contrast rules (AA) |
+| `apps/web/test/tool/settings.test.ts` | `fillSettings` → `readSettings` round trip; gated values (pack accents, message) keep stored values; `openSettings` |
+| `apps/web/test/tool/pwa.test.ts` | `sessionBusy`; `watchUpdates` (FR-PWA-01): offered at once when idle, never during a live session and offered when it ends, Reload posts `SKIP_WAITING` and reloads once after `controllerchange`, no reload on an unrequested `controllerchange`, a worker that finishes installing later is offered |
+| `apps/web/test/tool/sponsor.test.ts` | `parseSponsor`: valid config, trimming and caps, rejects bad ids/markup/non-`https` URLs and disabled configs |
+| `apps/web/test/tool/actions.test.ts` | `sharePath` (§3.20): preset routes, running session wins over the selected chip, `/until/HH-MM`, never a query string or `ref` |
+| `apps/web/scripts/sw.test.ts` | `precacheManifest()` (§8.2 of 05): shell pages by navigation URL with content revisions, static files, locale manifests and icons, hashed `_astro` JS/CSS with `revision: null` and nothing else, sorted without duplicates, fails loudly on a missing shell page; `_headers` serves `/sw.js` with `Cache-Control: no-cache` |
+
 ---
 
 ## 5. End-to-end (Playwright)
 
-Setup: `page.addInitScript` installs a controllable fake `navigator.wakeLock` (exposes `window.__at.releaseAll()`, `window.__at.rejectNext('NotAllowedError')`) and a `document.visibilityState` override with a `window.__at.setVisibility('hidden')` helper that also dispatches `visibilitychange`.
+Setup: `playwright.config.ts` sets `serviceWorkers: 'block'` for every test, because `page.route()` cannot see requests a service worker makes and an active SW would silently bypass every API mock; the offline journey opts back in with `test.use({ serviceWorkers: 'allow' })`. `page.addInitScript` installs a controllable fake `navigator.wakeLock` (exposes `window.__at.releaseAll()`, `window.__at.rejectNext('NotAllowedError')`) and a `document.visibilityState` override with a `window.__at.setVisibility('hidden')` helper that also dispatches `visibilitychange`.
 
 Journeys (chromium on every PR; all three engines nightly):
 
@@ -105,7 +123,7 @@ Journeys (chromium on every PR; all three engines nightly):
 3. **Until** — `U` → pick 17:30 → timer "Until 17:30"; if past, "Tomorrow" shown.
 4. **Hidden → lost → re-acquire** — `setVisibility('hidden')` → pill "Paused — tab hidden", no `alert()` (dialog listener fails the test); `setVisibility('visible')` → "Screen awake", toast "Screen awake again".
 5. **Denied** — `rejectNext` → pill "Blocked — here's the fix", advice text present, ring not active, timer hidden.
-6. **Timer end → extend** — 1-minute custom with fast-forwarded clock → chime call, title flash, extend prompt; `+30 min` → session continues.
+6. **Timer end → extend** — 1-minute custom with fast-forwarded clock → chime (a stub `AudioContext` counts `createOscillator()` calls after a priming `pointerdown`), title flash, extend prompt; `+30 min` → session continues.
 7. **Reload → resume** — mid-session reload → resume banner with remaining time; accept → lock re-requested.
 8. **PiP** — `P` in chromium → `documentPictureInPicture` stub called; in webkit → popup fallback opened.
 9. **Pro activation** — mock `/api/license/activate` → badge "Pro", `ambient.packs` unlocked; mock `revoked` on validate → gated again with toast.
@@ -113,7 +131,18 @@ Journeys (chromium on every PR; all three engines nightly):
 11. **Ads guard** — on `/`, `/30m`, `/pip` no request to any ad host (network assertion); on `/for/cooking` with `PUBLIC_ADS_ENABLED=1` the ad script loads only after the LCP entry.
 12. **Second tab** — two pages on the same context → second shows the warning.
 
-Visual regression (nightly): screenshots of the awake screen in each ambient mode × theme at 390 px and 1280 px; threshold 0.2%.
+M6 journeys (`apps/web/test/e2e/m6.spec.ts`; a `dialog` listener fails any test that opens a native dialog):
+
+13. **Ambient** — `M` from `standard` opens `clock`; `Esc` leaves the mode without stopping the session; `?mode=night` opens night mode on the `oled` palette.
+14. **Cook** — tap pauses the clock while the pill still reads "Screen awake"; a kitchen timer is stored in `modeState.cookTimers` and finishes with a toast.
+15. **Message** — a shared `msg=` previews for 60 s (fake clock) then falls back to `clock`; without `msg=` the sample text and Pro card show.
+16. **Stats** — the panel shows today, a 7-row heatmap and the free-tier limits.
+17. **Rating** — prompt after the 5th counted session, once only; the answer is stored in `at.v1.meta.ratingPrompt`.
+18. **`/pip` mirror** — the popup mirrors the owning tab and its Stop reaches the owner over `BroadcastChannel('awaketab')`.
+19. **Offline** (chromium only, service workers allowed) — after the worker controls the page and `/30m` is precached, `context.setOffline(true)` → `/30m` loads, the pill reads "Screen awake", and the offline toast shows.
+20. **axe on M6 surfaces** — ambient clock mode, stats dialog and settings dialog in each theme: zero violations.
+
+Visual regression (nightly): screenshots of the awake screen in each ambient mode × theme at 390 px and 1280 px; threshold 0.2%. Implemented in `apps/web/test/e2e/visual.spec.ts`: 6 modes × `light`/`dark`/`oled` × 2 widths = 36 shots with a frozen clock, taken once the controls have auto-hidden (`maxDiffPixelRatio: 0.002`, animations disabled). The file runs only with `VISUAL=1` (skipped on PRs); `nightly.yml` runs it on chromium with `--update-snapshots=missing` and uploads the snapshots and `test-results` as the `visual-snapshots` artifact. Baselines are not committed yet, so the first nightly run records them.
 
 ---
 
@@ -125,8 +154,8 @@ axe-core on every template (home, preset page, one per collection, `/pro`, `/emb
 
 ## 7. Performance
 
-- `size-limit`: `@awaketab/wake` ≤ 3.4 KB gz; tool island critical chunk ≤ 15 KB gz; total JS on `/` ≤ 40 KB gz; content pages ≤ 60 KB before ads.
-- `pnpm size` (`apps/web/scripts/size.mjs`, after `pnpm -F web build`) prints one JSON report and exits non-zero on any breach: `criticalJs` ≤ 15,360 B gz (the `<script src>` chunks `index.html` loads), `totalJs` ≤ 40,960 B gz (every `dist/_astro/*.js`), `totalCss` ≤ 20,480 B gz (inlined `<style>`), and — since `03-architecture.md` ADR-013 — `hydrated: []` (no built HTML anywhere under `dist/` contains `<astro-island`) and `reactChunks: []` (no `dist/_astro/` file matches `react.*.js`, `jsx-runtime.*.js` or `client.*.js`). A non-empty `hydrated` or `reactChunks` list is a failure even when the byte budgets pass: shadcn/ui is a build-time renderer and React must never ship. Reference values after adoption: `criticalJs` 14,876, `totalJs` 30,428, `totalCss` ≈ 7,300.
+- `size-limit`: `@awaketab/wake` ≤ 3.4 KB gz; tool island critical path ≤ 15 KB gz; total JS on `/` ≤ 40 KB gz; content pages ≤ 60 KB before ads.
+- `pnpm size` (`apps/web/scripts/size.mjs`, after `pnpm -F web build`) prints one JSON report and exits non-zero on any breach: `criticalJs` ≤ 15,360 B gz (the `<script src>` chunks `index.html` loads), `totalJs` ≤ 40,960 B gz (every `dist/_astro/*.js`), `totalCss` ≤ 20,480 B gz (inlined `<style>`), and — since `03-architecture.md` ADR-013 — `hydrated: []` (no built HTML anywhere under `dist/` contains `<astro-island`) and `reactChunks: []` (no `dist/_astro/` file matches `react.*.js`, `jsx-runtime.*.js` or `client.*.js`). A non-empty `hydrated` or `reactChunks` list is a failure even when the byte budgets pass: shadcn/ui is a build-time renderer and React must never ship. Reference values after adoption: `criticalJs` 14,876, `totalJs` 30,428, `totalCss` ≈ 7,300. Since M6 `criticalJs` is the entry scripts **plus their static-import closure** (`from"./x.js"` / `import"./x.js"`; dynamic `import()` excluded), and the report's `files` lists that closure — previously split-out shared chunks were not counted. Values at M6 close: `criticalJs` 14,415, `totalJs` 39,777, `totalCss` 12,303.
 - `AT_DIST=<dir>` makes `size.mjs`, `prune-unreferenced.mjs`, `sitemap.mjs` and the SEO suite read an alternate output directory (`apps/web/dist-*`, git-ignored), so parallel verification builds can be measured without clobbering `dist/`; wrap concurrent builds in `node scripts/locked.mjs -- <cmd>` (`14-devops.md` §6).
 - Lighthouse CI (mobile, `--preset=desktop` also) on the preview URL for `/`, `/30m`, `/for/cooking`, `/guides/lock-screen-vs-sleep`, `/es/`: performance ≥ 95, a11y 100, best practices 100, SEO 100; budgets JSON asserts LCP ≤ 1.2 s (lab), TBT ≤ 100 ms, CLS = 0, zero third-party requests on tool routes.
 - Weekly CrUX pull (`14-devops.md`) alerts when INP p75 > 200 ms or CLS > 0.1 on any route class.
@@ -171,6 +200,6 @@ Template (one row per case): date, OS/browser/version, plugged/battery, mode, ex
 ## 12. Policies
 
 - **Merge gate:** unit + DOM + functions + chromium e2e + axe + size-limit + `pnpm size` (byte budgets, `hydrated: []`, `reactChunks: []`) + SEO checks green; LHCI budgets green on the preview.
-- **Nightly:** firefox/webkit e2e, visual regression, link check across all locales.
+- **Nightly:** firefox/webkit e2e, visual regression (`VISUAL=1`), link check across all locales.
 - **Flaky tests:** quarantine with `test.fixme` + issue within 24 h; no retries above 1 in CI; a test flaky twice in a week is rewritten or deleted.
 - **Definition of done (per ticket):** acceptance criteria automated where feasible; new engine transitions have a `T##` test; user-visible change has a changelog fragment; docs updated if an identifier changed (and `00-conventions.md` first).

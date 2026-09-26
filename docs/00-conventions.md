@@ -2,7 +2,7 @@
 
 > **This file is the single source of truth for names, identifiers, states, keys, routes, plans and budgets.** Every other document in `docs/` must use these exact identifiers. If a detail here conflicts with another doc, this file wins and the other doc gets fixed. When a decision changes, change it here first.
 
-Status: v1.2 · 11 Sep 2026 · Owner: Soubhik · Derived from `awaketab-blueprint.md` (strategy) — see that document for the *why*; this set of docs is the *what* and *how*.
+Status: v1.3 · 26 Sep 2026 · Owner: Soubhik · Derived from `awaketab-blueprint.md` (strategy) — see that document for the *why*; this set of docs is the *what* and *how*.
 
 ---
 
@@ -62,7 +62,7 @@ Priority labels: `P0` (launch blocker), `P1` (launch), `P2` (post-launch, phase 
 | Site framework | **Astro 5**, static output, content collections (MDX), built-in i18n routing | One vanilla-TypeScript island for the tool; React is a build-time renderer only (`03-architecture.md` ADR-013), never shipped |
 | Language | TypeScript, `strict: true`, ESM | Node 22 LTS, pnpm 9 workspaces |
 | Styling | Tailwind CSS v4 with design tokens as CSS variables; **shadcn/ui** components rendered at build time (no hydration) | System font stack (no web fonts on tool pages); shadcn's semantic variables alias the `--at-*` tokens (`05-frontend-spec.md` §1.5) |
-| PWA | `@vite-pwa/astro` (Workbox) | Precache app shell + tool pages; runtime cache for content pages |
+| PWA | Workbox runtime modules (`workbox-precaching`, `-routing`, `-strategies`, `-expiration`) bundled by esbuild in a post-build step (`scripts/sw.mjs`) — not `@vite-pwa/astro` (`03-architecture.md` ADR-014) | Precache app shell + tool pages; runtime cache for content pages |
 | Hosting | **Cloudflare Pages** (+ Pages Functions for `/api/*`) | Preview deploy per PR; `_headers` and `_redirects` files |
 | Serverless state | Cloudflare **KV** (licences, embed configs), **Workers Analytics Engine** (events) | No database, no accounts |
 | Payments | **Polar.sh** as merchant of record (checkout, licence keys, webhooks) | Alternative: Dodo Payments (UPI) — not in v1 |
@@ -87,7 +87,8 @@ awaketab/
 │  │  │  ├─ pages/         # routes (see §7)
 │  │  │  ├─ content/       # MDX collections: for/, on/, vs/, guides/, learn/ (per locale)
 │  │  │  ├─ components/    # Astro components (layouts, SEO head, ads slot, sponsor card); ui/ = shadcn/ui primitives, build-time only
-│  │  │  ├─ tool/          # the vanilla-TS island: ui/, ambient/, pip/, store.ts, main.ts
+│  │  │  ├─ tool/          # the vanilla-TS island: ui/, ambient/, stats/, store.ts, main.ts, ctx.ts, pip.ts, pip-mirror.ts
+│  │  │  ├─ sw.ts          # service worker source (bundled to dist/sw.js by scripts/sw.mjs)
 │  │  │  ├─ i18n/          # ui strings: en.json, es.json, pt-br.json, de.json, fr.json, ja.json, zh.json, hi.json
 │  │  │  ├─ styles/        # tokens.css, base.css
 │  │  │  └─ lib/           # seo.ts (JSON-LD), og.ts, analytics.ts, ads.ts, license.ts
@@ -137,7 +138,7 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 
 ### 5.3 Keyboard shortcuts (web + PiP)
 
-`Space` toggle · `1`–`6` presets p15…p240 · `0` indefinite · `U` until… · `F` fullscreen · `D` cycle theme · `M` cycle ambient mode · `P` PiP · `Esc` stop/close · `?` shortcuts overlay.
+`Space` toggle · `1`–`6` presets p15…p240 · `0` indefinite · `U` until… · `F` fullscreen · `D` cycle theme · `M` cycle ambient mode · `P` PiP · `Esc` close the innermost layer (dialog → ambient mode → stop the session) · `?` shortcuts overlay.
 
 ---
 
@@ -149,7 +150,7 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 | `at.v1.session` | Current/last `ISession` (id, plan, presetId, mode, startedAt, endsAt, status, pausedAt) | Enables resume banner after reload |
 | `at.v1.stats` | `{ days: { "YYYY-MM-DD": minutes }, totalMinutes, sessions, longestStreak }` | Day key = **local** date via `Intl.DateTimeFormat('en-CA')`; retained 365 days |
 | `at.v1.license` | `{ token, plan, exp, features[], lastValidatedAt, deviceId }` | Token = ES256 JWT signed by our Worker |
-| `at.v1.meta` | `{ installedAt, sessionCount, ratingPrompt: { shownAt, action }, lastSeenVersion }` | |
+| `at.v1.meta` | `{ installedAt, sessionCount, ratingPrompt: { shownAt, action, stars?, rearmAt? }, lastSeenVersion }` | `rearmAt` since v1.3 (§13.8) |
 | `at.v1.onboarding` | `{ dismissedTips: [] }` | |
 
 `BroadcastChannel('awaketab')` coordinates multiple tabs (second-tab warning, single active lock). Migrations: `migrate(fromVersion)` in `@awaketab/core/storage`; bump prefix to `at.v2.` only for breaking changes.
@@ -291,7 +292,7 @@ The identifiers below were proposed while writing the other documents and are no
 | `Plan.until.wall` | `'HH:MM'` string kept with `endsAt` so the UI can re-derive after clock changes |
 | `ISession` extra fields | `pausedMs`, `endedAt`, `endReason`, `awakeSeconds` (seconds in `held` or `fallback`; feeds stats), `modeState` (per-mode data, e.g. `cookTimers[]`) |
 | `ISettings` extra fields | `keyboardShortcuts: boolean` (enables single-key shortcuts; WCAG 2.1.4) distinct from `keyboardHints: boolean` (shows hints); `lastCustomMs`; `ambient.message` |
-| `TTabMessage` | `{type:'hello'|'lock'|'state'|'bye', tabId, ts, …}` on `BroadcastChannel('awaketab')`; `tabId` in `sessionStorage['at.tabId']` |
+| `TTabMessage` | `{type:'hello'|'lock'|'state'|'intent'|'bye', tabId, ts, …}` on `BroadcastChannel('awaketab')`; `tabId` in `sessionStorage['at.tabId']`; `intent` and the `state` snapshot fields since v1.3 (§13.8) |
 | CSS token namespace | `--at-*` (e.g. `--at-accent`, `--at-accent-text` `#8A5200` light for AA text) |
 | `/8h` route | Maps to a `custom` plan of 480 min; there is no `p480` chip |
 
@@ -355,6 +356,68 @@ Accepted on 2026-09-11 (owner-directed; `03-architecture.md` ADR-013). Proposed 
 | `hydrated` · `reactChunks` | Fields in the `scripts/size.mjs` report; both must be `[]` (§11) |
 | `scripts/prune-unreferenced.mjs` · `scripts/locked.mjs` | Build steps in `apps/web`: prune deletes `dist/_astro/*.js` chunks nothing references (runs after `astro build`, before `sitemap.mjs`); `locked.mjs -- <cmd>` holds a `mkdir` lock at `apps/web/.build-lock` so concurrent builds do not race |
 | `AT_DIST` | Environment variable: alternate output directory (`apps/web/dist-*`, git-ignored) for `size.mjs`, `prune-unreferenced.mjs`, `sitemap.mjs` and the SEO tests |
+
+### 13.8 Engagement layer (v1.3 — M6: E10 + remaining E4)
+
+Accepted on 2026-09-26 with the M6 implementation. Specs: `04-engine-spec.md` §9, §11, §14, §16; `05-frontend-spec.md` §1.1a, §3.13–§3.24, §8.2, §9, §13; `03-architecture.md` ADR-014.
+
+**Engine (`@awaketab/core`)**
+
+| Identifier | Decision |
+|---|---|
+| `ISessionEngine.pause({ keepLock?: boolean })` | `keepLock: true` pauses the clock but keeps the lock held (cook mode); `resume()` reuses the kept lock if it is still `held`/`fallback`, else re-requests |
+| `ISessionEngine.addTime(ms)` | Adds time to a live finite plan in place (PiP `+15`). `duration` → `ms` and `endsAt` grow; `until` → becomes a `duration` plan with the same moved deadline. Ignored for `indefinite`, `ms ≤ 0`, or when remaining + `ms` > `CUSTOM_MAX_MS`. Tracks `session_extend {addedMin}` |
+| `ISessionEngine.updateSession({ mode?, modeState? })` | Persists the ambient mode and merges per-mode data into `ISession.modeState` on the live session |
+| `TTabMessage` `intent` | `{ type: 'intent', tabId, ts, target, action: 'stop' \| 'add', ms? }` — only the tab whose `tabId === target` acts (`stop()` or `addTime(ms)`) |
+| `TTabMessage` `state` snapshot fields | Optional `endsAt`, `planType`, `pausedMs`, `pausedAt`, `wall`; the engine posts a snapshot on every tick, status change and lock change, and in reply to `hello` |
+| `ISession.modeState.cookTimers` | `Array<{ id, name, durationMs, endsAt, doneAt: number \| null }>`, ≤ 3 entries (`08-data-storage.md` §2.2) |
+| `IMeta.ratingPrompt.rearmAt` | `sessionCount` at which a `later` answer asks again (`sessionCount + 10`) |
+| Battery monitor | One cached `BatteryManager` per engine; warn once per session; hysteresis re-arm (`04-engine-spec.md` §11) |
+
+**Tool island (`apps/web/src/tool`)**
+
+| Identifier | Decision |
+|---|---|
+| `IToolCtx` (`ctx.ts`) | The context `main.ts` passes to every lazy module (`ambient/*`, `stats/*`, `end.ts`, `pip.ts`, `ui/rating.ts`, `ui/settings.ts`, `ui/actions.ts`, `sponsor.ts`): `root`, `store`, `engine`, `lock`, `storage`, `params`, `startPlan`, `stop`, `syncLock`, `track`, `audio`. `hasFeature(ctx, gate)` checks an unexpired licence |
+| `TDialogName` | Gains `'stats'` |
+| `TChime` (`signal.ts`) | `end` · `focus` · `timer` — Web Audio oscillator tones, no audio files |
+| Notification tags | `at-end` · `at-focus` · `at-cook-{timerId}` |
+| Accent palettes (`accent.ts`) | `amber` `#B86E00` (default, no attribute) · `indigo` `#4F46E5` · `teal` `#0F766E` · `rose` `#BE123C`. `settings.accent` stores the hex; the id goes on `<html data-accent>`; `teal` and `rose` are the first `ambient.packs` pack (`PACK_ACCENTS`) and fall back to amber without it. `public/theme-boot.js` mirrors the map so the accent paints before first frame |
+| Ambient gating | Only `message` is gated (`MODE_GATES = { message: 'ambient.message' }`); `ambient.packs` gates palettes, never layouts. `05-frontend-spec.md` §3.13 wins over the E10-T01 wording in `15-implementation-plan.md` |
+| `ambient/logic.ts` constants | `AMBIENT_ORDER` (the `M` cycle) · `PIXEL_SHIFT_MS` 60,000 · `PIXEL_SHIFT_PX` 2 · `NIGHT_DIM_AFTER_MS` 30,000 · `BURNIN_DIM_AFTER_MS` 30 min · `MESSAGE_PREVIEW_MS` 60,000 · `FOCUS_LONG_BREAK_MIN` 15 · `COOK_MAX_TIMERS` 3 · `COOK_NAME_MAX` 20 · `COOK_MIN_MS` 1 min · `COOK_MAX_MS` 12 h · `COOK_FLASH_MS` 10,000 |
+| `end.ts` constants | `TITLE_FLASH_MS` 1000 · `TITLE_FLASH_MIN_MS` 3000 · `RATING_DELAY_MS` 2000 · `COUNTED_SESSION_S` 300 (a completed session counts toward `meta.sessionCount` only if ≥ 5 min awake) |
+| `ui/rating.ts` constants | `RATING_MIN_SESSIONS` 5 · `RATING_REARM_SESSIONS` 10 · `RATING_TEXT_MAX` 280 |
+| `stats/heatmap.ts` constants | `HEATMAP_WEEKS` 12 · `FREE_HISTORY_DAYS` 7 |
+| `pip.ts` / `pip-mirror.ts` constants | `PIP_SIZE` 280 × 120 · `PIP_ADD_MS` 15 min · `MIRROR_STALE_MS` 4000 (the `/pip` popup shows "Ready" instead of a stale timer after 4 s without a snapshot) |
+| `BaseLayout` `bare` prop | Chrome-less page (no shell padding, separator or footer); used by `/pip` |
+| `/config/sponsor.json` | `{ enabled, id, name, text, url }`; `id` `[a-z0-9_-]{1,32}`, `url` must be `https:`; validated client-side as untrusted input |
+
+**Tokens (`tokens.css`)**
+
+| Identifier | Value |
+|---|---|
+| `--at-t-ambient` | `clamp(4.5rem, 22vw, 15rem)` |
+| `--at-night-digit` | `#FF5A3C` (night-mode digits) |
+| `--at-d-slow` | `320ms` |
+| `[data-accent="indigo\|teal\|rose"]` blocks | Override `--at-accent`, `--at-accent-text`, `--at-on-accent`, `--at-focus` per accent, with `dark`/`oled` variants (`05-frontend-spec.md` §1.1a) |
+
+**Build, PWA and budgets**
+
+| Identifier | Decision |
+|---|---|
+| `apps/web/src/sw.ts` · `apps/web/scripts/sw.mjs` → `dist/sw.js` | Service worker built after `prune-unreferenced.mjs` (ADR-014). Precache manifest injected in place of `self.__WB_MANIFEST`; runtime caches `at-content` · `at-img` · `at-embed`; update message `SKIP_WAITING`. `apps/web/public/sw.js` is removed |
+| `/sw.js` headers | `Cache-Control: no-cache` · `Service-Worker-Allowed: /` (`scripts/headers.mjs`) |
+| `vite.build.modulePreload: false` | In `astro.config.mjs`: Vite emits no `__vite__mapDeps` dependency table and injects no `<link rel="modulepreload">` for lazy chunks, which load on first use. The small `preload-helper` chunk (~0.7 KB gz) is still statically imported by the entry and counted in `criticalJs` |
+| `src/i18n/critical.json` | Removed. Each tool page embeds its full locale catalog as `<script type="application/json" data-i18n-catalog>` (`ToolPanel.astro`, `/pip`); `setCatalog()` reads it at boot |
+| `criticalJs` in `scripts/size.mjs` | The entry scripts **plus their static-import closure** (shared chunks Rollup splits out). Dynamic `import()` is excluded. Previously only `<script src>` files were counted, which under-reported shared chunks |
+
+**Analytics fields used by M6**
+
+`session_extend {addedMin}` (extend prompt and PiP `+15`) · `rating_prompt {action: 'rate' | 'later' | 'never', stars?}` · `rating_submitted {stars}` · `sponsor_view {sponsorId}` · `sponsor_click {sponsorId}` · `pro_view {from}` (`from: 'message'` from the message-mode Pro card).
+
+**i18n**
+
+55 new keys, present in all 8 locales: groups `ambient.*` (titles, focus, message, cook timers), `stats.*`, `rating.*`, `end.*` (`end.notify.title`, `end.notify.body`, `end.titleFlash`), `settings.accent.*`, `settings.ambient.*` additions, `settings.notifications.unavailable`, `pip.add15.label`, `pip.empty`, `tool.toast.batteryLow`, `tool.toast.proMessage`.
 
 ---
 

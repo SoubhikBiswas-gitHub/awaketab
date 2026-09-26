@@ -1,6 +1,6 @@
 # 08 · Data and storage
 
-Status: v1.0 · 2026-09-07 · Owner: Soubhik
+Status: v1.1 · 2026-09-26 · Owner: Soubhik
 
 **Purpose.** Every byte AwakeTab persists — in the browser, in the extension, in Cloudflare KV and in Workers Analytics Engine — with its schema, defaults, versioning, retention and privacy classification. There are no accounts and no database; this document is the whole data model.
 
@@ -27,7 +27,7 @@ All values are JSON. Sizes are well under 50 KB total; localStorage quota (≥ 5
 export interface ISettings {
   v: 1;
   theme: 'auto' | 'light' | 'dark' | 'oled';        // default 'auto'
-  accent: string;                                   // hex, default '#B86E00' (light) — UI derives dark variant
+  accent: string;                                   // light-theme hex, default '#B86E00'; one of '#B86E00' (amber) · '#4F46E5' (indigo) · '#0F766E' (teal, ambient.packs) · '#BE123C' (rose, ambient.packs); unknown or unlicensed values render as amber — dark variants come from tokens.css (05-frontend-spec.md §1.1a)
   defaultPreset: TPresetId;                          // 'p15'|'p30'|'p45'|'p60'|'p120'|'p240'|'pinf'|'custom'|'until'; default 'pinf'
   lastCustomMs: number;                             // default 90 * 60_000
   lastUntilWall: string | null;                     // 'HH:MM', default null
@@ -80,10 +80,23 @@ export interface ISession {
   endedAt: number | null;
   endReason: TEndReason | null;
   awakeSeconds: number;     // seconds spent in lock `held` or `fallback`
-  modeState: Record<string, unknown>; // e.g. { cookTimers: [{label, endsAt}], focus: {cycle, phase} }
+  modeState: Record<string, unknown>; // per-mode data merged by engine.updateSession(); today only { cookTimers: ICookTimer[] }
   source: 'web' | 'pwa' | 'pip' | 'ext' | 'embed';
 }
 ```
+
+```ts
+// cook mode kitchen timers — session.modeState.cookTimers (apps/web/src/tool/ambient/logic.ts)
+export interface ICookTimer {
+  id: string;               // 8-char random id
+  name: string;             // ≤ 20 code points, NFC, control/format chars stripped; default 'Timer N'
+  durationMs: number;       // 60_000 … 12 h
+  endsAt: number;           // epoch ms (wall clock; keeps running while the session clock is paused)
+  doneAt: number | null;    // epoch ms when it fired, null while counting
+}
+```
+
+At most 3 timers. The reader is defensive: a non-array or malformed entry is dropped (localStorage is user-editable). Focus-mode phases are not stored — they are derived from `startedAt`, `pausedMs` and `settings.ambient.focus` on every repaint. Since M6 the session also changes through `addTime(ms)` (an `until` plan may become a `duration` plan with the same deadline) and `pause({ keepLock: true })` (cook mode; `04-engine-spec.md` §9).
 
 **Resume rule** (evaluated on load): offer the resume banner when `status ∈ {active, paused}` and (`endsAt > now` or (`plan.type === 'indefinite'` and `now - startedAt < 12 h`)) and `now - (pausedAt ?? startedAt) < LOST_TIMEOUT_MS`. Otherwise mark `aborted` with `lost_timeout` and fold `awakeSeconds` into stats.
 
@@ -127,7 +140,7 @@ export interface IMeta {
   v: 1;
   installedAt: number;
   sessionCount: number;            // completed sessions ≥ 5 min
-  ratingPrompt: { shownAt: number | null; action: 'rated' | 'later' | 'never' | null; stars?: number };
+  ratingPrompt: { shownAt: number | null; action: 'rated' | 'later' | 'never' | null; stars?: number; rearmAt?: number }; // rearmAt = sessionCount at which 'later' asks again (sessionCount + 10)
   lastSeenVersion: string;         // for the changelog toast
   pwa: { installed: boolean; promptShownAt: number | null };
   secondTabWarnedAt: number | null;
@@ -224,7 +237,7 @@ More queries in `18-analytics-kpis.md` §4.
 
 ## 6. CSV export (Pro `stats.export`)
 
-Columns: `date,awake_minutes,sessions` (one row per local day, ISO dates), plus a trailer comment `# exported YYYY-MM-DD from AwakeTab vX.Y`. Generated client-side; nothing is uploaded.
+Columns: `date,awake_minutes,sessions` (one row per local day, ISO dates), plus a trailer comment `# exported YYYY-MM-DD from AwakeTab vX.Y`. Generated client-side; nothing is uploaded. `at.v1.stats` stores minutes per day but no per-day session count, so the `sessions` column is written empty (the header is kept for forward compatibility). The download is named `awaketab-stats-YYYY-MM-DD.csv`.
 
 ---
 
