@@ -56,7 +56,10 @@ const pages = (await getCollection(kind))
 // it also lets the `.at-prose nav a` chip rule in tool.css take effect instead of being
 // overridden by the link variant's `text-primary` utility.
 const crumbLink = 'inline-flex min-h-11 items-center';
-const relatedLink = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11 px-4');
+const relatedLink = cn(
+  buttonVariants({ variant: 'ghost' }),
+  'h-auto min-h-11 max-w-full shrink px-4 py-2 text-start whitespace-normal',
+);
 ---
 
 <BaseLayout
@@ -95,7 +98,7 @@ const relatedLink = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11 px-4');
     <div class="mt-4 space-y-4 leading-relaxed">
       {copy[kind].map((paragraph) => <p>{paragraph}</p>)}
     </div>
-    <Alert role="note" className="mt-6 border-l-4 border-l-warning">
+    <Alert role="note" className="mt-6 border-s-4 border-s-warning">
       <AlertDescription className="text-foreground">
         AwakeTab never claims to work in a hidden tab, keep Teams or Slack “Available”, prevent sleep after
         closing a laptop lid, or simulate mouse and keyboard input.

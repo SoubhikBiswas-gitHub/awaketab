@@ -28,7 +28,10 @@ const title = t('page.preset.title', { label });
 const description = t('page.preset.description', { label });
 const canonical = `${site}/${slug}`;
 // shadcn outline buttons at build time only (docs/03 ADR-013); 44 px targets (docs/00 §11).
-const related = cn(buttonVariants({ variant: 'outline' }), 'min-h-11 no-underline');
+const related = cn(
+  buttonVariants({ variant: 'outline' }),
+  'h-auto min-h-11 max-w-full shrink py-2 text-start whitespace-normal no-underline',
+);
 ---
 
 <BaseLayout
