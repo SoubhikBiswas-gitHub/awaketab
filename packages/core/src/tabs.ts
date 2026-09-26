@@ -33,7 +33,14 @@ export function createTabProtocol(opts: {
   snapshot?: () => Extract<TTabMessage, { type: 'state' }> | null;
 }) {
   const peers = new Map<string, number>();
-  const ch = opts.channel ?? (typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel(CHANNEL_NAME) : null);
+  // `channel: null` disables the protocol (docs/04 §16: the extension worker has no peers); only an
+  // omitted channel opens the shared BroadcastChannel.
+  const ch =
+    opts.channel !== undefined
+      ? opts.channel
+      : typeof BroadcastChannel !== 'undefined'
+        ? new BroadcastChannel(CHANNEL_NAME)
+        : null;
 
   function gc(now: number) {
     for (const [id, ts] of peers) {
