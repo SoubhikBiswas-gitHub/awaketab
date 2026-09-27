@@ -9,7 +9,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { BADGE_COLORS, BADGE_TEXT_COLOR } from '../src/status.ts';
+import { BADGE_COLORS, BADGE_TEXT_COLOR, badgeText } from '../src/status.ts';
 import { staticInstance, woff2ToTtf } from './fonts.mts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -551,15 +551,16 @@ function popupFrame(c: TPalette, s: IPopupState, style: TStyle, line: string): I
   ]);
 }
 
-// The session every popup shows is frozen at 9:45:42 PM, so the art reads the same on every run.
+// The session every popup shows is frozen at 9:45:42 PM, so the art reads the same on every run. Each Until and
+// Started line follows from that clock and the popup's numbers (Started 9:29 PM + 1 h = Until 10:29 PM, 43:18 left).
 const POPUPS: Record<'awake' | 'system' | 'long' | 'overnight', IPopupState> = {
   awake: {
     level: 'display',
     pill: 'Screen awake',
     totalSec: 3600,
-    leftSec: 2658,
-    caption: 'Until 10:30 PM',
-    meta: 'Started 9:30 PM',
+    leftSec: 2598,
+    caption: 'Until 10:29 PM',
+    meta: 'Started 9:29 PM',
     chip: '1 h',
   },
   system: {
@@ -590,6 +591,21 @@ const POPUPS: Record<'awake' | 'system' | 'long' | 'overnight', IPopupState> = {
     chip: '4:11 AM',
   },
 };
+
+const FROZEN_MS = Date.UTC(2026, 8, 27, 21, 45, 42);
+
+// The toolbar badge comes from the extension's own rule (minutes rounded up), so it always agrees with the popup.
+function badgeSession(s: IPopupState): Parameters<typeof badgeText>[2] {
+  const startedAt = FROZEN_MS - (s.totalSec - s.leftSec) * 1000;
+  return {
+    status: 'active',
+    plan: { type: 'duration', ms: s.totalSec * 1000 },
+    startedAt,
+    endsAt: startedAt + s.totalSec * 1000,
+    pausedAt: null,
+    pausedMs: 0,
+  } as Parameters<typeof badgeText>[2];
+}
 
 interface ICopy {
   kicker: string;
@@ -757,7 +773,7 @@ function browserShot(c: TPalette): INode[] {
                     lineHeight: '16px',
                     boxShadow: `0 0 0 1px ${c.surface}`,
                   },
-                  '44m',
+                  badgeText('held', 'display', badgeSession(POPUPS.awake), FROZEN_MS),
                 ),
               ],
             ),
