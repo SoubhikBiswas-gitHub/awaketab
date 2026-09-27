@@ -1,6 +1,9 @@
 ---
+import '../../styles/tool-until.css';
+import '../../styles/tool-page.css';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ToolIsland from '../../components/ToolIsland.astro';
+import '../../styles/tool-full.css';
 import { t } from '../../i18n/load';
 
 export function getStaticPaths() {
@@ -15,9 +18,26 @@ export function getStaticPaths() {
   return paths;
 }
 
+// The UntilPage board (design/canvas/project/UntilPage.dc.html): the tool counts down to this wall-clock time, then
+// "About this page", the honest limit and the nearby times (every /until/HH-MM route exists in 5-minute steps).
 const time = Astro.params.time ?? '00-00';
 const wall = time.replace('-', ':');
-const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://awaketab.com';
+const [h, m] = wall.split(':').map(Number) as [number, number];
+const site =
+  Astro.site?.toString().replace(/\/$/, '') ?? 'https://awaketab.com';
+const label = (hh: number, mm: number) =>
+  `${String(hh % 12 || 12)}:${String(mm).padStart(2, '0')} ${hh < 12 ? 'AM' : 'PM'}`;
+const here = label(h, m);
+const at = h * 60 + m;
+const near = [-30, -15, 15, 30].map((d) => {
+  const x = (at + d + 1440) % 1440;
+  const hh = Math.floor(x / 60);
+  const mm = x % 60;
+  return {
+    label: label(hh, mm),
+    path: `/until/${String(hh).padStart(2, '0')}-${String(mm).padStart(2, '0')}`,
+  };
+});
 ---
 
 <BaseLayout
@@ -27,5 +47,65 @@ const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://awaketab.com'
   noindex
   header={false}
 >
-  <ToolIsland heading={t('page.until.title', { time: wall })} />
+  <ToolIsland
+    heading={`Keep your screen awake until ${here}`}
+    kicker="About this page"
+    until={time}
+  >
+    <section class="at-page-copy" aria-label="About this page">
+      <p class="at-lead">
+        Tap Keep awake and AwakeTab works out the length from your device clock,
+        then counts down to {here}. If {here} has already passed today, the session
+        ends at {here} tomorrow, and the tool says so before you start.
+      </p>
+      <p>
+        The end time stays fixed while the session runs. +15 min moves it 15
+        minutes later, and Stop ends it now. The pill still decides what is
+        true: it reads “{t('tool.pill.held')}” only while the browser holds the
+        wake lock.
+      </p>
+      <div class="at-honest" role="note">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          aria-hidden="true"
+          ><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"
+          ></path></svg
+        >
+        <div>
+          <span class="at-kicker">Honest limit</span>
+          <p>
+            An overnight session needs this tab in front for the whole night. A
+            hidden tab, a closed lid or another app in front lets the display
+            sleep. Plug in so the battery lasts until morning.
+          </p>
+        </div>
+      </div>
+    </section>
+    <nav class="at-times" id="times" aria-labelledby="h-times">
+      <h2 id="h-times">Nearby times</h2>
+      <ul>
+        {
+          near.map((n) => (
+            <li>
+              <a
+                class="at-time-tile"
+                href={n.path}
+                aria-label={`Keep awake until ${n.label}`}
+              >
+                <span class="at-time-big">{n.label}</span>
+                <span class="at-guide-path">{n.path}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a class="at-time-any" href="/"
+        >Any other time: open the tool and pick Until a time…</a
+      >
+    </nav>
+  </ToolIsland>
 </BaseLayout>

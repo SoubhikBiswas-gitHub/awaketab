@@ -16,7 +16,7 @@ Verified in the blueprint and re-verified per release on `/support-matrix`:
 
 - `navigator.wakeLock.request('screen')` exists in Chrome/Edge ≥ 84, Firefox ≥ 126, Safari ≥ 16.4, iOS Home-Screen web apps ≥ 18.4. The interface is `[SecureContext]`, so on `http://` (other than `localhost`) `navigator.wakeLock` is `undefined`.
 - The browser releases the lock when the document becomes hidden (tab switch, minimise, device lock). The `WakeLockSentinel` fires a `release` event; `sentinel.released` becomes `true`. The page must request again on `visibilitychange` to visible.
-- The request rejects with `NotAllowedError` when the document is hidden, when Permissions-Policy `screen-wake-lock` denies the document (typical in an iframe without `allow="screen-wake-lock"`), or when the platform refuses (battery saver, OS policy).
+- The request rejects with `NotAllowedError` when the document is hidden, when Permissions-Policy `screen-wake-lock` denies the document (typical in an iframe without `allow="screen-wake-lock"`), or when the browser refuses for its own reasons (Safari before a user gesture, Firefox at 5 % battery or less while discharging). Battery savers (Chrome Energy Saver, Android Battery Saver, Windows Energy saver) do not refuse it: Chromium and WebKit have no such check.
 - The video fallback needs a user gesture because of autoplay policy; a muted `playsinline` video that is visibly rendered (1 × 1 px, not `display:none`) keeps the screen on in browsers that predate the API.
 - iOS Low Power Mode is not detectable; it forces a 30 s Auto-Lock regardless of the wake lock.
 
@@ -64,13 +64,11 @@ export type TLockReason =
   | 'destroy';
 
 /** Classification of a NotAllowedError. */
-export type DeniedReason = 'hidden' | 'policy' | 'battery_platform' | 'insecure_context' | 'unknown';
+export type DeniedReason = 'hidden' | 'policy' | 'insecure_context' | 'unknown';
 
 /** What the UI should tell the user to do. Null when nothing is wrong. */
 export type Advice =
-  | 'battery_saver'        // Chromium/Android/Windows: energy saver or battery saver is on
   | 'tab_hidden'           // bring the tab back to the front
-  | 'ios_low_power'        // iOS: Low Power Mode forces 30 s Auto-Lock
   | 'insecure_context'     // page is served over http
   | 'unsupported_browser'  // browser too old / no API and no fallback possible
   | 'iframe_policy'        // embedded without allow="screen-wake-lock"
@@ -80,7 +78,7 @@ export type Advice =
 Classification of a `NotAllowedError`, in order:
 
 ```ts
-function classifyDenial(doc: Document, isIOS: boolean): { reason: DeniedReason; advice: Advice } {
+function classifyDenial(doc: Document, isIOS: boolean): { reason: DeniedReason; advice: Advice | null } {
   if (doc.visibilityState === 'hidden') return { reason: 'hidden', advice: 'tab_hidden' };
   const pp = (doc as any).permissionsPolicy ?? (doc as any).featurePolicy;
   if (pp && typeof pp.allowsFeature === 'function' && !pp.allowsFeature('screen-wake-lock')) {
@@ -88,7 +86,7 @@ function classifyDenial(doc: Document, isIOS: boolean): { reason: DeniedReason; 
   }
   if (!pp && window !== window.top) return { reason: 'policy', advice: 'iframe_policy' }; // Safari: no policy API, assume the iframe case
   if (!window.isSecureContext) return { reason: 'insecure_context', advice: 'insecure_context' };
-  return { reason: 'battery_platform', advice: isIOS ? 'ios_low_power' : 'battery_saver' };
+  return { reason: 'unknown', advice: null }; // no known cause (on iOS usually Safari wanting a tap): the UI lists the usual ones
 }
 ```
 
@@ -104,8 +102,8 @@ Guards reference `vis` (`document.visibilityState`), `fb` (`options.fallback ===
 | 2 | `idle` | `request()` | API absent | `unsupported` | advice = `insecure_context` if `!isSecureContext` else (`fb` ? `gesture_required` : `unsupported_browser`); emit `error` if not `fb` |
 | 3 | `requesting` | native promise resolves | not cancelled | `held` | store sentinel; `sentinel.addEventListener('release', onRelease)`; `mode = 'native'`; `attempt = 0`; advice = null |
 | 4 | `requesting` | native promise resolves | cancelled (release() during flight) | `idle` | `await sentinel.release()`; drop sentinel (*silent* beyond the earlier `release` change) |
-| 5 | `requesting` | rejects `NotAllowedError` | — | `denied` | `{reason, advice} = classifyDenial()`; if reason ∈ {`battery_platform`,`unknown`} and `vis==='visible'` and `n < N` → schedule retry in `min(baseMs·2^n, maxMs)` (defaults 1 s, 2 s, 4 s); if `hidden` → wait for `visibilitychange`; if `policy`/`insecure_context` → no timer; emit `error` |
-| 6 | `requesting` | rejects other error | — | `denied` | reason `unknown`, advice `battery_saver`/`ios_low_power`; same retry rule; emit `error` |
+| 5 | `requesting` | rejects `NotAllowedError` | — | `denied` | `{reason, advice} = classifyDenial()`; if reason is `unknown` and `vis==='visible'` and `n < N` → schedule retry in `min(baseMs·2^n, maxMs)` (defaults 1 s, 2 s, 4 s); if `hidden` → wait for `visibilitychange`; if `policy`/`insecure_context` → no timer; emit `error` |
+| 6 | `requesting` | rejects other error | — | `denied` | reason `unknown`, advice `null` (cause unknown); same retry rule; emit `error` |
 | 7 | `requesting` (video) | `video.play()` resolves | — | `fallback` | `mode = 'video'`; start 20 s nudge timer; advice = null |
 | 8 | `requesting` (video) | `play()` rejects `NotAllowedError` | — | `unsupported` | advice `gesture_required`; emit `error` |
 | 9 | `requesting` (video) | `play()` rejects other (`NotSupportedError`, `AbortError`) | — | `unsupported` | try the next source once (`webm` → `mp4`); if none left advice `unsupported_browser`; emit `error` |

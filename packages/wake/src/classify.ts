@@ -11,10 +11,12 @@ export function parseMajorMinor(ua: string, kind: 'safari' | 'firefox'): [number
   return [Number(m[1]), Number(m[2] ?? 0)];
 }
 
+// null: the browser refused without a known cause. Battery savers and Low Power Mode never refuse a wake lock
+// (Chromium and WebKit have no such check); on iOS the usual cause is Safari wanting a tap first.
 export function classifyDenial(
   err: unknown,
   ctx: { visible: boolean; secure: boolean; inIframe: boolean; ua: string },
-): TAdviceCode {
+): TAdviceCode | null {
   const name = err instanceof Error ? err.name : '';
   const message = err instanceof Error ? err.message : '';
 
@@ -32,10 +34,9 @@ export function classifyDenial(
   const firefox = parseMajorMinor(ctx.ua, 'firefox');
   if (firefox && firefox[0] < 126) return 'firefox_old';
   if (/permissions policy/i.test(message)) return 'permissions_policy';
-  if (IOS_RE.test(ctx.ua)) return 'low_power_ios';
-  return 'battery_saver';
+  return null;
 }
 
-export function isTransientAdvice(advice: TAdviceCode): boolean {
-  return advice === 'hidden_document' || advice === 'battery_saver' || advice === 'low_power_ios';
+export function isTransientAdvice(advice: TAdviceCode | null): boolean {
+  return advice === null || advice === 'hidden_document';
 }

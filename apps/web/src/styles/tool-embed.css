@@ -1,0 +1,145 @@
+.at-tool-embed .at-tool {
+  --at-u-max: 0.7375px;
+
+  grid-template-rows: auto calc(320 * var(--at-u-max)) auto auto auto;
+  grid-template-areas: "pill" "face" "dock" "note" "toast";
+  row-gap: var(--at-s-4);
+  padding: 0;
+}
+
+.at-tool-embed .at-pillrow {
+  justify-self: stretch;
+  align-items: stretch;
+}
+
+.at-tool-embed .at-pillline {
+  justify-content: space-between;
+  gap: var(--at-gap-tight) var(--at-gap-item);
+}
+
+.at-card-kicker {
+  white-space: nowrap;
+}
+
+.at-tool-embed .at-face-cell > * {
+  --u: min(var(--at-u-max), 100cqw / 320, 100cqh / 320);
+}
+
+.at-tool-embed .at-dial {
+  block-size: calc(320 * var(--u));
+  inline-size: calc(320 * var(--u));
+}
+
+.at-island.at-tool-embed .at-face:not(.at-face-ring) {
+  display: none;
+}
+
+.at-island.at-tool-embed .at-face-ring {
+  display: grid;
+}
+
+.at-tool-embed .at-face-text {
+  gap: var(--at-s-2);
+}
+
+.at-tool-embed .at-face-ring .at-kick {
+  color: var(--at-muted);
+  font: var(--at-type-kicker);
+}
+
+/* stylelint-disable declaration-property-value-allowed-list -- the ring face's digits, sized for the card as the canvas draws them (DESIGN.md §3) */
+.at-island.at-tool-embed .at-face-ring .at-digits {
+  font-size: 56px;
+  letter-spacing: -0.02em;
+}
+
+.at-island.at-tool-embed[data-units="h"] .at-face-ring .at-digits,
+.at-island.at-tool-embed[data-units="d"] .at-face-ring .at-digits {
+  font-size: 48px;
+}
+/* stylelint-enable declaration-property-value-allowed-list */
+
+.at-tool-embed .at-face-ring .at-meta {
+  inline-size: auto;
+  max-inline-size: none;
+  color: var(--at-muted);
+  font: var(--at-type-small);
+  white-space: nowrap;
+}
+
+.at-tool-embed .at-dock {
+  gap: var(--at-s-4);
+}
+
+.at-tool-embed .at-note-text {
+  color: var(--at-muted);
+}
+
+@media (width >= 600px) {
+  .at-tool-embed .at-tool {
+    --at-u-max: 0.8125px;
+
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--at-s-6);
+  }
+
+  .at-tool-embed .at-choose {
+    display: none;
+  }
+
+  .at-tool-embed .at-bar .at-seg-item {
+    font: var(--at-type-ui);
+  }
+}
+
+@media (width >= 1024px) {
+  .at-tool-embed .at-tool {
+    --at-u-max: 0.875px;
+
+    grid-template:
+      "face ." 1fr
+      "face pill" auto
+      "face dock" auto
+      "face note" auto
+      "face toast" 1fr / calc(320 * var(--at-u-max)) minmax(0, 1fr);
+    gap: var(--at-s-4) var(--at-s-12);
+  }
+
+  /* stylelint-disable declaration-property-value-allowed-list -- as above */
+  .at-island.at-tool-embed .at-face-ring .at-digits {
+    font-size: 64px;
+  }
+
+  .at-island.at-tool-embed[data-units="h"] .at-face-ring .at-digits,
+  .at-island.at-tool-embed[data-units="d"] .at-face-ring .at-digits {
+    font-size: 52px;
+  }
+  /* stylelint-enable declaration-property-value-allowed-list */
+
+  .at-tool-embed .at-bar .at-seg-item {
+    font: var(--at-type-small);
+  }
+
+  .at-tool-embed .at-pillrow,
+  .at-tool-embed .at-tool > .at-note {
+    text-align: start;
+  }
+}
+
+.at-tool-embed :is(.at-tabs, .at-why-btn, .at-tool-embed-bar) {
+  display: none;
+}
+
+@media (360px <= width < 600px) {
+  .at-tool-embed .at-len {
+    grid-template-columns: repeat(20, minmax(0, 1fr));
+  }
+
+  .at-tool-embed .at-len .at-chip {
+    grid-column: span 4;
+  }
+
+  .at-tool-embed .at-len :is([data-preset="p240"], [data-preset="pinf"], .at-chip-choose) {
+    grid-column: span 5;
+  }
+}

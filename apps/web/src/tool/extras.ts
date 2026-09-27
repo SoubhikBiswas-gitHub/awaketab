@@ -1,4 +1,8 @@
 import type { ILicenseRecord } from '@awaketab/core';
+import type { IToolCtx } from './ctx.js';
+import { mountPwa } from './pwa.js';
+import { mountSponsor } from './sponsor.js';
+import { mountLangSuggest } from './ui/lang-suggest.js';
 import { applyAccent } from './accent.js';
 import { t } from './i18n.js';
 import type { IStore } from './store.js';
@@ -23,7 +27,10 @@ export function track(store: IStore, event: string, params?: Record<string, stri
 
 export function mountExtras(
   store: IStore,
-  storage: { license(): ILicenseRecord | null; writeLicense(s: ILicenseRecord | null): void },
+  storage: {
+    license(): ILicenseRecord | null;
+    writeLicense(s: ILicenseRecord | null): void;
+  },
 ): () => void {
   const opts = {
     telemetry: store.get().settings.telemetry,
@@ -56,11 +63,31 @@ export function mountExtras(
     syncPro();
   });
   const sheet = document.querySelector<HTMLDialogElement>('[data-dialog="pro"]');
-  document.querySelector('[data-open-pro]')?.addEventListener('click', () => {
+  // Settings → Pro opens the Pro sheet over the page; without the island the link goes to /pro.
+  document.querySelector('[data-open-pro]')?.addEventListener('click', (e) => {
+    e.preventDefault();
     sheet?.showModal();
   });
   sheet?.querySelector('[data-pro-close]')?.addEventListener('click', () => {
     sheet.close();
   });
   return store.subscribe(syncPro);
+}
+
+export function mountLate(ctx: IToolCtx): () => void {
+  const { root, store, storage, engine } = ctx;
+  const offs = [mountExtras(store, storage)];
+  mountPwa(
+    root,
+    store,
+    () => engine.session?.status,
+    () => {
+      ctx.track('pwa_install');
+    },
+  );
+  mountLangSuggest(root, storage);
+  if (root.querySelector('[data-sponsor]')) void mountSponsor(ctx).then((u) => offs.push(u));
+  return () => {
+    for (const off of offs) off();
+  };
 }

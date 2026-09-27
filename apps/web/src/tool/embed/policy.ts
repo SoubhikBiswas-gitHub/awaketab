@@ -23,8 +23,7 @@ export function inIframe(win: Window): boolean {
   }
 }
 
-export function embedAdvice(advice: TAdviceCode | null, policy: boolean | null, ua: string): TAdviceCode | null {
-  if (advice === 'iframe_no_allow' && policy === true)
-    return /iPhone|iPad|iPod/u.test(ua) ? 'low_power_ios' : 'battery_saver';
-  return advice;
+// The frame is allowed, so an iframe_no_allow guess is wrong: the browser refused for another, unknown reason.
+export function embedAdvice(advice: TAdviceCode | null, policy: boolean | null): TAdviceCode | null {
+  return advice === 'iframe_no_allow' && policy === true ? null : advice;
 }

@@ -47,5 +47,6 @@ export type {
   ISettings,
   IStats,
   TTheme,
+  TFace,
 } from './types.js';
 export { DEFAULT_META, DEFAULT_ONBOARDING, DEFAULT_SETTINGS, DEFAULT_STATS, PRESET_MS } from './types.js';

@@ -1,61 +1,144 @@
+import './more-css.js';
 import { planUntil, type TPresetId, type TTheme } from '@awaketab/core';
 import type { IToolCtx } from '../ctx.js';
+import { hm, mins, nextWall, stepCustom, wallOf, when } from '../format.js';
 import { t } from '../i18n.js';
-import { EIGHT_H_MS } from '../params.js';
 import { applyTheme, nextTheme } from '../theme.js';
-import { bindCustomDialog, bindUntilDialog } from './dialogs.js';
 import { toast } from './toast.js';
+import { liveSession } from './view.js';
 
-function dialog(ctx: IToolCtx, name: 'custom' | 'until' | 'share'): HTMLDialogElement | null {
-  const el = ctx.root.querySelector<HTMLDialogElement>(`[data-dialog="${name}"]`);
-  if (el && el.dataset.closeBound !== '1') {
-    el.dataset.closeBound = '1';
-    el.addEventListener('close', () => {
-      ctx.store.set({ ui: { dialog: null } });
-    });
+export function untilSlots(now = Date.now()): number[] {
+  let at = Math.ceil((now + 20 * 60_000) / 1_800_000) * 1_800_000;
+  const out: number[] = [];
+  for (let i = 0; i < 4; i += 1) {
+    out.push(at);
+    at += i < 1 ? 1_800_000 : 3_600_000;
   }
-  return el;
+  return out;
 }
 
-function show(ctx: IToolCtx, el: HTMLDialogElement, name: 'custom' | 'until' | 'share'): void {
-  ctx.store.set({ ui: { dialog: name } });
-  if (!el.open) el.showModal();
+let panelsBound = false;
+
+function bindPanels(ctx: IToolCtx): void {
+  if (panelsBound) return;
+  panelsBound = true;
+  const { root, store } = ctx;
+  const input = root.querySelector<HTMLInputElement>('[data-until-input]');
+  const put = (key: string, text: string) => {
+    for (const n of root.querySelectorAll(`[data-t="${key}"]`)) if (n.textContent !== text) n.textContent = text;
+  };
+  const paint = () => {
+    const s = store.get();
+    if (s.ui.open !== 'until') return;
+    const c24 = s.settings.ambient.clock24h;
+    const wall =
+      liveSession(s)?.plan.type === 'until' || s.selectedPreset === 'until' ? s.settings.lastUntilWall : null;
+    const at = wall ? nextWall(wall) : 0;
+    untilSlots().forEach((ms, i) => {
+      put(`slot${String(i)}`, hm(ms, c24));
+      put(
+        `slotSub${String(i)}`,
+        t(new Date(ms).getDate() === new Date().getDate() ? 'tool.slot.today' : 'tool.slot.tomorrow'),
+      );
+      root
+        .querySelector(`[data-slot="${String(i)}"]`)
+        ?.setAttribute('aria-pressed', String(!!wall && wallOf(ms) === wall));
+    });
+    if (input && document.activeElement !== input) input.value = wall ?? wallOf(untilSlots()[0] ?? Date.now());
+    put('pastQ', t('tool.until.past', { time: hm(at, c24) }));
+    put(
+      'pastIn',
+      t('tool.until.pastIn', {
+        length: mins(Math.max(1, Math.round((at - Date.now()) / 60_000))),
+      }),
+    );
+  };
+  store.subscribe(paint);
+  window.setInterval(paint, 30_000);
+  input?.addEventListener('change', () => {
+    const m = /^(\d{1,2}):(\d{2})/u.exec(input.value);
+    if (!m) return;
+    const wall = `${(m[1] ?? '').padStart(2, '0')}:${m[2] ?? '00'}`;
+    const d = new Date();
+    d.setHours(Number(m[1]), Number(m[2]), 0, 0);
+    setUntil(ctx, wall, d.getTime() <= Date.now());
+  });
 }
 
-export function openCustom(ctx: IToolCtx): void {
-  const el = dialog(ctx, 'custom');
-  if (!el) return;
-  if (el.dataset.bound !== '1') {
-    el.dataset.bound = '1';
-    bindCustomDialog(el, {
-      lastCustomMs: ctx.store.get().settings.lastCustomMs,
-      onStart: (ms) => {
-        const next = { ...ctx.store.get().settings, lastCustomMs: ms };
-        ctx.storage.writeSettings(next);
-        ctx.store.set({ settings: next, selectedPreset: 'custom', eightHour: ms === EIGHT_H_MS });
-        void ctx.startPlan({ type: 'duration', ms }, 'custom');
-      },
+function setUntil(ctx: IToolCtx, wall: string, past = false): void {
+  const s = ctx.store.get();
+  const settings = { ...s.settings, lastUntilWall: wall };
+  ctx.storage.writeSettings(settings);
+  if (liveSession(s)) {
+    ctx.store.set({ settings, ui: { open: '', past: false } });
+    void ctx.startPlan(planUntil(wall), 'until', true);
+  } else
+    ctx.store.set({
+      settings,
+      selectedPreset: 'until',
+      eightHour: false,
+      ui: { past },
     });
-  }
-  show(ctx, el, 'custom');
 }
 
-export function openUntil(ctx: IToolCtx): void {
-  const el = dialog(ctx, 'until');
-  if (!el) return;
-  if (el.dataset.bound !== '1') {
-    el.dataset.bound = '1';
-    bindUntilDialog(el, {
-      lastWall: ctx.store.get().settings.lastUntilWall,
-      onStart: (wall) => {
-        const next = { ...ctx.store.get().settings, lastUntilWall: wall };
-        ctx.storage.writeSettings(next);
-        ctx.store.set({ settings: next, selectedPreset: 'until' });
-        void ctx.startPlan(planUntil(wall), 'until');
-      },
-    });
+function setCustom(ctx: IToolCtx, up: boolean): void {
+  const s = ctx.store.get();
+  const act = liveSession(s);
+  const cur =
+    act?.presetId === 'custom' && act.endsAt !== null
+      ? Math.round((act.endsAt - act.startedAt) / 60_000)
+      : s.settings.lastCustomMs / 60_000;
+  const ms = stepCustom(cur, up) * 60_000;
+  const settings = { ...s.settings, lastCustomMs: ms };
+  ctx.storage.writeSettings(settings);
+  ctx.store.set({ settings, selectedPreset: 'custom', eightHour: false });
+  if (act) void ctx.startPlan({ type: 'duration', ms }, 'custom', true);
+  const m = ms / 60_000;
+  ctx.root
+    .querySelector('[data-act="less"]')
+    ?.setAttribute('aria-label', t(m > 720 ? 'tool.custom.less60' : 'tool.custom.less5'));
+  ctx.root
+    .querySelector('[data-act="more5"]')
+    ?.setAttribute('aria-label', t(m >= 720 ? 'tool.custom.more60' : 'tool.custom.more5'));
+}
+
+function openPanel(ctx: IToolCtx, panel: 'until' | 'custom' | 'more'): void {
+  bindPanels(ctx);
+  const s = ctx.store.get();
+  if (!liveSession(s) && panel !== 'more') {
+    if (panel === 'until' && !(s.selectedPreset === 'until' && s.settings.lastUntilWall))
+      setUntil(ctx, wallOf(untilSlots()[0] ?? Date.now()));
+    else ctx.store.set({ selectedPreset: panel, eightHour: false });
   }
-  show(ctx, el, 'until');
+  ctx.store.set({ ui: { open: panel } });
+  const box = ctx.root.querySelector<HTMLElement>(`.at-lp-${panel}`);
+  box?.querySelector<HTMLElement>(panel === 'until' ? '.at-slot' : 'button')?.focus();
+}
+
+export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
+  const { store } = ctx;
+  if (name === 'until' || name === 'custom' || name === 'more') openPanel(ctx, name);
+  else if (name === 'close') {
+    store.set({ ui: { open: '', past: false } });
+    ctx.root.querySelector<HTMLElement>('[data-chips] [aria-pressed="true"], [data-chips] button')?.focus();
+  } else if (name === 'slot') {
+    const ms = untilSlots()[Number(el.dataset.slot)];
+    if (ms) setUntil(ctx, wallOf(ms));
+  } else if (name === 'less' || name === 'more5') setCustom(ctx, name === 'more5');
+  else if (name === 'changeTime') setUntil(ctx, wallOf(untilSlots()[0] ?? Date.now()));
+  else if (name === 'why') store.set({ ui: { why: !store.get().ui.why } });
+  else if (name === 'add15' || name === 'add30' || name === 'add60')
+    void import('../end.js').then((m) => {
+      m.extendAsk(ctx, { add15: 15, add30: 30, add60: 60 }[name] * 60_000);
+    });
+  else if (name === 'askStop')
+    void import('../end.js').then((m) => {
+      m.finishAsk(ctx);
+    });
+  else if (name === 'battSettings')
+    void import('./settings.js').then((m) => {
+      m.openSettings(ctx);
+    });
 }
 
 const SHARE_ROUTES: Partial<Record<TPresetId, string>> = {
@@ -76,24 +159,122 @@ export function sharePath(ctx: Pick<IToolCtx, 'store'>): string {
 }
 
 export function openShare(ctx: IToolCtx): void {
-  const el = dialog(ctx, 'share');
+  const el = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="share"]');
   if (!el) return;
-  const input = el.querySelector<HTMLInputElement>('[data-share-url]');
-  if (input) input.value = new URL(sharePath(ctx), location.origin).toString();
+  const btn = ctx.root.querySelector('[data-open-share]');
+  if (el.open) {
+    el.close();
+    return;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  const q = <T extends Element>(sel: string) => el.querySelector<T>(sel);
+  const input = q<HTMLInputElement>('[data-share-url]');
+  const auto = q<HTMLInputElement>('[data-share-auto]');
+  const msg = q<HTMLElement>('[data-share-msg]');
+  const url = () => new URL(sharePath(ctx) + (auto?.checked ? '?autostart=1' : ''), location.origin).toString();
+  const s = ctx.store.get();
+  const label = q<HTMLElement>('[data-share-label]');
+  const pre = s.session?.presetId ?? s.selectedPreset;
+  if (label)
+    label.textContent = t('tool.share.body', {
+      label:
+        pre === 'until' && s.session?.plan.type === 'until'
+          ? when(s.session.endsAt ?? 0)
+          : t(`tool.preset.${pre === 'custom' || pre === 'until' ? 'pinf.sr' : pre}`),
+    });
+  if (input) input.value = url();
+  if (msg) msg.textContent = '';
   if (el.dataset.bound !== '1') {
     el.dataset.bound = '1';
-    el.querySelector('[data-share-copy]')?.addEventListener('click', () => {
-      if (!input) return;
-      void navigator.clipboard.writeText(input.value).then(() => {
-        toast(ctx.store, { kind: 'success', text: t('tool.toast.copied'), id: 'copy' });
+    const copy = q<HTMLElement>('[data-share-copy]');
+    auto?.addEventListener('change', () => {
+      if (input) input.value = url();
+      copy?.removeAttribute('data-done');
+    });
+    input?.addEventListener('focus', () => {
+      input.select();
+    });
+    copy?.addEventListener('click', () => {
+      void navigator.clipboard.writeText(input?.value ?? '').then(() => {
+        copy.dataset.done = '';
+        copy.setAttribute('aria-label', t('tool.toast.copied'));
+        toast(ctx.store, {
+          kind: 'success',
+          text: t('tool.toast.copied'),
+          id: 'copy',
+        });
       });
     });
+    q('[data-share-native]')?.addEventListener('click', () => {
+      if ('share' in navigator)
+        void navigator.share({ url: input?.value ?? '', title: 'AwakeTab' }).catch(() => undefined);
+      else if (msg) msg.textContent = t('tool.share.noNative');
+    });
+    q('[data-share-close]')?.addEventListener('click', () => {
+      el.close();
+    });
+    el.addEventListener('close', () => {
+      btn?.setAttribute('aria-expanded', 'false');
+      ctx.store.set({ ui: { dialog: null } });
+    });
   }
-  show(ctx, el, 'share');
+  ctx.store.set({ ui: { dialog: 'share' } });
+  btn?.setAttribute('aria-expanded', 'true');
+  // Phones: a modal bottom sheet. From 600 it is a card in the dock, so the page stays live around it.
+  if (matchMedia('(width < 600px)').matches) el.showModal();
+  else el.show();
   ctx.track('share_click');
 }
 
 export { toggleFullscreen } from '../fullscreen.js';
+
+export function help(ctx: IToolCtx, show?: boolean): void {
+  const dlg = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="shortcuts"]');
+  const btn = ctx.root.querySelector('[data-open-shortcuts]');
+  if (!dlg) return;
+  if (dlg.dataset.bound !== '1') {
+    dlg.dataset.bound = '1';
+    dlg.addEventListener('close', () => {
+      btn?.setAttribute('aria-expanded', 'false');
+      ctx.store.set({ ui: { dialog: null } });
+    });
+  }
+  if (!(show ?? !dlg.open)) dlg.close();
+  else if (!dlg.open) {
+    ctx.store.set({ ui: { dialog: 'shortcuts' } });
+    btn?.setAttribute('aria-expanded', 'true');
+    dlg.showModal();
+  }
+}
+
+export function open(ctx: IToolCtx, el: HTMLElement): void {
+  const d = el.dataset;
+  if ('openSettings' in d)
+    void import('./settings.js').then((m) => {
+      m.openSettings(ctx);
+    });
+  else if ('openStats' in d)
+    void import('../stats/panel.js').then((m) => {
+      m.openStats(ctx);
+    });
+  else if ('openShare' in d) openShare(ctx);
+  else if ('openPip' in d) pip(ctx);
+  else help(ctx, 'openShortcuts' in d);
+}
+
+export function pip(ctx: IToolCtx): void {
+  void import('../pip.js').then(({ togglePip }) =>
+    togglePip(ctx).then((kind) => {
+      if (kind === 'blocked')
+        toast(ctx.store, {
+          kind: 'info',
+          text: t('tool.toast.pipBlocked'),
+          id: 'pip',
+        });
+      else if (kind !== 'closed') ctx.track('pip_open');
+    }),
+  );
+}
 
 export function cycleTheme(ctx: IToolCtx, theme: TTheme = nextTheme(ctx.store.get().settings.theme)): void {
   const next = { ...ctx.store.get().settings, theme };

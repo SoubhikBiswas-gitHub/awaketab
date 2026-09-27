@@ -63,7 +63,7 @@ export async function mountSponsor(ctx: IToolCtx): Promise<() => void> {
       idleSlot.dataset.state = idle ? 'shown' : 'hidden';
       idleSlot.inert = !idle;
     }
-    if (!viewed && ((idle && idleSlot) || (s.ui.dialog === 'extend' && extend))) {
+    if (!viewed && ((idle && idleSlot) || (!!s.ui.ask && extend))) {
       viewed = true;
       ctx.track('sponsor_view', { sponsorId });
     }

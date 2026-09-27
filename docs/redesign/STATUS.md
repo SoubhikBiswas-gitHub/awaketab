@@ -7,15 +7,15 @@ Updated Sunday, 27 September 2026 · 12:45 PM
 | # | Item | Canvas design | Real app |
 |---|---|---|---|
 | | **A · Tool** | | |
-| 1 | Tool phone + desktop · 4 faces · all states · dark/light | ✅ on canvas | ⬜ |
-| 2 | Tool on tablet | ✅ on canvas | ⬜ |
-| 3 | Settings + lamp colour picker | ✅ on canvas | ⬜ |
-| 4 | Stats (12-week heatmap) | ✅ on canvas | ⬜ |
-| 5 | Time's up prompt | ✅ on canvas | ⬜ |
+| 1 | Tool phone + desktop · 4 faces · all states · dark/light | ✅ on canvas | ✅ B3 (27 Sep) |
+| 2 | Tool on tablet | ✅ on canvas | ✅ B3 (27 Sep) |
+| 3 | Settings + lamp colour picker | ✅ on canvas | ✅ B3 (27 Sep) |
+| 4 | Stats (12-week heatmap) | ✅ on canvas | ✅ B3 (27 Sep) |
+| 5 | Time's up prompt | ✅ on canvas | ✅ B3 (27 Sep) |
 | 6 | Ambient: Clock, Focus, Minimal, Night, Message, Cook | ✅ on canvas | ⬜ |
 | 7 | Floating window (PiP) | ✅ on canvas | ⬜ |
-| 8 | Banners: resume, second tab, install | ✅ on canvas | ⬜ |
-| 9 | Rating, shortcuts, share, toasts | ✅ on canvas | ⬜ |
+| 8 | Banners: resume, second tab, install | ✅ on canvas | ✅ B3 (27 Sep) |
+| 9 | Rating, shortcuts, share, toasts | ✅ on canvas | ✅ B3 (27 Sep) |
 | 10 | Logo, colour, type | ✅ on canvas | ⬜ |
 | | **B · Content** | | |
 | 11 | Home below the tool | ✅ on canvas | ⬜ |
@@ -80,4 +80,4 @@ Updated Sunday, 27 September 2026 · 12:45 PM
 | 62 | /for hub cut to 14 (OD-3), embed 320×104 + credit outside the widget, docs updated | ✅ on canvas | ⬜ |
 | 63 | Coverage check: tablet for the /on /vs /guides /learn hubs, checkout failed and Pro lapsed; blocked and time's up at desktop and tablet | ✅ on canvas | ⬜ |
 
-**Canvas:** 63 done · 0 building · 0 not started (of 63). **Real app:** B1 foundation done (27 Sep); B2 shared shell done (27 Sep: header, footer with language switcher, theme switch, pill, buttons, chips, kbd, sheet on every page); page bodies follow in B3–B7.
+**Canvas:** 63 done · 0 building · 0 not started (of 63). **Real app:** B1 foundation done (27 Sep); B2 shared shell done (27 Sep: header, footer with language switcher, theme switch, pill, buttons, chips, kbd, sheet on every page); B3 tool page done (27 Sep: `/`, presets, `/until`, the four faces, inline panels, sheets, cards, edge states, on branch redesign/tool-page).

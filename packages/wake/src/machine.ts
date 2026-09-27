@@ -5,7 +5,7 @@ export type TMachineEvent =
   | { type: 'acquired' }
   | { type: 'fallback_ok' }
   | { type: 'fallback_blocked' }
-  | { type: 'denied'; advice: TAdviceCode }
+  | { type: 'denied'; advice: TAdviceCode | null }
   | { type: 'unsupported'; advice: TAdviceCode }
   | { type: 'release_event'; hidden: boolean }
   | { type: 'user_release' }
@@ -21,7 +21,7 @@ export interface IMachineGuards {
 export interface IMachineResult {
   state: TLockState;
   reason: TLockReason;
-  advice?: TAdviceCode;
+  advice?: TAdviceCode | null;
   silent?: boolean;
 }
 

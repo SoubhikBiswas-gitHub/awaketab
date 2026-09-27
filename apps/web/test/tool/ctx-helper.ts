@@ -27,17 +27,34 @@ export function license(features: ILicenseRecord['features']): ILicenseRecord {
 }
 
 export function makeCtx(
-  opts: { html?: string; settings?: Partial<ISettings>; search?: string; license?: ILicenseRecord | null } = {},
+  opts: {
+    html?: string;
+    settings?: Partial<ISettings>;
+    search?: string;
+    license?: ILicenseRecord | null;
+  } = {},
 ) {
   document.body.innerHTML = `<div id="awaketab-tool">${opts.html ?? ''}</div>`;
   const root = document.querySelector<HTMLElement>('#awaketab-tool') as HTMLElement;
   const fake = createFakeApi();
-  const lock = createWakeLock({ wakeLock: fake.api, documentLike: document, fallback: 'none' });
+  const lock = createWakeLock({
+    wakeLock: fake.api,
+    documentLike: document,
+    fallback: 'none',
+  });
   const storage = createStorage(memoryAdapter());
   const settings: ISettings = { ...DEFAULT_SETTINGS, ...opts.settings };
   storage.writeSettings(settings);
-  const store = createStore({ ...initialState(settings), license: opts.license ?? null });
-  const engine = createSession({ lock, storage, channel: null, settings: () => store.get().settings });
+  const store = createStore({
+    ...initialState(settings),
+    license: opts.license ?? null,
+  });
+  const engine = createSession({
+    lock,
+    storage,
+    channel: null,
+    settings: () => store.get().settings,
+  });
   const syncLock = () => {
     store.set({ lock: lock.state, session: engine.session });
   };
@@ -54,6 +71,7 @@ export function makeCtx(
       await engine.start(plan, { presetId, mode: store.get().ui.mode });
       syncLock();
     },
+    startCurrent: () => undefined,
     stop: () => {
       engine.stop();
       syncLock();

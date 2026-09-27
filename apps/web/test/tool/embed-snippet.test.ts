@@ -35,10 +35,18 @@ describe('/embed snippet generator (docs/11 §1, E12-T02)', () => {
   });
 
   it('produces a tag the loader parses back to the same options', () => {
-    const opts = { ...DEFAULT_SNIPPET, lang: 'de' as const, preset: 'p45' as const, size: 'full' as const };
+    const opts = {
+      ...DEFAULT_SNIPPET,
+      lang: 'de' as const,
+      preset: 'p45' as const,
+      size: 'full' as const,
+    };
     const doc = new DOMParser().parseFromString(loaderSnippet(opts), 'text/html');
     const script = doc.querySelector('script');
-    expect(optionsFromDataset({ ...script?.dataset }, 'en')).toEqual({ ...opts, lang: 'de' });
+    expect(optionsFromDataset({ ...script?.dataset }, 'en')).toEqual({
+      ...opts,
+      lang: 'de',
+    });
   });
 
   it('keeps allow="screen-wake-lock" in the bare-iframe fallback', () => {
@@ -94,7 +102,11 @@ describe('/kiosk URL builder (docs/09 §7.2)', () => {
   });
 
   it('adds licensed extras: an https logo and the token in the hash', () => {
-    const url = kioskUrl({ ...base, logo: 'https://cdn.example.com/l.png', token: 'aaa.bbb.ccc' });
+    const url = kioskUrl({
+      ...base,
+      logo: 'https://cdn.example.com/l.png',
+      token: 'aaa.bbb.ccc',
+    });
     expect(url).toBe(
       'https://awaketab.com/?autostart=1&mode=message&msg=Welcome&theme=dark&logo=https%3A%2F%2Fcdn.example.com%2Fl.png#lic=aaa.bbb.ccc',
     );
@@ -137,9 +149,12 @@ describe('embed catalog subset', () => {
     const subset = embedCatalog(en);
     for (const s of ['idle', 'requesting', 'held', 'lost', 'denied', 'unsupported', 'fallback'])
       expect(subset[`tool.pill.${s}`]).toBeTruthy();
+    // Decision O-59: battery saver and Low Power Mode do not refuse the lock, so they have no advice string; an
+    // unclassified denial reads the generic one.
+    expect(subset['tool.advice.battery_saver']).toBeUndefined();
+    expect(subset['tool.advice.low_power_ios']).toBeUndefined();
     for (const code of [
-      'battery_saver',
-      'low_power_ios',
+      'unknown',
       'hidden_document',
       'permissions_policy',
       'insecure_context',

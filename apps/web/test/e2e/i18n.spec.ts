@@ -81,7 +81,14 @@ test.describe('per-locale smoke', () => {
       await expect(page.locator('footer a[hreflang="en"]')).toHaveAttribute('href', '/on/iphone-safari');
       const pill = page.locator('[data-pill-text]');
       await expect(pill).toHaveText(strings['tool.pill.idle'] ?? '');
+      // A length chip chooses; the lamp button starts it (DESIGN.md §5). The one-time language suggestion is a
+      // fixed banner at the bottom of the viewport; dismiss it first so it cannot sit over the button.
+      const suggestion = page.locator('[data-lang-suggest-dismiss]');
+      if (await suggestion.isVisible()) await suggestion.click();
+      // The home's session is still running, so this page offers to resume it in place of the lamp button.
+      await page.locator('[data-resume-dismiss]').click();
       await page.locator('[data-chips] [data-preset="p15"]').click();
+      await page.locator('#awaketab-tool .at-cta').click();
       await expect(pill).toHaveText(strings['tool.pill.held'] ?? '', { timeout: 4000 });
 
       expect(errors).toEqual([]);
@@ -266,6 +273,7 @@ test.describe('pseudo-locale overflow at 320 px', () => {
 
       // Running state: the held pill and the timer caption, both from the pseudo catalog.
       await page.locator('[data-chips] [data-preset="p15"]').click();
+      await page.locator('#awaketab-tool .at-cta').click();
       await expect(page.locator('[data-pill-text]')).toContainText('ẋẋẋẋ');
       await expect(page.locator('[data-timer]')).toBeVisible();
       result = await findClipping(page);
@@ -303,7 +311,8 @@ test.describe('RTL readiness (phase-2 ar)', () => {
     await expect(separator).toHaveCSS('transform', 'matrix(-1, 0, 0, 1, 0, 0)');
     // The honest-limit note's glyph sits on the inline start edge, i.e. the right edge in RTL. (Clear Night, B5:
     // the note is a card with a leading glyph; side-stripe borders are banned, DESIGN.md §11.2.)
-    const limit = page.locator('[role="note"]').first();
+    // :visible skips the tool's closed shortcuts sheet, whose keyboard note is a role=note too.
+    const limit = page.locator('[role="note"]:visible').first();
     const [noteBox, glyphBox] = await Promise.all([limit.boundingBox(), limit.locator('> svg').boundingBox()]);
     expect(noteBox).not.toBeNull();
     expect(glyphBox).not.toBeNull();

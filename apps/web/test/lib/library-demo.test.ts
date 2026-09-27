@@ -36,10 +36,10 @@ describe('/library demo scenarios (docs/12 §6)', () => {
     lock.destroy();
   });
 
-  it('battery saver: denied with advice, no retry loop', async () => {
+  it('refused: denied with no known cause, no retry loop', async () => {
     const { lock } = states('denied');
     expect(await lock.request()).toBe('denied');
-    expect(lock.advice).toBe('battery_saver');
+    expect(lock.advice).toBeNull();
     lock.destroy();
   });
 
@@ -51,9 +51,10 @@ describe('/library demo scenarios (docs/12 §6)', () => {
   });
 
   it('formats a log line', () => {
-    expect(formatChange({ from: 'requesting', to: 'denied', reason: 'denied', advice: 'battery_saver' })).toBe(
-      'requesting → denied (denied, battery_saver)',
+    expect(formatChange({ from: 'requesting', to: 'denied', reason: 'denied', advice: 'hidden_document' })).toBe(
+      'requesting → denied (denied, hidden_document)',
     );
+    expect(formatChange({ from: 'requesting', to: 'denied', reason: 'denied' })).toBe('requesting → denied (denied)');
     expect(formatChange({ from: 'idle', to: 'requesting', reason: 'request' })).toBe('idle → requesting (request)');
   });
 });
@@ -86,7 +87,7 @@ describe('bindDemo', () => {
     await vi.waitFor(() => {
       expect(root.querySelector('[data-demo-current]')?.textContent).toBe('denied');
     });
-    expect(root.querySelector('[data-demo-advice]')?.textContent).toBe('Advice: battery_saver');
+    expect(root.querySelector('[data-demo-advice]')?.textContent).toBe('');
     expect(root.querySelector('[data-state="denied"]')?.hasAttribute('data-visited')).toBe(true);
     expect(root.querySelector('[data-state="denied"]')?.hasAttribute('aria-current')).toBe(true);
     expect(root.querySelector('[data-demo-log]')?.textContent).toContain('requesting → denied');
@@ -118,11 +119,11 @@ describe('bindDemo', () => {
     expect(root.querySelector('[data-state="idle"]')?.hasAttribute('aria-current')).toBe(false);
     expect(root.querySelector('[data-edge="requesting-denied"]')?.hasAttribute('data-on')).toBe(true);
     expect(root.querySelector('[data-edge="idle-requesting"]')?.hasAttribute('data-on')).toBe(false);
-    expect(root.querySelector('[data-demo-advice] code')?.textContent).toBe('battery_saver');
+    expect(root.querySelector('[data-demo-advice] code')).toBeNull();
     const newest = root.querySelector('[data-demo-log] li');
     expect(newest?.querySelector('time')?.textContent).toMatch(/^\d{1,2}:\d{2}:\d{2}\s?[AP]M$/u);
     expect(newest?.querySelector('[data-lock="denied"]')?.textContent).toBe('denied');
-    expect(newest?.textContent).toContain('requesting → denied (denied, battery_saver)');
+    expect(newest?.textContent).toContain('requesting → denied (denied)');
     delete win.AwakeTabWake;
   });
 });

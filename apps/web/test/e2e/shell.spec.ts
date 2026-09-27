@@ -87,7 +87,14 @@ test.describe('header and footer on every surface', () => {
     await expect(header.locator('[data-open-settings]')).toBeVisible();
     await page.setViewportSize({ width: 390, height: 800 });
     await expect(header.locator('[data-open-stats]')).toBeHidden();
-    await expect(page.locator('#awaketab-tool .at-tool-more [data-open-stats]')).toBeVisible();
+    // Phones reach Stats, Share and Shortcuts from the Settings footer (canvas ToolSettings; decision D-R27).
+    await header.locator('[data-open-settings]').click();
+    const sheet = page.locator('dialog[data-dialog="settings"]');
+    await expect(sheet.locator('[data-open-stats]')).toBeVisible();
+    await expect(sheet.locator('[data-open-share]')).toBeVisible();
+    await expect(sheet.locator('[data-open-shortcuts]')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(sheet).toBeHidden();
     await expect(header.getByRole('radiogroup')).toBeVisible();
     await expect(header.locator('[data-theme-cycle]')).toBeHidden();
     await page.setViewportSize({ width: 320, height: 568 });
@@ -348,7 +355,8 @@ test.describe('status pill and logo bead', () => {
       return `rgb(${String((n >> 16) & 255)}, ${String((n >> 8) & 255)}, ${String(n & 255)})`;
     };
     expect(await bead()).toBe(rgb(muted));
-    await page.getByRole('button', { name: '15 min', exact: true }).click();
+    await page.getByRole('button', { name: '15 minutes', exact: true }).click();
+    await page.locator('#awaketab-tool .at-cta').click();
     await expect(pill).toHaveAttribute('data-lock', 'held');
     await expect(pill.locator('[data-pill-text]')).toHaveText('Screen awake');
     expect(await glyph()).toEqual(['at-g-dot']);
@@ -363,6 +371,10 @@ test.describe('status pill and logo bead', () => {
       await page.goto('/');
       const stop = page.locator('#awaketab-tool [data-stop]');
       await expect(stop).toBeVisible({ timeout: 4000 });
+      // The actions rise in (DESIGN.md §8); measure the resting button, not a frame of its 0.985 → 1 scale.
+      await page.evaluate(() => {
+        for (const a of document.getAnimations()) if (a.effect?.getTiming().iterations !== Infinity) a.finish();
+      });
       const css = await stop.evaluate((el) => {
         const cs = getComputedStyle(el);
         const root = getComputedStyle(document.documentElement);

@@ -72,7 +72,12 @@ export function maybeShowRating(ctx: IToolCtx): boolean {
       void fetch('/api/rating', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ stars, text, locale: document.documentElement.lang || 'en', ver: 1 }),
+        body: JSON.stringify({
+          stars,
+          text,
+          locale: document.documentElement.lang || 'en',
+          ver: 1,
+        }),
         keepalive: true,
       })
         .then((res) => {
@@ -83,7 +88,11 @@ export function maybeShowRating(ctx: IToolCtx): boolean {
           });
         })
         .catch(() => {
-          toast(ctx.store, { kind: 'warn', text: t('rating.failed'), id: 'rating' });
+          toast(ctx.store, {
+            kind: 'warn',
+            text: t('rating.failed'),
+            id: 'rating',
+          });
         });
     },
     { signal },
@@ -116,7 +125,19 @@ export function maybeShowRating(ctx: IToolCtx): boolean {
     },
     { signal },
   );
+  const word = dialog.querySelector<HTMLElement>('[data-star-word]');
+  form.addEventListener(
+    'change',
+    () => {
+      const n = Number(new FormData(form).get('stars'));
+      if (word) word.textContent = n ? t('rating.star', { n }) : t('rating.stars');
+      if (error && n) error.textContent = '';
+    },
+    { signal },
+  );
   ctx.store.set({ ui: { dialog: 'rating' } });
-  dialog.showModal();
+  // Extras board: a bottom sheet on phones; from 600 a card in the dock while the page stays live.
+  if (matchMedia('(width < 600px)').matches) dialog.showModal();
+  else dialog.show();
   return true;
 }

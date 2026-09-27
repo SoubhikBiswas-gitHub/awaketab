@@ -47,7 +47,7 @@ describe('@awaketab/wake', () => {
     const p = lock.request();
     await Promise.resolve();
     expect(lock.state).toBe('denied');
-    expect(lock.advice).toBe('battery_saver');
+    expect(lock.advice).toBeNull();
     fake.api.request = async () => new FakeSentinel();
     await vi.advanceTimersByTimeAsync(500);
     await p;
@@ -233,6 +233,16 @@ describe('@awaketab/wake', () => {
         ua: 'Mozilla/5.0 Firefox/120.0',
       }),
     ).toBe('firefox_old');
+    // A refusal with no known cause names none: battery savers and Low Power Mode never refuse a wake lock.
+    for (const ua of [
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1',
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36',
+      'Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0',
+    ]) {
+      expect(
+        classifyDenial(new DOMException('x', 'NotAllowedError'), { visible: true, secure: true, inIframe: false, ua }),
+      ).toBeNull();
+    }
   });
 
   it('T15 retry exhaustion stays denied until request', async () => {

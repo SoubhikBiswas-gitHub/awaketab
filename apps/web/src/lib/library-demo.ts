@@ -35,7 +35,9 @@ export function demoWorld(scenario: TDemoScenario, ua: string): IDemoWorld {
         retry: false,
         navigatorLike: {
           userAgent: ua,
-          wakeLock: { request: () => Promise.reject(new DOMException('Battery saver is on', 'NotAllowedError')) },
+          wakeLock: {
+            request: () => Promise.reject(new DOMException('The request is not allowed', 'NotAllowedError')),
+          },
         },
       },
       hide() {},

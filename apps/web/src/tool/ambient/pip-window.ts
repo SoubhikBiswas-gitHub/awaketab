@@ -82,6 +82,11 @@ export async function togglePip(ctx: IToolCtx): Promise<'document' | 'popup' | '
       html.lang = document.documentElement.lang;
       pip.document.title = t('pip.open');
       slot.style.minBlockSize = `${String(slot.offsetHeight)}px`;
+      // The pill and timer sit deep in the face markup; comments hold their places until the window closes.
+      const pillHome = document.createComment('');
+      const timerHome = document.createComment('');
+      pill.before(pillHome);
+      timer.before(timerHome);
       const body = pip.document.body;
       body.className = 'at-pip-body';
       const top = el('div', { class: 'at-pip-top' });
@@ -136,7 +141,8 @@ export async function togglePip(ctx: IToolCtx): Promise<'document' | 'popup' | '
         unsub();
         offTick();
         offPro();
-        slot.append(pill, timer);
+        pillHome.replaceWith(pill);
+        timerHome.replaceWith(timer);
         slot.style.minBlockSize = '';
         current = null;
         ctx.store.set({ ui: { pip: 'closed' } });

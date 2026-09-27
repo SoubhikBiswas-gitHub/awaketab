@@ -11,7 +11,8 @@ export interface IToolCtx {
   storage: ReturnType<typeof createStorage>;
   params: IUrlParams;
   // Function-typed properties (not methods) so modules can pass them around as callbacks unbound.
-  startPlan: (plan: TPlan, presetId: TPresetId) => Promise<void>;
+  startPlan: (plan: TPlan, presetId: TPresetId, switched?: boolean) => Promise<void>;
+  startCurrent: () => void;
   stop: () => void;
   syncLock: () => void;
   track: (event: string, params?: Record<string, string | number | boolean>) => void;

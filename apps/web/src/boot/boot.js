@@ -21,8 +21,10 @@
     const allowed = ['auto', 'light', 'dark', 'oled'];
     const q = new URLSearchParams(location.search).get('theme');
     const raw = localStorage.getItem(KEY);
-    /** @type {{ theme?: unknown; accent?: unknown } | null} */
-    const saved = raw ? /** @type {{ theme?: unknown; accent?: unknown }} */ (JSON.parse(raw)) : null;
+    /** @type {{ theme?: unknown; accent?: unknown; face?: unknown; keyboardHints?: unknown } | null} */
+    const saved = raw
+      ? /** @type {{ theme?: unknown; accent?: unknown; face?: unknown; keyboardHints?: unknown }} */ (JSON.parse(raw))
+      : null;
     if (q && allowed.includes(q)) theme = q;
     else if (saved && typeof saved.theme === 'string' && allowed.includes(saved.theme)) theme = saved.theme;
     // Mirror of src/tool/accent.ts ACCENTS + LEGACY_ACCENTS (aqua, the default, has no attribute); the island
@@ -38,6 +40,11 @@
     };
     const accent = saved && typeof saved.accent === 'string' ? accents[saved.accent.toUpperCase()] : undefined;
     if (accent) root.dataset.accent = accent;
+    // The remembered clock face (DESIGN.md §7) and the keyboard-hint switch paint before first frame too, so the
+    // tool never flashes the Ring face or a keycap it is about to hide.
+    const face = saved && typeof saved.face === 'string' ? saved.face : '';
+    if (['bold', 'horizon', 'tide'].includes(face)) root.dataset.face = face;
+    if (saved && saved.keyboardHints === false) root.dataset.hints = 'off';
   } catch {
     // private mode
   }
@@ -69,7 +76,9 @@
       if (r instanceof HTMLInputElement) r.checked = r.value === pref;
     }
   };
-  new MutationObserver(sync).observe(root, { attributeFilter: ['data-theme-pref'] });
+  new MutationObserver(sync).observe(root, {
+    attributeFilter: ['data-theme-pref'],
+  });
   addEventListener('change', (e) => {
     const el = e.target;
     if (el instanceof HTMLInputElement && el.name === 'at-theme') choose(el.value);

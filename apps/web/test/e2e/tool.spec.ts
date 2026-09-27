@@ -23,24 +23,34 @@ test('journey 1 autostart shows Screen awake', async ({ page }) => {
 });
 
 test('journey 2 preset 2 h writes a duration session', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/?autostart=0');
   await page.locator('#awaketab-tool[data-booted]').waitFor();
-  await page.getByRole('button', { name: '2 h', exact: true }).click();
-  await expect(page.locator('[data-timer-digits]')).toHaveText(/0[12]:\d{2}:\d{2}/);
+  // A length chip chooses what the lamp button runs (DESIGN.md §5); the button starts it.
+  await page.getByRole('button', { name: '2 hours', exact: true }).click();
+  await expect(page.locator('#awaketab-tool .at-cta')).toHaveText(/Keep awake · 2 h/u);
+  await page.locator('#awaketab-tool .at-cta').click();
+  await expect(page.locator('[data-timer-digits]')).toHaveText(/^(?:1:59:\d{2}|2:00:00)$/u);
   const session = await page.evaluate(() => localStorage.getItem('at.v1.session'));
   expect(session).toContain('"type":"duration"');
 });
 
-test('journey 3 until picker shows Tomorrow when past', async ({ page }) => {
-  await page.goto('/');
+test('journey 3 until panel asks "tomorrow?" for a time that has passed', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-09-27T21:30:00') });
+  await page.goto('/?autostart=0');
   await page.locator('#awaketab-tool[data-booted]').waitFor();
-  await page.getByRole('button', { name: 'Until…' }).click();
-  const dlg = page.locator('dialog[data-dialog="until"]');
-  await expect(dlg).toBeVisible();
-  await expect(dlg.locator('[data-until-summary]')).not.toHaveText('');
-  await dlg.locator('input[name="until"]').fill('00:00');
-  await dlg.locator('input[name="until"]').dispatchEvent('input');
-  await expect(dlg.locator('[data-until-summary]')).toContainText('Tomorrow');
+  await page.getByRole('button', { name: 'Until a time' }).click();
+  // An inline panel replaces the length block, never a modal (DESIGN.md §6).
+  const panel = page.locator('.at-lp-until');
+  await expect(panel).toBeVisible();
+  await expect(page.locator('dialog[open]')).toHaveCount(0);
+  await expect(panel.locator('[data-slot="0"]')).toContainText(/\d{1,2}:\d{2}/u);
+  await panel.locator('[data-until-input]').fill('07:00');
+  await panel.locator('[data-until-input]').dispatchEvent('change');
+  await expect(panel.locator('[data-t="pastQ"]')).toHaveText('7:00 AM is tomorrow. Keep awake until then?');
+  await page.locator('#awaketab-tool .at-cta').click();
+  await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake');
+  const session = await page.evaluate(() => localStorage.getItem('at.v1.session'));
+  expect(session).toContain('"type":"until"');
 });
 
 test('journey 4 hide then show reacquires', async ({ page }) => {
@@ -57,19 +67,138 @@ test('journey 4 hide then show reacquires', async ({ page }) => {
   await expect(page.locator('[data-toasts]')).toContainText('Screen awake again');
 });
 
-test('journey 5 denied shows advice', async ({ page }) => {
+test('journey 5 denied shows the fix: the usual causes when the cause is unknown, Retry and the fallback', async ({
+  page,
+}) => {
   await page.goto('/?autostart=0');
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
   await page.evaluate(() => {
     (window as Window & { __at: { rejectNext: string | null } }).__at.rejectNext = 'NotAllowedError';
   });
-  await page.getByRole('button', { name: '15 min', exact: true }).click();
+  await page.locator('#awaketab-tool .at-cta').click();
   await expect(page.locator('[data-pill-text]')).toHaveText("Blocked — here's the fix", { timeout: 4000 });
-  await expect(page.locator('[data-notice]')).toBeVisible();
-  await expect(page.locator('[data-notice-body]')).not.toHaveText('');
-  await expect(page.locator('[data-timer]')).toBeHidden();
+  const card = page.locator('.at-blocked');
+  await expect(card).toBeVisible();
+  await expect(card).toContainText('Your browser said no');
+  await expect(card.locator('.at-causes')).toBeVisible();
+  // Battery savers and Low Power Mode never refuse a wake lock, so nothing may blame them (docs/04 §3).
+  await expect(page.locator('#awaketab-tool')).not.toContainText(/battery saver|low power mode|energy saver/iu, {
+    useInnerText: true,
+  });
+  await page.locator('#awaketab-tool [data-act="retry"]:visible').click();
+  await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake');
+  await expect(card).toBeHidden();
 });
 
-test('journey 6 timer end chimes, flashes the title and opens extend', async ({ page }) => {
+test('/30m first load with a refused lock stays honest and moves nothing', async ({ page }) => {
+  await page.addInitScript(() => {
+    const w = window as Window & { __at: { rejectNext: string | null }; __cls: number };
+    w.__at.rejectNext = 'NotAllowedError';
+    w.__cls = 0;
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries() as Array<PerformanceEntry & { value: number; hadRecentInput: boolean }>)
+        if (!e.hadRecentInput) w.__cls += e.value;
+    }).observe({ type: 'layout-shift', buffered: true });
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/30m');
+  // The refused auto-start keeps the Ready layout (decision O-70): the pill tells the truth, the face says a tap is
+  // needed and the lamp button is the fix. No card swaps in, so nothing shifts.
+  await expect(page.locator('[data-pill-text]')).toHaveText("Blocked — here's the fix", { timeout: 4000 });
+  await expect(page.locator('#awaketab-tool .at-face-ring [data-t="k"]')).toHaveText('One tap needed');
+  await expect(page.locator('#awaketab-tool .at-cta')).toBeVisible();
+  await expect(page.locator('.at-blocked')).toBeHidden();
+  await expect(page.locator('#awaketab-tool')).not.toContainText(/battery saver|low power mode|energy saver/iu, {
+    useInnerText: true,
+  });
+  await page.waitForTimeout(1000);
+  expect(await page.evaluate(() => (window as Window & { __cls: number }).__cls)).toBe(0);
+  // A refused tap then shows the full card with the usual causes.
+  await page.evaluate(() => {
+    (window as Window & { __at: { rejectNext: string | null } }).__at.rejectNext = 'NotAllowedError';
+  });
+  await page.locator('#awaketab-tool .at-cta').click();
+  await expect(page.locator('.at-blocked .at-causes')).toBeVisible();
+});
+
+test('a toast on a content page has a 44 px close button', async ({ page }) => {
+  await page.goto('/learn/screen-wake-lock-api-guide');
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
+  await page.locator('#awaketab-tool .at-cta').click();
+  await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake');
+  // Changing the length while running switches at once and says so in a toast.
+  await page.locator('#awaketab-tool [data-chips] [data-preset="p60"]').click();
+  const close = page.locator('[data-toasts] .at-toast-x').first();
+  await expect(close).toBeVisible();
+  // The toast rises in with a slight scale (DESIGN.md §8); measure it at rest.
+  await page.evaluate(() => {
+    for (const a of document.getAnimations()) if (a.effect?.getTiming().iterations !== Infinity) a.finish();
+  });
+  const box = await close.boundingBox();
+  expect(box?.width).toBeGreaterThanOrEqual(44);
+  expect(box?.height).toBeGreaterThanOrEqual(44);
+});
+
+test.describe('layout stability: the first load moves nothing (CLS 0, docs/00 §11)', () => {
+  for (const [route, deny] of [
+    ['/', false],
+    ['/', true],
+    ['/30m', false],
+    ['/30m', true],
+  ] as const) {
+    for (const [width, height] of [
+      [390, 844],
+      [412, 823],
+      [820, 1180],
+      [1280, 800],
+    ] as const) {
+      test(`${route} ${deny ? 'refused' : 'granted'} at ${String(width)}`, async ({ page }) => {
+        await page.setViewportSize({ width, height });
+        await page.addInitScript((refuse) => {
+          const w = window as Window & { __at: { rejectNext: string | null }; __cls: number; __moved: string[] };
+          if (refuse) w.__at.rejectNext = 'NotAllowedError';
+          w.__cls = 0;
+          w.__moved = [];
+          type TShift = PerformanceEntry & {
+            value: number;
+            hadRecentInput: boolean;
+            sources: Array<{ node?: Node; previousRect: DOMRectReadOnly; currentRect: DOMRectReadOnly }>;
+          };
+          const inHeader = (node?: Node) =>
+            (node instanceof Element ? node : node?.parentElement)?.closest('.at-site-header') != null;
+          new PerformanceObserver((list) => {
+            for (const e of list.getEntries() as TShift[]) {
+              // A worker under heavy test load can paint the shared header while the parser is still inside it (the
+              // theme switch before its buttons); that is the parser's frame, not the tool moving, so it is left out.
+              if (e.hadRecentInput || e.sources.every((src) => inHeader(src.node))) continue;
+              w.__cls += e.value;
+              for (const src of e.sources) {
+                const el = src.node instanceof Element ? src.node : src.node?.parentElement;
+                w.__moved.push(
+                  `${String(Math.round(e.startTime))} ms ${el?.className.toString() ?? '?'} ${JSON.stringify([src.previousRect, src.currentRect])}`,
+                );
+              }
+            }
+          }).observe({ type: 'layout-shift', buffered: true });
+        }, deny);
+        // Warm the font cache first: a web-font swap that lands late under test load is a network race (B1 keeps it
+        // metric-matched), not the tool moving its own layout, which is what this measures.
+        await page.goto('/about');
+        await page.evaluate(() => document.fonts.ready);
+        await page.goto(route);
+        await expect(page.locator('#awaketab-tool')).toHaveAttribute('data-settled', '');
+        await page.waitForTimeout(1500);
+        const { cls, moved } = await page.evaluate(() => {
+          const w = window as Window & { __cls: number; __moved: string[] };
+          return { cls: w.__cls, moved: w.__moved };
+        });
+        expect(cls, moved.join('\n')).toBe(0);
+      });
+    }
+  }
+});
+
+test("journey 6 timer end chimes, flashes the title and shows the time's-up card", async ({ page }) => {
   // Count synthesised chime tones: a stub AudioContext records every createOscillator() call.
   await page.addInitScript(() => {
     const w = window as Window & { __chimes: number };
@@ -97,18 +226,18 @@ test('journey 6 timer end chimes, flashes the title and opens extend', async ({ 
     }
     Object.defineProperty(window, 'AudioContext', { configurable: true, writable: true, value: FakeAudioContext });
   });
+  // A one-minute custom length (the Custom panel steps in 5 minutes; the stored last length is what it shows).
+  await page.addInitScript(() => {
+    localStorage.setItem('at.v1.settings', JSON.stringify({ v: 1, lastCustomMs: 60_000 }));
+  });
   await page.clock.install();
   await page.goto('/?autostart=0');
   await page.locator('#awaketab-tool[data-booted]').waitFor();
   // A pointerdown on the island primes the AudioContext (docs/04 §10).
   await page.locator('#awaketab-tool h1').click();
-  await page.getByRole('button', { name: 'Custom…' }).click();
-  const dlg = page.locator('dialog[data-dialog="custom"]');
-  await expect(dlg).toBeVisible();
-  await dlg.locator('input[name="days"]').fill('0');
-  await dlg.locator('input[name="hours"]').fill('0');
-  await dlg.locator('input[name="minutes"]').fill('1');
-  await dlg.locator('[data-custom-start]').click();
+  await page.getByRole('button', { name: 'Custom length' }).click();
+  await expect(page.locator('.at-lp-custom')).toBeVisible();
+  await page.locator('#awaketab-tool .at-cta').click();
   await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake');
   const titles: string[] = [];
   await page.clock.fastForward(61_000);
@@ -119,9 +248,11 @@ test('journey 6 timer end chimes, flashes the title and opens extend', async ({ 
     })
     .toBe(true);
   await expect.poll(() => page.evaluate(() => (window as Window & { __chimes: number }).__chimes)).toBeGreaterThan(0);
-  await expect(page.locator('dialog[data-dialog="extend"]')).toBeVisible({ timeout: 4000 });
-  await page.locator('[data-extend-30]').click();
-  await expect(page.locator('[data-timer-digits]')).toHaveText(/00:(29|30|31):\d{2}/);
+  // The time's-up card sits in the dock (canvas `timesup`), not a modal.
+  await expect(page.locator('#awaketab-tool')).toHaveAttribute('data-status', 'timesup', { timeout: 4000 });
+  await expect(page.locator('.at-ask')).toBeVisible();
+  await page.locator('[data-act="add30"]').click();
+  await expect(page.locator('[data-timer-digits]')).toHaveText(/^(?:29|30):\d{2}$/u);
 });
 
 test('journey 7 resume banner after reload', async ({ page }) => {

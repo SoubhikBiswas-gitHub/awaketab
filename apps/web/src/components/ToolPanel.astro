@@ -1,352 +1,1706 @@
 ---
-import { cn } from 'cn';
 import { createT, islandCatalog } from '../i18n/load';
-import type { TLocale } from '../i18n/locales';
-import { badgeVariants } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
-import { Kbd } from '@/components/ui/kbd';
+import {
+  LOCALE_META,
+  LOCALES,
+  localePath,
+  type TLocale,
+} from '../i18n/locales';
 import SponsorCard from './SponsorCard.astro';
 import Button from './shell/Button.astro';
 import StatusPill from './shell/StatusPill.astro';
 
 interface Props {
   locale?: TLocale;
+  embed?: boolean;
+  until?: string | undefined;
+  kicker?: string | undefined;
 }
 
-const { locale = 'en' } = Astro.props;
+const { locale = 'en', embed = false, until, kicker } = Astro.props;
 const t = createT(locale);
-const catalogJson = JSON.stringify(islandCatalog(locale)).replaceAll('<', '\\u003c');
-const chips = [
-  ['p15', t('tool.preset.p15')],
-  ['p30', t('tool.preset.p30')],
-  ['p45', t('tool.preset.p45')],
-  ['p60', t('tool.preset.p60')],
-  ['p120', t('tool.preset.p120')],
-  ['p240', t('tool.preset.p240')],
-] as const;
-
-// shadcn/ui at build time only (docs/03 ADR-013): cva class strings on native elements; the vanilla island
-// (src/tool/**) keeps driving state through data-* hooks, `hidden` and `aria-pressed`. Every control is ≥ 44 px.
-const btnPrimary = cn(buttonVariants(), 'min-h-11 cursor-pointer');
-const btnOutline = cn(buttonVariants({ variant: 'outline' }), 'min-h-11 cursor-pointer');
-const btnDanger = cn(btnOutline, 'text-destructive hover:text-destructive');
-const btnLink = cn(buttonVariants({ variant: 'link' }), 'min-h-11 px-2');
-// The advice link carries a full phrase (Lighthouse link-text); it wraps instead of overflowing at 320 px.
-const btnLinkWrap = cn(btnLink, 'h-auto whitespace-normal');
-const inlineLink = buttonVariants({ variant: 'link', size: 'sm' });
-// Preset chips use the Clear Night chip primitive (shell.css .at-chip): the island toggles aria-pressed, the
-// selected look keys on it. Custom… and Until… open a chooser, so they carry the dashed "choose" affordance.
-const chip = 'at-chip';
-const chooseChip = 'at-chip at-chip-choose';
-const proTag = cn(badgeVariants({ variant: 'secondary' }), 'ms-1');
+const catalogJson = JSON.stringify(islandCatalog(locale)).replaceAll(
+  '<',
+  '\\u003c',
+);
+const presets = ['p15', 'p30', 'p45', 'p60', 'p120', 'p240'] as const;
+const faces = ['ring', 'bold', 'horizon', 'tide'] as const;
 // SponsorCard slot (docs/05 §3.23): rendered only when the flag is on at build time, so CLS stays 0 when off.
 const sponsorEnabled = import.meta.env.PUBLIC_SPONSOR_ENABLED === '1';
-const accents = [
-  ['#087B87', t('settings.accent.aqua'), false],
-  ['#5A47CF', t('settings.accent.violet'), false],
-  ['#167A50', t('settings.accent.mint'), true],
-  ['#255FBD', t('settings.accent.sky'), true],
+const lamps = [
+  ['#087B87', 'aqua', t('settings.accent.aqua'), false],
+  ['#5A47CF', 'violet', t('settings.accent.violet'), false],
+  ['#167A50', 'mint', t('settings.accent.mint'), true],
+  ['#255FBD', 'sky', t('settings.accent.sky'), true],
 ] as const;
-const modes = ['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook'] as const;
-const stars = [1, 2, 3, 4, 5] as const;
 const shortcuts = [
-  ['Space', t('tool.shortcuts.space')],
-  ['1–6', t('tool.shortcuts.presets')],
-  ['0', t('tool.shortcuts.pinf')],
-  ['U', t('tool.shortcuts.until')],
-  ['F', t('tool.shortcuts.fullscreen')],
-  ['D', t('tool.shortcuts.theme')],
-  ['M', t('tool.shortcuts.mode')],
-  ['P', t('tool.shortcuts.pip')],
-  ['Esc', t('tool.shortcuts.esc')],
-  ['?', t('tool.shortcuts.help')],
+  ['Space', '', t('tool.shortcuts.space')],
+  ['1', '6', t('tool.shortcuts.presets')],
+  ['0', '', t('tool.shortcuts.pinf')],
+  ['U', '', t('tool.shortcuts.until')],
+  ['F', '', t('tool.shortcuts.fullscreen')],
+  ['D', '', t('tool.shortcuts.theme')],
+  ['M', '', t('tool.shortcuts.mode')],
+  ['P', '', t('tool.shortcuts.pip')],
+  ['Esc', '', t('tool.shortcuts.esc')],
+  ['?', '', t('tool.shortcuts.help')],
 ] as const;
+
+// Horizon stars and Tide waves: the canvas's deterministic art (Main.dc.html starList / wave), drawn once here.
+function stars(
+  seed: number,
+  n: number,
+): Array<[number, number, number, number]> {
+  let x = seed;
+  const r = () => (x = (x * 16807) % 2147483647) / 2147483647;
+  const out: Array<[number, number, number, number]> = [];
+  for (let i = 0; i < n; i += 1)
+    out.push([
+      Math.round(r() * 354),
+      Math.round(r() * 196),
+      r() > 0.8 ? 1.5 : 1,
+      Number((0.45 + r() * 0.55).toFixed(2)),
+    ]);
+  return out;
+}
+function wave(amp: number, ph: number): string {
+  let d = `M0 28L0 ${(14 + amp * Math.sin(ph)).toFixed(1)}`;
+  for (let x = 4; x <= 716; x += 4)
+    d += `L${String(x)} ${(14 + amp * Math.sin(ph + (x * 2 * Math.PI) / 179)).toFixed(1)}`;
+  return `${d}L716 28Z`;
+}
+const bubbles = [
+  [40, 300, 8, 0],
+  [112, 320, 5, -2.5],
+  [196, 310, 10, -5],
+  [262, 325, 6, -1.2],
+  [318, 305, 7, -6.8],
+] as const;
+const kbd = (k: string) => `<kbd class="at-kbd">${k}</kbd>`;
+const keysHelp = t('settings.shortcuts.help', {
+  space: kbd('Space'),
+  one: kbd('1'),
+  six: kbd('6'),
+  help: kbd('?'),
+});
+const close = t('tool.close');
+const X = 'M6 6l12 12M18 6L6 18';
+const ICON_SHARE =
+  'M12 3.5v11M8 7.5l4-4 4 4M5.5 12v6.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12';
+const here = LOCALE_META[locale];
+const untilWall = until?.replace('-', ':');
 ---
 
-<div class="at-tool" data-panel>
-  <script is:inline type="application/json" data-i18n-catalog set:html={catalogJson}></script>
-  <div data-pip-slot>
-    <svg
-      class="at-ring"
-      data-ring
-      viewBox="0 0 192 192"
-      width="192"
-      height="192"
-      role="img"
-      aria-label={t('tool.ring.label', { status: t('tool.pill.idle') })}
-    >
-      <circle class="at-ring-track" data-ring-track cx="96" cy="96" r="88"></circle>
-      <circle class="at-ring-progress" data-ring-progress cx="96" cy="96" r="88"></circle>
-      <circle class="at-ring-dot" data-ring-dot cx="96" cy="8" r="5"></circle>
-    </svg>
-    <StatusPill as="button" size="M" data-pill aria-live="polite" aria-atomic="true">
-      <output data-pill-text>{t('tool.pill.idle')}</output>
-      <span class="at-pill-extra" data-pill-extra hidden></span>
-    </StatusPill>
-    <div class="at-timer" data-timer role="timer" aria-live="off">
-      <div class="at-timer-digits is-muted" data-timer-digits>--:--:--</div>
-      <div class="at-timer-caption" data-timer-caption></div>
-      <div class="sr-only" data-timer-live aria-live="polite"></div>
-    </div>
-  </div>
-  <div class="at-banner" data-second-tab hidden>
-    <p>{t('tool.secondTab.title')}</p>
-    <div class="at-banner-actions">
-      <button class={btnPrimary} type="button" data-tab-use>{t('tool.secondTab.useThis')}</button>
-      <button class={btnOutline} type="button" data-tab-keep>{t('tool.secondTab.keepOther')}</button>
-    </div>
-  </div>
-  <div class="at-banner" data-lang-suggest hidden>
-    <p data-lang-suggest-text></p>
-    <div class="at-banner-actions">
-      <a class={btnPrimary} data-lang-suggest-accept href="/">{t('i18n.suggest.accept')}</a>
-      <button class={btnOutline} type="button" data-lang-suggest-dismiss>{t('i18n.suggest.dismiss')}</button>
-    </div>
-  </div>
-  <div class="at-banner" data-resume hidden>
-    <p data-resume-title>{t('tool.resume.title', { time: '' })}</p>
-    <div class="at-banner-actions">
-      <button class={btnPrimary} type="button" data-resume-accept>{t('tool.resume.accept')}</button>
-      <button class={btnOutline} type="button" data-resume-dismiss>{t('tool.resume.dismiss')}</button>
-    </div>
-  </div>
-  <div class="at-notice" data-notice hidden>
-    <h2 data-notice-title></h2>
-    <p data-notice-body></p>
-    <div class="at-notice-actions">
-      <button class={btnPrimary} type="button" data-notice-retry>{t('tool.advice.retry')}</button>
-      <button class={btnOutline} type="button" data-notice-fallback>{t('tool.fallback.consent.accept')}</button>
-      <a class={btnLinkWrap} data-notice-learn href="/learn">{t('tool.advice.learn')}</a>
-    </div>
-  </div>
-  <div class="at-chips" data-chips role="group" aria-label={t('tool.presets')}>
-    {
-      chips.map(([id, label]) => (
-        <button class={chip} type="button" data-preset={id} aria-pressed="false">
-          {label}
-        </button>
-      ))
-    }
-    <button class={chip} type="button" data-preset="pinf" aria-pressed="false">
-      {t('tool.preset.pinf')}
-      <span class="sr-only">{t('tool.preset.pinf.sr')}</span>
-    </button>
-    <button class={chooseChip} type="button" data-preset="custom" aria-pressed="false">{t('tool.preset.custom')}</button>
-    <button class={chooseChip} type="button" data-preset="until" aria-pressed="false">{t('tool.preset.until')}</button>
-  </div>
-  <div class="at-stop-slot">
-    <Button class="at-stop" variant="stop" data-stop hidden>{t('tool.ring.stop')}</Button>
-  </div>
-  {
-    sponsorEnabled && (
-      <SponsorCard placement="idle" label={t('sponsor.label')} />
-    )
-  }
-  <section class="at-toasts" data-toasts aria-label={t('tool.notifications')}></section>
+<div class="at-tool" data-panel id="content" tabindex="-1">
+  <script
+    is:inline
+    type="application/json"
+    data-i18n-catalog
+    set:html={catalogJson}
+  />
+  <span class="at-sr" role="status" data-t="announce"></span>
 
-  <dialog data-dialog="custom" aria-labelledby="custom-title">
-    <h2 id="custom-title">{t('tool.custom.title')}</h2>
-    <form class="at-fields" method="dialog">
-      <label>{t('tool.custom.days')} <input class="at-input" name="days" type="number" inputmode="numeric" min="0" max="7" value="0" /></label>
-      <label>{t('tool.custom.hours')} <input class="at-input" name="hours" type="number" inputmode="numeric" min="0" max="23" value="0" /></label>
-      <label>{t('tool.custom.minutes')} <input class="at-input" name="minutes" type="number" inputmode="numeric" min="0" max="59" value="30" /></label>
-      <p data-custom-summary></p>
-      <p class="at-error" data-custom-error></p>
-      <div class="at-banner-actions">
-        <button class={btnPrimary} type="button" data-custom-start>{t('tool.custom.start')}</button>
-        <button class={btnOutline} type="button" data-custom-cancel>{t('tool.custom.cancel')}</button>
-      </div>
-    </form>
-  </dialog>
-  <dialog data-dialog="until" aria-labelledby="until-title">
-    <h2 id="until-title">{t('tool.until.title')}</h2>
-    <form class="at-fields" method="dialog">
-      <label>{t('tool.until.title')} <input class="at-input" name="until" type="time" /></label>
-      <p data-until-summary></p>
-      <div class="at-banner-actions">
-        <button class={btnPrimary} type="button" data-until-start>{t('tool.until.start')}</button>
-        <button class={btnOutline} type="button" data-until-cancel>{t('tool.until.cancel')}</button>
-      </div>
-    </form>
-  </dialog>
-  <dialog class="at-sheet" data-dialog="settings" aria-labelledby="settings-title">
-    <h2 id="settings-title">{t('settings.title')}</h2>
-    <form class="at-fields">
-      <fieldset>
-        <legend>{t('settings.theme')}</legend>
-        <label><input type="radio" name="theme" value="auto" checked /> {t('settings.theme.auto')}</label>
-        <label><input type="radio" name="theme" value="light" /> {t('settings.theme.light')}</label>
-        <label><input type="radio" name="theme" value="dark" /> {t('settings.theme.dark')}</label>
-        <label><input type="radio" name="theme" value="oled" /> {t('settings.theme.oled')}</label>
-      </fieldset>
-      <fieldset class="at-accents">
-        <legend>{t('settings.accent')}</legend>
-        {
-          accents.map(([hex, label, pack]) => (
-            <label>
-              <input type="radio" name="accent" value={hex} checked={hex === '#087B87'} />
-              <span class="at-swatch" style={`--at-swatch:${hex}`} aria-hidden="true"></span>
-              {label}
-              {pack && <span class={proTag}>{t('pro.badge')}</span>}
-            </label>
-          ))
-        }
-        <p data-pack-gate>{t('settings.accent.packs')}</p>
-      </fieldset>
-      <label>{t('settings.defaultPreset')}
-        <select class="at-input" name="defaultPreset">
-          <option value="p15">{t('tool.preset.p15')}</option>
-          <option value="p30">{t('tool.preset.p30')}</option>
-          <option value="p45">{t('tool.preset.p45')}</option>
-          <option value="p60">{t('tool.preset.p60')}</option>
-          <option value="p120">{t('tool.preset.p120')}</option>
-          <option value="p240">{t('tool.preset.p240')}</option>
-          <option value="pinf">{t('tool.preset.pinf.sr')}</option>
-        </select>
-      </label>
-      <label>{t('settings.sound')}
-        <select class="at-input" name="sound">
-          <option value="chime">{t('settings.sound.chime')}</option>
-          <option value="none">{t('settings.sound.none')}</option>
-        </select>
-      </label>
-      <label><input type="checkbox" name="notifications" /> {t('settings.notifications')}</label>
-      <p data-notifications-note hidden></p>
-      <fieldset>
-        <legend>{t('settings.endBehaviour')}</legend>
-        <label><input type="radio" name="endBehaviour" value="prompt_extend" checked /> {t('settings.endBehaviour.prompt_extend')}</label>
-        <label><input type="radio" name="endBehaviour" value="stop" /> {t('settings.endBehaviour.stop')}</label>
-      </fieldset>
-      <div class="at-fields" data-battery-fields>
-        <label><input type="checkbox" name="batteryAuto" /> {t('settings.battery.autoStop')}</label>
-        <label><span data-battery-label>{t('settings.battery.threshold', { percent: 15 })}</span>
-          <input type="range" name="batteryThreshold" min="5" max="30" value="15" />
-        </label>
-      </div>
-      <p data-battery-unavailable hidden>{t('settings.battery.unavailable')}</p>
-      <fieldset>
-        <legend>{t('settings.ambient')}</legend>
-        <label>{t('settings.ambient.mode')}
-          <select class="at-input" name="ambientMode">
-            {modes.map((m) => <option value={m}>{t(`ambient.mode.${m}`)}</option>)}
-          </select>
-        </label>
-        <label>{t('settings.ambient.message')}
-          <input class="at-input" name="ambientMessage" maxlength="80" autocomplete="off" placeholder={t('ambient.message.placeholder')} />
-        </label>
-        <p data-message-gate>{t('tool.toast.proMessage')}</p>
-        <label><input type="checkbox" name="showSeconds" /> {t('settings.ambient.seconds')}</label>
-        <label>{t('settings.ambient.clock')}
-          <select class="at-input" name="clock24h">
-            <option value="auto">{t('settings.ambient.clock.auto')}</option>
-            <option value="24">{t('settings.ambient.clock24h')}</option>
-            <option value="12">{t('settings.ambient.clock12h')}</option>
-          </select>
-        </label>
-      </fieldset>
-      <label><input type="checkbox" name="telemetry" checked /> {t('settings.telemetry')}</label>
-      <p>{t('settings.telemetry.help')}</p>
-      <label><input type="checkbox" name="keyboardShortcuts" checked /> {t('settings.shortcuts')}</label>
-      <label><input type="checkbox" name="keyboardHints" checked /> {t('settings.hints')}</label>
-      <p><a class={inlineLink} href="/pro">{t('settings.pro')}</a> · <a class={inlineLink} href="/pro/manage">{t('settings.pro.manage')}</a> · <button class={btnOutline} type="button" data-open-pro>{t('pro.see')}</button></p>
-      <div class="at-banner-actions">
-        <button class={btnOutline} type="button" data-settings-close>{t('settings.close')}</button>
-        <button class={btnDanger} type="button" data-settings-reset>{t('settings.reset')}</button>
-      </div>
-    </form>
-  </dialog>
-  <dialog data-dialog="shortcuts" aria-labelledby="shortcuts-title">
-    <h2 id="shortcuts-title">{t('tool.shortcuts.title')}</h2>
-    <dl class="m-0 mb-4 grid gap-2">
+  <div class="at-tabs at-tabs-early">
+    <div
+      class="at-seg at-faces"
+      role="tablist"
+      aria-label={t('tool.face.label')}
+    >
+      <span class="at-seg-ind" aria-hidden="true"></span>
       {
-        shortcuts.map(([key, label]) => (
-          <div class="flex items-center gap-3">
-            <dt class="min-w-12"><Kbd>{key}</Kbd></dt>
-            <dd class="m-0 text-sm text-muted-foreground">{label}</dd>
-          </div>
+        faces.map((f) => (
+          <button
+            class="at-seg-item"
+            type="button"
+            role="tab"
+            data-face={f}
+            aria-selected={f === 'ring' ? 'true' : 'false'}
+          >
+            {t(`tool.face.${f}`)}
+          </button>
         ))
       }
-    </dl>
-    <button class={btnOutline} type="button" data-shortcuts-close>{t('settings.close')}</button>
-  </dialog>
-  <dialog data-dialog="share" aria-labelledby="share-title">
-    <h2 id="share-title">{t('tool.share.title')}</h2>
-    <div class="at-banner-actions">
-      <input class="at-input flex-1" data-share-url readonly aria-labelledby="share-title" />
-      <button class={btnPrimary} type="button" data-share-copy>{t('tool.share.copy')}</button>
     </div>
-  </dialog>
-  <dialog data-dialog="extend" aria-labelledby="extend-title">
-    <h2 id="extend-title">{t('tool.extend.title')}</h2>
-    <p data-extend-auto></p>
-    <div class="at-banner-actions">
-      <button class={btnOutline} type="button" data-extend-15>{t('tool.extend.add15')}</button>
-      <button class={btnOutline} type="button" data-extend-30>{t('tool.extend.add30')}</button>
-      <button class={btnOutline} type="button" data-extend-60>{t('tool.extend.add60')}</button>
-      <button class={btnDanger} type="button" data-extend-stop>{t('tool.extend.stop')}</button>
+  </div>
+
+  <div class="at-pip-slot" data-pip-slot>
+    <div class="at-pillrow">
+      <div class="at-pillline">
+        <span class="at-pillwrap">
+          <StatusPill
+            as="output"
+            data-pill
+            aria-live="polite"
+            aria-atomic="true"
+            ><span data-pill-text>{t('tool.pill.idle')}</span></StatusPill
+          >
+          <span class="at-ig-pill" aria-hidden="true"></span>
+        </span>
+        {
+          embed && kicker && (
+            <span class="at-kicker at-card-kicker">{kicker}</span>
+          )
+        }
+        <button
+          class="at-why-btn"
+          type="button"
+          data-act="why"
+          aria-expanded="false"
+          aria-controls="at-why"
+          aria-label={t('tool.why.open')}
+        >
+          <span class="at-why-text">{t('tool.why.open')}</span>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            ><circle cx="12" cy="12" r="9"></circle><path
+              d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6M12 17.2v.1"
+            ></path></svg
+          >
+        </button>
+      </div>
+      <span class="at-deferred" id="at-deferred">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          ><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path
+            d="M3 9.5h18M7 7.2h.01M10 7.2h.01"></path></svg
+        >
+        {t('tool.pill.idle.deferred')}
+      </span>
     </div>
-    {sponsorEnabled && <SponsorCard placement="extend" label={t('sponsor.label')} />}
-  </dialog>
-  <dialog data-dialog="pro" aria-labelledby="pro-sheet-title">
-    <h2 id="pro-sheet-title">{t('pro.title')}</h2>
-    <p>{t('pro.card')}</p>
-    <p><a class={inlineLink} href="/pro">{t('pro.cta')}</a> · <a class={inlineLink} href="/pro/activate">{t('pro.activate')}</a></p>
-    <button class={btnOutline} type="button" data-pro-close>{t('settings.close')}</button>
-  </dialog>
-  <dialog class="at-sheet" data-dialog="stats" aria-labelledby="stats-title">
-    <h2 id="stats-title">{t('stats.open')}</h2>
-    <p data-stats-empty hidden>{t('stats.empty')}</p>
-    <dl class="at-stats">
+
+    <div class="at-face-cell">
+      <div class="at-mini">
+        <div class="at-digits" role="timer" data-l="timer">
+          <span data-t="a">30</span><span class="at-secs" data-t="b">:00</span>
+        </div>
+        <p class="at-meta">
+          <span data-t="ma">{t('tool.meta.endsAt')}</span>
+          <span class="at-meta-b" data-t="mb"></span>
+        </p>
+      </div>
+
+      <section class="at-why" id="at-why" aria-labelledby="at-why-h">
+        <div class="at-why-head">
+          <h2 id="at-why-h">{t('tool.why.title')}</h2>
+          <button
+            class="at-icon-button at-why-x"
+            type="button"
+            data-act="why"
+            aria-label={t('tool.why.back')}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"><path d={X}></path></svg
+            >
+          </button>
+        </div>
+        <ul class="at-why-list" data-why-list></ul>
+      </section>
+
+      <section class="at-receipt" aria-labelledby="at-done-k">
+        <h2 class="at-kicker" id="at-done-k">{t('tool.kicker.complete')}</h2>
+        <p class="at-receipt-big">
+          <span class="at-receipt-num"
+            ><span data-t="rcBig"></span><span
+              class="at-receipt-unit"
+              data-t="rcUnit"></span></span
+          >
+          <span class="at-receipt-words" data-t="rcWords"></span>
+        </p>
+        <div class="at-receipt-line">
+          <div class="at-receipt-bar" role="img" data-l="rcAria" data-rc-bar>
+          </div>
+          <div class="at-receipt-ends" aria-hidden="true">
+            <span data-t="rcFrom"></span><span data-t="rcTo"></span>
+          </div>
+          <ul class="at-receipt-legend">
+            <li>
+              <span class="at-lg-held" aria-hidden="true"></span><span
+                data-t="rcHeld"></span>
+            </li>
+            <li class="at-lg-p">
+              <span class="at-lg-paused" aria-hidden="true"></span><span
+                data-t="rcPaused"></span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="at-dial">
+        <div class="at-final-glow" aria-hidden="true"></div>
+        <div class="at-face at-face-ring">
+          <div class="at-ring">
+            <svg
+              class="at-ring-art"
+              viewBox="0 0 320 320"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <defs
+                ><filter
+                  id="at-ring-glow"
+                  x="-20%"
+                  y="-20%"
+                  width="140%"
+                  height="140%"
+                  ><feGaussianBlur stdDeviation="7"></feGaussianBlur></filter
+                ></defs
+              >
+              <circle class="at-ticks" cx="160" cy="160" r="129"></circle>
+              <circle class="at-track" cx="160" cy="160" r="146"></circle>
+              <g transform="rotate(-90 160 160)">
+                <circle
+                  class="at-arc at-arc-glow"
+                  cx="160"
+                  cy="160"
+                  r="146"
+                  filter="url(#at-ring-glow)"></circle>
+                <circle class="at-arc" cx="160" cy="160" r="146"></circle>
+              </g>
+              <g class="at-tip">
+                <circle class="at-tip-halo" cx="160" cy="14" r="7"></circle>
+                <circle class="at-ig-tip" cx="160" cy="14" r="9"></circle>
+                <circle class="at-tip-dot" cx="160" cy="14" r="5.5"></circle>
+              </g>
+            </svg>
+            <div class="at-sweep" aria-hidden="true"></div>
+            <div class="at-face-text">
+              <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
+              <div class="at-digits" role="timer" data-timer data-l="timer">
+                <span data-timer-digits
+                  ><span data-t="a">30</span><span class="at-secs" data-t="b"
+                    >:00</span
+                  ></span>
+              </div>
+              <div class="at-meta">
+                <span data-t="ma">{t('tool.meta.endsAt')}</span>
+                <span class="at-meta-b" data-t="mb"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="at-face at-face-bold">
+          <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
+          <div class="at-digits" role="timer" data-l="timer">
+            <span data-t="a">30</span><span class="at-secs" data-t="b"
+              >:00</span>
+          </div>
+          <div class="at-bar-track" aria-hidden="true">
+            <div class="at-bar-fill"><div class="at-shim"></div></div>
+          </div>
+          <div class="at-bold-meta">
+            <span
+              ><span data-t="ma">{t('tool.meta.endsAt')}</span>
+              <span class="at-nowrap" data-t="mb"></span></span
+            ><span data-t="of"></span>
+          </div>
+        </div>
+
+        <div class="at-face at-face-horizon">
+          <div class="at-hz-warm" aria-hidden="true"></div>
+          <svg
+            class="at-hz-stars"
+            viewBox="0 0 358 340"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <g class="at-tw"
+              >{
+                stars(7, 26).map(([x, y, r, a]) => (
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r={r}
+                    fill={`rgba(255,255,255,${String(a)})`}
+                  />
+                ))
+              }</g
+            >
+            <g class="at-tw2"
+              >{
+                stars(91, 18).map(([x, y, r, a]) => (
+                  <circle
+                    cx={x}
+                    cy={y}
+                    r={r}
+                    fill={`rgba(255,255,255,${String(a)})`}
+                  />
+                ))
+              }</g
+            >
+          </svg>
+          <div class="at-cloud" aria-hidden="true"></div>
+          <div class="at-cloud at-cloud2" aria-hidden="true"></div>
+          <div class="at-orb" aria-hidden="true"></div>
+          <svg
+            class="at-hz-hill"
+            viewBox="0 0 358 26"
+            aria-hidden="true"
+            focusable="false"
+            ><path
+              d="M0 26V16C30 8 58 6 92 12C130 19 150 6 196 8C240 10 262 18 300 13C322 10 342 9 358 12V26Z"
+            ></path></svg
+          >
+          <div class="at-hz-water" aria-hidden="true"></div>
+          <div class="at-hz-glint" aria-hidden="true"><div></div></div>
+          <div class="at-hz-line" aria-hidden="true"></div>
+          <div class="at-hz-text">
+            <div class="at-digits" role="timer" data-l="timer">
+              <span data-t="a">30</span><span class="at-secs" data-t="b"
+                >:00</span>
+            </div>
+            <div class="at-hz-meta">
+              <span class="at-hz-name" data-t="hz"></span>
+              <span class="at-hz-when"
+                ><span data-t="ma">{t('tool.meta.endsAt')}</span>
+                <span class="at-nowrap" data-t="mb"></span></span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="at-face at-face-tide">
+          <div class="at-tide-water" aria-hidden="true">
+            <svg
+              class="at-wave2"
+              viewBox="0 0 716 28"
+              preserveAspectRatio="none"
+              focusable="false"><path d={wave(8, 1.6)}></path></svg
+            >
+            <svg
+              class="at-wave1"
+              viewBox="0 0 716 28"
+              preserveAspectRatio="none"
+              focusable="false"><path d={wave(6, 0)}></path></svg
+            >
+            <div class="at-tide-body"></div>
+            <div class="at-bubbles">
+              {
+                bubbles.map(([x, y, s, d]) => (
+                  <span
+                    style={`--x:${String(x)};--y:${String(y)};--s:${String(s)};animation-delay:${String(d)}s`}
+                  />
+                ))
+              }
+            </div>
+          </div>
+          <div class="at-tide-text">
+            <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
+            <div class="at-digits" role="timer" data-l="timer">
+              <span data-t="a">30</span><span data-t="b">:00</span>
+            </div>
+            <div class="at-meta">
+              <span data-t="ma">{t('tool.meta.endsAt')}</span>
+              <span class="at-nowrap" data-t="mb"></span>
+            </div>
+          </div>
+          <div class="at-tide-text at-tide-under" aria-hidden="true">
+            <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
+            <div class="at-digits">
+              <span data-t="a">30</span><span data-t="b">:00</span>
+            </div>
+            <div class="at-meta">
+              <span data-t="ma">{t('tool.meta.endsAt')}</span>
+              <span class="at-nowrap" data-t="mb"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="at-ig-face" aria-hidden="true"></span>
+      <span class="at-lamp-off" aria-hidden="true"></span>
+    </div>
+  </div>
+
+  <div class="at-note">
+    <div class="at-card-tone at-blocked" role="alert">
+      <h2>{t('tool.blocked.title')}</h2>
+      <p class="at-cause" data-t="cause"></p>
+      <ul class="at-causes">
+        <li>
+          <span
+            ><b>{t('tool.blocked.safari')}</b>
+            {t('tool.blocked.safari.fix')}</span>
+        </li>
+        <li>
+          <span
+            ><b>{t('tool.blocked.hidden')}</b>
+            {t('tool.blocked.hidden.fix')}</span>
+        </li>
+        <li>
+          <span
+            ><b>{t('tool.blocked.firefox')}</b>
+            {t('tool.blocked.firefox.fix')}</span>
+        </li>
+      </ul>
+      <p class="at-then">{t('tool.blocked.then')}</p>
+      <p>{t('tool.blocked.fallback')}</p>
+    </div>
+    <div class="at-card-tone at-lowbatt" role="status">
+      <h2>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          ><rect x="2.5" y="7" width="17" height="10" rx="2.5"></rect><path
+            d="M21.5 10.5v3"></path><path d="M5.5 10v4" stroke-width="2.6"
+          ></path></svg
+        >
+        {t('tool.battery.title')}
+      </h2>
+      <p data-t="battBody"></p>
+    </div>
+    <section
+      class="at-install-card at-card"
+      aria-labelledby="at-install-h"
+      data-install-card
+      hidden
+    >
+      <div class="at-install-head">
+        <span class="at-install-mark" aria-hidden="true"
+          ><svg viewBox="0 0 48 48"
+            ><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle
+              cx="24"
+              cy="9"
+              r="5"></circle></svg
+          ></span
+        >
+        <h2 id="at-install-h">{t('pwa.install')}</h2>
+      </div>
+      <p data-install-body>{t('pwa.card.body')}</p>
+      <div class="at-acts">
+        <Button data-install-later>{t('pwa.card.later')}</Button>
+        <Button variant="stop" size="md" data-install-now
+          >{t('pwa.install.short')}</Button
+        >
+      </div>
+    </section>
+    <div class="at-noterow">
+      {
+        untilWall && (
+          <p class="at-whenline">
+            <svg
+              class="at-when-moon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />
+            </svg>
+            <svg
+              class="at-when-sun"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <>
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
+              </>
+            </svg>
+            <span data-t="whenLine" />
+          </p>
+        )
+      }
+      <p class="at-note-text" data-t="note">{t('tool.note.ready')}</p>
+      <button
+        class="at-why-btn at-why-note"
+        type="button"
+        data-act="why"
+        aria-expanded="false"
+        aria-controls="at-why">{t('tool.why.open')}</button
+      >
+    </div>
+  </div>
+
+  <section class="at-toasts" data-toasts aria-label={t('tool.notifications')}>
+  </section>
+
+  <div class="at-dock">
+    <span class="at-ig-dock" aria-hidden="true"></span>
+    <span class="at-ig-travel" aria-hidden="true"></span>
+    {
+      untilWall ? (
+        <div class="at-untilchips">
+          <a class="at-chip at-chip-on" href="#times" data-l="untilChip">
+            <>
+              <span class="at-dot" aria-hidden="true" />
+              <span data-t="untilChip" />
+            </>
+          </a>
+          <a class="at-chip at-chip-choose" href={localePath(locale, '/')}>
+            {t('tool.until.pick')}
+          </a>
+        </div>
+      ) : (
+        <div
+          class="at-len"
+          data-chips
+          role="group"
+          aria-label={t('tool.presets')}
+        >
+          <div class="at-seg at-bar">
+            <span class="at-seg-ind" aria-hidden="true" />
+            {presets.map((id) => (
+              <button
+                class="at-seg-item at-chip"
+                type="button"
+                data-preset={id}
+                aria-pressed="false"
+                aria-label={t(`tool.preset.${id}.sr`)}
+              >
+                {t(`tool.preset.${id}`)}
+              </button>
+            ))}
+            <button
+              class="at-seg-item at-chip"
+              type="button"
+              data-preset="pinf"
+              aria-pressed="false"
+              aria-label={t('tool.preset.pinf.sr')}
+            >
+              {t('tool.preset.pinf')}
+            </button>
+          </div>
+          <div class="at-choose">
+            <button
+              class="at-chip at-chip-choose at-c-until"
+              type="button"
+              data-preset="until"
+              aria-pressed="false"
+              data-l="untilAria"
+              aria-label={t('tool.chip.untilAria')}
+            >
+              <>
+                <span data-t="untilLong">{t('tool.preset.until')}</span>
+                <span data-t="untilShort">{t('tool.preset.until')}</span>
+              </>
+            </button>
+            <button
+              class="at-chip at-chip-choose at-c-custom"
+              type="button"
+              data-preset="custom"
+              aria-pressed="false"
+              data-l="customAria"
+              aria-label={t('tool.chip.customAria')}
+            >
+              <span data-t="custom">{t('tool.preset.custom')}</span>
+            </button>
+            <button
+              class="at-chip at-chip-choose at-c-more"
+              type="button"
+              data-act="more"
+              aria-pressed="false"
+              data-l="moreAria"
+              aria-label={t('tool.chip.moreAria')}
+            >
+              <span data-t="more">{t('tool.chip.more')}</span>
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    <div class="at-lpanel at-lp-more">
+      <div class="at-lp-head">
+        <span class="at-lp-title" id="at-more-title"
+          >{t('tool.more.title')}</span
+        >
+        <button
+          class="at-icon-button"
+          type="button"
+          data-act="close"
+          aria-label={close}
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"><path d={X}></path></svg
+          ></button
+        >
+      </div>
+      <div class="at-lp-two" role="group" aria-labelledby="at-more-title">
+        <button
+          class="at-chip at-chip-choose at-c-until"
+          type="button"
+          data-preset="until"
+          aria-pressed="false"
+          ><span data-t="untilLong">{t('tool.preset.until')}</span></button
+        >
+        <button
+          class="at-chip at-chip-choose at-c-custom"
+          type="button"
+          data-preset="custom"
+          aria-pressed="false"
+          ><span data-t="custom">{t('tool.preset.custom')}</span></button
+        >
+      </div>
+    </div>
+
+    <div class="at-lpanel at-lp-until">
+      <div class="at-lp-head">
+        <label class="at-lp-title" for="at-until-time"
+          >{t('tool.until.title')}</label
+        >
+        <div class="at-lp-tools">
+          <input
+            class="at-input at-until-input"
+            id="at-until-time"
+            type="time"
+            data-until-input
+            aria-describedby="at-until-hint"
+          />
+          <button
+            class="at-icon-button"
+            type="button"
+            data-act="close"
+            aria-label={close}
+            ><svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"><path d={X}></path></svg
+            ></button
+          >
+        </div>
+      </div>
+      <span class="at-sr" id="at-until-hint">{t('tool.until.hint')}</span>
+      <div class="at-past" role="status">
+        <p data-t="pastQ"></p>
+        <div class="at-past-row">
+          <span data-t="pastIn"></span><button
+            type="button"
+            data-act="changeTime">{t('tool.until.change')}</button>
+        </div>
+      </div>
+      <div class="at-slots">
+        {
+          [0, 1, 2, 3].map((i) => (
+            <button
+              class="at-slot"
+              type="button"
+              data-slot={i}
+              aria-pressed="false"
+            >
+              <>
+                <span data-t={`slot${String(i)}`} />
+                <span class="at-slot-sub" data-t={`slotSub${String(i)}`} />
+              </>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="at-lpanel at-lp-custom">
+      <div class="at-lp-head">
+        <span class="at-lp-title">{t('tool.custom.title')}</span>
+        <button
+          class="at-icon-button"
+          type="button"
+          data-act="close"
+          aria-label={close}
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"><path d={X}></path></svg
+          ></button
+        >
+      </div>
+      <div class="at-stepper">
+        <button
+          type="button"
+          data-act="less"
+          data-l="lessAria"
+          aria-label={t('tool.custom.less5')}
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"><path d="M5 12h14"></path></svg
+          ></button
+        >
+        <output data-t="customWords" aria-live="polite"></output>
+        <button
+          type="button"
+          data-act="more5"
+          data-l="moreAria5"
+          aria-label={t('tool.custom.more5')}
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"><path d="M5 12h14M12 5v14"></path></svg
+          ></button
+        >
+      </div>
+    </div>
+
+    <section
+      class="at-dockcard at-card"
+      aria-labelledby="at-resume-h"
+      data-resume
+      hidden
+    >
+      <div class="at-dockcard-head">
+        <span class="at-dockcard-icon at-dockcard-lamp" aria-hidden="true"
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><path
+              d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4.5v3.6h3.6M12 8.5V12l2.5 1.8"
+            ></path></svg
+          ></span
+        >
+        <div>
+          <h2 id="at-resume-h">
+            <span data-resume-title></span>
+            <span class="at-dockcard-sub" data-resume-until></span>
+          </h2>
+          <p data-resume-body></p>
+        </div>
+      </div>
+      <div class="at-acts">
+        <Button data-resume-dismiss>{t('tool.resume.dismiss')}</Button>
+        <Button variant="primary" data-resume-accept
+          >{t('tool.resume.accept')}</Button
+        >
+      </div>
+    </section>
+
+    <section
+      class="at-dockcard at-card"
+      aria-labelledby="at-second-h"
+      data-second-tab
+      hidden
+    >
+      <div class="at-dockcard-head">
+        <span class="at-dockcard-icon" aria-hidden="true"
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linejoin="round"
+            ><rect x="3" y="7.5" width="13" height="12" rx="2.5"></rect><path
+              d="M7.5 4.5h11a2.5 2.5 0 0 1 2.5 2.5v9"></path></svg
+          ></span
+        >
+        <div>
+          <h2 id="at-second-h">{t('tool.secondTab.title')}</h2>
+          <p>{t('tool.secondTab.body')}</p>
+        </div>
+      </div>
+      <div class="at-acts at-acts-second">
+        <Button data-tab-keep>{t('tool.secondTab.keepOther')}</Button>
+        <Button variant="primary" glyph={false} data-tab-use
+          >{t('tool.secondTab.useThis')}</Button
+        >
+      </div>
+    </section>
+
+    <dialog
+      class="at-float-sheet at-docked"
+      data-dialog="share"
+      aria-labelledby="share-title"
+    >
+      <span class="at-grab" aria-hidden="true"></span>
+      <div class="at-fs-bar">
+        <div class="at-fs-titles">
+          <h2 id="share-title">{t('tool.share.title')}</h2>
+          <p data-share-label></p>
+        </div>
+        <button
+          class="at-icon-button"
+          type="button"
+          data-share-close
+          aria-label={close}
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"><path d={X}></path></svg
+          ></button
+        >
+      </div>
+      <div class="at-field">
+        <label class="at-caption" for="at-share-url"
+          >{t('tool.share.link')}</label
+        >
+        <div class="at-share-row">
+          <input
+            class="at-input at-share-url"
+            id="at-share-url"
+            data-share-url
+            readonly
+          />
+          <button
+            class="at-button at-button-sm at-copy"
+            type="button"
+            data-share-copy
+            aria-label={t('tool.share.copyAria')}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              ><path class="at-copy-i" d="M9 9h10.5v10.5H9zM15 9V4.5H4.5V15H9"
+              ></path><path class="at-copied-i" d="M5 12.5l4.5 4.5L19 7.5"
+              ></path></svg
+            >
+            <span class="at-copy-t">{t('tool.share.copy')}</span><span
+              class="at-copied-t">{t('tool.share.copied')}</span
+            >
+          </button>
+        </div>
+      </div>
+      <label class="at-switchrow">
+        <span class="at-switch-text"
+          ><span class="at-label">{t('tool.share.autostart')}</span><span
+            class="at-caption">{t('tool.share.autostartHelp')}</span
+          ></span
+        >
+        <input
+          class="at-switch"
+          type="checkbox"
+          role="switch"
+          data-share-auto
+        />
+      </label>
+      <button class="at-button" type="button" data-share-native>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"><path d={ICON_SHARE}></path></svg
+        >
+        {t('tool.share.native')}
+      </button>
+      <p class="at-caption at-share-msg" role="status" data-share-msg></p>
+    </dialog>
+
+    <dialog
+      class="at-float-sheet at-docked"
+      data-dialog="rating"
+      aria-labelledby="rating-title"
+    >
+      <span class="at-grab" aria-hidden="true"></span>
+      <h2 id="rating-title">{t('rating.title')}</h2>
+      <form class="at-rating" data-rating-form>
+        <div class="at-rate-top">
+          <fieldset class="at-stars">
+            <legend class="sr-only">{t('rating.stars')}</legend>
+            {
+              [1, 2, 3, 4, 5].map((n) => (
+                <label>
+                  <input
+                    class="sr-only"
+                    type="radio"
+                    name="stars"
+                    value={String(n)}
+                  />
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 17l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" />
+                  </svg>
+                  <span class="sr-only">{t('rating.star', { n })}</span>
+                </label>
+              ))
+            }
+          </fieldset>
+          <span class="at-caption" data-star-word>{t('rating.stars')}</span>
+        </div>
+        <p class="at-error" data-rating-error role="alert"></p>
+        <div class="at-field">
+          <label class="at-rate-label" for="at-rate-note"
+            >{t('rating.text')}</label
+          >
+          <textarea
+            class="at-input at-textarea"
+            id="at-rate-note"
+            name="text"
+            maxlength="280"
+            rows="3"></textarea>
+        </div>
+        <button class="at-button at-button-stop" type="submit"
+          >{t('rating.send')}</button
+        >
+        <div class="at-rate-later">
+          <button
+            class="at-button at-button-quiet at-button-sm"
+            type="button"
+            data-rating-later>{t('rating.later')}</button
+          >
+          <button
+            class="at-button at-button-quiet at-button-sm"
+            type="button"
+            data-rating-never>{t('rating.never')}</button
+          >
+        </div>
+      </form>
+    </dialog>
+
+    <Button
+      class="at-cta"
+      variant="primary"
+      data-act="start"
+      data-l="cta"
+      kbd="Space"
+      aria-keyshortcuts="Space"
+      ><span data-t="cta"
+        >{t('tool.cta.keep', { length: t('tool.preset.p30') })}</span
+      ></Button
+    >
+
+    <div class="at-acts at-acts-batt">
+      <Button size="lg" data-act="battSettings"
+        >{t('tool.battery.settings')}</Button
+      >
+      <Button variant="primary" glyph={false} data-act="start"
+        >{t('tool.battery.anyway')}</Button
+      >
+    </div>
+
+    <div class="at-acts at-acts-run">
+      <Button size="lg" class="at-extend" data-act="extend"
+        >{t('tool.extend.add15')}</Button
+      >
+      <Button
+        variant="stop"
+        data-stop
+        data-act="stop"
+        kbd="Space"
+        aria-keyshortcuts="Space">{t('tool.ring.stop')}</Button
+      >
+    </div>
+
+    <div class="at-ask" role="group" aria-labelledby="at-ask-title">
+      <div class="at-ask-head">
+        <p id="at-ask-title" role="status">{t('tool.extend.title')}</p>
+        <span role="timer" data-l="askAria" data-t="ask"></span>
+      </div>
+      <div class="at-ask-track" aria-hidden="true"><div></div></div>
+      <div class="at-ask-opts">
+        <button
+          type="button"
+          data-act="add15"
+          aria-label={t('tool.extend.add15.sr')}
+          >{t('tool.extend.add15')}</button
+        >
+        <button
+          type="button"
+          data-act="add30"
+          aria-label={t('tool.extend.add30.sr')}
+          >{t('tool.extend.add30')}</button
+        >
+        <button
+          type="button"
+          data-act="add60"
+          aria-label={t('tool.extend.add60.sr')}
+          >{t('tool.extend.add60')}</button
+        >
+        <button
+          class="at-ask-stop"
+          type="button"
+          data-act="askStop"
+          data-extend-stop>{t('tool.extend.stop')}</button
+        >
+      </div>
+      {
+        sponsorEnabled && (
+          <SponsorCard placement="extend" label={t('sponsor.label')} />
+        )
+      }
+    </div>
+
+    <div class="at-acts at-acts-blocked">
+      <Button size="lg" data-act="fallback"
+        >{t('tool.fallback.consent.accept')}</Button
+      >
+      <Button variant="stop" data-act="retry">{t('tool.advice.retry')}</Button>
+    </div>
+
+    <div class="at-acts at-acts-tap">
+      <Button size="lg" data-act="stop">{t('tool.ring.stop')}</Button>
+      <Button
+        variant="primary"
+        glyph={false}
+        class="at-float"
+        data-act="fallback">{t('tool.fallback.consent.start')}</Button
+      >
+    </div>
+    {
+      sponsorEnabled && (
+        <SponsorCard placement="idle" label={t('sponsor.label')} />
+      )
+    }
+  </div>
+
+  <div class="at-tabs at-tabs-late">
+    <div
+      class="at-seg at-faces"
+      role="tablist"
+      aria-label={t('tool.face.label')}
+    >
+      <span class="at-seg-ind" aria-hidden="true"></span>
+      {
+        faces.map((f) => (
+          <button
+            class="at-seg-item"
+            type="button"
+            role="tab"
+            data-face={f}
+            aria-selected={f === 'ring' ? 'true' : 'false'}
+          >
+            {t(`tool.face.${f}`)}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="at-banner at-lang-banner" data-lang-suggest hidden>
+    <p data-lang-suggest-text></p>
+    <div class="at-acts">
+      <a class="at-button at-button-sm" data-lang-suggest-accept href="/"
+        >{t('i18n.suggest.accept')}</a
+      >
+      <button
+        class="at-button at-button-sm at-button-quiet"
+        type="button"
+        data-lang-suggest-dismiss>{t('i18n.suggest.dismiss')}</button
+      >
+    </div>
+  </div>
+  <noscript><p class="at-noscript">{t('tool.noscript')}</p></noscript>
+</div>
+
+<dialog
+  class="at-sheet at-tsheet"
+  data-dialog="settings"
+  aria-labelledby="settings-title"
+>
+  <div class="at-tsheet-head">
+    <span class="at-grab" aria-hidden="true"></span>
+    <div class="at-tsheet-bar">
+      <h2 id="settings-title">{t('settings.title')}</h2>
+      <button
+        class="at-icon-button"
+        type="button"
+        data-settings-close
+        aria-label={t('settings.close')}
+        ><svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          aria-hidden="true"><path d={X}></path></svg
+        ></button
+      >
+    </div>
+  </div>
+  <form class="at-tsheet-body at-settings">
+    <section aria-labelledby="st-appearance">
+      <h3 class="at-kicker" id="st-appearance">{t('settings.appearance')}</h3>
+      <div class="at-field">
+        <span class="at-label" id="lb-theme">{t('settings.theme')}</span>
+        <div
+          class="at-seg at-sseg"
+          role="radiogroup"
+          aria-labelledby="lb-theme"
+          style="--at-seg-n:4"
+        >
+          <span class="at-seg-ind" aria-hidden="true"></span>
+          {
+            (['auto', 'light', 'dark', 'oled'] as const).map((v) => (
+              <label class="at-seg-item">
+                <input
+                  class="sr-only"
+                  type="radio"
+                  name="theme"
+                  value={v}
+                  checked={v === 'auto'}
+                />
+                {t(`settings.theme.${v}`)}
+              </label>
+            ))
+          }
+        </div>
+      </div>
+      <div class="at-field">
+        <div class="at-field-top">
+          <span class="at-label" id="lb-lamp">{t('settings.lamp')}</span><span
+            class="at-caption"
+            data-lamp-note>{t('settings.accent.aqua')}</span>
+        </div>
+        <div class="at-lamps" role="radiogroup" aria-labelledby="lb-lamp">
+          {
+            lamps.map(([hex, id, name, pro]) => (
+              <label class="at-lamp" data-lamp={id}>
+                <input
+                  class="sr-only"
+                  type="radio"
+                  name="accent"
+                  value={hex}
+                  checked={id === 'aqua'}
+                  aria-label={pro ? `${name}, ${t('pro.badge')}` : name}
+                />
+                <span class="at-swatch" aria-hidden="true" />
+                <span class="at-lamp-name">{name}</span>
+                {pro && (
+                  <span class="at-tag" aria-hidden="true">
+                    {t('pro.badge')}
+                  </span>
+                )}
+              </label>
+            ))
+          }
+        </div>
+        <p class="at-caption" data-pack-gate>{t('settings.lamp.note')}</p>
+      </div>
+      <div class="at-field">
+        <span class="at-label" id="lb-face">{t('settings.face')}</span>
+        <div
+          class="at-seg at-sseg"
+          role="radiogroup"
+          aria-labelledby="lb-face"
+          style="--at-seg-n:4"
+        >
+          <span class="at-seg-ind" aria-hidden="true"></span>
+          {
+            faces.map((f) => (
+              <label class="at-seg-item">
+                <input
+                  class="sr-only"
+                  type="radio"
+                  name="face"
+                  value={f}
+                  checked={f === 'ring'}
+                />
+                {t(`tool.face.${f}`)}
+              </label>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="st-time">
+      <h3 class="at-kicker" id="st-time">{t('settings.time')}</h3>
+      <div class="at-langrow">
+        <button
+          class="at-row at-langrow-btn"
+          type="button"
+          id="at-lang-set-btn"
+          aria-expanded="false"
+          aria-controls="at-lang-set-list"
+          data-lang-row
+        >
+          <span>{t('settings.locale')}</span>
+          <span class="at-langrow-cur"
+            >{here.label}<svg
+              class="at-lang-chev"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg
+            ></span
+          >
+        </button>
+        <ul
+          class="at-lang-list at-langrow-list"
+          id="at-lang-set-list"
+          role="list"
+          aria-label={t('settings.locale')}
+          hidden
+        >
+          {
+            LOCALES.map((code) => {
+              const meta = LOCALE_META[code];
+              const current = code === locale;
+              const note = current
+                ? t('footer.language.current')
+                : meta.reviewed
+                  ? ''
+                  : t('footer.language.review');
+              return (
+                <li>
+                  <a
+                    class="at-lang-row"
+                    href={localePath(code, '/')}
+                    lang={meta.htmlLang}
+                    hreflang={meta.hreflang}
+                    aria-current={current ? 'true' : undefined}
+                  >
+                    <svg
+                      class="at-lang-mark"
+                      viewBox="0 0 20 20"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <>
+                        <circle class="at-lang-ring" cx="10" cy="10" r="8" />
+                        <circle class="at-lang-dot" cx="10" cy="10" r="4" />
+                      </>
+                    </svg>
+                    <span class="at-lang-name">{meta.label}</span>
+                    <span class="at-lang-note" lang={here.htmlLang}>
+                      {note}
+                    </span>
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </div>
+      <div class="at-field">
+        <span class="at-label" id="lb-fmt">{t('settings.ambient.clock')}</span>
+        <div
+          class="at-seg at-sseg at-sseg-sm"
+          role="radiogroup"
+          aria-labelledby="lb-fmt"
+        >
+          <span class="at-seg-ind" aria-hidden="true"></span>
+          <label class="at-seg-item"
+            ><input
+              class="sr-only"
+              type="radio"
+              name="clock24h"
+              value="auto"
+              checked
+            />{t('settings.ambient.clock.auto')}</label
+          >
+          <label class="at-seg-item"
+            ><input class="sr-only" type="radio" name="clock24h" value="12" />{
+              t('settings.clock.12')
+            }</label
+          >
+          <label class="at-seg-item"
+            ><input class="sr-only" type="radio" name="clock24h" value="24" />{
+              t('settings.clock.24')
+            }</label
+          >
+        </div>
+        <span class="at-caption at-tabnum" data-t="nowShows"></span>
+      </div>
+      <label class="at-switchrow">
+        <span class="at-switch-text"
+          ><span class="at-label">{t('settings.ambient.seconds')}</span><span
+            class="at-caption">{t('settings.seconds.help')}</span
+          ></span
+        >
+        <input
+          class="at-switch"
+          type="checkbox"
+          role="switch"
+          name="showSeconds"
+        />
+      </label>
+    </section>
+
+    <section aria-labelledby="st-end">
+      <h3 class="at-kicker" id="st-end">{t('settings.endBehaviour')}</h3>
+      <div
+        class="at-seg at-sseg"
+        role="radiogroup"
+        aria-labelledby="st-end"
+        style="--at-seg-n:2"
+      >
+        <span class="at-seg-ind" aria-hidden="true"></span>
+        <label class="at-seg-item"
+          ><input
+            class="sr-only"
+            type="radio"
+            name="endBehaviour"
+            value="prompt_extend"
+            checked
+          />{t('settings.endBehaviour.prompt_extend')}</label
+        >
+        <label class="at-seg-item"
+          ><input
+            class="sr-only"
+            type="radio"
+            name="endBehaviour"
+            value="stop"
+          />{t('settings.endBehaviour.stop')}</label
+        >
+      </div>
+      <div class="at-field">
+        <span class="at-label" id="lb-sound">{t('settings.sound')}</span>
+        <div
+          class="at-seg at-sseg"
+          role="radiogroup"
+          aria-labelledby="lb-sound"
+          style="--at-seg-n:2"
+        >
+          <span class="at-seg-ind" aria-hidden="true"></span>
+          <label class="at-seg-item"
+            ><input
+              class="sr-only"
+              type="radio"
+              name="sound"
+              value="chime"
+              checked
+            />{t('settings.sound.chime')}</label
+          >
+          <label class="at-seg-item"
+            ><input class="sr-only" type="radio" name="sound" value="none" />{
+              t('settings.sound.none')
+            }</label
+          >
+        </div>
+      </div>
+      <label class="at-switchrow">
+        <span class="at-switch-text"
+          ><span class="at-label">{t('settings.notifications')}</span><span
+            class="at-caption"
+            data-notifications-note>{t('settings.notifications.help')}</span
+          ></span
+        >
+        <input
+          class="at-switch"
+          type="checkbox"
+          role="switch"
+          name="notifications"
+        />
+      </label>
+    </section>
+
+    <section aria-labelledby="st-batt" data-battery-fields>
+      <h3 class="at-kicker" id="st-batt">{t('settings.battery')}</h3>
+      <label class="at-switchrow">
+        <span class="at-switch-text"
+          ><span class="at-label">{t('settings.battery.autoStop')}</span><span
+            class="at-caption">{t('settings.battery.help')}</span
+          ></span
+        >
+        <input
+          class="at-switch"
+          type="checkbox"
+          role="switch"
+          name="batteryAuto"
+        />
+      </label>
+      <div class="at-range">
+        <div class="at-field-top">
+          <label class="at-label" for="at-batt"
+            >{t('settings.battery.stopAt')}</label
+          ><output class="at-label at-tabnum" for="at-batt" data-battery-label
+            >15%</output>
+        </div>
+        <input
+          id="at-batt"
+          type="range"
+          name="batteryThreshold"
+          min="5"
+          max="30"
+          step="1"
+          value="15"
+          aria-describedby="at-batt-hint"
+        />
+        <span class="at-caption" id="at-batt-hint" data-battery-hint
+          >{t('settings.battery.off')}</span
+        >
+      </div>
+    </section>
+    <p class="at-caption" data-battery-unavailable hidden>
+      {t('settings.battery.unavailable')}
+    </p>
+
+    <section aria-labelledby="st-priv" class="at-tight">
+      <h3 class="at-kicker" id="st-priv">{t('settings.privacy')}</h3>
+      <label class="at-switchrow">
+        <span class="at-switch-text"
+          ><span class="at-label">{t('settings.telemetry')}</span></span
+        >
+        <input
+          class="at-switch"
+          type="checkbox"
+          role="switch"
+          name="telemetry"
+          checked
+        />
+      </label>
+      <label class="at-switchrow">
+        <span class="at-switch-text"
+          ><span class="at-label">{t('settings.shortcuts')}</span><span
+            class="at-caption at-keys-help"
+            set:html={keysHelp}
+          /></span
+        >
+        <input
+          class="at-switch"
+          type="checkbox"
+          role="switch"
+          name="keyboardShortcuts"
+          checked
+        />
+      </label>
+      <label class="at-switchrow">
+        <span class="at-switch-text"
+          ><span class="at-label">{t('settings.hints')}</span></span
+        >
+        <input
+          class="at-switch"
+          type="checkbox"
+          role="switch"
+          name="keyboardHints"
+          checked
+        />
+      </label>
+    </section>
+
+    <div class="at-settings-foot">
+      <div class="at-settings-links">
+        <button class="at-phone-only at-textlink" type="button" data-open-stats
+          >{t('stats.title')}</button
+        >
+        <button class="at-phone-only at-textlink" type="button" data-open-share
+          >{t('tool.share.title')}</button
+        >
+        <button class="at-phone-only at-textlink" type="button" data-open-shortcuts
+          >{t('tool.shortcuts.title')}</button
+        >
+        <a class="at-textlink" href="/pro" data-open-pro>{t('settings.pro')}</a>
+        <a class="at-textlink" href="/pro/manage">{t('settings.pro.manage')}</a>
+      </div>
+      <Button data-settings-reset>{t('settings.reset')}</Button>
+    </div>
+  </form>
+</dialog>
+
+<dialog
+  class="at-sheet at-tsheet"
+  data-dialog="stats"
+  aria-labelledby="stats-title"
+>
+  <div class="at-tsheet-head">
+    <span class="at-grab" aria-hidden="true"></span>
+    <div class="at-tsheet-bar">
+      <h2 id="stats-title">{t('stats.title')}</h2>
+      <button
+        class="at-icon-button"
+        type="button"
+        data-stats-close
+        aria-label={t('stats.closeSr')}
+        ><svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          aria-hidden="true"><path d={X}></path></svg
+        ></button
+      >
+    </div>
+  </div>
+  <div class="at-tsheet-body">
+    <p class="at-caption" data-stats-empty hidden>{t('stats.empty')}</p>
+    <dl class="at-figs">
       <div><dt>{t('stats.today')}</dt><dd data-stats-today></dd></div>
       <div><dt>{t('stats.week')}</dt><dd data-stats-week></dd></div>
       <div><dt>{t('stats.streakLabel')}</dt><dd data-stats-streak></dd></div>
       <div><dt>{t('stats.total')}</dt><dd data-stats-total></dd></div>
     </dl>
-    <table class="at-heatmap" data-stats-heatmap>
-      <caption>{t('stats.heatmap.caption')}</caption>
-    </table>
-    <p data-stats-locked hidden>{t('stats.heatmap.pro')} <a class={inlineLink} href="/pro">{t('pro.see')}</a></p>
-    <div class="at-banner-actions">
-      <button class={btnPrimary} type="button" data-stats-export hidden>{t('stats.export')}</button>
-      <button class={btnOutline} type="button" data-stats-close>{t('stats.close')}</button>
-    </div>
-  </dialog>
-  <dialog data-dialog="rating" aria-labelledby="rating-title">
-    <h2 id="rating-title">{t('rating.title')}</h2>
-    <form class="at-fields" data-rating-form>
-      <fieldset class="at-stars">
-        <legend>{t('rating.stars')}</legend>
-        {
-          stars.map((n) => (
-            <label>
-              <input type="radio" name="stars" value={String(n)} />
-              <span aria-hidden="true">★</span>
-              <span class="sr-only">{t('rating.star', { n })}</span>
-            </label>
-          ))
-        }
-      </fieldset>
-      <label>{t('rating.text')}
-        <textarea class="at-input at-textarea" name="text" maxlength="280" rows="3"></textarea>
-      </label>
-      <p class="at-error" data-rating-error role="alert"></p>
-      <div class="at-banner-actions">
-        <button class={btnPrimary} type="submit">{t('rating.send')}</button>
-        <button class={btnOutline} type="button" data-rating-later>{t('rating.later')}</button>
-        <button class={btnOutline} type="button" data-rating-never>{t('rating.never')}</button>
+    <section class="at-heat-sec" aria-labelledby="st-heat">
+      <div class="at-field-top">
+        <h3 class="at-kicker" id="st-heat">{t('stats.heat.title')}</h3><span
+          class="at-caption">{t('stats.heat.sub')}</span>
       </div>
-    </form>
-  </dialog>
-  <dialog class="at-ambient" data-ambient aria-labelledby="ambient-title">
-    <h2 class="sr-only" id="ambient-title" data-ambient-title>{t('ambient.mode.clock')}</h2>
-    <div class="at-ambient-stage" data-ambient-stage>
-      <div class="at-ambient-content" data-ambient-content></div>
+      <div class="at-heat" role="img" data-stats-heatmap>
+        <div class="at-heat-lock" data-stats-locked>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+            ><rect x="5" y="11" width="14" height="10" rx="2"></rect><path
+              d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg
+          >
+          {t('stats.heatmap.locked')}
+        </div>
+      </div>
+      <div class="at-heat-legend" aria-hidden="true">
+        <span>{t('stats.heat.less')}</span><i></i><i></i><i></i><i></i><i
+        ></i><span>{t('stats.heat.more')}</span>
+      </div>
+    </section>
+    <div class="at-stats-foot">
+      <button
+        class="at-button at-export"
+        type="button"
+        data-stats-export
+        aria-describedby="st-csv-note"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          ><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg
+        >
+        {t('stats.export')}
+        <span class="at-tag" data-export-pro>{t('pro.badge')}</span>
+      </button>
+      <p class="at-caption" id="st-csv-note">
+        {t('stats.export.note')}
+        <a href="/pro">{t('pro.see')}</a>
+      </p>
     </div>
-    <div class="at-ambient-bar" data-ambient-controls>
-      <button class={btnOutline} type="button" data-ambient-next>{t('ambient.next')}</button>
-      <button class={btnOutline} type="button" data-ambient-fullscreen>{t('tool.header.fullscreen')}</button>
-      <button class={btnOutline} type="button" data-ambient-exit>{t('ambient.exit')}</button>
-    </div>
-  </dialog>
-  <noscript><p>{t('tool.noscript')}</p></noscript>
-</div>
+  </div>
+</dialog>
+
+<dialog
+  class="at-float-sheet"
+  data-dialog="shortcuts"
+  aria-labelledby="shortcuts-title"
+>
+  <span class="at-grab" aria-hidden="true"></span>
+  <div class="at-fs-bar">
+    <h2 id="shortcuts-title">{t('tool.shortcuts.title')}</h2>
+    <button
+      class="at-icon-button"
+      type="button"
+      data-shortcuts-close
+      aria-label={close}
+      ><svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        aria-hidden="true"><path d={X}></path></svg
+      ></button
+    >
+  </div>
+  <p class="at-keys-note" role="note">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      aria-hidden="true"
+      ><rect x="2.5" y="6" width="19" height="12" rx="2.5"></rect><path
+        d="M6.5 10h1M10.5 10h1M14.5 10h1M17.5 10h.5M7.5 14h9"></path></svg
+    >
+    <span>{t('tool.shortcuts.phoneNote')}</span>
+  </p>
+  <dl class="at-keys">
+    {
+      shortcuts.map(([k1, k2, label]) => (
+        <div>
+          <dt>
+            <kbd class="at-kbd">{k1}</kbd>
+            {k2 && (
+              <>
+                <span aria-hidden="true">–</span>
+                <kbd class="at-kbd">{k2}</kbd>
+              </>
+            )}
+          </dt>
+          <dd>{label}</dd>
+        </div>
+      ))
+    }
+  </dl>
+  <p class="at-caption at-keys-foot">
+    <span class="at-phone-hide">{t('tool.shortcuts.foot')}</span><span
+      class="at-phone-only">{t('tool.shortcuts.footPhone')}</span>
+  </p>
+</dialog>
+
+<dialog
+  data-dialog="pro"
+  class="at-float-sheet"
+  aria-labelledby="pro-sheet-title"
+>
+  <h2 id="pro-sheet-title">{t('pro.title')}</h2>
+  <p>{t('pro.card')}</p>
+  <p>
+    <a href="/pro">{t('pro.cta')}</a> · <a href="/pro/activate"
+      >{t('pro.activate')}</a>
+  </p>
+  <button class="at-button" type="button" data-pro-close
+    >{t('settings.close')}</button
+  >
+</dialog>
+
+<dialog class="at-ambient" data-ambient aria-labelledby="ambient-title">
+  <h2 class="sr-only" id="ambient-title" data-ambient-title>
+    {t('ambient.mode.clock')}
+  </h2>
+  <div class="at-ambient-stage" data-ambient-stage>
+    <div class="at-ambient-content" data-ambient-content></div>
+  </div>
+  <div class="at-ambient-bar" data-ambient-controls>
+    <button class="at-button at-button-sm" type="button" data-ambient-next
+      >{t('ambient.next')}</button
+    >
+    <button class="at-button at-button-sm" type="button" data-ambient-fullscreen
+      >{t('tool.header.fullscreen')}</button
+    >
+    <button class="at-button at-button-sm" type="button" data-ambient-exit
+      >{t('ambient.exit')}</button
+    >
+  </div>
+</dialog>

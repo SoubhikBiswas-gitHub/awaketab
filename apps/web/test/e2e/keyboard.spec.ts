@@ -162,7 +162,7 @@ test('journey 1 (keyboard): autostart, skip link, and the whole page tabs throug
   await expectVisibleFocus(page);
 });
 
-test('journey 2 (keyboard): Tab to the 2 h chip, Enter starts a 2 h session; the 5 key does too', async ({
+test('journey 2 (keyboard): Tab to the 2 h chip, Enter picks it, the lamp button starts it; the 5 key does too', async ({
   page,
   browserName,
 }) => {
@@ -171,7 +171,10 @@ test('journey 2 (keyboard): Tab to the 2 h chip, Enter starts a 2 h session; the
   await expect(pill(page)).toHaveText('Ready');
   await tabTo(page, keys, '#awaketab-tool [data-chips] [data-preset="p120"]');
   await page.keyboard.press('Enter');
-  await expect(page.locator('[data-timer-digits]')).toHaveText(/0[12]:\d{2}:\d{2}/u);
+  await expect(page.locator('#awaketab-tool [data-preset="p120"]').first()).toHaveAttribute('aria-pressed', 'true');
+  await tabTo(page, keys, '#awaketab-tool .at-cta');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('[data-timer-digits]')).toHaveText(/^(?:1:59:\d{2}|2:00:00)$/u);
   await expect(pill(page)).toHaveText('Screen awake');
   expect((await session(page))?.plan.type).toBe('duration');
 
@@ -183,7 +186,7 @@ test('journey 2 (keyboard): Tab to the 2 h chip, Enter starts a 2 h session; the
   await expect(page.locator('[data-preset="p120"]')).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('journey 3 (keyboard): U opens the until picker with focus inside; Enter on Start runs until then', async ({
+test('journey 3 (keyboard): U opens the until panel with focus on the first time; Enter picks it, the lamp button runs it', async ({
   page,
   browserName,
 }) => {
@@ -191,16 +194,18 @@ test('journey 3 (keyboard): U opens the until picker with focus inside; Enter on
   await open(page, '/?autostart=0');
   await expect(pill(page)).toHaveText('Ready');
   await page.keyboard.press('u');
-  const dlg = page.locator('dialog[data-dialog="until"]');
-  await expect(dlg).toBeVisible();
-  expect(await page.evaluate(() => document.activeElement?.closest('dialog')?.dataset.dialog)).toBe('until');
-  // The picker opens on "now", which has already begun, so the summary says Tomorrow (journey 3).
-  await expect(dlg.locator('[data-until-summary]')).toContainText('Tomorrow');
-  await tabTo(page, keys, 'dialog[data-dialog="until"] [data-until-start]', 12);
+  const panel = page.locator('.at-lp-until');
+  await expect(panel).toBeVisible();
+  expect(await focusedMatches(page, '.at-lp-until [data-slot="0"]')).toBe(true);
+  await expectVisibleFocus(page);
   await page.keyboard.press('Enter');
-  await expect(dlg).toBeHidden();
+  await expect(panel.locator('[data-slot="0"]')).toHaveAttribute('aria-pressed', 'true');
+  await tabTo(page, keys, '#awaketab-tool .at-cta', 12);
+  await page.keyboard.press('Enter');
   await expect(pill(page)).toHaveText('Screen awake');
   expect((await session(page))?.plan.type).toBe('until');
+  // Starting closes the panel and brings the length block back.
+  await expect(panel).toBeHidden();
 });
 
 test('journey 4 (keyboard): hide → Paused, show → Screen awake again, focus stays put', async ({
@@ -224,7 +229,7 @@ test('journey 4 (keyboard): hide → Paused, show → Screen awake again, focus 
   await expectVisibleFocus(page);
 });
 
-test('journey 5 (keyboard): denied → notice; Tab to Retry, Enter re-requests the lock', async ({
+test('journey 5 (keyboard): denied → blocked card; Tab to Retry, Enter re-requests the lock', async ({
   page,
   browserName,
 }) => {
@@ -235,69 +240,48 @@ test('journey 5 (keyboard): denied → notice; Tab to Retry, Enter re-requests t
   });
   await page.keyboard.press('1');
   await expect(pill(page)).toHaveText("Blocked — here's the fix", { timeout: 4000 });
-  await expect(page.locator('[data-notice]')).toBeVisible();
-  await expect(page.locator('[data-timer]')).toBeHidden();
-  // The pill is a button while blocked; the notice's link names its destination (not "Learn more").
-  await tabTo(page, keys, '[data-pill]');
-  await expect(page.locator('[data-notice-learn]')).toHaveText('Why this happens and how to fix it');
-  await tabTo(page, keys, '[data-notice-retry]');
+  await expect(page.locator('.at-blocked')).toBeVisible();
+  await tabTo(page, keys, '#awaketab-tool .at-acts-blocked [data-act="retry"]');
   await page.keyboard.press('Enter');
   await expect(pill(page)).toHaveText('Screen awake');
-  await expect(page.locator('[data-notice]')).toBeHidden();
+  await expect(page.locator('.at-blocked')).toBeHidden();
 });
 
-test.describe('journey 6 (keyboard): custom timer end → extend prompt', () => {
+test.describe("journey 6 (keyboard): custom timer end → the time's-up card", () => {
   async function runOneMinute(page: Page, keys: TKeys): Promise<void> {
+    await page.addInitScript(() => {
+      localStorage.setItem('at.v1.settings', JSON.stringify({ v: 1, lastCustomMs: 60_000 }));
+    });
     await page.clock.install();
     await open(page, '/?autostart=0');
     await expect(pill(page)).toHaveText('Ready');
     await tabTo(page, keys, '#awaketab-tool [data-chips] [data-preset="custom"]');
     await page.keyboard.press('Enter');
-    const dlg = page.locator('dialog[data-dialog="custom"]');
-    await expect(dlg).toBeVisible();
-    // showModal() puts focus in the dialog; the first field is days. Type 0 d 0 h 1 min.
-    if (!(await focusedMatches(page, 'dialog[data-dialog="custom"] input[name="days"]'))) {
-      await tabTo(page, keys, 'dialog[data-dialog="custom"] input[name="days"]', 6);
-    }
-    for (const [name, value] of [
-      ['days', '0'],
-      ['hours', '0'],
-      ['minutes', '1'],
-    ] as const) {
-      expect(await focusedMatches(page, `dialog[data-dialog="custom"] input[name="${name}"]`)).toBe(true);
-      await expectVisibleFocus(page);
-      await page.keyboard.press('ControlOrMeta+A');
-      await page.keyboard.type(value);
-      await page.keyboard.press(keys.tab);
-    }
-    await expect(dlg.locator('input[name="minutes"]')).toHaveValue('1');
-    expect(await focusedMatches(page, '[data-custom-start]')).toBe(true);
+    // The Custom panel opens inline with focus on its first button (the stepper).
+    await expect(page.locator('.at-lp-custom')).toBeVisible();
     await expectVisibleFocus(page);
+    await tabTo(page, keys, '#awaketab-tool .at-cta', 12);
     await page.keyboard.press('Enter');
-    await expect(dlg).toBeHidden();
     await expect(pill(page)).toHaveText('Screen awake');
     await page.clock.fastForward(61_000);
-    await expect(page.locator('dialog[data-dialog="extend"]')).toBeVisible({ timeout: 4000 });
+    await expect(page.locator('.at-ask')).toBeVisible({ timeout: 4000 });
   }
 
-  test('Stop is focused by default and Esc stops the session', async ({ page, browserName }) => {
+  test('Esc stops the session from the card', async ({ page, browserName }) => {
     const keys = keysFor(browserName);
     await runOneMinute(page, keys);
-    await expect.poll(() => focusedMatches(page, 'dialog[data-dialog="extend"] [data-extend-stop]')).toBe(true);
-    await expectVisibleFocus(page);
     await page.keyboard.press('Escape');
-    await expect(page.locator('dialog[data-dialog="extend"]')).toBeHidden();
+    await expect(page.locator('.at-ask')).toBeHidden();
     await expect(pill(page)).toHaveText('Ready');
   });
 
-  test('Shift+Tab to +30 min and Enter extends the session', async ({ page, browserName }) => {
+  test('Tab to +30 min and Enter extends the session', async ({ page, browserName }) => {
     const keys = keysFor(browserName);
     await runOneMinute(page, keys);
-    await expect.poll(() => focusedMatches(page, 'dialog[data-dialog="extend"] [data-extend-stop]')).toBe(true);
-    await tabTo(page, keys, 'dialog[data-dialog="extend"] [data-extend-30]', 4, true);
+    await tabTo(page, keys, '#awaketab-tool [data-act="add30"]', 40);
     await page.keyboard.press('Enter');
-    await expect(page.locator('dialog[data-dialog="extend"]')).toBeHidden();
-    await expect(page.locator('[data-timer-digits]')).toHaveText(/00:(29|30|31):\d{2}/u);
+    await expect(page.locator('.at-ask')).toBeHidden();
+    await expect(page.locator('[data-timer-digits]')).toHaveText(/^(?:29|30):\d{2}$/u);
     await expect(pill(page)).toHaveText('Screen awake');
   });
 });
