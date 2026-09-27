@@ -43,7 +43,8 @@ export function mountTimers(section: HTMLElement, deps: ITimerDeps): () => void 
     const btn = el(
       'button',
       { type: 'button', class: 'at-embed-add', 'data-embed-add': String(min) },
-      t('stats.minutes', { minutes: min }),
+      // The unit rides on the last chip only, so five chips fit the 264 px column with room inside each.
+      min === EMBED_QUICK_MIN.at(-1) ? t('stats.minutes', { minutes: min }) : String(min),
     );
     btn.setAttribute('aria-label', t('embed.timers.addLabel', { minutes: min }));
     quick.append(btn);

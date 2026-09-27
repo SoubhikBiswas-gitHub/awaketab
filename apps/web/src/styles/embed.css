@@ -444,8 +444,7 @@ body.at-embed-body {
 }
 
 .at-embed-quick {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: flex;
   gap: var(--at-s-1);
 }
 
@@ -455,8 +454,11 @@ body.at-embed-body {
 }
 
 .at-embed-add {
+  flex: 1 1 0;
+  min-inline-size: max-content;
   block-size: var(--at-h-control);
-  padding: 0;
+  padding-block: 0;
+  padding-inline: var(--at-s-2);
   border: var(--at-border) dashed var(--at-line-strong);
   border-radius: var(--at-r-md);
   background: transparent;

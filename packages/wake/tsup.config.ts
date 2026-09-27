@@ -12,7 +12,7 @@ const externalCore: NonNullable<Options['esbuildPlugins']>[number] = {
 
 export default defineConfig([
   {
-    entry: { index: 'src/index.ts' },
+    entry: { index: 'src/index.ts', video: 'src/video.ts' },
     format: ['esm', 'cjs'],
     dts: true,
     minify: true,

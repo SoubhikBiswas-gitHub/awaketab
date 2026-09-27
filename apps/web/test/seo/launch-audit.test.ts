@@ -94,7 +94,7 @@ describe('F-07 · /changelog renders Markdown and orders by date', () => {
     const headings = [...html.matchAll(/<h2[^>]*><time datetime="(\d{4}-\d{2}-\d{2})">/gu)].map((m) => m[1] ?? '');
     expect(headings.length).toBeGreaterThanOrEqual(4);
     for (const day of headings) expect(dates).toContain(day);
-    expect(titles[0]).toBe('1.0 — launch');
+    expect(titles[0]).toBe('1.0 launch');
     expect(dates.length).toBe(titles.length);
     expect(dates.length).toBeGreaterThanOrEqual(14);
     // The release card is pinned on top (changelog.astro); the entries after it run newest first.

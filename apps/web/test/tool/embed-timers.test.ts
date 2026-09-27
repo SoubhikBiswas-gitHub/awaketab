@@ -41,7 +41,7 @@ describe('embed kitchen timers (full size, docs/11 §2)', () => {
     const buttons = el.querySelectorAll('[data-embed-add]');
     expect([...buttons].map((b) => b.getAttribute('data-embed-add'))).toEqual(EMBED_QUICK_MIN.map(String));
     expect(buttons[0]?.getAttribute('aria-label')).toBe('Add a 5-minute kitchen timer');
-    expect(buttons[0]?.textContent).toBe('5 min');
+    expect([...buttons].map((b) => b.textContent)).toEqual(['5', '10', '15', '30', '60 min']);
     expect(el.hidden).toBe(false);
     // No timers yet: the "Add up to three" line shows (board EmbedWidget).
     expect(el.querySelector<HTMLElement>('[data-embed-timers-empty]')?.hidden).toBe(false);

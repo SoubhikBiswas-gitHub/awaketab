@@ -1,11 +1,9 @@
-import { MP4_DATA_URL } from './assets/blank.mp4.b64.js';
 import { WEBM_DATA_URL } from './assets/blank.webm.b64.js';
 
 export interface IFallbackHandle {
   el: HTMLVideoElement;
   play(): Promise<void>;
   pause(): void;
-  nudge(): void;
   remove(): void;
   startNudge(ms: number): void;
   stopNudge(): void;
@@ -27,23 +25,31 @@ export function createFallbackVideo(doc: Document, sources: { webm?: string; mp4
   v.disablePictureInPicture = true;
   v.style.cssText =
     'position:fixed;inset-inline-start:0;inset-block-end:0;inline-size:1px;block-size:1px;opacity:0.01;pointer-events:none';
-  const webm = sources.webm ?? WEBM_DATA_URL;
-  const mp4 = sources.mp4 ?? MP4_DATA_URL;
+  // The MP4 is opt-in (`@awaketab/wake/video`) so the default build stays inside its size budget.
+  let last: HTMLSourceElement | null = null;
   for (const [type, src] of [
-    ['video/webm', webm],
-    ['video/mp4', mp4],
+    ['video/webm', sources.webm ?? WEBM_DATA_URL],
+    ['video/mp4', sources.mp4],
   ] as const) {
-    const s = doc.createElement('source');
-    s.type = type;
-    s.src = src;
-    v.appendChild(s);
+    if (!src) continue;
+    last = doc.createElement('source');
+    last.type = type;
+    last.src = src;
+    v.appendChild(last);
   }
   doc.body.appendChild(v);
   let nudgeTimer: ReturnType<typeof setInterval> | null = null;
 
   const play = () => {
     v.muted = true;
-    return v.play();
+    return new Promise<void>((resolve, reject) => {
+      // play() never settles once every <source> has failed, so the last source's error rejects it instead.
+      if (last)
+        last.onerror = () => {
+          reject(new Error('no playable source'));
+        };
+      v.play().then(resolve, reject);
+    });
   };
 
   return {
@@ -51,12 +57,6 @@ export function createFallbackVideo(doc: Document, sources: { webm?: string; mp4
     play,
     pause() {
       v.pause();
-    },
-    nudge() {
-      if (v.paused || v.ended || v.readyState < 2) {
-        v.currentTime = 0;
-        void play();
-      }
     },
     startNudge(ms: number) {
       if (nudgeTimer) return;

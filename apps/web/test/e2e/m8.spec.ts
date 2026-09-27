@@ -284,6 +284,17 @@ test('full size in cook mode offers kitchen timers and tap-to-pause keeps the lo
   expect(stored).toContain('"cookTimers":[{');
 });
 
+test('with no Wake Lock API the widget reaches the real video fallback', async ({ page }) => {
+  await page.addInitScript(() => {
+    delete (Navigator.prototype as { wakeLock?: unknown }).wakeLock;
+  });
+  await page.goto('/embed/cook?mode=standard&size=full&theme=light&preset=p60');
+  await page.locator('[data-embed-toggle]').click();
+  await expect(page.locator('[data-pill-text]')).toHaveText('Awake via video fallback');
+  expect(await page.evaluate(() => document.querySelector('video')?.paused)).toBe(false);
+  await expect(page.locator('[data-embed-hint]')).toHaveText(/^Until \d/u);
+});
+
 test('/embed shows the paste-ready snippet, the generator and live demos', async ({ page }) => {
   await page.goto('/embed');
   await expect(page.locator('[data-snippet]')).toHaveText(
@@ -323,19 +334,6 @@ test('an invalid #lic= token is stripped from the address bar and reported', asy
 });
 
 test('/library demo drives the published IIFE through all seven states', async ({ page }) => {
-  // Headless Chromium never settles play() on the inlined 1-frame fallback videos (no media pipeline), so the
-  // media element is stubbed to "playing"; the library code under test (the published IIFE) runs unchanged.
-  await page.addInitScript(() => {
-    let playing = false;
-    Object.defineProperty(HTMLMediaElement.prototype, 'paused', { configurable: true, get: () => !playing });
-    HTMLMediaElement.prototype.play = function play() {
-      playing = true;
-      return Promise.resolve();
-    };
-    HTMLMediaElement.prototype.pause = function pause() {
-      playing = false;
-    };
-  });
   await page.goto('/library');
   const current = page.locator('[data-demo-current]');
   await expect(page.locator('[data-state]')).toHaveCount(7);
@@ -365,7 +363,7 @@ test('/library demo drives the published IIFE through all seven states', async (
   await page.locator('[data-demo-scenario]').selectOption('denied');
   await page.getByRole('button', { name: 'Request' }).click();
   await expect(current).toHaveText('denied');
-  await expect(page.locator('[data-demo-advice]')).toHaveText('');
+  await expect(page.locator('[data-demo-advice]')).toContainText('Your browser said no');
 
   // no API → unsupported; a click starts the real video fallback
   await page.locator('[data-demo-scenario]').selectOption('unsupported');

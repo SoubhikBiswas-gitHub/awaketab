@@ -7,7 +7,7 @@ First public release. The pending pre-release changesets (`wake-lock-layer`, and
 ### Features
 
 - `createWakeLock(options)` with exactly seven states — `idle` · `requesting` · `held` · `lost` · `denied` · `unsupported` · `fallback` — and `change` events carrying `{ from, to, reason, advice?, error?, at }`. `held` is reported only while a live `WakeLockSentinel` exists.
-- Inlined 1-frame WebM + MP4 video fallback: gesture-aware `play()`, 20 s `currentTime` nudge, paused while hidden, removed on release.
+- Inlined two-frame WebM video fallback: gesture-aware `play()`, 20 s `currentTime` nudge, paused while hidden, removed on release. When no source can play, `request()` resolves to `unsupported` instead of waiting. The MP4 for Safari before 16.4 is opt-in from `@awaketab/wake/video`.
 - `classifyDenial()` maps a rejection to an advice code (`battery_saver`, `low_power_ios`, `hidden_document`, `permissions_policy`, `insecure_context`, `unsupported_browser`, `ios_safari_old`, `firefox_old`, `iframe_no_allow`).
 - Re-acquire on `visibilitychange`, backoff retry for transient denials, re-request on `fullscreenchange`.
 - SSR-safe inert handle when `window` is undefined.

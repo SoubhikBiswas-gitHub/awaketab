@@ -109,11 +109,7 @@ export function createWakeLock(options: IWakeLockOptions = {}): IWakeLockHandle 
   const onRelease = () => {
     if (flags.releasing || flags.destroyed) return;
     const hidden = doc?.visibilityState === 'hidden';
-    transition(
-      hidden ? 'lost' : 'lost',
-      hidden ? 'released_hidden' : 'released_platform',
-      hidden ? 'hidden_document' : advice,
-    );
+    transition('lost', hidden ? 'released_hidden' : 'released_platform', hidden ? 'hidden_document' : advice);
     sentinel = null;
     if (!hidden) {
       const now = Date.now();
@@ -268,8 +264,7 @@ export function createWakeLock(options: IWakeLockOptions = {}): IWakeLockHandle 
     transition('requesting', reason);
     if (!video) video = createFallbackVideo(doc, options.videoSources);
     try {
-      const play = video.el.play();
-      await play;
+      await video.play();
       if (abortRequested()) {
         video.pause();
         transition('idle', 'user_release');
@@ -283,11 +278,9 @@ export function createWakeLock(options: IWakeLockOptions = {}): IWakeLockHandle 
       transition('fallback', 'fallback_started', null);
       return state;
     } catch (error) {
-      const name = error instanceof Error ? error.name : '';
       video.remove();
       video = null;
-      const code = name === 'NotAllowedError' ? 'unsupported_browser' : 'unsupported_browser';
-      transition('unsupported', 'unsupported', name === 'NotAllowedError' ? 'unsupported_browser' : code, { error });
+      transition('unsupported', 'unsupported', 'unsupported_browser', { error });
       emitter.emit('error', { error, at: Date.now(), state, advice });
       return state;
     }

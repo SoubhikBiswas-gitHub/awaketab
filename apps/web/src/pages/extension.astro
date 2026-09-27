@@ -10,7 +10,7 @@ import Button from '../components/shell/Button.astro';
 import '../styles/pages.css';
 import { t } from '../i18n/load';
 import { softwareSchema } from '../lib/seo';
-import { EXTENSION_STORE_URLS } from '../lib/extension';
+import { EXTENSION_LISTED, EXTENSION_STORE_URLS } from '../lib/extension';
 import matrix from '../data/support-matrix.json';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
@@ -83,15 +83,15 @@ const P = 2658 / 3600;
         <div class="at-ext-ctas" data-install>
           <a class="at-button at-button-primary at-button-lg" href={EXTENSION_STORE_URLS.chrome} rel="noopener" target="_blank" data-store="chrome" aria-describedby="ext-store-note">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
-            {t('page.extension.cta.chrome')}
+            {t(EXTENSION_LISTED ? 'page.extension.cta.chrome' : 'page.extension.cta.chromeSearch')}
           </a>
           <a class="at-button at-ext-edge" href={EXTENSION_STORE_URLS.edge} rel="noopener" target="_blank" data-store="edge" aria-describedby="ext-store-note">
-            {t('page.extension.cta.edge')}
+            {t(EXTENSION_LISTED ? 'page.extension.cta.edge' : 'page.extension.cta.edgeSearch')}
           </a>
         </div>
         <div id="ext-store-note" class="at-pg-small at-pg-stack-4" data-install>
           <span>{t('page.extension.cta.note', { browsers, version: support.minimumChromeVersion })}</span>
-          <span>Store links go live once the listing is approved.</span>
+          {!EXTENSION_LISTED && <span>{t('page.extension.cta.pending')}</span>}
         </div>
       </div>
 

@@ -58,6 +58,7 @@ describe('npm pack --dry-run @awaketab/wake', () => {
       'dist/index.d.ts',
       'dist/index.d.cts',
       'dist/awaketab-wake.iife.js',
+      ...['js', 'cjs', 'd.ts', 'd.cts'].map((ext) => `dist/video.${ext}`),
       ...['react', 'preact', 'vue'].flatMap((a) =>
         ['js', 'cjs', 'd.ts', 'd.cts'].map((ext) => `dist/adapters/${a}.${ext}`),
       ),

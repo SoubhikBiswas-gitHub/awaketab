@@ -52,6 +52,16 @@
         "default": "./dist/adapters/vue.cjs"
       }
     },
+    "./video": {
+      "import": {
+        "types": "./dist/video.d.ts",
+        "default": "./dist/video.js"
+      },
+      "require": {
+        "types": "./dist/video.d.cts",
+        "default": "./dist/video.cjs"
+      }
+    },
     "./iife": "./dist/awaketab-wake.iife.js",
     "./package.json": "./package.json"
   },
@@ -122,6 +132,12 @@
       "name": "@awaketab/wake core",
       "path": "dist/index.js",
       "limit": "3.4 kB",
+      "gzip": true
+    },
+    {
+      "name": "@awaketab/wake/video",
+      "path": "dist/video.js",
+      "limit": "650 B",
       "gzip": true
     },
     {
