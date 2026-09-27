@@ -42,6 +42,7 @@ export default {
       files: [
         '**/styles/shell.css',
         '**/styles/footer.css',
+        '**/styles/header-menus.css',
         '**/styles/content.css',
         '**/styles/article/*.css',
         '**/styles/hub.css',

@@ -1,0 +1,56 @@
+---
+import { createT } from '../../i18n/load';
+import type { TLocale } from '../../i18n/locales';
+import { EXTENSION_LISTED, EXTENSION_STORE_URLS } from '../../lib/extension';
+import { menuLink } from '../../lib/header-menu';
+import Glyph from './LogoGlyph.astro';
+
+interface Props {
+  locale: TLocale;
+  store?: boolean;
+  class?: string;
+}
+
+// One call to action per browser, picked in header-menus.css: the store where the extension runs, the Home Screen
+// guide on iOS, none elsewhere. CSS cannot tell Edge from Chrome, so boot.js sets <html data-edge>.
+const { locale, store = true, class: className } = Astro.props;
+const t = createT(locale);
+const english = locale !== 'en';
+const en = english ? t('header.nav.english') : '';
+const stores = store
+  ? ([
+      ['chrome', EXTENSION_LISTED ? EXTENSION_STORE_URLS.chrome : '/extension', t('header.add.chrome')],
+      ['edge', EXTENSION_LISTED ? EXTENSION_STORE_URLS.edge : '/extension', t('header.add.edge')],
+    ] as const)
+  : [];
+const home = await menuLink('on', 'ios-home-screen', locale);
+const homeLabel = `${t('header.add.home')}${home.en ? ` ${en}` : ''}`;
+---
+
+{
+  stores.map(([v, href, label]) => (
+    <a
+      class:list={['at-button at-button-primary at-button-sm at-hm-add', className]}
+      data-v={v}
+      href={href}
+      hreflang={english && !EXTENSION_LISTED ? 'en' : undefined}
+    >
+      <Glyph />
+      {label}
+      {en && !EXTENSION_LISTED && <span class="sr-only"> {en}</span>}
+    </a>
+  ))
+}
+<a
+  class:list={['at-button at-button-primary at-button-sm at-hm-add', className]}
+  data-v="ios"
+  href={home.href}
+  hreflang={home.en ? 'en' : undefined}
+  aria-label={homeLabel}
+>
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <path d="M6 3.5h12a2.5 2.5 0 0 1 2.5 2.5v12a2.5 2.5 0 0 1-2.5 2.5H6A2.5 2.5 0 0 1 3.5 18V6A2.5 2.5 0 0 1 6 3.5zM12 8v8M8 12h8" />
+  </svg>
+  <span class="at-hm-add-long">{t('header.add.home')}</span>
+  <span class="at-hm-add-short" aria-hidden="true">{t('header.add.homeShort')}</span>
+</a>
