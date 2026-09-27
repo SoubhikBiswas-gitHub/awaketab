@@ -2,7 +2,7 @@
 
 Auto-generated from the canvas status table. Canvas: https://claude.ai/artifact/MArJ4zoZRiYmppEd9hXv5e
 
-Updated Sunday, 27 September 2026 · 12:09 PM
+Updated Sunday, 27 September 2026 · 12:18 PM
 
 | # | Item | Canvas design | Real app |
 |---|---|---|---|
@@ -78,5 +78,6 @@ Updated Sunday, 27 September 2026 · 12:09 PM
 | 60 | Design system tokens (DESIGN §12, D-R23) + real-runtime §11 audit: 0 violations on all 300 boards | ✅ on canvas | ⬜ |
 | 61 | Responsive contract (D-R22) + tool boards at the 600 and 1024 breakpoint edges | ✅ on canvas | ⬜ |
 | 62 | /for hub cut to 14 (OD-3), embed 320×104 + credit outside the widget, docs updated | ✅ on canvas | ⬜ |
+| 63 | Coverage check: tablet for the /on /vs /guides /learn hubs, checkout failed and Pro lapsed; blocked and time's up at desktop and tablet | ✅ on canvas | ⬜ |
 
-**Canvas:** 62 done · 0 building · 0 not started (of 62). **Real app:** 0 of 26, starts after owner approval.
+**Canvas:** 63 done · 0 building · 0 not started (of 63). **Real app:** 0 of 26, starts after owner approval.

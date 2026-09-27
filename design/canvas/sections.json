@@ -193,6 +193,20 @@
     1180,
     "Tablet · Settings · language list open · light",
     true
+   ],
+   [
+    "ToolTabletBlockedDark.dc.html",
+    820,
+    1180,
+    "Tablet · Blocked, with the fix · dark · Ring",
+    true
+   ],
+   [
+    "ToolTabletTimesUpLight.dc.html",
+    820,
+    1180,
+    "Tablet · Time's up · light · Horizon",
+    true
    ]
   ]
  ],
@@ -232,6 +246,20 @@
     1280,
     800,
     "Desktop · Stats · light",
+    true
+   ],
+   [
+    "DeskBlockedLight.dc.html",
+    1280,
+    800,
+    "Desktop · Blocked, with the fix · light · Tide",
+    true
+   ],
+   [
+    "DeskTimesUpDark.dc.html",
+    1280,
+    800,
+    "Desktop · Time's up · dark · Bold",
     true
    ]
   ]
@@ -957,6 +985,34 @@
     1280,
     1432,
     "/learn hub · desktop · dark",
+    true
+   ],
+   [
+    "HubOnTablet.dc.html",
+    820,
+    2988,
+    "/on hub · tablet · light",
+    true
+   ],
+   [
+    "HubVsTablet.dc.html",
+    820,
+    2420,
+    "/vs hub · tablet · dark",
+    true
+   ],
+   [
+    "HubGuidesTablet.dc.html",
+    820,
+    2400,
+    "/guides hub · tablet · light",
+    true
+   ],
+   [
+    "HubLearnTablet.dc.html",
+    820,
+    2156,
+    "/learn hub · tablet · dark",
     true
    ]
   ]
@@ -1911,6 +1967,13 @@
     2966,
     "Pro lapsed · phone · dark",
     true
+   ],
+   [
+    "SysProLapsedTablet.dc.html",
+    820,
+    2912,
+    "Pro lapsed · tablet · light",
+    true
    ]
   ]
  ],
@@ -1971,6 +2034,13 @@
     820,
     1445,
     "Checkout success · tablet · light",
+    true
+   ],
+   [
+    "SysCheckoutFailedTablet.dc.html",
+    820,
+    1115,
+    "Checkout failed · tablet · dark",
     true
    ]
   ]
