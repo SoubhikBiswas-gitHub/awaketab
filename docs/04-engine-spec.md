@@ -106,7 +106,7 @@ Guards reference `vis` (`document.visibilityState`), `fb` (`options.fallback ===
 | 6 | `requesting` | rejects other error | — | `denied` | reason `unknown`, advice `null` (cause unknown); same retry rule; emit `error` |
 | 7 | `requesting` (video) | `video.play()` resolves | — | `fallback` | `mode = 'video'`; start 20 s nudge timer; advice = null |
 | 8 | `requesting` (video) | `play()` rejects `NotAllowedError` | — | `unsupported` | advice `gesture_required`; emit `error` |
-| 9 | `requesting` (video) | `play()` rejects other (`NotSupportedError`, `AbortError`) | — | `unsupported` | try the next source once (`webm` → `mp4`); if none left advice `unsupported_browser`; emit `error` |
+| 9 | `requesting` (video) | `play()` rejects another way (`NotSupportedError`, `AbortError`), or the last `<source>` fires `error` | — | `unsupported` | at once, never left on `requesting`: the browser tries the sources in order itself, and when none can play, `play()` never settles, so the last source's `error` ends the request; video removed; advice `unsupported_browser`; emit `error` |
 | 10 | `held` | sentinel `release` event | `vis === 'hidden'` | `lost` | sentinel = null; advice `tab_hidden`; reason `released_hidden` |
 | 11 | `held` | sentinel `release` event | `vis === 'visible'` | `lost` → immediately `requesting` | reason `released_visible`; loop guard: if ≥ 3 visible-releases within 10 s → go to `denied` (reason `battery_platform`) instead and apply the retry rule |
 | 12 | `held` | `release()` | — | `idle` | set `releasing`; `await sentinel.release()`; ignore the resulting `release` event; sentinel = null; `mode` kept |
@@ -132,31 +132,39 @@ Row 5 is the retry policy in full: exponential backoff, at most `N = 3` attempts
 
 ### 5. Video fallback details
 
-Created once, lazily, inside the user's gesture (row 21):
+Created lazily, inside the user's gesture (row 21):
 
 ```ts
-function createFallbackVideo(doc: Document, sources: { webm?: string; mp4?: string }): HTMLVideoElement {
+function createFallbackVideo(doc: Document, sources: { webm?: string; mp4?: string } = {}): IFallbackHandle {
   const v = doc.createElement('video');
   v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = false; v.preload = 'auto';
   v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
-  v.setAttribute('aria-hidden', 'true'); v.title = 'AwakeTab keeps the screen awake';
-  v.disablePictureInPicture = true; (v as any).disableRemotePlayback = true;
-  // Must be rendered (not display:none) for the platform to count it as playing video.
-  v.style.cssText = 'position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:0.01;pointer-events:none;';
-  for (const [type, src] of [['video/webm', sources.webm], ['video/mp4', sources.mp4]] as const) {
+  v.setAttribute('aria-hidden', 'true'); v.setAttribute('hidden', ''); v.title = 'AwakeTab keeps the screen awake';
+  v.disablePictureInPicture = true;
+  v.style.cssText = 'position:fixed;inset-inline-start:0;inset-block-end:0;inline-size:1px;block-size:1px;opacity:0.01;pointer-events:none';
+  // The WebM is built in; the MP4 is added only when the caller passes one (`@awaketab/wake/video`).
+  let last: HTMLSourceElement | null = null;
+  for (const [type, src] of [['video/webm', sources.webm ?? WEBM_DATA_URL], ['video/mp4', sources.mp4]] as const) {
     if (!src) continue;
-    const s = doc.createElement('source'); s.type = type; s.src = src; v.appendChild(s);
+    last = doc.createElement('source'); last.type = type; last.src = src; v.appendChild(last);
   }
   doc.body.appendChild(v);
-  return v;
+  // play() never settles once every <source> has failed, so the last source's error rejects it instead.
+  const play = () => new Promise<void>((resolve, reject) => {
+    if (last) last.onerror = () => reject(new Error('no playable source'));
+    v.play().then(resolve, reject);
+  });
+  return { el: v, play, /* pause, startNudge, stopNudge, remove */ };
 }
 ```
 
-- Sources default to inline `data:video/webm;base64,…` and `data:video/mp4;base64,…` 1-frame clips of ~1 s duration exported from `@awaketab/wake/video` (≤ 1.5 KB gz together). `options.videoSources` may replace them with URLs (`/fallback.webm`, `/fallback.mp4` in `public/`), which the site's service worker precaches.
+- **Sources.** By default there is one source: an inline `data:video/webm;base64,…` clip built into the core, a valid 16 × 16 VP8 WebM with two keyframes one second apart (a single frame never reaches `HAVE_ENOUGH_DATA` in Chromium). The MP4 is opt-in, so the core stays inside its 3.4 KB budget: `import { mp4 } from '@awaketab/wake/video'` (a valid two-frame H.264 MP4 for Safari before 16.4, which has no Wake Lock API and cannot play WebM; the entry holds both clips and is capped at 650 B gz by `size-limit`), then `createWakeLock({ videoSources: { mp4 } })`. The same entry also exports `webm`. `options.videoSources.webm` replaces the built-in WebM; either source may be a `data:` or `https:` URL.
+- **When nothing can play.** If no source can play, the request ends in `unsupported` (advice `unsupported_browser`) straight away and the video element is removed (row 9); it never hangs on `requesting`.
+- **Who passes the MP4.** The embed widget (`src/tool/embed/app.ts`) passes it for readers on older Safari, since its own budget has room (`11-embed-spec.md` §2); the tool page uses the default WebM only.
 - `play()` is called synchronously in the gesture handler's call stack (no `await` before it); its promise is handled per rows 7–9.
 - Nudge: every 20 s (`setInterval`) check `paused || ended || readyState < 2` and re-`play()` from `currentTime = 0`. This is a watchdog for browsers that stall a looping tiny video, not a keep-alive by itself.
 - On hidden: pause (row 24) — saves the CPU that older fallbacks burned (25–30% reported for the Firefox video path). On visible: `play()` again; if the browser now demands a gesture we surface `gesture_required` honestly instead of pretending.
-- The element is removed only on `destroy()`.
+- The element is removed when a failed `play()` ends the request, on `release()` from `fallback`, and on `destroy()`; the next `request()` creates a fresh one.
 
 ### 6. Public API of `@awaketab/wake`
 

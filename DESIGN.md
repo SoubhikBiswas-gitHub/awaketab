@@ -166,6 +166,7 @@ Scale: `4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64 · 96` px.
 - Inside a control or chip: 8–12. Between related items: 8 / 12. Between groups: 20 / 24. Between sections: phone 48, tablet 64, desktop 96.
 - Page gutters: phone 16, tablet 32, desktop 80, xl 120. Max content width 1200; reading measure 68ch.
 - Phone dock: length block → 20 → actions; actions 20 from the bottom edge.
+- Below the last row or button of a sheet, panel or dock: 20. **Exception, the extension popup:** it is a fixed 360 × 600 frame (Chrome caps a popup at 600 px and scrolls anything taller), so it keeps **8** below its last row inside that frame instead of 20. The tallest states end on the frame's last 8 px; a longer translation scrolls inside the frame rather than growing it.
 
 ### 11.2 Borders
 - Width is always **1 px** (focus ring is the only 2 px line, offset 3 px).
@@ -220,6 +221,7 @@ TV / kiosk scale (≥ 1920 wide): meta 32, date 40, message 96–128, clock digi
 - Card: `surface`, 1 px `line`, radius 16, padding 20 (phone) / 24 (≥ tablet). No nested cards: inner groups use dividers or spacing.
 - Elevation: dark and OLED use borders only; light adds `0 1px 2px rgba(14,23,38,.06)`. Sheets and floating panels: `0 24px 64px -24px rgba(0,0,0,.45)` + scrim `rgba(4,7,12,.55)`.
 - Header 60 (phone) / 68 (≥ tablet) on every product: tool, content, Pro, extension options, embed docs. Header gutter = page gutter (§11.1). Bottom border 1 px `line` only when content scrolls under it.
+- Header nav (Use cases, Devices, Extension, Pro) shows from 1024. On the tool page the header also carries the date line, the Pro badge, Install, the theme switch and the Share, Shortcuts, Floating window, Stats and Settings icon buttons, so the nav hides whenever the header is narrower than 1008 px inside its gutters (a container query), which with the 80 px desktop gutter is from 1024 to about 1170 px wide, when the controls would not fit beside it. The logo never shrinks while the nav shows.
 - A device or window mock (popup inside a browser, widget inside a host page) is not a nested card; explanatory cards inside cards are.
 
 ### 11.7 Composition rules

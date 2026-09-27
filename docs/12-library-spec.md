@@ -1,6 +1,6 @@
 # 12 · Library specification — `@awaketab/wake`
 
-Status: v1.1 · 2026-09-26 (as built in M8, §10) · Owner: Soubhik
+Status: v1.2 · 2026-09-28 (as built in M8, §10; fallback video fix, §10.4) · Owner: Soubhik
 
 **Purpose.** `@awaketab/wake` is the low-level Screen Wake Lock layer that the web app, the PiP window, the embed and the extension share — published as a standalone, MIT-licensed npm package. It is the maintained replacement for NoSleep.js (last release December 2020) and the developer-facing asset that earns the links a tool site needs. This document is its contract.
 
@@ -12,7 +12,7 @@ Related docs: `00-conventions.md` §5.1, §13.1 · `04-engine-spec.md` §3–§5
 
 | Goal | Target |
 |---|---|
-| Size | ≤ 3.4 KB gz for the core entry (`size-limit` in CI, `packages/wake/package.json`); the base64-inlined fallback video assets are part of that entry, not an addition on top |
+| Size | ≤ 3.4 KB gz for the core entry (`size-limit` in CI, `packages/wake/package.json`); the base64-inlined WebM fallback clip is part of that entry, not an addition on top. The opt-in `@awaketab/wake/video` entry (WebM and MP4 clips) is capped separately at 650 B gz |
 | Dependencies | zero |
 | Environments | Browsers per the support matrix; SSR-safe (`typeof window === 'undefined'` → inert instance) |
 | Types | TypeScript, `strict`, `.d.ts` shipped |
@@ -33,7 +33,7 @@ export type TAdviceCode = 'hidden_document' | 'permissions_policy'
 
 export interface IWakeLockOptions {
   fallback?: 'video' | 'none';                 // default 'video'
-  videoSources?: { webm?: string; mp4?: string }; // override the inlined 1-frame assets (data: or https: URLs)
+  videoSources?: { webm?: string; mp4?: string }; // webm replaces the built-in clip; mp4 is added only when passed (data: or https: URLs)
   reacquireOnVisible?: boolean;                // default true — re-request when the document becomes visible after `lost`
   retry?: { attempts: number; baseMs: number } | false; // default { attempts: 3, baseMs: 500 } for transient denials
   nudgeIntervalMs?: number;                    // default 20_000 — fallback video currentTime nudge
@@ -65,7 +65,8 @@ export const isWakeLockSupported: () => boolean;
 - `request()` from `idle`/`lost`/`denied` → `requesting` → `held` on resolve. On `NotAllowedError` → `denied` with `advice` from `classifyDenial()`; transient causes (`hidden_document`) retry per `retry` when the document becomes visible; others wait for a new `request()`.
 - Sentinel `release` while `document.hidden` → `lost` (reason `released_hidden`); while visible → `lost` (reason `released_platform`, e.g. Firefox at 5 % battery or less) and one retry; three visible releases within 10 s → `denied` with advice `null`.
 - `unsupported` is set at creation when the API is missing or the context is insecure. `request()` in `unsupported` with `fallback:'video'` attempts the video: `play()` rejection (autoplay policy) leaves the state `unsupported` and emits `error` — callers must invoke `request()` from a user gesture in that case (the UI shows "Tap to use the fallback").
-- The fallback video element is `<video muted playsinline loop hidden>` appended to `document.body`, sources = inlined 1-frame WebM then MP4; `currentTime` nudged every `nudgeIntervalMs`; paused when hidden and resumed when visible.
+- The fallback video element is `<video muted playsinline loop hidden>` appended to `document.body`. By default it has one source: the built-in WebM, a valid 16 × 16 VP8 clip with two keyframes one second apart. The MP4 for Safari before 16.4 (no Wake Lock API, no WebM) is opt-in: `import { mp4 } from '@awaketab/wake/video'`, then `createWakeLock({ videoSources: { mp4 } })`; it is then the second source. `currentTime` is nudged every `nudgeIntervalMs`; the video pauses when hidden and resumes when visible.
+- If no source can play, `request()` resolves to `unsupported` (advice `unsupported_browser`) straight away and the video element is removed. A browser's `play()` never settles once every source has failed, so the last source's `error` event ends the request; the state never hangs on `requesting`.
 - `fullscreenchange` triggers a re-request (some browsers release locks when entering fullscreen).
 - All listeners are removed on `destroy()`; the instance is inert afterwards (`state` stays `idle`).
 
@@ -81,6 +82,8 @@ button.addEventListener('click', () => lock.request());   // gesture-safe for th
 
 Framework adapters (separate entry points, each < 400 B): `@awaketab/wake/react` (`useWakeLock(options)` → `{ state, supported, request, release }`), `/preact`, `/vue` (`useWakeLock()` composable). Adapters are optional and tree-shaken.
 
+Fallback clips (separate entry point, ≤ 650 B gz): `@awaketab/wake/video` exports `webm` and `mp4` as `data:` URLs. Only the MP4 needs it (`createWakeLock({ videoSources: { mp4 } })`, for Safari before 16.4); the WebM is already built into the core.
+
 ---
 
 ## 3. Package layout
@@ -90,7 +93,8 @@ packages/wake/
 ├─ src/
 │  ├─ index.ts          # createWakeLock, classifyDenial, isWakeLockSupported
 │  ├─ machine.ts        # transition table (mirrors 04-engine-spec §4)
-│  ├─ fallback.ts       # video element management + inlined assets
+│  ├─ fallback.ts       # video element management; the built-in WebM
+│  ├─ video.ts          # the `@awaketab/wake/video` entry: exports `webm` and `mp4`
 │  ├─ classify.ts       # denial → TAdviceCode
 │  ├─ adapters/react.ts · preact.ts · vue.ts
 │  └─ assets/blank.webm.b64.ts · blank.mp4.b64.ts
@@ -116,7 +120,8 @@ packages/wake/
     ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js", "require": "./dist/index.cjs" },
     "./react": { "types": "./dist/adapters/react.d.ts", "import": "./dist/adapters/react.js" },
     "./preact": { "types": "./dist/adapters/preact.d.ts", "import": "./dist/adapters/preact.js" },
-    "./vue": { "types": "./dist/adapters/vue.d.ts", "import": "./dist/adapters/vue.js" }
+    "./vue": { "types": "./dist/adapters/vue.d.ts", "import": "./dist/adapters/vue.js" },
+    "./video": { "types": "./dist/video.d.ts", "import": "./dist/video.js" }
   },
   "files": ["dist", "README.md", "LICENSE"],
   "keywords": ["wake lock", "screen wake lock", "nosleep", "keep awake", "prevent sleep", "wakelock"],
@@ -138,7 +143,7 @@ Build: `tsup` with `format: ['esm','cjs','iife']`, `dts: true`, `minify: true`, 
 | Last release | maintained; semver | 16 Dec 2020 |
 | Native Wake Lock | yes, first | yes (when present) |
 | Honest state | seven states + `change` events with reason and advice | `isEnabled` boolean; state can be wrong after release |
-| Fallback | inlined 1-frame video, gesture-aware, pauses when hidden | looping video, always on |
+| Fallback | inlined two-frame WebM (MP4 opt-in), gesture-aware, pauses when hidden, `unsupported` at once when nothing can play | looping video, always on |
 | Denial diagnosis | `classifyDenial()` → advice codes | none |
 | Re-acquire on visible | yes, configurable | yes |
 | Size (gz) | ≤ 3.4 KB (fallback assets inlined in that budget) | ≈ 3.2 KB measured |
@@ -189,13 +194,13 @@ Identifiers are canonical in `00-conventions.md` §13.10.
 - **`exports`.** Nested `import`/`require` conditions, each with its own `types` (`.d.ts` / `.d.cts`), plus `"./iife"` and `"./package.json"`; `unpkg` and `jsdelivr` point at the IIFE.
 - **Metadata.** `author`, `bugs`, `funding` (GitHub Sponsors), `publishConfig: { access: 'public', provenance: true, registry }`; `files` adds `CHANGELOG.md`.
 - **Changesets.** `.changeset/config.json` `access` is `public`. The two pending wake changesets (`wake-lock-layer` patch, and the wake half of `type-name-prefixes` major) are folded into `CHANGELOG.md` → `## 1.0.0`, so `changeset version` does not bump the never-published package to 2.0.0. The `@awaketab/core` half stays pending (core is private).
-- **size-limit.** `dist/index.js` ≤ 3.4 kB (3.21 kB), the IIFE ≤ 3.6 kB (3.45 kB), each adapter ≤ 400 B.
+- **size-limit.** `dist/index.js` ≤ 3.4 kB (3.21 kB), the IIFE ≤ 3.6 kB (3.45 kB), each adapter ≤ 400 B, and (since §10.4) `dist/video.js` ≤ 650 B.
 
 ### 10.2 Release (`.github/workflows/release.yml`)
 
 Job `version` runs `changesets/action` (opens the "version packages" PR while changesets are pending). When none are pending and the repository variable `NPM_PUBLISH_ENABLED` is `true`, job `publish-wake` (environment `npm`) tests, builds and size-checks the package, skips if `@awaketab/wake@<version>` is already on npm, prints `npm pack --dry-run`, runs `npm publish --provenance --access public` from `packages/wake`, and pushes the tag `@awaketab/wake@<version>`. Auth: npm trusted publishing (GitHub OIDC; the job installs npm 11.6.2 because trusted publishing needs ≥ 11.5.1 and Node 22 bundles npm 10), with an `NPM_TOKEN` automation-token secret as the fallback. Nothing is published from a laptop: `publishConfig.provenance` makes a local `npm publish` fail outside CI.
 
-`npm pack --dry-run` for 1.0.0 (23 files, 12.9 kB packed, 55.8 kB unpacked): `CHANGELOG.md`, `LICENSE`, `README.md`, `package.json`, `dist/index.{js,cjs,d.ts,d.cts}`, `dist/types-*.d.{ts,cts}`, `dist/awaketab-wake.iife.js`, `dist/adapters/{react,preact,vue}.{js,cjs,d.ts,d.cts}`. `packages/wake/test/pack.test.ts` asserts this list, that every `exports`/`unpkg` target is packed, and that no `src/`, `test/` or config file is.
+`npm pack --dry-run` for 1.0.0 (23 files, 12.9 kB packed, 55.8 kB unpacked): `CHANGELOG.md`, `LICENSE`, `README.md`, `package.json`, `dist/index.{js,cjs,d.ts,d.cts}`, `dist/types-*.d.{ts,cts}`, `dist/awaketab-wake.iife.js`, `dist/adapters/{react,preact,vue}.{js,cjs,d.ts,d.cts}`; since §10.4 also `dist/video.{js,cjs,d.ts,d.cts}`. `packages/wake/test/pack.test.ts` asserts this list, that every `exports`/`unpkg` target is packed, and that no `src/`, `test/` or config file is.
 
 ### 10.3 README and `/library`
 
@@ -203,3 +208,11 @@ The README follows §5 (badges: npm version, gzip size, CI, provenance, licence;
 
 Clear Night B6 (2026-09-27, board `PageLibrary`): the demo is one card. The status pill shows the exact pill string for the current state (`[data-demo-pill]`, `data-lock`), next to `state: <id>` and an advice chip (`Advice: <code>`). The seven states are drawn as a state diagram (pills on a 3 × 3 grid, arrows for the seven transitions: `request()`, acquired, denied, released, retry, no API, gesture); the current state glows in its tone, visited states stay lit, and the arrow of the last transition lights up (`[data-edge="from-to"][data-on]`). The transition log lists the time, `from → to` and `(reason, advice)`, newest first, last 12, in a scrolling box. The usage samples are tabs (ESM · CDN · React · Preact · Vue) with line numbers, build-time highlighting and a Copy button (`src/lib/code-tabs.ts`, `src/lib/library-code.ts`). The npm and GitHub links wait for the package to be published ("npm package coming soon" beside the install line); related links go to How AwakeTab is checked, the Screen Wake Lock API guide and NoSleep.js vs Wake Lock.
 
+### 10.4 Fallback video fix (before the first publish)
+
+The inlined WebM never decoded and the MP4 had no `moov` box, so `play()` never settled and the lock stayed on `requesting` (the pill read "Starting…"). As built now:
+
+- **WebM, built in.** A valid 16 × 16 VP8 WebM with two keyframes one second apart (`src/assets/blank.webm.b64.ts`); a single frame never reaches `HAVE_ENOUGH_DATA` in Chromium. It is the only default source.
+- **MP4, opt-in.** A valid two-frame H.264 MP4 (`src/assets/blank.mp4.b64.ts`) for Safari before 16.4. It moved out of the core into the new `@awaketab/wake/video` entry (`src/video.ts`, exports `webm` and `mp4`; ESM, CJS and types; `exports["./video"]`), so the core stays inside its 3.4 KB budget. Pass it with `createWakeLock({ videoSources: { mp4 } })`. The embed widget does; the tool page does not.
+- **No playable source.** A browser's `play()` never settles once every `<source>` has failed, so the last source's `error` event rejects it. `request()` then resolves to `unsupported` (advice `unsupported_browser`) straight away, the video element is removed and an `error` event fires; the next `request()` builds a fresh one.
+- **Tests.** `test/transitions.test.ts` T09b (a `play()` that never settles fails over when the last source errors), T09c (the built-in source is WebM only; the MP4 is added only when passed), T09d (both clips are real two-frame videos: EBML header, `webm`, `V_VP8` and two VP8 keyframes; the MP4 boxes `ftyp` to `mdat` and a sample count of 2). `test/pack.test.ts` expects the four `dist/video.*` files.

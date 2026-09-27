@@ -449,7 +449,7 @@ UI affordances (all in the island, `apps/web/src/tool/ui/pro.ts`):
 | `activation_limit` | 409 | "This key is already active on 5 devices." + device labels (`pro.err.limit`) | Button → `/pro/manage` to remove one |
 | `revoked` / `refunded` | 403 | "This licence is no longer active." (`pro.err.revoked`) | Link to support and to `/pro` |
 | `polar_unavailable` | 502 | "Our licence service is taking a break. Try again in a minute." (`pro.err.unavailable`) | Retry button; nothing is stored |
-| `polar_unavailable` (syncing, as built F-08) | 503 + `Retry-After: 5` | "Your purchase is still syncing — retry in a minute" (`license.info.syncing`, the same copy as the 502) | A paid checkout whose order, grant or key Polar has not created yet (§2.3b). `/pro/activate` auto-fill retries after 3, 6 and 12 s; nothing is stored |
+| `polar_unavailable` (syncing, as built F-08) | 503 + `Retry-After: 5` | "Your purchase is still syncing. Retry in a minute." (`license.info.syncing`, the same copy as the 502) | A paid checkout whose order, grant or key Polar has not created yet (§2.3b). `/pro/activate` auto-fill retries after 3, 6 and 12 s; nothing is stored |
 | `rate_limited` | 429 | "Too many attempts. Wait a minute." (`pro.err.rate`) | Retry after 60 s (`Retry-After`) |
 | `bad_token` | 401 | "This device needs to re-activate." (`pro.err.token`) | Paste key again |
 | offline (client) | — | "You're offline. Pro keeps working until {date}; we'll re-check when you're back." (`pro.err.offline`) | Nothing to do |
