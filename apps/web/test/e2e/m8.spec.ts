@@ -287,6 +287,8 @@ test('full size in cook mode offers kitchen timers and tap-to-pause keeps the lo
 test('with no Wake Lock API the widget reaches the real video fallback', async ({ page }) => {
   await page.addInitScript(() => {
     delete (Navigator.prototype as { wakeLock?: unknown }).wakeLock;
+    // The beforeEach fake sits on the instance, so it goes too.
+    delete (navigator as { wakeLock?: unknown }).wakeLock;
   });
   await page.goto('/embed/cook?mode=standard&size=full&theme=light&preset=p60');
   await page.locator('[data-embed-toggle]').click();

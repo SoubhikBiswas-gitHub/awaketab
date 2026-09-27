@@ -46,7 +46,7 @@ export function createFallbackVideo(doc: Document, sources: { webm?: string; mp4
       // play() never settles once every <source> has failed, so the last source's error rejects it instead.
       if (last)
         last.onerror = () => {
-          reject(new Error('no playable source'));
+          reject(new Error('no source'));
         };
       v.play().then(resolve, reject);
     });

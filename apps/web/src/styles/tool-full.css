@@ -15,23 +15,6 @@
     align-self: center;
   }
 
-  .at-limit {
-    margin-block: var(--at-s-6);
-    padding: var(--at-card-pad);
-    border: 1px solid color-mix(in srgb, var(--at-warn) 32%, transparent);
-    border-radius: var(--at-r-lg);
-    background: color-mix(in srgb, var(--at-warn) 8%, transparent);
-    font: var(--at-type-small);
-  }
-
-  .at-limit ul {
-    display: grid;
-    gap: var(--at-gap-item);
-    margin: 0;
-    padding-inline-start: var(--at-s-6);
-    list-style: disc;
-  }
-
   [data-kiosk] .at-wordmark {
     visibility: hidden;
   }
@@ -559,7 +542,6 @@
   block-size: var(--at-icon-md);
 }
 
-.at-install-btn[hidden],
 .at-site-header [data-install][hidden] {
   display: none;
 }

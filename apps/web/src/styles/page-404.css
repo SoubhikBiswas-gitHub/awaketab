@@ -223,6 +223,7 @@
 }
 
 .at-404 .at-hz-meta {
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- face art scales with --u */
   font-size: max(var(--at-t-xs), calc(var(--fh) * var(--u)));
 }
 

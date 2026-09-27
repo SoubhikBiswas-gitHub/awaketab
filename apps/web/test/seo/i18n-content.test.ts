@@ -220,7 +220,9 @@ describe('localized chrome (E6-T05)', () => {
       expect(manifest.scope, code).toBe(`/${code}/`);
       expect(manifest.id, code).toBe(`/${code}/`);
       const home = await readFile(new URL(servedFile(`/${code}/`), dist), 'utf8');
-      expect(home, code).toContain(`<link rel="manifest" href="/${code}/manifest.webmanifest">`);
+      // Tool pages link the manifest after the first paint, from the island's data-manifest.
+      expect(home, code).toContain(`data-manifest="/${code}/manifest.webmanifest"`);
+      expect(home, code).not.toContain('<link rel="manifest"');
     }
   });
 

@@ -1734,6 +1734,12 @@ dialog.at-tsheet::before {
   }
 }
 
+@media (width < 768px) {
+  dialog.at-tsheet :is([data-open-share], [data-open-shortcuts]) {
+    display: inline-flex;
+  }
+}
+
 @media (width >= 1600px) {
   dialog.at-tsheet {
     inline-size: var(--at-tl-sheet-xl);

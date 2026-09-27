@@ -512,7 +512,7 @@
   font-size: calc(42 * var(--u));
 }
 
-.at-face-text > .at-kick {
+.at-face-text > :is(.at-kick, .at-digits) {
   align-self: stretch;
   text-align: center;
 }
@@ -718,7 +718,6 @@
 
 .at-bar > .at-seg-ind,
 .at-c-more,
-.at-until-long,
 .at-lpanel {
   display: none;
 }
@@ -1060,6 +1059,12 @@
   .at-toast p {
     font: var(--at-type-ui);
     font-weight: 400;
+  }
+}
+
+@media (width < 768px) {
+  .at-site-header :is([data-open-share], [data-open-shortcuts]) {
+    display: none;
   }
 }
 
