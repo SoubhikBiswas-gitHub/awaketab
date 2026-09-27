@@ -3,9 +3,10 @@ interface Props {
   name: string;
   class?: string;
   label?: string;
+  size?: number;
 }
 
-const { name, class: className, label } = Astro.props;
+const { name, class: className, label, size = 24 } = Astro.props;
 
 const PHONE = '<rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/>';
 const MONITOR = '<rect x="2.5" y="3.5" width="19" height="13" rx="2"/><path d="M9 20.5h6M12 16.5v4"/>';
@@ -31,6 +32,8 @@ const body = ICONS[name] ?? MONITOR;
 <svg
   class:list={['at-icon', className]}
   viewBox="0 0 24 24"
+  width={size}
+  height={size}
   fill="none"
   stroke="currentColor"
   stroke-width="1.8"

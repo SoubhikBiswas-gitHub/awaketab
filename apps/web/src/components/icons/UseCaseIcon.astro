@@ -3,9 +3,10 @@ interface Props {
   name: string;
   class?: string;
   label?: string;
+  size?: number;
 }
 
-const { name, class: className, label } = Astro.props;
+const { name, class: className, label, size = 24 } = Astro.props;
 
 const ICONS: Record<string, string> = {
   cooking:
@@ -40,6 +41,8 @@ const body = ICONS[name] ?? FALLBACK;
 <svg
   class:list={['at-icon', className]}
   viewBox="0 0 24 24"
+  width={size}
+  height={size}
   fill="none"
   stroke="currentColor"
   stroke-width="1.8"

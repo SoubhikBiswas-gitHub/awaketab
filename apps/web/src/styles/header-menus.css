@@ -54,6 +54,7 @@
   .at-hm-open,
   .at-hm-panel {
     display: none;
+    visibility: visible;
   }
 
   .at-hm-chev {

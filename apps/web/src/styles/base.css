@@ -33,6 +33,10 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
+
+  [data-swap] :not(.at-seg-ind) {
+    transition: none !important;
+  }
 }
 
 @layer components {

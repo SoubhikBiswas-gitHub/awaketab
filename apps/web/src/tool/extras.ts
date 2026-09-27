@@ -5,6 +5,7 @@ import { mountPwa } from './pwa.js';
 import { mountSponsor } from './sponsor.js';
 import { act } from './ui/actions.js';
 import { mountLangSuggest } from './ui/lang-suggest.js';
+import { moreCss } from './ui/more-css.js';
 import { applyAccent } from './accent.js';
 import { t } from './i18n.js';
 import type { IStore } from './store.js';
@@ -114,7 +115,9 @@ export function mountLate(ctx: IToolCtx): () => void {
       ctx.track('pwa_install');
     },
   );
-  mountLangSuggest(root, ctx.storage);
+  void moreCss().then(() => {
+    mountLangSuggest(root, ctx.storage);
+  });
   // The length links below a preset page's tool switch a running session in place instead of reloading the page
   // (which would drop the lock); "Until a time…" opens the Until panel. Without a session they open their page.
   root.addEventListener('click', (e) => {

@@ -8,6 +8,8 @@ const SVG = 'http://www.w3.org/2000/svg';
 function closeIcon(): SVGSVGElement {
   const svg = document.createElementNS(SVG, 'svg');
   svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('width', '16');
+  svg.setAttribute('height', '16');
   svg.setAttribute('aria-hidden', 'true');
   svg.setAttribute('focusable', 'false');
   const path = document.createElementNS(SVG, 'path');

@@ -88,7 +88,7 @@ A tiny page-side helper is exposed as `window.AwakeTabEmbed` by the loader: `.on
 
 ## 6. Performance
 
-Loader ≤ 3 KB gz, `async`, no blocking; iframe `loading="lazy"` so below-the-fold embeds cost nothing until scrolled; widget bundle ≤ 25 KB gz, no third-party requests, no ads ever (`00-conventions.md` §8.3). The only font is the site's own self-hosted Geist (same origin, preloaded, `font-display: swap` with a metric-matched fallback; DESIGN.md §3, D-R26). The iframe reserves its box before load (fixed height per size and container width) and the credit line its 24 px line, so neither adds CLS to the host page. The one exception: on a licensed domain the credit line is removed when the lookup answers (a single 40 px collapse, early, from an edge-cached response).
+Loader ≤ 3 KB gz, `async`, no blocking; iframe `loading="lazy"` so below-the-fold embeds cost nothing until scrolled; widget bundle ≤ 25 KB gz, no third-party requests, no ads ever (`00-conventions.md` §8.3). The only font is the site's own self-hosted Geist (same origin, preloaded, `font-display: optional` over a metric-matched fallback, so it never swaps after the first paint; DESIGN.md §3, D-R26). The iframe reserves its box before load (fixed height per size and container width) and the credit line its 24 px line, so neither adds CLS to the host page. The one exception: on a licensed domain the credit line is removed when the lookup answers (a single 40 px collapse, early, from an edge-cached response).
 
 ---
 

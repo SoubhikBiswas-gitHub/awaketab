@@ -208,7 +208,7 @@ const DASH = 'M7 12h10';
                             v
                           ) : (
                             <>
-                              <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                                 <path d={v ? CHECK : DASH} />
                               </svg>
                               <span class="sr-only">{p(v ? 'cmp.yes' : 'cmp.no')}</span>
@@ -235,7 +235,7 @@ const DASH = 'M7 12h10';
             gets.map((g) => (
               <li class="at-pro-get-item">
                 <span class="at-pro-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
+                  <svg viewBox="0 0 24 24" width="24" height="24">
                     <path d={g.d} />
                   </svg>
                 </span>
@@ -333,7 +333,7 @@ const DASH = 'M7 12h10';
             trust.map((x) => (
               <li class="at-pro-trust-item">
                 <p class="at-pro-refund">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                     <path d={x.d} />
                   </svg>
                   <span>
@@ -355,7 +355,7 @@ const DASH = 'M7 12h10';
                 <summary>
                   <h3>{q.q}</h3>
                   <span class="at-pro-faq-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 5v14M5 12h14" /></svg>
                   </span>
                 </summary>
                 <p>{q.a}</p>

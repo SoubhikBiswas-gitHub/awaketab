@@ -14,7 +14,7 @@ const sizeClass = size === 'M' ? undefined : `at-pill-${size.toLowerCase()}`;
 ---
 
 <Tag class:list={['at-pill', sizeClass, className]} data-lock={state} {...(Tag === 'button' ? { type: 'button' } : {})} {...rest}>
-  <svg class="at-pill-glyph" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+  <svg class="at-pill-glyph" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false">
     <path class="at-g-dot" d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path>
     <path class="at-g-pause" d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z"></path>
     <path class="at-g-tri" d="M6 1L11.2 10.5H.8z"></path>

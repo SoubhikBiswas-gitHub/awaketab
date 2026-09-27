@@ -101,7 +101,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
         <div class="at-tool-embed-bar">
           <span class="at-tag at-pro-badge" data-pro-badge hidden>{t('pro.badge')}</span>
           <button class="at-icon-button" type="button" data-open-settings aria-label={t('tool.header.settings')} aria-haspopup="dialog">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
               <path d={ICON.settings} /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" />
             </svg>
           </button>
@@ -119,7 +119,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
             const [before, after] = dated(`pro.lapse.${k}.body`);
             return (
               <div class="at-lapse-card" role="status" data-lapse-for={state}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d={ICON[state]} />
                 </svg>
                 <div class="at-lapse-text">
@@ -133,7 +133,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
                     <ul>
                       {lapseFalls.map((f) => (
                         <li>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d={ICON.arrow} />
                           </svg>
                           {t(`pro.lapse.ended.${f}`)}
@@ -151,7 +151,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
                     {t('pro.lapse.later')}
                   </button>
                   <button class="at-icon-button" type="button" data-lapse-dismiss aria-label={t('pro.lapse.dismiss')}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
                       <path d="M6 6l12 12M18 6L6 18" />
                     </svg>
                   </button>
@@ -179,6 +179,8 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -198,6 +200,8 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -220,6 +224,8 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -241,6 +247,8 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -262,6 +270,8 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -285,6 +295,8 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -304,6 +316,8 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"

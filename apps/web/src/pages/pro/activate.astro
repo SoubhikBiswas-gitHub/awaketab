@@ -94,7 +94,7 @@ const CO: TCo[] = [
     <main class="at-pro-act-main" data-view="activate">
       <div class="at-pro-act-col">
         <a class="at-pro-back" href="/pro">
-          <svg viewBox="0 0 24 24" aria-hidden="true" class="at-flip-rtl"><path d="M15 6l-6 6 6 6"></path></svg>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="at-flip-rtl"><path d="M15 6l-6 6 6 6"></path></svg>
           {a('back')}
         </a>
         <div class="at-pro-act-head">
@@ -124,7 +124,7 @@ const CO: TCo[] = [
           </p>
           <Button variant="primary" type="submit" glyph={false} class="at-pro-submit">
             <LogoGlyph />
-            <svg class="at-pro-spin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M21 12a9 9 0 0 0-9-9"></path></svg>
+            <svg class="at-pro-spin" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M21 12a9 9 0 0 0-9-9"></path></svg>
             <span data-activate-mode="web" data-label-idle>{t('page.pro.activate.submit')}</span>
             <span data-activate-mode="ext" data-label-idle hidden>{t('page.pro.activate.ext.submit')}</span>
             <span data-label-checking>{a('checking')}</span>
@@ -136,7 +136,7 @@ const CO: TCo[] = [
 
           <div role="alert" id="activate-error" class="at-pro-err" data-activate-error hidden>
             <p class="at-pro-err-title">
-              <svg viewBox="0 0 12 12" aria-hidden="true"><path class="at-pro-err-tri" d={GLYPH_TRI}></path><path class="at-pro-err-pause" d={GLYPH_PAUSE}></path></svg>
+              <svg viewBox="0 0 12 12" width="14" height="14" aria-hidden="true"><path class="at-pro-err-tri" d={GLYPH_TRI}></path><path class="at-pro-err-pause" d={GLYPH_PAUSE}></path></svg>
               <span data-activate-error-title></span>
             </p>
             <p class="at-pro-err-text" data-activate-error-text></p>
@@ -148,7 +148,7 @@ const CO: TCo[] = [
 
           <div role="status" class="at-card at-pro-ok" data-ok>
             <div class="at-pro-ok-top">
-              <svg class="at-pro-ok-ring" viewBox="0 0 48 48" aria-hidden="true">
+              <svg class="at-pro-ok-ring" viewBox="0 0 48 48" width="48" height="48" aria-hidden="true">
                 <circle class="at-pro-ok-track" cx="24" cy="24" r="20"></circle>
                 <circle class="at-pro-ok-arc" cx="24" cy="24" r="20" transform="rotate(-90 24 24)"></circle>
                 <circle class="at-pro-ring-halo" cx="24" cy="4" r="3.5"></circle>
@@ -166,7 +166,7 @@ const CO: TCo[] = [
                 {
                   UNLOCKED.map((u) => (
                     <li>
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d={CHECK}></path></svg>
+                      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d={CHECK}></path></svg>
                       {u}
                     </li>
                   ))
@@ -186,7 +186,7 @@ const CO: TCo[] = [
             <div class="at-pro-ext-row">
               <input class="at-input at-pro-key" type="text" readonly data-ext-key aria-labelledby="ext-title" aria-describedby="ext-copy" />
               <button type="button" class="at-button at-button-primary at-pro-copy" data-ext-copy>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path class="at-pro-copy-icon" d="M9 9h10v10H9zM5 15V5h10"></path><path class="at-pro-copied-icon" d={CHECK}></path></svg>
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path class="at-pro-copy-icon" d="M9 9h10v10H9zM5 15V5h10"></path><path class="at-pro-copied-icon" d={CHECK}></path></svg>
                 <span aria-live="polite"><span class="at-pro-copy-label">{a('copy')}</span><span class="at-pro-copied-label">{a('copied')}</span></span>
               </button>
             </div>
@@ -223,7 +223,7 @@ const CO: TCo[] = [
               [1, 2, 3].map((n) => (
                 <li>
                   <span aria-hidden="true">
-                    <svg viewBox="0 0 24 24"><path d={CHECK}></path></svg>
+                    <svg viewBox="0 0 24 24" width="12" height="12"><path d={CHECK}></path></svg>
                   </span>
                   {c(`rail.${n}`)}
                 </li>
@@ -304,7 +304,7 @@ const CO: TCo[] = [
             <div class="at-pro-co-col">
               <div class="at-pro-co-head">
                 <span class="at-pro-co-glyph" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
+                  <svg viewBox="0 0 24 24" width="20" height="20">
                     <path d={co.glyph} />
                   </svg>
                 </span>
@@ -319,7 +319,7 @@ const CO: TCo[] = [
                   <ul>
                     {co.list.map((item) => (
                       <li>
-                        <svg viewBox="0 0 24 24" aria-hidden="true" class="at-flip-rtl">
+                        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="at-flip-rtl">
                           <path d="M9 6l6 6-6 6" />
                         </svg>
                         <span>{item}</span>
@@ -341,7 +341,7 @@ const CO: TCo[] = [
               <h2 id={`co-aside-${co.id}`}>{c(`${co.id}.aside.title`)}</h2>
               {co.id === 'help' && (
                 <p role="note" class="at-pro-co-callout">
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
                     <path d="M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 11v5.5M12 7.6v.3" />
                   </svg>
                   {c('help.callout')}

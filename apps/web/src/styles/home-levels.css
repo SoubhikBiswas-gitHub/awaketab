@@ -7,6 +7,7 @@
     flex-direction: column;
     gap: var(--at-s-8);
     color: var(--at-ink);
+    visibility: visible;
   }
 
   .at-hl-head {
