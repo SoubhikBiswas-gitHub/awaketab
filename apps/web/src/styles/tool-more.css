@@ -1,6 +1,7 @@
 /* stylelint-disable no-descending-specificity -- state rules refine the base rule above them, in canvas order. */
 
 @import "./header-menus.css";
+@import "./icon-motion.css";
 
 :root {
   --at-tl-dot: 10px;

@@ -7,39 +7,47 @@ interface Props {
 
 const { name, class: className, label } = Astro.props;
 
+// Named parts (at-ico-part-*) move in icon-motion.css; parts with opacity="0" only show while acting.
 const ICONS: Record<string, string> = {
   cooking:
-    '<path d="M4 11h16v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M2.5 11h19"/><path d="M9 7.5c0-1.2 1-1.6 1-3M14 7.5c0-1.2 1-1.6 1-3"/>',
+    '<path d="M4 11h16v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M2.5 11h19"/><g class="at-ico-part-steam"><path d="M9 7.5c0-1.2 1-1.6 1-3"/><path d="M14 7.5c0-1.2 1-1.6 1-3"/></g>',
   reading:
-    '<path d="M12 6.5C10.5 5.2 8.3 4.5 5.5 4.5H3v14h2.5c2.8 0 5 .7 6.5 2 1.5-1.3 3.7-2 6.5-2H21v-14h-2.5c-2.8 0-5 .7-6.5 2z"/><path d="M12 6.5v14"/>',
+    '<path d="M12 6.5C10.5 5.2 8.3 4.5 5.5 4.5H3v14h2.5c2.8 0 5 .7 6.5 2"/><path d="M12 20.5c1.5-1.3 3.7-2 6.5-2H21v-14h-2.5c-2.8 0-5 .7-6.5 2"/><path d="M12 6.5v14"/><g class="at-ico-part-page" opacity="0"><path d="M12 6.5c1.5-1.3 3.7-2 6.5-2v14c-2.8 0-5 .7-6.5 2"/></g>',
   'sheet-music':
-    '<path d="M9 17V5l11-2v12M9 9l11-2"/><circle cx="6.5" cy="17" r="2.5"/><circle cx="17.5" cy="15" r="2.5"/>',
+    '<path d="M9 17V5l11-2v12M9 9l11-2"/><g class="at-ico-part-notes"><circle cx="6.5" cy="17" r="2.5"/><circle cx="17.5" cy="15" r="2.5"/></g>',
   workouts:
-    '<rect x="4" y="7" width="3" height="10" rx="1"/><rect x="17" y="7" width="3" height="10" rx="1"/><path d="M7 12h10M2 10v4M22 10v4"/>',
+    '<g class="at-ico-part-weight"><rect x="4" y="7" width="3" height="10" rx="1"/><rect x="17" y="7" width="3" height="10" rx="1"/><path d="M7 12h10M2 10v4M22 10v4"/></g>',
   'work-laptop':
-    '<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/><rect x="8.5" y="9" width="7" height="4.5" rx="1"/><path d="M10.5 9V8h3v1"/>',
-  'video-calls': '<rect x="3" y="6.5" width="12.5" height="11" rx="2.5"/><path d="M15.5 10.5 21 7.5v9l-5.5-3z"/>',
+    '<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/><g class="at-ico-part-case"><rect x="8.5" y="9" width="7" height="4.5" rx="1"/><path d="M10.5 9V8h3v1"/></g>',
+  'video-calls':
+    '<rect x="3" y="6.5" width="12.5" height="11" rx="2.5"/><path d="M15.5 10.5 21 7.5v9l-5.5-3z"/><g class="at-ico-part-light" opacity="0"><circle cx="6.5" cy="10" r="1.1" fill="currentColor" stroke="none"/></g>',
   presentations:
-    '<path d="M3 4.5h18"/><path d="M4 4.5v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-10"/><path d="M12 15.5V19M8.5 21l3.5-2 3.5 2"/><path d="m8 12 3-3 2 2 3-3"/>',
+    '<g class="at-ico-part-screen" opacity="0"><rect x="4" y="4.5" width="16" height="11" rx="1" fill="currentColor" stroke="none"/></g><path d="M3 4.5h18"/><path d="M4 4.5v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-10"/><path d="M12 15.5V19M8.5 21l3.5-2 3.5 2"/><g class="at-ico-part-chart"><path d="m8 12 3-3 2 2 3-3" pathLength="1"/></g>',
   teleprompter:
-    '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M7 8.5h10M7 12h7M9 21h6M12 17v4"/>',
+    '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M9 21h6M12 17v4"/><g class="at-ico-part-text"><path d="M7 8.5h10M7 12h7"/></g>',
   classroom:
-    '<path d="M2.5 9.5 12 5l9.5 4.5L12 14z"/><path d="M6.5 11.6v3.9c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-3.9M21.5 9.5v5"/>',
+    '<g class="at-ico-part-cap"><path d="M2.5 9.5 12 5l9.5 4.5L12 14z"/><path d="M6.5 11.6v3.9c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5v-3.9"/><g class="at-ico-part-tassel"><path d="M21.5 9.5v5"/></g></g>',
   dashboards:
-    '<rect x="3" y="3" width="8" height="10" rx="1.5"/><rect x="13" y="3" width="8" height="6" rx="1.5"/><rect x="13" y="11" width="8" height="10" rx="1.5"/><rect x="3" y="15" width="8" height="6" rx="1.5"/>',
+    '<g class="at-ico-part-tiles"><rect x="3" y="3" width="8" height="10" rx="1.5"/><rect x="13" y="3" width="8" height="6" rx="1.5"/><rect x="13" y="11" width="8" height="10" rx="1.5"/><rect x="3" y="15" width="8" height="6" rx="1.5"/></g>',
   kiosk:
-    '<rect x="6.5" y="2.5" width="11" height="15" rx="2"/><path d="M9.5 14h5M9.5 17.5l-1 4h7l-1-4"/>',
-  downloads: '<path d="M12 3.5v11M7.5 10l4.5 4.5 4.5-4.5M4 15.5v2a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-2"/>',
-  'ai-agents': '<rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="m6.5 9.5 3 2.5-3 2.5M12 15h5.5"/>',
-  'night-clock': '<path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/><path d="M17 3.5v3M15.5 5h3"/>',
+    '<rect x="6.5" y="2.5" width="11" height="15" rx="2"/><path d="M9.5 14h5M9.5 17.5l-1 4h7l-1-4"/><g class="at-ico-part-tap" opacity="0"><circle cx="12" cy="8.5" r="2.5"/></g>',
+  downloads:
+    '<g class="at-ico-part-arrow"><path d="M12 3.5v11M7.5 10l4.5 4.5 4.5-4.5"/></g><g class="at-ico-part-tray"><path d="M4 15.5v2a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-2"/></g>',
+  'ai-agents':
+    '<rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="m6.5 9.5 3 2.5-3 2.5"/><g class="at-ico-part-type"><path d="M12 15h5.5" pathLength="1"/></g>',
+  'night-clock':
+    '<path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/><g class="at-ico-part-star"><path d="M17 3.5v3M15.5 5h3"/></g>',
 };
-const FALLBACK = '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M9 21h6M12 17v4"/>';
+const FALLBACK =
+  '<g class="at-ico-part-screen" opacity="0"><rect x="4" y="5" width="16" height="11" rx="1" fill="currentColor" stroke="none"/></g><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M9 21h6M12 17v4"/>';
 const body = ICONS[name] ?? FALLBACK;
 ---
 
 <svg
   class:list={['at-icon', className]}
   viewBox="0 0 24 24"
+  width="24"
+  height="24"
   fill="none"
   stroke="currentColor"
   stroke-width="1.8"

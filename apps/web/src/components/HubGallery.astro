@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/content.css';
 import '../styles/hub.css';
 import '../styles/pick-gallery.css';
+import '../styles/tilt.css';
 import Button from './shell/Button.astro';
 import StatusPill from './shell/StatusPill.astro';
 import { t } from '../i18n/load';
@@ -189,7 +190,7 @@ const schema = {
             </div>
             <ul class="at-pick" role="list">
               {group.cards.map((card) => (
-                <li class="at-pick-card" style={`--at-k: ${String(card.k)}`}>
+                <li class="at-pick-card" style={`--at-k: ${String(card.k)}`} data-tilt>
                   <h3 class="at-pick-title">
                     {kind === 'vs' ? (
                       <a href={card.href} aria-label={card.title}>
@@ -247,7 +248,9 @@ const schema = {
   </main>
   <script>
     import { initContentNav } from '../lib/content-nav';
+    import { initTilt } from '../lib/tilt';
 
     initContentNav();
+    initTilt();
   </script>
 </BaseLayout>

@@ -271,6 +271,12 @@
     animation: at-hm-draw 1100ms var(--at-ease) calc(240ms + var(--i, 0) * 60ms) both;
   }
 
+  .at-hm-panel:popover-open :is(.at-hm-row, .at-hm-feature):is(:hover, :focus-visible) .at-hm-ring-arc {
+    animation:
+      at-hm-draw 1100ms var(--at-ease) calc(240ms + var(--i, 0) * 60ms) both,
+      at-hm-sweep var(--at-d-slide) var(--at-ease) both;
+  }
+
   .at-hm-panel:popover-open .at-hm-ring-bead {
     animation: at-hm-fade var(--at-d-slide) var(--at-ease) calc(900ms + var(--i, 0) * 60ms) both;
   }
@@ -636,6 +642,12 @@
   }
 
   @keyframes at-hm-draw {
+    from {
+      stroke-dasharray: 0 100;
+    }
+  }
+
+  @keyframes at-hm-sweep {
     from {
       stroke-dasharray: 0 100;
     }

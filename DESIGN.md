@@ -146,6 +146,11 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 - Animate `transform`, `opacity`, `clip-path`, `stroke-dasharray` only; never layout properties.
 - `prefers-reduced-motion: reduce` stops every loop and transition (burn-in pixel shift still applies, instantly).
 - Implementation is CSS-only (keyframes + `@property --at-p` for progress); the island only writes `--at-p` and `data-state`. JS budget has ~1 KB headroom.
+- **Interactive cards and icons** (content pages, the homepage below the tool, header menus). No raster or 3D-engine icons: the inline SVG line icons do the work.
+  - *Tilt:* cards marked `[data-tilt]` lean toward a mouse pointer (`perspective(64rem)`, at most 5° on each axis) and a soft lamp-tinted glow (`--at-accent` at 14 %) follows it; the card's icon (`[data-tilt-z]`) floats 24 px above the card plane. Only for `(hover: hover) and (pointer: fine)`. A keyboard-focused card lifts 4 px and never tilts; on touch a pressed card dips to 98.5 % for a moment. The pointer position comes from `lib/tilt.ts` (one passive listener, one write per frame), never from the tool's critical bundle.
+  - *Icons act out their use:* each use case and device icon has named parts (`.at-ico-part-*`) that play one short motion (about 900 ms, ease-out, no bounce, no loop) when its card or menu row is hovered or keyboard-focused: steam rises, a page turns, a screen lights, bars grow, a camera light blinks, the download arrow drops into the tray, a phone screen wakes, a laptop lid settles. At rest every icon looks exactly as drawn; parts that only appear while acting carry `opacity="0"`.
+  - *Ring fill:* the lamp arc around a use-case icon in the header menus sweeps from empty to its suggested length (600 ms, ease-out) on hover or focus.
+  - Nothing moves unless pointed at or focused, so a tab left open for hours spends nothing on it. Under reduced motion everything is static and the rings show full; under forced colours the icons keep `currentColor` and the glows are hidden.
 
 ## 9. Theme behaviour
 

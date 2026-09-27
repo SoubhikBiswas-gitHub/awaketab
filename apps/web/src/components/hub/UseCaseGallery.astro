@@ -27,9 +27,9 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
       const length = PRESET_LABEL[card.preset] ?? '';
       const mode = card.mode === 'standard' ? '' : (MODE_LABEL[card.mode] ?? '');
       return (
-        <li class="at-gal-card" style={`--at-k: ${String(i)}`}>
+        <li class="at-gal-card" style={`--at-k: ${String(i)}`} data-tilt>
           <div class="at-gal-top">
-            <span class="at-gal-icon">
+            <span class="at-gal-icon" data-tilt-z>
               <UseCaseIcon name={card.slug} />
             </span>
             {mode && <span class="at-tag">{mode}</span>}

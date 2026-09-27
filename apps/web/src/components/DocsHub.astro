@@ -3,6 +3,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/content.css';
 import '../styles/docs-hub.css';
+import '../styles/tilt.css';
 import { t } from '../i18n/load';
 import { articleSchema } from '../lib/seo';
 import { HUBS } from '../lib/hubs';
@@ -101,8 +102,8 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
           <h2 id="docs-start-h" class="at-kicker">Start here</h2>
           <ol class="at-docs-cards">
             {featured.map((doc, i) => (
-              <li class="at-docs-card" style={`--at-i: ${String(i)}`}>
-                <span class="at-docs-badge" aria-hidden="true">
+              <li class="at-docs-card" style={`--at-i: ${String(i)}`} data-tilt>
+                <span class="at-docs-badge" aria-hidden="true" data-tilt-z>
                   <svg viewBox="0 0 24 24" focusable="false"><path d={doc.icon} /></svg>
                 </span>
                 <h3>
@@ -155,8 +156,8 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
       <ul class="at-docs-tiles">
         {
           tiles.map((tile) => (
-            <li class="at-docs-tile">
-              <span class="at-docs-badge" aria-hidden="true">
+            <li class="at-docs-tile" data-tilt>
+              <span class="at-docs-badge" aria-hidden="true" data-tilt-z>
                 <svg viewBox="0 0 24 24" focusable="false"><path d={tile.icon} /></svg>
               </span>
               <div class="at-docs-text">
@@ -177,4 +178,9 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
       </ul>
     </section>
   </main>
+  <script>
+    import { initTilt } from '../lib/tilt';
+
+    initTilt();
+  </script>
 </BaseLayout>

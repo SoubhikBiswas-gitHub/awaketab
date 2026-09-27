@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/content.css';
 import '../styles/hub.css';
+import '../styles/tilt.css';
 import Button from './shell/Button.astro';
 import StatusPill from './shell/StatusPill.astro';
 import DeviceGallery from './hub/DeviceGallery.astro';
@@ -194,7 +195,9 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
   </main>
   <script>
     import { initContentNav } from '../lib/content-nav';
+    import { initTilt } from '../lib/tilt';
 
     initContentNav();
+    initTilt();
   </script>
 </BaseLayout>
