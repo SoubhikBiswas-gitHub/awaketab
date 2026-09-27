@@ -115,6 +115,12 @@
     const el = e.target instanceof Element ? e.target : null;
     if (!el) return;
     if (el.closest('[data-theme-cycle]')) choose(NEXT[root.dataset.themePref ?? 'auto'] ?? 'light');
+    // The footer's Keyboard shortcuts link opens the tool's own list where the tool is on the page.
+    const keys = el.closest('[data-keys]') && document.querySelector('[data-open-shortcuts]');
+    if (keys instanceof HTMLElement) {
+      e.preventDefault();
+      keys.click();
+    }
     const wrap = el.closest('[data-lang]');
     if (wrap instanceof HTMLElement) {
       if (el.closest('[data-lang-close]')) lang(wrap, false, true);
@@ -185,13 +191,15 @@
       for (const el of document.querySelectorAll('[data-main]')) {
         if (el instanceof HTMLElement && el.dataset.main) entries.push(import(el.dataset.main));
       }
-      void Promise.allSettled(entries).then(() =>
+      void Promise.allSettled(entries).then(() => {
+        const keys = document.querySelector('[data-open-shortcuts]');
+        if (location.hash === '#keys' && keys instanceof HTMLElement) keys.click();
         requestAnimationFrame(() =>
           setTimeout(() => {
             delete root.dataset.fontHold;
           }, 0),
-        ),
-      );
+        );
+      });
     };
     // First contentful paint is the signal (the LCP element is static HTML painted with it); the cap covers
     // browsers without paint timing and pages that are still hidden (no paint happens there).
