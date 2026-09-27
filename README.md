@@ -78,7 +78,7 @@ The fallback video pauses when the tab is hidden, so `fallback` moves to `lost` 
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset=".github/readme/screens/for-cooking-desktop-dark.png">
-  <img alt="The Keep your screen on while cooking guide on a desktop: header with the AwakeTab logo and navigation, an on-this-page list, the title and an honest introduction" src=".github/readme/screens/for-cooking-desktop-light.png" width="100%">
+  <img alt="The Keep your screen on while cooking guide on a desktop: header with the AwakeTab logo and navigation, an on-this-page list, the title, an honest introduction, and the embedded tool showing the Ready pill and the length presets" src=".github/readme/screens/for-cooking-desktop-light.png" width="100%">
 </picture>
 
 **AwakeTab Pro, [/pro](https://awaketab.pages.dev/pro)**
@@ -104,7 +104,7 @@ The fallback video pauses when the tab is hidden, so `fallback` moves to `lost` 
 
 <table>
   <tr>
-    <td width="50%"><img alt="The extension popup over a web page: a ring counting down 44:18 until 10:30 PM, the Screen awake pill, and the toolbar badge showing 44m" src="apps/extension/store/images/screenshot-1-popup.png" width="100%"></td>
+    <td width="50%"><img alt="The extension popup over a web page: a countdown ring with the time left and its end time, the Screen awake pill, and the toolbar badge with the minutes left" src="apps/extension/store/images/screenshot-1-popup.png" width="100%"></td>
     <td width="50%"><img alt="Two extension popups side by side: Screen level shows Screen awake, System level shows System awake with the note Screen may dim or lock" src="apps/extension/store/images/screenshot-2-screen-or-system.png" width="100%"></td>
   </tr>
 </table>
