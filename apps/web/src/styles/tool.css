@@ -182,7 +182,7 @@
   gap: var(--at-s-1) var(--at-gap-item);
 }
 
-.at-island[data-auto]:not([data-settled]) .at-pillline {
+.at-island[data-auto]:not([data-settled]) :is(.at-pillline, .at-noterow, .at-meta, .at-bold-meta) {
   visibility: hidden;
 }
 
