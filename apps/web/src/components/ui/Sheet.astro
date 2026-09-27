@@ -1,0 +1,14 @@
+---
+import type { ComponentProps } from 'astro/types';
+import Dialog from './Dialog.astro';
+
+type Props = Omit<ComponentProps<typeof Dialog>, 'side'> & { side?: 'end' | 'start' | 'bottom' };
+
+const { side = 'end', ...rest } = Astro.props;
+---
+
+<Dialog side={side} {...rest}>
+  {Astro.slots.has('description') && <Fragment slot="description"><slot name="description" /></Fragment>}
+  <slot />
+  {Astro.slots.has('footer') && <Fragment slot="footer"><slot name="footer" /></Fragment>}
+</Dialog>

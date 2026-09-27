@@ -637,6 +637,7 @@ async function boot(): Promise<void> {
       else if (ui.panel === 'pro') {
         ui.panel = 'none';
         render();
+        el.proRow.focus();
       } else window.close();
       return;
     }

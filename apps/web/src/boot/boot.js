@@ -86,27 +86,40 @@
     if (el instanceof HTMLInputElement && el.name === 'at-theme') choose(el.value);
   });
 
-  // Language switcher (PRIMITIVES.md P-LANG): a bottom sheet below 600 px (modal, focus trapped), an anchored
-  // non-modal panel from 600. Opening focuses the current row; ↑/↓ wrap, Home/End jump, Esc closes and returns
-  // focus to the trigger; an outside click or focus leaving closes it. It stores nothing: the rows are links.
+  // Language switcher (PRIMITIVES.md P-LANG), a native <dialog> built on components/ui/Drawer.astro: a modal
+  // bottom sheet below 600 px (showModal traps focus and makes the page inert), an anchored non-modal panel from 600.
+  // Opening focuses the current row; ↑/↓ wrap, Home/End jump, Esc closes and returns focus to the trigger; an
+  // outside click or focus leaving closes it. It stores nothing: the rows are links.
   const narrow = matchMedia('(width < 600px)');
   /** @type {HTMLElement | null} */
   let langOpen = null;
   /** @param {HTMLElement} wrap @param {boolean} open @param {boolean} [refocus] */
   const lang = (wrap, open, refocus) => {
     const btn = wrap.querySelector('button[aria-controls]');
-    const panel = wrap.querySelector('[data-lang-panel]');
-    if (!(btn instanceof HTMLElement) || !(panel instanceof HTMLElement)) return;
+    const panel = wrap.querySelector('dialog');
+    if (!(btn instanceof HTMLElement) || !(panel instanceof HTMLDialogElement)) return;
     btn.setAttribute('aria-expanded', String(open));
-    panel.hidden = !open;
-    panel.setAttribute('role', narrow.matches ? 'dialog' : 'group');
-    if (narrow.matches) panel.setAttribute('aria-modal', 'true');
-    else panel.removeAttribute('aria-modal');
     langOpen = open ? wrap : null;
+    if (!open) {
+      panel.close();
+      if (refocus) btn.focus();
+      return;
+    }
+    if (narrow.matches) panel.showModal();
+    else panel.show();
     const current = panel.querySelector('a[aria-current="true"]');
-    if (open && current instanceof HTMLElement) current.focus();
-    else if (!open && refocus) btn.focus();
+    if (current instanceof HTMLElement) current.focus();
   };
+  // Closed by the browser itself (Esc on the modal sheet, light dismiss): keep the trigger in step.
+  addEventListener(
+    'close',
+    (e) => {
+      const wrap = e.target instanceof Element ? e.target.closest('[data-lang]') : null;
+      wrap?.querySelector('button[aria-controls]')?.setAttribute('aria-expanded', 'false');
+      if (wrap === langOpen) langOpen = null;
+    },
+    true,
+  );
   /** @type {Record<string, string>} */
   const NEXT = { light: 'dark', dark: 'auto', oled: 'auto', auto: 'light' };
   /** @type {Record<string, number>} */
@@ -117,7 +130,12 @@
     if (el.closest('[data-theme-cycle]')) choose(NEXT[root.dataset.themePref ?? 'auto'] ?? 'light');
     const wrap = el.closest('[data-lang]');
     if (wrap instanceof HTMLElement) {
-      if (el.closest('[data-lang-close]')) lang(wrap, false, true);
+      const r = el.getBoundingClientRect();
+      // A click on the dialog box itself, outside its rectangle, is a click on the phone sheet's backdrop.
+      const out =
+        el.localName === 'dialog' &&
+        (e.clientY < r.top || e.clientY > r.bottom || e.clientX < r.left || e.clientX > r.right);
+      if (out || el.closest('[data-lang-close]')) lang(wrap, false, true);
       else if (el.closest('button[aria-controls]')) lang(wrap, wrap !== langOpen);
     } else if (langOpen) lang(langOpen, false);
   });
@@ -142,31 +160,12 @@
       const to = e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : i < 0 ? (step > 0 ? 0 : n - 1) : (i + step + n) % n;
       const row = rows[to];
       if (row instanceof HTMLElement) row.focus();
-      return;
-    }
-    // The phone sheet is modal: Tab cycles inside it.
-    if (e.key === 'Tab' && narrow.matches) {
-      const stops = [...wrap.querySelectorAll('[data-lang-panel] a[href], [data-lang-panel] button')];
-      const first = stops[0];
-      const last = stops[stops.length - 1];
-      if (
-        first instanceof HTMLElement &&
-        last instanceof HTMLElement &&
-        (active === (e.shiftKey ? first : last) || !wrap.contains(active))
-      ) {
-        e.preventDefault();
-        (e.shiftKey ? last : first).focus();
-      }
     }
   });
-  // Focus leaving closes the panel; the phone sheet is modal, so focus that escapes it (WebKit's Tab skips links)
-  // is brought back to its first stop instead.
+  // Focus leaving the non-modal panel closes it (the modal sheet never lets focus out).
   addEventListener('focusin', (e) => {
     const wrap = langOpen;
-    if (!wrap || !(e.target instanceof Node) || wrap.contains(e.target)) return;
-    const first = wrap.querySelector('[data-lang-panel] button, [data-lang-panel] a[href]');
-    if (narrow.matches && first instanceof HTMLElement) first.focus();
-    else lang(wrap, false);
+    if (wrap && e.target instanceof Node && !wrap.contains(e.target)) lang(wrap, false);
   });
 
   // Module entries (the tool island, content-page scripts) start after the first contentful paint (docs/00 §11: LCP

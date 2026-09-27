@@ -84,3 +84,8 @@ export function makeCtx(
   };
   return { ctx, root, store, engine, lock, storage, fake, tracked };
 }
+
+// Dialogs open once tool-more.css has loaded (ui/dialog.ts); with more-css mocked that is a few microtasks away.
+export async function dialogSettled(): Promise<void> {
+  for (let i = 0; i < 5; i += 1) await Promise.resolve();
+}

@@ -7,6 +7,7 @@ import { t } from '../i18n.js';
 import { sanitizeMsg } from '../params.js';
 import { notificationsState } from '../signal.js';
 import { applyTheme } from '../theme.js';
+import { openDialog } from './dialog.js';
 
 const MODES = new Set<TAmbientMode>(['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook']);
 const FACES = new Set<TFace>(['ring', 'bold', 'horizon', 'tide']);
@@ -94,7 +95,7 @@ export function readSettings(
 
 let bound = false;
 
-export function openSettings(ctx: IToolCtx): void {
+export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
   const dialog = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="settings"]');
   const form = dialog?.querySelector('form');
   if (!dialog || !form) return;
@@ -103,7 +104,6 @@ export function openSettings(ctx: IToolCtx): void {
     message: hasFeature(ctx, 'ambient.message'),
   });
   const q = (sel: string) => dialog.querySelector<HTMLElement>(sel);
-  const btn = ctx.root.querySelector('.at-site-header [data-open-settings]');
   const html = document.documentElement;
 
   const save = (next: ISettings) => {
@@ -197,15 +197,6 @@ export function openSettings(ctx: IToolCtx): void {
       save(next);
       refresh();
     });
-    // Language row (PRIMITIVES.md P-LANG, settings placement): the list opens inline, pushing the rows below down.
-    const langBtn = q('[data-lang-row]');
-    langBtn?.addEventListener('click', () => {
-      const open = langBtn.getAttribute('aria-expanded') !== 'true';
-      langBtn.setAttribute('aria-expanded', String(open));
-      const list = q('#at-lang-set-list');
-      if (list) list.hidden = !open;
-      if (open) list?.querySelector<HTMLElement>('[aria-current="true"]')?.focus();
-    });
     const reset = dialog.querySelector<HTMLButtonElement>('[data-settings-reset]');
     reset?.addEventListener('click', () => {
       if (reset.dataset.confirm !== '1') {
@@ -220,24 +211,13 @@ export function openSettings(ctx: IToolCtx): void {
       fillSettings(form, next);
       refresh();
     });
-    q('[data-settings-close]')?.addEventListener('click', () => {
-      dialog.close();
-    });
-    // Stats, Share, Shortcuts (phones) and the Pro sheet open over the page, so the sheet closes first.
-    q('.at-settings-links')?.addEventListener('click', (e) => {
-      if (e.target instanceof Element && e.target.closest('button, [data-open-pro]')) dialog.close();
-    });
+    // A previewed pack lamp is never kept: closing puts the stored lamp back.
     dialog.addEventListener('close', () => {
-      btn?.setAttribute('aria-expanded', 'false');
-      const s = ctx.store.get();
-      applyAccent(s.settings.accent, gates().packs);
-      ctx.store.set({ ui: { dialog: null } });
+      applyAccent(ctx.store.get().settings.accent, gates().packs);
     });
   }
 
   fillSettings(form, ctx.store.get().settings);
   refresh();
-  ctx.store.set({ ui: { dialog: 'settings' } });
-  btn?.setAttribute('aria-expanded', 'true');
-  if (!dialog.open) dialog.showModal();
+  openDialog(dialog, opener);
 }

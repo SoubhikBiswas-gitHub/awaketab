@@ -112,6 +112,6 @@ describe('store', () => {
     const s = createStore(initialState());
     s.set({ ui: { secondTab: true } });
     expect(s.get().ui.secondTab).toBe(true);
-    expect(s.get().ui.dialog).toBeNull();
+    expect(s.get().ui.toasts).toEqual([]);
   });
 });

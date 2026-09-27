@@ -4,6 +4,7 @@ import { dateLong } from './format.js';
 import { mountPwa } from './pwa.js';
 import { mountSponsor } from './sponsor.js';
 import { act } from './ui/actions.js';
+import { openDialog } from './ui/dialog.js';
 import { mountLangSuggest } from './ui/lang-suggest.js';
 import { applyAccent } from './accent.js';
 import { t } from './i18n.js';
@@ -59,13 +60,10 @@ export function mountExtras(ctx: Pick<IToolCtx, 'store' | 'storage'>): () => voi
     showLapse(ctx, store.get().license);
   });
   const sheet = document.querySelector<HTMLDialogElement>('[data-dialog="pro"]');
-  // Settings → Pro opens the Pro sheet over the page; without the island the link goes to /pro.
+  // Settings → Pro opens the Pro sheet in place of Settings; without the island the link goes to /pro.
   document.querySelector('[data-open-pro]')?.addEventListener('click', (e) => {
     e.preventDefault();
-    sheet?.showModal();
-  });
-  sheet?.querySelector('[data-pro-close]')?.addEventListener('click', () => {
-    sheet.close();
+    if (sheet) openDialog(sheet, e.target as Element);
   });
   return store.subscribe(syncPro);
 }

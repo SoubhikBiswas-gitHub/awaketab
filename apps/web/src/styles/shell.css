@@ -471,62 +471,6 @@
     transform: rotate(180deg);
   }
 
-  .at-lang-scrim {
-    position: fixed;
-    inset: 0;
-    z-index: 29;
-    display: none;
-    background: var(--at-scrim);
-  }
-
-  .at-lang:has(> [aria-expanded="true"]) .at-lang-scrim {
-    display: block;
-  }
-
-  .at-lang-panel {
-    position: fixed;
-    inset-inline: 0;
-    inset-block-end: 0;
-    z-index: 30;
-    display: flex;
-    flex-direction: column;
-    max-block-size: calc(100dvh - var(--at-s-12));
-    overflow-y: auto;
-    padding-block: var(--at-s-2) var(--at-s-8);
-    padding-inline: var(--at-s-4);
-    border: var(--at-border) solid var(--at-line);
-    border-block-end: 0;
-    border-start-start-radius: var(--at-r-2xl);
-    border-start-end-radius: var(--at-r-2xl);
-    background: var(--at-surface);
-    box-shadow: var(--at-shadow-float);
-    animation: at-rise var(--at-d-rise) var(--at-ease) both;
-  }
-
-  .at-lang-handle {
-    inline-size: 36px;
-    block-size: 4px;
-    margin-block: 0 var(--at-s-2);
-    margin-inline: auto;
-    border-radius: var(--at-r-pill);
-    background: var(--at-line-strong);
-  }
-
-  .at-lang-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--at-gap-item);
-    padding-block: 0 var(--at-s-2);
-    padding-inline: var(--at-s-1) 0;
-  }
-
-  .at-lang-title {
-    margin: 0;
-    color: var(--at-ink);
-    font: var(--at-type-h3);
-  }
-
   .at-lang-list {
     display: flex;
     flex-direction: column;
@@ -940,66 +884,113 @@
     padding-block: var(--at-s-3);
   }
 
-  dialog.at-sheet {
+  :root:has(dialog:modal) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+  }
+
+  .at-dialog {
+    --at-kb: 0px;
+    --at-safe-b: env(safe-area-inset-bottom, 0px);
+    --at-dlg-from: 0 100%;
+
     position: fixed;
-    inset-block: auto 0;
+    inset-block: auto var(--at-kb);
     inset-inline: 0;
+    flex-direction: column;
     inline-size: 100%;
     max-inline-size: none;
-    max-block-size: calc(100dvh - var(--at-s-12));
+    max-block-size: calc(100dvh - var(--at-kb) - var(--at-s-12));
     margin: 0;
-    padding-block: var(--at-s-2) var(--at-s-8);
-    padding-inline: var(--at-s-4);
+    padding: 0 0 var(--at-safe-b);
+    overflow: hidden;
     border: var(--at-border) solid var(--at-line);
     border-block-end: 0;
-    border-start-start-radius: var(--at-r-2xl);
-    border-start-end-radius: var(--at-r-2xl);
-    border-end-start-radius: 0;
-    border-end-end-radius: 0;
+    border-radius: var(--at-r-2xl) var(--at-r-2xl) 0 0;
+    background: var(--at-surface);
+    color: var(--at-ink);
     box-shadow: var(--at-shadow-float);
+    opacity: 0;
+    translate: var(--at-dlg-from);
   }
 
-  dialog.at-sheet[open] {
-    animation: at-sheet-up var(--at-d-slide) var(--at-ease) both;
+  .at-dialog,
+  .at-dialog::backdrop {
+    transition: var(--at-d-slow) var(--at-ease) allow-discrete;
+    transition-property: translate, opacity, overlay, display;
   }
 
-  dialog.at-sheet::before {
-    content: "";
-    display: block;
+  .at-dialog::backdrop {
+    background: var(--at-scrim);
+    opacity: 0;
+  }
+
+  .at-dialog[open] {
+    display: flex;
+    translate: 0;
+  }
+
+  .at-dialog[open],
+  .at-dialog[open]::backdrop {
+    opacity: 1;
+    transition-duration: var(--at-d-slide);
+  }
+
+  @starting-style {
+    .at-dialog[open] {
+      translate: var(--at-dlg-from);
+    }
+
+    .at-dialog[open],
+    .at-dialog[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  .at-dialog-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-1);
+    padding-block-start: var(--at-s-2);
+    padding-inline: var(--at-card-pad) var(--at-s-3);
+  }
+
+  .at-dialog-grab {
+    align-self: center;
     inline-size: 36px;
     block-size: 4px;
-    margin-block: 0 var(--at-s-3);
-    margin-inline: auto;
     border-radius: var(--at-r-pill);
     background: var(--at-line-strong);
   }
 
-  dialog.at-sheet::backdrop,
-  .at-scrim {
-    background: var(--at-scrim);
+  .at-dialog-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--at-gap-item);
   }
 
-  .at-scrim {
-    position: fixed;
-    inset: 0;
+  .at-dialog-title {
+    margin: 0;
+    font: var(--at-type-h3);
+    letter-spacing: -0.01em;
+  }
+
+  .at-dialog-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--at-s-4);
+    min-block-size: 0;
+    padding: var(--at-s-4) var(--at-card-pad) var(--at-s-5);
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   @keyframes at-rise {
     from {
       opacity: 0;
       transform: translateY(var(--at-s-2)) scale(0.985);
-    }
-  }
-
-  @keyframes at-sheet-up {
-    from {
-      transform: translateY(100%);
-    }
-  }
-
-  @keyframes at-sheet-in {
-    from {
-      transform: translateX(calc(var(--at-seg-dir) * 100%));
     }
   }
 
@@ -1031,30 +1022,29 @@
       margin-inline-start: auto;
     }
 
-    .at-lang:has(> [aria-expanded="true"]) .at-lang-scrim,
-    .at-lang-handle,
-    .at-lang-close {
+    .at-dialog-grab,
+    .at-lang-panel .at-dialog-close {
       display: none;
     }
 
-    .at-lang-panel {
+    .at-dialog.at-lang-panel {
+      --at-dlg-from: 0 var(--at-s-2);
+
       position: absolute;
       inset-inline: auto 0;
       inset-block: auto calc(100% + var(--at-s-2));
+      z-index: 30;
       inline-size: var(--at-panel-inline);
       max-inline-size: calc(100vw - 2 * var(--at-gutter));
-      max-block-size: none;
-      overflow: visible;
-      padding: var(--at-s-1);
       border-block-end: var(--at-border) solid var(--at-line);
       border-radius: var(--at-r-lg);
     }
 
-    .at-lang-head {
-      padding: 0;
+    .at-lang-panel .at-dialog-header {
+      padding: var(--at-s-1) var(--at-s-1) 0;
     }
 
-    .at-lang-title {
+    .at-lang-panel .at-dialog-title {
       padding-block: var(--at-s-2);
       padding-inline: var(--at-s-3);
       color: var(--at-muted);
@@ -1063,27 +1053,10 @@
       text-transform: uppercase;
     }
 
-    dialog.at-sheet {
-      inset-block: 0;
-      inset-inline: auto 0;
-      inline-size: min(var(--at-sheet-inline), 100%);
-      block-size: 100dvh;
-      max-block-size: none;
-      padding: var(--at-card-pad);
-      border: 0;
-      border-inline-start: var(--at-border) solid var(--at-line);
-      border-radius: 0;
-    }
-
-    dialog.at-sheet[open] {
-      animation-name: at-sheet-in;
-    }
-
-    dialog.at-sheet::before {
-      display: none;
+    .at-lang-panel .at-dialog-body {
+      padding: 0 var(--at-s-1) var(--at-s-1);
     }
   }
-
   @media (width >= 1024px) {
     .at-logo {
       flex-shrink: 0;

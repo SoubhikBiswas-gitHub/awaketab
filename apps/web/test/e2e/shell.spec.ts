@@ -195,7 +195,7 @@ test.describe('theme switch', () => {
 });
 
 test.describe('language switcher (P-LANG)', () => {
-  test('desktop panel: non-modal group, focus on the current row, arrows wrap, Home/End, Esc returns focus', async ({
+  test('desktop panel: non-modal dialog, focus on the current row, arrows wrap, Home/End, Esc returns focus', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
@@ -207,9 +207,9 @@ test.describe('language switcher (P-LANG)', () => {
     await openLang(page);
     await expect(btn).toHaveAttribute('aria-expanded', 'true');
     await expect(panel).toBeVisible();
-    await expect(panel).toHaveAttribute('role', 'group');
-    await expect(panel).not.toHaveAttribute('aria-modal', /.*/u);
-    await expect(page.locator('.at-lang-scrim')).toBeHidden();
+    // One native <dialog> (components/ui/Drawer.astro): anchored and non-modal from 600, so the page stays live.
+    expect(await panel.evaluate((el) => el.localName === 'dialog' && !el.matches(':modal'))).toBe(true);
+    await expect(panel).toHaveAccessibleName('Language');
     // Rows are real links in their own language, with this page's translations.
     const rows = panel.locator('a[hreflang]');
     await expect(rows).toHaveCount(8);
@@ -254,7 +254,7 @@ test.describe('language switcher (P-LANG)', () => {
     await expect(panel).toBeHidden();
   });
 
-  test('phone sheet: modal dialog with a scrim, Tab stays inside, Close and Esc return focus', async ({
+  test('phone sheet: modal dialog over a backdrop, Tab stays inside, Close, Esc and the backdrop close it', async ({
     page,
     browserName,
   }) => {
@@ -266,8 +266,8 @@ test.describe('language switcher (P-LANG)', () => {
     await openLang(page);
     const sheet = page.getByRole('dialog', { name: 'Language' });
     await expect(sheet).toBeVisible();
-    await expect(sheet).toHaveAttribute('aria-modal', 'true');
-    await expect(page.locator('.at-lang-scrim')).toBeVisible();
+    expect(await sheet.evaluate((el) => el.matches(':modal'))).toBe(true);
+    await expect(page.locator('html')).toHaveCSS('overflow', 'hidden');
     await sheet.evaluate((el) => el.getAnimations().forEach((a) => a.finish()));
     // Bottom sheet: flush with the viewport's bottom edge, full width.
     const box = await sheet.boundingBox();
@@ -275,7 +275,13 @@ test.describe('language switcher (P-LANG)', () => {
     expect(Math.round(box?.width ?? 0)).toBe(390);
     for (let i = 0; i < 12; i += 1) {
       await page.keyboard.press(i % 3 === 2 ? `Shift+${tab}` : tab);
-      expect(await page.evaluate(() => document.activeElement?.closest('#at-lang-list') !== null)).toBe(true);
+      // showModal() makes the page inert: focus is in the sheet or has left for the browser UI, never behind it.
+      expect(
+        await page.evaluate(() => {
+          const el = document.activeElement;
+          return el === null || el === document.body || el.closest('#at-lang-list') !== null;
+        }),
+      ).toBe(true);
     }
     await sheet.getByRole('button', { name: 'Close' }).click();
     await expect(sheet).toBeHidden();
@@ -284,8 +290,10 @@ test.describe('language switcher (P-LANG)', () => {
     await page.keyboard.press('Escape');
     await expect(sheet).toBeHidden();
     await btn.click();
-    await page.locator('.at-lang-scrim').click({ position: { x: 20, y: 20 } });
+    await expect(sheet).toBeVisible();
+    await page.mouse.click(20, 20);
     await expect(sheet).toBeHidden();
+    await expect(btn).toHaveAttribute('aria-expanded', 'false');
   });
 
   test('Esc closes only the panel on the tool page, never the session', async ({ page }) => {

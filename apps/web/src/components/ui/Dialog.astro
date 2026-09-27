@@ -1,0 +1,69 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type TSide = 'center' | 'bottom' | 'end' | 'start';
+type TSize = 'sm' | 'md' | 'lg';
+interface Props extends Omit<HTMLAttributes<'dialog'>, 'title'> {
+  name?: string;
+  title: string;
+  titleId: string;
+  description?: string;
+  closeLabel: string;
+  closeAttrs?: Record<string, string>;
+  side?: TSide;
+  size?: TSize;
+  docked?: boolean;
+  body?: 'div' | 'form';
+  bodyClass?: string;
+}
+
+const {
+  name,
+  title,
+  titleId,
+  description,
+  closeLabel,
+  closeAttrs = {},
+  side = 'center',
+  size = 'md',
+  docked = false,
+  body = 'div',
+  bodyClass,
+  class: className,
+  ...rest
+} = Astro.props;
+const Body = body;
+const hasDescription = description !== undefined || Astro.slots.has('description');
+const descriptionId = `${titleId}-d`;
+// Light dismiss where the browser supports it; the controllers close on a backdrop click everywhere else.
+const native = { closedby: 'any' };
+---
+
+<dialog
+  class:list={['at-dialog', className]}
+  data-dialog={name}
+  data-side={side}
+  data-size={size}
+  data-docked={docked ? '' : undefined}
+  aria-labelledby={titleId}
+  aria-describedby={hasDescription ? descriptionId : undefined}
+  {...native}
+  {...rest}
+>
+  <div class="at-dialog-header">
+    <span class="at-dialog-grab" aria-hidden="true"></span>
+    <div class="at-dialog-bar">
+      <div class="at-dialog-titles">
+        <h2 class="at-dialog-title" id={titleId}>{title}</h2>
+        {hasDescription && <p class="at-dialog-description" id={descriptionId}>{description}<slot name="description" /></p>}
+      </div>
+      <button class="at-icon-button at-dialog-close" type="button" data-dialog-close aria-label={closeLabel} {...closeAttrs}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <Body class:list={['at-dialog-body', bodyClass]}><slot /></Body>
+  {Astro.slots.has('footer') && <div class="at-dialog-footer"><slot name="footer" /></div>}
+</dialog>

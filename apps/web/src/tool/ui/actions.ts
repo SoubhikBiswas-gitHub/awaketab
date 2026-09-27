@@ -1,4 +1,3 @@
-import './more-css.js';
 import { planUntil, type TPresetId, type TTheme } from '@awaketab/core';
 import type { IToolCtx } from '../ctx.js';
 import { extendAsk, finishAsk } from '../end.js';
@@ -6,6 +5,7 @@ import { openStats } from '../stats/panel.js';
 import { hm, mins, nextWall, stepCustom, wallOf, when } from '../format.js';
 import { t } from '../i18n.js';
 import { applyTheme, nextTheme } from '../theme.js';
+import { openDialog } from './dialog.js';
 import { openSettings } from './settings.js';
 import { toast } from './toast.js';
 import { liveSession } from './view.js';
@@ -133,7 +133,7 @@ export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
   else if (name === 'add15' || name === 'add30' || name === 'add60')
     extendAsk(ctx, { add15: 15, add30: 30, add60: 60 }[name] * 60_000);
   else if (name === 'askStop') finishAsk(ctx);
-  else if (name === 'battSettings') openSettings(ctx);
+  else if (name === 'battSettings') openSettings(ctx, el);
 }
 
 const SHARE_ROUTES: Partial<Record<TPresetId, string>> = {
@@ -153,10 +153,9 @@ export function sharePath(ctx: Pick<IToolCtx, 'store'>): string {
   return SHARE_ROUTES[preset] ?? '/';
 }
 
-export function openShare(ctx: IToolCtx): void {
+export function openShare(ctx: IToolCtx, opener?: Element | null): void {
   const el = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="share"]');
   if (!el) return;
-  const btn = ctx.root.querySelector('[data-open-share]');
   if (el.open) {
     el.close();
     return;
@@ -182,8 +181,8 @@ export function openShare(ctx: IToolCtx): void {
           });
   if (input) input.value = url();
   if (msg) msg.textContent = '';
-  if (el.dataset.bound !== '1') {
-    el.dataset.bound = '1';
+  if (el.dataset.wired !== '1') {
+    el.dataset.wired = '1';
     const copy = q<HTMLElement>('[data-share-copy]');
     auto?.addEventListener('change', () => {
       if (input) input.value = url();
@@ -208,50 +207,27 @@ export function openShare(ctx: IToolCtx): void {
         void navigator.share({ url: input?.value ?? '', title: 'AwakeTab' }).catch(() => undefined);
       else if (msg) msg.textContent = t('tool.share.noNative');
     });
-    q('[data-share-close]')?.addEventListener('click', () => {
-      el.close();
-    });
-    el.addEventListener('close', () => {
-      btn?.setAttribute('aria-expanded', 'false');
-      ctx.store.set({ ui: { dialog: null } });
-    });
   }
-  ctx.store.set({ ui: { dialog: 'share' } });
-  btn?.setAttribute('aria-expanded', 'true');
-  // Phones: a modal bottom sheet. From 600 it is a card in the dock, so the page stays live around it.
-  if (matchMedia('(width < 600px)').matches) el.showModal();
-  else el.show();
+  openDialog(el, opener);
   ctx.track('share_click');
 }
 
 export { toggleFullscreen } from '../fullscreen.js';
 
-export function help(ctx: IToolCtx, show?: boolean): void {
+export function help(ctx: IToolCtx, show?: boolean, opener?: Element | null): void {
   const dlg = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="shortcuts"]');
-  const btn = ctx.root.querySelector('[data-open-shortcuts]');
   if (!dlg) return;
-  if (dlg.dataset.bound !== '1') {
-    dlg.dataset.bound = '1';
-    dlg.addEventListener('close', () => {
-      btn?.setAttribute('aria-expanded', 'false');
-      ctx.store.set({ ui: { dialog: null } });
-    });
-  }
   if (!(show ?? !dlg.open)) dlg.close();
-  else if (!dlg.open) {
-    ctx.store.set({ ui: { dialog: 'shortcuts' } });
-    btn?.setAttribute('aria-expanded', 'true');
-    dlg.showModal();
-  }
+  else openDialog(dlg, opener);
 }
 
 export function open(ctx: IToolCtx, el: HTMLElement): void {
   const d = el.dataset;
-  if ('openSettings' in d) openSettings(ctx);
-  else if ('openStats' in d) openStats(ctx);
-  else if ('openShare' in d) openShare(ctx);
+  if ('openSettings' in d) openSettings(ctx, el);
+  else if ('openStats' in d) openStats(ctx, el);
+  else if ('openShare' in d) openShare(ctx, el);
   else if ('openPip' in d) pip(ctx);
-  else help(ctx, 'openShortcuts' in d);
+  else help(ctx, true, el);
 }
 
 export function pip(ctx: IToolCtx): void {
