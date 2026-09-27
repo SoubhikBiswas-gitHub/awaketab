@@ -916,6 +916,7 @@
   }
 
   .at-pro-sched {
+    container-type: inline-size;
     gap: var(--at-gap-item);
   }
 
@@ -978,6 +979,25 @@
   }
 
   .at-pro-plans {
+  .at-pro-tiles > div > span:last-child {
+    white-space: nowrap;
+  }
+
+  @container (width < 308px) {
+    .at-pro-days {
+      grid-template-columns: repeat(4, minmax(var(--at-h-control), 1fr));
+      gap: var(--at-gap-tight);
+    }
+
+    .at-pro-tiles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .at-pro-tiles > :last-child {
+      grid-column: span 2;
+    }
+  }
+
     display: flex;
     flex-direction: column;
     gap: var(--at-gap-group-lg);
@@ -1130,7 +1150,7 @@
 
   .at-pro-faq-list summary:focus-visible {
     outline: 2px solid var(--at-focus);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
 
   .at-pro-faq-list h3 {

@@ -306,7 +306,7 @@
   "page.pro.hist.aria.pro": "Sample stats: 12 weeks of daily use, darker means longer",
   "page.pro.hist.aria.free": "Sample stats: only the last 7 days are visible on the free plan",
   "page.pro.hist.locked": "Locked — Pro keeps 12 weeks",
-  "page.pro.hist.caption": "Sample stats: last 12 weeks, by local day",
+  "page.pro.hist.caption": "Sample · 12 weeks, by local day",
   "page.pro.hist.export": "Export CSV",
   "page.pro.hist.export.locked": "CSV export is Pro",
   "page.pro.wall.time": "Monday · On the wall",
