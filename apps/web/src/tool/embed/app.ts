@@ -12,10 +12,12 @@ import {
   type TPresetId,
 } from '@awaketab/core';
 import { createWakeLock, type TAdviceCode } from '@awaketab/wake';
+// The same asset `@awaketab/wake/video` publishes; the app's `@awaketab/wake` alias points at the package source.
+import { MP4_DATA_URL as mp4 } from '../../../../../packages/wake/src/assets/blank.mp4.b64.js';
 import { activeElapsed } from '../ambient/logic.js';
 import { everySecond } from '../ambient/tick.js';
 import type { IToolCtx } from '../ctx.js';
-import { remainingOf } from '../format.js';
+import { dateLong, remainingOf, when } from '../format.js';
 import { setCatalog, t } from '../i18n.js';
 import { chime } from '../signal.js';
 import type { IStore } from '../store.js';
@@ -187,7 +189,8 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
   };
 
   const settings: ISettings = { ...DEFAULT_SETTINGS, endBehaviour: 'stop' };
-  const lock = createWakeLock();
+  // Readers on Safari before WebM support need the MP4 fallback; the embed's budget has room for it (docs/11 §2).
+  const lock = createWakeLock({ videoSources: { mp4 } });
   const engine = createSession({
     lock,
     storage: createStorage(memoryAdapter()),
@@ -309,19 +312,14 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
               ? t(params.mode === 'clock' ? 'embed.meta.clock' : 'embed.advice.tapToStart')
               : cook
                 ? t(paused ? 'embed.cook.resume' : 'embed.cook.pause')
-                : t('embed.meta.since', {
-                    time: wallTime(locale, s?.startedAt ?? now),
-                  });
+                : s?.endsAt
+                  ? t('tool.timer.until', { wall: when(s.endsAt) })
+                  : t('embed.meta.since', {
+                      time: wallTime(locale, s?.startedAt ?? now),
+                    });
     }
     if (foot) {
-      foot.textContent =
-        params.mode === 'clock'
-          ? new Intl.DateTimeFormat(locale, {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-            }).format(now)
-          : t('embed.foot');
+      foot.textContent = params.mode === 'clock' ? dateLong(now) : t('embed.foot');
     }
     const advice = adviceNow();
     if (notice && noticeText && noticeLink) {

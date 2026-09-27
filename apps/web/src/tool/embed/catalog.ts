@@ -1,6 +1,9 @@
 const PREFIXES = ['embed.', 'tool.pill.', 'tool.advice.'] as const;
 const EXACT = new Set([
   'tool.ring.stop',
+  'tool.timer.until',
+  'tool.when.tomorrow',
+  'tool.when.day',
   'stats.minutes',
   'ambient.cook.timer.default',
   'ambient.cook.timer.done',
