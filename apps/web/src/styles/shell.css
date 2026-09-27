@@ -838,7 +838,8 @@
     max-inline-size: none;
     max-block-size: calc(100dvh - var(--at-kb) - var(--at-s-12));
     margin: 0;
-    padding: 0 0 var(--at-safe-b);
+    padding-block: 0 var(--at-safe-b);
+    padding-inline: 0;
     overflow: hidden;
     border: var(--at-border) solid var(--at-line);
     border-block-end: 0;
@@ -918,7 +919,8 @@
     flex-direction: column;
     gap: var(--at-s-4);
     min-block-size: 0;
-    padding: var(--at-s-4) var(--at-card-pad) var(--at-s-5);
+    padding-block: var(--at-s-4) var(--at-s-5);
+    padding-inline: var(--at-card-pad);
     overflow-y: auto;
     overscroll-behavior: contain;
   }
@@ -977,7 +979,8 @@
     }
 
     .at-lang-panel .at-dialog-header {
-      padding: var(--at-s-1) var(--at-s-1) 0;
+      padding-block: var(--at-s-1) 0;
+      padding-inline: var(--at-s-1);
     }
 
     .at-lang-panel .at-dialog-title {
@@ -990,9 +993,11 @@
     }
 
     .at-lang-panel .at-dialog-body {
-      padding: 0 var(--at-s-1) var(--at-s-1);
+      padding-block: 0 var(--at-s-1);
+      padding-inline: var(--at-s-1);
     }
   }
+
   @media (width >= 1024px) {
     .at-logo {
       flex-shrink: 0;

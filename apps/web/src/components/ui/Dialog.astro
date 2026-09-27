@@ -36,7 +36,7 @@ const Body = body;
 const hasDescription = description !== undefined || Astro.slots.has('description');
 const descriptionId = `${titleId}-d`;
 // Light dismiss where the browser supports it; the controllers close on a backdrop click everywhere else.
-const native = { closedby: 'any' };
+const native = { closedby: 'any' } as Record<string, string>;
 ---
 
 <dialog

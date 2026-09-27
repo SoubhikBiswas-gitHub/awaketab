@@ -36,8 +36,7 @@
     const allowed = ['auto', 'light', 'dark', 'oled'];
     const q = new URLSearchParams(location.search).get('theme');
     const raw = localStorage.getItem(KEY);
-    /** @type {Record<string, unknown> | null} */
-    const saved = raw ? JSON.parse(raw) : null;
+    const saved = raw ? /** @type {Record<string, unknown>} */ (JSON.parse(raw)) : null;
     if (q && allowed.includes(q)) theme = q;
     else if (saved && typeof saved.theme === 'string' && allowed.includes(saved.theme)) theme = saved.theme;
     // Mirror of src/tool/accent.ts ACCENTS + LEGACY_ACCENTS (aqua, the default, has no attribute); the island
@@ -243,7 +242,7 @@
         if (+at <= now) at.setDate(at.getDate() + 1);
         const left = Math.max(60, Math.round((+at - now) / 1000));
         const hh = Math.floor(left / 3600);
-        put('a', hh ? `${hh}:${pad((left % 3600) / 60)}` : pad(left / 60));
+        put('a', hh ? `${String(hh)}:${pad((left % 3600) / 60)}` : pad(left / 60));
         put('b', `:${pad(left % 60)}`);
         d.units = hh ? 'h' : '';
         end = now + left * 1000;

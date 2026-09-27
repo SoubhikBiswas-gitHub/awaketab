@@ -581,7 +581,7 @@ const eight = ready.chip === 'custom';
                 class="at-seg-item at-chip"
                 type="button"
                 data-preset={id}
-                aria-pressed={String(id === ready.chip)}
+                aria-pressed={(id === ready.chip) ? "true" : "false"}
                 aria-label={t(`tool.preset.${id}.sr`)}
               >
                 {t(`tool.preset.${id}`)}
@@ -591,7 +591,7 @@ const eight = ready.chip === 'custom';
               class="at-seg-item at-chip"
               type="button"
               data-preset="pinf"
-              aria-pressed={String(ready.chip === 'pinf')}
+              aria-pressed={(ready.chip === 'pinf') ? "true" : "false"}
               aria-label={t('tool.preset.pinf.sr')}
             >
               {t('tool.preset.pinf')}
@@ -615,7 +615,7 @@ const eight = ready.chip === 'custom';
               class="at-chip at-chip-choose at-c-custom"
               type="button"
               data-preset="custom"
-              aria-pressed={String(eight)}
+              aria-pressed={(eight) ? "true" : "false"}
               data-l="customAria"
               aria-label={t('tool.chip.customAria')}
             >
@@ -625,7 +625,7 @@ const eight = ready.chip === 'custom';
               class="at-chip at-chip-choose at-c-more"
               type="button"
               data-act="more"
-              aria-pressed={String(eight)}
+              aria-pressed={(eight) ? "true" : "false"}
               data-l="moreAria"
               aria-label={t('tool.chip.moreAria')}
             >
@@ -668,7 +668,7 @@ const eight = ready.chip === 'custom';
           class="at-chip at-chip-choose at-c-custom"
           type="button"
           data-preset="custom"
-          aria-pressed={String(eight)}
+          aria-pressed={(eight) ? "true" : "false"}
           ><span data-t="custom">{eight ? ready.len : t('tool.preset.custom')}</span></button
         >
       </div>
