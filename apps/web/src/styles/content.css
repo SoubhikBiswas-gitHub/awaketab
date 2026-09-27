@@ -14,10 +14,6 @@
     --at-col-rail: 160px;
     --at-col-intro: 360px;
     --at-col-list: 664px;
-    --at-ad-w: 300px;
-    --at-ad-h: 250px;
-    --at-rail-w: 320px;
-    --at-rail-h: 50px;
     --at-type-row: 500 1rem/1.5rem var(--at-font);
     --at-type-count: 300 1.5rem/2rem var(--at-font);
     --at-type-count-l: 300 1.75rem/2.25rem var(--at-font);
@@ -783,63 +779,14 @@
     margin-inline-start: var(--at-s-1);
   }
 
-  .at-ad {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--at-s-2);
-    min-inline-size: 0;
-  }
-
-  .at-ad-label {
-    color: var(--at-muted);
-    font: var(--at-type-kicker);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
-  .at-ad-box {
-    display: grid;
-    place-items: center;
-    inline-size: var(--at-ad-w);
-    max-inline-size: 100%;
-    block-size: var(--at-ad-h);
-    overflow: hidden;
-    border: var(--at-border) solid var(--at-line);
-    border-radius: var(--at-r-md);
-    background: var(--at-hatch), color-mix(in srgb, var(--at-surface) 58%, transparent);
-  }
-
-  .at-ad-box:empty::after {
-    content: attr(data-size-sm);
-    color: var(--at-muted);
-    font: var(--at-type-caption);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .at-ad-rail {
-    grid-area: auto;
-  }
-
-  .at-ad-rail .at-ad-box {
-    inline-size: var(--at-rail-w);
-    block-size: var(--at-rail-h);
-  }
-
   @media (width >= 600px) {
     .at-cp {
-      --at-ad-w: 336px;
-      --at-ad-h: 280px;
       --at-col-fig: 160px;
       --at-shot-w: 160px;
       --at-shot-h: 320px;
       --at-gap-article: var(--at-s-16);
 
       margin-block-start: var(--at-s-2);
-    }
-
-    .at-ad-inline .at-ad-box:empty::after {
-      content: attr(data-size);
     }
 
     .at-art {
@@ -868,11 +815,6 @@
   }
 
   @media (width >= 1024px) {
-    .at-cp {
-      --at-rail-w: 160px;
-      --at-rail-h: 600px;
-    }
-
     .at-art {
       grid-template-columns:
         minmax(0, var(--at-col-toc)) minmax(0, var(--at-col-main))
@@ -993,18 +935,6 @@
 
     .at-art[data-variant="article"] .at-tool-card > .at-tool-embed {
       padding-inline: var(--at-s-8);
-    }
-
-    .at-ad-rail .at-ad-box:empty::after {
-      content: attr(data-size);
-    }
-
-    .at-ad-rail {
-      position: sticky;
-      inset-block-start: var(--at-s-6);
-      grid-area: rail;
-      align-items: flex-start;
-      align-self: start;
     }
   }
 
