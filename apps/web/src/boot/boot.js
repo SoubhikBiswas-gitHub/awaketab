@@ -1,9 +1,11 @@
 (() => {
-  // Inlined in <head> by BaseLayout (docs/05 §11) and allowed by a CSP sha256 hash that scripts/headers.mjs
-  // computes from this exact file. Keep it small, dependency-free and free of the string "</script".
+  // Inlined in <head> by BaseLayout (docs/05 §11), minified by scripts/boot-inline.mjs, and allowed by a CSP sha256
+  // hash that scripts/headers.mjs computes from that text. Keep it small, dependency-free and free of "</script".
   // It is the page's only inline script, so it also runs the shared shell (docs/05 §3.25–§3.27): the header theme
   // switch and the footer language switcher work on every page, with or without the tool island.
   const root = document.documentElement;
+  // Geist Mono waits until after the first paint (tokens.css maps it to its metric-matched fallback until then).
+  root.dataset.fontHold = '';
   const KEY = 'at.v1.settings';
   const dark = matchMedia('(prefers-color-scheme: dark)');
   /** @type {Record<string, string>} */
@@ -167,18 +169,29 @@
     else lang(wrap, false);
   });
 
-  // The tool module starts after the first contentful paint (docs/00 §11: LCP lab ≤ 1.2 s) and never later than 150 ms
-  // after DOMContentLoaded, so the wake lock is still requested within the 300 ms budget. scripts/defer-main.mjs
-  // moves the built entry URL onto #awaketab-tool[data-main]; without it (astro dev) the module tag runs as usual.
+  // Module entries (the tool island, content-page scripts) start after the first contentful paint (docs/00 §11: LCP
+  // lab ≤ 1.2 s) and never later than 150 ms after DOMContentLoaded, so the wake lock is still requested within the
+  // 300 ms budget. scripts/defer-main.mjs moves each built entry URL onto a [data-main] element; without it (astro
+  // dev) the module tags run as usual. One frame after they load, the monospace font follows, so its request never
+  // lands before the largest paint.
   addEventListener('DOMContentLoaded', () => {
     sync();
-    const src = document.getElementById('awaketab-tool')?.dataset.main;
-    if (!src) return;
     let started = false;
     const go = () => {
       if (started) return;
       started = true;
-      void import(src);
+      /** @type {Promise<unknown>[]} */
+      const entries = [];
+      for (const el of document.querySelectorAll('[data-main]')) {
+        if (el instanceof HTMLElement && el.dataset.main) entries.push(import(el.dataset.main));
+      }
+      void Promise.allSettled(entries).then(() =>
+        requestAnimationFrame(() =>
+          setTimeout(() => {
+            delete root.dataset.fontHold;
+          }, 0),
+        ),
+      );
     };
     // First contentful paint is the signal (the LCP element is static HTML painted with it); the cap covers
     // browsers without paint timing and pages that are still hidden (no paint happens there).

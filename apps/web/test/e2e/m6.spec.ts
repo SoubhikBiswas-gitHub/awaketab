@@ -296,6 +296,15 @@ test.describe('offline', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(pillText(page)).toHaveText('Screen awake', { timeout: 4000 });
     await expect(toasts(page)).toContainText("You're offline. The tool still works; guides may not load.");
+    // The preloaded main font is precached, so offline text keeps Geist instead of its fallback.
+    await expect
+      .poll(() =>
+        page.evaluate(async () => {
+          await document.fonts.ready;
+          return [...document.fonts].some((f) => f.family.replace(/"/gu, '') === 'Geist' && f.status === 'loaded');
+        }),
+      )
+      .toBe(true);
     await context.setOffline(false);
   });
 });

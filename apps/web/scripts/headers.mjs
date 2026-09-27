@@ -1,17 +1,15 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { bootInline } from './boot-inline.mjs';
 
 const LOCALES = ['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
 const CONTENT_FAMILIES = ['for', 'on', 'vs', 'guides', 'learn'];
 
-// The one inline script (src/boot/boot.js, inlined by BaseLayout and /embed/cook) is allowed by its hash, not
-// by 'unsafe-inline' (docs/05 §11, docs/14 §3). test/seo checks the built pages carry exactly these bytes.
-export const BOOT_HASH = `'sha256-${createHash('sha256')
-  .update(readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), '../src/boot/boot.js')))
-  .digest('base64')}'`;
+// The one inline script (src/boot/boot.js, minified by boot-inline.mjs and inlined by BaseLayout and /embed/cook) is
+// allowed by its hash, not by 'unsafe-inline' (docs/05 §11, docs/14 §3). test/seo checks the built pages carry it.
+export const BOOT_HASH = `'sha256-${createHash('sha256').update(bootInline()).digest('base64')}'`;
 
 const DEFAULT_CSP = [
   "default-src 'self'",

@@ -2,6 +2,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
+import { bootInline, BOOT_FILE } from './scripts/boot-inline.mjs';
 import { polarDefines } from './scripts/polar-server.mjs';
 
 export default defineConfig({
@@ -35,7 +36,18 @@ export default defineConfig({
     format: 'preserve',
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss(),
+      {
+        // Pages inline `boot.js?raw`; they get the minified text that headers.mjs hashes for the CSP.
+        name: 'at-boot-inline',
+        enforce: 'pre',
+        load(id) {
+          if (id === `${BOOT_FILE}?raw`) return `export default ${JSON.stringify(bootInline())};`;
+          return undefined;
+        },
+      },
+    ],
     // F-06: PUBLIC_POLAR_SERVER picks CHECKOUT_LINKS and whether the bundles trust the dev licence key.
     define: polarDefines(),
     build: {

@@ -62,11 +62,25 @@ async function shellAssets(dist) {
   return [...scripts, ...styles].map((file) => urlOf(dist, file));
 }
 
+// The font the shell pages preload (BaseLayout: the one their largest text uses), so offline pages keep their type.
+// The other fonts are not precached: they load after the first paint and only where a page uses them.
+async function shellFonts(dist) {
+  const fonts = new Set();
+  for (const { file } of SHELL_PAGES) {
+    const html = await readFile(path.join(dist, file), 'utf8');
+    for (const m of html.matchAll(/<link rel="preload" href="(\/fonts\/[^"]+\.woff2)" as="font"/gu)) fonts.add(m[1]);
+  }
+  return [...fonts];
+}
+
 // Precached for every visitor by Workbox: files no language owns.
 export async function precacheManifest(dist = DIST) {
   const entries = [{ url: '/favicon.svg', revision: revision(await readFile(path.join(dist, 'favicon.svg'))) }];
   for (const file of await files(path.join(dist, 'icons'))) {
     entries.push({ url: urlOf(dist, file), revision: revision(await readFile(file)) });
+  }
+  for (const url of await shellFonts(dist)) {
+    entries.push({ url, revision: revision(await readFile(path.join(dist, url.slice(1)))) });
   }
   // Vite-hashed assets: the URL is the revision.
   for (const url of await shellAssets(dist)) entries.push({ url, revision: null });

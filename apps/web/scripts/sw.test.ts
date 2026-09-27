@@ -19,7 +19,8 @@ async function put(rel: string, body: string) {
   await writeFile(file, body);
 }
 
-const tool = '<div id="awaketab-tool" data-main="/_astro/main.a1.js"></div>';
+const font = '<link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin>';
+const tool = `${font}<div id="awaketab-tool" data-main="/_astro/main.a1.js"></div>`;
 const pip = '<script type="module" src="/_astro/pip-page.b2.js"></script>';
 
 beforeAll(async () => {
@@ -42,6 +43,8 @@ beforeAll(async () => {
   await put('_astro/ambient.e5.css', 'a{}');
   await put('_astro/pip-page.b2.js', 'export{};');
   await put('_astro/font.woff2', 'woff2');
+  await put('fonts/main.woff2', 'main-woff2');
+  await put('fonts/mono.woff2', 'mono-woff2');
   // Other pages' scripts and styles ship too, but only the pages that use them load them.
   await put('_astro/pro-page.f6.js', 'export{};');
   await put('_astro/content.g7.css', 'b{}');
@@ -60,7 +63,7 @@ afterAll(async () => {
 });
 
 describe('precacheManifest: what every visitor gets (docs/05 §8.2)', () => {
-  it('holds only language-neutral files: the favicon, icons and the shell pages’ scripts and styles', async () => {
+  it('holds only language-neutral files: the favicon, icons, the preloaded font and the shell pages’ scripts and styles', async () => {
     const urls = (await precacheManifest(dist)).map((e) => e.url);
     expect(urls).toEqual([
       '/_astro/ambient.e5.css',
@@ -69,6 +72,7 @@ describe('precacheManifest: what every visitor gets (docs/05 §8.2)', () => {
       '/_astro/pip-page.b2.js',
       '/_astro/shared.c3.js',
       '/favicon.svg',
+      '/fonts/main.woff2',
       '/icons/a.png',
     ]);
   });
@@ -79,10 +83,18 @@ describe('precacheManifest: what every visitor gets (docs/05 §8.2)', () => {
     expect(entries.find((e) => e.url === '/favicon.svg')?.revision).toMatch(/^[0-9a-f]{12}$/u);
   });
 
-  it('never precaches a page, another page’s scripts, fonts or the embed', async () => {
+  it('gives the preloaded font a content revision', async () => {
+    const entries = await precacheManifest(dist);
+    expect(entries.find((e) => e.url === '/fonts/main.woff2')?.revision).toMatch(/^[0-9a-f]{12}$/u);
+  });
+
+  it('never precaches a page, another page’s scripts, other fonts or the embed', async () => {
     const urls = (await precacheManifest(dist)).map((e) => e.url);
-    expect(urls.filter((u) => !u.startsWith('/_astro/') && !u.startsWith('/icons/'))).toEqual(['/favicon.svg']);
-    for (const u of ['/_astro/pro-page.f6.js', '/_astro/content.g7.css', '/_astro/font.woff2']) {
+    expect(urls.filter((u) => !u.startsWith('/_astro/') && !u.startsWith('/icons/'))).toEqual([
+      '/favicon.svg',
+      '/fonts/main.woff2',
+    ]);
+    for (const u of ['/_astro/pro-page.f6.js', '/_astro/content.g7.css', '/_astro/font.woff2', '/fonts/mono.woff2']) {
       expect(urls).not.toContain(u);
     }
     expect(urls.filter((u) => u.startsWith('/embed'))).toEqual([]);
@@ -190,7 +202,7 @@ describe('buildServiceWorker', () => {
     expect(code).not.toContain('__AT_SHELL');
     expect(code).toContain(JSON.stringify(await precacheManifest(dist)));
     expect(code).toContain(JSON.stringify(await shellManifest(dist)));
-    expect(result).toMatchObject({ entries: 7, shell: 31 });
+    expect(result).toMatchObject({ entries: 8, shell: 31 });
   });
 });
 

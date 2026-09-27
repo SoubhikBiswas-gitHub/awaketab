@@ -26,7 +26,8 @@ const PRECACHE = self.__WB_MANIFEST;
 const REVISION = new Map(SHELL.map((e) => [e.url, e.revision]));
 
 cleanupOutdatedCaches();
-// Files every visitor needs (the tool's scripts and styles, icons). Query strings never select a different file.
+// Files every visitor needs (the tool's scripts and styles, the main font, icons). Query strings never select a
+// different file.
 precacheAndRoute(PRECACHE, { ignoreURLParametersMatching: [/.*/u] });
 
 const sameOrigin = (url: URL) => url.origin === self.location.origin;
