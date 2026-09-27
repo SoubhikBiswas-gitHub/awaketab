@@ -13,6 +13,7 @@ Related docs: `04-engine-spec.md` (what is being tested) · `08-data-storage.md`
 | Layer | Tool | Runs on | Blocks merge? |
 |---|---|---|---|
 | Types | `pnpm typecheck` (`pnpm -r typecheck`): `tsc --noEmit` per package; for `apps/web`, `astro check` plus `tsc -p functions/tsconfig.json` (Pages Functions against `@cloudflare/workers-types` only, no DOM or Node) and `tsc -p functions/tsconfig.test.json` (the Functions suites and `test/functions/harness.ts`, Workers + Node + DOM) | every PR | yes |
+| Dead code | `pnpm knip` (Knip, config in `knip.json`; part of `pnpm lint`): unused files, exports, types and dependencies in every workspace. Entry points are the Astro pages, the Pages Functions, the build scripts, the tests and the published package exports; files read by path (the OG fonts) and the vendored shadcn/ui and ad-config exports are the only ignores | every PR | yes |
 | Unit (`packages/*`, `apps/web/src/lib`) | Vitest + fake timers | every PR | yes |
 | DOM/component (`apps/web/src/tool`) | Vitest + happy-dom | every PR | yes |
 | Pages Functions | Vitest (node) against the handlers with in-memory KV / Analytics Engine / Polar fakes (`apps/web/test/functions/harness.ts`; §9 says why not Miniflare) | every PR | yes |
