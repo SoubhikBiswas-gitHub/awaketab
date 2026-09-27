@@ -87,7 +87,7 @@ export default defineConfig({
             )
               return 'tool-boot';
             if (
-              /\/src\/tool\/(?:ui\/(?:actions|dialog|more-css|view-more|banners|toast-view|why|receipt|settings|rating|lang-suggest)|stats\/\w+|shortcuts|msg|theme|end|signal|pwa|extras|fullscreen|accent|sponsor)\./u.test(
+              /\/src\/tool\/(?:ui\/(?:actions|dialog|more-css|view-more|banners|toast-view|why|receipt|settings|rating|lang-suggest)|stats\/\w+|shortcuts|msg|theme|end|signal|pwa|extras|fullscreen|accent|sponsor|embed\/kiosk|pip)\./u.test(
                 id,
               )
             )
