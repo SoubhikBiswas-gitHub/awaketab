@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+
 @source not inline("transition");
 
 /* stylelint-disable nesting-selector-no-missing-scoping-root -- Tailwind v4 variant syntax */
