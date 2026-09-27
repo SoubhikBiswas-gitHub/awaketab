@@ -17,8 +17,7 @@ const BY_LOCK: Partial<Record<IToolState['lock'], TStatus>> = {
   unsupported: 'needtap',
 };
 
-// A start the page made on load stays on Ready until the browser grants it: its request and a refusal show nothing
-// (Blocked is for a refused tap), so the first frame is the settled one.
+// A refusal of the page's own start shows nothing; Blocked is for a refused tap.
 export function statusOf(s: IToolState): TStatus {
   return s.ui.ask
     ? 'timesup'
@@ -100,7 +99,7 @@ export function mountView(ctx: IToolCtx): () => void {
     const inf = total === 0;
     const final = held && !inf && left > 0 && left <= 60;
     const shown = inf ? (live ? el : null) : left;
-    // No limit counts up (DESIGN.md §4): Ready shows it at rest, 00:00, so a grant never swaps the digits.
+    // No limit shows 00:00 at rest, so a grant never swaps the digits.
     const v = shown ?? el;
     const [a, b] = splitDigits(v);
     const endMs = Math.round((now + left * 1000) / 60_000) * 60_000;

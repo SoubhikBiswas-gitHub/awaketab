@@ -232,10 +232,9 @@ export function boot(root: HTMLElement): () => void {
   }
 
   let first = true;
-  // `auto`: the page asked on load, not the user, so the Ready layout holds until a grant (view.ts statusOf).
+  // A start the page made on load keeps Ready until a grant.
   const startCurrent = (auto = false) => {
     const cur = currentPlan();
-    // The receipt note ("Asked at … · confirmed … later") shows for the first start of a page view.
     store.set({ ui: { rcpt: first, auto } });
     first = false;
     void startPlan(cur.plan, cur.presetId);
@@ -367,7 +366,6 @@ export function boot(root: HTMLElement): () => void {
 
   const wantStart =
     (params.autostart || params.isToolAutostartRoute) && !params.isPip && !(resumable && !params.autostart);
-  // `data-settled`: the load-time start has its answer (view.ts) or 2 s passed; the pill line shows then (tool.css).
   setTimeout(
     () => {
       root.dataset.settled = '';

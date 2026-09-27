@@ -32,13 +32,9 @@ const {
   until,
 } = Astro.props;
 const t = createT(locale);
-// Routes that start on load (tool/params.ts isToolAutostartRoute) hold the pill until the browser answers, so it
-// never shows Ready and then Screen awake; boot.js lifts this for ?autostart=0 before the first paint.
+// Autostart routes hold the pill until the browser answers, so it never flips Ready to Screen awake.
 const auto = !embed && autostart !== '0' && (stripLocale(Astro.url.pathname) === '/' || !!preset || !!until);
-// /8h is the one full tool that passes 'custom' (tool/params.ts: an eight-hour custom plan).
 const ready = toolReady(t, preset, !embed && preset === 'custom');
-// The wall time as the island formats it (tool/format.ts hm, the locale's own clock); boot.js fills what depends on
-// today's date.
 const untilAt = until
   ? new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit', timeZone: 'UTC', numberingSystem: 'latn' }).format(
       Date.UTC(2000, 0, 1, Number(until.slice(0, 2)), Number(until.slice(3))),

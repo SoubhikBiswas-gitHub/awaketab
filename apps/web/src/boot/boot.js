@@ -86,8 +86,7 @@
   dark.addEventListener('change', () => {
     if (root.dataset.themePref === 'auto' && root.dataset.theme !== 'oled') apply('auto');
   });
-  // The switch's native radios mirror <html data-theme-pref> (OLED counts as Dark), whoever set it. A theme swap from
-  // anywhere (this switch, the island, the system) runs no transitions: every themed edge easing at once is a flicker.
+  // A theme swap from anywhere runs no transitions, so nothing eases in piecemeal.
   const sync = () => {
     const pref = root.dataset.themePref === 'oled' ? 'dark' : root.dataset.themePref;
     for (const r of document.querySelectorAll('input[name="at-theme"]')) {
@@ -195,9 +194,7 @@
     if (wrap && e.target instanceof Node && !wrap.contains(e.target)) lang(wrap, false);
   });
 
-  // The tool's first paint (docs/05 §3.33, First load): the markup already holds the page's length; before every
-  // frame while the page parses, this fills what depends on the clock or this device (date, time, end time, Horizon
-  // sky, an /until countdown, the remembered face tab), so the island's first render changes nothing on screen.
+  // Fill clock- and device-dependent text before each frame so the island's first render changes nothing.
   const locale = root.lang || 'en';
   /** @param {Intl.DateTimeFormatOptions} o @param {number} ms @param {string} [l] */
   const fmt = (o, ms, l = locale) => new Intl.DateTimeFormat(l, { ...o, numberingSystem: 'latn' }).format(ms);
@@ -219,7 +216,6 @@
     const tool = document.getElementById('awaketab-tool');
     if (tool && !('booted' in tool.dataset)) {
       const d = tool.dataset;
-      // The markup holds the pill back on routes that start on load; ?autostart=0 does not start.
       if (quiet) delete d.auto;
       const now = Date.now();
       const nowT = hm(now, secs);

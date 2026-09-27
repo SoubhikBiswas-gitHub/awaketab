@@ -17,8 +17,7 @@ export interface IToolReady {
 
 const isPreset = (id: string): id is keyof typeof PRESET_MS => id in PRESET_MS;
 
-// The Ready state the island's first render shows (tool/ui/view.ts), drawn at build time so the first paint already
-// equals it: the page's length (its route, the embedding page's, /8h, or the default), its digits and the lamp label.
+// The Ready state drawn at build time, so the first paint already equals the island's first render.
 export function toolReady(t: TT, preset: string | undefined, eight: boolean): IToolReady {
   const id = eight
     ? 'custom'

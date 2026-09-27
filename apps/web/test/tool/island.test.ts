@@ -81,10 +81,8 @@ describe('view status (canvas statuses from the seven lock states)', () => {
     expect(statusOf({ ...auto, lock: 'requesting' })).toBe('ready');
     expect(statusOf({ ...auto, lock: 'denied' })).toBe('ready');
     expect(statusOf({ ...auto, lock: 'held' })).toBe('awake');
-    // After a grant, a later request (coming back to the tab) and a refusal are shown as they are.
     expect(statusOf({ ...auto, lock: 'requesting', ui: { ...auto.ui, ok: 1 } })).toBe('starting');
     expect(statusOf({ ...auto, lock: 'denied', ui: { ...auto.ui, ok: 1 } })).toBe('blocked');
-    // A refused tap shows the fix.
     expect(statusOf({ ...s, lock: 'denied' })).toBe('blocked');
   });
 

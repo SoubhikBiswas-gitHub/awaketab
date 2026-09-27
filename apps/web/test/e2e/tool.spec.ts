@@ -102,8 +102,6 @@ test('/30m first load with a refused lock stays honest and moves nothing', async
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/30m');
-  // A start nobody asked for that the browser refuses leaves the calm Ready state exactly as it was first painted:
-  // Blocked is for a refused tap. No card swaps in, so nothing shifts.
   await expect(page.locator('#awaketab-tool')).toHaveAttribute('data-settled', '', { timeout: 4000 });
   await expect(page.locator('[data-pill-text]')).toBeVisible();
   await expect(page.locator('[data-pill-text]')).toHaveText('Ready');
@@ -144,11 +142,9 @@ test('the first paint is the settled tool: the island changes nothing on screen 
       };
     });
   };
-  // Without the island's modules the page shows what the markup and the inline boot script paint first.
   await page.route('**/*.js', (route) => route.abort());
   await page.goto('/');
   const first = await read();
-  // Nothing fades or slides into place on the first frames (entrance motion is for later, user-driven changes).
   const moving = await page.evaluate(
     () =>
       document

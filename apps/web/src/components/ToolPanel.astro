@@ -94,7 +94,6 @@ const ICON_SHARE =
   'M12 3.5v11M8 7.5l4-4 4 4M5.5 12v6.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12';
 const here = LOCALE_META[locale];
 const untilWall = until?.replace('-', ':');
-// An /until page's digits and end time depend on the visitor's clock: boot.js writes them before the first paint.
 const a = untilWall ? '' : ready.a;
 const b = untilWall ? '' : ready.b;
 const meta = untilWall ? t('tool.meta.endsAt') : ready.meta;
