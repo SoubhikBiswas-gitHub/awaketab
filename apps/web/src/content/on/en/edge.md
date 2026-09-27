@@ -2,63 +2,136 @@
 title: "Keep the screen on in Microsoft Edge — AwakeTab"
 description: "Edge 84 and later keep the screen on from a visible tab, like Chrome. Sleeping tabs only affect tabs in the background, not the one you see."
 h1: "Keep the screen on in Microsoft Edge"
+crumb: "Microsoft Edge"
 intent: "keep screen on edge"
+secondaryQueries:
+  - "stop edge screen turning off"
+  - "edge sleeping tabs keep screen on"
+  - "microsoft edge wake lock"
 preset: p30
 mode: standard
 locale: en
 reviewed: true
 noindex: true
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: ["edge"]
-os: ["windows", "macos"]
+os: ["windows", "macos", "linux", "android"]
+lead: "Edge 84 and later keep the screen on from a visible tab, on Windows, macOS, Linux and Android. Edge shares Chrome's engine, so the wake lock behaves the same way. Sleeping tabs only put background tabs to sleep, never the AwakeTab tab you can see. To keep the screen on with the tab hidden, the AwakeTab extension also runs in Edge."
+facts:
+  - label: "Edge"
+    value: "84 or later"
+  - label: "Sleeping tabs"
+    value: "background tabs only"
+  - label: "Energy saver"
+    value: "does not refuse the lock"
+  - label: "Extension"
+    value: "Edge 116 or later"
+toc:
+  set-it-up-in-edge: "Set it up"
+  which-edge-setups-keep-the-screen-on: "Which setups work"
+  what-turns-the-screen-off-anyway: "What turns it off"
+steps:
+  - title: "Open AwakeTab in Edge and press Start"
+    path: "Edge › awaketab.com"
+    text: "Pick a length or an \"Until…\" time, then press Start. The pill reads \"Starting…\" while Edge answers, then \"Screen awake\" once it has agreed."
+    shot: "AwakeTab in Edge with the pill reading Screen awake"
+  - title: "Keep the tab visible"
+    path: "No minimising while it runs"
+    text: "The window does not need focus, so a small one on a second monitor works while you type on the first. Minimise it or switch tabs and the pill changes to \"Paused — tab hidden\"."
+    shot: "a small Edge window with AwakeTab on a second monitor"
+  - title: "Check it on Windows"
+    path: "Right-click Start › Terminal (Admin)"
+    text: "Run `powercfg /requests` and look for Edge under DISPLAY. On a Mac, run `pmset -g assertions` in Terminal and look for a display-sleep line that names Edge. Hide the tab, run it again, and the entry is gone."
+    shot: "powercfg output with Edge listed under DISPLAY"
+  - title: "Optional: keep it on with the tab hidden"
+    path: "awaketab.com/extension › Get it for Edge"
+    text: "AwakeTab for Chrome also installs in Edge 116 or later. It asks the browser itself to keep the display on, so it carries on with the tab hidden or the window minimised."
+    shot: "the AwakeTab extension popup in the Edge toolbar"
+matrix:
+  label: "Edge support, sources checked 26 September 2026"
+  cols: ["Setup", "Result", "What to know"]
+  rows:
+    - what: "Edge 84 or later on Windows, macOS or Linux, window visible"
+      result: works
+      label: "Supported"
+      text: "The same version floor as Chrome. The window can be visible without focus."
+    - what: "Sleeping tabs turned on"
+      result: works
+      label: "Supported"
+      text: "Only tabs in the background sleep. The tab you can see keeps its lock."
+    - what: "Windows Energy saver on"
+      result: works
+      label: "Supported"
+      text: "Chromium has no Energy saver check, so the lock is not refused. The screen may still dim."
+    - what: "Efficiency mode on"
+      result: untested
+      label: "Not yet tested"
+      text: "We have not yet checked whether it changes anything for a visible tab."
+    - what: "Window minimised or another tab in front"
+      result: pauses
+      label: "Pauses"
+      text: "The lock is released until the tab is back in front."
+    - what: "Edge on Android, tab on screen"
+      result: works
+      label: "Supported"
+      text: "Leaving Edge releases the lock, as it does in Chrome."
+    - what: "AwakeTab browser extension, Edge 116 or later"
+      result: works
+      label: "Supported"
+      text: "[AwakeTab for Chrome](/extension) keeps the screen on with the tab hidden or the window minimised."
+rows:
+  blockers:
+    - title: "Locking the PC"
+      text: "A locked Windows PC hides the tab and uses its own 60-second monitor timeout."
+      link:
+        label: "Windows 11 screen turns off after 1 minute"
+        href: "/guides/windows-11-screen-turns-off-after-1-minute"
+    - title: "Closing the lid"
+      text: "Windows follows its lid-close setting, and a Mac sleeps unless it runs in clamshell mode. No tab changes that."
+    - title: "A work screen lock policy"
+      text: "A managed PC can lock the screen on its own schedule, separate from display sleep."
+      link:
+        label: "Lock screen versus display sleep"
+        href: "/guides/lock-screen-vs-sleep"
+    - title: "A hidden tab"
+      text: "A minimised window or another tab in front lets the display go. Bring the tab back and AwakeTab asks again."
 faq:
-  - q: "Does this work if the tab is hidden?"
-    a: "No. The browser releases the lock when you switch tabs or apps. Come back and the pill returns to “Screen awake”. On desktop Chrome or Edge, AwakeTab for Chrome keeps the screen on with the tab hidden."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Teams and Slack set you to Away from keyboard and mouse inactivity, not from a lit screen. AwakeTab never moves the mouse or presses keys."
-  - q: "What browsers are in scope?"
-    a: "Chrome and Edge 84+, Firefox 126+, Safari 16.4+ and Samsung Internet 14+ support the wake lock natively. Older Firefox can use the video fallback after a tap. Checked against browser documentation on 26 September 2026."
-honestLimit: "Edge 84+ holds the lock only while the tab is visible. Sleeping tabs affect background tabs only, and Windows Energy saver may still dim the screen."
+  - q: "Will sleeping tabs put the AwakeTab tab to sleep?"
+    a: "Not while you can see it. Sleeping tabs only affect background tabs, and once you switch away, Edge releases the wake lock anyway. AwakeTab asks again when you come back."
+  - q: "Does Energy saver stop Edge keeping the screen on?"
+    a: "No. Chromium's wake lock code has no Energy saver check, so the lock is not refused. Energy saver, called Battery saver before Windows 11 24H2, may still dim the screen."
+  - q: "Can AwakeTab stop by itself when my battery runs low in Edge?"
+    a: "Yes. Edge tells pages the battery level, so you can pick a level in AwakeTab's settings and the session ends there. Firefox and Safari do not share the battery level with pages."
+  - q: "Will this keep Teams showing me as Available?"
+    a: "No. Teams sets you to Away after about 5 minutes without keyboard or mouse input, whatever the screen does. AwakeTab never moves the mouse or presses keys."
+honestLimit: "Edge 84 and later hold the lock only while the tab is visible. Sleeping tabs affect only background tabs, and Energy saver may dim the screen but does not refuse the lock. Minimise the window, lock the PC or close the lid and Edge lets the screen go."
 related:
-  - "/vs/mouse-jigglers"
-  - "/guides/second-monitor-turns-off"
-  - "/learn/how-we-tested"
+  - "/on/windows-11"
+  - "/on/macos"
+  - "/extension"
+  - "/guides/lock-screen-vs-sleep"
+  - "/learn/does-a-wake-lock-keep-teams-green"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
-## What you are actually asking
+## Set it up in Edge
 
-Edge 84 and later match Chrome on wake lock. Sleeping tabs apply to background tabs, not the visible one. Windows Energy saver may dim the screen, but it does not refuse the request.
+Two steps start a session. The last two are an optional check and a way to keep the screen on with the tab hidden.
 
-## How the lock works on this page
+::steps
 
-AwakeTab asks the browser for a screen wake lock from a secure page that is on screen. The pill at the top of the tool says what the browser answered: "Starting…" while it asks, "Screen awake" once the browser has confirmed the lock, "Paused — tab hidden" when the tab is out of sight, and "Blocked — here's the fix" when the browser refuses, with the cause. Only "Screen awake" and "Awake via video fallback" come with a running timer.
+::ad
 
-Chrome and Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 and Opera 70 are the first versions with the Screen Wake Lock API; iPhone and iPad Home Screen apps need iOS 18.4. Older Firefox can use the video fallback after a tap. A browser refuses or takes back the lock when the tab is hidden, when a Permissions-Policy blocks it, when Safari has not had a tap yet, or when Firefox is at 5 % battery or less and not charging. A page without HTTPS has no wake lock at all. Battery savers are not a refusal cause in Chrome or Safari.
+## Which Edge setups keep the screen on
 
-## Practical setup
+Sources: browser documentation and Chromium's code, checked 26 September 2026. Real-device results appear once recorded.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+::matrix
 
-## Operating-system notes
+## What turns the screen off anyway
 
-Windows: Settings > System > Power & battery sets the screen timeout. Energy saver (called Battery saver before Windows 11 24H2) may dim the screen, but it does not refuse a browser wake lock. macOS: System Settings > Lock Screen. While Chrome keeps the display on, the Mac does not idle-sleep; closing the lid still sleeps it unless you use clamshell mode with power and an external display. iPhone: Settings > Display & Brightness > Auto-Lock; Low Power Mode sets Auto-Lock to 30 seconds. Android: Settings > Display (Pixel: Display & touch) > Screen timeout, and some makers' sleeping-apps lists can close a browser after you leave it. Linux: Chrome and Firefox ask the desktop not to sleep; whether that holds depends on your desktop.
+Edge can only hold the display while its tab is showing. These still end the session.
 
-## What success looks like
-
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Tapping Start again without changing what caused a refusal gets the same answer. Stats count only the time the screen was actually kept awake.
-
-
-## A short checklist before you walk away
-
-Before you walk away, check that the page uses HTTPS, that this tab is in front, and that the pill says "Screen awake". A dimming clock or a chat avatar tells you nothing about the lock; the pill does. If the pill says "Blocked — here's the fix", follow the line under it instead of tapping Start again. A timed session ends when its time is up, so pick ∞ if you want it to run until you stop it.
-
-## When the pill changes
-
-When you hide the tab, the pill changes to "Paused — tab hidden". That is the page telling the truth, not a bug: the browser has taken the lock back, and AwakeTab asks again as soon as you return. Paused time does not count toward a timed session. If the screen must stay on while the tab is hidden, AwakeTab for Chrome uses Chrome's own power setting instead and keeps working with the tab hidden on desktop Chrome and Edge. Firefox and Safari give extensions no power setting, so there the tab has to stay in view.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. In Chrome and Edge, AwakeTab can stop by itself at a battery level you pick; Firefox and Safari do not tell pages the battery level. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Firmware and OS power rules still win. If you need those jobs, use a native utility and keep this tab for a screen you can see.
+::rows blockers

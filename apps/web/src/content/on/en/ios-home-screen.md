@@ -1,64 +1,140 @@
 ---
 title: "Keep an iOS Home Screen app awake — AwakeTab"
-description: "Keep an iPhone Home Screen web app awake. The wake lock there needs iOS 18.4 or later; on older iOS, use Safari. Notifications need the installed app."
+description: "Keep an iPhone Home Screen web app awake. The wake lock there needs iOS 18.4 or later and one tap; on older iOS, use AwakeTab in Safari."
 h1: "Keep an iOS Home Screen app awake"
+crumb: "iPhone Home Screen app"
 intent: "keep screen on iphone web app"
+secondaryQueries:
+  - "iphone home screen web app keep screen on"
+  - "ios pwa wake lock"
+  - "add to home screen keep awake iphone"
 preset: pinf
 mode: clock
 locale: en
 reviewed: true
 noindex: true
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: ["safari"]
-os: ["ios"]
+os: ["ios", "ipados"]
+lead: "From iOS 18.4, AwakeTab added to your Home Screen can keep the iPhone screen on while the app is open in front. Tap Start once, because iOS only grants a wake lock after a tap. On iOS 26, sites you add to the Home Screen open as web apps by default. Before iOS 18.4, web apps cannot hold the lock, so use AwakeTab in Safari instead."
+facts:
+  - label: "Home Screen web app"
+    value: "iOS 18.4 or later"
+  - label: "Safari instead"
+    value: "iOS 16.4 or later"
+  - label: "iOS 26"
+    value: "added sites open as web apps"
+  - label: "Low Power Mode"
+    value: "Auto-Lock 30 seconds"
+toc:
+  set-it-up-on-your-home-screen: "Set it up"
+  which-home-screen-setups-keep-the-screen-on: "Which setups work"
+  what-turns-the-screen-off-anyway: "What turns it off"
+steps:
+  - title: "Check your iOS version"
+    path: "Settings › General › About"
+    text: "Look at the iOS Version row. Home Screen web apps gained the wake lock in iOS 18.4, through a WebKit fix. On anything older, skip the Home Screen and use Safari."
+    shot: "the About screen with the iOS Version row"
+  - title: "Add AwakeTab to your Home Screen"
+    path: "Safari › Share › Add to Home Screen"
+    text: "Open awaketab.com in Safari first. The icon opens AwakeTab without the Safari toolbar, and on iOS 26 it opens as a web app by default."
+    shot: "the Share sheet with Add to Home Screen"
+  - title: "Open the app and tap Start"
+    path: "Home Screen › AwakeTab"
+    text: "iOS will not grant a wake lock until you touch the page, so the session always starts from your tap. The pill says \"Screen awake\" only once iOS has agreed."
+    shot: "the AwakeTab web app with the pill reading Screen awake"
+  - title: "Keep the app in front"
+    path: "No app switching while it runs"
+    text: "Going Home, opening another app or pressing the side button releases the lock, and the pill changes to \"Paused — tab hidden\". Open the app again and AwakeTab asks again by itself."
+    shot: "the pill after switching away and back"
+matrix:
+  label: "Home Screen web app support, sources checked 26 September 2026"
+  cols: ["Setup", "Result", "What to know"]
+  rows:
+    - what: "Home Screen web app, iOS 18.4 or later, app in front"
+      result: works
+      label: "Supported"
+      text: "Tap Start once. The same rules as Safari apply."
+    - what: "Site added to the Home Screen on iOS 26"
+      result: works
+      label: "Supported"
+      text: "iOS 26 opens it as a web app by default, so the web app rules apply."
+    - what: "Home Screen web app before iOS 18.4"
+      result: "no"
+      label: "Not supported"
+      text: "Open [AwakeTab in Safari](/on/iphone-safari) instead. Safari 16.4 or later holds the lock."
+    - what: "Session started without a tap, for example after a reload"
+      result: blocked
+      label: "Blocked"
+      text: "The pill says \"Blocked — here's the fix\". Tap Retry."
+    - what: "Home Screen, another app or the lock screen"
+      result: pauses
+      label: "Pauses"
+      text: "The lock is released. It comes back when you return to the app."
+    - what: "Low Power Mode on"
+      result: untested
+      label: "Not yet tested"
+      text: "WebKit has no check for it. It sets Auto-Lock to 30 seconds, which takes over once you leave the app."
+    - what: "iPad Home Screen web app, iPadOS 18.4 or later"
+      result: works
+      label: "Supported"
+      text: "The same rules. See [keep an iPad display awake](/on/ipad)."
+rows:
+  blockers:
+    - title: "Low Power Mode"
+      text: "It sets Auto-Lock to 30 seconds and greys out the longer choices, including Never."
+      link:
+        label: "Fix a greyed-out Auto-Lock"
+        href: "/guides/iphone-auto-lock-never-greyed-out"
+    - title: "A work or school profile"
+      text: "A management profile can set a maximum Auto-Lock time that you cannot change."
+      link:
+        label: "Check for a profile"
+        href: "/guides/iphone-auto-lock-never-greyed-out#step-3"
+    - title: "No tap yet"
+      text: "After iOS reloads the app, it waits for a fresh tap before it grants the lock again."
+    - title: "An iOS version before 18.4"
+      text: "The web app opens, but it cannot hold a wake lock. Safari can."
+      link:
+        label: "Keep your iPhone screen on in Safari"
+        href: "/on/iphone-safari"
 faq:
-  - q: "Does this work if the tab is hidden?"
-    a: "No. The browser releases the lock when you switch tabs or apps. Come back and the pill returns to “Screen awake”. On desktop Chrome or Edge, AwakeTab for Chrome keeps the screen on with the tab hidden."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Teams and Slack set you to Away from keyboard and mouse inactivity, not from a lit screen. AwakeTab never moves the mouse or presses keys."
-  - q: "What browsers are in scope?"
-    a: "Chrome and Edge 84+, Firefox 126+, Safari 16.4+ and Samsung Internet 14+ support the wake lock natively. Older Firefox can use the video fallback after a tap. Checked against browser documentation on 26 September 2026."
-honestLimit: "Wake Lock in Home Screen web apps needs iOS 18.4+; notifications work only in the installed app."
+  - q: "Should I use the Home Screen app or Safari?"
+    a: "Either works on iOS 18.4 or later. The Home Screen app opens without the Safari toolbar, which suits a bedside clock. On older iOS, only Safari can keep the screen on."
+  - q: "iOS reloaded the app. Do I lose my session?"
+    a: "No. AwakeTab remembers how much time you had left and offers to resume. Tap Resume: that tap is also what iOS needs before it grants a new wake lock."
+  - q: "Why does the screen go dark after 30 seconds once I leave the app?"
+    a: "Low Power Mode is probably on. It sets Auto-Lock to 30 seconds, and once AwakeTab is not in front, Auto-Lock is in charge again. Turn Low Power Mode off in Settings › Battery if you need longer outside the app."
+  - q: "Can the screen stay on while I use another app?"
+    a: "Not from AwakeTab. iOS releases the wake lock as soon as the app is not in front. For that, change Settings › Display & Brightness › Auto-Lock instead, and set it back afterwards."
+honestLimit: "The wake lock in a Home Screen web app needs iOS 18.4 or later, one tap and the app in front. Switching apps or locking the iPhone releases it, and Low Power Mode sets Auto-Lock to 30 seconds. On older iOS, open AwakeTab in Safari instead."
 related:
-  - "/on/macos"
-  - "/vs/caffeinate-command"
-  - "/guides/chrome-energy-saver"
+  - "/on/iphone-safari"
+  - "/on/ipad"
+  - "/guides/iphone-auto-lock-never-greyed-out"
+  - "/learn/low-power-mode-and-wake-locks"
+  - "/for/night-clock"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
-## What you are actually asking
+## Set it up on your Home Screen
 
-A site added to the Home Screen runs as a web app, apart from Safari, and iOS 26 opens every Home Screen site that way by default. A wake lock there needs iOS 18.4 or later; on older versions, stay in Safari. Notifications also require the installed app.
+Four steps. The first tells you whether the Home Screen app can hold the lock at all.
 
-## How the lock works on this page
+::steps
 
-AwakeTab asks the browser for a screen wake lock from a secure page that is on screen. The pill at the top of the tool says what the browser answered: "Starting…" while it asks, "Screen awake" once the browser has confirmed the lock, "Paused — tab hidden" when the tab is out of sight, and "Blocked — here's the fix" when the browser refuses, with the cause. Only "Screen awake" and "Awake via video fallback" come with a running timer.
+::ad
 
-Chrome and Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 and Opera 70 are the first versions with the Screen Wake Lock API; iPhone and iPad Home Screen apps need iOS 18.4. Older Firefox can use the video fallback after a tap. A browser refuses or takes back the lock when the tab is hidden, when a Permissions-Policy blocks it, when Safari has not had a tap yet, or when Firefox is at 5 % battery or less and not charging. A page without HTTPS has no wake lock at all. Battery savers are not a refusal cause in Chrome or Safari.
+## Which Home Screen setups keep the screen on
 
-## Practical setup
+These results come from WebKit's release notes and bug tracker and Apple's support pages, checked 26 September 2026. Real-device results appear once recorded.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+::matrix
 
-## Operating-system notes
+## What turns the screen off anyway
 
-Windows: Settings > System > Power & battery sets the screen timeout. Energy saver (called Battery saver before Windows 11 24H2) may dim the screen, but it does not refuse a browser wake lock. macOS: System Settings > Lock Screen. While Chrome keeps the display on, the Mac does not idle-sleep; closing the lid still sleeps it unless you use clamshell mode with power and an external display. iPhone: Settings > Display & Brightness > Auto-Lock; Low Power Mode sets Auto-Lock to 30 seconds. Android: Settings > Display (Pixel: Display & touch) > Screen timeout, and some makers' sleeping-apps lists can close a browser after you leave it. Linux: Chrome and Firefox ask the desktop not to sleep; whether that holds depends on your desktop.
+If the screen still dims with the app open, one of these is usually the reason.
 
-## What success looks like
-
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Tapping Start again without changing what caused a refusal gets the same answer. Stats count only the time the screen was actually kept awake.
-
-
-## A short checklist before you walk away
-
-Before you walk away, check that the page uses HTTPS, that this tab is in front, and that the pill says "Screen awake". A dimming clock or a chat avatar tells you nothing about the lock; the pill does. If the pill says "Blocked — here's the fix", follow the line under it instead of tapping Start again. A timed session ends when its time is up, so pick ∞ if you want it to run until you stop it.
-
-## When the pill changes
-
-When you hide the tab, the pill changes to "Paused — tab hidden". That is the page telling the truth, not a bug: the browser has taken the lock back, and AwakeTab asks again as soon as you return. Paused time does not count toward a timed session. If the screen must stay on while the tab is hidden, AwakeTab for Chrome uses Chrome's own power setting instead and keeps working with the tab hidden on desktop Chrome and Edge. Firefox and Safari give extensions no power setting, so there the tab has to stay in view.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. In Chrome and Edge, AwakeTab can stop by itself at a battery level you pick; Firefox and Safari do not tell pages the battery level. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Firmware and OS power rules still win. If you need those jobs, use a native utility and keep this tab for a screen you can see.
+::rows blockers

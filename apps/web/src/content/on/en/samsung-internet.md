@@ -1,64 +1,133 @@
 ---
 title: "Keep the screen on in Samsung Internet — AwakeTab"
-description: "Samsung Internet 14 and later keep the screen on from a visible tab. Power-saving settings can close the tab after you leave it."
-h1: "Keep Samsung Internet awake"
+description: "Samsung Internet 14 and later keep the screen on from a visible tab. Power-saving settings can close the browser after you leave it."
+h1: "Keep your screen on in Samsung Internet"
+crumb: "Samsung Internet"
 intent: "keep screen on samsung internet"
+secondaryQueries:
+  - "samsung internet wake lock"
+  - "stop galaxy screen turning off in browser"
+  - "samsung internet screen timeout"
 preset: p30
 mode: standard
 locale: en
 reviewed: true
 noindex: true
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: ["samsung-internet"]
 os: ["android"]
+lead: "Samsung Internet 14 and later can keep your Android screen on while the AwakeTab tab is showing. It is built on Chromium 87, so the wake lock works as it does in Chrome. Leave the browser and your normal screen timeout comes back, and Samsung's power-saving settings can close the browser once you have left it."
+facts:
+  - label: "Samsung Internet"
+    value: "14 or later"
+  - label: "Built on"
+    value: "Chromium 87"
+  - label: "Screen timeout"
+    value: "one setting for every app"
+  - label: "Floating window"
+    value: "not on Android"
+toc:
+  set-it-up-in-samsung-internet: "Set it up"
+  which-samsung-internet-setups-keep-the-screen-on: "Which setups work"
+  what-turns-the-screen-off-anyway: "What turns it off"
+steps:
+  - title: "Open AwakeTab in Samsung Internet and tap Start"
+    path: "Samsung Internet › awaketab.com"
+    text: "Pick a length or an \"Until…\" time, then tap Start. Wait for the pill to say \"Screen awake\" before you put the phone down."
+    shot: "AwakeTab in Samsung Internet with the pill reading Screen awake"
+  - title: "Keep the tab on screen"
+    path: "No Home, Recents or other apps"
+    text: "Leaving the browser or switching tabs ends the lock at once, and the pill changes to \"Paused — tab hidden\". Come back and AwakeTab asks again."
+    shot: "the pill after leaving Samsung Internet and coming back"
+  - title: "Optional: use split screen"
+    path: "Recents › app icon › Split screen"
+    text: "Put your recipe or notes in one half and AwakeTab in the other, so the tab stays on screen. The exact steps differ between phones and Android versions."
+    shot: "split screen with a notes app and AwakeTab"
+  - title: "Optional: change the phone's own timeout"
+    path: "Settings › Display › Screen timeout"
+    text: "This covers every app on the phone, and the longest choice depends on the model. A long timeout also drains the battery in your pocket."
+    shot: "the Screen timeout choices in Settings"
+matrix:
+  label: "Samsung Internet support, sources checked 26 September 2026"
+  cols: ["Setup", "Result", "What to know"]
+  rows:
+    - what: "Samsung Internet 14 or later, tab on screen"
+      result: works
+      label: "Supported"
+      text: "The screen stays on while you can see the tab."
+    - what: "Home, Recents, another app or another tab"
+      result: pauses
+      label: "Pauses"
+      text: "The lock ends at once. AwakeTab asks again when you return."
+    - what: "Split screen with AwakeTab in one half"
+      result: untested
+      label: "Not yet tested"
+      text: "The tab stays on screen, so it should keep the display lit beside the other app."
+    - what: "Samsung power saving on"
+      result: untested
+      label: "Not yet tested"
+      text: "We have not yet checked on a device whether it changes anything for a visible tab."
+    - what: "Samsung Internet before 14"
+      result: fallback
+      label: "Video fallback"
+      text: "No Screen Wake Lock API there. You can choose \"Tap to use the fallback\"."
+    - what: "Chrome 84 or later on the same phone"
+      result: works
+      label: "Supported"
+      text: "The same rules. See [keep your Android screen on in Chrome](/on/android-chrome)."
+    - what: "AwakeTab browser extension"
+      result: "no"
+      label: "Not available"
+      text: "The extension is for desktop Chrome and Edge. There is no Android version."
+rows:
+  blockers:
+    - title: "Sleeping-apps lists"
+      text: "Samsung's \"sleeping apps\" settings can close the browser after you leave it. They do not touch a tab you are looking at."
+    - title: "One timeout for the whole phone"
+      text: "Android has no per-app timeout, so a long one keeps the screen on for every app."
+      link:
+        label: "Android screen timeout for one app"
+        href: "/guides/android-screen-timeout-one-app"
+    - title: "Leaving the browser"
+      text: "Home, Recents or a notification that opens another app hides the tab and releases the lock."
+    - title: "The power button"
+      text: "Pressing it turns the screen off, whatever the tab asked for."
 faq:
-  - q: "Does this work if the tab is hidden?"
-    a: "No. The browser releases the lock when you switch tabs or apps. Come back and the pill returns to “Screen awake”. On desktop Chrome or Edge, AwakeTab for Chrome keeps the screen on with the tab hidden."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Teams and Slack set you to Away from keyboard and mouse inactivity, not from a lit screen. AwakeTab never moves the mouse or presses keys."
-  - q: "What browsers are in scope?"
-    a: "Chrome and Edge 84+, Firefox 126+, Safari 16.4+ and Samsung Internet 14+ support the wake lock natively. Older Firefox can use the video fallback after a tap. Checked against browser documentation on 26 September 2026."
-honestLimit: "Samsung Internet 14+ (Chromium 87 base) holds the lock only while the tab is visible; Samsung's sleeping-apps settings can close the tab after you leave it."
+  - q: "Why was my session gone when I came back to Samsung Internet?"
+    a: "Samsung's power-saving settings can close the browser once it is in the background. AwakeTab restores a session after the page reloads, so check the pill. If it keeps happening, look for the list of apps that should never sleep in your phone's battery settings and add Samsung Internet."
+  - q: "Is Samsung Internet any different from Chrome here?"
+    a: "Not in how the lock works. Both are built on Chromium, and both hold the wake lock only while the tab is on screen. The version floors differ: Samsung Internet 14 and Chrome 84."
+  - q: "Does Samsung's power saving stop the screen staying on?"
+    a: "We have not tested it on a Galaxy phone yet. Chromium's wake lock code has no battery-saver check, but Samsung's own settings are not covered by that, so the table marks it as not yet tested."
+  - q: "Can I use AwakeTab's floating window on my phone?"
+    a: "No. The floating window needs a desktop browser feature that Android browsers lack. Split screen is the nearest option, since it keeps the tab on screen beside another app."
+honestLimit: "Samsung Internet 14 and later (Chromium 87 base) hold the lock only while the tab is on screen. Leave the browser and your normal timeout returns, and Samsung's sleeping-apps settings can close the browser after you leave it."
 related:
-  - "/on/edge"
-  - "/vs/mouse-jigglers"
-  - "/guides/second-monitor-turns-off"
+  - "/on/android-chrome"
+  - "/guides/android-screen-timeout-one-app"
+  - "/for/cooking"
+  - "/learn/browser-support-matrix"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
-## What you are actually asking
+## Set it up in Samsung Internet
 
-Samsung Internet 14 and later use Chromium's wake lock, and it holds while the tab is visible. Samsung's battery settings, such as putting unused apps to sleep, can close the browser after you leave it, so AwakeTab may have to start again when you return.
+Two steps start a session. The last two are optional ways to keep the tab in view or change the phone's own setting.
 
-## How the lock works on this page
+::steps
 
-AwakeTab asks the browser for a screen wake lock from a secure page that is on screen. The pill at the top of the tool says what the browser answered: "Starting…" while it asks, "Screen awake" once the browser has confirmed the lock, "Paused — tab hidden" when the tab is out of sight, and "Blocked — here's the fix" when the browser refuses, with the cause. Only "Screen awake" and "Awake via video fallback" come with a running timer.
+::ad
 
-Chrome and Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 and Opera 70 are the first versions with the Screen Wake Lock API; iPhone and iPad Home Screen apps need iOS 18.4. Older Firefox can use the video fallback after a tap. A browser refuses or takes back the lock when the tab is hidden, when a Permissions-Policy blocks it, when Safari has not had a tap yet, or when Firefox is at 5 % battery or less and not charging. A page without HTTPS has no wake lock at all. Battery savers are not a refusal cause in Chrome or Safari.
+## Which Samsung Internet setups keep the screen on
 
-## Practical setup
+These results come from browser documentation and Chromium's source, checked 26 September 2026. Real-device results on a Galaxy phone appear here once recorded.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+::matrix
 
-## Operating-system notes
+## What turns the screen off anyway
 
-Windows: Settings > System > Power & battery sets the screen timeout. Energy saver (called Battery saver before Windows 11 24H2) may dim the screen, but it does not refuse a browser wake lock. macOS: System Settings > Lock Screen. While Chrome keeps the display on, the Mac does not idle-sleep; closing the lid still sleeps it unless you use clamshell mode with power and an external display. iPhone: Settings > Display & Brightness > Auto-Lock; Low Power Mode sets Auto-Lock to 30 seconds. Android: Settings > Display (Pixel: Display & touch) > Screen timeout, and some makers' sleeping-apps lists can close a browser after you leave it. Linux: Chrome and Firefox ask the desktop not to sleep; whether that holds depends on your desktop.
+If the screen still goes dark, one of these is usually why.
 
-## What success looks like
-
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Tapping Start again without changing what caused a refusal gets the same answer. Stats count only the time the screen was actually kept awake.
-
-
-## A short checklist before you walk away
-
-Before you walk away, check that the page uses HTTPS, that this tab is in front, and that the pill says "Screen awake". A dimming clock or a chat avatar tells you nothing about the lock; the pill does. If the pill says "Blocked — here's the fix", follow the line under it instead of tapping Start again. A timed session ends when its time is up, so pick ∞ if you want it to run until you stop it.
-
-## When the pill changes
-
-When you hide the tab, the pill changes to "Paused — tab hidden". That is the page telling the truth, not a bug: the browser has taken the lock back, and AwakeTab asks again as soon as you return. Paused time does not count toward a timed session. If the screen must stay on while the tab is hidden, AwakeTab for Chrome uses Chrome's own power setting instead and keeps working with the tab hidden on desktop Chrome and Edge. Firefox and Safari give extensions no power setting, so there the tab has to stay in view.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. In Chrome and Edge, AwakeTab can stop by itself at a battery level you pick; Firefox and Safari do not tell pages the battery level. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Firmware and OS power rules still win. If you need those jobs, use a native utility and keep this tab for a screen you can see.
+::rows blockers

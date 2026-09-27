@@ -1,64 +1,129 @@
 ---
 title: "Keep the screen on in Linux — AwakeTab"
-description: "Keep the screen on in Firefox or Chrome on Linux. The browser asks the desktop not to sleep; whether that holds depends on your desktop."
+description: "Keep a Linux screen on from a visible Chrome, Edge or Firefox tab. The browser asks the desktop not to blank, and your desktop decides whether it holds."
 h1: "Keep the screen on in Linux"
+crumb: "Linux"
 intent: "keep screen on linux browser"
+secondaryQueries:
+  - "stop linux screen blanking in browser"
+  - "keep screen awake ubuntu chrome"
+  - "linux idle inhibit browser"
 preset: pinf
 mode: standard
 locale: en
 reviewed: true
 noindex: true
-lastVerified: 2026-09-09
-browsers: ["firefox", "chrome"]
+lastVerified: 2026-09-26
+browsers: ["chrome", "edge", "firefox"]
 os: ["linux"]
+lead: "Chrome and Edge 84 and later, and Firefox 126 and later, can keep a Linux screen on while the AwakeTab tab is visible. The browser asks your desktop not to blank the screen. Whether that holds depends on the desktop, which has to honour the GNOME SessionManager or freedesktop ScreenSaver inhibit. We have not yet recorded real-device results on Linux."
+facts:
+  - label: "Chrome and Edge"
+    value: "84 or later"
+  - label: "Firefox"
+    value: "126 or later"
+  - label: "Your desktop"
+    value: "must honour the inhibit"
+  - label: "Device results"
+    value: "not yet recorded"
+toc:
+  set-it-up-on-linux: "Set it up"
+  which-linux-setups-keep-the-screen-on: "Which setups work"
+  what-turns-the-screen-off-anyway: "What turns it off"
+steps:
+  - title: "Open AwakeTab in Chrome, Edge or Firefox and press Start"
+    path: "Browser › awaketab.com"
+    text: "Pick a length, or leave it running until you stop it, then press Start. The pill says \"Screen awake\" once the browser has granted the lock."
+    shot: "AwakeTab in Chrome on a Linux desktop with the pill reading Screen awake"
+  - title: "Keep the window visible"
+    path: "No minimising while it runs"
+    text: "Minimise the window or switch tabs and the browser releases the lock. The pill changes to \"Paused — tab hidden\", and AwakeTab asks again when you come back."
+    shot: "the pill after minimising and restoring the window"
+  - title: "Wait past your blank time once"
+    path: "Leave the machine alone for longer than the blank delay"
+    text: "The pill reports what the browser answered, not what the desktop did. So the first time, stay away for longer than your screen-blank delay. If the screen stays on, your desktop honours the request."
+    shot: "a Linux desktop still lit past its blank delay"
+  - title: "If it still blanks, try the other engine"
+    path: "Chrome or Edge, then Firefox"
+    text: "On Linux, Chrome and Edge ask over D-Bus, through GNOME SessionManager or the freedesktop PowerManagement and ScreenSaver services. Firefox is a separate engine with its own code, so it is worth one try."
+    shot: "AwakeTab open in Firefox beside Chrome"
+matrix:
+  label: "Linux support, sources checked 26 September 2026"
+  cols: ["Setup", "Result", "What to know"]
+  rows:
+    - what: "Chrome or Edge 84 or later, desktop honours the inhibit"
+      result: works
+      label: "Supported"
+      text: "Chromium asks the desktop over D-Bus not to go idle."
+    - what: "Firefox 126 or later, window visible"
+      result: works
+      label: "Supported"
+      text: "Refuses at 5 % battery or less while not charging."
+    - what: "A desktop without GNOME SessionManager or freedesktop inhibit"
+      result: untested
+      label: "Not yet tested"
+      text: "The browser may grant the lock while the desktop still blanks the screen."
+    - what: "Window minimised or another tab in front"
+      result: pauses
+      label: "Pauses"
+      text: "The lock is released until the tab is back in front."
+    - what: "Firefox before 126"
+      result: fallback
+      label: "Video fallback"
+      text: "Tap once to start it. It needs this tab visible and uses a little more battery."
+rows:
+  blockers:
+    - title: "A desktop that ignores the request"
+      text: "The pill can say \"Screen awake\" while the desktop blanks anyway, because the browser cannot make it listen."
+    - title: "A hidden tab"
+      text: "A minimised window or another tab in front lets the display go. Bring it back and AwakeTab asks again."
+    - title: "A low battery in Firefox"
+      text: "At 5 % or less and not charging, Firefox refuses the lock."
+      link:
+        label: "Keep the screen on in Firefox"
+        href: "/on/firefox"
+    - title: "A screen lock with its own schedule"
+      text: "A managed machine can lock the screen on its own timer, separate from display sleep."
+      link:
+        label: "Lock screen versus display sleep"
+        href: "/guides/lock-screen-vs-sleep"
 faq:
-  - q: "Does this work if the tab is hidden?"
-    a: "No. The browser releases the lock when you switch tabs or apps. Come back and the pill returns to “Screen awake”. On desktop Chrome or Edge, AwakeTab for Chrome keeps the screen on with the tab hidden."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Teams and Slack set you to Away from keyboard and mouse inactivity, not from a lit screen. AwakeTab never moves the mouse or presses keys."
-  - q: "What browsers are in scope?"
-    a: "Chrome and Edge 84+, Firefox 126+, Safari 16.4+ and Samsung Internet 14+ support the wake lock natively. Older Firefox can use the video fallback after a tap. Checked against browser documentation on 26 September 2026."
-honestLimit: "Needs a desktop that honours the browser's sleep inhibit (GNOME SessionManager or freedesktop ScreenSaver). Device results for Linux are still pending."
+  - q: "Does it work on Wayland and X11?"
+    a: "Those are display protocols, not desktops, so they are not what decides it. What matters is whether your desktop implements GNOME SessionManager or freedesktop ScreenSaver inhibit, because that is what the browser asks."
+  - q: "The pill says Screen awake, but the screen still blanked. Why?"
+    a: "The pill shows the browser's answer. The browser granted the lock, but your desktop did not keep the screen on. Try the other engine, or change your desktop's own blank delay for this session."
+  - q: "Can AwakeTab stop by itself on low battery on a Linux laptop?"
+    a: "In Chrome and Edge, yes: they share the battery level with pages, so you can pick a level in AwakeTab's settings. Firefox removed that API in version 52, so there it cannot."
+  - q: "Have you tested this on a Linux machine?"
+    a: "Not yet. The support rows come from browser documentation and source code. Real-device results will appear in the table once they are recorded."
+honestLimit: "The screen stays on only while the tab is visible and only if your desktop honours the browser's sleep inhibit (GNOME SessionManager or freedesktop ScreenSaver). Real-device results for Linux are still pending."
 related:
-  - "/vs/nosleep-page"
-  - "/guides/android-screen-timeout-one-app"
-  - "/learn/low-power-mode-and-wake-locks"
+  - "/on/firefox"
+  - "/learn/browser-support-matrix"
+  - "/learn/screen-wake-lock-api-guide"
+  - "/guides/lock-screen-vs-sleep"
+  - "/for/dashboards"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
-## What you are actually asking
+## Set it up on Linux
 
-Firefox 126+ and Chrome 84+ on Linux ask the desktop not to sleep, over D-Bus, while the tab is visible. Whether that holds depends on your desktop implementing GNOME SessionManager or freedesktop ScreenSaver inhibit. Device results for Linux are still pending.
+Two steps start a session. The next two tell you whether your desktop is listening, and what to try if it is not.
 
-## How the lock works on this page
+::steps
 
-AwakeTab asks the browser for a screen wake lock from a secure page that is on screen. The pill at the top of the tool says what the browser answered: "Starting…" while it asks, "Screen awake" once the browser has confirmed the lock, "Paused — tab hidden" when the tab is out of sight, and "Blocked — here's the fix" when the browser refuses, with the cause. Only "Screen awake" and "Awake via video fallback" come with a running timer.
+::ad
 
-Chrome and Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 and Opera 70 are the first versions with the Screen Wake Lock API; iPhone and iPad Home Screen apps need iOS 18.4. Older Firefox can use the video fallback after a tap. A browser refuses or takes back the lock when the tab is hidden, when a Permissions-Policy blocks it, when Safari has not had a tap yet, or when Firefox is at 5 % battery or less and not charging. A page without HTTPS has no wake lock at all. Battery savers are not a refusal cause in Chrome or Safari.
+## Which Linux setups keep the screen on
 
-## Practical setup
+These results come from Chromium's and Firefox's source and browser documentation, checked 26 September 2026. They depend on your desktop, and no Linux device run is recorded yet.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+::matrix
 
-## Operating-system notes
+## What turns the screen off anyway
 
-Windows: Settings > System > Power & battery sets the screen timeout. Energy saver (called Battery saver before Windows 11 24H2) may dim the screen, but it does not refuse a browser wake lock. macOS: System Settings > Lock Screen. While Chrome keeps the display on, the Mac does not idle-sleep; closing the lid still sleeps it unless you use clamshell mode with power and an external display. iPhone: Settings > Display & Brightness > Auto-Lock; Low Power Mode sets Auto-Lock to 30 seconds. Android: Settings > Display (Pixel: Display & touch) > Screen timeout, and some makers' sleeping-apps lists can close a browser after you leave it. Linux: Chrome and Firefox ask the desktop not to sleep; whether that holds depends on your desktop.
+If the screen still blanks, one of these is usually the reason.
 
-## What success looks like
-
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Tapping Start again without changing what caused a refusal gets the same answer. Stats count only the time the screen was actually kept awake.
-
-
-## A short checklist before you walk away
-
-Before you walk away, check that the page uses HTTPS, that this tab is in front, and that the pill says "Screen awake". A dimming clock or a chat avatar tells you nothing about the lock; the pill does. If the pill says "Blocked — here's the fix", follow the line under it instead of tapping Start again. A timed session ends when its time is up, so pick ∞ if you want it to run until you stop it.
-
-## When the pill changes
-
-When you hide the tab, the pill changes to "Paused — tab hidden". That is the page telling the truth, not a bug: the browser has taken the lock back, and AwakeTab asks again as soon as you return. Paused time does not count toward a timed session. If the screen must stay on while the tab is hidden, AwakeTab for Chrome uses Chrome's own power setting instead and keeps working with the tab hidden on desktop Chrome and Edge. Firefox and Safari give extensions no power setting, so there the tab has to stay in view.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. In Chrome and Edge, AwakeTab can stop by itself at a battery level you pick; Firefox and Safari do not tell pages the battery level. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Firmware and OS power rules still win. If you need those jobs, use a native utility and keep this tab for a screen you can see.
+::rows blockers
