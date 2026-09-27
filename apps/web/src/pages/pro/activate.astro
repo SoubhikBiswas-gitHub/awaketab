@@ -1,32 +1,70 @@
 ---
+// /pro/activate (docs/09 §2.3, §2.3a; canvas boards ProActivate.dc.html and Sys.dc.html kind="checkout"). One page,
+// two layouts, picked by `data-state` on the root (lib/activate-page.ts):
+// - the activation form: idle · checking · error · success ("Pro is active on this device", O-26) · ext-success;
+// - the checkout return: checkout-success (after the `checkout_id` auto-fill), cancelled, failed and help
+//   (`?checkout=cancelled|failed|help`, or reached from the auto-fill: invalid_key → failed, still syncing → help).
+// Zero hydration (docs/03 ADR-013); English only, like the rest of /pro (the switcher links other locales home).
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../../components/shell/Button.astro';
+import LogoGlyph from '../../components/shell/LogoGlyph.astro';
 import { t } from '../../i18n/load';
 import { articleSchema } from '../../lib/seo';
-// shadcn/ui renders at build time only (docs/03-architecture.md ADR-013): no client:* directives here.
-import { cn } from 'cn';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableRow } from '@/components/ui/table';
+import { PLAN_PRICES, PRO_LAUNCH_END } from '../../lib/license';
+import { POLAR_PORTAL_URL, usd } from '../../lib/pro-common';
+import '../../styles/pro.css';
 
+const a = (key: string, vars?: Record<string, string | number>) => t(`page.pro.activate.${key}`, vars);
+const c = (key: string, vars?: Record<string, string | number>) => t(`page.pro.checkout.${key}`, vars);
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/pro/activate`;
+const launch = Date.now() < PRO_LAUNCH_END;
+const yearly = usd(PLAN_PRICES.pro_yearly);
+const lifeLaunch = usd(PLAN_PRICES.pro_lifetime_launch);
+const lifeFull = usd(PLAN_PRICES.pro_lifetime);
 
-// docs/09-monetization-impl.md §2.10 — API error code → copy shown on this page. The `data-err`
-// cell doubles as the copy source for activate-page.ts, so the copy exists exactly once in the DOM.
-const ERRORS: ReadonlyArray<readonly [code: string, key: string]> = [
-  ['invalid_key', 'license.error.invalid'],
-  ['activation_limit', 'license.error.limit'],
-  ['revoked', 'license.error.revoked'],
-  ['polar_unavailable', 'license.info.syncing'],
-  ['offline', 'license.error.offline'],
-  ['bad_token', 'license.error.token'],
+// docs/09 §2.10 — API error code → copy and tone. The `data-err` text doubles as the copy source for
+// activate-page.ts, so each message exists exactly once in the DOM.
+const ERRORS = [
+  ['invalid_key', 'license.error.invalid', 'bad'],
+  ['activation_limit', 'license.error.limit', 'bad'],
+  ['revoked', 'license.error.revoked', 'bad'],
+  ['polar_unavailable', 'license.info.syncing', 'warn'],
+  ['offline', 'license.error.offline', 'warn'],
+  ['bad_token', 'license.error.token', 'warn'],
+] as const;
+const UNLOCKED = [1, 2, 3, 4, 5, 6].map((n) => a(`ok.u${n}`));
+const GLYPH_TRI = 'M6 1L11.2 10.5H.8z';
+const GLYPH_PAUSE = 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z';
+const CHECK = 'M5 12.5l4.5 4.5L19 7.5';
+
+type TCo = {
+  id: 'cancelled' | 'failed' | 'help';
+  glyph: string;
+  list: string[];
+  primary: [string, string];
+  secondary: [string, string];
+  asideLink: [string, string];
+};
+const CO: TCo[] = [
+  { id: 'cancelled', glyph: 'M6 6l12 12M18 6L6 18', list: [], primary: [c('cancelled.primary'), '/'], secondary: [c('cancelled.secondary'), '/pro#plans'], asideLink: [c('cancelled.link'), 'mailto:support@awaketab.com'] },
+  {
+    id: 'failed',
+    glyph: 'M12 3.5L21.5 20h-19zM12 10v4.5M12 17.2v.3',
+    list: [1, 2, 3].map((n) => c(`failed.l${n}`)),
+    primary: [c('failed.primary'), '/pro#plans'],
+    secondary: [c('failed.secondary'), 'mailto:support@awaketab.com'],
+    asideLink: [c('failed.link'), 'mailto:support@awaketab.com'],
+  },
+  {
+    id: 'help',
+    glyph: 'M4 6h16v12H4zM4 7l8 6 8-6',
+    list: [1, 2, 3, 4].map((n) => c(`help.l${n}`)),
+    primary: [c('help.primary'), '/pro/activate'],
+    secondary: [c('help.secondary'), POLAR_PORTAL_URL],
+    asideLink: [c('help.link'), '/pro/activate'],
+  },
 ];
-
-const secondaryClass = cn(buttonVariants({ variant: 'outline' }), 'min-h-11');
-const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balance';
 ---
 
 <BaseLayout
@@ -48,68 +86,282 @@ const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balan
     ],
   })}
 >
-  <main class="mx-auto mt-8 max-w-[45rem] leading-normal" data-activate-root>
-    <h1 class={headingClass}>{t('page.pro.activate.h1')}</h1>
-    <p class="mt-3 text-lg" data-activate-mode="web">{t('page.pro.activate.lead')}</p>
-    <p class="mt-3 text-lg" data-activate-mode="ext" hidden>{t('page.pro.activate.ext.lead')}</p>
+  <div class="at-pro at-pro-act" data-activate-root data-state="idle" data-launch={launch ? 'on' : 'off'} data-launch-end={String(PRO_LAUNCH_END)}>
+    <div class="at-pro-aura at-pro-aura-act" aria-hidden="true"></div>
 
-    <Card className="mt-6">
-      <CardContent>
-        <form data-activate class="grid gap-3">
-          <Label htmlFor="license-key">{t('pro.activate')}</Label>
-          <Input
+    <main class="at-pro-act-main" data-view="activate">
+      <div class="at-pro-act-col">
+        <a class="at-pro-back" href="/pro">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="at-flip-rtl"><path d="M15 6l-6 6 6 6"></path></svg>
+          {a('back')}
+        </a>
+        <div class="at-pro-act-head">
+          <h1 class="at-pro-h1">{t('page.pro.activate.h1')}</h1>
+          <p class="at-pro-lead" data-activate-mode="web">{t('page.pro.activate.lead')}</p>
+          <p class="at-pro-lead" data-activate-mode="ext" hidden>{t('page.pro.activate.ext.lead')}</p>
+        </div>
+
+        <form class="at-card at-pro-act-form" data-activate aria-busy="false">
+          <label for="license-key">{t('pro.activate')}</label>
+          <input
             id="license-key"
+            class="at-input at-pro-key"
             name="key"
-            autoComplete="off"
-            spellCheck={false}
-            minLength={20}
-            maxLength={80}
-            aria-describedby="activate-error"
-            className="min-h-11 font-mono"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            minlength="20"
+            maxlength="80"
+            placeholder={a('placeholder')}
+            aria-describedby="key-hint activate-msg"
+            required
           />
-          <Button type="submit" className="min-h-11 sm:w-fit">
-            <span data-activate-mode="web">{t('page.pro.activate.submit')}</span>
-            <span data-activate-mode="ext" hidden>{t('page.pro.activate.ext.submit')}</span>
+          <p id="key-hint" class="at-pro-caption">
+            <span data-activate-mode="web">{a('hint')}</span>
+            <span data-activate-mode="ext" hidden>{a('hint.ext')}</span>
+          </p>
+          <Button variant="primary" type="submit" glyph={false} class="at-pro-submit">
+            <LogoGlyph />
+            <svg class="at-pro-spin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M21 12a9 9 0 0 0-9-9"></path></svg>
+            <span data-activate-mode="web" data-label-idle>{t('page.pro.activate.submit')}</span>
+            <span data-activate-mode="ext" data-label-idle hidden>{t('page.pro.activate.ext.submit')}</span>
+            <span data-label-checking>{a('checking')}</span>
           </Button>
         </form>
-      </CardContent>
-    </Card>
 
-    <Alert variant="destructive" id="activate-error" data-activate-error="" hidden className="mt-4">
-      <AlertDescription data-activate-error-text=""></AlertDescription>
-    </Alert>
+        <div id="activate-msg" class="at-pro-act-msg" aria-live="polite">
+          <p role="status" class="at-pro-act-checking" data-checking>{a('checking.status')}</p>
 
-    <section class="mt-8" aria-labelledby="activate-errors">
-      <Table>
-        <TableCaption id="activate-errors" className="caption-top mt-0 mb-3 text-start text-base font-semibold text-foreground">
-          {t('page.pro.activate.errors')}
-        </TableCaption>
-        <TableBody>
-          {ERRORS.map(([code, key]) => (
-            <TableRow>
-              <TableHead scope="row" className="font-mono text-xs">{code}</TableHead>
-              <TableCell data-err={key} className="whitespace-normal">{t(key)}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </section>
+          <div role="alert" id="activate-error" class="at-pro-err" data-activate-error hidden>
+            <p class="at-pro-err-title">
+              <svg viewBox="0 0 12 12" aria-hidden="true"><path class="at-pro-err-tri" d={GLYPH_TRI}></path><path class="at-pro-err-pause" d={GLYPH_PAUSE}></path></svg>
+              <span data-activate-error-title></span>
+            </p>
+            <p class="at-pro-err-text" data-activate-error-text></p>
+            <div class="at-pro-err-actions">
+              <Button variant="stop" size="md" data-retry>{a('retry')}</Button>
+              <Button variant="secondary" href="/pro/manage" data-err-manage hidden>{a('manage')}</Button>
+            </div>
+          </div>
 
-    <Card data-ext-panel="" hidden className="mt-6">
-      <CardHeader>
-        <CardTitle>{t('page.pro.activate.ext.title')}</CardTitle>
-        <CardDescription id="ext-copy">{t('page.pro.activate.ext')}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-wrap gap-2">
-        <Input data-ext-key="" readOnly aria-labelledby="ext-copy" className="min-h-11 min-w-48 flex-1 font-mono" />
-        <button class={cn(buttonVariants({ variant: 'outline' }), 'min-h-11')} type="button" data-ext-copy>
-          {t('tool.share.copy')}
-        </button>
-      </CardContent>
-    </Card>
+          <div role="status" class="at-card at-pro-ok" data-ok>
+            <div class="at-pro-ok-top">
+              <svg class="at-pro-ok-ring" viewBox="0 0 48 48" aria-hidden="true">
+                <circle class="at-pro-ok-track" cx="24" cy="24" r="20"></circle>
+                <circle class="at-pro-ok-arc" cx="24" cy="24" r="20" transform="rotate(-90 24 24)"></circle>
+                <circle class="at-pro-ring-halo" cx="24" cy="4" r="3.5"></circle>
+                <circle class="at-pro-ring-bead" cx="24" cy="4" r="3"></circle>
+                <path class="at-pro-ok-check" d="M16.5 24.5l5 5 10-10.5"></path>
+              </svg>
+              <div class="at-pro-ok-title">
+                <h2 class="at-pro-h3">{t('pro.activated')}</h2>
+                <p class="at-pro-small at-pro-muted" data-ok-key data-tpl={a('ok.key')}>{a('ok.key', { tail: '····' })}</p>
+              </div>
+            </div>
+            <div class="at-pro-ok-list">
+              <h3 class="at-pro-kicker">{a('ok.unlocked')}</h3>
+              <ul>
+                {
+                  UNLOCKED.map((u) => (
+                    <li>
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d={CHECK}></path></svg>
+                      {u}
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+            <div class="at-pro-ok-actions">
+              <Button variant="primary" href="/" data-ok-open>{a('ok.open')}</Button>
+              <Button variant="secondary" href="/pro/manage">{a('manage')}</Button>
+            </div>
+            <button type="button" class="at-pro-reset" data-reset>{a('reset')}</button>
+          </div>
 
-    <p class="mt-6"><a class={secondaryClass} href="/pro/manage">{t('settings.pro.manage')}</a></p>
-  </main>
+          <div role="status" class="at-pro-ext" data-ext-panel hidden>
+            <h2 id="ext-title" class="at-pro-h3">{t('page.pro.activate.ext.title')}</h2>
+            <p id="ext-copy" class="at-pro-ext-copy">{t('page.pro.activate.ext')}</p>
+            <div class="at-pro-ext-row">
+              <input class="at-input at-pro-key" type="text" readonly data-ext-key aria-labelledby="ext-title" aria-describedby="ext-copy" />
+              <button type="button" class="at-button at-button-primary at-pro-copy" data-ext-copy>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path class="at-pro-copy-icon" d="M9 9h10v10H9zM5 15V5h10"></path><path class="at-pro-copied-icon" d={CHECK}></path></svg>
+                <span aria-live="polite"><span class="at-pro-copy-label">{a('copy')}</span><span class="at-pro-copied-label">{a('copied')}</span></span>
+              </button>
+            </div>
+            <p class="at-pro-small at-pro-muted">{a('ext.note')}</p>
+            <button type="button" class="at-pro-reset" data-reset>{a('reset')}</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="at-pro-act-aside" aria-labelledby="fails-h">
+        <h2 id="fails-h" class="at-pro-h3">{t('page.pro.activate.errors')}</h2>
+        <ul class="at-pro-fails">
+          {
+            ERRORS.map(([code, key, tone]) => (
+              <li data-code={code} data-tone={tone} data-title={a(`err.${code}`)}>
+                <code>{code}</code>
+                <span data-err={key}>{t(key)}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="at-pro-act-links">
+          <a class="at-pro-link" href="/pro/manage">{a('manage')}</a>
+          <a class="at-pro-link at-pro-link-quiet" href="/pro">{a('plans')}</a>
+        </div>
+      </aside>
+    </main>
+
+    <main class="at-pro-co" data-view="checkout" hidden>
+      <div class="at-pro-co-grid" data-co="success">
+        <div class="at-pro-co-col">
+          <ol class="at-pro-rail" aria-label={c('rail')}>
+            {
+              [1, 2, 3].map((n) => (
+                <li>
+                  <span aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d={CHECK}></path></svg>
+                  </span>
+                  {c(`rail.${n}`)}
+                </li>
+              ))
+            }
+          </ol>
+          <div class="at-pro-co-head">
+            <h1 class="at-pro-h1">{c('success.h1')}</h1>
+            <p class="at-pro-lead">{c('success.lead')}</p>
+          </div>
+          <section class="at-pro-co-steps" aria-labelledby="co-next">
+            <h2 id="co-next" class="at-pro-h3">{c('next')}</h2>
+            <ol>
+              <li>
+                <span class="at-pro-co-n" aria-hidden="true">1</span>
+                <div>
+                  <p>{c('step1')}</p>
+                  <Button variant="primary" href="/">{c('open')}</Button>
+                </div>
+              </li>
+              <li>
+                <span class="at-pro-co-n" aria-hidden="true">2</span>
+                <div>
+                  <p>{c('step2')}</p>
+                  <button type="button" class="at-button at-button-sm" aria-expanded="false" aria-controls="co-key" data-co-show data-show={c('showKey')} data-hide={c('hideKey')}>
+                    {c('showKey')}
+                  </button>
+                  <div id="co-key" class="at-pro-co-key" data-co-key-panel hidden>
+                    <input class="at-input at-pro-key" type="text" readonly aria-label={c('keyLabel')} data-co-key />
+                    <button type="button" class="at-button at-button-sm at-pro-copy" data-co-copy>
+                      <span aria-live="polite"><span class="at-pro-copy-label">{a('copy')}</span><span class="at-pro-copied-label">{a('copied')}</span></span>
+                    </button>
+                  </div>
+                  <p class="at-pro-caption" data-co-key-missing hidden>{c('keyMissing')}</p>
+                </div>
+              </li>
+              <li>
+                <span class="at-pro-co-n" aria-hidden="true">3</span>
+                <div><p>{c('step3')}</p></div>
+              </li>
+            </ol>
+          </section>
+        </div>
+        <aside class="at-card at-pro-co-aside" aria-labelledby="co-aside-success">
+          <h2 id="co-aside-success">{c('purchase')}</h2>
+          <dl>
+            <div>
+              <dt>{c('row.plan')}</dt>
+              <dd data-co-plan data-pro_yearly={c('plan.yearly')} data-pro_lifetime={c('plan.lifetime')}>{c('plan.yearly')}</dd>
+            </div>
+            <div>
+              <dt>{c('row.price')}</dt>
+              <dd data-co-price data-pro_yearly={c('price.yearly', { price: yearly })} data-pro_lifetime={c('price.lifetime', { price: launch ? lifeLaunch : lifeFull })} data-lifetime-after={c('price.lifetime', { price: lifeFull })}>
+                {c('price.yearly', { price: yearly })}
+              </dd>
+            </div>
+            <div>
+              <dt>{c('row.renews')}</dt>
+              <dd data-co-renews data-never={c('renews.never')}></dd>
+            </div>
+            <div data-co-devices-row hidden>
+              <dt>{c('row.devices')}</dt>
+              <dd data-co-devices data-tpl={c('devices')}></dd>
+            </div>
+            <div data-co-tail-row hidden>
+              <dt>{c('row.key')}</dt>
+              <dd data-co-tail data-tpl={c('key')}></dd>
+            </div>
+          </dl>
+          <p>{c('success.aside')}</p>
+          <a class="at-pro-co-link" href="/pro/manage">{c('success.link')}</a>
+        </aside>
+      </div>
+
+      {
+        CO.map((co) => (
+          <div class="at-pro-co-grid" data-co={co.id}>
+            <div class="at-pro-co-col">
+              <div class="at-pro-co-head">
+                <span class="at-pro-co-glyph" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d={co.glyph} />
+                  </svg>
+                </span>
+                <h1 class="at-pro-h1">{c(`${co.id}.h1`)}</h1>
+                <p class="at-pro-lead">{c(`${co.id}.lead`)}</p>
+              </div>
+              {co.list.length > 0 && (
+                <section class="at-pro-co-list" aria-labelledby={`co-list-${co.id}`}>
+                  <h2 id={`co-list-${co.id}`} class="at-pro-h3">
+                    {c(`${co.id}.listTitle`)}
+                  </h2>
+                  <ul>
+                    {co.list.map((item) => (
+                      <li>
+                        <svg viewBox="0 0 24 24" aria-hidden="true" class="at-flip-rtl">
+                          <path d="M9 6l6 6-6 6" />
+                        </svg>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+              <div class="at-pro-co-actions">
+                <Button variant="primary" href={co.primary[1]} glyph={false}>
+                  {co.primary[0]}
+                </Button>
+                <Button variant="secondary" href={co.secondary[1]}>
+                  {co.secondary[0]}
+                </Button>
+              </div>
+            </div>
+            <aside class="at-card at-pro-co-aside" aria-labelledby={`co-aside-${co.id}`}>
+              <h2 id={`co-aside-${co.id}`}>{c(`${co.id}.aside.title`)}</h2>
+              {co.id === 'help' && (
+                <p role="note" class="at-pro-co-callout">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 11v5.5M12 7.6v.3" />
+                  </svg>
+                  {c('help.callout')}
+                </p>
+              )}
+              {co.id === 'cancelled' ? (
+                <p>
+                  <span data-launch-only>{c('cancelled.aside.launch', { yearly, price: lifeLaunch, after: lifeFull })}</span>
+                  <span data-after-only>{c('cancelled.aside', { yearly, price: lifeFull })}</span>
+                </p>
+              ) : (
+                <p>{c(`${co.id}.aside.text`)}</p>
+              )}
+              <a class="at-pro-co-link" href={co.asideLink[1]}>
+                {co.asideLink[0]}
+              </a>
+            </aside>
+          </div>
+        ))
+      }
+    </main>
+  </div>
   <script>
     import { bootActivatePage } from '../../lib/activate-page';
     const root = document.querySelector<HTMLElement>('[data-activate-root]');
