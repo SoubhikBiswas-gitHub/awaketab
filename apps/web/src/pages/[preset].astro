@@ -83,6 +83,7 @@ const slug = Astro.params.preset as keyof typeof routes;
 const route = routes[slug];
 const label = route.label;
 const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://awaketab.com';
+const ogImage = `/og/${slug}-en.png`;
 const title = t('page.preset.title', { label });
 const description = t('page.preset.description', { label });
 const canonical = `${site}/${slug}`;
@@ -93,12 +94,13 @@ const h1 = `Keep your screen awake for ${route.words}`;
   title={title}
   description={description}
   canonical={canonical}
-  ogImage={`/og/${slug}-en.png`}
+  ogImage={ogImage}
   schema={articleSchema({
     canonical,
     title: title.replace(' — AwakeTab', ''),
     description,
     locale: 'en',
+    image: `${site}${ogImage}`,
     published: '2026-09-09',
     breadcrumbs: [
       { name: 'AwakeTab', url: site },

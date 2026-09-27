@@ -13,6 +13,7 @@ import { codeTabs, highlight } from '../lib/library-code';
 import wakePkg from '../../../../packages/wake/package.json';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const ogImage = '/og/library-en.png';
 const canonical = `${site}/library`;
 const title = t('page.library.title');
 const description = t('page.library.description');
@@ -95,12 +96,13 @@ const pills = Object.fromEntries(LOCK_STATES.map((s) => [s, t(`tool.pill.${s}`)]
   title={title}
   description={description}
   canonical={canonical}
-  ogImage="/og/library-en.png"
+  ogImage={ogImage}
   schema={articleSchema({
     canonical,
     title: t('page.library.h1'),
     description,
     locale: 'en',
+    image: `${site}${ogImage}`,
     published: '2026-09-26',
     breadcrumbs: [
       { name: 'AwakeTab', url: site },

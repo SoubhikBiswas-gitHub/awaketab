@@ -11,6 +11,7 @@ import { CONTACT_EMAIL, CONTACT_MAILTO } from '../lib/contact';
 import { articleSchema } from '../lib/seo';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const ogImage = '/og/privacy-en.png';
 const canonical = `${site}/privacy`;
 const toc = [
   ['browser', 'Data stored in your browser'],
@@ -41,12 +42,13 @@ const events = [
   title={t('page.privacy.title')}
   description={t('page.privacy.description')}
   canonical={canonical}
-  ogImage="/og/privacy-en.png"
+  ogImage={ogImage}
   schema={articleSchema({
     canonical,
     title: t('page.privacy.h1'),
     description: t('page.privacy.description'),
     locale: 'en',
+    image: `${site}${ogImage}`,
     published: '2026-09-09',
     updated: '2026-09-26',
     breadcrumbs: [

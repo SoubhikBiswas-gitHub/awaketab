@@ -17,6 +17,7 @@ interface Props {
 const { kind } = Astro.props;
 const hub = HUBS[kind];
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const ogImage = `/og/${kind}-en.png`;
 const canonical = `${site}/${kind}`;
 const title = t(`page.hub.${kind}.title`);
 const description = t(`page.hub.${kind}.description`);
@@ -66,12 +67,13 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
   title={title}
   description={description}
   canonical={canonical}
-  ogImage={`/og/${kind}-en.png`}
+  ogImage={ogImage}
   schema={articleSchema({
     canonical,
     title: h1,
     description,
     locale: 'en',
+    image: `${site}${ogImage}`,
     published: '2026-09-09',
     breadcrumbs: [
       { name: 'AwakeTab', url: site },

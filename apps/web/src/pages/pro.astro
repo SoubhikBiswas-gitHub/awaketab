@@ -18,6 +18,7 @@ import '../styles/pro.css';
 
 const p = (key: string, vars?: Record<string, string | number>) => t(`page.pro.${key}`, vars);
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const ogImage = '/og/pro-en.png';
 const canonical = `${site}/pro`;
 const title = t('page.pro.title');
 const description = t('page.pro.description');
@@ -92,12 +93,13 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
   title={title}
   description={description}
   canonical={canonical}
-  ogImage="/og/pro-en.png"
+  ogImage={ogImage}
   schema={articleSchema({
     canonical,
     title: t('page.pro.h1'),
     description,
     locale: 'en',
+    image: `${site}${ogImage}`,
     published: '2026-09-09',
     breadcrumbs: [
       { name: 'AwakeTab', url: site },
