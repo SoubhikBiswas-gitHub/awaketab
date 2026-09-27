@@ -99,6 +99,7 @@ export default defineConfig({
     },
     resolve: {
       alias: {
+        '@awaketab/wake/video': fileURLToPath(new URL('../../packages/wake/src/video.ts', import.meta.url)),
         '@awaketab/wake': fileURLToPath(new URL('../../packages/wake/src/index.ts', import.meta.url)),
         '@awaketab/core': fileURLToPath(new URL('../../packages/core/src/index.ts', import.meta.url)),
       },
