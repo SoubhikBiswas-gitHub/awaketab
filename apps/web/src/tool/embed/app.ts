@@ -37,8 +37,6 @@ import {
 } from './protocol.js';
 import { readEmbedSettings, safeLocalStorage, writeEmbedSettings } from './settings.js';
 
-export const EMBED_FIX_URL = 'https://awaketab.com/embed#allow';
-
 const RUNNING = new Set(['held', 'fallback']);
 const HTML_LANG: Record<string, string> = { 'pt-br': 'pt-BR', zh: 'zh-Hans' };
 

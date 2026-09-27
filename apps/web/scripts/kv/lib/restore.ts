@@ -46,7 +46,7 @@ export async function planRestore(
   return plan;
 }
 
-export function restoreWrites(plan: IRestorePlan, overwrite: boolean): IKvRecord[] {
+function restoreWrites(plan: IRestorePlan, overwrite: boolean): IKvRecord[] {
   return overwrite ? [...plan.create, ...plan.conflict] : [...plan.create];
 }
 

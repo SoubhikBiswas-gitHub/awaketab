@@ -11,7 +11,7 @@ import type {
   TPowerLevel,
 } from '../../src/api';
 
-export function fakeEvent<TFn extends (...args: never[]) => unknown>(): IExtEvent<TFn> & {
+function fakeEvent<TFn extends (...args: never[]) => unknown>(): IExtEvent<TFn> & {
   fire: (...args: Parameters<TFn>) => void;
 } {
   const listeners = new Set<TFn>();
@@ -28,7 +28,7 @@ export function fakeEvent<TFn extends (...args: never[]) => unknown>(): IExtEven
   };
 }
 
-export interface IFakeStorageArea extends IStorageAreaApi {
+interface IFakeStorageArea extends IStorageAreaApi {
   data: Map<string, unknown>;
   sets: Array<Record<string, unknown>>;
 }

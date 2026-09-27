@@ -1,14 +1,14 @@
 import type { IExtApi, IStorageAreaApi, TPowerLevel } from './api';
 
-export const POWER_LOG_KEY = 'at.test.power';
+const POWER_LOG_KEY = 'at.test.power';
 
-export interface IPowerCall {
+interface IPowerCall {
   call: 'request' | 'release';
   level?: TPowerLevel;
   at: number;
 }
 
-export const POWER_DENY_KEY = 'at.test.deny';
+const POWER_DENY_KEY = 'at.test.deny';
 
 export function mockPower(
   area: IStorageAreaApi | undefined,

@@ -359,7 +359,8 @@ describe('fact-check claims stay fixed (D-R12)', () => {
     for (const [locale, phrases] of Object.entries(FALSE_LOCALE)) {
       const files = [
         ...index.filter((page) => page.locale === locale).map((page) => page.file),
-        path.join(CONTENT, 'locale-home', `${locale}.ts`),
+        // The locale homes take their copy from the locale's UI catalog.
+        path.resolve('apps/web/src/i18n', `${locale}.json`),
       ];
       expect(files.length, locale).toBe(11);
       for (const file of files) {

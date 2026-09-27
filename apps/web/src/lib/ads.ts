@@ -1,4 +1,4 @@
-export const ADS_ENABLED = import.meta.env.PUBLIC_ADS_ENABLED === '1';
+const ADS_ENABLED = import.meta.env.PUBLIC_ADS_ENABLED === '1';
 
 export const AD_CLIENT = '';
 export const AD_UNITS = {
@@ -6,7 +6,7 @@ export const AD_UNITS = {
   inline: 'inline',
 } as const;
 
-export interface IAdsConfig {
+interface IAdsConfig {
   enabled: boolean;
 }
 
@@ -16,14 +16,14 @@ export function shouldRenderAdSlots(): boolean {
   return ADS_ENABLED;
 }
 
-export function inCmpRegion(locale = typeof navigator === 'undefined' ? 'en' : navigator.language): boolean {
+function inCmpRegion(locale = typeof navigator === 'undefined' ? 'en' : navigator.language): boolean {
   return (
     /-(AT|BE|BG|HR|CY|CZ|DK|EE|FI|FR|DE|GR|HU|IE|IT|LV|LT|LU|MT|NL|PL|PT|RO|SK|SI|ES|SE|GB|UK|CH)\b/iu.test(locale) ||
     /^(de|fr|it|es|nl|pl|sv|da|fi|pt|el|cs|hu|ro|bg|hr|sk|sl|lt|lv|et|ga|mt)$/iu.test(locale.split('-')[0] ?? '')
   );
 }
 
-export function hasCmpConsent(): boolean {
+function hasCmpConsent(): boolean {
   if (!inCmpRegion()) return true;
   return (globalThis as { __atCmpConsent?: boolean }).__atCmpConsent === true;
 }

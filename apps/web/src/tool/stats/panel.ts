@@ -85,7 +85,7 @@ export function renderHeatmap(
   );
 }
 
-export function downloadCsv(csv: string, filename: string): void {
+function downloadCsv(csv: string, filename: string): void {
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
   const a = document.createElement('a');
   a.href = url;

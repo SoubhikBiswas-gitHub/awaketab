@@ -1,9 +1,9 @@
-export const DEVICE_VERDICTS = ['pending', 'pass', 'partial', 'fail'] as const;
+const DEVICE_VERDICTS = ['pending', 'pass', 'partial', 'fail'] as const;
 export type TDeviceVerdict = (typeof DEVICE_VERDICTS)[number];
-export const DEVICE_POWER = ['plugged', 'battery', 'battery-saver'] as const;
-export type TDevicePower = (typeof DEVICE_POWER)[number];
+const DEVICE_POWER = ['plugged', 'battery', 'battery-saver'] as const;
+type TDevicePower = (typeof DEVICE_POWER)[number];
 
-export interface IDeviceRow {
+interface IDeviceRow {
   id: string;
   device: string;
   os: string;

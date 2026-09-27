@@ -6,7 +6,7 @@ export interface IHubItem {
   meta?: readonly [string, string];
 }
 
-export interface IHubGroup {
+interface IHubGroup {
   id: string;
   short: string;
   title: string;

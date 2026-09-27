@@ -2,7 +2,7 @@ import { dayKey } from '@awaketab/core';
 import { pad } from '../format.js';
 
 export const HEATMAP_WEEKS = 12;
-export const FREE_HISTORY_DAYS = 7;
+const FREE_HISTORY_DAYS = 7;
 
 export interface IHeatCell {
   key: string;

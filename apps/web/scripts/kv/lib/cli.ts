@@ -30,7 +30,7 @@ export interface ICliDeps {
   now?: () => Date;
 }
 
-export class UsageError extends Error {}
+class UsageError extends Error {}
 
 export function backupTargets(
   env: Record<string, string | undefined>,

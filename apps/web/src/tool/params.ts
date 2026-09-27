@@ -1,6 +1,6 @@
 import type { TAmbientMode, TPresetId, TTheme } from '@awaketab/core';
 
-export const PRESET_ROUTES: Record<string, TPresetId | 'eight'> = {
+const PRESET_ROUTES: Record<string, TPresetId | 'eight'> = {
   '/15m': 'p15',
   '/30m': 'p30',
   '/45m': 'p45',
@@ -43,7 +43,7 @@ export function stripLocale(pathname: string): string {
   return segs[0] && LOCALE_RE.test(segs[0]) ? `/${segs.slice(1).join('/')}` : parts;
 }
 
-export function canonicalPathname(pathname: string): string {
+function canonicalPathname(pathname: string): string {
   const trimmed = pathname.replace(/(.)\/+$/u, '$1');
   return LOCALE_RE.test(trimmed.slice(1)) ? `${trimmed}/` : trimmed;
 }

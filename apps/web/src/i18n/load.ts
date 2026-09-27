@@ -56,7 +56,7 @@ export const ISLAND_PREFIXES = [
 ] as const;
 
 // Rendered at build time by ToolIsland.astro, so the client never needs them.
-export const ISLAND_EXCLUDED_PREFIXES = ['pro.lapse.'] as const;
+const ISLAND_EXCLUDED_PREFIXES = ['pro.lapse.'] as const;
 
 export function islandCatalog(locale: TLocale): TCatalog {
   return Object.fromEntries(
