@@ -316,7 +316,10 @@ async function settled(page: Page): Promise<void> {
       .getAnimations()
       .every(
         (a) =>
-          !(a instanceof CSSAnimation) || a.effect?.getTiming().iterations === Infinity || a.playState === 'finished',
+          !(a instanceof CSSAnimation) ||
+          !(a.timeline instanceof DocumentTimeline) ||
+          a.effect?.getTiming().iterations === Infinity ||
+          a.playState === 'finished',
       ),
   );
 }

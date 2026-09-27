@@ -17,7 +17,13 @@ const TOOL = ['src/components/ToolIsland.astro', 'src/components/ToolPanel.astro
 // The files whose last commit is a page's last change (docs/06 §6), relative to apps/web. The tool routes also
 // change with the tool island; hubs also change with the articles they list (added in sitemapFiles).
 export const PAGE_SOURCES = {
-  '/': ['src/pages/index.astro', 'src/components/HomeBelow.astro', ...TOOL],
+  '/': [
+    'src/pages/index.astro',
+    'src/components/HomeBelow.astro',
+    'src/components/home',
+    'src/styles/home.css',
+    ...TOOL,
+  ],
   ...Object.fromEntries(PRESETS.map((p) => [p, ['src/pages/[preset].astro', ...TOOL]])),
   ...Object.fromEntries(HUBS.map((p) => [p, [`src/pages${p}.astro`, 'src/components/HubPage.astro']])),
   '/learn': ['src/pages/learn.astro', 'src/components/DocsHub.astro', 'src/lib/docs-hub.ts'],

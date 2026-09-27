@@ -48,6 +48,7 @@ export default {
         '**/styles/docs-hub.css',
         '**/styles/hub-gallery.css',
         '**/styles/pick-gallery.css',
+        '**/styles/home.css',
         '**/styles/device-matrix.css',
         '**/styles/pages.css',
         '**/styles/page-404.css',

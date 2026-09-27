@@ -22,13 +22,17 @@ async function expectNoViolations(page: Page, theme: TTheme): Promise<void> {
     await expect(html).toHaveAttribute('data-theme', theme);
   }
   // Entrance rises (0.7 s from opacity 0, DESIGN.md §8) must end first: mid-fade colours are not the resting
-  // colours axe must judge. Infinite loops (aura, halo) never end, so they are skipped.
+  // colours axe must judge. Infinite loops (aura, halo) and scroll-driven rises (the home) never end, so they
+  // are skipped.
   await page.waitForFunction(() =>
     document
       .getAnimations()
       .every(
         (a) =>
-          !(a instanceof CSSAnimation) || a.effect?.getTiming().iterations === Infinity || a.playState === 'finished',
+          !(a instanceof CSSAnimation) ||
+          !(a.timeline instanceof DocumentTimeline) ||
+          a.effect?.getTiming().iterations === Infinity ||
+          a.playState === 'finished',
       ),
   );
   const results = await new AxeBuilder({ page }).analyze();
@@ -235,6 +239,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
           .every(
             (a) =>
               !(a instanceof CSSAnimation) ||
+              !(a.timeline instanceof DocumentTimeline) ||
               a.effect?.getTiming().iterations === Infinity ||
               a.playState === 'finished',
           ),

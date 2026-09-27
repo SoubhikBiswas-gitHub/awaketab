@@ -561,6 +561,10 @@
   padding-inline: var(--at-gutter);
 }
 
+.at-below:has(> .at-hb) {
+  --at-below-max: var(--at-content-max);
+}
+
 .at-below-head {
   display: flex;
   flex-direction: column;
