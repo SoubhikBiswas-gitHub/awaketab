@@ -284,7 +284,8 @@ test.describe('offline', () => {
       .poll(() =>
         page.evaluate(async () => {
           for (const name of await caches.keys()) {
-            if (await (await caches.open(name)).match('/30m', { ignoreSearch: true })) return true;
+            // The visitor's start page is cached at install; /30m offline is served from it (the preset is in the URL).
+            if (await (await caches.open(name)).match('/', { ignoreSearch: true })) return true;
           }
           return false;
         }),
