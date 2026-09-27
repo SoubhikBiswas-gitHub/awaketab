@@ -101,7 +101,7 @@ awaketab/
 │  └─ core/                # @awaketab/core — session engine, plans, stats, storage schema, licence token verification (framework-agnostic; shared by web + extension)
 ├─ docs/                   # this documentation set
 ├─ .github/workflows/      # ci.yml, lighthouse.yml, release.yml
-├─ pnpm-workspace.yaml · package.json · turbo.json (optional) · .cursorrules · CLAUDE.md
+├─ pnpm-workspace.yaml · package.json · turbo.json (optional) · CLAUDE.md
 ```
 
 ---
