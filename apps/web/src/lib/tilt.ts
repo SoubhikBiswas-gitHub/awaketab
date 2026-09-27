@@ -1,6 +1,6 @@
 const clamp = (n: number): string => Math.max(-1, Math.min(1, n)).toFixed(3);
 
-// Cards marked [data-tilt] lean toward a mouse pointer; tilt.css reads --at-tx and --at-ty (-1 to 1 from the centre).
+// Cards marked [data-tilt] lean toward the pointer through --at-tx and --at-ty.
 export function initTilt(): void {
   if (!matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches) return;
   let card: HTMLElement | null = null;
