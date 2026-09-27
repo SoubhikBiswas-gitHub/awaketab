@@ -221,6 +221,7 @@ const author = 'Soubhik Biswas';
 const ICON_CHECK = 'M8 12.5l2.7 2.7L16.5 9.5';
 const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
 const ICON_TICK = 'M5 12.5l4.5 4.5L19 7.5';
+const ICON_TRANSLATE = 'M4 5h8M8 3v2M5.5 5c.8 3 3 5.5 6 7M10.5 5c-.6 3.4-2.8 6.2-6.5 8M12.5 20l4-9 4 9M13.8 17h5.4';
 const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
 ---
 
@@ -397,14 +398,17 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
       }
       {
         !english && !data.reviewed && (
-          <span class="at-meta-pending" data-translation-pending>
-            {t('content.translation.pending')}
-            {englishHref && (
-              <a href={englishHref} hreflang="en" lang="en">
-                {t('content.translation.original')}
-              </a>
-            )}
-          </span>
+          <p class="at-meta-pending" role="note" data-translation-pending>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ICON_TRANSLATE} /></svg>
+            <span>
+              {t('content.translation.pending')}{' '}
+              {englishHref && (
+                <a href={englishHref} hreflang="en">
+                  {t('content.translation.original')}
+                </a>
+              )}
+            </span>
+          </p>
         )
       }
       <span class="at-meta-by">{t('content.byline', { name: author })}</span>

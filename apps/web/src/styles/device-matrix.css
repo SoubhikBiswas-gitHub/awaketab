@@ -59,7 +59,7 @@
     background: var(--at-sunken);
     color: var(--at-muted);
     font: var(--at-type-kicker);
-    letter-spacing: 0.14em;
+    letter-spacing: var(--at-trk-k, 0.14em);
     text-align: start;
     text-transform: uppercase;
   }

@@ -45,15 +45,33 @@
     margin: 0;
     color: var(--at-muted);
     font: var(--at-type-kicker);
-    letter-spacing: 0.14em;
+    letter-spacing: var(--at-trk-k, 0.14em);
     text-transform: uppercase;
+  }
+
+  .at-cp:is(:lang(ja), :lang(zh), :lang(hi)) {
+    --at-trk-k: 0;
+    --at-trk-1: 0;
+    --at-trk-2: 0;
+  }
+
+  .at-cp:lang(ja) :is(h1, h2, h3, summary, th, .at-link-row, .at-toc-list) {
+    word-break: auto-phrase;
+  }
+
+  :is(.at-head, .at-prose):is(:lang(de), :lang(es), :lang(fr), :lang(pt)) {
+    hyphens: auto;
+  }
+
+  .at-cp code {
+    hyphens: manual;
   }
 
   .at-cp .at-h1-page {
     margin: 0;
     color: var(--at-ink);
     font: var(--at-type-h1);
-    letter-spacing: -0.02em;
+    letter-spacing: var(--at-trk-1, -0.02em);
     text-wrap: balance;
     overflow-wrap: break-word;
   }
@@ -188,7 +206,7 @@
     stroke: var(--at-warn);
   }
 
-  .at-meta :is(.at-meta-stale, .at-meta-pending) {
+  .at-meta .at-meta-stale {
     flex-wrap: wrap;
     min-block-size: var(--at-h-pill-s);
     padding-block: var(--at-s-1);
@@ -200,16 +218,29 @@
     font-weight: 500;
   }
 
-  .at-meta .at-meta-pending {
+  .at-meta-pending {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--at-s-2);
+    margin: 0;
+    padding-block: var(--at-s-2);
     padding-inline: var(--at-s-3);
-    border-color: var(--at-line-strong);
-    background: none;
+    border: var(--at-border) solid var(--at-line-strong);
+    border-radius: var(--at-r-lg);
     color: var(--at-ink-2);
+  }
+
+  .at-meta-pending svg {
+    margin-block-start: calc(var(--at-s-1) / 2);
+    stroke: currentcolor;
   }
 
   .at-meta-pending a {
     padding-block: var(--at-s-3);
     color: var(--at-accent-text);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   .at-art[data-variant="guide"] .at-meta {
@@ -221,7 +252,7 @@
     padding-block: var(--at-s-1);
     padding-inline: var(--at-s-2) var(--at-s-3);
     border: var(--at-border) solid var(--at-line-strong);
-    border-radius: var(--at-r-pill);
+    border-radius: var(--at-r-lg);
     color: var(--at-ink-2);
     font-weight: 500;
   }
@@ -292,7 +323,7 @@
     margin: 0;
     color: var(--at-ink);
     font: var(--at-type-h2);
-    letter-spacing: -0.02em;
+    letter-spacing: var(--at-trk-2, -0.01em);
     text-wrap: balance;
   }
 
