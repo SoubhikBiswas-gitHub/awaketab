@@ -195,7 +195,6 @@
     font: var(--at-type-ui);
     font-weight: 600;
     text-decoration: none;
-    outline: none;
   }
 
   .at-hb-use-go::after {
@@ -203,11 +202,6 @@
     inset: 0;
     border-radius: var(--at-r-lg);
     content: "";
-  }
-
-  .at-hb-use-go:focus-visible::after {
-    outline: 2px solid var(--at-focus);
-    outline-offset: 3px;
   }
 
   .at-hb-final {

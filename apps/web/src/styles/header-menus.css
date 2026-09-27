@@ -569,8 +569,16 @@
       display: inline;
     }
 
+    .at-site-header:not([data-tool]) .at-header-end {
+      flex-shrink: 1;
+      min-inline-size: 0;
+    }
+
     .at-site-header:not([data-tool]) .at-header-end > .at-hm-add {
+      min-inline-size: 0;
       padding-inline: var(--at-s-3);
+      white-space: normal;
+      overflow-wrap: break-word;
     }
 
     .at-hm-menu {

@@ -825,9 +825,9 @@
     }
 
     .at-hx-lap {
-      inline-size: 150%;
+      inline-size: 130%;
       max-inline-size: none;
-      margin-inline: -50% 0;
+      margin-inline: -30% 0;
     }
   }
 

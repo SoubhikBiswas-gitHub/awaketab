@@ -25,6 +25,11 @@
   display: none;
 }
 
+.at-tool-until:is([data-status="awake"], [data-status="fallback"]) .at-whenline {
+  display: inline-flex;
+  visibility: hidden;
+}
+
 .at-whenline svg {
   flex-shrink: 0;
   inline-size: var(--at-icon-sm);

@@ -1397,6 +1397,12 @@
     stroke-width: 2;
   }
 
+  .at-ext-ctas > .at-button {
+    max-inline-size: 100%;
+    white-space: normal;
+    text-wrap: balance;
+  }
+
   .at-ext-edge {
     min-block-size: var(--at-h-primary);
   }

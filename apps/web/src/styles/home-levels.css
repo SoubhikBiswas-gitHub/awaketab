@@ -153,6 +153,7 @@
 
   .at-hl-keys {
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--at-s-1);
     vertical-align: middle;
