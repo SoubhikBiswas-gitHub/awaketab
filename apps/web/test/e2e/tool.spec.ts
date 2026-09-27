@@ -186,6 +186,9 @@ test('journey 9 mocked Pro activation shows the badge then revokes', async ({ pa
   await page.goto('/pro/activate');
   await page.locator('input[name="key"]').fill('ATAB-TEST-KEY-1234567890');
   await page.locator('[data-activate] button[type="submit"]').click();
+  // B7 / O-26: activation ends on "Pro is active on this device" (no redirect); its lamp action opens the tool.
+  await expect(page.locator('[data-ok]')).toBeVisible();
+  await page.locator('[data-ok-open]').click();
   await page.waitForURL('**/');
   await expect(page.locator('[data-pro-badge]')).toBeVisible();
   await firstValidate;

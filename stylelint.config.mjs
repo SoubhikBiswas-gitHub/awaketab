@@ -33,10 +33,10 @@ export default {
   overrides: [
     { files: ['**/styles/tokens.css'], rules: { 'declaration-property-value-allowed-list': null } },
     {
-      // shell.css (B2), content.css (B5) and pages.css (B6, the site pages). pages.css names its few off-scale sizes once as
-      // --at-pg-* custom properties and uses them by name; its two illustrations (the kiosk screen, the host page)
-      // and the state diagram opt out in marked blocks, as DESIGN.md §11.2 exempts drawings and mocks.
-      files: ['**/styles/shell.css', '**/styles/content.css', '**/styles/pages.css', '**/styles/page-404.css'],
+      // shell.css (B2), content.css (B5), pages.css (B6, the site pages) and pro.css (B7). pages.css names its few
+      // off-scale sizes once as --at-pg-* custom properties and uses them by name; its two illustrations (the kiosk
+      // screen, the host page) and the state diagram opt out in marked blocks, as DESIGN.md §11.2 exempts drawings and mocks.
+      files: ['**/styles/shell.css', '**/styles/content.css', '**/styles/pages.css', '**/styles/page-404.css', '**/styles/pro.css'],
       rules: {
         'declaration-property-value-allowed-list': [
           {

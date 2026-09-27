@@ -358,6 +358,17 @@
   --at-shadow-float: 0 24px 64px -24px rgb(0 0 0 / 45%);
   --at-sheet-inline: 26rem;
   --at-panel-inline: 360px;
+
+  /* The four lamps by name, per theme (DESIGN.md §2.2; docs/08 §2.1 accent). `--at-accent` stays the one live lamp;
+     these name every lamp at once, for swatches and previews such as the /pro lamp picker (B7). */
+  --at-lamp-aqua-light: #087b87;
+  --at-lamp-aqua-dark: #5be0e8;
+  --at-lamp-violet-light: #5a47cf;
+  --at-lamp-violet-dark: #a594ff;
+  --at-lamp-mint-light: #167a50;
+  --at-lamp-mint-dark: #7ef0b8;
+  --at-lamp-sky-light: #255fbd;
+  --at-lamp-sky-dark: #7cb8ff;
 }
 
 /* Breakpoints (DESIGN.md §12.2): 600 tablet, 1024 desktop, 1600 xl. Only semantic tokens change. */
