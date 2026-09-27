@@ -1,0 +1,194 @@
+.at-fx-an-dial {
+  position: relative;
+  inline-size: calc(320 * var(--u));
+  block-size: calc(320 * var(--u));
+}
+
+.at-fx-an-plate {
+  position: absolute;
+  inset: 5.625%;
+  border: 1px solid var(--at-line);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 32%,
+    color-mix(in srgb, var(--at-ink) 3%, var(--at-surface)) 0%,
+    var(--at-surface) 72%
+  );
+  box-shadow: 0 calc(14 * var(--u)) calc(34 * var(--u)) calc(-18 * var(--u)) var(--at-fx-shade);
+}
+
+.at-fx-an[data-style="luxe"] .at-fx-an-plate {
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      color-mix(in srgb, var(--at-ink) 3.5%, transparent) 0deg 0.6deg,
+      transparent 0.6deg 2.4deg
+    ),
+    radial-gradient(
+      circle at 50% 30%,
+      color-mix(in srgb, var(--at-face-c) 7%, var(--at-surface)) 0%,
+      var(--at-surface) 78%
+    );
+}
+
+:root[data-theme="oled"] .at-fx-an-plate {
+  background: var(--at-ground);
+  box-shadow: none;
+}
+
+.at-fx-an-art,
+.at-fx-an-hands {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+
+.at-fx-an-hands {
+  z-index: 2;
+  filter: drop-shadow(0 calc(2 * var(--u)) calc(3 * var(--u)) var(--at-fx-shade));
+}
+
+.at-fx-an-track {
+  fill: none;
+  stroke: var(--at-track);
+  stroke-width: 4;
+}
+
+.at-island[data-fb] .at-fx-an-track {
+  stroke-dasharray: 3 9;
+}
+
+.at-fx-an-arc {
+  fill: none;
+  stroke: var(--at-face-c);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: max(0.01px, calc(955.04px * var(--at-p))) 955.04px;
+  transition: stroke-dasharray 1s linear;
+}
+
+.at-island:is([data-status="awake"], [data-status="fallback"], [data-status="starting"]) .at-fx-an-arc {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--at-face-c) 70%, transparent));
+}
+
+.at-island:is([data-status="ready"], [data-batt]) .at-fx-an-arc {
+  stroke-opacity: 0.45;
+}
+
+.at-island[data-status="paused"] .at-fx-an-arc {
+  stroke-dasharray: 18px 12px;
+}
+
+.at-island[data-status="blocked"] .at-fx-an-arc {
+  stroke-dasharray: 1px 13px;
+}
+
+.at-island[data-status="ended"]:not([data-batt]) .at-fx-an-arc {
+  stroke-opacity: 0;
+}
+
+.at-fx-an-min,
+.at-fx-an-hr,
+.at-fx-an-card {
+  fill: none;
+  stroke-linecap: round;
+}
+
+.at-fx-an-min {
+  stroke: var(--at-tick);
+  stroke-width: 1.2;
+}
+
+.at-fx-an-hr {
+  stroke: var(--at-ink-2);
+  stroke-width: 2;
+}
+
+.at-fx-an-card {
+  stroke: var(--at-ink);
+  stroke-width: 3.6;
+}
+
+.at-fx-an[data-style="luxe"] .at-fx-an-hr {
+  stroke: var(--at-ink);
+  stroke-width: 3;
+}
+
+.at-fx-an[data-style="luxe"] .at-fx-an-card {
+  stroke-width: 5;
+}
+
+.at-fx-an-lume {
+  fill: var(--at-face-c);
+  opacity: 0.85;
+}
+
+:root:is([data-theme="dark"], [data-theme="oled"]) .at-fx-an-lume {
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--at-face-c) 80%, transparent));
+}
+
+.at-fx-an:not([data-style="luxe"]) :is(.at-fx-an-min, .at-fx-an-lume, .at-fx-an-inlay) {
+  display: none;
+}
+
+.at-fx-an-h,
+.at-fx-an-m,
+.at-fx-an-s {
+  transform-box: view-box;
+  transform-origin: 160px 160px;
+}
+
+.at-fx-an-hand,
+.at-fx-an-cap {
+  fill: var(--at-fx-ink);
+}
+
+.at-fx-an-inlay {
+  fill: var(--at-face-c);
+}
+
+.at-fx-an-sec {
+  fill: none;
+  stroke: var(--at-face-c);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.at-fx-an-dot,
+.at-fx-an-pin {
+  fill: var(--at-face-c);
+}
+
+.at-fx-an-dial > .at-kick {
+  position: absolute;
+  inset-block-start: 27%;
+  inset-inline: 22%;
+}
+
+.at-fx-an-low {
+  position: absolute;
+  inset-block-start: 58%;
+  inset-inline: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(4 * var(--u));
+}
+
+.at-fx-an-low .at-digits {
+  font-size: calc(34 * var(--u));
+}
+
+.at-island[data-units="h"] .at-fx-an-low .at-digits {
+  font-size: calc(28 * var(--u));
+}
+
+.at-island[data-units="d"] .at-fx-an-low .at-digits {
+  font-size: calc(21 * var(--u));
+}
+
+.at-fx-an .at-fx-meta {
+  font-size: calc(12 * var(--u));
+}

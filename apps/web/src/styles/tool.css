@@ -144,7 +144,7 @@
 }
 
 .at-faces {
-  --at-seg-n: 4;
+  --at-seg-n: 5;
 }
 
 .at-faces .at-seg-ind {
@@ -314,7 +314,7 @@
   display: grid;
 }
 
-:root:is([data-face="bold"], [data-face="horizon"], [data-face="tide"]) .at-face-ring {
+:root[data-face] .at-face-ring {
   display: none;
 }
 

@@ -55,7 +55,9 @@
     // The remembered clock face (DESIGN.md §7) and the keyboard-hint switch paint before first frame too, so the
     // tool never flashes the Ring face or a keycap it is about to hide.
     const f = saved && typeof saved.face === 'string' ? saved.face : '';
-    if (['bold', 'horizon', 'tide'].includes(f)) root.dataset.face = face = f;
+    if ('bold horizon tide flip rolling analog rings word nixie lcd matrix'.split(' ').includes(f)) {
+      root.dataset.face = face = f;
+    }
     if (saved && saved.keyboardHints === false) root.dataset.hints = 'off';
     const clock = /** @type {{ clock24h?: unknown; showSeconds?: unknown } | undefined} */ (saved?.ambient);
     const h24 = clock?.clock24h;
@@ -258,8 +260,10 @@
         }
       }
       if (face) {
-        for (const tab of tool.querySelectorAll('[role="tab"][data-face]')) {
-          tab.setAttribute('aria-selected', String(tab.getAttribute('data-face') === face));
+        // The More faces tab stands for the eight faces it lists (data-faces).
+        for (const tab of tool.querySelectorAll('[role="tab"]:is([data-face], [data-faces])')) {
+          const ids = (tab.getAttribute('data-face') ?? tab.getAttribute('data-faces') ?? '').split(' ');
+          tab.setAttribute('aria-selected', String(ids.includes(face)));
         }
       }
     }

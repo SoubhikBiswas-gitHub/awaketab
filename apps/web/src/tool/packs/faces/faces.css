@@ -1,0 +1,78 @@
+.at-face-x {
+  --at-fx-ink: var(--at-ink-2);
+  --at-fx-glow: 0;
+  --at-fx-shade: rgb(14 23 38 / 22%);
+
+  place-items: center;
+  transition: translate 1s var(--at-ease);
+}
+
+:root:is(
+    [data-face="flip"],
+    [data-face="rolling"],
+    [data-face="analog"],
+    [data-face="rings"],
+    [data-face="word"],
+    [data-face="nixie"],
+    [data-face="lcd"],
+    [data-face="matrix"]
+  )
+  .at-face-x {
+  display: grid;
+}
+
+:root:is([data-theme="dark"], [data-theme="oled"]) .at-face-x {
+  --at-fx-shade: rgb(0 0 0 / 55%);
+}
+
+.at-island:is([data-status="awake"], [data-status="fallback"], [data-status="starting"], [data-status="timesup"])
+  .at-face-x {
+  --at-fx-ink: var(--at-ink);
+  --at-fx-glow: 1;
+}
+
+.at-island[data-status="paused"] .at-face-x {
+  --at-fx-glow: 0.55;
+}
+
+.at-island[data-status="blocked"] .at-face-x {
+  --at-fx-glow: 0.4;
+}
+
+.at-island[data-final] .at-face-x {
+  --at-fx-ink: var(--at-accent-text);
+}
+
+.at-face-x[data-still] *,
+.at-face-x[data-still] *::before,
+.at-face-x[data-still] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+.at-fx {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(16 * var(--u));
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.at-fx .at-kick {
+  text-align: center;
+}
+
+.at-fx .at-fx-meta {
+  max-inline-size: calc(320 * var(--u));
+  font-size: calc(var(--fm) * var(--u));
+  line-height: 1.35;
+}
+
+@media (width < 360px) {
+  .at-fx .at-kick {
+    display: none;
+  }
+}

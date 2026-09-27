@@ -39,7 +39,8 @@ async function walk(dir) {
 // scripts) to the tool page's 40 KB budget.
 const tool = await pageJs(DIST, servedFile('/'));
 const criticalJs = tool.criticalBytes;
-const packOf = (f) => /(?:^|\/)pack-([a-z]+)\.[\w-]+\.js$/u.exec(f)?.[1];
+// A pack may split into named chunks (pack-faces-flip); they count toward their pack.
+const packOf = (f) => /(?:^|\/)pack-([a-z]+)(?:-[a-z]+)?\.[\w-]+\.js$/u.exec(f)?.[1];
 const packs = {};
 for (const f of tool.all) {
   const name = packOf(f);

@@ -7,7 +7,8 @@ import { polarDefines } from './scripts/polar-server.mjs';
 
 // Libraries each feature pack owns; they never enter the tool's own chunks.
 const PACK_LIBS = [
-  [/\/node_modules\/.*(?:@pqina|number-flow|embla-carousel)/u, 'faces'],
+  [/\/node_modules\/.*(?:@pqina|embla-carousel)/u, 'faces'],
+  [/\/node_modules\/.*\/(?:number-flow|esm-env)\//u, 'faces-rolling'],
   [/\/node_modules\/.*\/(?:tone|howler|standardized-audio-context|automation-events)\//u, 'sound'],
   [
     /\/node_modules\/.*(?:@tiptap|prosemirror-|orderedmap|rope-sequence|w3c-keyname|linkifyjs|idb-keyval|annyang)/u,
@@ -92,6 +93,11 @@ export default defineConfig({
           // 40 KB total budget than the code itself. It still loads only on first use, never on the boot path.
           manualChunks(id) {
             // Feature packs (src/tool/packs/<name>/ and their libraries) load on first use under their own budgets.
+            // Each clock face is its own chunk (pack-faces-<id>), so picking one never downloads the others.
+            const face = /\/src\/tool\/packs\/faces\/(flip|rolling|analog|rings|word|nixie|lcd|matrix)[.-]/u.exec(
+              id,
+            )?.[1];
+            if (face) return `pack-faces-${face}`;
             const own = /\/src\/tool\/packs\/(faces|sound|notes|themes|extras)\//u.exec(id)?.[1];
             if (own) return `pack-${own}`;
             const lib = PACK_LIBS.find(([re]) => re.test(id));

@@ -1,0 +1,99 @@
+.at-fx-word {
+  gap: calc(12 * var(--u));
+}
+
+.at-fx-wd-board {
+  position: relative;
+  padding: calc(14 * var(--u));
+}
+
+.at-fx-wd-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--at-fx-cols), calc(26 * var(--u)));
+  grid-auto-rows: calc(23 * var(--u));
+  place-items: center;
+  font-size: calc(17 * var(--u));
+  font-weight: 500;
+  line-height: 1;
+  direction: ltr;
+}
+
+.at-fx-wd-grid > span {
+  position: relative;
+  color: color-mix(in srgb, var(--at-ink) 15%, transparent);
+}
+
+.at-fx-wd-grid > span::after {
+  content: attr(data-c);
+  position: absolute;
+  inset: 0;
+  color: var(--at-fx-ink);
+  text-shadow:
+    0 0 calc(6 * var(--u)) color-mix(in srgb, var(--at-face-c) calc(35% + var(--at-fx-glow) * 35%), transparent),
+    0 0 calc(16 * var(--u)) color-mix(in srgb, var(--at-face-c) calc(var(--at-fx-glow) * 45%), transparent);
+  opacity: 0;
+  transition: opacity 0.9s var(--at-ease);
+}
+
+:root[data-theme="light"] .at-fx-wd-grid > span::after {
+  text-shadow: 0 0 calc(8 * var(--u)) color-mix(in srgb, var(--at-face-c) calc(var(--at-fx-glow) * 40%), transparent);
+}
+
+.at-fx-wd-grid > span[data-on]::after {
+  opacity: 1;
+}
+
+.at-fx-wd-dot {
+  position: absolute;
+  inline-size: calc(6 * var(--u));
+  block-size: calc(6 * var(--u));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--at-ink) 15%, transparent);
+  transition: box-shadow 0.9s var(--at-ease);
+}
+
+.at-fx-wd-dot[data-on] {
+  background: var(--at-face-c);
+  box-shadow: 0 0 calc(10 * var(--u)) color-mix(in srgb, var(--at-face-c) 70%, transparent);
+}
+
+.at-fx-wd-dot:nth-child(1) {
+  inset-block-start: 0;
+  inset-inline-start: 0;
+}
+
+.at-fx-wd-dot:nth-child(2) {
+  inset-block-start: 0;
+  inset-inline-end: 0;
+}
+
+.at-fx-wd-dot:nth-child(3) {
+  inset-block-end: 0;
+  inset-inline-end: 0;
+}
+
+.at-fx-wd-dot:nth-child(4) {
+  inset-block-end: 0;
+  inset-inline-start: 0;
+}
+
+.at-fx-wd-low {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: calc(4 * var(--u)) calc(12 * var(--u));
+}
+
+.at-fx-wd-low .at-digits {
+  font-size: calc(26 * var(--u));
+}
+
+.at-island[data-units="d"] .at-fx-wd-low .at-digits {
+  font-size: calc(20 * var(--u));
+}
+
+.at-fx-word .at-fx-meta {
+  inline-size: auto;
+  font-size: calc(13 * var(--u));
+}
