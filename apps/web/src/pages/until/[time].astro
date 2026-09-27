@@ -18,8 +18,8 @@ export function getStaticPaths() {
   return paths;
 }
 
-// The UntilPage board (design/canvas/project/UntilPage.dc.html): the tool counts down to this wall-clock time, then
-// "About this page", the honest limit and the nearby times (every /until/HH-MM route exists in 5-minute steps).
+// The UntilPage board (Site pages canvas, docs/redesign/CANVASES.md): the tool counts down to this wall-clock time,
+// then "About this page", the honest limit and the nearby times (every /until/HH-MM route exists in 5-minute steps).
 const time = Astro.params.time ?? '00-00';
 const wall = time.replace('-', ':');
 const [h, m] = wall.split(':').map(Number) as [number, number];

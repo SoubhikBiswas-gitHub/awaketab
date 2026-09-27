@@ -8,7 +8,7 @@ const ts = createRequire(import.meta.url)('typescript');
 
 const FIX = process.argv.includes('--fix');
 const EXT = /\.(?:ts|tsx|mts|cts|js|mjs|cjs|astro|css)$/u;
-const SKIP = /^(?:design\/|apps\/web\/public\/)|\/(?:dist|\.astro|\.wxt|\.output)\//u;
+const SKIP = /^apps\/web\/public\/|\/(?:dist|\.astro|\.wxt|\.output)\//u;
 const DIRECTIVE =
   /^\/\*[*!]?\s*(?:eslint|stylelint|global\s|globals\s|istanbul|c8\s|v8\signore|@ts-|@vitest-environment|prettier-ignore|@vite-ignore|[#@]__PURE__|@license|@preserve)/u;
 const CONFIG_TYPE = /^\/\*\*\s*@type\s*\{[^\n]*\}\s*\*\/$/u;

@@ -6,7 +6,7 @@ Status: v1.2 · 2026-09-27 (as built in M8, redesigned in Clear Night milestone 
 
 Related docs: `00-conventions.md` §7, §8, §9, §13.10 · `04-engine-spec.md` (engine reused) · `05-frontend-spec.md` §3.16 (Cook Mode) · `09-monetization-impl.md` §7 (Embed licence) · `14-devops.md` (headers for `/embed/*`) · `DESIGN.md` §11 (sizes, pill XS/S, Stop D-R20).
 
-**Clear Night (B8, 2026-09-27).** Two redesign decisions are built and folded into the sections below: **O-58**, the compact size is 320 × 104 (at 96 px the Start button and the pill could not both keep 44 px targets with 16 px padding), and **O-47**, the credit sits outside the widget, as a `nofollow` link in the host page's own HTML that the loader inserts after the iframe (§1, §11.2). Design boards: `EmbedWidget`, `EmbedCook*`, `EmbedCompactLight`, `EmbedFullDark`, `EmbedEdge*` and `EmbedShowcase*` (`design/canvas/project/`).
+**Clear Night (B8, 2026-09-27).** Two redesign decisions are built and folded into the sections below: **O-58**, the compact size is 320 × 104 (at 96 px the Start button and the pill could not both keep 44 px targets with 16 px padding), and **O-47**, the credit sits outside the widget, as a `nofollow` link in the host page's own HTML that the loader inserts after the iframe (§1, §11.2). Design boards: `EmbedWidget`, `EmbedCook*`, `EmbedCompactLight`, `EmbedFullDark`, `EmbedEdge*` and `EmbedShowcase*` (Embed, kiosk & library canvas, `redesign/CANVASES.md`).
 
 ---
 

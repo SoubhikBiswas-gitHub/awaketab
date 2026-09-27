@@ -193,7 +193,6 @@ Add `--with-browsers` to also install Playwright Chromium for the end-to-end tes
 | [`packages/wake`](packages/wake) | `@awaketab/wake`: the wake lock state machine and video fallback |
 | [`packages/core`](packages/core) | `@awaketab/core`: sessions, timers, stats, licence checks and the multi-tab protocol |
 | [`docs`](docs) | Product, engineering and design specs. Start with [docs/00-conventions.md](docs/00-conventions.md) |
-| [`design`](design) | The Clear Night design canvas boards behind [DESIGN.md](DESIGN.md) |
 
 ## Tech stack
 

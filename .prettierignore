@@ -1,4 +1,3 @@
-design/
 apps/web/public/
 **/dist/
 **/.astro/

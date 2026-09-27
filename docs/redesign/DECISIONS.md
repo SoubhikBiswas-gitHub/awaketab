@@ -1,6 +1,6 @@
 # Redesign decisions log
 
-Every design and product decision taken during the Clear Night redesign, newest last. **Open** items wait for the owner (Soubhik). Agents: read this before designing or writing anything, and never contradict a **Decided** item without a new entry here.
+Every design and product decision taken during the Clear Night redesign, newest last. **Open** items wait for the owner (Soubhik). Agents: read this before designing or writing anything, and never contradict a **Decided** item without a new entry here. The canvas links are in `CANVASES.md`. Files named in the Where column under `research/`, `design/canvas/` or the agent briefs are no longer in this repository: research and briefs live in the private repo SoubhikBiswas-gitHub/awaketab-internal, and the canvas sources are in git history (`CANVASES.md` says how to restore them).
 
 ## Decided
 | # | Date | Decision | Why | Where |
@@ -205,7 +205,7 @@ The owner delegated all open questions to the lead ("you take the decision"). Pr
 | O-74 | **Yes** (two-row grid with all seven presets on every phone, including 320 px). |
 | O-75 | **Change** to "You're offline. The tool still works; guides may not load." in en.json and all locales. |
 | O-76 | **Yes**: show the detected cause; the list only when unknown. |
-| O-77 | **Merge** into one shared primitives file during the final audit. Done 27 Sep 2026: `design/canvas/PRIMITIVES.md`; nav items padding 0 12 + gap 8, footer links 13/18 500 with min-width 44, kiosk L pill gap 8, one kbd font stack; `tools/final/primvariance.py` checks it. |
+| O-77 | **Merge** into one shared primitives file during the final audit. Done 27 Sep 2026: `docs/redesign/PRIMITIVES.md`; nav items padding 0 12 + gap 8, footer links 13/18 500 with min-width 44, kiosk L pill gap 8, one kbd font stack; `tools/final/primvariance.py` checks it. |
 | O-78 / O-79 / O-80 | **Fix in the build** before those pages ship; each fact dated. |
 | O-81 | **Inline panel** in the right column. |
 | O-83 | **PiP digits may go to 40 px** (display-s range 24–40 in PiP). |

@@ -90,7 +90,7 @@ Useful commands:
 | [docs/12-library-spec.md](docs/12-library-spec.md) | The `@awaketab/wake` library                                          |
 | [docs/13-testing-strategy.md](docs/13-testing-strategy.md) | What each test suite proves                                   |
 | [docs/redesign/DECISIONS.md](docs/redesign/DECISIONS.md) | Design decisions of the Clear Night redesign                        |
-| [DESIGN.md](DESIGN.md) and `design/canvas/`    | The Clear Night design system and its design canvas boards               |
+| [DESIGN.md](DESIGN.md) and [docs/redesign/CANVASES.md](docs/redesign/CANVASES.md) | The Clear Night design system and links to its 12 design canvases |
 
 ## Reporting bugs
 
