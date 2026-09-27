@@ -13,7 +13,7 @@ import { encryptKeyEnc, parseAesKey, tryDecryptKeyEnc } from './crypto.ts';
 import type { IKvRecord } from './format.ts';
 import { isExpiredForWrite, listPages, readPage, type IKvStore } from './store.ts';
 
-export const LICENSE_PREFIX = 'lic:';
+const LICENSE_PREFIX = 'lic:';
 
 export interface IReencryptOptions {
   oldKey: string;
@@ -38,7 +38,7 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-export function validateRotationKeys(oldKey: string, newKey: string): void {
+function validateRotationKeys(oldKey: string, newKey: string): void {
   const oldRaw = parseAesKey(oldKey, 'OLD_LICENSE_KEY_ENC_KEY');
   const newRaw = parseAesKey(newKey, 'NEW_LICENSE_KEY_ENC_KEY');
   if (oldRaw.every((byte, index) => byte === newRaw[index])) {

@@ -1,4 +1,4 @@
-export const BLOCKS = [
+const BLOCKS = [
   'steps',
   'figures',
   'pills',
@@ -16,7 +16,7 @@ export type TBlockName = (typeof BLOCKS)[number];
 const PAGE_MARKERS = ['ad', 'limit'] as const;
 type TPageMarker = (typeof PAGE_MARKERS)[number];
 
-export type TSectionPart = { kind: 'html'; html: string } | { kind: 'block'; name: TBlockName; arg: string };
+type TSectionPart = { kind: 'html'; html: string } | { kind: 'block'; name: TBlockName; arg: string };
 export interface ISection {
   kind: 'section';
   id?: string;

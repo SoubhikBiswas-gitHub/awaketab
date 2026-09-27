@@ -6,10 +6,10 @@ export const EMBED_SIZES = ['compact', 'full'] as const;
 export const EMBED_PRESETS = ['p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf', 'until'] as const;
 export const EMBED_LOCALES = ['en', 'es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'] as const;
 
-export type TEmbedMode = (typeof EMBED_MODES)[number];
+type TEmbedMode = (typeof EMBED_MODES)[number];
 export type TEmbedTheme = (typeof EMBED_THEMES)[number];
 export type TEmbedSize = (typeof EMBED_SIZES)[number];
-export type TEmbedPreset = (typeof EMBED_PRESETS)[number];
+type TEmbedPreset = (typeof EMBED_PRESETS)[number];
 export type TEmbedLocale = (typeof EMBED_LOCALES)[number];
 
 export const EMBED_BOX: Record<TEmbedSize, { width: string; height: number; radius: number }> = {
@@ -137,7 +137,7 @@ export type TWidgetMessage =
   | ({ type: 'awaketab:state' } & IEmbedState)
   | { type: 'awaketab:resize'; height: number };
 
-export const EMBED_MAX_MS = 7 * 24 * 3_600_000;
+const EMBED_MAX_MS = 7 * 24 * 3_600_000;
 
 function record(data: unknown): Record<string, unknown> | null {
   return data !== null && typeof data === 'object' && !Array.isArray(data) ? (data as Record<string, unknown>) : null;

@@ -425,7 +425,7 @@ Behaviour lives in `src/boot/boot.js` (the page's only inline script, so it work
 ### 3.29 Segmented bar and keyboard hint (B2)
 
 - `.at-seg`: surface, 1 px line, 4 px padding, r999, `--at-seg-n` equal columns of 44 px items (`.at-seg-item`: `--at-type-ui`, ink-2; selected ink 600). One indicator `.at-seg-ind` (lamp 14 % fill + lamp 45 % border; neutral `--at-raised` for the theme switch) moves by `translateX(index × 100%)` over `--at-d-slide` / `--at-ease` (mirrored under `dir="rtl"`). The index comes from CSS alone: `:has()` finds the item with `aria-pressed`, `aria-checked` or `aria-selected="true"`, or a checked radio inside (items 1–7). No script moves it.
-- `.at-kbd` (P-KBD): one theme keycap everywhere: 24 high, min 24 wide, padding 0 8, r8, `--at-font-mono` 12/16 500, `--at-raised` fill, 1 px line-strong plus a 1 px inset bottom line, ink. `Kbd` (`components/ui/kbd.tsx`) emits it. On buttons it goes inside `span.at-kbd-hint[aria-hidden]` (the button carries `aria-keyshortcuts`), shown only with `(hover: hover) and (pointer: fine)` and not under `<html data-hints="off">` (the Settings toggle wires this in B3).
+- `.at-kbd` (P-KBD): one theme keycap everywhere: 24 high, min 24 wide, padding 0 8, r8, `--at-font-mono` 12/16 500, `--at-raised` fill, 1 px line-strong plus a 1 px inset bottom line, ink. On buttons it goes inside `span.at-kbd-hint[aria-hidden]` (the button carries `aria-keyshortcuts`), shown only with `(hover: hover) and (pointer: fine)` and not under `<html data-hints="off">` (the Settings toggle wires this in B3).
 
 ### 3.30 Surfaces, fields and sheets (B2)
 

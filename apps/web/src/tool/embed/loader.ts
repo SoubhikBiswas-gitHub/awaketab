@@ -23,14 +23,14 @@ export interface ILoaderStrings {
   credits: Record<string, string>;
 }
 
-export type TEmbedEvent = 'ready' | 'state';
+type TEmbedEvent = 'ready' | 'state';
 
-export interface IEmbedEventDetail extends Partial<IEmbedState> {
+interface IEmbedEventDetail extends Partial<IEmbedState> {
   frame: HTMLIFrameElement;
   version?: string;
 }
 
-export interface IAwakeTabEmbed {
+interface IAwakeTabEmbed {
   readonly version: string;
   on(event: TEmbedEvent, cb: (detail: IEmbedEventDetail) => void): () => void;
   start(opts?: { preset?: string; ms?: number; until?: string }): void;
@@ -112,7 +112,7 @@ export function createRegistry(win: Window): IEmbedRegistry {
   };
 }
 
-export function mountCredit(frame: HTMLIFrameElement, text: string): HTMLElement {
+function mountCredit(frame: HTMLIFrameElement, text: string): HTMLElement {
   const doc = frame.ownerDocument;
   const box = doc.createElement('div');
   box.className = EMBED_CREDIT_CLASS;

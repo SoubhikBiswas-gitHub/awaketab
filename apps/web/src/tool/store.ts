@@ -53,7 +53,7 @@ export interface IToolState {
   };
 }
 
-export type TToolPatch = Partial<Omit<IToolState, 'ui' | 'settings'>> & {
+type TToolPatch = Partial<Omit<IToolState, 'ui' | 'settings'>> & {
   ui?: Partial<IToolState['ui']>;
   settings?: ISettings;
 };

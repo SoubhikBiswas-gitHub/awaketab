@@ -1,0 +1,59 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/*.mjs", "lighthouserc.cjs"],
+      "project": ["*.{ts,mjs,cjs}", "scripts/**/*.mjs"],
+      "vitest": {
+        "config": ["vitest.config.ts", "vitest.functions.config.ts", "vitest.seo.config.ts"]
+      },
+      "playwright": {
+        "config": ["playwright.config.ts"]
+      }
+    },
+    "apps/web": {
+      "entry": [
+        "src/pages/**/*.{astro,ts,md,mdx}",
+        "src/sw.ts",
+        "src/boot/boot.js",
+        "src/tool/main.ts",
+        "src/tool/pip-mirror.ts",
+        "src/tool/embed/loader-entry.ts",
+        "scripts/*.{mjs,mts}",
+        "scripts/kv/*.ts",
+        "functions/**/*.ts",
+        "test/**/*.{test,spec}.ts",
+        "scripts/**/*.test.ts"
+      ],
+      "project": [
+        "src/**/*.{astro,ts,tsx,js,mjs,css}",
+        "scripts/**/*.{mjs,mts,ts}",
+        "functions/**/*.ts",
+        "test/**/*.ts"
+      ],
+      "ignoreDependencies": [
+        "@fontsource/inter",
+        "@fontsource/noto-sans-devanagari",
+        "@fontsource/noto-sans-jp",
+        "@fontsource/noto-sans-sc"
+      ],
+      "ignoreIssues": {
+        "src/components/ui/*.tsx": ["exports"],
+        "src/lib/ads.ts": ["exports"]
+      }
+    },
+    "apps/extension": {
+      "entry": ["scripts/*.{mjs,mts}", "test/**/*.test.ts", "e2e/**/*.spec.ts"],
+      "project": ["entrypoints/**/*.ts", "src/**/*.ts", "scripts/**/*.{mjs,mts}", "test/**/*.ts", "e2e/**/*.ts"]
+    },
+    "packages/wake": {
+      "entry": ["src/adapters/*.ts", "test/**/*.test.ts"],
+      "project": ["src/**/*.{ts,vue}", "test/**/*.ts"],
+      "vitest": false
+    },
+    "packages/core": {
+      "entry": ["test/**/*.test.ts"],
+      "project": ["src/**/*.ts", "test/**/*.ts"]
+    }
+  }
+}

@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-export const EXTENSION_DIR = path.resolve(HERE, '../.output-test/chrome-mv3');
+const EXTENSION_DIR = path.resolve(HERE, '../.output-test/chrome-mv3');
 
 export interface IPowerCall {
   call: 'request' | 'release';
@@ -71,12 +71,7 @@ export async function syncStore(page: Page): Promise<Record<string, unknown>> {
   return page.evaluate(() => chrome.storage.sync.get(null));
 }
 
-export async function devToken(claims: {
-  plan: string;
-  features: string[];
-  deviceId: string;
-  exp: number;
-}): Promise<string> {
+async function devToken(claims: { plan: string; features: string[]; deviceId: string; exp: number }): Promise<string> {
   const vars = await readFile(path.resolve(HERE, '../../web/.dev.vars.example'), 'utf8');
   const line = vars.split('\n').find((l) => l.startsWith('LICENSE_SIGNING_KEY='));
   if (!line) throw new Error('dev signing key missing');

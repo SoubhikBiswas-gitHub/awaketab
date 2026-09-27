@@ -14,7 +14,7 @@ const ERR_ROW: Record<string, string> = {
   bad_request: 'invalid_key',
 };
 
-export type TActivateState =
+type TActivateState =
   'idle' | 'checking' | 'error' | 'success' | 'ext-success' | 'checkout-success' | 'cancelled' | 'failed' | 'help';
 const CHECKOUT_STATES: readonly TActivateState[] = ['checkout-success', 'cancelled', 'failed', 'help'];
 
@@ -211,7 +211,7 @@ export function bootActivatePage(root: HTMLElement): void {
   });
 }
 
-export function keyTail(key: string): string {
+function keyTail(key: string): string {
   return key.replace(/\s/gu, '').slice(-4).toUpperCase() || '····';
 }
 

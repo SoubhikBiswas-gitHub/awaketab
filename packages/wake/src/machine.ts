@@ -1,6 +1,6 @@
 import type { TAdviceCode, TLockReason, TLockState } from './types.js';
 
-export type TMachineEvent =
+type TMachineEvent =
   | { type: 'request'; hasApi: boolean }
   | { type: 'acquired' }
   | { type: 'fallback_ok' }
@@ -13,12 +13,12 @@ export type TMachineEvent =
   | { type: 'retry' }
   | { type: 'destroyed' };
 
-export interface IMachineGuards {
+interface IMachineGuards {
   reacquireOnVisible: boolean;
   fallback: boolean;
 }
 
-export interface IMachineResult {
+interface IMachineResult {
   state: TLockState;
   reason: TLockReason;
   advice?: TAdviceCode | null;

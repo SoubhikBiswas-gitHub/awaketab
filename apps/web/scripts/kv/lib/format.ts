@@ -20,7 +20,7 @@ export interface IKvRecord {
   metadata?: unknown;
 }
 
-export interface IBackupHeader {
+interface IBackupHeader {
   format: typeof BACKUP_FORMAT;
   version: typeof BACKUP_VERSION;
   namespace: string;

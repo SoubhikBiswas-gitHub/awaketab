@@ -55,7 +55,7 @@ export function urlParts(url: string): IUrlPart[] {
   return parts;
 }
 
-export function httpsLogo(raw: string): boolean {
+function httpsLogo(raw: string): boolean {
   try {
     const url = new URL(raw.trim());
     return url.protocol === 'https:' && !url.username && !url.password;

@@ -8,9 +8,6 @@ import {
 } from '@awaketab/core';
 
 export const API_ORIGIN = 'https://awaketab.com';
-export const ACTIVATE_URL = `${API_ORIGIN}/pro/activate?ext=1`;
-export const MANAGE_URL = `${API_ORIGIN}/pro/manage`;
-export const PRO_URL = `${API_ORIGIN}/pro`;
 
 export const NO_LICENSE: ILicenseState = { valid: false, plan: null, features: [], exp: null, grace: false };
 

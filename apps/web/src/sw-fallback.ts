@@ -1,4 +1,4 @@
-export const SW_LOCALES = ['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
+const SW_LOCALES = ['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
 
 const PIP = new RegExp(`^/(?:(?:${SW_LOCALES.join('|')})/)?pip$`, 'u');
 const NO_FALLBACK = [/^\/api\//u, /^\/embed\//u];

@@ -6,7 +6,7 @@ import { toast } from './toast.js';
 
 export const RATING_MIN_SESSIONS = 5;
 export const RATING_REARM_SESSIONS = 10;
-export const RATING_TEXT_MAX = 280;
+const RATING_TEXT_MAX = 280;
 
 export function ratingEligible(meta: Pick<IMeta, 'sessionCount' | 'ratingPrompt'>): boolean {
   const rp = meta.ratingPrompt;

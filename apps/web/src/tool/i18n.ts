@@ -21,7 +21,3 @@ export function t(key: string, vars?: TVars): string {
   });
   return withPlural.replace(TOKEN, (_m, name: string) => String(vars[name] ?? ''));
 }
-
-export function hasKey(key: string): boolean {
-  return key in catalog;
-}

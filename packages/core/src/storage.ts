@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from './constants.js';
+import { STORAGE_KEYS, TAB_ID_KEY } from './constants.js';
 import {
   DEFAULT_META,
   DEFAULT_ONBOARDING,
@@ -168,7 +168,7 @@ export function createStorage(adapter?: IStorageAdapter): {
     },
     clearAll() {
       for (const k of Object.values(STORAGE_KEYS)) a.remove(k);
-      if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('at.tabId');
+      if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem(TAB_ID_KEY);
     },
     exportCsv() {
       return exportStatsCsv(this.stats());

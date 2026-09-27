@@ -1,6 +1,6 @@
 import { LICENSE_PUBLIC_KEYS, sha256Hex, type ILicenseRecord, type TFeatureGate } from '@awaketab/core';
 import { createController, type IController } from '../../src/controller';
-import { flush, type IFakeChrome } from './fake-chrome';
+import type { IFakeChrome } from './fake-chrome';
 import en from '../../../web/src/i18n/en.json';
 
 const b64url = (bytes: Uint8Array) =>
@@ -12,7 +12,7 @@ const enc = (obj: unknown) => b64url(new TextEncoder().encode(JSON.stringify(obj
 
 let pair: CryptoKeyPair | null = null;
 
-export async function testKeys(): Promise<CryptoKeyPair> {
+async function testKeys(): Promise<CryptoKeyPair> {
   if (!pair) {
     pair = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify']);
     LICENSE_PUBLIC_KEYS[1] = await crypto.subtle.exportKey('jwk', pair.publicKey);
@@ -84,5 +84,3 @@ export function wired(
   });
   return ctl;
 }
-
-export { flush };

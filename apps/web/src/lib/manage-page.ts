@@ -3,7 +3,7 @@ import { applyLaunch, fill, longDate } from './pro-common';
 
 type TRow = { label: string; at: number; devHash: string };
 type TRecord = { token?: string; plan?: string; exp?: number; deviceId?: string };
-export type TManageState = 'loading' | 'list' | 'empty' | 'grace' | 'lapsed' | 'offline';
+type TManageState = 'loading' | 'list' | 'empty' | 'grace' | 'lapsed' | 'offline';
 
 const DAY_S = 86_400;
 const LICENSE_KEY = 'at.v1.license';

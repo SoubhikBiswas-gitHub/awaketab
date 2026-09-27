@@ -26,7 +26,8 @@ Useful commands:
 | `pnpm dev`                    | Astro dev server for the website and tool                            |
 | `pnpm -F extension dev`       | The Chrome extension in development mode (WXT)                       |
 | `pnpm format`                 | Prettier over the repository                                         |
-| `pnpm lint`                   | Comment rule, Prettier check, ESLint and Stylelint                   |
+| `pnpm lint`                   | Comment rule, Prettier check, Knip, ESLint and Stylelint             |
+| `pnpm knip`                   | Unused files, exports and dependencies (Knip, `knip.json`)           |
 | `pnpm typecheck`              | TypeScript and `astro check` in every workspace                      |
 | `pnpm test`                   | Unit tests and Pages Functions tests (Vitest)                        |
 | `pnpm build`                  | Builds every package, the site and the extension                     |
@@ -50,6 +51,8 @@ Useful commands:
 **Formatting.** Run `pnpm format` before every commit. Prettier uses 120 columns. Astro templates are excluded because their whitespace is page text.
 
 **Comments.** Only a short `//` line where the reason is not obvious. No block comments, JSDoc, or HTML and CSS comments (tool directives such as `eslint-disable` are fine). `pnpm lint` runs `scripts/comments.mjs` to check this, and `node scripts/comments.mjs --fix` strips them.
+
+**Unused code.** `pnpm knip` (also part of `pnpm lint`) fails on files, exports and dependencies nothing uses. Delete them rather than silence them. If something is used in a way Knip cannot see (a file read by path, a script run by hand), add the narrowest entry or ignore to `knip.json` and say why in the pull request.
 
 **Tests.**
 

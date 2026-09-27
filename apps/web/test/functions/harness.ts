@@ -200,14 +200,14 @@ export interface IPolarKey {
   grantedAt: string;
 }
 
-export interface IPolarCheckout {
+interface IPolarCheckout {
   status: 'open' | 'expired' | 'confirmed' | 'succeeded' | 'failed';
   customer_id: string | null;
   subscription_id: string | null;
   product_id: string | null;
 }
 
-export interface IPolarOrder {
+interface IPolarOrder {
   id: string;
   checkout_id: string | null;
   customer_id: string;
@@ -216,7 +216,7 @@ export interface IPolarOrder {
   status: 'paid' | 'refunded';
 }
 
-export interface IPolarCall {
+interface IPolarCall {
   method: string;
   path: string;
   query: Record<string, string>;
@@ -226,7 +226,7 @@ export interface IPolarCall {
 
 let polarSeq = 0;
 
-export class FakePolar {
+class FakePolar {
   readonly calls: IPolarCall[] = [];
   readonly keys = new Map<string, IPolarKey>();
   readonly checkouts = new Map<string, IPolarCheckout>();

@@ -1,4 +1,4 @@
-export type TEmbedScheme = 'auto' | 'light' | 'dark';
+type TEmbedScheme = 'auto' | 'light' | 'dark';
 
 export interface IEmbedConfig {
   licensed: boolean;
@@ -9,7 +9,7 @@ export interface IEmbedConfig {
 
 export const FREE_CONFIG: IEmbedConfig = { licensed: false, attribution: true, accent: null, scheme: null };
 
-export const EMBED_CONFIG_TIMEOUT_MS = 4000;
+const EMBED_CONFIG_TIMEOUT_MS = 4000;
 
 const HEX = /^#[0-9a-f]{6}$/iu;
 

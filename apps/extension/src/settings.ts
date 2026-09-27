@@ -28,16 +28,16 @@ export interface IExtSettings {
   autostart: { browserStart: boolean; sites: IAutostartSite[] };
 }
 
-export const DEFAULT_EXT: IExtSettings = {
+const DEFAULT_EXT: IExtSettings = {
   v: 1,
   level: 'display',
   schedules: [],
   autostart: { browserStart: false, sites: [] },
 };
 
-export const EXT_DEFAULT_SETTINGS: ISettings = { ...DEFAULT_SETTINGS, telemetry: false, notifications: false };
+const EXT_DEFAULT_SETTINGS: ISettings = { ...DEFAULT_SETTINGS, telemetry: false, notifications: false };
 
-export const EXT_PRESETS = ['p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf'] as const;
+const EXT_PRESETS = ['p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf'] as const;
 export type TExtPreset = (typeof EXT_PRESETS)[number];
 
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/u;
@@ -63,7 +63,7 @@ export function readSettings(raw: unknown): ISettings {
   return merged;
 }
 
-export function sanitizeSchedule(raw: unknown): ISchedule | null {
+function sanitizeSchedule(raw: unknown): ISchedule | null {
   if (!isRecord(raw)) return null;
   const days = Array.isArray(raw.days)
     ? [
@@ -77,7 +77,7 @@ export function sanitizeSchedule(raw: unknown): ISchedule | null {
   return { id: raw.id, days, start: raw.start, end: raw.end, level: isLevel(raw.level) ? raw.level : 'display' };
 }
 
-export function sanitizeSite(raw: unknown): IAutostartSite | null {
+function sanitizeSite(raw: unknown): IAutostartSite | null {
   if (!isRecord(raw) || typeof raw.host !== 'string') return null;
   const host = normalizeHost(raw.host);
   if (!host) return null;
