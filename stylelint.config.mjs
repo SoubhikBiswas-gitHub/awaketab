@@ -45,6 +45,7 @@ export default {
         '**/styles/article/*.css',
         '**/styles/hub.css',
         '**/styles/docs-hub.css',
+        '**/styles/hub-gallery.css',
         '**/styles/device-matrix.css',
         '**/styles/pages.css',
         '**/styles/page-404.css',

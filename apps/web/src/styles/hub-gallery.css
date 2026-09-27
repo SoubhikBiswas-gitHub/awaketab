@@ -1,0 +1,152 @@
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-gal {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: var(--at-gap-item);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .at-gal-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-3);
+    min-inline-size: 0;
+    padding: var(--at-card-pad);
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-lg);
+    background: var(--at-surface);
+    box-shadow: var(--at-elev);
+    animation: at-rise var(--at-d-rise) var(--at-ease) both;
+    animation-delay: calc(min(var(--at-k, 0), 8) * 70ms);
+  }
+
+  .at-gal-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--at-s-3);
+  }
+
+  .at-gal-icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    inline-size: var(--at-h-control);
+    block-size: var(--at-h-control);
+    border: var(--at-border) solid color-mix(in srgb, var(--at-accent) 24%, transparent);
+    border-radius: var(--at-r-md);
+    background: color-mix(in srgb, var(--at-accent) 10%, transparent);
+    color: var(--at-accent-text);
+  }
+
+  .at-gal-icon > svg {
+    inline-size: var(--at-icon-lg);
+    block-size: var(--at-icon-lg);
+  }
+
+  .at-cp .at-gal-title {
+    margin: 0;
+    color: var(--at-ink);
+    font: var(--at-type-h3);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    overflow-wrap: break-word;
+  }
+
+  .at-gal-line {
+    margin: 0;
+    color: var(--at-ink-2);
+    font: var(--at-type-small);
+    text-wrap: pretty;
+  }
+
+  .at-gal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--at-gap-item);
+    margin-block-start: auto;
+    padding-block-start: var(--at-s-1);
+  }
+
+  .at-gal-read {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--at-s-2);
+    min-block-size: var(--at-h-control);
+    color: var(--at-accent-text);
+    font: var(--at-type-ui);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .at-gal-read .at-go {
+    stroke: currentcolor;
+  }
+
+  :is(a.at-gal-read, .at-gal-link):hover .at-go {
+    transform: translateX(var(--at-s-1));
+  }
+
+  .at-gal-dev .at-gal-card {
+    padding: 0;
+  }
+
+  .at-gal-link {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: var(--at-s-3);
+    padding: var(--at-card-pad);
+    border-radius: calc(var(--at-r-lg) - var(--at-border));
+    color: var(--at-ink);
+    text-decoration: none;
+  }
+
+  .at-gal-link:hover {
+    background-color: color-mix(in srgb, var(--at-muted) 6%, transparent);
+  }
+
+  .at-cp a.at-gal-link:focus-visible {
+    border-radius: calc(var(--at-r-lg) - var(--at-border));
+  }
+
+  .at-gal-link .at-gal-read {
+    margin-block-start: auto;
+    min-block-size: auto;
+  }
+
+  .at-gal-native {
+    --at-tone: var(--at-good);
+  }
+
+  .at-gal-native > svg {
+    inline-size: var(--at-icon-sm);
+    block-size: var(--at-icon-sm);
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .at-gal-browsers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--at-s-2);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .at-gal-card {
+      animation: none;
+    }
+
+    :is(a.at-gal-read, .at-gal-link):hover .at-go {
+      transform: none;
+    }
+  }
+}

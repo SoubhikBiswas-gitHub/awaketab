@@ -816,6 +816,19 @@ Accepted on 2026-09-28. The home page now sells and starts the tool; the explana
 | Merged copy | The home support table and device list join `/learn/browser-support-matrix`; "How AwakeTab is checked" joins `/learn/how-we-tested`; "When something else is the better tool" becomes the `/vs` hub intro; "Or fix the setting itself" becomes the `/guides` hub intro (`src/lib/hubs.ts`) |
 | Structured data | None added. `FAQPage` is not emitted anywhere (`06-content-seo-spec.md` §7, §8); `/learn/faq` carries the usual `Article` and `BreadcrumbList` |
 
+### Use case and device hub galleries
+
+Accepted on 2026-09-28. The `/for` and `/on` hubs show their entries as card galleries; `/vs`, `/guides` and `/learn` keep the list. Routes, slugs, schema, breadcrumbs, storage keys, lock states and the ad rules (no ads on hub pages) do not change.
+
+| Identifier | Decision |
+|---|---|
+| Components | `components/icons/UseCaseIcon.astro` (prop `name` = a `/for` slug) · `components/icons/DeviceIcon.astro` (prop `name` = an `/on` slug): inline 24 px line icons, `currentColor`, stroke 1.8, `aria-hidden` unless a `label` prop is given; an unknown name draws a plain screen. `components/hub/UseCaseGallery.astro` · `components/hub/DeviceGallery.astro`, rendered by `HubPage.astro` for `kind` `for` and `on` |
+| Start link | `startHref(preset, mode)` in `src/lib/hubs.ts`: the preset's tool route (`/15m` … `/4h`, `/8h`, `/` for `pinf` and `until`) plus `?mode=` when the entry's mode is not `standard` |
+| Support tags | `supportTags(slug, browsers, os)` in `src/lib/device-support.ts`: one tag per entry browser that `support-matrix.json` lists on one of the entry's systems ("Safari 16.4+"); `ios-home-screen` uses the `ios-pwa` context. "Native wake lock" shows only when every tag's mechanism is `native` |
+| Stylesheet | `src/styles/hub-gallery.css` (layer `content`, strict token lint), imported by `pages/for.astro` and `pages/on.astro` only |
+| Classes | `.at-gal` (+ `-uc`, `-dev`) · `.at-gal-card` · `.at-gal-top` · `.at-gal-icon` · `.at-gal-title` · `.at-gal-line` · `.at-gal-actions` · `.at-gal-start` · `.at-gal-read` · `.at-gal-link` · `.at-gal-native` · `.at-gal-browsers`; tags reuse `.at-tag` / `.at-tag-tone`. `--at-k` is the card index for the staggered rise |
+| i18n keys | New in all 8 locales (English values until translated): `page.hub.start` · `page.hub.readGuide` · `page.hub.native` |
+
 ## 14. Writing conventions for these docs
 
 - Requirements are testable sentences with "must/should/may"; every FR has at least one acceptance criterion in Given/When/Then form.

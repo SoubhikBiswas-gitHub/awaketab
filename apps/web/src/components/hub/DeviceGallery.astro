@@ -1,0 +1,62 @@
+---
+import DeviceIcon from '../icons/DeviceIcon.astro';
+import { t } from '../../i18n/load';
+import { supportTags } from '../../lib/device-support';
+
+export interface IDeviceCard {
+  slug: string;
+  href: string;
+  name: string;
+  line: string;
+  browsers: readonly string[];
+  os: readonly string[];
+}
+
+interface Props {
+  cards: readonly IDeviceCard[];
+}
+
+const { cards } = Astro.props;
+const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
+---
+
+<ul class="at-gal at-gal-dev">
+  {
+    cards.map((card, i) => {
+      const tags = supportTags(card.slug, card.browsers, card.os);
+      const native = tags.length > 0 && tags.every((tag) => tag.native);
+      return (
+        <li class="at-gal-card" style={`--at-k: ${String(i)}`}>
+          <a class="at-gal-link" href={card.href}>
+            <span class="at-gal-top">
+              <span class="at-gal-icon">
+                <DeviceIcon name={card.slug} />
+              </span>
+              {native && (
+                <span class="at-tag at-tag-tone at-gal-native">
+                  <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                    <path d="m3.5 8.5 3 3 6-7" />
+                  </svg>
+                  {t('page.hub.native')}
+                </span>
+              )}
+            </span>
+            <h3 class="at-gal-title">{card.name}</h3>
+            {tags.length > 0 && (
+              <span class="at-gal-browsers">
+                {tags.map((tag) => (
+                  <span class="at-tag">{tag.label}</span>
+                ))}
+              </span>
+            )}
+            <span class="at-gal-line">{card.line}</span>
+            <span class="at-gal-read">
+              {t('page.hub.readGuide')}
+              <svg class="at-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+            </span>
+          </a>
+        </li>
+      );
+    })
+  }
+</ul>
