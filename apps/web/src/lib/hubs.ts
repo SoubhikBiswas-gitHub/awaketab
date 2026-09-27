@@ -381,68 +381,13 @@ export const HUBS: Record<TContentKind, IHub> = {
       },
     ],
   },
+  // The /learn hub renders through DocsHub.astro (groups in lib/docs-hub.ts); articles take its crumb from here.
   learn: {
-    crumb: 'Learn',
-    lead: 'The facts behind the pill: which browsers support a wake lock, what can refuse one, and what it cannot do.',
-    note: HONEST,
+    crumb: 'Docs',
+    lead: 'How AwakeTab keeps a screen awake, where a web page stops, and what each browser supports.',
     jumpAria: 'Jump to a topic',
     unit: ['article', 'articles'],
-    groups: [
-      {
-        id: 'g-support',
-        short: 'Support',
-        title: 'Browser support',
-        line: 'Which browsers hold the screen, and how that is checked.',
-        items: [
-          {
-            slug: 'browser-support-matrix',
-            line: 'The first version with native support: Chrome and Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14, Opera 70, and iOS Home Screen apps from 18.4.',
-            meta: ['Reference', '7 browsers'],
-          },
-          {
-            slug: 'how-we-tested',
-            line: 'What each support claim rests on today: browser documentation, engine source and automated tests. Device results are added as they are recorded.',
-            meta: ['Method', 'Sources and tests'],
-          },
-        ],
-      },
-      {
-        id: 'g-dev',
-        short: 'Developers',
-        title: 'For developers',
-        line: 'The API, its errors, and the older video trick.',
-        items: [
-          {
-            slug: 'screen-wake-lock-api-guide',
-            line: "How navigator.wakeLock.request('screen') works, why it throws NotAllowedError, and how to request it again after visibilitychange.",
-            meta: ['Developers', 'Code and errors'],
-          },
-          {
-            slug: '/vs/nosleep-js',
-            line: 'Both try the API first and a video second. NoSleep.js reports one yes or no; @awaketab/wake reports seven states and why.',
-            meta: ['Developers', 'Comparison'],
-          },
-        ],
-      },
-      {
-        id: 'g-limits',
-        short: 'Limits',
-        title: 'Myths and limits',
-        line: 'What a wake lock cannot do, and what does not stop it.',
-        items: [
-          {
-            slug: 'low-power-mode-and-wake-locks',
-            line: 'iPhone Low Power Mode forces a 30-second Auto-Lock. Chrome and Safari have no battery-saver check; Firefox refuses at 5 % battery or less while not charging.',
-            meta: ['Explainer', 'iPhone, Android, Windows'],
-          },
-          {
-            slug: 'does-a-wake-lock-keep-teams-green',
-            line: 'No. Teams shows Away after about 5 minutes without keyboard or mouse input, and Slack after about 10, even with the screen on.',
-            meta: ['Explainer', 'Teams and Slack'],
-          },
-        ],
-      },
-    ],
+    groups: [],
   },
 };
 
