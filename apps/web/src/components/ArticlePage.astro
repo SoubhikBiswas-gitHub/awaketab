@@ -16,7 +16,9 @@ import {
   type TArticlePart,
   type TBlockName,
 } from '../lib/article';
-import { articleCss } from '../lib/article-css';
+import { articleCss, minifyCss } from '../lib/article-css';
+import tableSheet from '../styles/article/table.css?raw';
+import { HUBS } from '../lib/hubs';
 import {
   contentIndex,
   pageAlternates,
@@ -171,6 +173,12 @@ const blockCss = articleCss(
   placedBlocks(parts).map((b) => b.split(' ')[0] as TBlockName),
   data.steps ? stepVariant : null,
 );
+// Markdown tables (lib/article.ts) bring their own sheet, so pages without one do not pay for it.
+const tableCss = parts.some(
+  (part) => part.kind === 'section' && part.parts.some((p) => p.kind === 'html' && p.html.includes('class="at-table"')),
+)
+  ? minifyCss(tableSheet)
+  : '';
 
 // "On this page": the page's own sections and template sections in page order.
 const sectionToc = (
@@ -242,6 +250,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
 >
   {blockCss && <style is:inline slot="styles" set:html={blockCss} />}
 
+  {tableCss && <style is:inline slot="styles" set:html={tableCss} />}
   {
     tracked && data.steps ? (
       <nav
