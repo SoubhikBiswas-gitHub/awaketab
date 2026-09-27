@@ -648,7 +648,7 @@
   "ambient.cook.timer.done": "完了",
   "ambient.cook.timer.remove": "削除",
   "ambient.cook.timer.removeNamed": "{name}を削除",
-  "ambient.cook.timer.notify": "{name} — 完了",
+  "ambient.cook.timer.notify": "{name}が完了しました",
   "ambient.cook.timer.invalid": "1分〜12時間で指定してください。タイマーは3個までです。",
   "stats.minutes": "{minutes}分",
   "stats.hours": "{hours}時間{minutes}分",

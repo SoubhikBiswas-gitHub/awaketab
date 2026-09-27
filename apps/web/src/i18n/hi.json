@@ -648,7 +648,7 @@
   "ambient.cook.timer.done": "पूरा हुआ",
   "ambient.cook.timer.remove": "हटाएँ",
   "ambient.cook.timer.removeNamed": "{name} हटाएँ",
-  "ambient.cook.timer.notify": "{name} — पूरा हुआ",
+  "ambient.cook.timer.notify": "{name} पूरा हो गया",
   "ambient.cook.timer.invalid": "1 मिनट से 12 घंटे तक चुनें; ज़्यादा से ज़्यादा 3 टाइमर।",
   "stats.minutes": "{minutes} मिनट",
   "stats.hours": "{hours} घंटे {minutes} मिनट",
