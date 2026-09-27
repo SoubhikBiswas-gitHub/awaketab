@@ -303,5 +303,40 @@
     "done"
    ]
   ]
+ ],
+ [
+  "J · Owner review fixes and gap closing (27 Sep)",
+  [
+   [
+    53,
+    "Stop and strong buttons follow the theme (D-R20) on every board",
+    "done"
+   ],
+   [
+    54,
+    "Tablet views and missing themes for every page",
+    "wip"
+   ],
+   [
+    55,
+    "Language switcher (footer + Settings) and the /on, /vs, /guides, /learn hubs",
+    "wip"
+   ],
+   [
+    56,
+    "/embed page on phone and tablet; stats and settings on tablet/desktop",
+    "wip"
+   ],
+   [
+    57,
+    "Real-runtime render check of every board + compact canvas layout (D-R21)",
+    "wip"
+   ],
+   [
+    58,
+    "Popup spacing and padding (owner comments)",
+    "done"
+   ]
+  ]
  ]
 ]
