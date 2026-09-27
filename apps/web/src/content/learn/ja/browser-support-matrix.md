@@ -14,6 +14,8 @@ browsers: []
 os: []
 lead: "2026年9月26日に資料で確認した時点で、画面のWake Lock（Screen Wake Lock API）にネイティブ対応している最低バージョンは、Chrome 84、Edge 84、Firefox 126、Safari 16.4、Samsung Internet 14、Opera 70です。iPhoneのホーム画面に追加したウェブアプリでは、iOS 18.4以降が必要です。Firefox 125以前などの古いバージョンでは、タップして同意すると動画の代替方式に切り替わります。資料で確認できない組み合わせは、この表に載せていません。"
 crumb: "対応ブラウザ一覧"
+toc:
+  対応表2026年9月26日時点: "対応表"
 rows:
   refusals:
     - title: "ページがHTTPSで開かれていること"
@@ -73,6 +75,16 @@ AwakeTabは安全な接続で表示されているページから`navigator.wake
 
 ## 確認の方法について
 
-各行は、ブラウザの資料とソースコード（2026年9月26日に確認）にもとづいています。実機での記録はまだありません。ブラウザの更新で挙動が変わることがあるため、行の内容はその日付に限って有効だと考えてください。表にないブラウザやバージョンについては、対応しているともいないとも主張しません。実機での結果は、記録でき次第「how we tested」のページ（英語）で公開します。
+各行は、ブラウザの資料とソースコード（2026年9月26日に確認）にもとづいています。
+
+- [MDN browser-compat-data, WakeLock](https://github.com/mdn/browser-compat-data/blob/main/api/WakeLock.json)
+- [New in Chrome 84](https://developer.chrome.com/blog/new-in-chrome-84/)
+- [Firefox 126 release notes for developers](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/126)
+- [WebKit features in Safari 18.4](https://webkit.org/blog/16574/webkit-features-in-safari-18-4/)
+- [Chromium wake_lock.cc](https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/modules/wake_lock/wake_lock.cc)
+- [WebKit WakeLock.cpp](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/Modules/screen-wake-lock/WakeLock.cpp)
+- [Firefox WakeLockJS.cpp](https://github.com/mozilla-firefox/firefox/blob/main/dom/power/WakeLockJS.cpp)
+
+実機での記録はまだありません。ブラウザの更新で挙動が変わることがあるため、行の内容はその日付に限って有効だと考えてください。表にないブラウザやバージョンについては、対応しているともいないとも主張しません。実機での結果は、記録でき次第「how we tested」のページ（英語）で公開します。
 
 ::limit inline

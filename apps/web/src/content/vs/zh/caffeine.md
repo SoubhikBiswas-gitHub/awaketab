@@ -14,6 +14,9 @@ lastVerified: 2026-09-09
 browsers: []
 os: []
 crumb: "Caffeine"
+toc:
+  什么时候-caffeine-更合适: "Caffeine 更合适"
+  什么时候-awaketab-更合适: "AwakeTab 更合适"
 lead: "Caffeine 是一款 macOS 小工具，通过向系统发出电源断言让 Mac 保持唤醒，即使屏幕上没有任何窗口也照样生效；它不模拟按键（模拟 F15 键的是 Windows 上的 Zhorn Caffeine）。AwakeTab 则是一个浏览器标签页，使用浏览器标准的 Screen Wake Lock API，但要求标签页始终可见。需要后台或无窗口运行时，选 Caffeine 这样的原生应用（合盖后是否睡眠由 macOS 决定）；只是想让屏幕在你看着的时候别熄灭、不想额外装软件，并且希望状态显示如实可信时，选 AwakeTab。"
 compare:
   label: "AwakeTab 与 Caffeine 对比一览"

@@ -44,7 +44,7 @@ faq:
   - q: "iPhone पर होम स्क्रीन ऐप और Safari में क्या फ़र्क है?"
     a: "Safari टैब में नेटिव लॉक Safari 16.4 से मिलता है। होम स्क्रीन पर इंस्टॉल किए गए वेब ऐप में यह iOS 18.4 से मिलता है। पुराने iOS पर AwakeTab को Safari में ही चलाएँ।"
   - q: "इस तालिका के वर्ज़न कितने ताज़ा हैं?"
-    a: "वर्ज़न और सीमाएँ ब्राउज़र के दस्तावेज़ और सोर्स कोड से ली गई हैं, जिन्हें 26 सितंबर 2026 को जाँचा गया। किसी भी डिवाइस पर हमारा अपना परीक्षण अभी दर्ज नहीं है; नतीजे /learn/how-we-tested पर आएँगे।"
+    a: "वर्ज़न और सीमाएँ ब्राउज़र के दस्तावेज़ और सोर्स कोड से ली गई हैं, जिन्हें 26 सितंबर 2026 को जाँचा गया। किसी भी डिवाइस पर हमारा अपना परीक्षण अभी दर्ज नहीं है; नतीजे [How AwakeTab is checked](/learn/how-we-tested) पर आएँगे।"
 honestLimit: "यह तालिका ब्राउज़र के दस्तावेज़ और सोर्स कोड पर आधारित है, डिवाइस परीक्षण पर नहीं; इन वर्ज़न से पुराने ब्राउज़र नेटिव लॉक के बजाय फ़ॉलबैक पर चलते हैं, और टैब छिपते ही हर ब्राउज़र लॉक छोड़ देता है।"
 related:
   - "/learn/how-we-tested"
@@ -99,6 +99,16 @@ AwakeTab का पिल सात में से किसी एक हा�
 
 ## स्रोत और तारीख़
 
-तालिका की हर पंक्ति ब्राउज़र के दस्तावेज़ और सोर्स कोड पर आधारित है, जिन्हें 26 सितंबर 2026 को जाँचा गया। डिवाइस पर हमारा अपना परीक्षण अभी दर्ज नहीं है। ब्राउज़र बदलते रहते हैं, इसलिए कोई नया वर्ज़न व्यवहार बदल दे तो पिल ही असली सच बताएगा, तालिका नहीं। डिवाइस परीक्षण के नतीजे [/learn/how-we-tested](/learn/how-we-tested) पर आएँगे।
+तालिका की हर पंक्ति ब्राउज़र के दस्तावेज़ और सोर्स कोड पर आधारित है, जिन्हें 26 सितंबर 2026 को जाँचा गया।
+
+- [MDN browser-compat-data, WakeLock](https://github.com/mdn/browser-compat-data/blob/main/api/WakeLock.json)
+- [New in Chrome 84](https://developer.chrome.com/blog/new-in-chrome-84/)
+- [Firefox 126 release notes for developers](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/126)
+- [WebKit features in Safari 18.4](https://webkit.org/blog/16574/webkit-features-in-safari-18-4/)
+- [Chromium wake_lock.cc](https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/modules/wake_lock/wake_lock.cc)
+- [WebKit WakeLock.cpp](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/Modules/screen-wake-lock/WakeLock.cpp)
+- [Firefox WakeLockJS.cpp](https://github.com/mozilla-firefox/firefox/blob/main/dom/power/WakeLockJS.cpp)
+
+डिवाइस पर हमारा अपना परीक्षण अभी दर्ज नहीं है। ब्राउज़र बदलते रहते हैं, इसलिए कोई नया वर्ज़न व्यवहार बदल दे तो पिल ही असली सच बताएगा, तालिका नहीं। डिवाइस परीक्षण के नतीजे [How AwakeTab is checked](/learn/how-we-tested) पर आएँगे।
 
 ::limit inline

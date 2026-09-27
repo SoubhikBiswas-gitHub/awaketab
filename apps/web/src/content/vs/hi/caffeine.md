@@ -14,6 +14,8 @@ lastVerified: 2026-09-09
 browsers: []
 os: []
 crumb: "Caffeine"
+toc:
+  mac-पर-awaketab-की-सीमाएँ: "Mac पर सीमाएँ"
 lead: "Caffeine, macOS का एक छोटा ऐप है जो macOS पावर असर्शन रखकर (कोई कुंजी दबाए बिना) Mac को जगाए रखता है, कोई विंडो खुली न हो तब भी (26 सितंबर 2026 तक की जानकारी)। AwakeTab एक दिखता हुआ ब्राउज़र टैब है जो मानक Screen Wake Lock API से स्क्रीन जगाता है। अगर स्क्रीन पर कुछ भी दिखे बिना Mac को जगाए रखना है, तो Caffeine चुनें। अगर आप कोई अतिरिक्त ऐप नहीं चाहते और एक ऐसा स्टेटस पिल चाहते हैं जो सच बोले, तो AwakeTab।"
 compare:
   label: "AwakeTab और Caffeine (macOS) की आमने-सामने तुलना"

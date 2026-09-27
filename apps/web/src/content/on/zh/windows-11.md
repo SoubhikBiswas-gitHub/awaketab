@@ -14,6 +14,8 @@ browsers: ["chrome", "edge"]
 os: ["windows"]
 lead: "在 Windows 11 上，Chrome 84 及以上版本和 Edge 84 及以上版本都能为可见的标签页提供原生屏幕唤醒锁。打开 AwakeTab，本页预设 1 小时，点按开始，状态标签显示“屏幕保持常亮”后，屏幕就不会按电源设置里的时间熄灭。同样的步骤在 Windows 10 上也适用。限制有三条：标签页被隐藏就会失效；合上笔记本盖子会睡眠；采用新式待机（Modern Standby）的电脑属于固件层面的另一回事，行为可能与预期不同。"
 crumb: "Windows 11 和 10"
+toc:
+  chrome-和-edge-上的注意事项: "Chrome 和 Edge"
 facts:
   - label: "Chrome 和 Edge"
     value: "84 及以上"

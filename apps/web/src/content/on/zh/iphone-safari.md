@@ -13,6 +13,9 @@ lastVerified: 2026-09-09
 browsers: ["safari"]
 os: ["ios"]
 crumb: "iPhone Safari"
+toc:
+  低电量模式是最常见的拦路虎: "低电量模式"
+  切换应用切换标签页都会暂停: "切换应用、切换标签页"
 lead: "从 Safari 16.4 开始，iPhone 上的网页也能请求原生的屏幕唤醒锁（Wake Lock）。在 Safari 中打开 AwakeTab，默认时长为 30 分钟，点按开始后，只要状态标签显示“屏幕保持常亮”，iPhone 就不会按“自动锁定”的时间熄屏。但有两条硬性限制：低电量模式开启时会强制 30 秒自动锁定，“永不”也会变灰；一旦离开 Safari，锁就会被收回。"
 facts:
   - label: "Safari"
@@ -33,6 +36,30 @@ steps:
   - title: "需要更久时，在提示中延长"
     text: "在“时间到。要继续吗？”提示中延长，不要以为选了 30 分钟也会一直常亮。"
     shot: "“时间到。要继续吗？”提示"
+matrix:
+  label: "iPhone 支持情况（2026年9月9日的支持矩阵）"
+  cols: ["环境", "结果", "说明"]
+  rows:
+    - what: "Safari 16.4 及以上"
+      result: works
+      label: "支持"
+      text: "点按开始后，只要状态标签显示“屏幕保持常亮”，iPhone 就不会按“自动锁定”的时间熄屏。"
+    - what: "回到主屏幕、打开其他 App、切换到 Safari 的另一个标签页，或者锁屏"
+      result: pauses
+      label: "暂停"
+      text: "回到这个标签页后，状态恢复为“屏幕保持常亮”，计时才会继续。"
+    - what: "低电量模式"
+      result: untested
+      label: "还没有记录到真机结果"
+      text: "低电量模式开启后，iOS 会把自动锁定强制设为 30 秒，并让“设置 → 显示与亮度 → 自动锁定”里的“永不”无法选择。"
+    - what: "主屏幕 App，iOS 18.4 及以上"
+      result: works
+      label: "支持"
+      text: "通过 Safari 的“添加到主屏幕”安装后，主屏幕 App 在 iOS 18.4 及以上版本可以使用原生唤醒锁；更早的版本请继续在 Safari 标签页里使用。"
+    - what: "低于 Safari 16.4"
+      result: fallback
+      label: "视频备用方案"
+      text: "你可以更新系统，或点按“开始”使用视频备用方案——它需要你亲手点按一次才能启动，并且比原生唤醒锁更耗电。"
 rows:
   myths:
     - title: "“屏幕亮着，App 就在后台运行”"
@@ -65,6 +92,8 @@ updated: 2026-09-27
 ## 在 iPhone 上怎么用
 
 ::steps
+
+::matrix
 
 ::ad
 

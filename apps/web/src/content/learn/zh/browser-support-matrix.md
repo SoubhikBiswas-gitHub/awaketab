@@ -85,6 +85,16 @@ updated: 2026-09-27
 
 ## 数据的时效
 
-浏览器更新很快，这张表只对 2026年9月26日核对的资料负责，每一行都与该日期绑定。真机测试结果还没有记录，记录后会发布在[我们如何测试](/learn/how-we-tested)。如果你的浏览器不在表中，最可靠的判断方式是打开 AwakeTab，点按开始后看状态标签：显示“屏幕保持常亮”，就说明浏览器确实持有了锁；想在 iPhone 上使用，可参考 [iPhone Safari 屏幕常亮](/zh/on/iphone-safari)。
+浏览器更新很快，这张表只对 2026年9月26日核对的资料负责，每一行都与该日期绑定。
+
+- [MDN browser-compat-data, WakeLock](https://github.com/mdn/browser-compat-data/blob/main/api/WakeLock.json)
+- [New in Chrome 84](https://developer.chrome.com/blog/new-in-chrome-84/)
+- [Firefox 126 release notes for developers](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/126)
+- [WebKit features in Safari 18.4](https://webkit.org/blog/16574/webkit-features-in-safari-18-4/)
+- [Chromium wake_lock.cc](https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/modules/wake_lock/wake_lock.cc)
+- [WebKit WakeLock.cpp](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/Modules/screen-wake-lock/WakeLock.cpp)
+- [Firefox WakeLockJS.cpp](https://github.com/mozilla-firefox/firefox/blob/main/dom/power/WakeLockJS.cpp)
+
+真机测试结果还没有记录，记录后会发布在[我们如何测试](/learn/how-we-tested)。如果你的浏览器不在表中，最可靠的判断方式是打开 AwakeTab，点按开始后看状态标签：显示“屏幕保持常亮”，就说明浏览器确实持有了锁；想在 iPhone 上使用，可参考 [iPhone Safari 屏幕常亮](/zh/on/iphone-safari)。
 
 ::limit inline

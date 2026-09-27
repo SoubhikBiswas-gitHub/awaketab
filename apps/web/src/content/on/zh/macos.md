@@ -14,6 +14,9 @@ browsers: ["chrome", "safari", "firefox"]
 os: ["macos"]
 lead: "在 Mac 上，Safari 16.4 及以上、Chrome 84 及以上和 Firefox 126 及以上版本都支持屏幕唤醒锁（Wake Lock），AwakeTab 可以借此让**显示器**保持常亮。打开本页工具，预设时长 1 小时，点按开始，状态标签显示“屏幕保持常亮”即表示浏览器已经持有锁。在这期间，Mac 也不会进入空闲休眠；但合上盖子仍会睡眠。"
 crumb: "Mac"
+toc:
+  显示器休眠与系统睡眠的关系: "显示器休眠与系统睡眠"
+  哪些场景适合在-mac-上用-awaketab: "哪些场景适合"
 facts:
   - label: "Safari"
     value: "16.4 及以上"
