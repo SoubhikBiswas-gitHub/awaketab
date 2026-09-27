@@ -5,6 +5,8 @@ import { localePath, type TLocale } from '../i18n/locales';
 import ToolPanel from './ToolPanel.astro';
 import SiteHeader from './shell/SiteHeader.astro';
 import { POLAR_PORTAL_URL } from '../lib/pro-common';
+import { toolReady } from '../lib/tool-ready';
+import { stripLocale } from '../tool/params';
 
 interface Props {
   heading: string;
@@ -30,9 +32,18 @@ const {
   until,
 } = Astro.props;
 const t = createT(locale);
-// Routes that start on load (tool/params.ts isToolAutostartRoute) hide the pill and note until the outcome is known,
-// so Ready → Starting… → Screen awake never moves the layout on first paint (CLS 0).
-const auto = !embed && autostart !== '0' && (Astro.url.pathname === '/' || !!preset || !!until);
+// Routes that start on load (tool/params.ts isToolAutostartRoute) hold the pill until the browser answers, so it
+// never shows Ready and then Screen awake; boot.js lifts this for ?autostart=0 before the first paint.
+const auto = !embed && autostart !== '0' && (stripLocale(Astro.url.pathname) === '/' || !!preset || !!until);
+// /8h is the one full tool that passes 'custom' (tool/params.ts: an eight-hour custom plan).
+const ready = toolReady(t, preset, !embed && preset === 'custom');
+// The wall time as the island formats it (tool/format.ts hm, the locale's own clock); boot.js fills what depends on
+// today's date.
+const untilAt = until
+  ? new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit', timeZone: 'UTC', numberingSystem: 'latn' }).format(
+      Date.UTC(2000, 0, 1, Number(until.slice(0, 2)), Number(until.slice(3))),
+    )
+  : '';
 // The embedded card's eyebrow (ContentArticle / GuideGuides boards): the page's suggested length, or cook mode.
 const PRESET_LABEL: Record<string, string> = {
   p15: 'p15',
@@ -86,15 +97,16 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
   data-status="ready"
   data-open=""
   data-auto={auto ? '' : undefined}
+  data-inf={!until && !ready.sec ? '' : undefined}
+  data-units={!until && ready.sec >= 3600 ? 'h' : undefined}
+  data-sec={!until && ready.sec ? ready.sec : undefined}
+  data-until={until}
+  data-chip={until ? t('tool.chip.untilAt') : undefined}
+  data-tmr={t('tool.when.tomorrow')}
+  data-sky={['dawn', 'day', 'dusk', 'night'].map((p) => t(`tool.sky.${p}`)).join('|')}
   data-manifest={embed ? undefined : localePath(locale, '/manifest.webmanifest')}
 >
-  {
-    auto && (
-      <noscript>
-        <style is:inline>{'.at-island :is(.at-pillline, .at-noterow, .at-untilchips, .at-kick, .at-meta) { visibility: visible !important; }'}</style>
-      </noscript>
-    )
-  }
+  {auto && <noscript><style is:inline>{'.at-pillline{visibility:visible!important}'}</style></noscript>}
   {
     embed ? (
       <section class="at-embed-card" aria-label={t('app.name')}>
@@ -106,7 +118,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
             </svg>
           </button>
         </div>
-        <ToolPanel locale={locale} embed kicker={cardKicker} />
+        <ToolPanel locale={locale} embed kicker={cardKicker} ready={ready} />
       </section>
     ) : (
       <>
@@ -325,7 +337,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
               <time class="at-date" data-t="date" />
               <time class="at-now" data-t="now" />
             </p>
-            <ToolPanel locale={locale} until={until} />
+            <ToolPanel locale={locale} until={until} untilAt={untilAt} ready={ready} />
           </div>
           <div class="at-below">
             <div class="at-below-head">

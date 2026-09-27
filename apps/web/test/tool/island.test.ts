@@ -75,12 +75,17 @@ describe('view status (canvas statuses from the seven lock states)', () => {
     ).toBe('ended');
   });
 
-  it('keeps a refused auto-start on the Ready layout until the user taps (decision O-70)', () => {
+  it('keeps a start the page made on load on Ready until the browser grants it', () => {
     const s = initialState();
-    const tap = { ...s, lock: 'denied' as const, ui: { ...s.ui, tap: true } };
-    expect(statusOf(tap)).toBe('ready');
-    expect(statusOf({ ...tap, lock: 'requesting' })).toBe('starting');
-    expect(statusOf({ ...tap, ui: { ...tap.ui, tap: false } })).toBe('blocked');
+    const auto = { ...s, ui: { ...s.ui, auto: true } };
+    expect(statusOf({ ...auto, lock: 'requesting' })).toBe('ready');
+    expect(statusOf({ ...auto, lock: 'denied' })).toBe('ready');
+    expect(statusOf({ ...auto, lock: 'held' })).toBe('awake');
+    // After a grant, a later request (coming back to the tab) and a refusal are shown as they are.
+    expect(statusOf({ ...auto, lock: 'requesting', ui: { ...auto.ui, ok: 1 } })).toBe('starting');
+    expect(statusOf({ ...auto, lock: 'denied', ui: { ...auto.ui, ok: 1 } })).toBe('blocked');
+    // A refused tap shows the fix.
+    expect(statusOf({ ...s, lock: 'denied' })).toBe('blocked');
   });
 
   it('plans the selected length: presets, no limit, custom and 8 h', () => {

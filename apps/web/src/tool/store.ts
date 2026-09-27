@@ -53,7 +53,6 @@ export interface IToolState {
     rcpt: boolean;
     auto: boolean;
     past: boolean;
-    tap: boolean;
   };
 }
 
@@ -99,7 +98,6 @@ export function initialState(settings: ISettings = DEFAULT_SETTINGS): IToolState
       rcpt: false,
       auto: false,
       past: false,
-      tap: false,
     },
   };
 }

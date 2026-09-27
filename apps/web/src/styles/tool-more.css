@@ -609,6 +609,11 @@
   display: none;
 }
 
+.at-dock:has(> .at-dockcard:not([hidden])) .at-cta,
+.at-island:has(.at-dockcard[data-resume]:not([hidden])) :is(.at-len, .at-tabs) {
+  display: none;
+}
+
 .at-dockcard-head {
   display: flex;
   align-items: flex-start;
