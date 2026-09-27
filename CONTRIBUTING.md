@@ -89,7 +89,7 @@ Useful commands:
 | [docs/11-embed-spec.md](docs/11-embed-spec.md) | The Cook Mode embed widget                                                |
 | [docs/12-library-spec.md](docs/12-library-spec.md) | The `@awaketab/wake` library                                          |
 | [docs/13-testing-strategy.md](docs/13-testing-strategy.md) | What each test suite proves                                   |
-| [docs/redesign/README.md](docs/redesign/README.md) | Status and decisions of the Clear Night redesign                      |
+| [docs/redesign/DECISIONS.md](docs/redesign/DECISIONS.md) | Design decisions of the Clear Night redesign                        |
 | [DESIGN.md](DESIGN.md) and `design/canvas/`    | The Clear Night design system and its design canvas boards               |
 
 ## Reporting bugs
