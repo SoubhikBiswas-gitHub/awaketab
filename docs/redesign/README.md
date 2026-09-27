@@ -53,4 +53,5 @@ AwakeTab is getting a full UI/UX redesign called **"Clear Night" (version D)**. 
 - 27 Sep 2026: Design critique done (design-critique.md): tool close to wow, product not yet (drift); DESIGN.md corrected (D-R17). Audit B fixes published. All 4 marketing reports and the content audit done.
 - 27 Sep 2026: Languages/accessibility boards and 46 Growth boards on canvas (264 boards). Fix batch 2 (2a Pro/extension/growth, 2b embed/pages/kiosk/system) started from fix-batch-brief.md.
 - 27 Sep 2026: Owner delegated every open question; all 87 decided (DECISIONS.md "Decided under owner delegation"). Owner: domain and accounts are the last step, after design and build.
-- Next: fix batches 1a/2a/2b, final audit, then build, fix batches 1–2, final audit, owner review, build.
+- 27 Sep 2026 (cloud agent): fix batches 1a, 2a, 2b and the 1b follow-up finished (docs/research/fix-batch-*.md); board heights synced; 18 duplicate boards removed (D-R18); primitives merged into design/canvas/PRIMITIVES.md (O-77); final audit done (docs/research/final-audit.md); canvas published (251 boards).
+- Next: owner reviews the canvas (the one approval gate), then the build phase on redesign/clear-night.

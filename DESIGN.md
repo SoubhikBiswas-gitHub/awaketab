@@ -110,7 +110,7 @@ Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · butt
 
 Phone bottom dock (user decision): the length block (15m · 30m · 1h · 2h · No limit, then Until a time… · Custom…) always stays above the actions with a 20 px gap; the actions (+15 min · Stop, or the lamp CTA "Keep awake · 30 min") sit at the very bottom. Changing the length while running applies immediately.
 
-Presets per size: phone shows 15m · 30m · 1h · 2h · No limit (45 min and 4 h stay reachable through Custom… and the `/45m`, `/4h` routes); tablet and desktop show the full set 15 min · 30 min · 45 min · 1 h · 2 h · 4 h · No limit.
+Presets per size (decision O-74): every phone shows all seven in a two-row grid, 15 min · 30 min · 45 min · 1 h · 2 h / 4 h · ∞ · Until… · Custom… (at 320 px four columns, the eighth cell More… holds Until… and Custom…); tablet and desktop show 15 min · 30 min · 45 min · 1 h · 2 h · 4 h · ∞ in one bar. ∞ is named "Until I stop".
 
 Ads and sponsor (contract, docs/00 §8.3): no Google ads on the tool, presets, `/until`, `/pip`, `/embed`, `/pro*` or the extension. Content pages (`/for`, `/on`, `/vs`, `/guides`, `/learn`) may carry a 160×600 desktop rail and one inline 336×280 (300×250 on phones), labelled "Advertisement", never touching the tool card. The 300×100 "Sponsored" card may appear only in Ready/held and the extend prompt, never in Night or Minimal.
 

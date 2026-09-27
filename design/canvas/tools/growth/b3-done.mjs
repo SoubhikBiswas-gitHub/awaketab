@@ -94,7 +94,7 @@ ${DATELINE}
             <a href="PageExtension.dc.html" style="${SECONDARY}; display: inline-flex; align-items: center; text-decoration: none">Get the extension</a>
             <button onClick="{{dismiss}}" style="${GHOST}">Not now</button>
           </div>
-          <p style="font-size: 13px; color: {{t.muted}}">Free. Chrome, Edge, Brave, Arc and Opera.</p>
+          <p style="font-size: 13px; color: {{t.muted}}">Free. Chrome and Edge.</p>
         </aside>
       </sc-if>
 
