@@ -4,7 +4,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { PRODUCTION_LICENSE_PUBLIC_KEYS } from '../../../../packages/core/src/license';
-import { servedFile } from '../../scripts/served.mjs';
+import { servedFile, servedPath } from '../../scripts/served.mjs';
 
 const dist = process.env.AT_DIST ? path.resolve(process.env.AT_DIST) : path.resolve(import.meta.dirname, '../../dist');
 const devVars = path.resolve(import.meta.dirname, '../../.dev.vars.example');
@@ -266,26 +266,111 @@ describe('security headers per route class (docs/14 §3)', async () => {
   });
 });
 
-describe('inline boot script (docs/05 §11)', () => {
-  it('every built page carries only inline scripts whose sha256 the route CSP allows', async () => {
-    const { createHash } = await import('node:crypto');
-    const headers = await readFile(path.join(dist, '_headers'), 'utf8');
+// A tokenizer rather than a regex: <script> text inside an attribute value (the library page's copyable code
+// samples) or a comment is not a script. JSON and other data blocks are not executed and need no hash.
+const EXECUTABLE_TYPE = /^(?:|module|importmap|speculationrules|(?:text|application)\/(?:x-)?(?:java|ecma)script)$/iu;
+const RAW_TEXT = new Set(['script', 'style', 'textarea', 'title']);
+
+function attributes(raw: string): Map<string, string> {
+  const out = new Map<string, string>();
+  for (const m of raw.matchAll(/([^\s"'>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/gu)) {
+    const [, name = '', dq, sq, bare] = m;
+    out.set(name.toLowerCase(), dq ?? sq ?? bare ?? '');
+  }
+  return out;
+}
+
+function inlineCode(html: string): { scripts: string[]; handlers: string[] } {
+  const scripts: string[] = [];
+  const handlers: string[] = [];
+  let i = 0;
+  while ((i = html.indexOf('<', i)) !== -1) {
+    if (html.startsWith('<!--', i)) {
+      const end = html.indexOf('-->', i + 4);
+      i = end === -1 ? html.length : end + 3;
+      continue;
+    }
+    const open = /^<([A-Za-z][\w-]*)/u.exec(html.slice(i, i + 64));
+    if (!open?.[1]) {
+      i += 1;
+      continue;
+    }
+    let j = i + open[0].length;
+    let quote = '';
+    for (; j < html.length; j += 1) {
+      const c = html[j];
+      if (quote) {
+        if (c === quote) quote = '';
+      } else if (c === '"' || c === "'") quote = c;
+      else if (c === '>') break;
+    }
+    const tag = open[1].toLowerCase();
+    const attrs = attributes(html.slice(i + open[0].length, j));
+    for (const [name, value] of attrs) {
+      if (/^on[a-z]/u.test(name)) handlers.push(`<${tag} ${name}>`);
+      if (/^\s*javascript:/iu.test(value)) handlers.push(`<${tag} ${name}="javascript:">`);
+    }
+    i = j + 1;
+    if (!RAW_TEXT.has(tag)) continue;
+    const close = new RegExp(`</${tag}[\\s>]`, 'giu');
+    close.lastIndex = i;
+    const end = close.exec(html)?.index ?? html.length;
+    if (tag === 'script' && !attrs.has('src') && EXECUTABLE_TYPE.test((attrs.get('type') ?? '').trim()))
+      scripts.push(html.slice(i, end));
+    i = end;
+  }
+  return { scripts, handlers };
+}
+
+describe('inline scripts against the served CSP (docs/05 §11)', async () => {
+  const { createHash } = await import('node:crypto');
+  const headers = await readFile(path.join(dist, '_headers'), 'utf8');
+  const rules = parseHeaders(headers);
+  const pages = (await files(dist)).filter((f) => f.endsWith('.html')).map((f) => path.relative(dist, f));
+
+  it('the tokenizer finds real scripts and skips data blocks, comments and script text in attributes', () => {
+    const { scripts, handlers } = inlineCode(
+      '<script>a()</script><script type="module">b()</script><script type="application/ld+json">{}</script>' +
+        '<script type="application/json" data-x>{}</script><script src="/x.js"></script><!-- <script>c()</script> -->' +
+        '<pre data-code="<script>d()</script>"></pre><button onclick="e()">x</button><a href="javascript:f()">y</a>',
+    );
+    expect(scripts).toEqual(['a()', 'b()']);
+    expect(handlers).toEqual(['<button onclick>', '<a href="javascript:">']);
+  });
+
+  it('the whole site allows exactly one inline script hash: the boot script', () => {
     const allowed = new Set([...headers.matchAll(/'sha256-[A-Za-z0-9+/]+=*'/gu)].map((m) => m[0]));
     expect(allowed.size).toBe(1);
-    const pages = ['/', '/30m', '/for/cooking', '/es/', '/embed/cook', '/pro'];
-    for (const page of pages) {
-      const html = await readFile(path.join(dist, servedFile(page)), 'utf8');
-      // Executable inline scripts only: JSON data blocks are not scripts and need no hash.
-      const inline = [
-        ...html.matchAll(
-          /<script(?![^>]*\bsrc=)(?![^>]*type="application\/(?:ld\+)?json")[^>]*>([\s\S]*?)<\/script>/gu,
-        ),
-      ];
-      expect(inline.length, page).toBe(1);
-      for (const [, body = ''] of inline) {
-        const hash = `'sha256-${createHash('sha256').update(body).digest('base64')}'`;
-        expect(allowed.has(hash), `${page}: inline script hash not in CSP`).toBe(true);
+  });
+
+  it('checks every built page', () => {
+    expect(pages.length).toBeGreaterThan(400);
+  });
+
+  // Each page is checked at the URL Pages serves it at (served.mjs), against that route's effective policy. A hash
+  // cannot allow an event-handler attribute or a javascript: URL, so none may appear.
+  it('every built page runs only the inline boot script, allowed by hash in its route CSP', async () => {
+    const failures: string[] = [];
+    for (const file of pages) {
+      const url = servedPath(file.split(path.sep).join('/'));
+      const csp = effective(rules, url).get('content-security-policy');
+      if (!csp) {
+        failures.push(`${url}: no CSP`);
+        continue;
       }
+      const d = directives(csp);
+      const sources = new Set(
+        (d.get('script-src-elem') ?? d.get('script-src') ?? d.get('default-src') ?? '').split(' '),
+      );
+      if (sources.has("'unsafe-inline'") || sources.has("'unsafe-hashes'")) failures.push(`${url}: unsafe script-src`);
+      const { scripts, handlers } = inlineCode(await readFile(path.join(dist, file), 'utf8'));
+      if (scripts.length !== 1) failures.push(`${url}: ${String(scripts.length)} inline scripts, expected 1`);
+      for (const body of scripts) {
+        const hash = `'sha256-${createHash('sha256').update(body).digest('base64')}'`;
+        if (!sources.has(hash)) failures.push(`${url}: inline script ${hash} not in script-src`);
+      }
+      for (const h of handlers) failures.push(`${url}: ${h}`);
     }
+    expect(failures).toEqual([]);
   });
 });

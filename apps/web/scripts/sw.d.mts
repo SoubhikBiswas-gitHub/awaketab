@@ -3,6 +3,14 @@ export interface IPrecacheEntry {
   revision: string | null;
 }
 
-export const SHELL_PAGES: Array<[url: string, file: string]>;
+export interface IShellEntry {
+  url: string;
+  revision: string;
+  lang: string;
+  install: boolean;
+}
+
+export const SHELL_PAGES: Array<{ lang: string; url: string; file: string; install: boolean }>;
 export function precacheManifest(dist?: string): Promise<IPrecacheEntry[]>;
-export function buildServiceWorker(dist?: string): Promise<{ entries: number; bytes: number }>;
+export function shellManifest(dist?: string): Promise<IShellEntry[]>;
+export function buildServiceWorker(dist?: string): Promise<{ entries: number; shell: number; bytes: number }>;
