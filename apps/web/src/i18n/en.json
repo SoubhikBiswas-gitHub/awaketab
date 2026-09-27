@@ -397,6 +397,9 @@
   "tool.pill.denied": "Blocked — here's the fix",
   "tool.pill.unsupported": "Tap to use the fallback",
   "tool.pill.fallback": "Awake via video fallback",
+  "tool.tab.awake": "● {timer}",
+  "tool.tab.paused": "Paused · {timer}",
+  "tool.tab.blocked": "Blocked · AwakeTab",
 
   "tool.ring.label": "Keep screen awake. {status}",
   "tool.ring.indefinite": "Progress ring: keeping the screen awake until you stop",
