@@ -22,6 +22,28 @@ facts:
     value: "126 o posterior"
   - label: "Opera"
     value: "70 o posterior"
+matrix:
+  label: "Tabla de compatibilidad"
+  cols: ["Navegador", "Mecanismo", "Nota"]
+  rows:
+    - what: "Firefox 126 o posterior"
+      result: works
+      label: "Nativo"
+      text: "Rechaza y libera el bloqueo con la batería al 5 % o menos sin cargar."
+    - what: "Opera 70 o posterior"
+      result: works
+      label: "Nativo"
+      text: "Basado en Chromium; la pestaña debe seguir visible."
+    - what: "Video de respaldo"
+      result: fallback
+      label: "Respaldo"
+      text: "Con un Firefox más antiguo, AwakeTab ofrece un video de respaldo que requiere un clic y consume más energía."
+rows:
+  blockers:
+    - title: "Modern Standby"
+      text: "Muchas laptops con Windows 11 usan Modern Standby, un estado de reposo que maneja el firmware y tiene sus propias rarezas. Un Wake Lock del navegador no controla ese nivel."
+    - title: "La tapa cerrada"
+      text: "Al cerrarla, el equipo hace lo que indique la acción de la tapa en Windows (normalmente, suspenderse), sin importar lo que diga cualquier página web o extensión."
 faq:
   - q: "¿Funciona igual en Edge que en Chrome?"
     a: "Sí. Los dos tienen Wake Lock nativo desde la versión 84 en Windows. El modo de eficiencia de Edge no rechaza el bloqueo, porque Edge usa el mismo código de Chromium; si el indicador no llega a “Pantalla despierta”, el motivo aparece debajo."
@@ -40,7 +62,7 @@ related:
   - "/for/presentations"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 ## Dónde dejar la ventana
@@ -55,7 +77,9 @@ Si minimizas el navegador o cambias de pestaña, el indicador pasa a “En pausa
 
 ## Otros navegadores en Windows
 
-Según la documentación de los navegadores (revisada el 26 de septiembre de 2026), Firefox 126+ y Opera 70+ también tienen Wake Lock nativo en Windows. Con un Firefox más antiguo, AwakeTab ofrece un video de respaldo que requiere un clic y consume más energía.
+Según la documentación de los navegadores (revisada el 26 de septiembre de 2026), Firefox 126+ y Opera 70+ también tienen Wake Lock nativo en Windows.
+
+::matrix
 
 ## Sin tocar la configuración de energía
 
@@ -69,7 +93,7 @@ En Windows 11 24H2, el ahorro de batería pasó a llamarse ahorro de energía (�
 
 ## Modern Standby y la tapa cerrada
 
-Muchas laptops con Windows 11 usan Modern Standby, un estado de reposo que maneja el firmware y tiene sus propias rarezas. Un Wake Lock del navegador no controla ese nivel. Lo mismo con la tapa: al cerrarla, el equipo hace lo que indique la acción de la tapa en Windows (normalmente, suspenderse), sin importar lo que diga cualquier página web o extensión.
+::rows blockers
 
 ## Lo que no cambia
 

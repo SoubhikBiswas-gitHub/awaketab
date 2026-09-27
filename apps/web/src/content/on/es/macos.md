@@ -34,6 +34,40 @@ steps:
   - title: "Deja la ventana a la vista"
     text: "Puede estar en un costado de la pantalla o en un monitor externo, pero no minimizada."
     shot: "una ventana pequeña de AwakeTab junto a otra app"
+matrix:
+  label: "Tabla de compatibilidad"
+  cols: ["Navegador", "Mecanismo", "Nota"]
+  rows:
+    - what: "Safari 16.4 o posterior"
+      result: works
+      label: "Nativo"
+      text: "Necesita un toque primero. La pestaña debe seguir visible."
+    - what: "Chrome 84 o posterior"
+      result: works
+      label: "Nativo"
+      text: "La pestaña debe seguir visible."
+    - what: "Firefox 126 o posterior"
+      result: works
+      label: "Nativo"
+      text: "Rechaza y libera el bloqueo con la batería al 5 % o menos sin cargar."
+    - what: "Edge 84 o posterior"
+      result: works
+      label: "Nativo"
+      text: "La pestaña debe seguir visible."
+    - what: "Opera 70 o posterior"
+      result: works
+      label: "Nativo"
+      text: "Basado en Chromium; la pestaña debe seguir visible."
+    - what: "Video de respaldo"
+      result: fallback
+      label: "Respaldo"
+      text: "Con un Firefox anterior, AwakeTab usa un video de respaldo tras un clic, que gasta más energía."
+rows:
+  limits:
+    - title: "No mantiene tu estado en verde en Teams, Slack o Zoom."
+      text: "Esas apps se fijan en si usas el teclado o el mouse, algo que AwakeTab jamás simula."
+    - title: "Si tu empresa impone un bloqueo de sesión por política, esa regla va por fuera del Wake Lock."
+    - title: "Si vas a dejar la pantalla encendida toda la noche, conéctala a la corriente."
 faq:
   - q: "¿AwakeTab evita que la Mac entre en reposo?"
     a: "Sí, mientras la pantalla siga encendida. Chrome sostiene una aserción que impide el reposo de la pantalla y, según la documentación de Apple, la Mac tampoco entra en reposo por inactividad mientras está activa. Si necesitas el equipo activo con la pantalla apagada, usa caffeinate u otra utilidad nativa."
@@ -52,7 +86,7 @@ related:
   - "/learn/does-a-wake-lock-keep-teams-green"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 ## Cómo dejarlo listo
@@ -60,6 +94,8 @@ updated: 2026-09-27
 ::steps
 
 Los ajustes del sistema que controlan cuándo se apaga la pantalla están en Ajustes del Sistema → Pantalla bloqueada y en Energía (o Batería en una MacBook). AwakeTab no los cambia: solo evita que ese tiempo corra mientras la pestaña sigue al frente.
+
+::matrix
 
 ::ad
 
@@ -77,8 +113,6 @@ El Wake Lock pertenece a la pestaña que ves. Minimizar la ventana o pasar a otr
 
 ## Otros límites en Mac
 
-- No mantiene tu estado en verde en Teams, Slack o Zoom. Esas apps se fijan en si usas el teclado o el mouse, algo que AwakeTab jamás simula.
-- Si tu empresa impone un bloqueo de sesión por política, esa regla va por fuera del Wake Lock.
-- Si vas a dejar la pantalla encendida toda la noche, conéctala a la corriente.
+::rows limits
 
 Si tu Mac se queda descargando algo pesado, la guía de [descargas](/es/for/descargas) resume qué esperar en cada sistema.

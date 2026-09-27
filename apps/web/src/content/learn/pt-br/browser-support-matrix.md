@@ -15,6 +15,23 @@ browsers: []
 os: []
 crumb: "Tabela de suporte"
 lead: "Pela tabela de suporte do AwakeTab, baseada na documentação e no código-fonte dos navegadores (conferidos em 26 de setembro de 2026), o Wake Lock de tela funciona de forma nativa a partir do Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 e Opera 70. Apps web adicionados à Tela de Início do iPhone precisam do iOS 18.4. Versões mais antigas, como Firefox anterior ao 126, usam o vídeo alternativo depois de um toque. Combinações que não conferimos não entram na tabela: não afirmamos suporte sem fonte."
+rows:
+  refusals:
+    - title: "Aba oculta"
+    - title: "Página incorporada sem a permissão `screen-wake-lock`"
+    - title: "Safari sem um toque antes"
+    - title: "Firefox com bateria em 5 % ou menos"
+  limits:
+    - title: "Segurar a tela com a aba oculta, o navegador minimizado ou o celular em outro app."
+    - title: "Impedir a suspensão com a tampa do notebook fechada."
+    - title: "Manter seu status verde no Teams, no Slack ou no Zoom."
+      text: "A presença segue o teclado e o mouse."
+    - title: "Impedir que a economia de energia do sistema escureça a tela."
+      text: "Ela não recusa o bloqueio, mas continua valendo."
+notes:
+  https:
+    kicker: "Um detalhe útil"
+    text: "Uma página sem HTTPS nem tem Wake Lock: o AwakeTab oferece a alternativa."
 faq:
   - q: "Suporte ao Wake Lock significa que a tela fica ligada com a aba em segundo plano?"
     a: "Não. Em todos os navegadores da tabela, o bloqueio só vale enquanto a aba está visível. Minimizar, trocar de aba ou de app libera o bloqueio, e o AwakeTab mostra “Pausado — aba oculta” até você voltar."
@@ -34,7 +51,7 @@ related:
   - "/on/ios-home-screen"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 ## Tabela de compatibilidade
@@ -56,7 +73,11 @@ updated: 2026-09-27
 
 **Nativo** quer dizer que o AwakeTab chama `navigator.wakeLock.request('screen')` e o navegador confirma. Só então o indicador diz “Tela ligada”. Se o navegador recusar, aparece “Bloqueado — veja como corrigir”, nunca um falso “ligado”.
 
-**Observação** lista o que costuma derrubar o bloqueio mesmo numa versão compatível: aba oculta, página incorporada sem a permissão `screen-wake-lock`, Safari sem um toque antes ou Firefox com bateria em 5 % ou menos. Uma página sem HTTPS nem tem Wake Lock: o AwakeTab oferece a alternativa.
+**Observação** lista o que costuma derrubar o bloqueio mesmo numa versão compatível:
+
+::rows refusals
+
+::note https
 
 ::ad
 
@@ -64,15 +85,22 @@ updated: 2026-09-27
 
 Esta tabela vem de um único arquivo de dados do AwakeTab, e todas as páginas do site citam as mesmas versões. Nenhuma página promete um número diferente do que aparece aqui. Quando um navegador mudar, a tabela e a data de verificação mudam juntas.
 
+Fontes verificadas em 26 de setembro de 2026:
+
+- [MDN browser-compat-data, WakeLock](https://github.com/mdn/browser-compat-data/blob/main/api/WakeLock.json)
+- [New in Chrome 84](https://developer.chrome.com/blog/new-in-chrome-84/)
+- [Firefox 126 release notes for developers](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/126)
+- [WebKit features in Safari 18.4](https://webkit.org/blog/16574/webkit-features-in-safari-18-4/)
+- [Chromium wake_lock.cc](https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/modules/wake_lock/wake_lock.cc)
+- [WebKit WakeLock.cpp](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/Modules/screen-wake-lock/WakeLock.cpp)
+- [Firefox WakeLockJS.cpp](https://github.com/mozilla-firefox/firefox/blob/main/dom/power/WakeLockJS.cpp)
+
 ## Guias por navegador
 
 Se você usa iPhone, veja [tela do iPhone sempre acesa no Safari](/pt-br/on/iphone-safari). Para Android, o caminho está em [tela do celular sempre ligada com o Chrome](/pt-br/on/android-chrome). Para as fontes e os testes em aparelhos, ainda pendentes, consulte [como testamos](/learn/how-we-tested).
 
 ## O que nenhum navegador da tabela faz
 
-- Segurar a tela com a aba oculta, o navegador minimizado ou o celular em outro app.
-- Impedir a suspensão com a tampa do notebook fechada.
-- Manter seu status verde no Teams, no Slack ou no Zoom. A presença segue o teclado e o mouse.
-- Impedir que a economia de energia do sistema escureça a tela. Ela não recusa o bloqueio, mas continua valendo.
+::rows limits
 
 ::limit inline

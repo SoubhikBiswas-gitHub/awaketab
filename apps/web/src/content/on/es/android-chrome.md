@@ -34,6 +34,36 @@ steps:
   - title: "Si quieres usar otra app al mismo tiempo"
     text: "Activa la pantalla dividida y deja AwakeTab en una de las mitades."
     shot: "la pantalla dividida con AwakeTab en una mitad"
+matrix:
+  label: "Tabla de compatibilidad"
+  cols: ["Navegador", "Mecanismo", "Nota"]
+  rows:
+    - what: "Chrome 84 o posterior"
+      result: works
+      label: "Nativo"
+      text: "La pestaña debe seguir visible."
+    - what: "Samsung Internet 14 o posterior"
+      result: works
+      label: "Nativo"
+      text: "Las “apps en suspensión” pueden cerrar el navegador después de que lo dejas; no afectan una pestaña visible."
+    - what: "Firefox 126 o posterior"
+      result: works
+      label: "Nativo"
+      text: "Rechaza y libera el bloqueo con la batería al 5 % o menos sin cargar."
+    - what: "Opera 70 o posterior"
+      result: works
+      label: "Nativo"
+      text: "Basado en Chromium; la pestaña debe seguir visible."
+    - what: "Video de respaldo"
+      result: fallback
+      label: "Respaldo"
+      text: "Con un Firefox más antiguo verás “Toca para usar el respaldo”: es un video mudo que consume más batería."
+rows:
+  blockers:
+    - title: "El Ahorro de batería"
+      text: "Chrome no revisa el Ahorro de batería al pedir el Wake Lock: según su código fuente (revisado el 26 de septiembre de 2026), solo lo rechaza si la pestaña no está visible o si una política del sitio lo bloquea. Lo que sí puede hacer el Ahorro de batería es acortar el tiempo de espera o atenuar la pantalla. Si alguna vez ves “Bloqueado — aquí está la solución”, AwakeTab muestra la causa real debajo."
+    - title: "Las “apps en suspensión”"
+      text: "Samsung y otros fabricantes agregan sus propias listas para poner en suspensión las apps que no usas. Si Chrome está en esa lista, el sistema puede cerrar la pestaña mientras estás en otra app, y al volver AwakeTab tendrá que empezar de nuevo. Si te pasa seguido, saca Chrome de esa lista en los ajustes de batería de tu equipo."
 faq:
   - q: "¿Por qué AwakeTab dice “Bloqueado — aquí está la solución” en mi celular?"
     a: "Casi siempre la pestaña no estaba a la vista cuando AwakeTab pidió el bloqueo, o la página está dentro de un marco (iframe) que no lo permite; el motivo aparece debajo del indicador. El Ahorro de batería no es la causa: Chrome no rechaza el Wake Lock por él. Repetir el intento sin cambiar esa condición da el mismo rechazo."
@@ -52,7 +82,7 @@ related:
   - "/learn/browser-support-matrix"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 ## Configura el celular en un minuto
@@ -65,13 +95,13 @@ El tiempo de apagado normal del sistema está en Ajustes → Pantalla → Tiempo
 
 ## Otros navegadores en Android
 
-Según nuestra [matriz de compatibilidad](/es/learn/matriz-compatibilidad-navegadores), basada en la documentación de los navegadores revisada el 26 de septiembre de 2026, además de Chrome 84+ tienen Wake Lock nativo en Android Samsung Internet 14+, Firefox 126+ y Opera 70+. Con un Firefox más antiguo verás “Toca para usar el respaldo”: es un video mudo que consume más batería. Para el iPhone, las reglas cambian un poco: [así funciona en Safari](/es/on/iphone-safari).
+Según nuestra [matriz de compatibilidad](/es/learn/matriz-compatibilidad-navegadores), basada en la documentación de los navegadores revisada el 26 de septiembre de 2026, además de Chrome 84+ tienen Wake Lock nativo en Android Samsung Internet 14+, Firefox 126+ y Opera 70+. Para el iPhone, las reglas cambian un poco: [así funciona en Safari](/es/on/iphone-safari).
+
+::matrix
 
 ## El Ahorro de batería y los fabricantes
 
-Chrome no revisa el Ahorro de batería al pedir el Wake Lock: según su código fuente (revisado el 26 de septiembre de 2026), solo lo rechaza si la pestaña no está visible o si una política del sitio lo bloquea. Lo que sí puede hacer el Ahorro de batería es acortar el tiempo de espera o atenuar la pantalla. Si alguna vez ves “Bloqueado — aquí está la solución”, AwakeTab muestra la causa real debajo.
-
-Samsung y otros fabricantes agregan sus propias listas para poner en suspensión las apps que no usas. Si Chrome está en esa lista, el sistema puede cerrar la pestaña mientras estás en otra app, y al volver AwakeTab tendrá que empezar de nuevo. Si te pasa seguido, saca Chrome de esa lista en los ajustes de batería de tu equipo.
+::rows blockers
 
 ## Qué pasa cuando sales de Chrome
 
