@@ -370,7 +370,9 @@ class Component extends DCLogic {
   hms(sec) {
     const v = Math.max(0, Math.floor(sec));
     const p = (n) => String(n).padStart(2, '0');
-    return p(Math.floor(v / 3600)) + ':' + p(Math.floor((v % 3600) / 60)) + ':' + p(v % 60);
+    const d = Math.floor(v / 86400), h = Math.floor((v % 86400) / 3600), hms = p(Math.floor((v % 3600) / 60)) + ':' + p(v % 60);
+    // DESIGN.md §4 on every surface: MM:SS under 1 h, H:MM:SS from 1 h, "1d 02:15:00" from 24 h
+    return d ? d + 'd ' + p(h) + ':' + hms : h ? h + ':' + hms : hms;
   }
   renderVals() {
     const s = this.state;
@@ -401,7 +403,9 @@ class Component extends DCLogic {
     const small = mode === 'logo';
     const portrait = size === 'portrait';
     const [sx, sy] = SHIFTS[s.shift];
-    const since = this.hm(s.startedAt);
+    const sd = new Date(s.startedAt), nd = new Date(now); sd.setHours(0, 0, 0, 0); nd.setHours(0, 0, 0, 0);
+    const days = Math.round((nd - sd) / 86400000); // §4: "since yesterday 7:43 PM" after midnight
+    const since = (days === 1 ? 'yesterday ' : days > 1 ? new Date(s.startedAt).toLocaleDateString('en-GB', { weekday: 'long' }) + ' ' : '') + this.hm(s.startedAt);
     const statusMeta = status === 'paused' ? 'Resumes when this tab is in front' : 'No limit · since ' + since;
     const elapsedSec = (now - s.startedAt) / 1000;
     const wPill = atPill('XS', s.running ? STATE[status] : 'idle', t);
@@ -430,7 +434,7 @@ class Component extends DCLogic {
       panels: this.panels, dockShadow: dark ? 'rgba(0,0,0,0.45)' : 'rgba(14,23,38,0.2)',
       wAura: atRgba(wPill.tone, s.running ? (dark ? 0.16 : 0.1) : 0.04),
       credit: 'display: inline-flex; align-items: center; min-height: 24px; font-size: 12px; line-height: 16px; color: ' + t.muted + '; text-decoration: underline; text-decoration-color: ' + t.line2 + '; text-underline-offset: 2px; white-space: nowrap',
-      elapsed: s.running ? this.hms(elapsedSec) : '00:00:00',
+      elapsed: s.running ? this.hms(elapsedSec) : '00:00',
       elapsedAria: 'Awake for ' + this.hms(elapsedSec),
       wBtn: atBtn(s.running ? 'smallStop' : 'smallLamp', t) + '; width: 96px; padding: 0', wBtnLabel: s.running ? 'Stop' : 'Start',
       showAttrib: !licensed,

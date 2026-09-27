@@ -392,7 +392,9 @@ class Component extends DCLogic {
   hms(sec) {
     const v = Math.max(0, Math.floor(sec));
     const p = (n) => String(n).padStart(2, '0');
-    return p(Math.floor(v / 3600)) + ':' + p(Math.floor((v % 3600) / 60)) + ':' + p(v % 60);
+    const d = Math.floor(v / 86400), h = Math.floor((v % 86400) / 3600), hms = p(Math.floor((v % 3600) / 60)) + ':' + p(v % 60);
+    // DESIGN.md §4 on every surface: MM:SS under 1 h, H:MM:SS from 1 h, "1d 02:15:00" from 24 h
+    return d ? d + 'd ' + p(h) + ':' + hms : h ? h + ':' + hms : hms;
   }
   press(edge) {
     const s = this.state;
@@ -423,7 +425,7 @@ class Component extends DCLogic {
     if (lock === 'unsupported') noticeText = ADVICE.unsupported;
     if (edge === 'noallow' && lock !== 'held') noticeText = ADVICE.noallow;
     const isErr = lock === 'denied' || edge === 'noallow';
-    const digits = live ? this.hms((s.now - s.startedAt) / 1000) : '00:00:00';
+    const digits = live ? this.hms((s.now - s.startedAt) / 1000) : '00:00';
     const btnBase = busy ? atBtn('smallStop', w) : atBtn('smallLamp', w) + (brand ? '; background: ' + h.brand + '; color: ' + h.brandInk : '');
 
     const hostSnippet = [

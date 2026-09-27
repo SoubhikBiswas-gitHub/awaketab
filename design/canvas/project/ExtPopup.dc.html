@@ -260,11 +260,10 @@ class Component extends DCLogic {
       ended: { mode: 'ended', level: 'display', preset: 'p30', total: 1800, left: 0, el: 0 }
     };
     // Long sessions, seeded relative to now so the boards read right at any hour.
-    // Overnight ends tomorrow at 4:11 AM, or earlier tomorrow when that is a full day away.
-    const t0 = new Date(now); t0.setHours(24, 0, 0, 0);
-    let overEnd = t0.getTime() + 15060000;
-    if (overEnd - now >= 86340000) overEnd = Math.max(t0.getTime() + 300000, Math.floor((now + 84600000) / 60000) * 60000);
-    const tmr = new Date(overEnd);
+    // Overnight ends at the next 4:11 AM: "tomorrow" in the evening, later today after midnight; never a day or more away.
+    const tmr = new Date(now); tmr.setHours(4, 11, 0, 0);
+    if (tmr.getTime() <= now) tmr.setDate(tmr.getDate() + 1);
+    const overEnd = tmr.getTime();
     const overLeft = Math.round((overEnd - now) / 1000);
     S.long = { mode: 'held', level: 'display', preset: 'p120', total: 7200, left: 5058, el: 0 };
     S.overnight = { mode: 'held', level: 'display', preset: 'until', untilAt: tmr.getTime(), total: overLeft + 3600, left: overLeft, el: 0 };

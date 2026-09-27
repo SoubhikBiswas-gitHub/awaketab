@@ -327,7 +327,9 @@ class Component extends DCLogic {
   hms(sec) {
     const v = Math.max(0, Math.floor(sec));
     const p = (n) => String(n).padStart(2, '0');
-    return p(Math.floor(v / 3600)) + ':' + p(Math.floor((v % 3600) / 60)) + ':' + p(v % 60);
+    const d = Math.floor(v / 86400), h = Math.floor((v % 86400) / 3600), hms = p(Math.floor((v % 3600) / 60)) + ':' + p(v % 60);
+    // DESIGN.md §4 on every surface: MM:SS under 1 h, H:MM:SS from 1 h, "1d 02:15:00" from 24 h
+    return d ? d + 'd ' + p(h) + ':' + hms : h ? h + ':' + hms : hms;
   }
   ms(sec) {
     const v = Math.max(0, Math.ceil(sec));
