@@ -1,5 +1,23 @@
+/* stylelint-disable no-descending-specificity -- state rules are scoped by data-mode; order never decides */
+
+:root {
+  --at-type-ext-ring-caption: 500 0.8125rem/1rem var(--at-font);
+  --at-type-ext-digits: 300 1.75rem/1 var(--at-font);
+  --at-type-ext-digits-long: 300 1.25rem/1 var(--at-font);
+  --at-type-ext-until: 300 1.5rem/1.75rem var(--at-font);
+  --at-ext-popup: 360px;
+  --at-ext-ring: 124px;
+  --at-ext-ring-blocked: 72px;
+  --at-ext-status-h: 128px;
+  --at-ext-ring-caption: 96px;
+  --at-ext-ticks-mask: radial-gradient(circle, transparent 44px, #000 45px, #000 48px, transparent 49px);
+  --at-ext-retry: 112px;
+  --at-ext-tips-keys: 104px;
+  --at-ext-tips-icon: 28px;
+}
+
 body {
-  inline-size: 360px;
+  inline-size: var(--at-ext-popup);
   background: var(--at-ground);
 }
 
@@ -13,7 +31,8 @@ body {
   flex-direction: column;
   gap: var(--at-s-3);
   min-block-size: 100%;
-  padding: 0 var(--at-s-4) var(--at-dock-bottom);
+  padding-block: 0 var(--at-dock-bottom);
+  padding-inline: var(--at-s-4);
   overflow: hidden;
   background: radial-gradient(120% 70% at 50% 26%, var(--ext-lift) 0%, var(--at-ground) 58%, var(--ext-lift-end) 100%);
   color: var(--at-ink);
@@ -109,7 +128,7 @@ body {
   gap: var(--at-s-2);
   block-size: var(--at-h-control);
   padding-inline: var(--at-s-3);
-  border: 1px solid var(--ext-lamp-line);
+  border: var(--at-border) solid var(--ext-lamp-line);
   border-radius: var(--at-r-pill);
   background: var(--ext-lamp-tag);
   font: var(--at-type-caption);
@@ -120,8 +139,8 @@ body {
 }
 
 .pp-new-dot {
-  inline-size: 8px;
-  block-size: 8px;
+  inline-size: var(--at-s-2);
+  block-size: var(--at-s-2);
   border-radius: var(--at-r-pill);
   background: var(--at-accent);
   animation: at-breathe 3.4s var(--ext-ease) infinite alternate;
@@ -129,16 +148,16 @@ body {
 
 .pp-status {
   display: grid;
-  grid-template-columns: 124px minmax(0, 1fr);
+  grid-template-columns: var(--at-ext-ring) minmax(0, 1fr);
   column-gap: var(--at-s-4);
   align-items: center;
-  min-block-size: 128px;
+  min-block-size: var(--at-ext-status-h);
 }
 
 .pp-ring {
   position: relative;
-  inline-size: 124px;
-  block-size: 124px;
+  inline-size: var(--at-ext-ring);
+  block-size: var(--at-ext-ring);
 }
 
 .pp-ring-art {
@@ -152,7 +171,7 @@ body {
   inset: 0;
   border-radius: 50%;
   background: repeating-conic-gradient(from -0.6deg, var(--at-tick) 0deg 1.2deg, transparent 1.2deg 6deg);
-  mask: radial-gradient(circle, transparent 44px, #000 45px, #000 48px, transparent 49px);
+  mask: var(--at-ext-ticks-mask);
 }
 
 .pp-sweep {
@@ -214,17 +233,17 @@ body {
 }
 
 .pp[data-mode="blocked"] .pp-status {
-  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-columns: var(--at-ext-ring-blocked) minmax(0, 1fr);
 }
 
 .pp[data-mode="blocked"] .pp-ring {
-  inline-size: 72px;
-  block-size: 72px;
+  inline-size: var(--at-ext-ring-blocked);
+  block-size: var(--at-ext-ring-blocked);
 }
 
 .pp[data-mode="blocked"] .pp-ring-art {
-  inline-size: 124px;
-  block-size: 124px;
+  inline-size: var(--at-ext-ring);
+  block-size: var(--at-ext-ring);
   transform: scale(0.5806);
 }
 
@@ -239,7 +258,7 @@ body {
 
 .pp-tip {
   opacity: 0;
-  transform-origin: 62px 62px;
+  transform-origin: calc(var(--at-ext-ring) / 2) calc(var(--at-ext-ring) / 2);
   transition:
     transform 1s linear,
     opacity 1s linear;
@@ -268,8 +287,8 @@ body {
 
 .pp-kicker,
 .pp-caption {
-  max-inline-size: 96px;
-  font: 500 0.8125rem/1rem var(--at-font);
+  max-inline-size: var(--at-ext-ring-caption);
+  font: var(--at-type-ext-ring-caption);
   color: var(--at-muted);
   text-align: center;
 }
@@ -289,19 +308,22 @@ body {
 }
 
 .pp-days {
-  font: 500 0.8125rem/1rem var(--at-font);
+  font: var(--at-type-ext-ring-caption);
   color: var(--at-ink-2);
 }
 
 .pp-digits {
-  font-size: 28px;
-  line-height: 1;
+  font: var(--at-type-ext-digits);
+  font-variant-numeric: inherit;
+  font-feature-settings: inherit;
   letter-spacing: -0.02em;
   white-space: nowrap;
 }
 
 .pp-digits[data-long] {
-  font-size: 20px;
+  font: var(--at-type-ext-digits-long);
+  font-variant-numeric: inherit;
+  font-feature-settings: inherit;
 }
 
 .pp-sec {
@@ -351,7 +373,7 @@ body {
 
 .pp-add-btn {
   block-size: var(--at-h-control);
-  border: 1px solid var(--at-line-strong);
+  border: var(--at-border) solid var(--at-line-strong);
   border-radius: var(--at-r-md);
   background: var(--at-surface);
   font: var(--at-type-caption);
@@ -365,7 +387,7 @@ body {
   flex-direction: column;
   gap: var(--at-s-3);
   padding: var(--at-s-4);
-  border: 1px solid var(--ext-lamp-line);
+  border: var(--at-border) solid var(--ext-lamp-line);
   border-radius: var(--at-r-lg);
   background: var(--ext-lamp-faint);
 }
@@ -385,7 +407,7 @@ body {
   flex-direction: column;
   gap: var(--at-s-2);
   padding: var(--at-s-4);
-  border: 1px solid color-mix(in srgb, var(--at-bad) 32%, transparent);
+  border: var(--at-border) solid color-mix(in srgb, var(--at-bad) 32%, transparent);
   border-radius: var(--at-r-lg);
   background: color-mix(in srgb, var(--at-bad) 8%, transparent);
 }
@@ -399,7 +421,7 @@ body {
 }
 
 .pp-error h2 svg {
-  margin-block-start: 3px;
+  margin-block-start: calc(var(--at-s-1) - var(--at-border));
   color: var(--at-bad);
 }
 
@@ -427,11 +449,11 @@ body {
   border: 0;
   background: var(--at-accent);
   color: var(--at-on-accent);
-  box-shadow: 0 10px 30px -8px var(--ext-lamp-glow);
+  box-shadow: var(--at-ext-lamp-lift) var(--ext-lamp-glow);
 }
 
 .pp-main[data-live="1"] {
-  border: 1px solid var(--at-line-strong);
+  border: var(--at-border) solid var(--at-line-strong);
   background: var(--at-raised);
   color: var(--at-ink);
 }
@@ -442,7 +464,7 @@ body {
 
 .pp-retry {
   display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
+  grid-template-columns: var(--at-ext-retry) minmax(0, 1fr);
   gap: var(--at-s-2);
 }
 
@@ -512,7 +534,7 @@ body {
   min-inline-size: 0;
   block-size: var(--at-h-control);
   padding-inline: var(--at-s-1);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-pill);
   background: transparent;
   font: var(--at-type-small);
@@ -551,14 +573,14 @@ body {
 
 .pp-until-row {
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  grid-template-columns: var(--at-h-input) minmax(0, 1fr) var(--at-h-input);
   align-items: center;
   gap: var(--at-s-2);
 }
 
 .pp-step {
   block-size: var(--at-h-input);
-  border: 1px solid var(--at-line-strong);
+  border: var(--at-border) solid var(--at-line-strong);
   border-radius: var(--at-r-md);
   background: transparent;
   font: var(--at-type-h3);
@@ -574,7 +596,7 @@ body {
 }
 
 .pp-until-time {
-  font: 300 1.5rem/1.75rem var(--at-font);
+  font: var(--at-type-ext-until);
   color: var(--at-ink);
 }
 
@@ -592,10 +614,11 @@ body {
 
 .pp-card {
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr);
+  grid-template-columns: var(--at-s-8) minmax(0, 1fr);
   gap: var(--at-s-3);
-  padding: var(--at-s-3) var(--at-s-4);
-  border: 1px solid var(--at-line);
+  padding-block: var(--at-s-3);
+  padding-inline: var(--at-s-4);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
   box-shadow: var(--ext-shadow);
@@ -604,8 +627,8 @@ body {
 .pp-card-icon {
   display: grid;
   place-items: center;
-  inline-size: 32px;
-  block-size: 32px;
+  inline-size: var(--at-s-8);
+  block-size: var(--at-s-8);
   border-radius: var(--at-r-md);
   background: var(--at-raised);
   color: var(--at-ink-2);
@@ -635,9 +658,10 @@ body {
 }
 
 .pp-sched {
-  grid-template-columns: 32px minmax(0, 1fr) auto;
+  grid-template-columns: var(--at-s-8) minmax(0, 1fr) auto;
   align-items: center;
-  padding: var(--at-s-2) var(--at-s-2) var(--at-s-2) var(--at-s-4);
+  padding-block: var(--at-s-2);
+  padding-inline: var(--at-s-4) var(--at-s-2);
 }
 
 .pp-sched-range {
@@ -665,7 +689,7 @@ body {
   gap: var(--at-s-3);
   block-size: var(--at-h-button);
   padding-inline: var(--at-s-4) var(--at-s-3);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-xl);
   background: transparent;
   font: var(--at-type-small);
@@ -686,8 +710,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--at-s-2);
-  padding: var(--at-s-4) var(--at-s-4) var(--at-s-5);
-  border: 1px solid var(--ext-lamp-line);
+  padding-block: var(--at-s-4) var(--at-s-5);
+  padding-inline: var(--at-s-4);
+  border: var(--at-border) solid var(--ext-lamp-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
 }
@@ -700,7 +725,7 @@ body {
 }
 
 .pp-pro-head h2 {
-  font: 600 1rem/1.5rem var(--at-font);
+  font: var(--at-type-ext-label);
   text-wrap: pretty;
 }
 
@@ -730,7 +755,7 @@ body {
   color: var(--at-ink);
   text-decoration: underline;
   text-decoration-color: var(--at-line-strong);
-  text-underline-offset: 4px;
+  text-underline-offset: var(--at-s-1);
 }
 
 .pp-tips {
@@ -763,7 +788,7 @@ body {
 
 .pp-tips-list li {
   display: grid;
-  grid-template-columns: 104px minmax(0, 1fr);
+  grid-template-columns: var(--at-ext-tips-keys) minmax(0, 1fr);
   gap: var(--at-s-2);
   align-items: center;
   font: var(--at-type-caption);
@@ -774,28 +799,28 @@ body {
   position: relative;
   display: grid;
   place-items: center;
-  inline-size: 28px;
-  block-size: 24px;
+  inline-size: var(--at-ext-tips-icon);
+  block-size: var(--at-s-6);
   color: var(--at-accent);
 }
 
 .pp-tips-badge {
   position: absolute;
-  inset-block-end: -4px;
-  inset-inline-start: 16px;
-  block-size: 16px;
+  inset-block-end: calc(-1 * var(--at-s-1));
+  inset-inline-start: var(--at-s-4);
+  block-size: var(--at-s-4);
   padding-inline: var(--at-s-1);
   border-radius: var(--at-r-xs);
-  background: #087b87;
-  font: 600 0.75rem/1rem var(--at-font);
-  color: #fff;
+  background: var(--at-lamp-aqua-light);
+  font: var(--at-type-kicker);
+  color: var(--at-ext-badge-ink);
 }
 
 .pp-foot {
   display: flex;
   flex-direction: column;
   padding-block-start: var(--at-s-2);
-  border-block-start: 1px solid var(--at-line);
+  border-block-start: var(--at-border) solid var(--at-line);
 }
 
 .pp-foot .at-link {

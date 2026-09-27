@@ -1,7 +1,7 @@
 // DESIGN.md §12.4, §12.8: radii come from the --at-r-* scale by name (4 · 8 · 12 · 16 · 20 · 28 · 999), never as
-// raw values. Allowed: 0, 50 %, the tokens and calc() over them.
+// raw values. Allowed: 0, 50 %, the tokens and calc() over them (a nested corner may subtract --at-border).
 // tokens.css defines the scale and is exempt.
-const RADIUS_TOKENS = /^(?:0|50%|inherit|calc\(|var\(--at-r-[a-z0-9]+\)|[\s()+-])+$/u;
+const RADIUS_TOKENS = /^(?:0|50%|inherit|calc\(|var\(--at-r-[a-z0-9]+\)|var\(--at-border\)|[\s()+-])+$/u;
 // DESIGN.md §12.8, from B2 on: rebuilt stylesheets (shell.css) take spacing, type and control heights by token only.
 // Allowed: 0, auto, percentages, 1px borders, the tokens and calc() over them.
 const SPACING_TOKENS =
@@ -37,12 +37,18 @@ export default {
       // shell.css (B2), content.css (B5), pages.css (B6, the site pages) and pro.css (B7). pages.css names its few
       // off-scale sizes once as --at-pg-* custom properties and uses them by name; its two illustrations (the kiosk
       // screen, the host page) and the state diagram opt out in marked blocks, as DESIGN.md §11.2 exempts drawings and mocks.
+      // The extension's four stylesheets follow the same rules; their off-scale values are named once at the top of each
+      // file (--at-ext-*, --at-type-ext-*).
       files: [
         '**/styles/shell.css',
         '**/styles/content.css',
         '**/styles/pages.css',
         '**/styles/page-404.css',
         '**/styles/pro.css',
+        'apps/extension/src/styles/base.css',
+        'apps/extension/entrypoints/popup/popup.css',
+        'apps/extension/entrypoints/options/options.css',
+        'apps/extension/entrypoints/welcome/welcome.css',
       ],
       rules: {
         'declaration-property-value-allowed-list': [
