@@ -825,7 +825,6 @@
   "ext.options.shortcut.change": "Tastenkürzel ändern",
   "ext.options.locale.auto": "Browsersprache",
   "ext.schedules.title": "Zeitpläne",
-  "ext.schedules.help": "Wach halten in wöchentlichen Zeitfenstern, etwa werktags 09:00–18:00. Überlappende Zeitfenster werden zusammengeführt.",
   "ext.schedules.days": "Tage",
   "ext.schedules.from": "Von",
   "ext.schedules.to": "Bis",

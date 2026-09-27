@@ -825,7 +825,6 @@
   "ext.options.shortcut.change": "Modifier le raccourci",
   "ext.options.locale.auto": "Langue du navigateur",
   "ext.schedules.title": "Plannings",
-  "ext.schedules.help": "Gardez l’appareil éveillé sur des plages hebdomadaires, par exemple en semaine de 09:00 à 18:00. Les plages qui se chevauchent sont fusionnées.",
   "ext.schedules.days": "Jours",
   "ext.schedules.from": "De",
   "ext.schedules.to": "À",

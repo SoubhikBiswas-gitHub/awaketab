@@ -825,7 +825,6 @@
   "ext.options.shortcut.change": "ショートカットを変更",
   "ext.options.locale.auto": "ブラウザの言語",
   "ext.schedules.title": "スケジュール",
-  "ext.schedules.help": "平日 09:00–18:00 のように、毎週の時間帯にスリープを防ぎます。重なる時間帯は 1 つにまとめられます。",
   "ext.schedules.days": "曜日",
   "ext.schedules.from": "開始",
   "ext.schedules.to": "終了",

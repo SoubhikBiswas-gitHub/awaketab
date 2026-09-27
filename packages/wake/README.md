@@ -128,7 +128,7 @@ Try the live state-machine demo at [awaketab.com/library](https://awaketab.com/l
 
 Issues and PRs are welcome at [github.com/SoubhikBiswas-gitHub/awaketab](https://github.com/SoubhikBiswas-gitHub/awaketab). A PR needs a changeset (`pnpm changeset`), a test for any transition change, and a passing size check (`pnpm -F @awaketab/wake size`). Security issues: security@awaketab.com.
 
-Sponsor development via [GitHub Sponsors](https://github.com/sponsors/awaketab).
+Support development via [Buy me a coffee](https://buymeacoffee.com/awaketab).
 
 ## Licence
 

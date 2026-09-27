@@ -466,7 +466,7 @@ Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`), as written with
 | `ISessionOptions.resumeIndefiniteMs` | `@awaketab/core`: how long an `indefinite` session stays resumable (default 12 h; the extension passes `Infinity`) |
 | Extension times | `createTimeFormat()` (`src/format.ts`): 12-hour with AM/PM in English, the locale's own clock elsewhere unless the user picks 12 or 24 h; `hour()` names the week axis `12 AM · 6 AM · Noon · 6 PM · 12 AM` (`ext.time.noon`, 12-hour clocks only); `range(start, end)` writes a schedule window as "9:00 AM to 6:00 PM" (`ext.time.span`, plus `ext.time.nextDay` past midnight) for the popup and options |
 | Auto-start and schedule popup lines | A held session started by auto-start (`startup` or `autostart` origin) with no end: caption `tool.timer.elapsedCaption` ("Elapsed"), meta `ext.popup.sinceMeta` ("Since 8:02 AM"), level help shown, no "Awake for" kicker. A scheduled session: `ext.schedule.until` plus a second line with its days (`ext.days.weekdays` "Weekdays" for Mon–Fri, otherwise the day list) |
-| `ext.schedules.intro` | The options schedule intro with a `{range}` the extension formats ("such as weekdays 9:00 AM to 6:00 PM"); replaces the web key `ext.schedules.help`, which the extension no longer reads |
+| `ext.schedules.intro` | The options schedule intro with a `{range}` the extension formats ("such as weekdays 9:00 AM to 6:00 PM"); replaced the web key `ext.schedules.help`, now removed from the locale files |
 | `IStorageAdapter` | Now exported from `@awaketab/core` (docs/04 §16) |
 
 **Build and test**

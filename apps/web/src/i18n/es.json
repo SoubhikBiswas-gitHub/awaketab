@@ -825,7 +825,6 @@
   "ext.options.shortcut.change": "Cambiar atajo",
   "ext.options.locale.auto": "Idioma del navegador",
   "ext.schedules.title": "Horarios",
-  "ext.schedules.help": "Mantén el equipo despierto en franjas semanales, como de lunes a viernes de 09:00 a 18:00. Las franjas que se solapan se unen en una.",
   "ext.schedules.days": "Días",
   "ext.schedules.from": "Desde",
   "ext.schedules.to": "Hasta",

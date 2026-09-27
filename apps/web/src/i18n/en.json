@@ -851,7 +851,6 @@
   "ext.options.shortcut.change": "Change shortcut",
   "ext.options.locale.auto": "Browser language",
   "ext.schedules.title": "Schedules",
-  "ext.schedules.help": "Keep awake during weekly windows, such as weekdays 09:00–18:00. Overlapping windows merge into one.",
   "ext.schedules.days": "Days",
   "ext.schedules.from": "From",
   "ext.schedules.to": "To",

@@ -825,7 +825,6 @@
   "ext.options.shortcut.change": "शॉर्टकट बदलें",
   "ext.options.locale.auto": "ब्राउज़र की भाषा",
   "ext.schedules.title": "शेड्यूल",
-  "ext.schedules.help": "हर हफ़्ते तय समय में जागा रखें, जैसे कामकाजी दिनों में 09:00–18:00। एक-दूसरे पर पड़ने वाले समय एक में मिल जाते हैं।",
   "ext.schedules.days": "दिन",
   "ext.schedules.from": "से",
   "ext.schedules.to": "तक",

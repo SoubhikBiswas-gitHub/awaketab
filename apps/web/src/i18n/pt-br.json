@@ -825,7 +825,6 @@
   "ext.options.shortcut.change": "Alterar atalho",
   "ext.options.locale.auto": "Idioma do navegador",
   "ext.schedules.title": "Programações",
-  "ext.schedules.help": "Mantenha ligado em janelas semanais, como dias úteis das 09:00 às 18:00. Janelas sobrepostas se juntam em uma só.",
   "ext.schedules.days": "Dias",
   "ext.schedules.from": "De",
   "ext.schedules.to": "Até",
