@@ -1,126 +1,248 @@
 /*
- * AwakeTab Embed widget (/embed/cook) — docs/11 §2. Reads only the --at-* tokens (docs/05 §1.1); logical
- * properties only. Sizes: compact 320 × 96 (the loader's reserved box), full 100 % × 240; the widget asks the
- * loader for more height (awaketab:resize) only when a notice or timers need it.
+ * AwakeTab Embed widget (/embed/cook): docs/11 §2, DESIGN.md §11, canvas boards EmbedWidget, EmbedCook and
+ * EmbedEdge (design/canvas/project/). Reads the --at-* tokens (tokens.css) and logical properties only.
+ *
+ * Sizes: compact 320 × 104 (O-58; pill XS, radius 16, padding 16, Start/Stop 20 from the bottom edge), 116 when
+ * the pill needs its own row (a long state, or a frame under 300 px: app.ts sets data-long); full 100 % × 240
+ * (pill S, radius 28, padding 16 24), 420 for a cook widget under 600 px that stacks its kitchen timers. The
+ * loader reserves the same boxes (protocol.ts EMBED_BOX, EMBED_NARROW); the widget asks for more height
+ * (awaketab:resize) only when a notice needs it. The iframe's viewport is the widget, so width rules are media
+ * queries.
+ *
+ * Widget-scoped values without an --at-* token yet (docs/11 §11.3): the two pill heights of DESIGN.md §11.4,
+ * the reserved heights above, and the 60 px primary height (tokens.css drops --at-h-primary to 52 on screens
+ * ≤ 568 tall, which every embed frame is).
  */
+
+:root {
+  --at-embed-pill-xs: 26px;
+  --at-embed-pill-s: 32px;
+  --at-embed-h-primary: 60px;
+  --at-embed-compact: 104px;
+  --at-embed-compact-long: 116px;
+  --at-embed-full: 240px;
+  --at-embed-full-stacked: 420px;
+  --at-embed-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* The lamp aura behind the widget: 10 % in light, 16 % in dark and OLED (board EmbedWidget). */
+  --at-embed-aura: 10%;
+}
+
+:root:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-embed-aura: 16%;
+}
 
 html,
 body.at-embed-body {
   margin: 0;
-  background: var(--at-ground);
+  background: var(--at-surface);
   color: var(--at-ink);
   font-family: var(--at-font);
 }
 
+/* ── The card ─────────────────────────────────────────────────────────────────────────────────── */
+
 .at-embed {
+  --tone: var(--at-accent);
+
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: var(--at-s-1);
-  padding-block: var(--at-s-2);
-  padding-inline: var(--at-s-3);
-  font-size: var(--at-t-sm);
-  line-height: 1.3;
+  gap: var(--at-s-2);
+  min-block-size: var(--at-embed-compact);
+  padding: var(--at-s-4);
+  overflow: hidden;
+  border: var(--at-border) solid var(--at-line);
+  border-radius: var(--at-r-lg);
+  background: var(--at-surface);
+  color: var(--at-ink);
+  font: var(--at-type-small);
+}
+
+/* State tone (DESIGN.md §2.3): muted when idle, warn when lost, bad when denied, the lamp otherwise. */
+.at-embed[data-lock="idle"] {
+  --tone: var(--at-muted);
+}
+
+.at-embed[data-lock="lost"] {
+  --tone: var(--at-warn);
+}
+
+.at-embed[data-lock="denied"] {
+  --tone: var(--at-bad);
+}
+
+/* The one status halo: a faint radial light from the top-start corner, lamp while awake. */
+.at-embed::before {
+  position: absolute;
+  z-index: -1;
+  inset-block-start: -60%;
+  inset-inline-start: -20%;
+  inline-size: 90%;
+  block-size: 180%;
+  background: radial-gradient(45% 45% at 50% 50%, color-mix(in srgb, var(--at-muted) 4%, transparent) 0%, transparent 70%);
+  content: "";
+  pointer-events: none;
+}
+
+.at-embed[data-live]::before {
+  background: radial-gradient(
+    45% 45% at 50% 50%,
+    color-mix(in srgb, var(--at-accent) var(--at-embed-aura), transparent) 0%,
+    transparent 70%
+  );
 }
 
 .at-embed :focus-visible {
   outline: 2px solid var(--at-focus);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
-.at-embed-bar {
-  display: flex;
+.at-embed p {
+  margin: 0;
+}
+
+/* ── Compact layout (the default): pill over the digits, Start/Stop on the end side ─────────────── */
+
+.at-embed-grid {
+  display: grid;
+  flex-grow: 1;
+  grid-template:
+    "pill btn" var(--at-embed-pill-xs)
+    "dig btn" var(--at-h-control)
+    / minmax(0, 1fr) auto;
+  align-content: end;
+  column-gap: var(--at-s-3);
+  min-block-size: 0;
+}
+
+.at-embed-main,
+.at-embed-head,
+.at-embed-row,
+.at-embed-readout {
+  display: contents;
+}
+
+/* ── Start / Stop / Retry (compact: small 44, r12, 96 wide, 20 px from the bottom edge) ─────────── */
+
+.at-embed-toggle {
+  box-sizing: border-box;
+  display: inline-flex;
+  grid-area: btn;
   align-items: center;
-  gap: var(--at-s-3);
-}
+  align-self: end;
+  justify-content: center;
+  gap: var(--at-s-2);
+  inline-size: 96px;
+  block-size: var(--at-h-control);
+  margin-block-end: var(--at-s-1);
+  padding: 0;
+  border: 0;
 
-.at-embed-toggle,
-.at-embed-btn {
-  min-block-size: 44px;
-  min-inline-size: 44px;
-  padding-inline: var(--at-s-4);
-
-  /* --at-embed-brand / --at-embed-on-brand are set only for licensed sites (config.ts applyBranding); the
-     defaults are the AA-checked primary pair (--at-accent-text on --at-on-accent), as in tool.css. */
-  border: 1px solid var(--at-embed-brand, var(--at-accent-text));
-  border-radius: var(--at-r-pill);
-  background: var(--at-embed-brand, var(--at-accent-text));
+  /* --at-embed-brand / --at-embed-on-brand are set only for licensed sites (config.ts applyBranding). */
+  border-radius: var(--at-r-md);
+  background: var(--at-embed-brand, var(--at-accent));
   color: var(--at-embed-on-brand, var(--at-on-accent));
-  font: inherit;
-  font-weight: 700;
+  font: 600 0.9375rem/1.375rem var(--at-font);
+  white-space: nowrap;
   cursor: pointer;
 }
 
-.at-embed-toggle[aria-pressed="true"] {
-  background: var(--at-surface);
+.at-embed-toggle-icon {
+  flex-shrink: 0;
+  inline-size: var(--at-icon-sm);
+  block-size: var(--at-icon-sm);
+}
+
+.at-embed-toggle-icon path {
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-width: 5;
+}
+
+.at-embed-toggle-icon circle {
+  fill: currentcolor;
+}
+
+/* Stop and Retry are the strong neutral (DESIGN.md §6, D-R20): raised fill, line-strong border, ink text. */
+.at-embed-toggle:is([data-kind="stop"], [data-kind="retry"]) {
+  border: var(--at-border) solid var(--at-line-strong);
+  background: var(--at-raised);
   color: var(--at-ink);
-  border-color: var(--at-line);
 }
 
-.at-embed-status {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--at-s-2);
-  min-inline-size: 0;
+.at-embed-toggle:is([data-kind="stop"], [data-kind="retry"]) .at-embed-toggle-icon {
+  display: none;
 }
 
-/* Pill — mirrors tool.css .at-pill state tints (docs/05 §3.2); an <output>, never a control here. */
+/* ── Status pill (DESIGN.md §11.4: XS 26 in compact, S 32 in full; tone 12 % fill + 38 % border) ── */
+
 .at-embed-pill {
+  box-sizing: border-box;
   display: inline-flex;
+  grid-area: pill;
+  place-self: center start;
   align-items: center;
-  min-block-size: 28px;
-  padding-inline: var(--at-s-3);
-  border: 1px solid var(--at-line);
+  gap: var(--at-s-1);
+  block-size: var(--at-embed-pill-xs);
+  padding-inline: var(--at-s-2);
+  border: var(--at-border) solid color-mix(in srgb, var(--tone) 38%, transparent);
   border-radius: var(--at-r-pill);
-  background: var(--at-surface);
-  font-size: var(--at-t-xs);
-  font-weight: 600;
+  background: color-mix(in srgb, var(--tone) 12%, transparent);
+  color: var(--at-ink);
+  font: 600 0.8125rem/1 var(--at-font);
   white-space: nowrap;
+}
+
+.at-embed-pill-text {
+  min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.at-embed-pill[data-lock="requesting"] {
-  color: var(--at-muted);
+.at-embed-glyph {
+  flex-shrink: 0;
+  inline-size: 12px;
+  block-size: 12px;
+  overflow: visible;
 }
 
-.at-embed-pill[data-lock="held"] {
-  border-color: var(--at-accent);
-  background: color-mix(in srgb, var(--at-accent) 12%, var(--at-surface));
+.at-embed-glyph path {
+  fill: var(--tone);
+  fill-rule: evenodd;
+  stroke: var(--tone);
+  stroke-linejoin: round;
+  stroke-width: 1.6;
 }
 
-.at-embed-pill[data-lock="lost"] {
-  border-color: var(--at-warn);
-  background: color-mix(in srgb, var(--at-warn) 12%, var(--at-surface));
+.at-embed:is([data-lock="idle"], [data-lock="requesting"]) .at-embed-glyph path {
+  fill: transparent;
 }
 
-.at-embed-pill[data-lock="denied"] {
-  border-color: var(--at-bad);
-  background: color-mix(in srgb, var(--at-bad) 12%, var(--at-surface));
+.at-embed[data-lock="held"] .at-embed-glyph {
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--tone) 80%, transparent));
 }
 
-.at-embed-pill[data-lock="fallback"] {
-  border-color: color-mix(in srgb, var(--at-accent) 60%, transparent);
-  background: color-mix(in srgb, var(--at-accent) 8%, var(--at-surface));
-  color: var(--at-muted);
-}
+/* ── Digits (display-s: 28 / 300 in compact; 28 · 48 · 64 in full, 200 from 48) ────────────────── */
 
 .at-embed-clock {
-  min-block-size: 44px;
+  grid-area: dig;
+  justify-self: start;
+  block-size: var(--at-h-control);
+  margin-block: calc(-1 * var(--at-s-1)) var(--at-s-1);
   padding: 0;
   border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-
-.at-embed-digits {
-  font-size: var(--at-t-xl);
-  font-weight: 700;
+  background: transparent;
+  color: var(--at-ink);
+  font: 300 1.75rem/1 var(--at-font);
+  font-feature-settings: "tnum" 1, "zero" 0;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
 .at-embed-digits.is-muted {
@@ -131,100 +253,539 @@ body.at-embed-body {
   display: none;
 }
 
-.at-embed-hint,
-.at-embed-attrib {
-  margin: 0;
+/* Minimal mode: a short note stands in for the digits. */
+.at-embed-note {
+  display: flex;
+  grid-area: dig;
+  align-items: center;
+  min-block-size: var(--at-h-control);
+  margin-block: calc(-1 * var(--at-s-1)) var(--at-s-1);
   color: var(--at-muted);
-  font-size: var(--at-t-xs);
+  font: var(--at-type-caption);
+  text-wrap: pretty;
 }
 
-.at-embed-attrib a {
-  color: var(--at-accent-text);
-  text-underline-offset: 2px;
+.at-embed-note[hidden] {
+  display: none;
 }
+
+/* Full-size parts, hidden in compact. */
+.at-embed-brand {
+  display: none;
+  align-items: center;
+  gap: var(--at-s-2);
+  min-inline-size: 0;
+  font: 600 0.9375rem/1.375rem var(--at-font);
+}
+
+.at-embed-title {
+  white-space: nowrap;
+}
+
+.at-embed-logo {
+  flex-shrink: 0;
+  inline-size: var(--at-icon-lg);
+  block-size: var(--at-icon-lg);
+  overflow: visible;
+}
+
+.at-embed-logo-ring {
+  fill: none;
+  stroke: var(--at-ink);
+  stroke-linecap: round;
+  stroke-width: 4.5;
+}
+
+.at-embed-logo-halo {
+  fill: var(--tone);
+  opacity: 0.28;
+}
+
+.at-embed-logo-bead {
+  fill: var(--tone);
+}
+
+.at-embed-hint {
+  display: none;
+  min-block-size: 1.125rem;
+  color: var(--at-ink-2);
+  font: var(--at-type-caption);
+}
+
+.at-embed-foot {
+  display: none;
+  block-size: 1rem;
+  overflow: hidden;
+  color: var(--at-muted);
+  font: 400 0.75rem/1rem var(--at-font);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Notice (iframe_no_allow, denied advice, fallback): full-bleed along the bottom edge ─────────── */
 
 .at-embed-notice {
-  padding-block: var(--at-s-1);
-  padding-inline: var(--at-s-2);
-  border-inline-start: 3px solid var(--at-bad);
-  border-radius: var(--at-r-xs);
-  background: color-mix(in srgb, var(--at-bad) 8%, var(--at-surface));
-  font-size: var(--at-t-xs);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--at-s-1);
+  margin-block: 0 calc(-1 * var(--at-s-4));
+  margin-inline: calc(-1 * var(--at-s-4));
+  padding-block: var(--at-s-4) var(--at-s-5);
+  padding-inline: var(--at-s-4);
+  background: color-mix(in srgb, var(--at-accent) 8%, transparent);
+  color: var(--at-ink);
+  font: var(--at-type-caption);
+}
+
+.at-embed-notice[data-tone="bad"] {
+  background: color-mix(in srgb, var(--at-bad) 8%, transparent);
+}
+
+.at-embed-notice[hidden],
+.at-embed-notice a[hidden] {
+  display: none;
 }
 
 .at-embed-notice p {
-  margin: 0;
+  text-wrap: pretty;
 }
 
 .at-embed-notice a {
-  color: var(--at-accent-text);
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 24px;
+  color: var(--at-ink);
   font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 
-/* full: 100 % × 240 — bigger digits and the kitchen timers inline. */
-.at-embed[data-size="full"] .at-embed-digits {
-  font-size: var(--at-t-3xl);
+.at-embed-notice a:hover {
+  text-decoration-thickness: 2px;
 }
+
+/* ── Kitchen timers (cook, full): 46 px rows, dashed quick-add chips, a 1 px divider ────────────── */
 
 .at-embed-timers {
-  display: grid;
+  position: relative;
+  display: none;
+  flex-direction: column;
   gap: var(--at-s-2);
+  min-inline-size: 0;
+  padding-block-start: var(--at-s-4);
+}
+
+.at-embed-timers::before {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: var(--at-border);
+  background: var(--at-line);
+  content: "";
+}
+
+.at-embed-kicker {
+  margin: 0;
+  color: var(--at-muted);
+  font: var(--at-type-kicker);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .at-embed-timer-list {
-  display: grid;
-  gap: var(--at-s-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--at-s-2);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .at-embed-timer {
-  display: flex;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto var(--at-h-control);
   align-items: center;
   gap: var(--at-s-2);
-  padding-inline: var(--at-s-2);
-  border: 1px solid var(--at-line);
-  border-radius: var(--at-r-sm);
-  background: var(--at-surface);
+  block-size: calc(var(--at-h-control) + 2 * var(--at-border));
+  padding-inline-start: var(--at-s-3);
+  border: var(--at-border) solid var(--at-line);
+  border-radius: var(--at-r-md);
+  background: var(--at-sunken);
+}
+
+.at-embed-timer[data-done] {
+  border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--at-accent) 14%, transparent);
 }
 
 .at-embed-timer-name {
-  flex: 1;
-  font-weight: 600;
+  overflow: hidden;
+  color: var(--at-ink-2);
+  font: 500 0.875rem/1.25rem var(--at-font);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .at-embed-timer-left {
+  color: var(--at-ink);
+  font: 400 1.125rem/1.5rem var(--at-font);
+  font-feature-settings: "tnum" 1, "zero" 0;
   font-variant-numeric: tabular-nums;
 }
 
-.at-embed-timer[data-flash] {
-  border-color: var(--at-good);
-  background: color-mix(in srgb, var(--at-good) 14%, var(--at-surface));
-}
-
-.at-embed-timer .at-embed-btn {
-  background: none;
-  color: var(--at-ink);
-  border-color: transparent;
-}
-
-.at-embed-quick {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--at-s-2);
-}
-
-.at-embed-quick .at-embed-btn {
-  padding-inline: var(--at-s-3);
-  background: var(--at-surface);
-  color: var(--at-ink);
-  border-color: var(--at-line);
+.at-embed-timer[data-done] .at-embed-timer-left {
   font-weight: 600;
 }
 
+.at-embed-timer-remove {
+  display: grid;
+  place-items: center;
+  inline-size: var(--at-h-control);
+  block-size: var(--at-h-control);
+  padding: 0;
+  border: 0;
+  border-radius: var(--at-r-md);
+  background: transparent;
+  color: var(--at-muted);
+  cursor: pointer;
+}
+
+.at-embed-timer-remove svg {
+  inline-size: var(--at-icon-sm);
+  block-size: var(--at-icon-sm);
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
+.at-embed-quick {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--at-s-1);
+}
+
+.at-embed-quick[hidden],
+.at-embed-empty[hidden] {
+  display: none;
+}
+
+.at-embed-add {
+  block-size: var(--at-h-control);
+  padding: 0;
+  border: var(--at-border) dashed var(--at-line-strong);
+  border-radius: var(--at-r-md);
+  background: transparent;
+  color: var(--at-ink);
+  font: 600 0.8125rem/1.125rem var(--at-font);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.at-embed-empty {
+  color: var(--at-muted);
+  font: var(--at-type-caption);
+}
+
+/* ── Full size: header (logo, title, pill S), digits + Start/Stop, kitchen timers, footer line ───── */
+
+.at-embed[data-size="full"] {
+  min-block-size: var(--at-embed-full);
+  padding-inline: var(--at-s-6);
+  border-radius: var(--at-r-2xl);
+}
+
+.at-embed[data-size="full"] .at-embed-grid {
+  grid-template: none / minmax(0, 1fr);
+  grid-auto-rows: minmax(0, 1fr);
+  align-content: stretch;
+  gap: var(--at-s-4) var(--at-s-6);
+}
+
+.at-embed[data-size="full"] .at-embed-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--at-s-2);
+  min-inline-size: 0;
+}
+
+.at-embed[data-size="full"] .at-embed-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--at-s-2) var(--at-s-3);
+}
+
+.at-embed[data-size="full"] .at-embed-brand {
+  display: flex;
+}
+
+.at-embed[data-size="full"] .at-embed-pill {
+  gap: var(--at-s-2);
+  block-size: var(--at-embed-pill-s);
+  padding-inline: var(--at-s-2) var(--at-s-3);
+  font-size: 0.875rem;
+}
+
+.at-embed[data-size="full"] .at-embed-row {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--at-s-4);
+  min-block-size: var(--at-s-24);
+}
+
+.at-embed[data-size="full"] .at-embed-readout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--at-s-1);
+  min-inline-size: 0;
+}
+
+.at-embed[data-size="full"] .at-embed-clock {
+  --at-embed-digit: 1.75rem;
+
+  align-self: flex-start;
+  block-size: auto;
+  min-block-size: var(--at-h-control);
+  margin: 0;
+  font-size: var(--at-embed-digit);
+  letter-spacing: -0.03em;
+}
+
+.at-embed[data-size="full"] .at-embed-note {
+  display: block;
+  min-block-size: 0;
+  margin: 0;
+  color: var(--at-ink-2);
+  font: var(--at-type-body);
+}
+
+.at-embed[data-size="full"] .at-embed-note[hidden] {
+  display: none;
+}
+
+.at-embed[data-size="full"] .at-embed-hint,
+.at-embed[data-size="full"] .at-embed-foot {
+  display: block;
+}
+
+.at-embed[data-size="full"] .at-embed-toggle {
+  flex-shrink: 0;
+  align-self: center;
+  inline-size: 104px;
+  block-size: var(--at-embed-h-primary);
+  margin: 0;
+  border-radius: var(--at-r-xl);
+  font: var(--at-type-action);
+}
+
+.at-embed[data-size="full"] .at-embed-toggle[data-kind="start"] {
+  box-shadow: 0 10px 28px -12px color-mix(in srgb, var(--at-embed-brand, var(--at-accent)) 60%, transparent);
+}
+
+.at-embed[data-size="full"] .at-embed-toggle-icon {
+  inline-size: var(--at-icon-md);
+  block-size: var(--at-icon-md);
+}
+
+.at-embed[data-size="full"] .at-embed-notice {
+  margin-inline: calc(-1 * var(--at-s-6));
+  padding-inline: var(--at-s-6);
+}
+
+.at-embed[data-size="full"] .at-embed-timers:not([hidden]) {
+  display: flex;
+}
+
+/* Cook: 64 px targets (DESIGN.md §11.4); under 600 px the timers stack and the frame reserves 420. */
+.at-embed[data-size="full"][data-mode="cook"] {
+  min-block-size: var(--at-embed-full-stacked);
+}
+
+.at-embed[data-size="full"][data-mode="cook"] .at-embed-grid {
+  grid-auto-rows: min-content;
+}
+
+.at-embed[data-size="full"][data-mode="cook"] .at-embed-toggle {
+  block-size: var(--at-h-cook);
+}
+
+/* Title and digit steps follow the board's fit rule: 8 digits × 0.58 em must fit beside the button. */
+@media (width < 400px) {
+  .at-embed[data-size="full"][data-mode="cook"] .at-embed-title {
+    display: none;
+  }
+}
+
+@media (width < 460px) {
+  .at-embed[data-size="full"]:not([data-mode="cook"]) .at-embed-title {
+    display: none;
+  }
+}
+
+@media (width >= 393px) {
+  .at-embed[data-size="full"] .at-embed-clock {
+    --at-embed-digit: 3rem;
+
+    font-weight: 200;
+  }
+}
+
+@media (width >= 467px) {
+  .at-embed[data-size="full"] .at-embed-clock {
+    --at-embed-digit: 4rem;
+  }
+}
+
+@media (width >= 600px) {
+  .at-embed[data-size="full"] .at-embed-toggle {
+    inline-size: 120px;
+  }
+
+  .at-embed[data-size="full"][data-mode="cook"] {
+    min-block-size: var(--at-embed-full);
+  }
+
+  .at-embed[data-size="full"][data-mode="cook"] .at-embed-grid {
+    grid-template-columns: minmax(0, 1fr) 264px;
+    grid-auto-rows: minmax(0, 1fr);
+  }
+
+  .at-embed[data-size="full"] .at-embed-timers:not([hidden]) {
+    padding-block-start: 0;
+    padding-inline-start: var(--at-s-6);
+  }
+
+  .at-embed-timers::before {
+    inset-block: 0;
+    inset-inline: 0 auto;
+    inline-size: var(--at-border);
+    block-size: auto;
+  }
+
+  /* Beside 264 px of timers the digits have less room: 28 until 697, 48 until 771. */
+  .at-embed[data-size="full"][data-mode="cook"] .at-embed-clock {
+    --at-embed-digit: 1.75rem;
+
+    font-weight: 300;
+  }
+}
+
+@media (width >= 600px) and (width < 700px) {
+  .at-embed[data-size="full"][data-mode="cook"] .at-embed-title {
+    display: none;
+  }
+}
+
+@media (width >= 697px) {
+  .at-embed[data-size="full"][data-mode="cook"] .at-embed-clock {
+    --at-embed-digit: 3rem;
+
+    font-weight: 200;
+  }
+}
+
+@media (width >= 771px) {
+  .at-embed[data-size="full"][data-mode="cook"] .at-embed-clock {
+    --at-embed-digit: 4rem;
+  }
+}
+
+/* ── Compact, long state: the pill takes its own row and the frame grows 12 px (board EmbedEdge) ── */
+
+.at-embed[data-size="compact"][data-long] {
+  min-block-size: var(--at-embed-compact-long);
+}
+
+.at-embed[data-size="compact"][data-long] .at-embed-grid {
+  grid-template:
+    "pill pill" var(--at-embed-pill-xs)
+    "dig btn" calc(var(--at-h-control) + var(--at-s-1))
+    / minmax(0, 1fr) auto;
+  row-gap: var(--at-s-2);
+}
+
+.at-embed[data-size="compact"][data-long] .at-embed-pill {
+  max-inline-size: 100%;
+}
+
+.at-embed[data-size="compact"][data-long] :is(.at-embed-clock, .at-embed-note) {
+  align-self: end;
+  margin-block: 0 var(--at-s-1);
+}
+
+/* ── Motion: slow and calm, ease-out, only with no reduced-motion preference (DESIGN.md §8) ─────── */
+
 @media (prefers-reduced-motion: no-preference) {
+  .at-embed,
+  .at-embed::before {
+    transition:
+      background-color 0.6s var(--at-embed-ease),
+      border-color 0.6s var(--at-embed-ease),
+      background 0.6s var(--at-embed-ease);
+  }
+
+  .at-embed-pill {
+    transition:
+      background-color 0.5s var(--at-embed-ease),
+      border-color 0.5s var(--at-embed-ease),
+      color 0.5s var(--at-embed-ease);
+  }
+
+  .at-embed-glyph path,
+  .at-embed-logo-bead,
+  .at-embed-logo-halo {
+    transition: fill 0.6s var(--at-embed-ease), stroke 0.6s var(--at-embed-ease);
+  }
+
+  .at-embed button {
+    transition:
+      background-color 0.45s var(--at-embed-ease),
+      color 0.45s var(--at-embed-ease),
+      border-color 0.45s var(--at-embed-ease),
+      box-shadow 0.45s var(--at-embed-ease),
+      transform 0.18s var(--at-embed-ease);
+  }
+
+  .at-embed button:active {
+    transform: scale(0.97);
+  }
+
   .at-embed-timer {
-    transition: background-color var(--at-d-slow, 320ms) ease;
+    animation: at-embed-in 0.6s var(--at-embed-ease) both;
+  }
+
+  .at-embed-timer[data-flash] {
+    animation:
+      at-embed-in 0.6s var(--at-embed-ease) both,
+      at-embed-flash 1s ease-in-out 3;
+  }
+
+  .at-embed-notice:not([hidden]) {
+    animation: at-embed-in 0.7s var(--at-embed-ease) both;
+  }
+}
+
+@keyframes at-embed-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes at-embed-flash {
+  50% {
+    background-color: transparent;
   }
 }

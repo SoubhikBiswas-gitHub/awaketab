@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  EMBED_BOX,
   EMBED_MAX_HEIGHT,
   EMBED_MIN_HEIGHT,
   embedLocale,
@@ -10,7 +11,21 @@ import {
   parsePageMessage,
   parseWall,
   parseWidgetMessage,
+  reservedHeight,
 } from '../../src/tool/embed/protocol.js';
+
+describe('reserved boxes (docs/11 §2, O-58)', () => {
+  it('reserves 104 for compact and 240 for full, and the taller layouts in narrow containers', () => {
+    expect(EMBED_BOX.compact).toEqual({ width: '320px', height: 104, radius: 16 });
+    expect(EMBED_BOX.full).toEqual({ width: '100%', height: 240, radius: 28 });
+    expect(reservedHeight({ size: 'compact', mode: 'cook' }, 0)).toBe(104);
+    expect(reservedHeight({ size: 'compact', mode: 'clock' }, 320)).toBe(104);
+    expect(reservedHeight({ size: 'compact', mode: 'clock' }, 280)).toBe(116);
+    expect(reservedHeight({ size: 'full', mode: 'cook' }, 390)).toBe(420);
+    expect(reservedHeight({ size: 'full', mode: 'cook' }, 720)).toBe(240);
+    expect(reservedHeight({ size: 'full', mode: 'standard' }, 390)).toBe(240);
+  });
+});
 
 describe('embed protocol: loader attributes and iframe params (docs/11 §1)', () => {
   it('applies the documented defaults', () => {

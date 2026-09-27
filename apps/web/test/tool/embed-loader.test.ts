@@ -1,8 +1,14 @@
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { createRegistry, EMBED_SANDBOX, install, mountFrame } from '../../src/tool/embed/loader.js';
-import { SNIPPET_SANDBOX } from '../../src/tool/embed/snippet.js';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createRegistry, EMBED_SANDBOX, install, keepsCredit, mountFrame } from '../../src/tool/embed/loader.js';
+import { EMBED_CREDIT_URL } from '../../src/tool/embed/protocol.js';
+import { creditSnippet, SNIPPET_SANDBOX } from '../../src/tool/embed/snippet.js';
 
-const TITLES = { en: 'Keep screen awake', de: 'Bildschirm wach halten' };
+const TITLES = {
+  titles: { en: 'Keep screen awake', de: 'Bildschirm wach halten' },
+  credits: { en: 'Keep awake by AwakeTab', de: 'Wach gehalten von AwakeTab' },
+};
+
+const flush = () => new Promise((r) => setTimeout(r, 0));
 
 function tag(attrs: Record<string, string> = {}, src = 'https://awaketab.com/embed.js'): HTMLScriptElement {
   const script = document.createElement('script');
@@ -32,9 +38,15 @@ beforeAll(() => {
   }
 });
 
+beforeEach(() => {
+  // install() asks the licence endpoint for the credit; unit tests answer as a free domain unless they say otherwise.
+  vi.spyOn(window, 'fetch').mockResolvedValue(Response.json({ licensed: false, attribution: true }));
+});
+
 afterEach(() => {
   document.body.innerHTML = '';
   delete (window as Window & { AwakeTabEmbed?: unknown }).AwakeTabEmbed;
+  vi.restoreAllMocks();
 });
 
 describe('embed.js loader (docs/11 §1)', () => {
@@ -62,6 +74,46 @@ describe('embed.js loader (docs/11 §1)', () => {
     });
     expect(frame?.style.height).toBe('240px');
     expect(frame?.style.width).toBe('100%');
+    expect(frame?.style.borderRadius).toBe('28px');
+  });
+
+  it('reserves the compact 320 × 104 box (O-58), and 116 in a container under 300 px', () => {
+    const frame = mountFrame(tag({ 'data-size': 'compact' }), createRegistry(window), TITLES);
+    expect(frame?.style.width).toBe('320px');
+    expect(frame?.style.height).toBe('104px');
+    expect(frame?.style.borderRadius).toBe('16px');
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(280);
+    expect(mountFrame(tag({ 'data-size': 'compact' }), createRegistry(window), TITLES)?.style.height).toBe('116px');
+    // A full cook widget in a phone column stacks its kitchen timers (420); other modes keep 240.
+    expect(mountFrame(tag({ 'data-size': 'full' }), createRegistry(window), TITLES)?.style.height).toBe('420px');
+    expect(mountFrame(tag({ 'data-size': 'full', 'data-mode': 'clock' }), createRegistry(window), TITLES)?.style.height).toBe('240px');
+  });
+
+  it('puts the credit link in the host page right after the iframe (O-47)', () => {
+    const frame = mountFrame(tag({ 'data-lang': 'de' }), createRegistry(window), TITLES);
+    const credit = frame?.nextElementSibling as HTMLElement | null;
+    expect(credit?.className).toBe('awaketab-credit');
+    const link = credit?.querySelector('a');
+    expect(link?.textContent).toBe('Wach gehalten von AwakeTab');
+    expect(link?.getAttribute('href')).toBe('https://awaketab.com/?ref=embed&source=embed');
+    expect(link?.getAttribute('rel')).toBe('nofollow');
+    expect(link?.hasAttribute('target')).toBe(false);
+    // Neutral on any site: the host's font and colour, a fixed 24 px line so it never shifts the page.
+    expect(link?.style.color).toBe('inherit');
+    expect(credit?.style.height).toBe('24px');
+    expect(credit?.style.lineHeight).toBe('24px');
+    expect(credit?.style.whiteSpace).toBe('nowrap');
+    // The bare-iframe snippet carries the same line as plain HTML.
+    const doc = new DOMParser().parseFromString(creditSnippet('Wach gehalten von AwakeTab'), 'text/html');
+    const pasted = doc.querySelector<HTMLElement>('.awaketab-credit');
+    const pastedLink = pasted?.querySelector('a');
+    expect(pasted?.style.cssText).toBe(credit?.style.cssText);
+    expect(pastedLink?.style.cssText).toBe(link?.style.cssText);
+    expect([pastedLink?.getAttribute('href'), pastedLink?.getAttribute('rel'), pastedLink?.textContent]).toEqual([
+      link?.getAttribute('href'),
+      link?.getAttribute('rel'),
+      link?.textContent,
+    ]);
   });
 
   it('keeps the sandbox tokens in step with the documented iframe snippet', () => {
@@ -97,6 +149,44 @@ describe('embed.js loader (docs/11 §1)', () => {
     install(window, tag({ 'data-size': 'full' }), TITLES);
     expect((window as Window & { AwakeTabEmbed?: unknown }).AwakeTabEmbed).toBe(first);
     expect(document.querySelectorAll('iframe')).toHaveLength(2);
+    expect(document.querySelectorAll('.awaketab-credit')).toHaveLength(2);
+  });
+});
+
+describe('credit lookup (O-47, docs/11 §11.4)', () => {
+  const answer = (body: unknown, ok = true) =>
+    vi.spyOn(window, 'fetch').mockResolvedValue(ok ? Response.json(body) : new Response('no', { status: 500 }));
+
+  it('removes the credit only for a licensed domain without attribution', async () => {
+    const fetch = answer({ licensed: true, attribution: false, theme: null, expiresAt: null });
+    install(window, tag(), TITLES);
+    expect(document.querySelector('.awaketab-credit')).not.toBeNull();
+    await vi.waitFor(() => {
+      expect(document.querySelector('.awaketab-credit')).toBeNull();
+    });
+    expect(fetch).toHaveBeenCalledWith(`https://awaketab.com/api/embed/config?domain=${location.hostname}`);
+  });
+
+  it('keeps the credit for a free domain, a licence that keeps attribution, and a failed lookup', async () => {
+    for (const body of [{ licensed: false, attribution: true }, { licensed: true, attribution: true }, 'nope']) {
+      answer(body);
+      expect(await keepsCredit(window, 'https://awaketab.com')).toBe(true);
+      vi.restoreAllMocks();
+    }
+    answer(null, false);
+    expect(await keepsCredit(window, 'https://awaketab.com')).toBe(true);
+    vi.spyOn(window, 'fetch').mockRejectedValue(new TypeError('blocked by CSP'));
+    install(window, tag(), TITLES);
+    await flush();
+    await flush();
+    expect(document.querySelector('.awaketab-credit a')?.getAttribute('href')).toBe(EMBED_CREDIT_URL);
+  });
+
+  it('asks once per widget origin, however many widgets the page holds', async () => {
+    const fetch = answer({ licensed: false, attribution: true });
+    const cache = {};
+    await Promise.all([keepsCredit(window, 'https://awaketab.com', cache), keepsCredit(window, 'https://awaketab.com', cache)]);
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -150,9 +240,9 @@ describe('window.AwakeTabEmbed postMessage bridge (docs/11 §3)', () => {
     deliver(win, 'https://awaketab.com', { type: 'awaketab:resize', height: 150 });
     expect(frame.style.height).toBe('150px');
     deliver(win, 'https://awaketab.com', { type: 'awaketab:resize', height: 40 });
-    expect(frame.style.height).toBe('96px');
+    expect(frame.style.height).toBe('104px');
     deliver(win, 'https://evil.example', { type: 'awaketab:resize', height: 600 });
-    expect(frame.style.height).toBe('96px');
+    expect(frame.style.height).toBe('104px');
   });
 
   it('unsubscribes', () => {
