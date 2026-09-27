@@ -1,64 +1,105 @@
 ---
 title: "Chrome Energy Saver and wake locks — AwakeTab"
-description: "Chrome Energy Saver slows background tabs but does not block a visible tab's wake lock. OS battery savers may dim the screen but do not refuse it."
-h1: "Chrome Energy Saver and wake locks"
+description: "Chrome Energy Saver slows background tabs but does not block a visible tab's wake lock. If the screen still goes dark, here is how to find the real cause."
+h1: "Chrome Energy Saver and wake locks: why the screen still goes dark"
+crumb: "Chrome Energy Saver"
 intent: "chrome energy saver"
 preset: p30
 mode: standard
 locale: en
 reviewed: true
 noindex: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+lastVerified: 2026-09-26
+browsers: ["chrome", "edge"]
+os: ["windows", "macos", "linux", "chromeos", "android"]
+lead: "You can leave Chrome's Energy Saver on. It slows tabs in the background, and Chromium's wake lock code has no check for it, so a visible tab still keeps the screen on. If the screen goes dark anyway, the tab was hidden, or a setting outside Chrome took over. The steps below find which one."
+toc:
+  find-the-real-cause-in-five-steps: "Find the cause"
+  if-the-screen-still-goes-dark: "Still going dark"
+  what-each-saver-changes: "What each saver changes"
+steps:
+  - title: "Bring the AwakeTab tab to the front"
+    short: "Tab in front"
+    path: "Chrome › the AwakeTab tab"
+    text: "Energy Saver slows background tabs, and a hidden tab has no wake lock anyway. Switching tabs or minimising the window releases the lock. A visible window without focus keeps it."
+  - title: "Start a session and read the pill"
+    short: "Read the pill"
+    path: "AwakeTab › Start"
+    text: "Wait for \"Screen awake\", which shows only once Chrome has granted the lock. If it says \"Blocked — here's the fix\", follow the line under it."
+  - title: "Check the Windows screen timeout and Energy saver"
+    short: "Check Windows settings"
+    path: "Settings › System › Power & battery"
+    text: "Windows keeps one screen timeout for battery and one for plugged in. Energy saver (Battery saver before Windows 11 24H2) may shorten timeouts or dim the screen on battery, but it does not refuse a browser wake lock."
+  - title: "Check the phone's own timeout"
+    short: "Check the phone"
+    path: "Settings › Display › Screen timeout"
+    text: "On a Pixel with Android 16, the path is Settings › Display & touch › Screen timeout. Battery Saver may shorten it or dim the screen, but Chrome does not refuse the lock because of it."
+  - title: "Confirm the request reached the system"
+    short: "Confirm the request"
+    path: "Terminal › powercfg /requests or pmset -g assertions"
+    text: "On Windows, run `powercfg /requests` in an administrator terminal: the browser should be listed under DISPLAY. On a Mac, run `pmset -g assertions` and look for a PreventUserIdleDisplaySleep or NoDisplaySleep line from your browser."
+stepsDone: "All five done. If the screen still goes dark with the tab in front, read the next section."
+rows:
+  still:
+    - title: "The lid closed"
+      text: "A closed laptop lid sleeps the computer whatever a page asks, apart from a Mac in clamshell mode or a Chromebook with \"Sleep when cover is closed\" turned off."
+    - title: "A work lock screen appeared"
+      text: "A wake lock holds off display sleep, not a \"require sign-in after N minutes\" policy. On a work computer, only your IT team can change it."
+      link:
+        label: "Lock screen versus sleep"
+        href: "/guides/lock-screen-vs-sleep"
+    - title: "The session ended"
+      text: "A timed session stops at the time you picked, and your normal timeout takes over. Pick ∞ to run until you stop it."
+  savers:
+    - title: "Chrome's Energy Saver"
+      text: "Slows tabs in the background. It does not touch the wake lock of the tab you are looking at."
+    - title: "Windows Energy saver"
+      text: "Called Battery saver before Windows 11 24H2. It may dim the screen or shorten timeouts; it does not refuse a browser wake lock."
+    - title: "Android Battery Saver"
+      text: "Chrome has no Battery Saver check on the wake lock. It may shorten your timeout or dim the screen once you leave the tab."
+    - title: "iPhone Low Power Mode"
+      text: "Sets Auto-Lock to 30 seconds. WebKit has no Low Power Mode check; whether a Safari lock holds under it has not been device-tested yet."
+      link:
+        label: "iPhone Auto-Lock greyed out"
+        href: "/guides/iphone-auto-lock-never-greyed-out"
+toolNote: "You don't need to turn Energy Saver off first. Keep this tab in front and press Start: the pill says \"Screen awake\" once Chrome grants the lock, and it changes to \"Paused — tab hidden\" the moment the tab is out of sight."
 faq:
-  - q: "Does this work if the tab is hidden?"
-    a: "No. The browser releases the lock when you switch tabs or apps. Come back and the pill returns to “Screen awake”. On desktop Chrome or Edge, AwakeTab for Chrome keeps the screen on with the tab hidden."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Teams and Slack set you to Away from keyboard and mouse inactivity, not from a lit screen. AwakeTab never moves the mouse or presses keys."
-  - q: "What browsers are in scope?"
-    a: "Chrome and Edge 84+, Firefox 126+, Safari 16.4+ and Samsung Internet 14+ support the wake lock natively. Older Firefox can use the video fallback after a tap. Checked against browser documentation on 26 September 2026."
-honestLimit: "Energy Saver throttles background tabs. It does not block a visible tab's wake lock, and neither do Windows Energy saver or Android Battery Saver, which may still dim the screen."
+  - q: "Should I turn off Energy Saver to keep the screen on?"
+    a: "No. Chromium's wake lock code has no check for Energy Saver, and the lock permission is allowed by default. Turning it off changes how background tabs behave, not whether the visible tab can keep the screen on."
+  - q: "Does Energy Saver affect AwakeTab for Chrome?"
+    a: "AwakeTab for Chrome uses Chrome's own power setting instead of a page's wake lock, so it keeps working with the tab hidden or the window minimised. It still cannot stop sleep when a laptop lid closes."
+  - q: "Why did the pill change to \"Paused — tab hidden\"?"
+    a: "The browser took the lock back because the tab was hidden: another tab in front, the window minimised, or a full-screen app on top. AwakeTab asks again as soon as you return, and paused time does not count toward a timed session."
+honestLimit: "Energy Saver throttles background tabs. It does not block a visible tab's wake lock, and neither do Windows Energy saver or Android Battery Saver, which may still dim the screen. A hidden tab has no lock at all."
 related:
-  - "/learn/does-a-wake-lock-keep-teams-green"
-  - "/for/ai-agents"
-  - "/for/reading"
+  - "/learn/browser-support-matrix"
+  - "/on/windows-11"
+  - "/on/android-chrome"
+  - "/guides/lock-screen-vs-sleep"
+  - "/learn/low-power-mode-and-wake-locks"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
-## What you are actually asking
+## Find the real cause in five steps
 
-Chrome > Settings > Performance > Energy Saver slows background tabs. A visible AwakeTab tab still holds the lock. Windows Energy saver and Android Battery Saver are different switches: they may dim the screen or shorten its timeout, but Chrome does not refuse the request because of them.
+These work in Chrome and Edge on any system. Sources checked 26 September 2026: Chromium's [wake_lock.cc](https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/modules/wake_lock/wake_lock.cc) refuses only for a hidden or inactive page, a Permissions-Policy block or a denied permission, and never reads a saver mode.
 
-## How the lock works on this page
+::steps
 
-AwakeTab asks the browser for a screen wake lock from a secure page that is on screen. The pill at the top of the tool says what the browser answered: "Starting…" while it asks, "Screen awake" once the browser has confirmed the lock, "Paused — tab hidden" when the tab is out of sight, and "Blocked — here's the fix" when the browser refuses, with the cause. Only "Screen awake" and "Awake via video fallback" come with a running timer.
+## If the screen still goes dark
 
-Chrome and Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 and Opera 70 are the first versions with the Screen Wake Lock API; iPhone and iPad Home Screen apps need iOS 18.4. Older Firefox can use the video fallback after a tap. A browser refuses or takes back the lock when the tab is hidden, when a Permissions-Policy blocks it, when Safari has not had a tap yet, or when Firefox is at 5 % battery or less and not charging. A page without HTTPS has no wake lock at all. Battery savers are not a refusal cause in Chrome or Safari.
+With the tab in front and the pill saying "Screen awake", the cause is outside the browser. These are the usual ones.
 
-## Practical setup
+::rows still
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+::ad
 
-## Operating-system notes
+## What each saver changes
 
-Windows: Settings > System > Power & battery sets the screen timeout. Energy saver (called Battery saver before Windows 11 24H2) may dim the screen, but it does not refuse a browser wake lock. macOS: System Settings > Lock Screen. While Chrome keeps the display on, the Mac does not idle-sleep; closing the lid still sleeps it unless you use clamshell mode with power and an external display. iPhone: Settings > Display & Brightness > Auto-Lock; Low Power Mode sets Auto-Lock to 30 seconds. Android: Settings > Display (Pixel: Display & touch) > Screen timeout, and some makers' sleeping-apps lists can close a browser after you leave it. Linux: Chrome and Firefox ask the desktop not to sleep; whether that holds depends on your desktop.
+Four different switches share the name. None makes Chrome refuse a wake lock, but some change what the system does around it.
 
-## What success looks like
+::rows savers
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Tapping Start again without changing what caused a refusal gets the same answer. Stats count only the time the screen was actually kept awake.
-
-
-## A short checklist before you walk away
-
-Before you walk away, check that the page uses HTTPS, that this tab is in front, and that the pill says "Screen awake". A dimming clock or a chat avatar tells you nothing about the lock; the pill does. If the pill says "Blocked — here's the fix", follow the line under it instead of tapping Start again. A timed session ends when its time is up, so pick ∞ if you want it to run until you stop it.
-
-## When the pill changes
-
-When you hide the tab, the pill changes to "Paused — tab hidden". That is the page telling the truth, not a bug: the browser has taken the lock back, and AwakeTab asks again as soon as you return. Paused time does not count toward a timed session. If the screen must stay on while the tab is hidden, AwakeTab for Chrome uses Chrome's own power setting instead and keeps working with the tab hidden on desktop Chrome and Edge. Firefox and Safari give extensions no power setting, so there the tab has to stay in view.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. In Chrome and Edge, AwakeTab can stop by itself at a battery level you pick; Firefox and Safari do not tell pages the battery level. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Firmware and OS power rules still win. If you need those jobs, use a native utility and keep this tab for a screen you can see.
+To keep the screen on while you work in another tab, use [AwakeTab for Chrome](/extension) on desktop Chrome or Edge.
