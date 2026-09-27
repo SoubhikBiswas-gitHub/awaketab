@@ -150,7 +150,7 @@ const pills = Object.fromEntries(LOCK_STATES.map((s) => [s, t(`tool.pill.${s}`)]
         <div class="at-lib-status">
           <StatusPill state="idle" aria-live="polite" data-demo-pill><span data-demo-pill-text>{pills.idle}</span></StatusPill>
           <code class="at-lib-state">state: <span data-demo-current>idle</span></code>
-          <span class="at-lib-advice" data-demo-advice data-label={t('library.demo.advice', { code: '{code}' })}></span>
+          <span class="at-lib-advice" data-demo-advice data-label={t('library.demo.advice', { code: '{code}' })} data-unknown={t('tool.advice.unknown')}></span>
         </div>
         <div class="at-lib-buttons">
           <button class="at-button at-button-primary at-pg-b52" type="button" data-demo-request disabled>

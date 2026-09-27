@@ -1,3 +1,6 @@
+// Until the stores approve the listing the links are store searches, and the buttons say so (flip with the URLs).
+export const EXTENSION_LISTED = false;
+
 export const EXTENSION_STORE_URLS = {
   chrome: 'https://chromewebstore.google.com/search/AwakeTab',
   edge: 'https://microsoftedge.microsoft.com/addons/search/AwakeTab',

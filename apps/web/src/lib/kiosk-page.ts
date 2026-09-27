@@ -231,8 +231,15 @@ export function bindKiosk(root: HTMLElement, win: Window = window): void {
     setText('[data-k-hint="msg"]', h.msg);
     setText('[data-k-hint="logo"]', h.logo);
     setText('[data-k-hint="token"]', h.token);
-    root.querySelector('[data-k-hint="logo"]')?.toggleAttribute('data-warn', h.logoWarn);
-    root.querySelector('[data-k-hint="token"]')?.toggleAttribute('data-warn', h.tokenWarn);
+    for (const [key, warn] of [
+      ['logo', h.logoWarn],
+      ['token', h.tokenWarn],
+    ] as const) {
+      root.querySelector(`[data-k-hint="${key}"]`)?.toggleAttribute('data-warn', warn);
+      const field = root.querySelector(`[name="${key}"]`);
+      if (warn) field?.setAttribute('aria-invalid', 'true');
+      else field?.removeAttribute('aria-invalid');
+    }
     const msg = kioskMsg(o.msg) || 'Your message';
     const len = Array.from(msg).length;
     setText('[data-k-msg]', msg);

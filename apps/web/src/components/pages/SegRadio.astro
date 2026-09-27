@@ -13,14 +13,26 @@ interface Props {
   labelledby?: string | undefined;
   small?: boolean;
   compactPhone?: boolean;
+  wrap?: boolean;
   class?: string | undefined;
   hook?: string | undefined;
 }
-const { name, options, checked, label, labelledby, small = false, compactPhone = false, class: className, hook } = Astro.props;
+const {
+  name,
+  options,
+  checked,
+  label,
+  labelledby,
+  small = false,
+  compactPhone = false,
+  wrap = false,
+  class: className,
+  hook,
+} = Astro.props;
 ---
 
 <div
-  class:list={['at-seg', 'at-pg-seg', small && 'at-pg-seg-sm', compactPhone && 'at-pg-seg-xs', className]}
+  class:list={['at-seg', 'at-pg-seg', small && 'at-pg-seg-sm', compactPhone && 'at-pg-seg-xs', wrap && 'at-pg-seg-wrap', className]}
   role="radiogroup"
   aria-label={labelledby ? undefined : label}
   aria-labelledby={labelledby}

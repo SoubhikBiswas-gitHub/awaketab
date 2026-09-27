@@ -127,10 +127,12 @@ export function bindDemo(root: HTMLElement, win: Window & { AwakeTabWake?: IWake
     if (advice) {
       const code = lock?.advice ?? null;
       const [before = '', after = ''] = (advice.dataset.label ?? '{code}').split('{code}');
-      if (code) {
+      // A refusal with no known cause still gets its fix, the tool's "Your browser said no… Retry" line.
+      const fix = state === 'denied' && !code ? (advice.dataset.unknown ?? '') : '';
+      if (code || fix) {
         const el = doc.createElement('code');
-        el.textContent = code;
-        advice.replaceChildren(before, el, after);
+        el.textContent = code ?? 'null';
+        advice.replaceChildren(before, el, after, fix && ` · ${fix}`);
       } else advice.replaceChildren();
     }
   };
