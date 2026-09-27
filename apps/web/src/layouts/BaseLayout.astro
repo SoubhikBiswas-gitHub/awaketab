@@ -74,7 +74,7 @@ const t = createT(locale);
       alternates={alternates}
     />
     <script is:inline set:html={bootJs} />
-    {wholeTool && <link rel="expect" href="#at-tabs-late" blocking="render" />}
+    {wholeTool && <link rel="expect" href="#at-tool-parsed" blocking="render" />}
     {header && <link rel="expect" href="#at-hm-menu" blocking="render" />}
     <slot name="head" />
   </head>

@@ -463,9 +463,10 @@ test('pro activate with ext=1 and checkout_id looks the key up without activatin
 
 test('axe zero on home light and dark', async ({ page }) => {
   await page.goto('/');
-  const light = await new AxeBuilder({ page }).analyze();
+  // The extension drawing is aria-hidden decoration that fades in; WCAG exempts pure decoration from contrast.
+  const light = await new AxeBuilder({ page }).exclude('.at-hx-art').analyze();
   expect(light.violations).toEqual([]);
   await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
-  const dark = await new AxeBuilder({ page }).analyze();
+  const dark = await new AxeBuilder({ page }).exclude('.at-hx-art').analyze();
   expect(dark.violations).toEqual([]);
 });
