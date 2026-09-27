@@ -10,7 +10,7 @@ import {
   type TEmbedLocale,
 } from './protocol.js';
 
-export const SITE_ORIGIN = 'https://awaketab.com';
+const SITE_ORIGIN = 'https://awaketab.com';
 
 export const SNIPPET_SANDBOX = 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox';
 
@@ -57,7 +57,7 @@ export function iframeSnippet(opts: ISnippetOptions, title: string, origin = SIT
 }
 
 export const KIOSK_MODES = ['message', 'clock', 'minimal', 'standard', 'night'] as const;
-export type TKioskMode = (typeof KIOSK_MODES)[number];
+type TKioskMode = (typeof KIOSK_MODES)[number];
 
 export interface IKioskUrlOptions {
   preset: 'p15' | 'p30' | 'p45' | 'p60' | 'p120' | 'p240' | 'pinf';

@@ -60,7 +60,7 @@
 
         <div class="pp-state">
           <output class="at-pill" data-pill data-lock="idle" aria-live="polite" aria-atomic="true">
-            <svg class="at-pill-glyph" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path data-pill-glyph d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg>
+            <svg class="at-pill-glyph" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true" focusable="false"><path data-pill-glyph d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg>
             <span data-pill-text></span>
           </output>
           <p class="pp-line at-in" data-pill-extra hidden>
@@ -73,6 +73,10 @@
           </p>
           <p class="pp-meta" data-meta></p>
           <p class="pp-meta2" data-meta2 hidden></p>
+          <p class="pp-fail at-in" role="alert" data-fail hidden>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 7.5v5.5M12 16.5v.01"></path></svg>
+            <span data-i18n="ext.popup.noAnswer"></span>
+          </p>
         </div>
       </section>
 
@@ -130,8 +134,8 @@
           <span class="pp-levels-label" aria-hidden="true" data-i18n="ext.level.label"></span>
           <div class="at-seg">
             <span class="at-seg-ind" aria-hidden="true"></span>
-            <label class="at-seg-item"><input class="at-sr" type="radio" name="level" value="display" /><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v11H3zM9 20h6M12 16v4"></path></svg><span data-i18n="ext.level.display"></span></label>
-            <label class="at-seg-item"><input class="at-sr" type="radio" name="level" value="system" /><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14v12H5zM3 20h18M9 10h6"></path></svg><span data-i18n="ext.level.system"></span></label>
+            <label class="at-seg-item"><input class="at-sr" type="radio" name="level" value="display" /><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v11H3zM9 20h6M12 16v4"></path></svg><span data-i18n="ext.level.display"></span></label>
+            <label class="at-seg-item"><input class="at-sr" type="radio" name="level" value="system" /><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14v12H5zM3 20h18M9 10h6"></path></svg><span data-i18n="ext.level.system"></span></label>
           </div>
         </div>
         <p class="pp-help" aria-live="polite" data-level-help></p>

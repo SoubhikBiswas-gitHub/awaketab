@@ -25,9 +25,9 @@
 @font-face {
   font-family: "Geist Fallback";
   src: local("Arial"), local("Helvetica"), local("Liberation Sans");
-  size-adjust: 105.5%;
-  ascent-override: 95.26%;
-  descent-override: 27.96%;
+  size-adjust: 105.8%;
+  ascent-override: 94.99%;
+  descent-override: 27.88%;
   line-gap-override: 0%;
 }
 
@@ -627,6 +627,26 @@ svg {
 @media (width >= 600px) {
   .at-foot {
     padding-block-end: var(--at-s-6);
+  }
+}
+
+@media (hover: hover) {
+  .at-btn:not(.at-btn-lamp, :disabled):hover {
+    background: color-mix(in srgb, var(--at-raised) 88%, var(--at-ink));
+    color: var(--at-ink);
+  }
+
+  .at-link:hover {
+    text-decoration: underline;
+    text-underline-offset: var(--at-s-1);
+  }
+
+  .at-foot a:hover {
+    color: var(--at-ink);
+  }
+
+  .at-seg-item:not(:has(input:checked, input:disabled)):hover {
+    color: var(--at-ink);
   }
 }
 

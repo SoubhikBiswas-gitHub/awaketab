@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount as mountCook } from '../../src/tool/ambient/cook.js';
-import { at, dateLong, digits, short, split } from '../../src/tool/ambient/fmt.js';
+import { at, digits, short, split } from '../../src/tool/ambient/fmt.js';
+import { dateLong } from '../../src/tool/format.js';
 import { mount as mountFocus } from '../../src/tool/ambient/focus.js';
 import { mount as mountMessage } from '../../src/tool/ambient/message.js';
 import { togglePip } from '../../src/tool/ambient/pip-window.js';

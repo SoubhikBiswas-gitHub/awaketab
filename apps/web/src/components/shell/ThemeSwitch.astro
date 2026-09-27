@@ -27,7 +27,7 @@ const themes = [
     themes.map(([value, label, title]) => (
       <label class="at-theme-item" data-v={value} title={title}>
         <input class="sr-only" type="radio" name="at-theme" value={value} aria-label={label} checked={value === 'auto'} />
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
           <path d={ICONS[value][0]} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
           {ICONS[value][1] && <path d={ICONS[value][1]} fill="currentColor" />}
         </svg>
@@ -44,7 +44,7 @@ const themes = [
       ))}
       <span class="sr-only">{t('header.theme.change')}</span>
       {themes.map(([value]) => (
-        <svg data-v={value} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <svg data-v={value} viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
           <path d={ICONS[value][0]} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
           {ICONS[value][1] && <path d={ICONS[value][1]} fill="currentColor" />}
         </svg>

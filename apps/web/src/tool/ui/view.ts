@@ -17,10 +17,11 @@ const BY_LOCK: Partial<Record<IToolState['lock'], TStatus>> = {
   unsupported: 'needtap',
 };
 
+// A refusal of the page's own start shows nothing; Blocked is for a refused tap.
 export function statusOf(s: IToolState): TStatus {
   return s.ui.ask
     ? 'timesup'
-    : s.ui.tap && s.lock === 'denied'
+    : s.ui.auto && !s.ui.ok && (s.lock === 'requesting' || s.lock === 'denied')
       ? 'ready'
       : (BY_LOCK[s.lock] ?? (s.ui.done ? 'ended' : 'ready'));
 }
@@ -98,7 +99,9 @@ export function mountView(ctx: IToolCtx): () => void {
     const inf = total === 0;
     const final = held && !inf && left > 0 && left <= 60;
     const shown = inf ? (live ? el : null) : left;
-    const [a, b] = shown === null ? ['∞', ''] : splitDigits(shown);
+    // No limit shows 00:00 at rest, so a grant never swaps the digits.
+    const v = shown ?? el;
+    const [a, b] = splitDigits(v);
     const endMs = Math.round((now + left * 1000) / 60_000) * 60_000;
     const untilAt =
       act?.plan.type === 'until' ? (act.endsAt ?? now) : nextWall(routeUntil ?? settings.lastUntilWall ?? '00:00', now);
@@ -112,7 +115,7 @@ export function mountView(ctx: IToolCtx): () => void {
     if (live && inf && act) km = ['awakeFor', 'since', since(act.startedAt, c24)];
     if (st === 'paused') km = ['paused', 'resumes', ''];
     if (st === 'blocked') km = ['blocked', 'seeFix', ''];
-    if (st === 'needtap' || (ui.tap && st === 'ready')) km = ['needtap', 'tapBelow', ''];
+    if (st === 'needtap') km = ['needtap', 'tapBelow', ''];
     if (ui.ask) km = ['timesup', 'reachedZero', hm(ui.ask.until - 60_000, c24)];
     if (final) km[0] = 'final';
 
@@ -222,9 +225,10 @@ export function mountView(ctx: IToolCtx): () => void {
     if (face === 'ring') delete html.dataset.face;
     else html.dataset.face = face;
     if (pill) {
-      pill.dataset.lock = s.lock;
+      const lk = st === 'ready' ? 'idle' : s.lock;
+      pill.dataset.lock = lk;
       const text = pill.querySelector('[data-pill-text]');
-      if (text) text.textContent = t(`tool.pill.${s.lock}`);
+      if (text) text.textContent = t(`tool.pill.${lk}`);
     }
     // The tab mirrors the state in its title and favicon shape, so a background tab still tells the truth.
     const k = held ? 'awake' : st === 'paused' || st === 'blocked' ? st : '';
@@ -235,9 +239,9 @@ export function mountView(ctx: IToolCtx): () => void {
 
     const d = root.dataset;
     d.status = st;
-    if (st !== 'starting' && (st !== 'ready' || ui.tap || deferred)) d.settled = '';
+    if ((s.lock !== 'idle' && s.lock !== 'requesting') || deferred) d.settled = '';
     d.open = batt || st === 'blocked' || st === 'needtap' || st === 'timesup' ? '' : ui.open;
-    d.units = shown === null ? '' : shown >= 86_400 ? 'd' : shown >= 3600 ? 'h' : '';
+    d.units = v >= 86_400 ? 'd' : v >= 3600 ? 'h' : '';
     d.phase = phase;
     const flags: Record<string, boolean> = {
       final,

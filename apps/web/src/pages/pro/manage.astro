@@ -52,7 +52,7 @@ const ICONS = {
     <main class="at-pro-man-main">
       <div class="at-pro-man-col">
         <a class="at-pro-back" href="/pro">
-          <svg viewBox="0 0 24 24" aria-hidden="true" class="at-flip-rtl"><path d="M15 6l-6 6 6 6"></path></svg>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" class="at-flip-rtl"><path d="M15 6l-6 6 6 6"></path></svg>
           {t('page.pro.activate.back')}
         </a>
 
@@ -74,7 +74,7 @@ const ICONS = {
 
         <section class="at-card at-pro-lapse" aria-labelledby="lp-h" data-lapse>
           <p class="at-pro-lapse-kicker">
-            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg>
+            <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg>
             <span data-for-state="grace">{l('grace.kicker')}</span>
             <span data-for-state="lapsed" data-lapse-fill data-tpl={l('ended.kicker')}></span>
           </p>
@@ -130,7 +130,7 @@ const ICONS = {
             <div role="cell" class="at-pro-dev-name">
               {
                 Object.entries(ICONS).map(([id, d]) => (
-                  <svg viewBox="0 0 24 24" aria-hidden="true" data-icon={id}>
+                  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" data-icon={id}>
                     <path d={d} />
                   </svg>
                 ))
@@ -158,7 +158,7 @@ const ICONS = {
         <span hidden data-confirm-other data-tpl={m('confirm.other')} data-aria={m('confirm.aria')}></span>
 
         <div role="status" class="at-card at-pro-empty" data-manage-empty tabindex="-1" hidden>
-          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.2"></circle></svg>
+          <svg viewBox="0 0 48 48" width="44" height="44" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.2"></circle></svg>
           <p>{t('page.pro.manage.empty')}</p>
           <div class="at-pro-empty-actions">
             <Button variant="primary" href="/pro/activate">{t('pro.activate')}</Button>
@@ -168,7 +168,7 @@ const ICONS = {
 
         <div role="alert" class="at-pro-err" data-tone="warn" data-manage-offline tabindex="-1" hidden>
           <p class="at-pro-err-title">
-            <svg viewBox="0 0 12 12" aria-hidden="true"><path class="at-pro-err-pause" d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z"></path></svg>
+            <svg viewBox="0 0 12 12" width="14" height="14" aria-hidden="true"><path class="at-pro-err-pause" d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z"></path></svg>
             {t('page.pro.activate.err.offline')}
           </p>
           <p class="at-pro-err-text">{t('license.error.offline')}</p>

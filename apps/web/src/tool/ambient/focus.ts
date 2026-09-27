@@ -3,16 +3,10 @@ import type { IToolCtx } from '../ctx.js';
 import { t } from '../i18n.js';
 import { chime, notify } from '../signal.js';
 import { toast } from '../ui/toast.js';
+import { liveSession } from '../ui/view.js';
 import { activeElapsed, FOCUS_LONG_BREAK_MIN, focusPhase, focusPlanMs, type IFocusPhase } from './logic.js';
 import { at, digits as writeDigits } from './fmt.js';
 import { el, everySecond } from './tick.js';
-
-const PHASE = {
-  work: 'ambient.focus.work',
-  break: 'ambient.focus.break',
-  long: 'ambient.focus.long',
-  done: 'tool.timer.complete',
-};
 
 function dotState(cycle: number, p: IFocusPhase): 'done' | 'now' | 'todo' {
   if (cycle < p.cycle || (cycle === p.cycle && p.kind !== 'work')) return 'done';
@@ -21,14 +15,12 @@ function dotState(cycle: number, p: IFocusPhase): 'done' | 'now' | 'todo' {
 
 export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   const kicker = el('span', { class: 'at-am-kicker' }, t('ambient.focus.block'));
-  const row = el('div', { class: 'at-am-frow', 'data-focus-label': '' });
   const phaseEl = el('span', { class: 'at-am-phase' });
   const cycle = el('span', { class: 'at-am-cycle' });
   const dots = el('span', { class: 'at-focus-dots', role: 'img' });
-  row.append(phaseEl, cycle, dots);
+  const row = el('div', { class: 'at-am-frow', 'data-focus-label': '' }, phaseEl, cycle, dots);
   const digits = el('div', { class: 'at-am-fdigits', role: 'timer', 'data-focus-digits': '' });
-  const bar = el('div', { class: 'at-am-fbar', 'aria-hidden': 'true' });
-  bar.append(el('i'));
+  const bar = el('div', { class: 'at-am-fbar', 'aria-hidden': 'true' }, el('i'));
   const next = el('p', { class: 'at-am-next' });
   const skip = el('button', { type: 'button', class: 'at-am-skip', 'data-focus-skip': '' });
   const intro = el('p', { class: 'at-am-intro' });
@@ -53,8 +45,8 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   let wasRunning: boolean | null = null;
   const paint = (now: number) => {
     const c = cfg();
-    const session = ctx.store.get().session;
-    const running = session?.mode === 'focus' && (session.status === 'active' || session.status === 'paused');
+    const session = liveSession(ctx.store.get());
+    const running = session?.mode === 'focus';
     // Stats are re-read only when a block starts or ends, not every second.
     if (running !== wasRunning) {
       wasRunning = running;
@@ -81,30 +73,14 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
     const work = phase.kind === 'work';
     const last = phase.cycle >= c.cycles;
     stage.dataset.phase = phase.kind;
-    phaseEl.textContent = t(PHASE[phase.kind]);
+    phaseEl.textContent = t(`ambient.focus.${phase.kind}`);
     cycle.textContent = t('ambient.focus.cycle', { n: phase.cycle, total: c.cycles });
     writeDigits(digits, phase.remainingMs);
     bar.style.setProperty('--p', String(phase.remainingMs / phase.phaseMs));
     const time = at(now + phase.remainingMs, now, ctx.store.get().settings.ambient.clock24h);
-    next.textContent = t(
-      work
-        ? last
-          ? 'ambient.focus.nextLong'
-          : 'ambient.focus.nextBreak'
-        : phase.kind === 'break'
-          ? 'ambient.focus.nextFocus'
-          : 'ambient.focus.nextEnd',
-      { time },
-    );
-    skip.textContent = t(
-      work
-        ? last
-          ? 'ambient.focus.skipLong'
-          : 'ambient.focus.skipBreak'
-        : phase.kind === 'break'
-          ? 'ambient.focus.skipFocus'
-          : 'ambient.focus.finish',
-    );
+    const to = work ? (last ? 'Long' : 'Break') : phase.kind === 'break' ? 'Focus' : '';
+    next.textContent = t(`ambient.focus.next${to || 'End'}`, { time });
+    skip.textContent = t(to ? `ambient.focus.skip${to}` : 'ambient.focus.finish');
     const states = Array.from({ length: c.cycles }, (_, i) => dotState(i + 1, phase));
     dots.replaceChildren(...states.map((s) => el('span', { 'data-state': s })));
     dots.setAttribute(

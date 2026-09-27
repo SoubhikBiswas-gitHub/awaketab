@@ -30,29 +30,36 @@ export function keyHandler(
   const { store, root } = ctx;
   return (e) => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
-    const s = store.get();
-    if (!s.settings.keyboardShortcuts && e.key !== 'Escape') return;
-    if (typingTarget(e.target)) return;
-    // Any open modal counts (the Pro sheet, the rating prompt), not just the ones the store names; the
-    // ambient layer is a <dialog> too but is a mode, not a dialog.
-    const dialogOpen = s.ui.dialog !== null || document.querySelector('dialog[open]:not([data-ambient])') !== null;
     const key = e.key.toLowerCase();
     const run = (fn: () => void) => {
       e.preventDefault();
       fn();
     };
-    // The ambient layer's own cancel event takes Esc back to standard; on a first press this module loads after it did.
-    if (key === 'escape' && e.target instanceof Element && e.target.closest('[data-ambient]')) return;
+    // Esc from inside a layer belongs to it, from a field too: a modal sheet and the ambient layer take it natively
+    // (their cancel event; on a first press this module loads after they did), a docked card closes here.
+    const layer = e.target instanceof Element ? e.target.closest('dialog') : null;
+    if (key === 'escape' && layer) {
+      if (layer.open && !layer.matches(':modal'))
+        run(() => {
+          layer.close();
+        });
+      return;
+    }
+    const s = store.get();
+    if (!s.settings.keyboardShortcuts && e.key !== 'Escape') return;
+    if (typingTarget(e.target)) return;
+    // Esc closing a header menu must not also stop the session.
+    if (e.target instanceof Element && e.target.closest('.at-hm-panel, [popovertarget]')) return;
+    if ('showPopover' in root && document.querySelector('.at-hm-panel:popover-open')) return;
+    // The open <dialog> is the truth; the ambient layer is a <dialog> too but is a mode, not a dialog.
+    const dialogOpen = root.querySelector('dialog[open]:not([data-ambient])');
     if (key === 'escape') {
       // Esc closes the innermost layer: a dialog, the ambient mode, a length panel or "How AwakeTab knows", then
       // the session (docs/05 §5).
       run(() => {
         const ui = s.ui;
-        if (dialogOpen) {
-          const open = [...root.querySelectorAll('dialog[open]:not([data-ambient])')].pop();
-          if (open instanceof HTMLDialogElement) open.close();
-          store.set({ ui: { dialog: null } });
-        } else if (ui.mode !== 'standard') store.set({ ui: { mode: 'standard' } });
+        if (dialogOpen instanceof HTMLDialogElement) dialogOpen.close();
+        else if (ui.mode !== 'standard') store.set({ ui: { mode: 'standard' } });
         else if (ui.open || ui.why) store.set({ ui: { open: '', why: false } });
         else if (ui.ask) toggle();
         else ctx.stop();

@@ -120,8 +120,8 @@ body {
   margin-inline-end: calc(-1 * var(--at-s-3));
 }
 
-.pp-icon:hover {
-  color: var(--at-ink);
+.pp-head .pp-icon:focus-visible {
+  outline-offset: calc(-1 * var(--at-ext-ring-width));
 }
 
 .pp-new {
@@ -189,7 +189,8 @@ body {
   transition: opacity 0.9s var(--ext-ease);
 }
 
-.pp[data-mode="held"] .pp-sweep {
+.pp[data-mode="held"] .pp-sweep,
+.pp[data-mode="starting"] .pp-sweep {
   opacity: 1;
   animation: at-spin 16s linear infinite;
 }
@@ -364,6 +365,21 @@ body {
 .pp-meta2 {
   font: var(--at-type-caption);
   color: var(--at-muted);
+}
+
+.pp-fail {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--at-s-2);
+  font: var(--at-type-caption);
+  font-weight: 600;
+  color: var(--at-ink);
+  text-wrap: pretty;
+}
+
+.pp-fail svg {
+  margin-block-start: var(--at-border);
+  color: var(--at-ink-2);
 }
 
 .pp-add,
@@ -834,4 +850,38 @@ body {
 .pp-foot .at-link {
   align-self: flex-start;
   min-inline-size: var(--at-h-control);
+}
+
+@media (hover: hover) {
+  .pp-icon:hover {
+    background: var(--at-raised);
+    color: var(--at-ink);
+  }
+
+  .pp-card-action:hover,
+  .pp-note-link:hover {
+    background: var(--at-raised);
+  }
+
+  .pp-new:hover {
+    border-color: var(--at-accent);
+    background: var(--ext-lamp-soft);
+  }
+
+  .pp-chip:not([aria-pressed="true"]):hover,
+  .pp-prorow:hover {
+    border-color: var(--at-line-strong);
+    color: var(--at-ink);
+  }
+
+  .pp-add-btn:hover,
+  .pp-step:hover {
+    background: color-mix(in srgb, var(--at-raised) 88%, var(--at-ink));
+  }
+
+  .pp-main[data-live="0"]:hover,
+  .pp-until .pp-until-start:hover {
+    background: var(--at-accent);
+    color: var(--at-on-accent);
+  }
 }

@@ -1,6 +1,5 @@
 :root {
   --at-tl-clip: 1px;
-  --at-tl-dialog: 24rem;
   --at-tl-prose: 45rem;
 }
 
@@ -32,6 +31,10 @@
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
+  }
+
+  [data-swap] :not(.at-seg-ind) {
+    transition: none !important;
   }
 }
 
@@ -66,23 +69,6 @@
 
   .at-shell:focus {
     outline: none;
-  }
-
-  dialog {
-    inline-size: calc(100% - 2 * var(--at-s-4));
-    max-inline-size: var(--at-tl-dialog);
-    max-block-size: calc(100% - 2 * var(--at-s-4));
-    margin: auto;
-    padding: var(--at-s-6);
-    overflow: auto;
-    border: 1px solid var(--border);
-    border-radius: var(--at-r-lg);
-    background: var(--card);
-    color: var(--card-foreground);
-  }
-
-  dialog::backdrop {
-    background: var(--at-scrim);
   }
 
   .at-prose {
@@ -181,5 +167,9 @@
       animation-iteration-count: 1 !important;
       transition-duration: 1ms !important;
     }
+  }
+
+  :root[data-swap] * {
+    transition: none !important;
   }
 }

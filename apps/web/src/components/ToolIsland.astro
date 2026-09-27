@@ -5,6 +5,8 @@ import { localePath, type TLocale } from '../i18n/locales';
 import ToolPanel from './ToolPanel.astro';
 import SiteHeader from './shell/SiteHeader.astro';
 import { POLAR_PORTAL_URL } from '../lib/pro-common';
+import { toolReady } from '../lib/tool-ready';
+import { stripLocale } from '../tool/params';
 
 interface Props {
   heading: string;
@@ -30,9 +32,14 @@ const {
   until,
 } = Astro.props;
 const t = createT(locale);
-// Routes that start on load (tool/params.ts isToolAutostartRoute) hide the pill and note until the outcome is known,
-// so Ready → Starting… → Screen awake never moves the layout on first paint (CLS 0).
-const auto = !embed && autostart !== '0' && (Astro.url.pathname === '/' || !!preset || !!until);
+// Autostart routes hold the pill until the browser answers, so it never flips Ready to Screen awake.
+const auto = !embed && autostart !== '0' && (stripLocale(Astro.url.pathname) === '/' || !!preset || !!until);
+const ready = toolReady(t, preset, !embed && preset === 'custom');
+const untilAt = until
+  ? new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit', timeZone: 'UTC', numberingSystem: 'latn' }).format(
+      Date.UTC(2000, 0, 1, Number(until.slice(0, 2)), Number(until.slice(3))),
+    )
+  : '';
 // The embedded card's eyebrow (ContentArticle / GuideGuides boards): the page's suggested length, or cook mode.
 const PRESET_LABEL: Record<string, string> = {
   p15: 'p15',
@@ -86,27 +93,28 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
   data-status="ready"
   data-open=""
   data-auto={auto ? '' : undefined}
+  data-inf={!until && !ready.sec ? '' : undefined}
+  data-units={!until && ready.sec >= 3600 ? 'h' : undefined}
+  data-sec={!until && ready.sec ? ready.sec : undefined}
+  data-until={until}
+  data-chip={until ? t('tool.chip.untilAt') : undefined}
+  data-tmr={t('tool.when.tomorrow')}
+  data-sky={['dawn', 'day', 'dusk', 'night'].map((p) => t(`tool.sky.${p}`)).join('|')}
   data-manifest={embed ? undefined : localePath(locale, '/manifest.webmanifest')}
 >
-  {
-    auto && (
-      <noscript>
-        <style is:inline>{'.at-island :is(.at-pillline, .at-noterow, .at-untilchips, .at-kick, .at-meta) { visibility: visible !important; }'}</style>
-      </noscript>
-    )
-  }
+  {auto && <noscript><style is:inline>{'.at-pillline{visibility:visible!important}'}</style></noscript>}
   {
     embed ? (
       <section class="at-embed-card" aria-label={t('app.name')}>
         <div class="at-tool-embed-bar">
           <span class="at-tag at-pro-badge" data-pro-badge hidden>{t('pro.badge')}</span>
           <button class="at-icon-button" type="button" data-open-settings aria-label={t('tool.header.settings')} aria-haspopup="dialog">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
               <path d={ICON.settings} /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" />
             </svg>
           </button>
         </div>
-        <ToolPanel locale={locale} embed kicker={cardKicker} />
+        <ToolPanel locale={locale} embed kicker={cardKicker} ready={ready} />
       </section>
     ) : (
       <>
@@ -119,7 +127,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
             const [before, after] = dated(`pro.lapse.${k}.body`);
             return (
               <div class="at-lapse-card" role="status" data-lapse-for={state}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d={ICON[state]} />
                 </svg>
                 <div class="at-lapse-text">
@@ -133,7 +141,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
                     <ul>
                       {lapseFalls.map((f) => (
                         <li>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d={ICON.arrow} />
                           </svg>
                           {t(`pro.lapse.ended.${f}`)}
@@ -151,7 +159,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
                     {t('pro.lapse.later')}
                   </button>
                   <button class="at-icon-button" type="button" data-lapse-dismiss aria-label={t('pro.lapse.dismiss')}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
                       <path d="M6 6l12 12M18 6L6 18" />
                     </svg>
                   </button>
@@ -179,6 +187,8 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -198,6 +208,8 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -216,10 +228,12 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
             data-open-share
             aria-label={t('tool.header.share')}
             title={t('tool.header.share')}
-            aria-expanded="false"
+            aria-haspopup="dialog"
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -237,10 +251,11 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
             aria-label={t('tool.header.shortcuts')}
             title={t('tool.header.shortcuts')}
             aria-haspopup="dialog"
-            aria-expanded="false"
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -262,6 +277,8 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -281,10 +298,11 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
             data-open-stats
             aria-label={t('stats.title')}
             aria-haspopup="dialog"
-            aria-expanded="false"
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -300,10 +318,11 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
             data-open-settings
             aria-label={t('tool.header.settings')}
             aria-haspopup="dialog"
-            aria-expanded="false"
           >
             <svg
               viewBox="0 0 24 24"
+              width="20"
+              height="20"
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
@@ -325,7 +344,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
               <time class="at-date" data-t="date" />
               <time class="at-now" data-t="now" />
             </p>
-            <ToolPanel locale={locale} until={until} />
+            <ToolPanel locale={locale} until={until} untilAt={untilAt} ready={ready} />
           </div>
           <div class="at-below">
             <div class="at-below-head">

@@ -1,7 +1,7 @@
 import { STORAGE_KEYS, type IStorageAdapter } from '@awaketab/core';
 import type { IStorageAreaApi, IStorageChange } from './api';
 
-export const SESSION_COALESCE_MS = 10_000;
+const SESSION_COALESCE_MS = 10_000;
 
 export interface IChromeStorageAdapter extends IStorageAdapter {
   load(): Promise<void>;

@@ -164,8 +164,8 @@ const NOTES = {
               <span class="at-pg-caption">The loader adds the visible credit link below the widget.</span>
               <span class="sr-only" role="status" aria-live="polite" data-snippet-status data-copied={t('builder.copied')}></span>
               <button class="at-button at-button-sm at-pg-copy at-embed-copy" type="button" data-snippet-copy>
-                <svg class="at-pg-copy-idle" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9h10v11H9zM5 15V4h10"></path></svg>
-                <svg class="at-pg-copy-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                <svg class="at-pg-copy-idle" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 9h10v11H9zM5 15V4h10"></path></svg>
+                <svg class="at-pg-copy-done" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
                 <span class="at-pg-copy-idle">{t('tool.share.copy')}</span><span class="at-pg-copy-done">{t('builder.copied')}</span>
               </button>
             </div>
@@ -199,7 +199,7 @@ const NOTES = {
                   <option value="" selected>{t('builder.lang.page')}</option>
                   {EMBED_LOCALES.map((l) => <option value={l}>{langNames[l]}</option>)}
                 </select>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
               </div>
             </div>
             <div class="at-pg-field">
@@ -208,7 +208,7 @@ const NOTES = {
                 <select id="g-preset" class="at-input" name="preset">
                   {presets.map((p) => <option value={p} selected={p === DEFAULT_SNIPPET.preset}>{p === 'pinf' ? t('tool.preset.pinf.sr') : t(`tool.preset.${p}`)}</option>)}
                 </select>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
               </div>
             </div>
           </div>
@@ -241,10 +241,10 @@ const NOTES = {
         <pre class="at-embed-pre" tabindex="0"><code>{apiSample}</code></pre>
       </section>
       <nav class="at-pg-related" aria-label="Related">
-        <a class="at-pg-chiplink" href="/">Open AwakeTab<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-        <a class="at-pg-chiplink" href="/kiosk">Kiosk licence<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-        <a class="at-pg-chiplink" href="/library">The wake lock library<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-        <a class="at-pg-chiplink" href="/terms">Licence terms<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        <a class="at-pg-chiplink" href="/">Open AwakeTab<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        <a class="at-pg-chiplink" href="/kiosk">Kiosk licence<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        <a class="at-pg-chiplink" href="/library">The wake lock library<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        <a class="at-pg-chiplink" href="/terms">Licence terms<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
       </nav>
     </div>
   </main>

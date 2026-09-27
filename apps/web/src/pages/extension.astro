@@ -1,13 +1,11 @@
 ---
-// /extension (B6, canvas board PageExtension). Product page: BaseLayout, no ad code (docs/00 §8.3), zero hydration.
-// The popup preview is a static, aria-hidden drawing of the popup's awake state (the real popup is the extension's
-// own, milestone B9); the Screen or System switch on the page drives it and the laptop figure with CSS alone.
-// One small script: hide the store buttons where the extension cannot exist, and record extension_click.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Crumbs from '../components/pages/Crumbs.astro';
 import SegRadio from '../components/pages/SegRadio.astro';
 import Button from '../components/shell/Button.astro';
+import StatusPill from '../components/shell/StatusPill.astro';
 import '../styles/pages.css';
+import '../styles/extension-page.css';
 import { t } from '../i18n/load';
 import { softwareSchema } from '../lib/seo';
 import { EXTENSION_LISTED, EXTENSION_STORE_URLS } from '../lib/extension';
@@ -17,11 +15,13 @@ const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com
 const canonical = `${site}/extension`;
 const title = t('page.extension.title');
 const description = t('page.extension.description');
-// Every browser claim comes from src/data/support-matrix.json (docs/19 B7). The page names only the two stores the
-// extension is published to (decision O-41: no unverified Brave, Arc or Opera claim here).
+// Name only the two stores the extension is published to.
 const support = matrix.extension;
 const stores = support.browsers.filter((b) => b === 'Chrome' || b === 'Edge');
 const browsers = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(stores);
+const storeNote = t('page.extension.cta.note', { browsers, version: support.minimumChromeVersion });
+const chromeLabel = t(EXTENSION_LISTED ? 'page.extension.cta.chrome' : 'page.extension.cta.chromeSearch');
+const edgeLabel = t(EXTENSION_LISTED ? 'page.extension.cta.edge' : 'page.extension.cta.edgeSearch');
 
 type TSeg = string | { kbd: string };
 const adds: Array<[string, TSeg[], TSeg[]]> = [
@@ -33,6 +33,8 @@ const adds: Array<[string, TSeg[], TSeg[]]> = [
   ['Schedules and auto-start', ['No'], ['With Pro']],
   ['Install', ['Nothing to install'], ['Chrome or Edge']],
 ];
+const facts = ['page.extension.fact.hidden', 'page.extension.fact.level', 'page.extension.fact.private'] as const;
+const steps = ['install', 'pin', 'press'] as const;
 const limits = ['page.extension.limits.running', 'page.extension.limits.lid', 'page.extension.limits.presence'] as const;
 const perms = [
   ['power', '', 'Hold the display or system keep-awake.'],
@@ -41,6 +43,7 @@ const perms = [
   ['notifications', 'Optional', 'Tell you when a timer ends.'],
   ['optional_host_permissions', 'Optional, one site at a time', 'Site access, so it can start automatically on sites you pick. None by default.'],
 ] as const;
+const faq = [1, 2, 3, 4].map((n) => ({ n, q: t(`page.extension.faq.q${n}`), a: t(`page.extension.faq.a${n}`) }));
 const days = [
   ['M', 'Monday', true],
   ['T', 'Tuesday', true],
@@ -79,19 +82,33 @@ const P = 2658 / 3600;
       <div class="at-pg-intro">
         <Crumbs current={t('page.extension.h1')} />
         <h1 class="at-pg-h1">{t('page.extension.h1')}</h1>
-        <p class="at-pg-lead">{t('page.extension.lead')}</p>
+        <p class="at-pg-lead at-pg-ink at-ext-value">{t('page.extension.value')}</p>
+        <ul class="at-ext-facts">
+          {
+            facts.map((key) => (
+              <li>
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                {t(key)}
+              </li>
+            ))
+          }
+        </ul>
         <div class="at-ext-ctas" data-install>
           <a class="at-button at-button-primary at-button-lg" href={EXTENSION_STORE_URLS.chrome} rel="noopener" target="_blank" data-store="chrome" aria-describedby="ext-store-note">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
-            {t(EXTENSION_LISTED ? 'page.extension.cta.chrome' : 'page.extension.cta.chromeSearch')}
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+            {chromeLabel}
           </a>
           <a class="at-button at-ext-edge" href={EXTENSION_STORE_URLS.edge} rel="noopener" target="_blank" data-store="edge" aria-describedby="ext-store-note">
-            {t(EXTENSION_LISTED ? 'page.extension.cta.edge' : 'page.extension.cta.edgeSearch')}
+            {edgeLabel}
           </a>
         </div>
         <div id="ext-store-note" class="at-pg-small at-pg-stack-4" data-install>
-          <span>{t('page.extension.cta.note', { browsers, version: support.minimumChromeVersion })}</span>
+          <span>{storeNote}</span>
           {!EXTENSION_LISTED && <span>{t('page.extension.cta.pending')}</span>}
+        </div>
+        <div class="at-ext-alt">
+          <Button href="/" variant="primary">{t('ext.popup.open')}</Button>
+          <a class="at-pg-link at-pg-textlink" href="#ext-ff">{t('page.extension.alt.why')}</a>
         </div>
       </div>
 
@@ -101,16 +118,16 @@ const P = 2658 / 3600;
           <div class="at-xp-aura"></div>
           <div class="at-xp-head">
             <span class="at-xp-logo">
-              <svg viewBox="0 0 48 48"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" class="at-xp-ring"></path><circle cx="24" cy="9" r="7.5" class="at-xp-halo"></circle><circle cx="24" cy="9" r="4.2" class="at-xp-bead"></circle></svg>
+              <svg viewBox="0 0 48 48" width="26" height="26"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" class="at-xp-ring"></path><circle cx="24" cy="9" r="7.5" class="at-xp-halo"></circle><circle cx="24" cy="9" r="4.2" class="at-xp-bead"></circle></svg>
               AwakeTab
             </span>
-            <span class="at-xp-icon"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span>
+            <span class="at-xp-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span>
           </div>
           <div class="at-xp-status">
             <div class="at-xp-face">
               <div class="at-xp-ticks"></div>
               <div class="at-xp-sweep"></div>
-              <svg viewBox="0 0 124 124" class="at-xp-arc">
+              <svg viewBox="0 0 124 124" width="124" height="124" class="at-xp-arc">
                 <circle cx="62" cy="62" r="56" class="at-xp-track"></circle>
                 <g transform="rotate(-90 62 62)">
                   <circle cx="62" cy="62" r="56" class="at-xp-glow" style={`stroke-dasharray: ${(C * P).toFixed(1)} ${C.toFixed(1)}`}></circle>
@@ -128,12 +145,12 @@ const P = 2658 / 3600;
             </div>
             <div class="at-xp-side">
               <span class="at-pill at-pill-s at-xp-pill" data-lock="held">
-                <svg class="at-pill-glyph" viewBox="0 0 12 12"><path class="at-g-dot at-xp-screen" d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path><path class="at-xp-halfglyph at-xp-system" d="M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z"></path></svg>
+                <svg class="at-pill-glyph" viewBox="0 0 12 12" width="12" height="12"><path class="at-g-dot at-xp-screen" d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path><path class="at-xp-halfglyph at-xp-system" d="M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z"></path></svg>
                 <span class="at-xp-screen">Screen awake</span><span class="at-xp-system">System awake</span>
               </span>
               <span class="at-xp-meta at-xp-screen">Started 9:30 PM</span>
               <span class="at-xp-meta at-xp-system at-xp-caveat">
-                <svg viewBox="0 0 12 12"><path d="M10.4 7.6A4.6 4.6 0 1 1 4.4 1.6a3.7 3.7 0 0 0 6 6z"></path></svg>
+                <svg viewBox="0 0 12 12" width="12" height="12"><path d="M10.4 7.6A4.6 4.6 0 1 1 4.4 1.6a3.7 3.7 0 0 0 6 6z"></path></svg>
                 Screen may dim or lock
               </span>
             </div>
@@ -144,8 +161,8 @@ const P = 2658 / 3600;
             <span>Keep awake</span>
             <div class="at-xp-seg">
               <span class="at-xp-ind"></span>
-              <span class="at-xp-opt at-xp-opt-screen"><svg viewBox="0 0 24 24"><path d={ICON_SCREEN}></path></svg>Screen</span>
-              <span class="at-xp-opt at-xp-opt-system"><svg viewBox="0 0 24 24"><path d={ICON_SYSTEM}></path></svg>System</span>
+              <span class="at-xp-opt at-xp-opt-screen"><svg viewBox="0 0 24 24" width="16" height="16"><path d={ICON_SCREEN}></path></svg>Screen</span>
+              <span class="at-xp-opt at-xp-opt-system"><svg viewBox="0 0 24 24" width="16" height="16"><path d={ICON_SYSTEM}></path></svg>System</span>
             </div>
           </div>
           <div class="at-xp-chips">
@@ -153,18 +170,30 @@ const P = 2658 / 3600;
             <span class="at-xp-until">Until…</span>
           </div>
           <div class="at-xp-foot">
-            Open AwakeTab<svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+            Open AwakeTab<svg viewBox="0 0 24 24" width="16" height="16"><path d="M7 17L17 7M9 7h8v8"></path></svg>
           </div>
         </div>
       </div>
     </div>
 
     <section class="at-pg-stack-32" aria-labelledby="ext-adds">
-      <div class="at-pg-stack-8 at-ext-sechead">
-        <h2 id="ext-adds" class="at-pg-h2">What the extension adds</h2>
-        <p class="at-pg-body">Same honest status as the web app. The difference is who holds the lock: the tab, or Chrome itself.</p>
+      <div class="at-pg-stack-12 at-ext-sechead">
+        <h2 id="ext-adds" class="at-pg-h2">{t('page.extension.compare.title')}</h2>
+        <p class="at-pg-body">{t('page.extension.lead')}</p>
       </div>
-      <div class="at-pg-panel at-pg-table at-pg-wide" role="table" aria-label="The web app compared with AwakeTab for Chrome" style="--at-pg-cols: minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1fr)">
+      <ul class="at-ext-vs">
+        <li class="at-ext-reveal">
+          <span class="at-ext-vs-name">The web app</span>
+          <span class="at-ext-vs-when">{t('page.extension.compare.hidden')}</span>
+          <StatusPill as="span" size="S" state="lost" label={t('tool.pill.lost')} />
+        </li>
+        <li class="at-ext-vs-ext at-ext-reveal">
+          <span class="at-ext-vs-name">AwakeTab for Chrome</span>
+          <span class="at-ext-vs-when">{t('page.extension.compare.hidden')}</span>
+          <StatusPill as="span" size="S" state="held" label={t('tool.pill.held')} />
+        </li>
+      </ul>
+      <div class="at-pg-panel at-pg-table at-pg-wide at-ext-table" role="table" aria-label="The web app compared with AwakeTab for Chrome" style="--at-pg-cols: minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1fr)">
         <div class="at-pg-tr at-pg-th" role="row">
           <span role="columnheader"><span class="sr-only">Feature</span></span>
           <span role="columnheader" class="at-pg-ink2">The web app</span>
@@ -210,7 +239,7 @@ const P = 2658 / 3600;
         </p>
       </div>
       <figure class="at-ext-figure">
-        <svg class="at-ext-laptop" viewBox="0 0 320 200" aria-hidden="true">
+        <svg class="at-ext-laptop" viewBox="0 0 320 200" width="320" height="200" aria-hidden="true">
           <rect x="44" y="8" width="232" height="150" rx="12" class="at-lap-frame"></rect>
           <rect x="54" y="18" width="212" height="130" rx="4" class="at-lap-screen"></rect>
           <rect x="54" y="18" width="212" height="130" rx="4" class="at-lap-glow"></rect>
@@ -227,7 +256,7 @@ const P = 2658 / 3600;
         </svg>
         <div class="at-pg-stack-8 at-ext-figstatus">
           <span class="at-pill" data-lock="held">
-            <svg class="at-pill-glyph" viewBox="0 0 12 12" aria-hidden="true"><path class="at-g-dot" d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg>
+            <svg class="at-pill-glyph" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path class="at-g-dot" d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg>
             <span class="at-xp-screen">Screen awake</span><span class="at-xp-system">System awake</span>
           </span>
           <span class="at-pg-small at-ext-sub"><span class="at-xp-system">Screen may dim or lock</span></span>
@@ -235,12 +264,32 @@ const P = 2658 / 3600;
         <figcaption>
           Toolbar badge
           <span class="at-ext-badge" aria-hidden="true">
-            <svg viewBox="0 0 48 48"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.4"></circle></svg>
+            <svg viewBox="0 0 48 48" width="20" height="20"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.4"></circle></svg>
             <span><span class="at-xp-screen">ON</span><span class="at-xp-system">SYS</span></span>
           </span>
           <span class="sr-only"><span class="at-xp-screen">ON</span><span class="at-xp-system">SYS</span></span>
         </figcaption>
       </figure>
+    </section>
+
+    <section class="at-pg-stack-32" aria-labelledby="ext-steps">
+      <h2 id="ext-steps" class="at-pg-h2">{t('page.extension.steps.title')}</h2>
+      <ol class="at-ext-steps" role="list">
+        {
+          steps.map((step, i) => (
+            <li class="at-ext-reveal">
+              <span class="at-ext-stepn" aria-hidden="true">{i + 1}</span>
+              <h3 class="at-pg-h3">{t(`page.extension.steps.${step}.title`)}</h3>
+              {step === 'press' && (
+                <p class="at-ext-keys">
+                  <kbd class="at-kbd">Alt</kbd>+<kbd class="at-kbd">Shift</kbd>+<kbd class="at-kbd">A</kbd>
+                </p>
+              )}
+              <p class="at-pg-body">{t(`page.extension.steps.${step}.body`)}</p>
+            </li>
+          ))
+        }
+      </ol>
     </section>
 
     <section class="at-ext-split" aria-labelledby="ext-pro">
@@ -270,21 +319,11 @@ const P = 2658 / 3600;
     </section>
 
     <div class="at-ext-grid">
-      <section class="at-pg-stack-20" aria-labelledby="ext-limits">
-        <h2 id="ext-limits" class="at-pg-h2">Honest limits</h2>
-        <ul class="at-ext-limits">
-          {
-            limits.map((key) => (
-              <li>
-                <svg class="at-pg-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12h8"></path></svg>
-                {t(key)}
-              </li>
-            ))
-          }
-        </ul>
-      </section>
       <section class="at-pg-stack-20" aria-labelledby="ext-perms">
-        <h2 id="ext-perms" class="at-pg-h2">{t('page.extension.permissions.title')}</h2>
+        <div class="at-pg-stack-8">
+          <h2 id="ext-perms" class="at-pg-h2">{t('page.extension.permissions.title')}</h2>
+          <p class="at-pg-body">{t('page.extension.permissions.lead')}</p>
+        </div>
         <dl class="at-pg-panel at-ext-perms">
           {
             perms.map(([name, opt, why]) => (
@@ -301,17 +340,67 @@ const P = 2658 / 3600;
         <p class="at-pg-body">{t('page.extension.privacy')}</p>
         <a class="at-pg-link at-pg-textlink at-pg-body-size" href="/privacy#extension">{t('ext.privacy.policy')}</a>
       </section>
-      <section class="at-card at-pg-stack-16" aria-labelledby="ext-ff" data-unsupported-note>
+    </div>
+
+    <div class="at-ext-grid">
+      <section class="at-pg-stack-20" aria-labelledby="ext-limits">
+        <h2 id="ext-limits" class="at-pg-h2">Honest limits</h2>
+        <ul class="at-ext-limits">
+          {
+            limits.map((key) => (
+              <li>
+                <svg class="at-pg-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12h8"></path></svg>
+                {t(key)}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+      <section class="at-card at-pg-stack-16 at-ext-ff" aria-labelledby="ext-ff" data-unsupported-note>
         <h2 id="ext-ff" class="at-pg-h3">{t('page.extension.firefox.title')}</h2>
         <p class="at-pg-ui">{t('page.extension.firefox.body')}</p>
         <a class="at-pg-link at-pg-textlink" href="/on/firefox">{t('page.extension.firefox.link')}</a>
       </section>
     </div>
 
-    <div class="at-card at-ext-web">
-      <p class="at-pg-lead at-pg-ink">{t('page.extension.web')}</p>
-      <Button href="/" glyph>{t('ext.popup.open')}</Button>
-    </div>
+    <section class="at-pg-stack-16 at-ext-faq" aria-labelledby="ext-faq">
+      <h2 id="ext-faq" class="at-pg-h2">{t('page.extension.faq.title')}</h2>
+      <div class="at-ext-faq-list">
+        {
+          faq.map((q) => (
+            <details name="ext-faq" open={q.n === 1}>
+              <summary>
+                <h3>{q.q}</h3>
+                <span class="at-ext-faq-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 5v14M5 12h14"></path></svg>
+                </span>
+              </summary>
+              <p>{q.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="at-ext-band" aria-labelledby="ext-band">
+      <div class="at-ext-band-main" data-install>
+        <h2 id="ext-band" class="at-pg-h2">{t('page.extension.band.title')}</h2>
+        <div class="at-ext-ctas">
+          <a class="at-button at-button-primary at-button-lg" href={EXTENSION_STORE_URLS.chrome} rel="noopener" target="_blank" data-store="chrome" aria-describedby="ext-band-note">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+            {chromeLabel}
+          </a>
+          <a class="at-button at-ext-edge" href={EXTENSION_STORE_URLS.edge} rel="noopener" target="_blank" data-store="edge" aria-describedby="ext-band-note">
+            {edgeLabel}
+          </a>
+        </div>
+        <p id="ext-band-note" class="at-pg-small">{storeNote}</p>
+      </div>
+      <div class="at-ext-band-web">
+        <p class="at-pg-body at-pg-ink">{t('page.extension.web')}</p>
+        <Button href="/" glyph>{t('ext.popup.open')}</Button>
+      </div>
+    </section>
   </main>
   <script>
     import { bootExtensionPage } from '../lib/extension';

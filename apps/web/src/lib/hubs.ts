@@ -6,7 +6,7 @@ export interface IHubItem {
   meta?: readonly [string, string];
 }
 
-export interface IHubGroup {
+interface IHubGroup {
   id: string;
   short: string;
   title: string;
@@ -48,6 +48,23 @@ export const MODE_LABEL: Record<string, string> = {
   message: 'Message mode',
   cook: 'Cook mode',
 };
+
+const PRESET_ROUTE: Record<string, string> = {
+  p15: '/15m',
+  p30: '/30m',
+  p45: '/45m',
+  p60: '/1h',
+  p120: '/2h',
+  p240: '/4h',
+  pinf: '/',
+  custom: '/8h',
+  until: '/',
+};
+
+export function startHref(preset: string, mode: string): string {
+  const route = PRESET_ROUTE[preset] ?? '/';
+  return mode === 'standard' ? route : `${route}?mode=${mode}`;
+}
 
 export const HUBS: Record<TContentKind, IHub> = {
   for: {
@@ -233,7 +250,7 @@ export const HUBS: Record<TContentKind, IHub> = {
   },
   vs: {
     crumb: 'Compare',
-    lead: 'Some tools keep the whole computer awake, some fake input, and some are tabs like this one. Each comparison says plainly when the other tool is the better pick.',
+    lead: 'AwakeTab is instant and needs no installation, but it is not always the right tool. A native utility beats it when the screen must stay on with the browser out of sight. Some tools keep the whole computer awake, some fake input, and some are tabs like this one; each comparison uses dated facts and says plainly when the other tool is the better pick.',
     jumpAria: 'Jump to a kind of tool',
     unit: ['comparison', 'comparisons'],
     groups: [
@@ -308,7 +325,7 @@ export const HUBS: Record<TContentKind, IHub> = {
   },
   guides: {
     crumb: 'Fixes',
-    lead: 'Step-by-step fixes for timeouts, greyed-out options and screens that go dark, grouped by system. Each says what AwakeTab can change and what it cannot.',
+    lead: 'Sometimes the real answer is a system setting, not a tab. These step-by-step fixes, grouped by system, show where the timeout lives, what to do when an option is greyed out, and when AwakeTab is the faster answer.',
     jumpAria: 'Jump to a system',
     unit: ['guide', 'guides'],
     groups: [
@@ -382,67 +399,11 @@ export const HUBS: Record<TContentKind, IHub> = {
     ],
   },
   learn: {
-    crumb: 'Learn',
-    lead: 'The facts behind the pill: which browsers support a wake lock, what can refuse one, and what it cannot do.',
-    note: HONEST,
+    crumb: 'Docs',
+    lead: 'How AwakeTab keeps a screen awake, where a web page stops, and what each browser supports.',
     jumpAria: 'Jump to a topic',
     unit: ['article', 'articles'],
-    groups: [
-      {
-        id: 'g-support',
-        short: 'Support',
-        title: 'Browser support',
-        line: 'Which browsers hold the screen, and how that is checked.',
-        items: [
-          {
-            slug: 'browser-support-matrix',
-            line: 'The first version with native support: Chrome and Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14, Opera 70, and iOS Home Screen apps from 18.4.',
-            meta: ['Reference', '7 browsers'],
-          },
-          {
-            slug: 'how-we-tested',
-            line: 'What each support claim rests on today: browser documentation, engine source and automated tests. Device results are added as they are recorded.',
-            meta: ['Method', 'Sources and tests'],
-          },
-        ],
-      },
-      {
-        id: 'g-dev',
-        short: 'Developers',
-        title: 'For developers',
-        line: 'The API, its errors, and the older video trick.',
-        items: [
-          {
-            slug: 'screen-wake-lock-api-guide',
-            line: "How navigator.wakeLock.request('screen') works, why it throws NotAllowedError, and how to request it again after visibilitychange.",
-            meta: ['Developers', 'Code and errors'],
-          },
-          {
-            slug: '/vs/nosleep-js',
-            line: 'Both try the API first and a video second. NoSleep.js reports one yes or no; @awaketab/wake reports seven states and why.',
-            meta: ['Developers', 'Comparison'],
-          },
-        ],
-      },
-      {
-        id: 'g-limits',
-        short: 'Limits',
-        title: 'Myths and limits',
-        line: 'What a wake lock cannot do, and what does not stop it.',
-        items: [
-          {
-            slug: 'low-power-mode-and-wake-locks',
-            line: 'iPhone Low Power Mode forces a 30-second Auto-Lock. Chrome and Safari have no battery-saver check; Firefox refuses at 5 % battery or less while not charging.',
-            meta: ['Explainer', 'iPhone, Android, Windows'],
-          },
-          {
-            slug: 'does-a-wake-lock-keep-teams-green',
-            line: 'No. Teams shows Away after about 5 minutes without keyboard or mouse input, and Slack after about 10, even with the screen on.',
-            meta: ['Explainer', 'Teams and Slack'],
-          },
-        ],
-      },
-    ],
+    groups: [],
   },
 };
 

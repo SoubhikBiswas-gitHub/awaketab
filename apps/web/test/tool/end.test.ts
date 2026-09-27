@@ -14,6 +14,9 @@ import {
 import { EXTEND_AUTO_STOP_MS } from '../../src/tool/params.js';
 import { makeCtx } from './ctx-helper.js';
 
+// The rating prompt waits for tool-more.css; happy-dom never loads the stylesheet.
+vi.mock('../../src/tool/ui/more-css.js', () => ({ moreCss: async () => undefined }));
+
 function session(over: Partial<ISession> = {}): ISession {
   return {
     v: 1,
@@ -122,7 +125,7 @@ describe('onEnded: skipped reasons', () => {
     expect(notificationSpy).not.toHaveBeenCalled();
     expect(document.title).toBe('AwakeTab — Keep your screen awake');
     expect(storage.meta().sessionCount).toBe(0);
-    expect(store.get().ui.dialog).toBeNull();
+    expect(document.querySelector('dialog[open]')).toBeNull();
     expect(store.get().ui.toasts).toHaveLength(0);
   });
 });

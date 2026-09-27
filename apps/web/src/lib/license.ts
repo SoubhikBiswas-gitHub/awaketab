@@ -12,56 +12,27 @@ export const PLAN_PRICES = {
 
 export const PRO_LAUNCH_END = Date.parse('2026-12-08T00:00:00.000Z');
 
-// CHECKOUT_LINKS live in ./checkout.ts (F-06: picked by PUBLIC_POLAR_SERVER; imported by .astro pages only).
-
-export const PLAN_FEATURES: Record<TPlanId, TFeatureGate[]> = {
-  pro_yearly: [
-    'ambient.packs',
-    'ambient.message',
-    'ambient.logo',
-    'schedules',
-    'sounds.custom',
-    'stats.history',
-    'stats.export',
-    'pip.pro',
-    'ext.autostart',
-    'ext.schedules',
-    'ads.free',
-  ],
-  pro_lifetime: [
-    'ambient.packs',
-    'ambient.message',
-    'ambient.logo',
-    'schedules',
-    'sounds.custom',
-    'stats.history',
-    'stats.export',
-    'pip.pro',
-    'ext.autostart',
-    'ext.schedules',
-    'ads.free',
-  ],
-  biz_embed_site_yearly: ['embed.noattrib', 'ads.free'],
-  biz_kiosk_site: ['kiosk.branding', 'ambient.message', 'ambient.logo', 'ads.free'],
-  biz_kiosk_5: ['kiosk.branding', 'ambient.message', 'ambient.logo', 'ads.free'],
-};
-
-export const DONATE_URL = 'https://buymeacoffee.com/awaketab';
+// CHECKOUT_LINKS live in ./checkout.ts (picked by PUBLIC_POLAR_SERVER; imported by .astro pages only).
 
 const LICENSE_KEY = 'at.v1.license';
 
+type TActivation = { label: string; at: number; devHash: string };
+
+const post = (path: string, body: unknown): Promise<Response> =>
+  fetch(`/api/license/${path}`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
 export function deviceId(): string {
-  const raw = localStorage.getItem(LICENSE_KEY);
-  if (raw) {
-    try {
-      const parsed = JSON.parse(raw) as { deviceId?: string };
-      if (parsed.deviceId) return parsed.deviceId;
-    } catch {
-      // fall through
-    }
+  try {
+    const id = (JSON.parse(localStorage.getItem(LICENSE_KEY) ?? '{}') as { deviceId?: string } | null)?.deviceId;
+    if (id) return id;
+  } catch {
+    // fall through
   }
-  const id = crypto.randomUUID();
-  return id;
+  return crypto.randomUUID();
 }
 
 export function lifetimePrice(now = Date.now()): { current: number; strike: number | null } {
@@ -78,67 +49,37 @@ export async function activateLicense(input: {
   { ok: true; token: string; plan: TPlanId; features: TFeatureGate[]; exp: number } | { ok: false; error: string }
 > {
   try {
-    const res = await fetch('/api/license/activate', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(input),
-    });
-    const data = (await res.json()) as {
+    const res = await post('activate', input);
+    const { error, token, plan, features, exp } = (await res.json()) as {
       error?: string;
       token?: string;
       plan?: TPlanId;
       features?: TFeatureGate[];
       exp?: number;
     };
-    if (!res.ok || !data.token || !data.plan || !data.features || !data.exp) {
-      return { ok: false, error: data.error ?? 'invalid_key' };
-    }
+    if (!res.ok || !token || !plan || !features || !exp) return { ok: false, error: error ?? 'invalid_key' };
+    const { deviceId: id, deviceLabel } = input;
     localStorage.setItem(
       LICENSE_KEY,
-      JSON.stringify({
-        v: 1,
-        token: data.token,
-        plan: data.plan,
-        features: data.features,
-        exp: data.exp,
-        lastValidatedAt: Date.now(),
-        deviceId: input.deviceId,
-        deviceLabel: input.deviceLabel,
-      }),
+      JSON.stringify({ v: 1, token, plan, features, exp, lastValidatedAt: Date.now(), deviceId: id, deviceLabel }),
     );
-    return { ok: true, token: data.token, plan: data.plan, features: data.features, exp: data.exp };
+    return { ok: true, token, plan, features, exp };
   } catch {
     return { ok: false, error: 'offline' };
   }
 }
 
-export async function fetchActivations(token: string): Promise<{
-  revoked: boolean;
-  activations: Array<{ label: string; at: number; devHash: string }>;
-}> {
-  const res = await fetch('/api/license/validate', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ token }),
-  });
-  return (await res.json()) as {
-    revoked: boolean;
-    activations: Array<{ label: string; at: number; devHash: string }>;
-  };
+export async function fetchActivations(token: string): Promise<{ revoked: boolean; activations: TActivation[] }> {
+  return (await (await post('validate', { token })).json()) as { revoked: boolean; activations: TActivation[] };
 }
 
 export async function deactivateDevice(
   token: string,
   deviceId: string,
-): Promise<{ ok: boolean; activations?: Array<{ label: string; at: number; devHash: string }> }> {
-  const res = await fetch('/api/license/deactivate', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ token, deviceId }),
-  });
-  return (await res.json()) as {
+): Promise<{ ok: boolean; activations?: TActivation[] }> {
+  return (await (await post('deactivate', { token, deviceId })).json()) as {
     ok: boolean;
-    activations?: Array<{ label: string; at: number; devHash: string }>;
+    activations?: TActivation[];
   };
 }
 
@@ -158,40 +99,31 @@ export async function revalidateStoredLicense(): Promise<'ok' | 'revoked' | 'rea
   } catch {
     return 'skip';
   }
-  const state = await verifyLicenseToken(record.token, {
-    deviceId: record.deviceId,
-    lastValidatedAt: record.lastValidatedAt,
-  });
+  const { token, deviceId: id } = record;
+  const state = await verifyLicenseToken(token, { deviceId: id, lastValidatedAt: record.lastValidatedAt });
   if (!needsRevalidation(record.plan, record.lastValidatedAt) && state.valid) return 'ok';
   let res: Response;
   let data: { revoked?: boolean; reason?: string; token?: string };
   try {
-    res = await fetch('/api/license/validate', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ token: record.token }),
-    });
+    res = await post('validate', { token });
     data = (await res.json()) as typeof data;
   } catch {
     return 'skip';
   }
-  if (res.status === 401) {
+  if (res.status === 401 || data.revoked) {
     localStorage.removeItem(LICENSE_KEY);
-    return 'reactivate';
-  }
-  if (data.revoked) {
-    localStorage.removeItem(LICENSE_KEY);
-    return data.reason === 'deactivated' ? 'reactivate' : 'revoked';
+    return res.status === 401 || data.reason === 'deactivated' ? 'reactivate' : 'revoked';
   }
   if (!res.ok) return 'skip';
   if (typeof data.token === 'string') {
-    const fresh = await verifyLicenseToken(data.token, { deviceId: record.deviceId, lastValidatedAt: Date.now() });
-    if (fresh.valid && fresh.exp !== null) {
-      record.token = data.token;
-      record.features = fresh.features;
-      record.exp = fresh.exp;
-      if (fresh.plan) record.plan = fresh.plan;
-    }
+    const fresh = await verifyLicenseToken(data.token, { deviceId: id, lastValidatedAt: Date.now() });
+    if (fresh.valid && fresh.exp !== null)
+      Object.assign(record, {
+        token: data.token,
+        features: fresh.features,
+        exp: fresh.exp,
+        plan: fresh.plan || record.plan,
+      });
   }
   record.lastValidatedAt = Date.now();
   localStorage.setItem(LICENSE_KEY, JSON.stringify(record));

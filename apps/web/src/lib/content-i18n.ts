@@ -14,7 +14,7 @@ import {
 export type TContentKind = 'for' | 'on' | 'vs' | 'guides' | 'learn';
 export const CONTENT_KINDS: readonly TContentKind[] = ['for', 'on', 'vs', 'guides', 'learn'];
 
-export const SLUGS = slugsJson as TSlugMap;
+const SLUGS = slugsJson as TSlugMap;
 
 export interface IIndexedPage {
   kind: TContentKind;

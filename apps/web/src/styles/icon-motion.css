@@ -1,0 +1,263 @@
+@layer components {
+  [class^="at-ico-part-"],
+  :is(.at-ico-part-steam, .at-ico-part-notes, .at-ico-part-tiles, .at-ico-part-apps) > * {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation-duration: 900ms;
+    animation-timing-function: var(--at-ease);
+    animation-fill-mode: backwards;
+  }
+
+  .at-ico-part-page {
+    transform-origin: 0 50%;
+  }
+
+  .at-ico-part-tiles > *,
+  .at-ico-part-lid,
+  .at-ico-part-flame {
+    transform-origin: 50% 100%;
+  }
+
+  .at-ico-part-tassel {
+    transform-origin: 50% 0;
+  }
+
+  :is(.at-ico-part-steam, .at-ico-part-notes, .at-ico-part-tiles, .at-ico-part-apps) > :nth-child(2) {
+    animation-delay: 120ms;
+  }
+
+  :is(.at-ico-part-tiles, .at-ico-part-apps) > :nth-child(3) {
+    animation-delay: 240ms;
+  }
+
+  :is(.at-ico-part-tiles, .at-ico-part-apps) > :nth-child(4) {
+    animation-delay: 360ms;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .at-ico-part-screen {
+      transition: opacity var(--at-d-slide) var(--at-ease);
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-screen {
+      opacity: 0.16;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible))
+      :is(.at-ico-part-steam > *, .at-ico-part-text) {
+      animation-name: at-ico-rise;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-page {
+      animation-name: at-ico-turn;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible))
+      :is(.at-ico-part-notes > *, .at-ico-part-logo) {
+      animation-name: at-ico-pulse;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible))
+      :is(.at-ico-part-weight, .at-ico-part-case, .at-ico-part-cap) {
+      animation-name: at-ico-lift;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-tassel {
+      animation-name: at-ico-swing;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-light {
+      animation-name: at-ico-blink;
+      animation-fill-mode: both;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible))
+      :is(.at-ico-part-chart, .at-ico-part-type, .at-ico-part-wave) {
+      animation-name: at-ico-draw;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-tap {
+      animation-name: at-ico-tap;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-arrow {
+      animation-name: at-ico-drop;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-tray {
+      animation-name: at-ico-dip;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-star {
+      animation-name: at-ico-twinkle;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-tiles > * {
+      animation-name: at-ico-grow;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible))
+      :is(.at-ico-part-needle, .at-ico-part-orbit) {
+      animation-name: at-ico-spin;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-apps > * {
+      animation-name: at-ico-pop;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-lid {
+      animation-name: at-ico-open;
+    }
+
+    :is(.at-hm-row, [data-tilt]):is(:hover, :focus-visible, :has(:focus-visible)) .at-ico-part-flame {
+      animation-name: at-ico-flicker;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .at-ico-part-screen {
+      display: none;
+    }
+  }
+
+  @keyframes at-ico-rise {
+    45% {
+      opacity: 0;
+      transform: translateY(-3px);
+    }
+
+    46% {
+      opacity: 0;
+      transform: translateY(2px);
+    }
+  }
+
+  @keyframes at-ico-turn {
+    15%,
+    80% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+      transform: scaleX(-1);
+    }
+  }
+
+  @keyframes at-ico-pulse {
+    40% {
+      transform: scale(1.2);
+    }
+  }
+
+  @keyframes at-ico-lift {
+    40% {
+      transform: translateY(-2px);
+    }
+  }
+
+  @keyframes at-ico-swing {
+    40% {
+      transform: rotate(14deg);
+    }
+  }
+
+  @keyframes at-ico-blink {
+    0%,
+    45% {
+      opacity: 0.2;
+    }
+
+    25%,
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes at-ico-draw {
+    from {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+
+    to {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes at-ico-tap {
+    0% {
+      transform: scale(0.4);
+    }
+
+    25% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(1.4);
+    }
+  }
+
+  @keyframes at-ico-drop {
+    45% {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+
+    46% {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes at-ico-dip {
+    45% {
+      transform: translateY(1px);
+    }
+  }
+
+  @keyframes at-ico-twinkle {
+    50% {
+      opacity: 0.4;
+      transform: rotate(45deg) scale(0.5);
+    }
+
+    100% {
+      transform: rotate(90deg);
+    }
+  }
+
+  @keyframes at-ico-grow {
+    from {
+      transform: scaleY(0.55);
+    }
+  }
+
+  @keyframes at-ico-spin {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+
+  @keyframes at-ico-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+  }
+
+  @keyframes at-ico-open {
+    from {
+      transform: scaleY(0.8);
+    }
+  }
+
+  @keyframes at-ico-flicker {
+    40% {
+      transform: scale(1.06, 1.14);
+    }
+  }
+}

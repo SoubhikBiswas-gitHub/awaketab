@@ -151,6 +151,24 @@
       "pt-br": "como-testamos",
       "de": "wie-wir-testen",
       "fr": "comment-nous-testons"
+    },
+    "how-awaketab-works": {
+      "es": "como-funciona-awaketab",
+      "pt-br": "como-o-awaketab-funciona",
+      "de": "so-funktioniert-awaketab",
+      "fr": "comment-fonctionne-awaketab"
+    },
+    "honest-limits": {
+      "es": "limites-honestos",
+      "pt-br": "limites-honestos",
+      "de": "ehrliche-grenzen",
+      "fr": "limites-honnetes"
+    },
+    "faq": {
+      "es": "preguntas-frecuentes",
+      "pt-br": "perguntas-frequentes",
+      "de": "haeufige-fragen",
+      "fr": "questions-frequentes"
     }
   }
 }

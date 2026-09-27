@@ -4,7 +4,9 @@ import { dateLong } from './format.js';
 import { mountPwa } from './pwa.js';
 import { mountSponsor } from './sponsor.js';
 import { act } from './ui/actions.js';
+import { openDialog } from './ui/dialog.js';
 import { mountLangSuggest } from './ui/lang-suggest.js';
+import { moreCss } from './ui/more-css.js';
 import { applyAccent } from './accent.js';
 import { t } from './i18n.js';
 import type { IStore } from './store.js';
@@ -59,13 +61,10 @@ export function mountExtras(ctx: Pick<IToolCtx, 'store' | 'storage'>): () => voi
     showLapse(ctx, store.get().license);
   });
   const sheet = document.querySelector<HTMLDialogElement>('[data-dialog="pro"]');
-  // Settings → Pro opens the Pro sheet over the page; without the island the link goes to /pro.
+  // Settings → Pro opens the Pro sheet in place of Settings; without the island the link goes to /pro.
   document.querySelector('[data-open-pro]')?.addEventListener('click', (e) => {
     e.preventDefault();
-    sheet?.showModal();
-  });
-  sheet?.querySelector('[data-pro-close]')?.addEventListener('click', () => {
-    sheet.close();
+    if (sheet) openDialog(sheet, e.target as Element);
   });
   return store.subscribe(syncPro);
 }
@@ -114,7 +113,9 @@ export function mountLate(ctx: IToolCtx): () => void {
       ctx.track('pwa_install');
     },
   );
-  mountLangSuggest(root, ctx.storage);
+  void moreCss().then(() => {
+    mountLangSuggest(root, ctx.storage);
+  });
   // The length links below a preset page's tool switch a running session in place instead of reloading the page
   // (which would drop the lock); "Until a time…" opens the Until panel. Without a session they open their page.
   root.addEventListener('click', (e) => {

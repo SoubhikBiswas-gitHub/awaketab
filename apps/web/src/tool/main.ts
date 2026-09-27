@@ -104,12 +104,6 @@ export function boot(root: HTMLElement): () => void {
   let awaitingReacquire = false;
   const offLock = engine.on('lock', (e) => {
     const ui = store.get().ui;
-    // A refused auto-start (Safari wants a tap first, decision O-70) stays on the Ready layout with the tap button,
-    // so the first paint never swaps in the blocked card; a refused tap shows it.
-    if (e.to === 'denied' && ui.auto) {
-      store.set({ ui: { tap: true, auto: false } });
-      void lock.release();
-    }
     store.set({
       lock: e.to,
       advice: e.advice ?? lock.advice,
@@ -167,6 +161,7 @@ export function boot(root: HTMLElement): () => void {
         kind: 'error',
         text: t('tool.toast.error'),
         id: 'end',
+        action: { label: t('tool.advice.retry'), onClick: startCurrent },
       });
     const held = store.get().ui.log.reduce((sum, [k, from, to]) => sum + (k ? 0 : (to ?? Date.now()) - from), 0);
     // A stop after a minute awake shows the Done receipt (canvas `ended`); a shorter one goes straight back to Ready.
@@ -237,10 +232,10 @@ export function boot(root: HTMLElement): () => void {
   }
 
   let first = true;
-  const startCurrent = () => {
+  // A start the page made on load keeps Ready until a grant.
+  const startCurrent = (auto = false) => {
     const cur = currentPlan();
-    // The receipt note ("Asked at … · confirmed … later") shows for the first start of a page view (canvas O-70).
-    store.set({ ui: { rcpt: first, auto: false, tap: false } });
+    store.set({ ui: { rcpt: first, auto } });
     first = false;
     void startPlan(cur.plan, cur.presetId);
   };
@@ -326,7 +321,7 @@ export function boot(root: HTMLElement): () => void {
     const el =
       e.target instanceof Element
         ? e.target.closest<HTMLElement>(
-            '[data-open-settings],[data-open-stats],[data-open-share],[data-open-shortcuts],[data-open-pip],[data-shortcuts-close]',
+            '[data-open-settings],[data-open-stats],[data-open-share],[data-open-shortcuts],[data-open-pip]',
           )
         : null;
     if (el)
@@ -366,13 +361,11 @@ export function boot(root: HTMLElement): () => void {
       void engine.resumeSession().then(syncLock);
       return;
     }
-    startCurrent();
-    store.set({ ui: { auto: true } });
+    startCurrent(true);
   };
 
   const wantStart =
     (params.autostart || params.isToolAutostartRoute) && !params.isPip && !(resumable && !params.autostart);
-  // The pill and note show once the start's outcome is known (view.ts), or after 2 s if the request hangs.
   setTimeout(
     () => {
       root.dataset.settled = '';

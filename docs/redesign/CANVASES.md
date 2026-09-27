@@ -1,6 +1,6 @@
 # Redesign canvases
 
-The design lives on 12 canvases, one per product area (decision D-R25). Each holds its own boards plus the component files they mount, so it loads fast and every board renders. They replace the single 357-board canvas, which was too heavy to load (boards showed as empty frames).
+The Clear Night design lives on 12 canvases on claude.ai, one per product area. Each holds its boards (phone, tablet and desktop, light and dark) plus the component files they mount, with every prop editable in Tweaks. Open them to see a screen before building or changing it.
 
 | # | Canvas | What is on it |
 |---|---|---|
@@ -17,4 +17,8 @@ The design lives on 12 canvases, one per product area (decision D-R25). Each hol
 | 11 | [Brand & share images](https://claude.ai/artifact/1h91b7xNW9qw1g2TrWLsjk) | Brand sheet, social share images |
 | 12 | [Components (all props)](https://claude.ai/artifact/KPSmTrmhVBxtmWJxB5GKCy) | Page components with every prop in Tweaks |
 
-Source: `design/canvas/project` (one file per board) and `sections.json`. `design/canvas/split.py` rebuilds the 12 bundles in a scratch folder; publish each bundle to its canvas (canvas.json as `file_path`, the boards as `files`). Gates before publishing: `tools/final/rtscan.sh` (0 flagged) and `tools/final/rtaudit.sh` (0 violations).
+Boards are named after their file on the canvas, for example `PresetPage`, `UntilPage`, `StoreAssets` or `ExtPopup`; specs and code comments cite them by that name. The shared numbers every board uses are in `PRIMITIVES.md`, and the design system itself is `DESIGN.md`.
+
+## Source files
+
+The board sources (`design/canvas/project`, one `.dc.html` file per board, 357 boards), the section list that splits them into the 12 canvases, and the render and audit scripts were removed from the repository on 28 September 2026 to keep it small. The published canvases above match them byte for byte. To get them back, restore the folder from the commit before the removal: `git log --diff-filter=D --oneline -- design/canvas/sections.json` names the removing commit, and `git checkout <that commit>~1 -- design/canvas` restores it (at the time of removal that parent was `cfe415b`).

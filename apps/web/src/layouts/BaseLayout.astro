@@ -43,11 +43,13 @@ const {
   bare = false,
 } = Astro.props;
 const localeMeta = LOCALE_META[locale];
+// Tool pages paint once the whole tool is parsed, other pages once the header is, so nothing shows half built.
+const wholeTool = !header && !bare;
 const t = createT(locale);
 ---
 
 <!doctype html>
-<html lang={localeMeta.htmlLang} dir={textDirection(localeMeta.htmlLang)}>
+<html lang={localeMeta.htmlLang} dir={textDirection(localeMeta.htmlLang)} style={bare ? undefined : 'scrollbar-gutter:stable'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -72,6 +74,8 @@ const t = createT(locale);
       alternates={alternates}
     />
     <script is:inline set:html={bootJs} />
+    {wholeTool && <link rel="expect" href="#at-tool-parsed" blocking="render" />}
+    {header && <link rel="expect" href="#at-hm-menu" blocking="render" />}
     <slot name="head" />
   </head>
   <body>

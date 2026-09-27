@@ -3,7 +3,7 @@ export interface IChangelogSortable {
   data: { date: Date; release?: string | undefined };
 }
 
-export function compareChangelog(a: IChangelogSortable, b: IChangelogSortable): number {
+function compareChangelog(a: IChangelogSortable, b: IChangelogSortable): number {
   const byDate = b.data.date.getTime() - a.data.date.getTime();
   if (byDate !== 0) return byDate;
   const byRelease = Number(b.data.release !== undefined) - Number(a.data.release !== undefined);

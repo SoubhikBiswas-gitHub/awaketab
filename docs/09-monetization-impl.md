@@ -433,7 +433,7 @@ export async function loadLicense(): Promise<void> {
 }
 ```
 
-The token's `features` array is the source of truth in the client; `PLAN_FEATURES` is used by the server to mint and by `/pro` to render the comparison table.
+The token's `features` array is the source of truth in the client; `PLAN_FEATURES` lives only on the server (`functions/_lib/license.ts`), which mints tokens from it.
 
 UI affordances (all in the island, `apps/web/src/tool/ui/pro.ts`):
 

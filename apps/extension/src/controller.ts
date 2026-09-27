@@ -46,11 +46,11 @@ import { createTelemetry } from './telemetry';
 
 // Alarm names, cadences and windows of the extension worker (docs/00 §13.9).
 export const ALARMS = { tick: 'at.tick', end: 'at.end', license: 'at.license' } as const;
-export const TICK_PERIOD_MIN = 0.5;
-export const LICENSE_PERIOD_MIN = 60;
-export const EXTEND_WINDOW_MS = 5 * 60_000;
-export const STALE_NOTIFY_MS = 5 * 60_000;
-export const SYNC_DEBOUNCE_MS = 2_000;
+const TICK_PERIOD_MIN = 0.5;
+const LICENSE_PERIOD_MIN = 60;
+const EXTEND_WINDOW_MS = 5 * 60_000;
+const STALE_NOTIFY_MS = 5 * 60_000;
+const SYNC_DEBOUNCE_MS = 2_000;
 export const NOTIFICATION_ID = 'at-end';
 export const WELCOME_PAGE = 'welcome.html';
 

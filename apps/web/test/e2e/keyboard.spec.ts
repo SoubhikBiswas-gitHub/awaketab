@@ -44,8 +44,8 @@ async function focusInfo(page: Page): Promise<IFocus | null> {
         // A ring is a spread (x y blur spread); a resting drop shadow (shadow-xs) has none and does not count.
         return alpha(color) > 0 && (lengths[3] ?? 0) > 0;
       });
-    const shows = (node: Element): boolean => {
-      const cs = getComputedStyle(node);
+    const shows = (node: Element, pseudo?: string): boolean => {
+      const cs = getComputedStyle(node, pseudo);
       const outline =
         cs.outlineStyle !== 'none' && Number.parseFloat(cs.outlineWidth) > 0 && alpha(cs.outlineColor) > 0;
       return outline || visibleShadow(cs.boxShadow);
@@ -53,7 +53,9 @@ async function focusInfo(page: Page): Promise<IFocus | null> {
     const rect = el.getBoundingClientRect();
     const hiddenInput = el instanceof HTMLInputElement && (rect.width <= 1 || rect.height <= 1);
     const label = el.closest('label');
-    const indicator = shows(el) || (hiddenInput && label !== null && shows(label));
+    // A stretched link (a card's whole-area link) rings the card through its ::after overlay.
+    const indicator =
+      shows(el) || shows(el, '::after') || shows(el, '::before') || (hiddenInput && label !== null && shows(label));
     const name =
       el.getAttribute('aria-label') ?? el.getAttribute('data-preset') ?? (el.textContent ?? '').trim().slice(0, 40);
     return {
@@ -444,7 +446,7 @@ test('stats dialog: opens from the keyboard, Tab reaches Close, Esc closes and r
   await page.keyboard.press('Enter');
   const dlg = page.locator('dialog[data-dialog="stats"]');
   await expect(dlg).toBeVisible();
-  await tabTo(page, keys, 'dialog[data-dialog="stats"] [data-stats-close]', 10);
+  await tabTo(page, keys, 'dialog[data-dialog="stats"] [data-dialog-close]', 10);
   await page.keyboard.press('Escape');
   await expect(dlg).toBeHidden();
   expect(await focusedMatches(page, '#awaketab-tool header [data-open-stats]')).toBe(true);

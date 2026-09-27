@@ -1,25 +1,138 @@
 ---
 import { createT } from '../../i18n/load';
-import type { TLocale } from '../../i18n/locales';
+import { localePath, type TLocale } from '../../i18n/locales';
 import LangSwitch from './LangSwitch.astro';
+import '../../styles/footer.css';
 
 interface Props {
   locale: TLocale;
   links?: Partial<Record<TLocale, string>> | undefined;
 }
 
+interface ILink {
+  href: string;
+  label: string;
+  external?: boolean;
+  keys?: boolean;
+  more?: boolean;
+}
+
 const { locale, links } = Astro.props;
 const t = createT(locale);
+const home = localePath(locale, '/');
+const trim = (path: string): string => path.replace(/(.)\/$/u, '$1');
+const here = trim(Astro.url.pathname);
+
+// Hubs, product and legal pages are English-only routes.
+const columns: Array<{ title: string; items: ILink[] }> = [
+  {
+    title: t('footer.col.product'),
+    items: [
+      { href: home, label: t('footer.start') },
+      { href: '/extension', label: t('header.nav.extension') },
+      { href: '/pro', label: t('header.nav.pro') },
+      { href: '/embed', label: t('footer.embed') },
+      { href: '/kiosk', label: t('footer.kiosk') },
+      { href: '/library', label: t('footer.library') },
+    ],
+  },
+  {
+    title: t('footer.col.for'),
+    items: [
+      { href: '/for/cooking', label: t('footer.for.cooking') },
+      { href: '/for/reading', label: t('footer.for.reading') },
+      { href: '/for/presentations', label: t('footer.for.presentations') },
+      { href: '/for/dashboards', label: t('footer.for.dashboards') },
+      { href: '/for/video-calls', label: t('footer.for.videoCalls') },
+      { href: '/for/downloads', label: t('footer.for.downloads') },
+      { href: '/for', label: t('footer.for.all'), more: true },
+    ],
+  },
+  {
+    title: t('footer.col.on'),
+    items: [
+      { href: '/on/iphone-safari', label: 'iPhone' },
+      { href: '/on/ipad', label: 'iPad' },
+      { href: '/on/android-chrome', label: 'Android' },
+      { href: '/on/macos', label: 'Mac' },
+      { href: '/on/windows-11', label: 'Windows 11' },
+      { href: '/on/chromebook', label: 'Chromebook' },
+      { href: '/on', label: t('footer.on.all'), more: true },
+    ],
+  },
+  {
+    title: t('footer.col.resources'),
+    items: [
+      { href: '/guides', label: t('footer.guides') },
+      { href: '/learn', label: t('footer.docs') },
+      { href: '/vs', label: t('footer.compare') },
+      { href: '/changelog', label: t('footer.changelog') },
+    ],
+  },
+  {
+    title: t('footer.col.about'),
+    items: [
+      { href: '/about', label: t('footer.about') },
+      { href: '/privacy', label: t('footer.privacy') },
+      { href: '/terms', label: t('footer.terms') },
+      { href: `${home}#keys`, label: t('footer.shortcuts'), keys: true },
+      { href: 'https://github.com/SoubhikBiswas-gitHub/awaketab', label: t('footer.github'), external: true },
+      { href: 'https://buymeacoffee.com/awaketab', label: t('footer.donate'), external: true },
+    ],
+  },
+];
 ---
 
 <footer class="at-site-footer">
-  <p class="at-footer-line">{t('footer.honest')}</p>
-  <nav class="at-footer-nav" aria-label={t('footer.nav')}>
-    <a href="/privacy">{t('footer.privacy')}</a>
-    <a href="/terms">{t('footer.terms')}</a>
-    <a href="/changelog">{t('footer.changelog')}</a>
-    <a href="/about">{t('footer.about')}</a>
-    <a href="https://buymeacoffee.com/awaketab" rel="noopener" target="_blank">{t('footer.donate')}</a>
-  </nav>
-  <LangSwitch locale={locale} links={links} />
+  <div class="at-foot-top">
+    <div class="at-foot-brand">
+      <a class="at-logo at-wordmark" href={home} aria-label={t('header.home')}>
+        <svg class="at-logo-mark" viewBox="0 0 48 48" width="26" height="26" aria-hidden="true" focusable="false">
+          <path class="at-logo-ring" d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path>
+          <circle class="at-logo-halo" cx="24" cy="9" r="7.5"></circle>
+          <circle class="at-logo-bead" cx="24" cy="9" r="4.2"></circle>
+        </svg>
+        {t('app.name')}
+      </a>
+      <p class="at-foot-promise">{t('footer.promise')}</p>
+      <p class="at-foot-license">{t('footer.license')}</p>
+    </div>
+    <nav class="at-foot-map" aria-label={t('footer.nav')}>
+      {
+        columns.map((col) => (
+          <details class="at-foot-col" name="at-foot">
+            <summary class="at-foot-sum">
+              {col.title}
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M6 9l6 6 6-6"></path>
+              </svg>
+            </summary>
+            <h2 class="at-foot-h">{col.title}</h2>
+            <ul class="at-foot-list" role="list">
+              {
+                col.items.map((item) => (
+                  <li>
+                    <a
+                      href={item.href}
+                      rel={item.external ? 'noopener' : undefined}
+                      target={item.external ? '_blank' : undefined}
+                      data-keys={item.keys ? '' : undefined}
+                      aria-current={!item.external && !item.keys && trim(item.href) === here ? 'page' : undefined}
+                    >
+                      {item.label}
+                      {item.more && <span aria-hidden="true">→</span>}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </details>
+        ))
+      }
+    </nav>
+  </div>
+  <div class="at-foot-base">
+    <p class="at-footer-line">{t('footer.honest')}</p>
+    <LangSwitch locale={locale} links={links} />
+  </div>
 </footer>

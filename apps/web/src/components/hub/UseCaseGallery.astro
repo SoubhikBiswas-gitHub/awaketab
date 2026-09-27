@@ -1,0 +1,56 @@
+---
+import Button from '../shell/Button.astro';
+import UseCaseIcon from '../icons/UseCaseIcon.astro';
+import { t } from '../../i18n/load';
+import { MODE_LABEL, PRESET_LABEL, startHref } from '../../lib/hubs';
+
+interface IUseCaseCard {
+  slug: string;
+  href: string;
+  title: string;
+  line: string;
+  preset: string;
+  mode: string;
+}
+
+interface Props {
+  cards: readonly IUseCaseCard[];
+}
+
+const { cards } = Astro.props;
+const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
+---
+
+<ul class="at-gal at-gal-uc">
+  {
+    cards.map((card, i) => {
+      const length = PRESET_LABEL[card.preset] ?? '';
+      const mode = card.mode === 'standard' ? '' : (MODE_LABEL[card.mode] ?? '');
+      return (
+        <li class="at-gal-card" style={`--at-k: ${String(i)}`} data-tilt>
+          <div class="at-gal-top">
+            <span class="at-gal-icon" data-tilt-z>
+              <UseCaseIcon name={card.slug} />
+            </span>
+            {mode && <span class="at-tag">{mode}</span>}
+          </div>
+          <h3 class="at-gal-title">{card.title}</h3>
+          <p class="at-gal-line">{card.line}</p>
+          <div class="at-gal-actions">
+            <Button size="sm" href={startHref(card.preset, card.mode)} glyph class="at-gal-start">
+              {t('page.hub.start')}
+              {length && <span aria-hidden="true">·</span>}
+              {length && <span>{length}</span>}
+              <span class="at-sr">, {card.title}</span>
+            </Button>
+            <a class="at-gal-read" href={card.href}>
+              {t('page.hub.readGuide')}
+              <span class="at-sr">: {card.title}</span>
+              <svg class="at-go" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+            </a>
+          </div>
+        </li>
+      );
+    })
+  }
+</ul>

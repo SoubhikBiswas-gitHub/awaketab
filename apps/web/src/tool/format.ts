@@ -5,13 +5,6 @@ export function pad(n: number): string {
   return String(Math.max(0, Math.floor(n))).padStart(2, '0');
 }
 
-export function formatHms(ms: number): string {
-  const total = Math.max(0, Math.floor(ms / 1000));
-  const days = Math.floor(total / 86400);
-  const clock = `${pad((total % 86400) / 3600)}:${pad((total % 3600) / 60)}:${pad(total % 60)}`;
-  return days > 0 ? `${String(days)}d ${clock}` : clock;
-}
-
 export function splitDigits(sec: number): [string, string] {
   const s = Math.max(0, Math.floor(sec));
   const d = Math.floor(s / 86400);
@@ -74,31 +67,23 @@ export function dateLong(ms: number, year = true): string {
   return `${dtf({ weekday: 'long' }, 'en-GB').format(ms)}, ${dtf(o, 'en-GB').format(ms)}`;
 }
 
+const midnight = (ms: number) => new Date(ms).setHours(0, 0, 0, 0);
+
 export function dayDiff(ms: number, now = Date.now()): number {
-  const a = new Date(ms);
-  const b = new Date(now);
-  return Math.round(
-    (new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime() -
-      new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime()) /
-      86_400_000,
-  );
+  return Math.round((midnight(ms) - midnight(now)) / 86_400_000);
 }
 
-export function when(ms: number, c24: boolean | null = null): string {
+function relative(ms: number, c24: boolean | null, near: number, key: string): string {
   const d = dayDiff(ms);
   const time = hm(ms, c24);
   if (d === 0) return time;
-  if (d === 1) return t('tool.when.tomorrow', { time });
+  if (d === near) return t(key, { time });
   return t('tool.when.day', { day: dtf({ weekday: 'long' }).format(ms), time });
 }
 
-export function since(ms: number, c24: boolean | null = null): string {
-  const d = dayDiff(ms);
-  const time = hm(ms, c24);
-  if (d === 0) return time;
-  if (d === -1) return t('tool.when.yesterday', { time });
-  return t('tool.when.day', { day: dtf({ weekday: 'long' }).format(ms), time });
-}
+export const when = (ms: number, c24: boolean | null = null): string => relative(ms, c24, 1, 'tool.when.tomorrow');
+
+export const since = (ms: number, c24: boolean | null = null): string => relative(ms, c24, -1, 'tool.when.yesterday');
 
 export function nextWall(wall: string, from = Date.now()): number {
   const [h, m] = wall.split(':').map(Number);

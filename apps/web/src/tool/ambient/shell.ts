@@ -98,7 +98,7 @@ export function mountAmbient(ctx: IToolCtx): () => void {
     if (keyboardUser) return;
     hideTimer = window.setTimeout(() => {
       // Never hide while another dialog (settings, extend) is up; the pill itself never hides (CSS).
-      if (store.get().ui.dialog === null && dialog.open) setHidden(true);
+      if (!document.querySelector('.at-dialog[open]') && dialog.open) setHidden(true);
     }, store.get().settings.ambient.autoHideMs);
   };
 

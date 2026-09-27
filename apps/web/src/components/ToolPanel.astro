@@ -8,16 +8,21 @@ import {
 } from '../i18n/locales';
 import SponsorCard from './SponsorCard.astro';
 import Button from './shell/Button.astro';
+import Dialog from './ui/Dialog.astro';
+import Sheet from './ui/Sheet.astro';
 import StatusPill from './shell/StatusPill.astro';
+import type { IToolReady } from '../lib/tool-ready';
 
 interface Props {
   locale?: TLocale;
   embed?: boolean;
   until?: string | undefined;
   kicker?: string | undefined;
+  ready: IToolReady;
+  untilAt?: string;
 }
 
-const { locale = 'en', embed = false, until, kicker } = Astro.props;
+const { locale = 'en', embed = false, until, kicker, ready, untilAt = '' } = Astro.props;
 const t = createT(locale);
 const catalogJson = JSON.stringify(islandCatalog(locale)).replaceAll(
   '<',
@@ -89,6 +94,11 @@ const ICON_SHARE =
   'M12 3.5v11M8 7.5l4-4 4 4M5.5 12v6.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12';
 const here = LOCALE_META[locale];
 const untilWall = until?.replace('-', ':');
+const a = untilWall ? '' : ready.a;
+const b = untilWall ? '' : ready.b;
+const meta = untilWall ? t('tool.meta.endsAt') : ready.meta;
+const cta = untilWall ? t('tool.cta.until', { time: untilAt }) : ready.ctaAria;
+const eight = ready.chip === 'custom';
 ---
 
 <div class="at-tool" data-panel id="content" tabindex="-1">
@@ -150,7 +160,7 @@ const untilWall = until?.replace('-', ':');
           aria-label={t('tool.why.open')}
         >
           <span class="at-why-text">{t('tool.why.open')}</span>
-          <svg
+          <svg width="20" height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -165,7 +175,7 @@ const untilWall = until?.replace('-', ':');
         </button>
       </div>
       <span class="at-deferred" id="at-deferred">
-        <svg
+        <svg width="16" height="16"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -183,10 +193,10 @@ const untilWall = until?.replace('-', ':');
     <div class="at-face-cell">
       <div class="at-mini">
         <div class="at-digits" role="timer" data-l="timer">
-          <span data-t="a">30</span><span class="at-secs" data-t="b">:00</span>
+          <span data-t="a">{a}</span><span class="at-secs" data-t="b">{b}</span>
         </div>
         <p class="at-meta">
-          <span data-t="ma">{t('tool.meta.endsAt')}</span>
+          <span data-t="ma">{meta}</span>
           <span class="at-meta-b" data-t="mb"></span>
         </p>
       </div>
@@ -200,7 +210,7 @@ const untilWall = until?.replace('-', ':');
             data-act="why"
             aria-label={t('tool.why.back')}
           >
-            <svg
+            <svg width="20" height="20"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -246,7 +256,7 @@ const untilWall = until?.replace('-', ':');
         <div class="at-final-glow" aria-hidden="true"></div>
         <div class="at-face at-face-ring">
           <div class="at-ring">
-            <svg
+            <svg width="608" height="608"
               class="at-ring-art"
               viewBox="0 0 320 320"
               aria-hidden="true"
@@ -284,12 +294,12 @@ const untilWall = until?.replace('-', ':');
               <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
               <div class="at-digits" role="timer" data-timer data-l="timer">
                 <span data-timer-digits
-                  ><span data-t="a">30</span><span class="at-secs" data-t="b"
-                    >:00</span
+                  ><span data-t="a">{a}</span><span class="at-secs" data-t="b"
+                    >{b}</span
                   ></span>
               </div>
               <div class="at-meta">
-                <span data-t="ma">{t('tool.meta.endsAt')}</span>
+                <span data-t="ma">{meta}</span>
                 <span class="at-meta-b" data-t="mb"></span>
               </div>
             </div>
@@ -299,23 +309,23 @@ const untilWall = until?.replace('-', ':');
         <div class="at-face at-face-bold">
           <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
           <div class="at-digits" role="timer" data-l="timer">
-            <span data-t="a">30</span><span class="at-secs" data-t="b"
-              >:00</span>
+            <span data-t="a">{a}</span><span class="at-secs" data-t="b"
+              >{b}</span>
           </div>
           <div class="at-bar-track" aria-hidden="true">
             <div class="at-bar-fill"><div class="at-shim"></div></div>
           </div>
           <div class="at-bold-meta">
             <span
-              ><span data-t="ma">{t('tool.meta.endsAt')}</span>
+              ><span data-t="ma">{meta}</span>
               <span data-t="mb"></span></span
-            ><span data-t="of"></span>
+            ><span data-t="of">{untilWall ? '' : ready.of}</span>
           </div>
         </div>
 
         <div class="at-face at-face-horizon">
           <div class="at-hz-warm" aria-hidden="true"></div>
-          <svg
+          <svg width="358" height="340"
             class="at-hz-stars"
             viewBox="0 0 358 340"
             aria-hidden="true"
@@ -349,7 +359,7 @@ const untilWall = until?.replace('-', ':');
           <div class="at-cloud" aria-hidden="true"></div>
           <div class="at-cloud at-cloud2" aria-hidden="true"></div>
           <div class="at-orb" aria-hidden="true"></div>
-          <svg
+          <svg width="358" height="26"
             class="at-hz-hill"
             viewBox="0 0 358 26"
             aria-hidden="true"
@@ -363,13 +373,13 @@ const untilWall = until?.replace('-', ':');
           <div class="at-hz-line" aria-hidden="true"></div>
           <div class="at-hz-text">
             <div class="at-digits" role="timer" data-l="timer">
-              <span data-t="a">30</span><span class="at-secs" data-t="b"
-                >:00</span>
+              <span data-t="a">{a}</span><span class="at-secs" data-t="b"
+                >{b}</span>
             </div>
             <div class="at-hz-meta">
               <span class="at-hz-name" data-t="hz"></span>
               <span class="at-hz-when"
-                ><span data-t="ma">{t('tool.meta.endsAt')}</span>
+                ><span data-t="ma">{meta}</span>
                 <span data-t="mb"></span></span
               >
             </div>
@@ -378,13 +388,13 @@ const untilWall = until?.replace('-', ':');
 
         <div class="at-face at-face-tide">
           <div class="at-tide-water" aria-hidden="true">
-            <svg
+            <svg width="716" height="28"
               class="at-wave2"
               viewBox="0 0 716 28"
               preserveAspectRatio="none"
               focusable="false"><path d={wave(8, 1.6)}></path></svg
             >
-            <svg
+            <svg width="716" height="28"
               class="at-wave1"
               viewBox="0 0 716 28"
               preserveAspectRatio="none"
@@ -404,20 +414,20 @@ const untilWall = until?.replace('-', ':');
           <div class="at-tide-text">
             <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
             <div class="at-digits" role="timer" data-l="timer">
-              <span data-t="a">30</span><span data-t="b">:00</span>
+              <span data-t="a">{a}</span><span data-t="b">{b}</span>
             </div>
             <div class="at-meta">
-              <span data-t="ma">{t('tool.meta.endsAt')}</span>
+              <span data-t="ma">{meta}</span>
               <span data-t="mb"></span>
             </div>
           </div>
           <div class="at-tide-text at-tide-under" aria-hidden="true">
             <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
             <div class="at-digits">
-              <span data-t="a">30</span><span data-t="b">:00</span>
+              <span data-t="a">{a}</span><span data-t="b">{b}</span>
             </div>
             <div class="at-meta">
-              <span data-t="ma">{t('tool.meta.endsAt')}</span>
+              <span data-t="ma">{meta}</span>
               <span data-t="mb"></span>
             </div>
           </div>
@@ -454,7 +464,7 @@ const untilWall = until?.replace('-', ':');
     </div>
     <div class="at-card-tone at-lowbatt" role="status">
       <h2>
-        <svg
+        <svg width="20" height="20"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -478,7 +488,7 @@ const untilWall = until?.replace('-', ':');
     >
       <div class="at-install-head">
         <span class="at-install-mark" aria-hidden="true"
-          ><svg viewBox="0 0 48 48"
+          ><svg width="20" height="20" viewBox="0 0 48 48"
             ><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle
               cx="24"
               cy="9"
@@ -499,7 +509,7 @@ const untilWall = until?.replace('-', ':');
       {
         untilWall && (
           <p class="at-whenline">
-            <svg
+            <svg width="16" height="16"
               class="at-when-moon"
               viewBox="0 0 24 24"
               fill="none"
@@ -510,7 +520,7 @@ const untilWall = until?.replace('-', ':');
             >
               <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" />
             </svg>
-            <svg
+            <svg width="16" height="16"
               class="at-when-sun"
               viewBox="0 0 24 24"
               fill="none"
@@ -539,8 +549,7 @@ const untilWall = until?.replace('-', ':');
     </div>
   </div>
 
-  <section class="at-toasts" data-toasts aria-label={t('tool.notifications')}>
-  </section>
+  <section class="at-toasts" data-toasts aria-label={t('tool.notifications')} aria-live="polite"></section>
 
   <div class="at-dock">
     <span class="at-ig-dock" aria-hidden="true"></span>
@@ -572,7 +581,7 @@ const untilWall = until?.replace('-', ':');
                 class="at-seg-item at-chip"
                 type="button"
                 data-preset={id}
-                aria-pressed="false"
+                aria-pressed={(id === ready.chip) ? "true" : "false"}
                 aria-label={t(`tool.preset.${id}.sr`)}
               >
                 {t(`tool.preset.${id}`)}
@@ -582,7 +591,7 @@ const untilWall = until?.replace('-', ':');
               class="at-seg-item at-chip"
               type="button"
               data-preset="pinf"
-              aria-pressed="false"
+              aria-pressed={(ready.chip === 'pinf') ? "true" : "false"}
               aria-label={t('tool.preset.pinf.sr')}
             >
               {t('tool.preset.pinf')}
@@ -606,21 +615,21 @@ const untilWall = until?.replace('-', ':');
               class="at-chip at-chip-choose at-c-custom"
               type="button"
               data-preset="custom"
-              aria-pressed="false"
+              aria-pressed={(eight) ? "true" : "false"}
               data-l="customAria"
               aria-label={t('tool.chip.customAria')}
             >
-              <span data-t="custom">{t('tool.preset.custom')}</span>
+              <span data-t="custom">{eight ? ready.len : t('tool.preset.custom')}</span>
             </button>
             <button
               class="at-chip at-chip-choose at-c-more"
               type="button"
               data-act="more"
-              aria-pressed="false"
+              aria-pressed={(eight) ? "true" : "false"}
               data-l="moreAria"
               aria-label={t('tool.chip.moreAria')}
             >
-              <span data-t="more">{t('tool.chip.more')}</span>
+              <span data-t="more">{t(eight ? 'tool.chip.moreCustom' : 'tool.chip.more')}</span>
             </button>
           </div>
         </div>
@@ -637,7 +646,7 @@ const untilWall = until?.replace('-', ':');
           type="button"
           data-act="close"
           aria-label={close}
-          ><svg
+          ><svg width="20" height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -659,8 +668,8 @@ const untilWall = until?.replace('-', ':');
           class="at-chip at-chip-choose at-c-custom"
           type="button"
           data-preset="custom"
-          aria-pressed="false"
-          ><span data-t="custom">{t('tool.preset.custom')}</span></button
+          aria-pressed={(eight) ? "true" : "false"}
+          ><span data-t="custom">{eight ? ready.len : t('tool.preset.custom')}</span></button
         >
       </div>
     </div>
@@ -683,7 +692,7 @@ const untilWall = until?.replace('-', ':');
             type="button"
             data-act="close"
             aria-label={close}
-            ><svg
+            ><svg width="20" height="20"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -730,7 +739,7 @@ const untilWall = until?.replace('-', ':');
           type="button"
           data-act="close"
           aria-label={close}
-          ><svg
+          ><svg width="20" height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -746,7 +755,7 @@ const untilWall = until?.replace('-', ':');
           data-act="less"
           data-l="lessAria"
           aria-label={t('tool.custom.less5')}
-          ><svg
+          ><svg width="20" height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -761,7 +770,7 @@ const untilWall = until?.replace('-', ':');
           data-act="more5"
           data-l="moreAria5"
           aria-label={t('tool.custom.more5')}
-          ><svg
+          ><svg width="20" height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -781,7 +790,7 @@ const untilWall = until?.replace('-', ':');
     >
       <div class="at-dockcard-head">
         <span class="at-dockcard-icon at-dockcard-lamp" aria-hidden="true"
-          ><svg
+          ><svg width="20" height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -817,7 +826,7 @@ const untilWall = until?.replace('-', ':');
     >
       <div class="at-dockcard-head">
         <span class="at-dockcard-icon" aria-hidden="true"
-          ><svg
+          ><svg width="20" height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -840,32 +849,14 @@ const untilWall = until?.replace('-', ':');
       </div>
     </section>
 
-    <dialog
-      class="at-float-sheet at-docked"
-      data-dialog="share"
-      aria-labelledby="share-title"
+    <Dialog
+      name="share"
+      title={t('tool.share.title')}
+      titleId="share-title"
+      closeLabel={close}
+      docked
     >
-      <span class="at-grab" aria-hidden="true"></span>
-      <div class="at-fs-bar">
-        <div class="at-fs-titles">
-          <h2 id="share-title">{t('tool.share.title')}</h2>
-          <p data-share-label></p>
-        </div>
-        <button
-          class="at-icon-button"
-          type="button"
-          data-share-close
-          aria-label={close}
-          ><svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            aria-hidden="true"><path d={X}></path></svg
-          ></button
-        >
-      </div>
+      <span slot="description" data-share-label></span>
       <div class="at-field">
         <label class="at-caption" for="at-share-url"
           >{t('tool.share.link')}</label
@@ -884,6 +875,8 @@ const untilWall = until?.replace('-', ':');
             aria-label={t('tool.share.copyAria')}
           >
             <svg
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -916,6 +909,8 @@ const untilWall = until?.replace('-', ':');
       </label>
       <button class="at-button" type="button" data-share-native>
         <svg
+          width="20"
+          height="20"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -927,15 +922,15 @@ const untilWall = until?.replace('-', ':');
         {t('tool.share.native')}
       </button>
       <p class="at-caption at-share-msg" role="status" data-share-msg></p>
-    </dialog>
+    </Dialog>
 
-    <dialog
-      class="at-float-sheet at-docked"
-      data-dialog="rating"
-      aria-labelledby="rating-title"
+    <Dialog
+      name="rating"
+      title={t('rating.title')}
+      titleId="rating-title"
+      closeLabel={close}
+      docked
     >
-      <span class="at-grab" aria-hidden="true"></span>
-      <h2 id="rating-title">{t('rating.title')}</h2>
       <form class="at-rating" data-rating-form>
         <div class="at-rate-top">
           <fieldset class="at-stars">
@@ -949,7 +944,7 @@ const untilWall = until?.replace('-', ':');
                     name="stars"
                     value={String(n)}
                   />
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 17l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" />
                   </svg>
                   <span class="sr-only">{t('rating.star', { n })}</span>
@@ -957,7 +952,13 @@ const untilWall = until?.replace('-', ':');
               ))
             }
           </fieldset>
-          <span class="at-caption" data-star-word>{t('rating.stars')}</span>
+          <span class="at-caption at-star-word"
+            ><span>{t('rating.stars')}</span>{
+              [1, 2, 3, 4, 5].map((n) => (
+                <span data-n={String(n)}>{t('rating.star', { n })}</span>
+              ))
+            }</span
+          >
         </div>
         <p class="at-error" data-rating-error role="alert"></p>
         <div class="at-field">
@@ -987,17 +988,18 @@ const untilWall = until?.replace('-', ':');
           >
         </div>
       </form>
-    </dialog>
+    </Dialog>
 
     <Button
       class="at-cta"
       variant="primary"
       data-act="start"
       data-l="cta"
+      aria-label={cta}
       kbd="Space"
       aria-keyshortcuts="Space"
       ><span data-t="cta"
-        >{t('tool.cta.keep', { length: t('tool.preset.p30') })}</span
+        >{untilWall ? cta : ready.cta}</span
       ></Button
     >
 
@@ -1085,7 +1087,7 @@ const untilWall = until?.replace('-', ':');
     }
   </div>
 
-  <div class="at-tabs at-tabs-late">
+  <div class="at-tabs at-tabs-late" id="at-tabs-late">
     <div
       class="at-seg at-faces"
       role="tablist"
@@ -1107,11 +1109,14 @@ const untilWall = until?.replace('-', ':');
       }
     </div>
   </div>
+  <span id="at-tool-parsed" hidden></span>
 
   <div class="at-banner at-lang-banner" data-lang-suggest hidden>
     <div class="at-fs-bar">
       <svg
         class="at-toast-i"
+        width="20"
+        height="20"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -1128,7 +1133,7 @@ const untilWall = until?.replace('-', ':');
         type="button"
         data-lang-suggest-dismiss
         aria-label={t('i18n.suggest.dismiss')}
-        ><svg
+        ><svg width="20" height="20"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -1145,244 +1150,249 @@ const untilWall = until?.replace('-', ':');
   <noscript><p class="at-noscript">{t('tool.noscript')}</p></noscript>
 </div>
 
-<dialog
-  class="at-sheet at-tsheet"
-  data-dialog="settings"
-  aria-labelledby="settings-title"
+<Sheet
+  name="settings"
+  title={t('settings.title')}
+  titleId="settings-title"
+  closeLabel={t('settings.close')}
+  body="form"
+  bodyClass="at-settings"
 >
-  <div class="at-tsheet-head">
-    <span class="at-grab" aria-hidden="true"></span>
-    <div class="at-tsheet-bar">
-      <h2 id="settings-title">{t('settings.title')}</h2>
-      <button
-        class="at-icon-button"
-        type="button"
-        data-settings-close
-        aria-label={t('settings.close')}
-        ><svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          aria-hidden="true"><path d={X}></path></svg
-        ></button
-      >
-    </div>
-  </div>
-  <form class="at-tsheet-body at-settings">
-    <section aria-labelledby="st-appearance">
-      <h3 class="at-kicker" id="st-appearance">{t('settings.appearance')}</h3>
-      <div class="at-field">
-        <span class="at-label" id="lb-theme">{t('settings.theme')}</span>
-        <div
-          class="at-seg at-sseg"
-          role="radiogroup"
-          aria-labelledby="lb-theme"
-          style="--at-seg-n:4"
-        >
-          <span class="at-seg-ind" aria-hidden="true"></span>
-          {
-            (['auto', 'light', 'dark', 'oled'] as const).map((v) => (
-              <label class="at-seg-item">
-                <input
-                  class="sr-only"
-                  type="radio"
-                  name="theme"
-                  value={v}
-                  checked={v === 'auto'}
-                />
-                {t(`settings.theme.${v}`)}
-              </label>
-            ))
-          }
-        </div>
-      </div>
-      <div class="at-field">
-        <div class="at-field-top">
-          <span class="at-label" id="lb-lamp">{t('settings.lamp')}</span><span
-            class="at-caption"
-            data-lamp-note>{t('settings.accent.aqua')}</span>
-        </div>
-        <div class="at-lamps" role="radiogroup" aria-labelledby="lb-lamp">
-          {
-            lamps.map(([hex, id, name, pro]) => (
-              <label class="at-lamp" data-lamp={id}>
-                <input
-                  class="sr-only"
-                  type="radio"
-                  name="accent"
-                  value={hex}
-                  checked={id === 'aqua'}
-                  aria-label={pro ? `${name}, ${t('pro.badge')}` : name}
-                />
-                <span class="at-swatch" aria-hidden="true" />
-                <span class="at-lamp-name">{name}</span>
-                {pro && (
-                  <span class="at-tag" aria-hidden="true">
-                    {t('pro.badge')}
-                  </span>
-                )}
-              </label>
-            ))
-          }
-        </div>
-        <p class="at-caption" data-pack-gate>{t('settings.lamp.note')}</p>
-      </div>
-      <div class="at-field">
-        <span class="at-label" id="lb-face">{t('settings.face')}</span>
-        <div
-          class="at-seg at-sseg"
-          role="radiogroup"
-          aria-labelledby="lb-face"
-          style="--at-seg-n:4"
-        >
-          <span class="at-seg-ind" aria-hidden="true"></span>
-          {
-            faces.map((f) => (
-              <label class="at-seg-item">
-                <input
-                  class="sr-only"
-                  type="radio"
-                  name="face"
-                  value={f}
-                  checked={f === 'ring'}
-                />
-                {t(`tool.face.${f}`)}
-              </label>
-            ))
-          }
-        </div>
-      </div>
-    </section>
-
-    <section aria-labelledby="st-time">
-      <h3 class="at-kicker" id="st-time">{t('settings.time')}</h3>
-      <div class="at-langrow">
-        <button
-          class="at-row at-langrow-btn"
-          type="button"
-          id="at-lang-set-btn"
-          aria-expanded="false"
-          aria-controls="at-lang-set-list"
-          data-lang-row
-        >
-          <span>{t('settings.locale')}</span>
-          <span class="at-langrow-cur"
-            >{here.label}<svg
-              class="at-lang-chev"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg
-            ></span
-          >
-        </button>
-        <ul
-          class="at-lang-list at-langrow-list"
-          id="at-lang-set-list"
-          role="list"
-          aria-label={t('settings.locale')}
-          hidden
-        >
-          {
-            LOCALES.map((code) => {
-              const meta = LOCALE_META[code];
-              const current = code === locale;
-              const tl = createT(code);
-              const note = current
-                ? t('footer.language.current')
-                : meta.reviewed
-                  ? ''
-                  : t('footer.language.review');
-              return (
-                <li>
-                  <a
-                    class="at-lang-row"
-                    href={localePath(code, '/')}
-                    lang={meta.htmlLang}
-                    hreflang={meta.hreflang}
-                    aria-current={current ? 'true' : undefined}
-                    data-code={code}
-                    data-q={tl('i18n.suggest', { language: meta.label })}
-                    data-a={tl('i18n.suggest.accept')}
-                  >
-                    <svg
-                      class="at-lang-mark"
-                      viewBox="0 0 20 20"
-                      aria-hidden="true"
-                      focusable="false"
-                    >
-                      <>
-                        <circle class="at-lang-ring" cx="10" cy="10" r="8" />
-                        <circle class="at-lang-dot" cx="10" cy="10" r="4" />
-                      </>
-                    </svg>
-                    <span class="at-lang-name">{meta.label}</span>
-                    <span class="at-lang-note" lang={here.htmlLang}>
-                      {note}
-                    </span>
-                  </a>
-                </li>
-              );
-            })
-          }
-        </ul>
-      </div>
-      <div class="at-field">
-        <span class="at-label" id="lb-fmt">{t('settings.ambient.clock')}</span>
-        <div
-          class="at-seg at-sseg at-sseg-sm"
-          role="radiogroup"
-          aria-labelledby="lb-fmt"
-        >
-          <span class="at-seg-ind" aria-hidden="true"></span>
-          <label class="at-seg-item"
-            ><input
-              class="sr-only"
-              type="radio"
-              name="clock24h"
-              value="auto"
-              checked
-            />{t('settings.ambient.clock.auto')}</label
-          >
-          <label class="at-seg-item"
-            ><input class="sr-only" type="radio" name="clock24h" value="12" />{
-              t('settings.clock.12')
-            }</label
-          >
-          <label class="at-seg-item"
-            ><input class="sr-only" type="radio" name="clock24h" value="24" />{
-              t('settings.clock.24')
-            }</label
-          >
-        </div>
-        <span class="at-caption at-tabnum" data-t="nowShows"></span>
-      </div>
-      <label class="at-switchrow">
-        <span class="at-switch-text"
-          ><span class="at-label">{t('settings.ambient.seconds')}</span><span
-            class="at-caption">{t('settings.seconds.help')}</span
-          ></span
-        >
-        <input
-          class="at-switch"
-          type="checkbox"
-          role="switch"
-          name="showSeconds"
-        />
-      </label>
-    </section>
-
-    <section aria-labelledby="st-end">
-      <h3 class="at-kicker" id="st-end">{t('settings.endBehaviour')}</h3>
+  <section aria-labelledby="st-appearance">
+    <h3 class="at-kicker" id="st-appearance">{t('settings.appearance')}</h3>
+    <div class="at-field">
+      <span class="at-label" id="lb-theme">{t('settings.theme')}</span>
       <div
         class="at-seg at-sseg"
         role="radiogroup"
-        aria-labelledby="st-end"
+        aria-labelledby="lb-theme"
+        style="--at-seg-n:4"
+      >
+        <span class="at-seg-ind" aria-hidden="true"></span>
+        {
+          (['auto', 'light', 'dark', 'oled'] as const).map((v) => (
+            <label class="at-seg-item">
+              <input
+                class="sr-only"
+                type="radio"
+                name="theme"
+                value={v}
+                checked={v === 'auto'}
+              />
+              {t(`settings.theme.${v}`)}
+            </label>
+          ))
+        }
+      </div>
+    </div>
+    <div class="at-field">
+      <div class="at-field-top">
+        <span class="at-label" id="lb-lamp">{t('settings.lamp')}</span><span
+          class="at-caption"
+          data-lamp-note>{t('settings.accent.aqua')}</span>
+      </div>
+      <div class="at-lamps" role="radiogroup" aria-labelledby="lb-lamp">
+        {
+          lamps.map(([hex, id, name, pro]) => (
+            <label class="at-lamp" data-lamp={id}>
+              <input
+                class="sr-only"
+                type="radio"
+                name="accent"
+                value={hex}
+                checked={id === 'aqua'}
+                aria-label={pro ? `${name}, ${t('pro.badge')}` : name}
+              />
+              <span class="at-swatch" aria-hidden="true" />
+              <span class="at-lamp-name">{name}</span>
+              {pro && (
+                <span class="at-tag" aria-hidden="true">
+                  {t('pro.badge')}
+                </span>
+              )}
+            </label>
+          ))
+        }
+      </div>
+      <p class="at-caption" data-pack-gate>{t('settings.lamp.note')}</p>
+    </div>
+    <div class="at-field">
+      <span class="at-label" id="lb-face">{t('settings.face')}</span>
+      <div
+        class="at-seg at-sseg"
+        role="radiogroup"
+        aria-labelledby="lb-face"
+        style="--at-seg-n:4"
+      >
+        <span class="at-seg-ind" aria-hidden="true"></span>
+        {
+          faces.map((f) => (
+            <label class="at-seg-item">
+              <input
+                class="sr-only"
+                type="radio"
+                name="face"
+                value={f}
+                checked={f === 'ring'}
+              />
+              {t(`tool.face.${f}`)}
+            </label>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="st-time">
+    <h3 class="at-kicker" id="st-time">{t('settings.time')}</h3>
+    <details class="at-langrow">
+      <summary class="at-row at-langrow-btn" id="at-lang-set-btn">
+        <span>{t('settings.locale')}</span>
+        <span class="at-langrow-cur"
+          >{here.label}<svg
+            width="16"
+            height="16"
+            class="at-lang-chev"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg
+          ></span
+        >
+      </summary>
+      <ul
+        class="at-lang-list at-langrow-list"
+        id="at-lang-set-list"
+        role="list"
+        aria-label={t('settings.locale')}
+      >
+        {
+          LOCALES.map((code) => {
+            const meta = LOCALE_META[code];
+            const current = code === locale;
+            const tl = createT(code);
+            const note = current
+              ? t('footer.language.current')
+              : meta.reviewed
+                ? ''
+                : t('footer.language.review');
+            return (
+              <li>
+                <a
+                  class="at-lang-row"
+                  href={localePath(code, '/')}
+                  lang={meta.htmlLang}
+                  hreflang={meta.hreflang}
+                  aria-current={current ? 'true' : undefined}
+                  data-code={code}
+                  data-q={tl('i18n.suggest', { language: meta.label })}
+                  data-a={tl('i18n.suggest.accept')}
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    class="at-lang-mark"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <>
+                      <circle class="at-lang-ring" cx="10" cy="10" r="8" />
+                      <circle class="at-lang-dot" cx="10" cy="10" r="4" />
+                    </>
+                  </svg>
+                  <span class="at-lang-name">{meta.label}</span>
+                  <span class="at-lang-note" lang={here.htmlLang}>
+                    {note}
+                  </span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </details>
+    <div class="at-field">
+      <span class="at-label" id="lb-fmt">{t('settings.ambient.clock')}</span>
+      <div
+        class="at-seg at-sseg at-sseg-sm"
+        role="radiogroup"
+        aria-labelledby="lb-fmt"
+      >
+        <span class="at-seg-ind" aria-hidden="true"></span>
+        <label class="at-seg-item"
+          ><input
+            class="sr-only"
+            type="radio"
+            name="clock24h"
+            value="auto"
+            checked
+          />{t('settings.ambient.clock.auto')}</label
+        >
+        <label class="at-seg-item"
+          ><input class="sr-only" type="radio" name="clock24h" value="12" />{
+            t('settings.clock.12')
+          }</label
+        >
+        <label class="at-seg-item"
+          ><input class="sr-only" type="radio" name="clock24h" value="24" />{
+            t('settings.clock.24')
+          }</label
+        >
+      </div>
+      <span class="at-caption at-tabnum" data-t="nowShows"></span>
+    </div>
+    <label class="at-switchrow">
+      <span class="at-switch-text"
+        ><span class="at-label">{t('settings.ambient.seconds')}</span><span
+          class="at-caption">{t('settings.seconds.help')}</span
+        ></span
+      >
+      <input
+        class="at-switch"
+        type="checkbox"
+        role="switch"
+        name="showSeconds"
+      />
+    </label>
+  </section>
+
+  <section aria-labelledby="st-end">
+    <h3 class="at-kicker" id="st-end">{t('settings.endBehaviour')}</h3>
+    <div
+      class="at-seg at-sseg"
+      role="radiogroup"
+      aria-labelledby="st-end"
+      style="--at-seg-n:2"
+    >
+      <span class="at-seg-ind" aria-hidden="true"></span>
+      <label class="at-seg-item"
+        ><input
+          class="sr-only"
+          type="radio"
+          name="endBehaviour"
+          value="prompt_extend"
+          checked
+        />{t('settings.endBehaviour.prompt_extend')}</label
+      >
+      <label class="at-seg-item"
+        ><input
+          class="sr-only"
+          type="radio"
+          name="endBehaviour"
+          value="stop"
+        />{t('settings.endBehaviour.stop')}</label
+      >
+    </div>
+    <div class="at-field">
+      <span class="at-label" id="lb-sound">{t('settings.sound')}</span>
+      <div
+        class="at-seg at-sseg"
+        role="radiogroup"
+        aria-labelledby="lb-sound"
         style="--at-seg-n:2"
       >
         <span class="at-seg-ind" aria-hidden="true"></span>
@@ -1390,275 +1400,216 @@ const untilWall = until?.replace('-', ':');
           ><input
             class="sr-only"
             type="radio"
-            name="endBehaviour"
-            value="prompt_extend"
+            name="sound"
+            value="chime"
             checked
-          />{t('settings.endBehaviour.prompt_extend')}</label
+          />{t('settings.sound.chime')}</label
         >
         <label class="at-seg-item"
-          ><input
-            class="sr-only"
-            type="radio"
-            name="endBehaviour"
-            value="stop"
-          />{t('settings.endBehaviour.stop')}</label
+          ><input class="sr-only" type="radio" name="sound" value="none" />{
+            t('settings.sound.none')
+          }</label
         >
       </div>
-      <div class="at-field">
-        <span class="at-label" id="lb-sound">{t('settings.sound')}</span>
-        <div
-          class="at-seg at-sseg"
-          role="radiogroup"
-          aria-labelledby="lb-sound"
-          style="--at-seg-n:2"
-        >
-          <span class="at-seg-ind" aria-hidden="true"></span>
-          <label class="at-seg-item"
-            ><input
-              class="sr-only"
-              type="radio"
-              name="sound"
-              value="chime"
-              checked
-            />{t('settings.sound.chime')}</label
-          >
-          <label class="at-seg-item"
-            ><input class="sr-only" type="radio" name="sound" value="none" />{
-              t('settings.sound.none')
-            }</label
-          >
-        </div>
-      </div>
-      <label class="at-switchrow">
-        <span class="at-switch-text"
-          ><span class="at-label">{t('settings.notifications')}</span><span
-            class="at-caption"
-            data-notifications-note>{t('settings.notifications.help')}</span
-          ></span
-        >
-        <input
-          class="at-switch"
-          type="checkbox"
-          role="switch"
-          name="notifications"
-        />
-      </label>
-    </section>
-
-    <section aria-labelledby="st-batt" data-battery-fields>
-      <h3 class="at-kicker" id="st-batt">{t('settings.battery')}</h3>
-      <label class="at-switchrow">
-        <span class="at-switch-text"
-          ><span class="at-label">{t('settings.battery.autoStop')}</span><span
-            class="at-caption">{t('settings.battery.help')}</span
-          ></span
-        >
-        <input
-          class="at-switch"
-          type="checkbox"
-          role="switch"
-          name="batteryAuto"
-        />
-      </label>
-      <div class="at-range">
-        <div class="at-field-top">
-          <label class="at-label" for="at-batt"
-            >{t('settings.battery.stopAt')}</label
-          ><output class="at-label at-tabnum" for="at-batt" data-battery-label
-            >15%</output>
-        </div>
-        <input
-          id="at-batt"
-          type="range"
-          name="batteryThreshold"
-          min="5"
-          max="30"
-          step="1"
-          value="15"
-          aria-describedby="at-batt-hint"
-        />
-        <span class="at-caption" id="at-batt-hint" data-battery-hint
-          >{t('settings.battery.off')}</span
-        >
-      </div>
-    </section>
-    <p class="at-caption" data-battery-unavailable hidden>
-      {t('settings.battery.unavailable')}
-    </p>
-
-    <section aria-labelledby="st-priv" class="at-tight">
-      <h3 class="at-kicker" id="st-priv">{t('settings.privacy')}</h3>
-      <label class="at-switchrow">
-        <span class="at-switch-text"
-          ><span class="at-label">{t('settings.telemetry')}</span></span
-        >
-        <input
-          class="at-switch"
-          type="checkbox"
-          role="switch"
-          name="telemetry"
-          checked
-        />
-      </label>
-      <label class="at-switchrow">
-        <span class="at-switch-text"
-          ><span class="at-label">{t('settings.shortcuts')}</span><span
-            class="at-caption at-keys-help"
-            set:html={keysHelp}
-          /></span
-        >
-        <input
-          class="at-switch"
-          type="checkbox"
-          role="switch"
-          name="keyboardShortcuts"
-          checked
-        />
-      </label>
-      <label class="at-switchrow">
-        <span class="at-switch-text"
-          ><span class="at-label">{t('settings.hints')}</span></span
-        >
-        <input
-          class="at-switch"
-          type="checkbox"
-          role="switch"
-          name="keyboardHints"
-          checked
-        />
-      </label>
-    </section>
-
-    <div class="at-settings-foot">
-      <div class="at-settings-links">
-        <button class="at-phone-only at-textlink" type="button" data-open-stats
-          >{t('stats.title')}</button
-        >
-        <button class="at-phone-only at-textlink" type="button" data-open-share
-          >{t('tool.share.title')}</button
-        >
-        <button class="at-phone-only at-textlink" type="button" data-open-shortcuts
-          >{t('tool.shortcuts.title')}</button
-        >
-        <a class="at-textlink" href="/pro" data-open-pro>{t('settings.pro')}</a>
-        <a class="at-textlink" href="/pro/manage">{t('settings.pro.manage')}</a>
-      </div>
-      <Button data-settings-reset>{t('settings.reset')}</Button>
     </div>
-  </form>
-</dialog>
-
-<dialog
-  class="at-sheet at-tsheet"
-  data-dialog="stats"
-  aria-labelledby="stats-title"
->
-  <div class="at-tsheet-head">
-    <span class="at-grab" aria-hidden="true"></span>
-    <div class="at-tsheet-bar">
-      <h2 id="stats-title">{t('stats.title')}</h2>
-      <button
-        class="at-icon-button"
-        type="button"
-        data-stats-close
-        aria-label={t('stats.closeSr')}
-        ><svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          aria-hidden="true"><path d={X}></path></svg
-        ></button
+    <label class="at-switchrow">
+      <span class="at-switch-text"
+        ><span class="at-label">{t('settings.notifications')}</span><span
+          class="at-caption"
+          data-notifications-note>{t('settings.notifications.help')}</span
+        ></span
       >
-    </div>
-  </div>
-  <div class="at-tsheet-body">
-    <p class="at-caption" data-stats-empty hidden>{t('stats.empty')}</p>
-    <dl class="at-figs">
-      <div><dt>{t('stats.today')}</dt><dd data-stats-today></dd></div>
-      <div><dt>{t('stats.week')}</dt><dd data-stats-week></dd></div>
-      <div><dt>{t('stats.streakLabel')}</dt><dd data-stats-streak></dd></div>
-      <div><dt>{t('stats.total')}</dt><dd data-stats-total></dd></div>
-    </dl>
-    <section class="at-heat-sec" aria-labelledby="st-heat">
+      <input
+        class="at-switch"
+        type="checkbox"
+        role="switch"
+        name="notifications"
+      />
+    </label>
+  </section>
+
+  <section aria-labelledby="st-batt" data-battery-fields>
+    <h3 class="at-kicker" id="st-batt">{t('settings.battery')}</h3>
+    <label class="at-switchrow">
+      <span class="at-switch-text"
+        ><span class="at-label">{t('settings.battery.autoStop')}</span><span
+          class="at-caption">{t('settings.battery.help')}</span
+        ></span
+      >
+      <input
+        class="at-switch"
+        type="checkbox"
+        role="switch"
+        name="batteryAuto"
+      />
+    </label>
+    <div class="at-range">
       <div class="at-field-top">
-        <h3 class="at-kicker" id="st-heat">{t('stats.heat.title')}</h3><span
-          class="at-caption">{t('stats.heat.sub')}</span>
+        <label class="at-label" for="at-batt"
+          >{t('settings.battery.stopAt')}</label
+        ><output class="at-label at-tabnum" for="at-batt" data-battery-label
+          >15%</output>
       </div>
-      <div class="at-heat" role="img" data-stats-heatmap>
-        <div class="at-heat-lock" data-stats-locked>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            aria-hidden="true"
-            ><rect x="5" y="11" width="14" height="10" rx="2"></rect><path
-              d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg
-          >
-          {t('stats.heatmap.locked')}
-        </div>
-      </div>
-      <div class="at-heat-legend" aria-hidden="true">
-        <span>{t('stats.heat.less')}</span><i></i><i></i><i></i><i></i><i
-        ></i><span>{t('stats.heat.more')}</span>
-      </div>
-    </section>
-    <div class="at-stats-foot">
-      <button
-        class="at-button at-export"
-        type="button"
-        data-stats-export
-        aria-describedby="st-csv-note"
+      <input
+        id="at-batt"
+        type="range"
+        name="batteryThreshold"
+        min="5"
+        max="30"
+        step="1"
+        value="15"
+        aria-describedby="at-batt-hint"
+      />
+      <span class="at-caption" id="at-batt-hint" data-battery-hint
+        >{t('settings.battery.off')}</span
       >
+    </div>
+  </section>
+  <p class="at-caption" data-battery-unavailable hidden>
+    {t('settings.battery.unavailable')}
+  </p>
+
+  <section aria-labelledby="st-priv" class="at-tight">
+    <h3 class="at-kicker" id="st-priv">{t('settings.privacy')}</h3>
+    <label class="at-switchrow">
+      <span class="at-switch-text"
+        ><span class="at-label">{t('settings.telemetry')}</span></span
+      >
+      <input
+        class="at-switch"
+        type="checkbox"
+        role="switch"
+        name="telemetry"
+        checked
+      />
+    </label>
+    <label class="at-switchrow">
+      <span class="at-switch-text"
+        ><span class="at-label">{t('settings.shortcuts')}</span><span
+          class="at-caption at-keys-help"
+          set:html={keysHelp}
+        /></span
+      >
+      <input
+        class="at-switch"
+        type="checkbox"
+        role="switch"
+        name="keyboardShortcuts"
+        checked
+      />
+    </label>
+    <label class="at-switchrow">
+      <span class="at-switch-text"
+        ><span class="at-label">{t('settings.hints')}</span></span
+      >
+      <input
+        class="at-switch"
+        type="checkbox"
+        role="switch"
+        name="keyboardHints"
+        checked
+      />
+    </label>
+  </section>
+
+  <div class="at-settings-foot">
+    <div class="at-settings-links">
+      <button class="at-phone-only at-textlink" type="button" data-open-stats
+        >{t('stats.title')}</button
+      >
+      <button class="at-phone-only at-textlink" type="button" data-open-share
+        >{t('tool.share.title')}</button
+      >
+      <button class="at-phone-only at-textlink" type="button" data-open-shortcuts
+        >{t('tool.shortcuts.title')}</button
+      >
+      <a class="at-textlink" href="/pro" data-open-pro>{t('settings.pro')}</a>
+      <a class="at-textlink" href="/pro/manage">{t('settings.pro.manage')}</a>
+    </div>
+    <Button data-settings-reset>{t('settings.reset')}</Button>
+  </div>
+</Sheet>
+
+<Sheet
+  name="stats"
+  title={t('stats.title')}
+  titleId="stats-title"
+  closeLabel={t('stats.closeSr')}
+>
+  <p class="at-caption" data-stats-empty hidden>{t('stats.empty')}</p>
+  <dl class="at-figs">
+    <div><dt>{t('stats.today')}</dt><dd data-stats-today></dd></div>
+    <div><dt>{t('stats.week')}</dt><dd data-stats-week></dd></div>
+    <div><dt>{t('stats.streakLabel')}</dt><dd data-stats-streak></dd></div>
+    <div><dt>{t('stats.total')}</dt><dd data-stats-total></dd></div>
+  </dl>
+  <section class="at-heat-sec" aria-labelledby="st-heat">
+    <div class="at-field-top">
+      <h3 class="at-kicker" id="st-heat">{t('stats.heat.title')}</h3><span
+        class="at-caption">{t('stats.heat.sub')}</span>
+    </div>
+    <div class="at-heat" role="img" data-stats-heatmap>
+      <div class="at-heat-lock" data-stats-locked>
         <svg
+          width="16"
+          height="16"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           stroke-width="1.8"
           stroke-linecap="round"
-          stroke-linejoin="round"
           aria-hidden="true"
-          ><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg
+          ><rect x="5" y="11" width="14" height="10" rx="2"></rect><path
+            d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg
         >
-        {t('stats.export')}
-        <span class="at-tag" data-export-pro>{t('pro.badge')}</span>
-      </button>
-      <p class="at-caption" id="st-csv-note">
-        {t('stats.export.note')}
-        <a href="/pro">{t('pro.see')}</a>
-      </p>
+        {t('stats.heatmap.locked')}
+      </div>
     </div>
-  </div>
-</dialog>
-
-<dialog
-  class="at-float-sheet"
-  data-dialog="shortcuts"
-  aria-labelledby="shortcuts-title"
->
-  <span class="at-grab" aria-hidden="true"></span>
-  <div class="at-fs-bar">
-    <h2 id="shortcuts-title">{t('tool.shortcuts.title')}</h2>
+    <div class="at-heat-legend" aria-hidden="true">
+      <span>{t('stats.heat.less')}</span><i></i><i></i><i></i><i></i><i
+      ></i><span>{t('stats.heat.more')}</span>
+    </div>
+  </section>
+  <div class="at-stats-foot">
     <button
-      class="at-icon-button"
+      class="at-button at-export"
       type="button"
-      data-shortcuts-close
-      aria-label={close}
-      ><svg
+      data-stats-export
+      aria-describedby="st-csv-note"
+    >
+      <svg
+        width="20"
+        height="20"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
         stroke-width="1.8"
         stroke-linecap="round"
-        aria-hidden="true"><path d={X}></path></svg
-      ></button
-    >
+        stroke-linejoin="round"
+        aria-hidden="true"
+        ><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg
+      >
+      {t('stats.export')}
+      <span class="at-tag" data-export-pro>{t('pro.badge')}</span>
+    </button>
+    <p class="at-caption" id="st-csv-note">
+      {t('stats.export.note')}
+      <a href="/pro">{t('pro.see')}</a>
+    </p>
   </div>
+</Sheet>
+
+<Dialog
+  name="shortcuts"
+  title={t('tool.shortcuts.title')}
+  titleId="shortcuts-title"
+  closeLabel={close}
+  size="lg"
+>
   <p class="at-keys-note" role="note">
     <svg
+      width="20"
+      height="20"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -1692,41 +1643,20 @@ const untilWall = until?.replace('-', ':');
     <span class="at-phone-hide">{t('tool.shortcuts.foot')}</span><span
       class="at-phone-only">{t('tool.shortcuts.footPhone')}</span>
   </p>
-</dialog>
+</Dialog>
 
-<dialog
-  class="at-sheet at-tsheet"
-  data-dialog="pro"
-  aria-labelledby="pro-sheet-title"
+<Sheet
+  name="pro"
+  title={t('pro.title')}
+  titleId="pro-sheet-title"
+  closeLabel={close}
 >
-  <div class="at-tsheet-head">
-    <span class="at-grab" aria-hidden="true"></span>
-    <div class="at-tsheet-bar">
-      <h2 id="pro-sheet-title">{t('pro.title')}</h2>
-      <button
-        class="at-icon-button"
-        type="button"
-        data-pro-close
-        aria-label={close}
-        ><svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          aria-hidden="true"><path d={X}></path></svg
-        ></button
-      >
-    </div>
-  </div>
-  <div class="at-tsheet-body">
-    <p>{t('pro.card')}</p>
-    <div class="at-stats-foot">
-      <Button variant="primary" href="/pro" glyph={false}>{t('pro.cta')}</Button>
-      <a class="at-textlink" href="/pro/activate">{t('pro.activate')}</a>
-    </div>
-  </div>
-</dialog>
+  <p>{t('pro.card')}</p>
+  <Fragment slot="footer">
+    <Button variant="primary" href="/pro" glyph={false}>{t('pro.cta')}</Button>
+    <a class="at-textlink" href="/pro/activate">{t('pro.activate')}</a>
+  </Fragment>
+</Sheet>
 
 <dialog class="at-ambient" data-ambient aria-labelledby="ambient-title">
   <h2 class="sr-only" id="ambient-title" data-ambient-title>

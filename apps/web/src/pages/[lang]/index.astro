@@ -7,14 +7,6 @@ import { createT } from '../../i18n/load';
 import { LOCALE_META, isLocale, type TLocale } from '../../i18n/locales';
 import { homeSchema } from '../../lib/seo';
 import ratings from '../../../../../data/ratings.json';
-import type { ILocaleHomeCopy } from '../../content/locale-home/types';
-import { es } from '../../content/locale-home/es';
-import { ptBr } from '../../content/locale-home/pt-br';
-import { de } from '../../content/locale-home/de';
-import { fr } from '../../content/locale-home/fr';
-import { ja } from '../../content/locale-home/ja';
-import { zh } from '../../content/locale-home/zh';
-import { hi } from '../../content/locale-home/hi';
 
 export function getStaticPaths() {
   return ['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'].map((lang) => ({ params: { lang } }));
@@ -30,20 +22,6 @@ const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com
 // `/es/`, with its slash: the build writes es/index.html, which Cloudflare Pages serves only at /es/ (docs/14 §2.1).
 const canonical = `${site}/${locale}/`;
 const meta = LOCALE_META[locale];
-
-// Draft, unreviewed machine-assisted translations (docs/BUILD-STATE.md "Known gaps" E6-T04).
-// meta.reviewed stays false until a native speaker signs off, so `noindex` below is unaffected
-// by how much prose exists on the page.
-const COPY: Record<Exclude<TLocale, 'en'>, ILocaleHomeCopy> = {
-  es,
-  'pt-br': ptBr,
-  de,
-  fr,
-  ja,
-  zh,
-  hi,
-};
-const copy = COPY[locale];
 
 const ICON_TRANSLATE = 'M4 5h8M8 3v2M5.5 5c.8 3 3 5.5 6 7M10.5 5c-.6 3.4-2.8 6.2-6.5 8M12.5 20l4-9 4 9M13.8 17h5.4';
 ---
@@ -62,45 +40,18 @@ const ICON_TRANSLATE = 'M4 5h8M8 3v2M5.5 5c.8 3 3 5.5 6 7M10.5 5c-.6 3.4-2.8 6.2
     {
       !meta.reviewed && (
         <p class="at-hb-note" role="note" data-translation-pending slot="top">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ICON_TRANSLATE} /></svg>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d={ICON_TRANSLATE} /></svg>
           <span>
             {t('content.translation.pending')} <a href="/" hreflang="en">{t('content.translation.original')}</a>
           </span>
         </p>
       )
     }
-    <HomeBelow locale={locale} copy={copy} />
+    <HomeBelow locale={locale} />
   </ToolIsland>
 </BaseLayout>
 
 <style>
-  :global(.at-hb .at-hb-how .at-hb-states) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--at-s-2);
-    border: 0;
-  }
-
-  :global(.at-hb .at-hb-how .at-hb-states .at-pill) {
-    max-inline-size: 100%;
-    padding-block: var(--at-s-1);
-    border-radius: var(--at-r-lg);
-    white-space: normal;
-    text-wrap: balance;
-  }
-
-  :global(.at-hb .at-hb-how .at-hb-states > li) {
-    padding: 0;
-    border: 0;
-  }
-
-  @media (width >= 1024px) {
-    :global(.at-hb .at-hb-how .at-hb-steps) {
-      grid-template-columns: minmax(0, 1fr);
-      gap: var(--at-s-5);
-    }
-  }
-
   .at-hb-note {
     display: flex;
     align-items: flex-start;

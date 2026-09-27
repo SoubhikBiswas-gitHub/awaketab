@@ -2,7 +2,10 @@ import { DEFAULT_STATS, type IStats } from '@awaketab/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { buildHeatmap, HEATMAP_WEEKS, levelFor, summarise } from '../../src/tool/stats/heatmap.js';
 import { formatMinutes, openStats, renderHeatmap } from '../../src/tool/stats/panel.js';
-import { license, makeCtx } from './ctx-helper.js';
+import { dialogSettled, license, makeCtx } from './ctx-helper.js';
+
+// Sheets wait for tool-more.css (ui/dialog.ts); happy-dom never loads the stylesheet.
+vi.mock('../../src/tool/ui/more-css.js', () => ({ moreCss: async () => undefined }));
 
 // 00:15 on Monday 3 Aug 2026 in India; still Sunday 2 Aug in UTC. Keys must follow the local calendar.
 const NOW = Date.UTC(2026, 7, 2, 18, 45);
@@ -251,7 +254,7 @@ const STATS_HTML = `
     <dl><dd data-stats-today></dd><dd data-stats-week></dd><dd data-stats-streak></dd><dd data-stats-total></dd></dl>
     <div data-stats-heatmap><div data-stats-locked hidden></div></div>
     <button type="button" data-stats-export hidden>Export <span data-export-pro>Pro</span></button>
-    <button type="button" data-stats-close>Close</button>
+    <button type="button" data-dialog-close>Close</button>
   </dialog>`;
 
 describe('openStats', () => {
@@ -265,8 +268,8 @@ describe('openStats', () => {
 
   const today = '2026-08-03';
 
-  it('free: export carries the Pro tag, shows the locked badge, fills the four figures', () => {
-    const { ctx, root, storage, store } = makeCtx({ html: STATS_HTML });
+  it('free: export carries the Pro tag, shows the locked badge, fills the four figures', async () => {
+    const { ctx, root, storage } = makeCtx({ html: STATS_HTML });
     storage.writeStats({
       ...DEFAULT_STATS,
       days: { [today]: 42, '2026-08-02': 90 },
@@ -276,9 +279,9 @@ describe('openStats', () => {
       currentStreakDays: 2,
     });
     openStats(ctx);
+    await dialogSettled();
     const q = (sel: string) => root.querySelector<HTMLElement>(sel);
     expect(root.querySelector<HTMLDialogElement>('[data-dialog="stats"]')?.open).toBe(true);
-    expect(store.get().ui.dialog).toBe('stats');
     expect(q('[data-stats-export]')?.hidden).toBe(false);
     expect(q('[data-export-pro]')?.hidden).toBe(false);
     expect(q('[data-stats-locked]')?.hidden).toBe(false);

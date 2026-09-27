@@ -84,6 +84,8 @@ Each fact comes from one of four places, and its page says when it was last chec
 
 ::rows basis
 
+When a browser changes, the matrix and the affected pages change with it, and the change is dated in the [changelog](/changelog).
+
 ## What did the source check find?
 
 The version floors hold: Chrome and Edge 84, Opera 70, Samsung Internet 14, Firefox 126 and Safari 16.4. iPhone and iPad Home Screen web apps need iOS or iPadOS 18.4. In every engine the lock lasts only while the tab is visible, and a browser refuses it or takes it back for four reasons only: the page is hidden or inactive, a Permissions-Policy blocks it, Safari has had no recent tap, or Firefox is at 5 % battery or less and not charging. A page served over plain http has no wake lock at all, which is "unsupported" rather than a refusal.

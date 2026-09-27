@@ -1,6 +1,6 @@
 # AwakeTab design system — "Clear Night" (version D)
 
-Status: **approved direction, not yet implemented.** The interactive source of truth is the design canvas (the 12 redesign canvases (docs/redesign/CANVASES.md), `Main.dc.html` holds the reference logic). When this file and `docs/05-frontend-spec.md` disagree, this file describes the target and docs/05 must be updated in the same PR that implements it (CLAUDE.md contracts rule). Product context lives in `PRODUCT.md`.
+Status: **approved direction, not yet implemented.** The interactive source of truth is the design canvas: the 12 redesign canvases linked from `docs/redesign/CANVASES.md` (the `Main` board on the Tool canvas holds the reference logic). When this file and `docs/05-frontend-spec.md` disagree, this file describes the target and docs/05 must be updated in the same PR that implements it (CLAUDE.md contracts rule). Product context lives in `PRODUCT.md`.
 
 Contracts that do **not** change: the seven lock states and their exact pill copy, storage keys `at.v1.*`, routes and slugs, ad placement rules, performance budgets, zero hydration, self-hosted fonts only (no third-party font request; D-R26), `--at-*` token names and their shadcn aliases.
 
@@ -78,7 +78,7 @@ The logo bead in the header takes the current tone, so the brand mark is itself 
 
 ## 3. Type
 
-The product uses the canvas's fonts (decision D-R26, replacing the earlier "system fonts only" rule). All three are SIL OFL 1.1 and **self-hosted** from `/fonts` (Latin woff2, licence files alongside); no third-party font request, `font-display: swap`, and a metric-matched local fallback face per font (size-adjust and ascent/descent/line-gap overrides) so the swap keeps CLS 0. Only Geist is preloaded. Scripts outside Latin (ja, zh, hi) fall through to the system stack.
+The product uses the canvas's fonts (decision D-R26, replacing the earlier "system fonts only" rule). All three are SIL OFL 1.1 and **self-hosted** from `/fonts` (Latin woff2, licence files alongside); no third-party font request, and a metric-matched local fallback face per font (size-adjust and ascent/descent/line-gap overrides). Only Geist is preloaded, with `font-display: optional`: it paints when it arrives in time and otherwise the page keeps its fallback rather than swapping text under the reader. Geist Mono and Space Grotesk load after the first paint with `swap`; their fallbacks match their advances, so the swap never moves layout. Scripts outside Latin (ja, zh, hi) fall through to the system stack.
 
 | Role | Token and font | Notes |
 |---|---|---|
@@ -98,7 +98,7 @@ Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · butt
 - Show consequences before acting: Ready shows `ends at 10:30 PM`; running shows `until 10:30 PM`; no-limit shows `since 9:12 PM`.
 - End times are rounded to the nearest minute before display.
 - Long sessions, same rule on every surface (tool, popup, PiP, embed, kiosk): under 1 h "MM:SS"; 1 h and over "H:MM:SS" (tabular, sized so 12:59:59 never wraps); 24 h and over "1d 02:15:00" with the full end line ("Sunday, 27 September · 10:30 AM"); ends 2+ days away show the weekday.
-- No limit (∞, "Until I stop"): no countdown. Digits count up as elapsed with the caption "Awake for" and "since 9:04 PM" ("since yesterday 7:43 PM" after midnight); ring full and steady; extend buttons hidden; Stop stays; extension badge ON/SYS.
+- No limit (∞, "Until I stop"): no countdown. Ready shows the count-up at rest, 00:00. Digits count up as elapsed with the caption "Awake for" and "since 9:04 PM" ("since yesterday 7:43 PM" after midnight); ring full and steady; extend buttons hidden; Stop stays; extension badge ON/SYS.
 
 ## 5. Layout and breakpoints
 
@@ -124,13 +124,14 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 
 ## 6. Components
 
-- **Header:** logo lockup (ring + lamp bead) · desktop nav (Use cases, Devices, Extension, Pro) · theme switch (Light · Dark · Auto, sliding indicator, 44 px segments) · Stats (desktop) · Settings.
+- **Header:** logo lockup (ring + lamp bead) · three menus (Use it for ▾, Devices ▾, Resources ▾, native popovers that rise in with a lamp glow; use cases carry their suggested length as a ring around the icon) · Extension · Pro · theme switch (Light · Dark · Auto, sliding indicator, 44 px segments) · Add to Chrome (Add to Edge, or Add to Home Screen on iOS). Narrower headers and every tool page fold the menus into one Menu button: a bottom sheet on phones, an anchored panel from 600. The tool header keeps Stats (desktop) and Settings.
 - **Segmented bars** (face tabs, presets, theme): surface pill with one sliding indicator (`translateX(index × 100%)`, 600 ms ease-out), selected text ink 600, others ink-2 500.
 - **Status pill:** see §11.4 pill sizes; tone 12 % fill + 38 % border, glyph 12 px, `<output aria-live="polite">`.
 - **Primary CTA:** lamp fill, on-accent text, logo glyph, soft lamp shadow. **Stop** (and every strong neutral action: Retry, Stop for today, Send, Install, Exit): `raised` fill + 1 px `line-strong` + `ink` text, so it follows the theme (dark button on dark, light button on light; decision D-R20). **Secondary:** surface + strong line.
 - **Inline panels, not modals:** Until a time (4 half-hour slots with `today`/`tomorrow` sub-labels) and Custom (± 5 min stepper) replace the preset bar in place.
 - **Blocked card:** tinted bad 8% with 32% border, title + one-paragraph fix; actions become "Use video fallback" · "Try again".
 - **Settings sheet:** bottom sheet on phone, side sheet on desktop; sections Appearance (theme, lamp colour, clock face), Time (12/24 h, show seconds), Behaviour (existing settings from docs/05 §3.18).
+- **Dialogs, sheets and drawers** (one set: `components/ui/Dialog.astro`, `Sheet.astro`, `Drawer.astro`, native `<dialog>`, docs/05 §3.30): surface fill, 1 px line, `--at-shadow-float`, backdrop `--at-scrim`; header = 36 × 4 grab handle (phones), title 20/28 600, optional description (small, ink-2) and a labelled 44 × 44 Close at the end; body scrolls inside; footer holds the actions, primary last. Phones always get a bottom sheet in the thumb zone (r28 top corners, above the safe area and the keyboard). From 600: `Dialog` is a centred card (r28), `Sheet` a full-height side sheet (inner corners r28, 1 px line on the leading edge), a docked card (share, rating) sits in the tool dock and keeps the page live. Motion: slides up or in from its side while the backdrop fades, `--at-d-slide` in and `--at-d-slow` out, ease-out, no bounce, instant under reduced motion. One layer at a time; the page behind never scrolls. Still a last resort: inline panels come first.
 
 ## 7. Clock faces (user-switchable, remembered)
 
@@ -145,7 +146,13 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 - Durations: state colour 450–600 ms, slides 600 ms, content rise 700–900 ms, time-driven transforms 1 s linear (matches the tick), ambient loops 3–130 s.
 - Animate `transform`, `opacity`, `clip-path`, `stroke-dasharray` only; never layout properties.
 - `prefers-reduced-motion: reduce` stops every loop and transition (burn-in pixel shift still applies, instantly).
+- Nothing moves into its first place: the page paints its settled state (docs/05 §3.33, First load), so primary buttons, the pill, the note and the selected-segment indicators never fade or slide on load. Motion answers a change the user can see coming; a theme swap runs no transitions at all.
 - Implementation is CSS-only (keyframes + `@property --at-p` for progress); the island only writes `--at-p` and `data-state`. JS budget has ~1 KB headroom.
+- **Interactive cards and icons** (content pages, the homepage below the tool, header menus). No raster or 3D-engine icons: the inline SVG line icons do the work.
+  - *Tilt:* cards marked `[data-tilt]` lean toward a mouse pointer (`perspective(64rem)`, at most 5° on each axis) and a soft lamp-tinted glow (`--at-accent` at 14 %) follows it; the card's icon (`[data-tilt-z]`) floats 24 px above the card plane. Only for `(hover: hover) and (pointer: fine)`. A keyboard-focused card lifts 4 px and never tilts; on touch a pressed card dips to 98.5 % for a moment. The pointer position comes from `lib/tilt.ts` (one passive listener, one write per frame), never from the tool's critical bundle.
+  - *Icons act out their use:* each use case and device icon has named parts (`.at-ico-part-*`) that play one short motion (about 900 ms, ease-out, no bounce, no loop) when its card or menu row is hovered or keyboard-focused: steam rises, a page turns, a screen lights, bars grow, a camera light blinks, the download arrow drops into the tray, a phone screen wakes, a laptop lid settles. At rest every icon looks exactly as drawn; parts that only appear while acting carry `opacity="0"`.
+  - *Ring fill:* the lamp arc around a use-case icon in the header menus sweeps from empty to its suggested length (600 ms, ease-out) on hover or focus.
+  - Nothing moves unless pointed at or focused, so a tab left open for hours spends nothing on it. Under reduced motion everything is static and the rings show full; under forced colours the icons keep `currentColor` and the glows are hidden.
 
 ## 9. Theme behaviour
 
@@ -194,7 +201,7 @@ Nested radius rule: inner radius = outer radius − padding (e.g. bar 999 → it
 - Night mode pill and bead use `--at-night-muted`, never red or lamp; Minimal uses `muted` (decision O-09).
 - Small screens (≤ 568 tall) and landscape phones may use 52 for the primary action and header; nothing else shrinks.
 - Switch 52×32 track, 24 knob. Checkbox/radio 24 visual inside a 44 target.
-- Icons 16 / 20 / 24 px, stroke 1.8, round caps. Icon + label gap 8.
+- Icons 16 / 20 / 24 px, stroke 1.8, round caps. Icon + label gap 8. Every inline SVG carries `width`, `height` and `viewBox` at its design size (drawings at their viewBox size), so an icon never renders larger than designed while its stylesheet is still loading.
 
 ### 11.5 Type scale (size / line-height, weight)
 | Token | Size/LH | Weight | Use |
@@ -221,7 +228,7 @@ TV / kiosk scale (≥ 1920 wide): meta 32, date 40, message 96–128, clock digi
 - Card: `surface`, 1 px `line`, radius 16, padding 20 (phone) / 24 (≥ tablet). No nested cards: inner groups use dividers or spacing.
 - Elevation: dark and OLED use borders only; light adds `0 1px 2px rgba(14,23,38,.06)`. Sheets and floating panels: `0 24px 64px -24px rgba(0,0,0,.45)` + scrim `rgba(4,7,12,.55)`.
 - Header 60 (phone) / 68 (≥ tablet) on every product: tool, content, Pro, extension options, embed docs. Header gutter = page gutter (§11.1). Bottom border 1 px `line` only when content scrolls under it.
-- Header nav (Use cases, Devices, Extension, Pro) shows from 1024. On the tool page the header also carries the date line, the Pro badge, Install, the theme switch and the Share, Shortcuts, Floating window, Stats and Settings icon buttons (below 768 px Share and Shortcuts move to the Settings footer, as on phones, so the logo keeps its width), so the nav hides whenever the header is narrower than 1008 px inside its gutters (a container query), which with the 80 px desktop gutter is from 1024 to about 1170 px wide, when the controls would not fit beside it. The logo never shrinks while the nav shows.
+- Header menus (Use it for, Devices, Resources, then Extension and Pro) show when the header is at least 1000 px wide inside its gutters (a container query); below that, and on every tool page, they fold into one Menu button. On the tool page the header also carries the date line, the Pro badge, Install, the theme switch and the Share, Shortcuts, Floating window, Stats and Settings icon buttons (below 768 px Share and Shortcuts move to the Settings footer, as on phones). Below 768 px the tool header's theme switch is the one-button cycle, and below 360 px every header's logo keeps its ring and bead but drops the word so Menu fits. Header, content and footer share one column edge at every width (max 1200 plus gutters).
 - A device or window mock (popup inside a browser, widget inside a host page) is not a nested card; explanatory cards inside cards are.
 
 ### 11.7 Composition rules
@@ -229,8 +236,9 @@ TV / kiosk scale (≥ 1920 wide): meta 32, date 40, message 96–128, clock digi
 - Align to a 4 px baseline; left edges of text in a column share one x.
 - Consistent order in every product: status → time → primary control → options.
 - Every page ends with the same footer (links, honest line "No ads on the awake screen, now or later."; wording depends on owner decision O-04 about the sponsor card).
-  Footer spec: 1 px `line` top border, padding 24 (phone 32 bottom), honest line left in caption 13 `muted`, links right in the order Privacy · Terms · Changelog · About · Buy me a coffee. Pro, Activate and Manage pages included.
+  Footer spec: a site map that mirrors the header. 1 px `line` top border; brand block (logo lockup, one-line promise in small `ink-2`, "Open source · MIT" in caption `muted`); five columns Product · Use it for · Devices · Resources · About with kicker titles and caption 500 `ink-2` links (44 × 44 targets); a base row with the honest line in caption 13 `muted` and the language switcher last. Phones: the columns are native `<details>` accordions (48 px rows, no JS). 3 columns from 600, 5 from 1024, brand beside the map when the footer is 1120 wide inside its gutters. Pro, Activate and Manage pages included. Full spec in docs/05 §3.27.
 - A notice, toast or banner never covers the primary action or the status pill; it pushes content or sits above the dock.
+- Toasts: one region above the dock, newest nearest it; a distinct icon shape per kind (check, info ring, triangle, octagon); errors stay until dismissed; while a sheet, dialog or menu is open they rise above it at the bottom centre instead of hiding behind it (docs/05 §3.7).
 - Canvas boards: height ≤ 8000; a board's default `layout` prop must match its width.
 
 ## 12. Token system (scalable, responsive; how §11 is built)
@@ -299,9 +307,9 @@ Where §11.5 gives a weight range (caption and small 400–500, ui 500–600), t
 - **Grid:** `grid-template-columns: repeat(auto-fit, minmax(min(100%, <n>px), 1fr))` for card lists and tiles, so columns follow the width without breakpoints.
 - **Two-column tool:** from 1024 the face column and the control column; the control column never goes below 400 px, and the face scales to the space left (see the 1024 board).
 - **Dock (phone):** status and content on top; length block, 20 px gap, actions at the bottom, 20 px from the bottom edge.
-- **Sheets and panels:** bottom sheet on phone, side sheet from 1024, inline panel otherwise; padding `--at-card-pad`, 20 px below the last button.
+- **Sheets and panels:** bottom sheet on phone; from 600 a side sheet, a centred dialog or a card docked in place (§6 dialogs, sheets and drawers); inline panel wherever a modal is not needed; padding `--at-card-pad`, 20 px below the last button.
 - **Text:** `max-inline-size: var(--at-measure)` for paragraphs; `text-wrap: balance` on headings, `pretty` on paragraphs; long words and URLs break (`overflow-wrap: anywhere`) and never push the page wider.
 
 ### 12.8 Gates
-- **Canvas:** `design/canvas/tools/final/rtaudit.sh` (every board rendered with the real canvas runtime, checked against §11: radius, spacing, gap, type size and weight, control height, borders, colours, nested cards) must report nothing; `rtscan.sh` must flag 0 boards (empty boards, overflow, dropped styles, controls within 12 px of an edge).
+- **Canvas:** every board, rendered with the real canvas runtime, follows §11 (radius, spacing, gap, type size and weight, control height, borders, colours, no nested cards) and has no empty board, overflow, dropped style or control within 12 px of an edge. The render and audit scripts that checked this were removed with the canvas sources; `docs/redesign/CANVASES.md` says how to restore them from git history.
 - **Code:** a stylelint rule rejects raw px or rem for `padding`, `margin`, `gap`, `border-radius`, `font-size`, `line-height`, `height` of controls and `font` outside `tokens.css` (allowed: 0, 1px borders, percentages, `auto`). Plus the responsive sweep in §5 (every route, every 40 px from 320 to 2560). Both run in CI and block the release.

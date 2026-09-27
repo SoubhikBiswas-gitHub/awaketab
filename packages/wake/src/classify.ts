@@ -4,7 +4,7 @@ const IOS_RE = /iPhone|iPad|iPod/i;
 const SAFARI_VER = /Version\/(\d+)(?:\.(\d+))?.*Safari/i;
 const FIREFOX_VER = /Firefox\/(\d+)/i;
 
-export function parseMajorMinor(ua: string, kind: 'safari' | 'firefox'): [number, number] | null {
+function parseMajorMinor(ua: string, kind: 'safari' | 'firefox'): [number, number] | null {
   const re = kind === 'safari' ? SAFARI_VER : FIREFOX_VER;
   const m = re.exec(ua);
   if (!m) return null;

@@ -173,18 +173,38 @@ describe('built site SEO', () => {
     expect(/<title>(.*?)<\/title>/u.exec(html)?.[1]).toBe('Keep the screen awake for 15 min — AwakeTab');
   });
 
-  it('keeps the English home in the 1,200–1,800 word band', async () => {
+  it('builds the English home as a short product page below the tool', async () => {
     const html = await readFile(built('/'), 'utf8');
-    const text = extractProse(html);
-    const words = text.split(/\s+/u).filter(Boolean);
-    expect(words.length).toBeGreaterThanOrEqual(1200);
-    expect(words.length).toBeLessThanOrEqual(1800);
+    for (const id of ['home-uses', 'home-final']) expect(html, id).toContain(`id="${id}"`);
+    for (const id of ['what', 'how', 'limits', 'support', 'guides', 'alt', 'faq', 'who']) {
+      expect(html, id).not.toContain(`id="home-${id}"`);
+    }
+    for (const slug of ['cooking', 'reading', 'presentations', 'dashboards', 'video-calls', 'downloads']) {
+      expect(html, slug).toContain(`href="/for/${slug}"`);
+    }
+    expect(html).toContain('All 14 use cases');
+    for (const href of ['#content', '/extension', '/learn']) expect(html, href).toContain(`href="${href}"`);
+    expect(html).not.toContain('FAQPage');
+    const start = /<div class="at-hb"[^>]*>/u.exec(html);
+    const below = start ? proseBlock(html, start.index, start[0].length) : '';
+    const words = below
+      .replace(/<(script|style)[\s\S]*?<\/\1>/gu, ' ')
+      .replace(/<[^>]+>/gu, ' ')
+      .split(/\s+/u)
+      .filter(Boolean);
+    expect(words.length).toBeGreaterThanOrEqual(120);
+    expect(words.length).toBeLessThanOrEqual(800);
   });
 
-  // OD-3 (redesign B11): 51 generated pages became 44 (4 cut, 4 merged with a 301, /for/classroom added). The 25
-  // rewritten pages are indexed and meet their family's word band (docs/06 §2; learn per marketing-seo-content.md
-  // §4); the 19 drafts stay live but noindex (OD-2 / O-45) and keep the old 600–1,000 band until rewritten.
-  it('publishes forty-four English content pages: rewritten pages in their family band, drafts in 600–1,000', async () => {
+  it('links the home stylesheet instead of inlining it', async () => {
+    const html = await readFile(built('/'), 'utf8');
+    const href = /<link rel="stylesheet" href="(\/_astro\/home\.[^"]+\.css)"/u.exec(html)?.[1] ?? '';
+    await expect(stat(new URL(`.${href}`, dist)), href).resolves.toBeTruthy();
+    expect(html.indexOf(href)).toBeGreaterThan(html.indexOf('id="content"'));
+  });
+
+  // Indexed pages meet their family word band; drafts keep the old 600–1,000 band.
+  it('publishes forty-seven English content pages: rewritten pages in their family band, drafts in 600–1,000', async () => {
     const BANDS: Record<string, readonly [number, number]> = {
       for: [600, 1000],
       on: [600, 900],
@@ -196,7 +216,7 @@ describe('built site SEO', () => {
       const relative = path.relative(new URL(dist).pathname, file.pathname).replace(/\\/gu, '/');
       return /^(for|on|vs|guides|learn)\/[^/]+\.html$/u.test(relative);
     });
-    expect(files).toHaveLength(44);
+    expect(files).toHaveLength(47);
     const english = await readFile(new URL('sitemap-en.xml', dist), 'utf8');
     const descriptions = new Set<string>();
     let indexed = 0;
@@ -223,7 +243,7 @@ describe('built site SEO', () => {
       expect(descriptions.has(description), relative).toBe(false);
       descriptions.add(description);
     }
-    expect(indexed).toBe(25);
+    expect(indexed).toBe(28);
   });
 
   it('builds no page for the OD-3 cut and merged routes, and 301s the merged ones (docs/00 §7)', async () => {
@@ -268,8 +288,8 @@ describe('built site SEO', () => {
         const href = match[1] ?? '';
         if (href.startsWith('/api/') || href.startsWith('/og/') || href.startsWith('/icons/')) continue;
         if (href.endsWith('.webmanifest') || href.endsWith('.svg') || href.endsWith('.js')) continue;
-        // Self-hosted font preloads (D-R26) must point at a file that ships.
-        if (href.startsWith('/fonts/')) {
+        // Font preloads and linked stylesheets must point at a file that ships.
+        if (href.startsWith('/fonts/') || (href.startsWith('/_astro/') && href.endsWith('.css'))) {
           await expect(stat(new URL(`.${href}`, dist)), `${relative} -> ${href}`).resolves.toBeTruthy();
           continue;
         }

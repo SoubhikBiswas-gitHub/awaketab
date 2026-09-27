@@ -38,29 +38,83 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('header and footer on every surface', () => {
   for (const path of SURFACES) {
-    test(`${path}: one header (60 / 68 px), nav from 1024, one footer in the fixed order`, async ({ page }) => {
+    test(`${path}: one header (60 / 68 px), menus from 1160 (Menu on the tool), one footer in the fixed order`, async ({
+      page,
+    }) => {
+      const tool = path === '/' || path === '/es/';
       await page.setViewportSize({ width: 390, height: 800 });
       await page.goto(path);
       const header = page.locator('header.at-site-header');
+      const nav = header.locator('nav.at-nav');
+      const menu = header.locator('button.at-hm-open');
       await expect(header).toHaveCount(1);
       expect((await header.boundingBox())?.height).toBe(60);
-      await expect(header.locator('nav')).toBeHidden();
+      await expect(nav).toBeHidden();
+      await expect(menu).toBeVisible();
       await expect(header.locator('a.at-logo')).toHaveAttribute('aria-label', /AwakeTab/u);
 
       await page.setViewportSize({ width: 820, height: 800 });
       expect((await header.boundingBox())?.height).toBe(68);
-      await expect(header.locator('nav')).toBeHidden();
+      await expect(nav).toBeHidden();
+      await expect(menu).toBeVisible();
 
       await page.setViewportSize({ width: 1280, height: 800 });
-      await expect(header.locator('nav a')).toHaveCount(4);
-      await expect(header.locator('nav')).toBeVisible();
+      if (tool) {
+        await expect(nav).toHaveCount(0);
+        await expect(menu).toBeVisible();
+      } else {
+        await expect(nav).toBeVisible();
+        await expect(nav.locator('button.at-hm-trigger')).toHaveCount(3);
+        await expect(nav.locator('button.at-hm-trigger').first()).toBeVisible();
+        await expect(nav.locator('a.at-hm-hub').first()).toBeHidden();
+        await expect(menu).toBeHidden();
+      }
       // Header gutter = page gutter (80 at desktop): the logo starts 80 px in.
       expect(Math.round((await header.locator('a.at-logo').boundingBox())?.x ?? 0)).toBe(80);
 
       const footer = page.locator('footer.at-site-footer');
       await expect(footer).toHaveCount(1);
       const hrefs = await footer.locator('nav a').evaluateAll((els) => els.map((a) => a.getAttribute('href')));
-      expect(hrefs).toEqual(['/privacy', '/terms', '/changelog', '/about', 'https://buymeacoffee.com/awaketab']);
+      const home = path === '/es/' ? '/es/' : '/';
+      expect(hrefs).toEqual([
+        home,
+        '/extension',
+        '/pro',
+        '/embed',
+        '/kiosk',
+        '/library',
+        '/for/cooking',
+        '/for/reading',
+        '/for/presentations',
+        '/for/dashboards',
+        '/for/video-calls',
+        '/for/downloads',
+        '/for',
+        '/on/iphone-safari',
+        '/on/ipad',
+        '/on/android-chrome',
+        '/on/macos',
+        '/on/windows-11',
+        '/on/chromebook',
+        '/on',
+        '/guides',
+        '/learn',
+        '/vs',
+        '/changelog',
+        '/about',
+        '/privacy',
+        '/terms',
+        `${home}#keys`,
+        'https://github.com/SoubhikBiswas-gitHub/awaketab',
+        'https://buymeacoffee.com/awaketab',
+      ]);
+      await expect(footer.locator('h2.at-foot-h')).toHaveCount(5);
+      await expect(footer.locator('h2.at-foot-h').first()).toBeVisible();
+      await page.setViewportSize({ width: 390, height: 800 });
+      await expect(footer.locator('summary.at-foot-sum').first()).toBeVisible();
+      await expect(footer.locator('nav a').first()).toBeHidden();
+      await footer.locator('summary.at-foot-sum').first().click();
+      await expect(footer.locator('nav a').first()).toBeVisible();
       await expect(footer.locator('#at-lang-btn')).toHaveAttribute('aria-expanded', 'false');
     });
   }
@@ -68,14 +122,58 @@ test.describe('header and footer on every surface', () => {
   test('the current section is marked in the nav (ink 600 + lamp dot, aria-current)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/for/cooking');
-    await expect(page.locator('header nav a[aria-current="page"]')).toHaveAttribute('href', '/for');
+    const current = page.locator('header nav.at-nav button[aria-current="true"]');
+    await expect(current).toHaveAttribute('popovertarget', 'at-hm-for');
+    await expect(page.locator('#at-hm-for a[aria-current="page"]')).toHaveAttribute('href', '/for/cooking');
+    await page.goto('/guides');
+    await expect(current).toHaveAttribute('popovertarget', 'at-hm-res');
     await page.goto('/pro/activate');
-    await expect(page.locator('header nav a[aria-current="page"]')).toHaveAttribute('href', '/pro');
+    await expect(page.locator('header nav.at-nav a:visible[aria-current="page"]')).toHaveAttribute('href', '/pro');
     await page.goto('/about');
-    await expect(page.locator('header nav a[aria-current="page"]')).toHaveCount(0);
+    await expect(page.locator('header nav.at-nav [aria-current]')).toHaveCount(0);
   });
 
-  test('tool header: Stats from 600, Settings always; the compact theme button below 360 px', async ({
+  test('header menus open from their buttons, close on Esc, and never stop a running session', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/about');
+    await page.locator('header button[popovertarget="at-hm-for"]').click();
+    const panel = page.locator('#at-hm-for');
+    await expect(panel).toBeVisible();
+    await expect(panel.locator('a[href="/for/cooking"]')).toBeVisible();
+    await expect(panel.locator('a[href="/30m"]')).toBeVisible();
+    await expect(panel.locator('a[href="/for"]')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(panel).toBeHidden();
+    await page.locator('header button[popovertarget="at-hm-on"]').click();
+    await expect(page.locator('#at-hm-on a[href="/on/iphone-safari"]')).toBeVisible();
+    await page.mouse.click(8, 400);
+    await expect(page.locator('#at-hm-on')).toBeHidden();
+
+    await page.setViewportSize({ width: 390, height: 800 });
+    await page.locator('header button.at-hm-open').click();
+    const sheet = page.locator('#at-hm-menu');
+    await expect(sheet).toBeVisible();
+    await expect
+      .poll(async () => {
+        const box = await sheet.boundingBox();
+        return Math.round((box?.y ?? 0) + (box?.height ?? 0));
+      })
+      .toBe(800);
+    await expect(sheet.locator('a[href="/on/android-chrome"]')).toBeVisible();
+    await sheet.locator('button[popovertargetaction="hide"]').click();
+    await expect(sheet).toBeHidden();
+
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+    await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake', { timeout: 4000 });
+    await page.locator('#awaketab-tool header button.at-hm-open').click();
+    await expect(page.locator('#at-hm-menu')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#at-hm-menu')).toBeHidden();
+    await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake');
+  });
+
+  test('tool header: Stats from 600, Settings always, Menu always; the compact theme button below 768 px', async ({
     page,
     browserName,
   }) => {
@@ -95,10 +193,14 @@ test.describe('header and footer on every surface', () => {
     await expect(sheet.locator('[data-open-shortcuts]')).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(sheet).toBeHidden();
+    await expect(header.locator('button.at-hm-open')).toBeVisible();
+    await page.setViewportSize({ width: 820, height: 800 });
     await expect(header.getByRole('radiogroup')).toBeVisible();
     await expect(header.locator('[data-theme-cycle]')).toBeHidden();
     await page.setViewportSize({ width: 320, height: 568 });
     await expect(header.getByRole('radiogroup')).toBeHidden();
+    await expect(header.locator('.at-logo-word')).toBeHidden();
+    await expect(header.locator('button.at-hm-open')).toBeVisible();
     const cycle = header.locator('[data-theme-cycle]');
     await expect(cycle).toBeVisible();
     await expect(cycle).toHaveAccessibleName('Theme: Auto, follows your system. Change theme');
@@ -195,7 +297,7 @@ test.describe('theme switch', () => {
 });
 
 test.describe('language switcher (P-LANG)', () => {
-  test('desktop panel: non-modal group, focus on the current row, arrows wrap, Home/End, Esc returns focus', async ({
+  test('desktop panel: non-modal dialog, focus on the current row, arrows wrap, Home/End, Esc returns focus', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
@@ -207,9 +309,9 @@ test.describe('language switcher (P-LANG)', () => {
     await openLang(page);
     await expect(btn).toHaveAttribute('aria-expanded', 'true');
     await expect(panel).toBeVisible();
-    await expect(panel).toHaveAttribute('role', 'group');
-    await expect(panel).not.toHaveAttribute('aria-modal', /.*/u);
-    await expect(page.locator('.at-lang-scrim')).toBeHidden();
+    // One native <dialog> (components/ui/Drawer.astro): anchored and non-modal from 600, so the page stays live.
+    expect(await panel.evaluate((el) => el.localName === 'dialog' && !el.matches(':modal'))).toBe(true);
+    await expect(panel).toHaveAccessibleName('Language');
     // Rows are real links in their own language, with this page's translations.
     const rows = panel.locator('a[hreflang]');
     await expect(rows).toHaveCount(8);
@@ -254,7 +356,7 @@ test.describe('language switcher (P-LANG)', () => {
     await expect(panel).toBeHidden();
   });
 
-  test('phone sheet: modal dialog with a scrim, Tab stays inside, Close and Esc return focus', async ({
+  test('phone sheet: modal dialog over a backdrop, Tab stays inside, Close, Esc and the backdrop close it', async ({
     page,
     browserName,
   }) => {
@@ -266,8 +368,8 @@ test.describe('language switcher (P-LANG)', () => {
     await openLang(page);
     const sheet = page.getByRole('dialog', { name: 'Language' });
     await expect(sheet).toBeVisible();
-    await expect(sheet).toHaveAttribute('aria-modal', 'true');
-    await expect(page.locator('.at-lang-scrim')).toBeVisible();
+    expect(await sheet.evaluate((el) => el.matches(':modal'))).toBe(true);
+    await expect(page.locator('html')).toHaveCSS('overflow', 'hidden');
     await sheet.evaluate((el) => el.getAnimations().forEach((a) => a.finish()));
     // Bottom sheet: flush with the viewport's bottom edge, full width.
     const box = await sheet.boundingBox();
@@ -275,7 +377,13 @@ test.describe('language switcher (P-LANG)', () => {
     expect(Math.round(box?.width ?? 0)).toBe(390);
     for (let i = 0; i < 12; i += 1) {
       await page.keyboard.press(i % 3 === 2 ? `Shift+${tab}` : tab);
-      expect(await page.evaluate(() => document.activeElement?.closest('#at-lang-list') !== null)).toBe(true);
+      // showModal() makes the page inert: focus is in the sheet or has left for the browser UI, never behind it.
+      expect(
+        await page.evaluate(() => {
+          const el = document.activeElement;
+          return el === null || el === document.body || el.closest('#at-lang-list') !== null;
+        }),
+      ).toBe(true);
     }
     await sheet.getByRole('button', { name: 'Close' }).click();
     await expect(sheet).toBeHidden();
@@ -284,8 +392,10 @@ test.describe('language switcher (P-LANG)', () => {
     await page.keyboard.press('Escape');
     await expect(sheet).toBeHidden();
     await btn.click();
-    await page.locator('.at-lang-scrim').click({ position: { x: 20, y: 20 } });
+    await expect(sheet).toBeVisible();
+    await page.mouse.click(20, 20);
     await expect(sheet).toBeHidden();
+    await expect(btn).toHaveAttribute('aria-expanded', 'false');
   });
 
   test('Esc closes only the panel on the tool page, never the session', async ({ page }) => {
@@ -343,7 +453,7 @@ test.describe('status pill and logo bead', () => {
     expect(await glyph()).toEqual(['at-g-dot']);
     // M pill: 38 px drawn (O-62 allows a second line in long locales).
     expect((await pill.boundingBox())?.height).toBe(38);
-    const bead = () => page.locator('.at-logo-bead').evaluate((el) => getComputedStyle(el).fill);
+    const bead = () => page.locator('header .at-logo-bead').evaluate((el) => getComputedStyle(el).fill);
     const muted = await page.evaluate(() =>
       getComputedStyle(document.documentElement).getPropertyValue('--at-muted').trim(),
     );

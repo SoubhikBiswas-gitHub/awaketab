@@ -1,0 +1,186 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/content.css';
+import '../styles/docs-hub.css';
+import '../styles/tilt.css';
+import { t } from '../i18n/load';
+import { articleSchema } from '../lib/seo';
+import { HUBS } from '../lib/hubs';
+import { DOCS_FEATURED, DOCS_GROUPS, DOCS_MORE, DOCS_TILES, docsIcon, readingMinutes } from '../lib/docs-hub';
+
+const hub = HUBS.learn;
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const ogImage = '/og/learn-en.png';
+const canonical = `${site}/learn`;
+const title = t('page.hub.learn.title');
+const description = t('page.hub.learn.description');
+const h1 = t('page.hub.learn.h1');
+
+const english = (entry: { data: { locale: string } }): boolean => entry.data.locale === 'en';
+const slugOf = (id: string): string => id.replace(/^en\//u, '');
+const entries = new Map<string, CollectionEntry<'learn'>>(
+  (await getCollection('learn', english)).map((entry) => [slugOf(entry.id), entry]),
+);
+
+interface IDoc {
+  href: string;
+  slug: string;
+  title: string;
+  line: string;
+  minutes: number | null;
+  icon: string;
+}
+const toDoc = (slug: string): IDoc | null => {
+  const entry = entries.get(slug);
+  if (!entry) return null;
+  return {
+    href: `/learn/${slug}`,
+    slug,
+    title: entry.data.h1,
+    line: entry.data.description,
+    minutes: readingMinutes(entry.body, entry.data),
+    icon: docsIcon(slug),
+  };
+};
+const present = (doc: IDoc | null): doc is IDoc => doc !== null;
+
+const featured = DOCS_FEATURED.map(toDoc).filter(present);
+const placed = new Set([...DOCS_FEATURED, ...DOCS_GROUPS.flatMap((group) => group.slugs)]);
+const rest = [...entries.keys()].filter((slug) => !placed.has(slug)).sort();
+const groups = [...DOCS_GROUPS, { ...DOCS_MORE, slugs: rest }]
+  .map((group) => ({ ...group, docs: group.slugs.map(toDoc).filter(present) }))
+  .filter((group) => group.docs.length > 0);
+
+const counts = {
+  guides: (await getCollection('guides', english)).length,
+  vs: (await getCollection('vs', english)).length,
+};
+const tiles = DOCS_TILES.map((tile) => ({ ...tile, count: counts[tile.kind] }));
+const read = (minutes: number): string => `${String(minutes)} min read`;
+const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogImage={ogImage}
+  schema={articleSchema({
+    canonical,
+    title: h1,
+    description,
+    locale: 'en',
+    image: `${site}${ogImage}`,
+    published: '2026-09-09',
+    breadcrumbs: [
+      { name: 'AwakeTab', url: site },
+      { name: hub.crumb, url: canonical },
+    ],
+  })}
+>
+  <main class="at-cp at-docs">
+    <header class="at-docs-head">
+      <nav class="at-crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">{t('app.name')}</a></li>
+          <li aria-current="page">
+            <span class="at-crumb-sep" data-slot="breadcrumb-separator" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
+            </span>
+            <span>{hub.crumb}</span>
+          </li>
+        </ol>
+      </nav>
+      <h1 class="at-h1-page">{h1}</h1>
+      <p class="at-lead">{hub.lead}</p>
+    </header>
+
+    {
+      featured.length > 0 && (
+        <section class="at-docs-start" aria-labelledby="docs-start-h">
+          <h2 id="docs-start-h" class="at-kicker">Start here</h2>
+          <ol class="at-docs-cards">
+            {featured.map((doc, i) => (
+              <li class="at-docs-card" style={`--at-i: ${String(i)}`} data-tilt>
+                <span class="at-docs-badge" aria-hidden="true" data-tilt-z>
+                  <svg viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d={doc.icon} /></svg>
+                </span>
+                <h3>
+                  <a href={doc.href}>{doc.title}</a>
+                </h3>
+                <p class="at-docs-line">{doc.line}</p>
+                <span class="at-docs-foot">
+                  {doc.minutes !== null && <span class="at-docs-time">{read(doc.minutes)}</span>}
+                  <svg class="at-docs-go" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+
+    <div class="at-docs-groups">
+      {
+        groups.map((group) => (
+          <section id={group.id} class="at-docs-group" aria-labelledby={`${group.id}-h`}>
+            <div class="at-docs-group-head">
+              <h2 id={`${group.id}-h`}>{group.title}</h2>
+              <p>{group.line}</p>
+            </div>
+            <ul class="at-docs-list">
+              {group.docs.map((doc) => (
+                <li class="at-docs-row">
+                  <span class="at-docs-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d={doc.icon} /></svg>
+                  </span>
+                  <div class="at-docs-text">
+                    <h3>
+                      <a href={doc.href}>{doc.title}</a>
+                    </h3>
+                    <span class="at-docs-line">{doc.line}</span>
+                    {doc.minutes !== null && <span class="at-docs-time">{read(doc.minutes)}</span>}
+                  </div>
+                  <svg class="at-docs-go" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+
+    <section class="at-docs-more" aria-labelledby="docs-more-h">
+      <h2 id="docs-more-h" class="at-kicker">More help</h2>
+      <ul class="at-docs-tiles">
+        {
+          tiles.map((tile) => (
+            <li class="at-docs-tile" data-tilt>
+              <span class="at-docs-badge" aria-hidden="true" data-tilt-z>
+                <svg viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d={tile.icon} /></svg>
+              </span>
+              <div class="at-docs-text">
+                <h3>
+                  <a href={tile.href}>{tile.title}</a>
+                </h3>
+                <span class="at-docs-line">{tile.line}</span>
+                {tile.count > 0 && (
+                  <span class="at-docs-time">
+                    {tile.count} {tile.unit[tile.count === 1 ? 0 : 1]}
+                  </span>
+                )}
+              </div>
+              <svg class="at-docs-go" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+  <script>
+    import { initTilt } from '../lib/tilt';
+
+    initTilt();
+  </script>
+</BaseLayout>

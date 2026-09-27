@@ -1,6 +1,6 @@
 // Store listing images (docs/10 §9): five 1280×800 screenshots and the 440×280 promo tile, drawn from the
-// design canvas board design/canvas/project/StoreAssets.dc.html (the Store 1–5 boards and the small promo
-// tile, dark theme). Colours come from apps/web/src/styles/tokens.css and text from the repo's own fonts in
+// StoreAssets board on the Chrome extension design canvas (docs/redesign/CANVASES.md; the Store 1–5 boards
+// and the small promo tile, dark theme). Colours come from apps/web/src/styles/tokens.css and text from the repo's own fonts in
 // apps/web/public/fonts, rendered with satori + resvg: the renderer (and pinned versions) the web uses for OG
 // images, resolved from apps/web so the extension adds no dependency. Text becomes paths, so output bytes
 // depend only on this script and its inputs: `pnpm -F extension store:assets` twice gives the same files

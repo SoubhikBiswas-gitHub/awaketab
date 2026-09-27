@@ -19,11 +19,15 @@
   color: var(--at-ink);
   font: var(--at-type-ui);
   font-weight: 500;
-  animation: at-in 0.9s var(--at-ease) 0.08s both;
 }
 
 .at-tool-until:not([data-status="ready"]) .at-whenline {
   display: none;
+}
+
+.at-tool-until:is([data-status="awake"], [data-status="fallback"]) .at-whenline {
+  display: inline-flex;
+  visibility: hidden;
 }
 
 .at-whenline svg {

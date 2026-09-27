@@ -141,8 +141,8 @@ const RC = 2 * Math.PI * 112;
           <div class="at-k-screen" data-kiosk-screen data-mode="message" data-ktheme="dark" data-msg-size="l" data-on style={`--at-kp-c: ${RC.toFixed(1)}`}>
             <div class="at-k-aura"></div>
             <div class="at-k-top">
-              <span class="at-k-logo"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 16l5-5 4 4 3-3 6 6"></path></svg>Your logo</span>
-              <span class="at-k-pill" data-k-pillwrap data-lock="held"><svg viewBox="0 0 12 12"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg><span data-k-pill>Screen awake</span></span>
+              <span class="at-k-logo"><svg viewBox="0 0 24 24" width="16" height="16"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 16l5-5 4 4 3-3 6 6"></path></svg>Your logo</span>
+              <span class="at-k-pill" data-k-pillwrap data-lock="held"><svg viewBox="0 0 12 12" width="12" height="12"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg><span data-k-pill>Screen awake</span></span>
             </div>
             <div class="at-k-view at-k-message">
               <div class="at-k-msg" data-k-msg>{DEFAULTS.msg}</div>
@@ -158,7 +158,7 @@ const RC = 2 * Math.PI * 112;
             </div>
             <div class="at-k-view at-k-standard">
               <div class="at-k-ring">
-                <svg viewBox="0 0 250 250"><circle cx="125" cy="125" r="112" class="at-k-track"></circle><g transform="rotate(-90 125 125)"><circle cx="125" cy="125" r="112" class="at-k-arc"></circle></g></svg>
+                <svg viewBox="0 0 250 250" width="250" height="250"><circle cx="125" cy="125" r="112" class="at-k-track"></circle><g transform="rotate(-90 125 125)"><circle cx="125" cy="125" r="112" class="at-k-arc"></circle></g></svg>
                 <div class="at-k-ringtext">
                   <div class="at-k-kicker" data-k-kicker></div>
                   <div class="at-k-ringdigits at-pg-digits"><span data-k-big></span><span data-k-sec></span></div>
@@ -170,7 +170,7 @@ const RC = 2 * Math.PI * 112;
               <div class="at-k-bigclock at-pg-digits"><span data-k-clock></span><span> <span data-k-ampm></span></span></div>
               <div class="at-k-dim">Dims after 30 s</div>
             </div>
-            <div class="at-k-mark"><svg viewBox="0 0 48 48"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.6"></circle></svg>AwakeTab</div>
+            <div class="at-k-mark"><svg viewBox="0 0 48 48" width="16" height="16"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.6"></circle></svg>AwakeTab</div>
           </div>
         </div>
         <figcaption class="at-pg-small at-k-cap">
@@ -187,7 +187,7 @@ const RC = 2 * Math.PI * 112;
         <div class="at-k-well">
           <code aria-labelledby="k-url-l" data-kiosk-url>{urlParts(initial).map((p) => <span data-part={p.kind}>{p.text}</span>)}</code>
           <button class="at-button at-button-primary at-button-sm at-pg-copy" type="button" data-kiosk-copy aria-label="Copy the kiosk link">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"></rect><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"></path></svg>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"></rect><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"></path></svg>
             <span class="at-pg-copy-idle">{t('tool.share.copy')}</span><span class="at-pg-copy-done">Copied</span>
           </button>
         </div>
@@ -218,11 +218,11 @@ const RC = 2 * Math.PI * 112;
                 {param && <code class="at-k-param">{param}</code>}
               </span>
               <span role="cell" class={`at-k-cell at-k-${fk}`}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={GLYPH[fk]} /></svg>
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d={GLYPH[fk]} /></svg>
                 {free}
               </span>
               <span role="cell" class={`at-k-cell at-k-${lk}`}>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={GLYPH[lk]} /></svg>
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d={GLYPH[lk]} /></svg>
                 {lic}
               </span>
             </div>
@@ -248,7 +248,7 @@ const RC = 2 * Math.PI * 112;
     </section>
 
     <div class="at-pg-note" role="note">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
       <div class="at-pg-stack-8">
         <span class="at-pg-kicker">Honest limit</span>
         <p>
@@ -260,9 +260,9 @@ const RC = 2 * Math.PI * 112;
     </div>
 
     <nav class="at-pg-related" aria-label="Related">
-      <a class="at-pg-chiplink" href="/for/kiosk">Kiosk setup guide<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-      <a class="at-pg-chiplink" href="/embed">Embed widget<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-      <a class="at-pg-chiplink" href="/terms">Licence terms<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <a class="at-pg-chiplink" href="/for/kiosk">Kiosk setup guide<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <a class="at-pg-chiplink" href="/embed">Embed widget<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <a class="at-pg-chiplink" href="/terms">Licence terms<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
     </nav>
   </main>
   <script>

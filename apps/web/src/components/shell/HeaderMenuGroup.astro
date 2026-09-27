@@ -1,0 +1,124 @@
+---
+import { createT } from '../../i18n/load';
+import type { TLocale } from '../../i18n/locales';
+import { contentIndex } from '../../lib/content-i18n';
+import { arc, menuLink, MENU_FOR, MENU_ON, MENU_RES, ring } from '../../lib/header-menu';
+import DeviceIcon from '../icons/DeviceIcon.astro';
+import UseCaseIcon from '../icons/UseCaseIcon.astro';
+
+interface Props {
+  locale: TLocale;
+  kind: 'for' | 'on' | 'res';
+  scope: string;
+  path: string;
+  feature?: boolean;
+}
+
+const { locale, kind, scope, path, feature = false } = Astro.props;
+const t = createT(locale);
+const english = locale !== 'en';
+const titles = { for: t('header.nav.for'), on: t('header.nav.on'), res: t('header.nav.res') } as const;
+const headId = `at-hm-${scope}-${kind}`;
+
+const presets = new Map<string, string>();
+let count = 0;
+if (kind === 'for') {
+  for (const page of await contentIndex()) {
+    if (page.kind !== 'for' || page.locale !== 'en') continue;
+    presets.set(page.enSlug, page.entry.data.preset);
+    count += 1;
+  }
+}
+
+const rows =
+  kind === 'res'
+    ? MENU_RES.map((r) => ({ id: r.id, href: r.href, en: english, icon: r.icon, preset: '' }))
+    : await Promise.all(
+        (kind === 'for' ? MENU_FOR : MENU_ON).map(async (slug) => ({
+          id: slug,
+          ...(await menuLink(kind, slug, locale)),
+          icon: '',
+          preset: presets.get(slug) ?? '',
+        })),
+      );
+const hub = kind === 'for' ? '/for' : kind === 'on' ? '/on' : '';
+const dial = arc(50, 19, 24);
+---
+
+<div class="at-hm-group" data-kind={kind}>
+  <p class="at-hm-kicker" id={headId}>{titles[kind]}</p>
+  {
+    feature && (
+      <a class="at-hm-feature" href="/30m" hreflang={english ? 'en' : undefined}>
+        <svg class="at-hm-dial" viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" focusable="false">
+          <circle class="at-hm-dial-ticks" cx="24" cy="24" r="22.5" pathLength="120" />
+          <circle class="at-hm-ring-track" cx="24" cy="24" r="19" />
+          <circle class="at-hm-ring-arc" cx="24" cy="24" r="19" pathLength="100" transform="rotate(-90 24 24)" style={`--p:${dial.p}`} />
+          <circle class="at-hm-ring-halo" cx={dial.x} cy={dial.y} r="5.5" />
+          <circle class="at-hm-ring-bead" cx={dial.x} cy={dial.y} r="3" />
+        </svg>
+        <span class="at-hm-text">
+          <span class="at-hm-label">{t('header.menu.start')}</span>
+          <span class="at-hm-hint">{t('header.menu.start.line')}</span>
+        </span>
+        <svg class="at-hm-go" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+        {english && <span class="sr-only"> {t('header.nav.english')}</span>}
+      </a>
+    )
+  }
+  <ul class="at-hm-list" role="list" aria-labelledby={headId}>
+    {
+      rows.map((row, i) => {
+        const len = row.preset ? ring(row.preset) : null;
+        return (
+          <li style={`--i:${i}`}>
+            <a class="at-hm-row" href={row.href} hreflang={row.en ? 'en' : undefined} aria-current={row.href === path ? 'page' : undefined}>
+              <span class="at-hm-tile">
+                {len && (
+                  <svg class="at-hm-ring" viewBox="0 0 44 44" width="44" height="44" aria-hidden="true" focusable="false">
+                    <circle class="at-hm-ring-track" cx="22" cy="22" r="20" />
+                    <circle class="at-hm-ring-arc" cx="22" cy="22" r="20" pathLength="100" transform="rotate(-90 22 22)" style={`--p:${len.p}`} />
+                    <circle class="at-hm-ring-bead" cx={len.x} cy={len.y} r="2.5" />
+                  </svg>
+                )}
+                {kind === 'for' && <UseCaseIcon name={row.id} size={20} />}
+                {kind === 'on' && <DeviceIcon name={row.id} size={32} />}
+                {kind === 'res' && (
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <path d={row.icon} />
+                  </svg>
+                )}
+              </span>
+              <span class="at-hm-text">
+                <span class="at-hm-label">
+                  {t(`header.menu.${kind}.${row.id}`)}
+                  {row.preset && (
+                    <span class="at-tag at-hm-len" aria-hidden="true">
+                      {t(`tool.preset.${row.preset}`)}
+                    </span>
+                  )}
+                </span>
+                <span class="at-hm-hint">{t(`header.menu.${kind}.${row.id}.line`)}</span>
+                {row.preset && <span class="sr-only">{t('header.menu.length', { length: t(`tool.preset.${row.preset}.sr`) })}</span>}
+              </span>
+              {row.en && <span class="sr-only"> {t('header.nav.english')}</span>}
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+  {
+    hub && (
+      <a class="at-hm-all" href={hub} hreflang={english ? 'en' : undefined} aria-current={path === hub ? 'page' : undefined}>
+        {kind === 'for' ? t('header.menu.all.for', { count }) : t('header.menu.all.on')}
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+        {english && <span class="sr-only"> {t('header.nav.english')}</span>}
+      </a>
+    )
+  }
+</div>

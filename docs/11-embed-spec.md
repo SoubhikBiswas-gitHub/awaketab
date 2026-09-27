@@ -6,7 +6,7 @@ Status: v1.2 · 2026-09-27 (as built in M8, redesigned in Clear Night milestone 
 
 Related docs: `00-conventions.md` §7, §8, §9, §13.10 · `04-engine-spec.md` (engine reused) · `05-frontend-spec.md` §3.16 (Cook Mode) · `09-monetization-impl.md` §7 (Embed licence) · `14-devops.md` (headers for `/embed/*`) · `DESIGN.md` §11 (sizes, pill XS/S, Stop D-R20).
 
-**Clear Night (B8, 2026-09-27).** Two redesign decisions are built and folded into the sections below: **O-58**, the compact size is 320 × 104 (at 96 px the Start button and the pill could not both keep 44 px targets with 16 px padding), and **O-47**, the credit sits outside the widget, as a `nofollow` link in the host page's own HTML that the loader inserts after the iframe (§1, §11.2). Design boards: `EmbedWidget`, `EmbedCook*`, `EmbedCompactLight`, `EmbedFullDark`, `EmbedEdge*` and `EmbedShowcase*` (`design/canvas/project/`).
+**Clear Night (B8, 2026-09-27).** Two redesign decisions are built and folded into the sections below: **O-58**, the compact size is 320 × 104 (at 96 px the Start button and the pill could not both keep 44 px targets with 16 px padding), and **O-47**, the credit sits outside the widget, as a `nofollow` link in the host page's own HTML that the loader inserts after the iframe (§1, §11.2). Design boards: `EmbedWidget`, `EmbedCook*`, `EmbedCompactLight`, `EmbedFullDark`, `EmbedEdge*` and `EmbedShowcase*` (Embed, kiosk & library canvas, `redesign/CANVASES.md`).
 
 ---
 
@@ -88,7 +88,7 @@ A tiny page-side helper is exposed as `window.AwakeTabEmbed` by the loader: `.on
 
 ## 6. Performance
 
-Loader ≤ 3 KB gz, `async`, no blocking; iframe `loading="lazy"` so below-the-fold embeds cost nothing until scrolled; widget bundle ≤ 25 KB gz, no third-party requests, no ads ever (`00-conventions.md` §8.3). The only font is the site's own self-hosted Geist (same origin, preloaded, `font-display: swap` with a metric-matched fallback; DESIGN.md §3, D-R26). The iframe reserves its box before load (fixed height per size and container width) and the credit line its 24 px line, so neither adds CLS to the host page. The one exception: on a licensed domain the credit line is removed when the lookup answers (a single 40 px collapse, early, from an edge-cached response).
+Loader ≤ 3 KB gz, `async`, no blocking; iframe `loading="lazy"` so below-the-fold embeds cost nothing until scrolled; widget bundle ≤ 25 KB gz, no third-party requests, no ads ever (`00-conventions.md` §8.3). The only font is the site's own self-hosted Geist (same origin, preloaded, `font-display: optional` over a metric-matched fallback, so it never swaps after the first paint; DESIGN.md §3, D-R26). The iframe reserves its box before load (fixed height per size and container width) and the credit line its 24 px line, so neither adds CLS to the host page. The one exception: on a licensed domain the credit line is removed when the lookup answers (a single 40 px collapse, early, from an edge-cached response).
 
 ---
 

@@ -66,14 +66,16 @@ const ROUTES: Record<string, readonly string[]> = {
   learn: [
     'browser-support-matrix',
     'does-a-wake-lock-keep-teams-green',
+    'faq',
+    'honest-limits',
+    'how-awaketab-works',
     'how-we-tested',
     'low-power-mode-and-wake-locks',
     'screen-wake-lock-api-guide',
   ],
 };
 
-// The launch set (docs/06 §20): marketing-seo-content.md §7 top pages + the days 15–45 wave + /for/classroom + the
-// two 301 targets that absorbed merged pages. Everything else is a draft: live, noindex, out of the sitemap.
+// The indexed launch set; everything else is a live, noindex draft.
 const READY = [
   '/for/cooking',
   '/for/ai-agents',
@@ -100,12 +102,15 @@ const READY = [
   '/learn/screen-wake-lock-api-guide',
   '/learn/does-a-wake-lock-keep-teams-green',
   '/learn/browser-support-matrix',
+  '/learn/how-awaketab-works',
+  '/learn/honest-limits',
+  '/learn/faq',
 ];
 
 const CUT = ['/for/navigation', '/for/live-streams', '/for/exams-proctoring', '/for/baby-monitor'];
 
 describe('OD-3 content routes (docs/00 §7)', () => {
-  it('ships exactly the 44 English pages of docs/00 §7: 14 /for, 11 /on, 7 /vs, 7 /guides, 5 /learn', () => {
+  it('ships exactly the 47 English pages of docs/00 §7: 14 /for, 11 /on, 7 /vs, 7 /guides, 8 /learn', () => {
     for (const [kind, slugs] of Object.entries(ROUTES)) {
       expect(
         english
@@ -115,7 +120,7 @@ describe('OD-3 content routes (docs/00 §7)', () => {
         kind,
       ).toEqual([...slugs].sort());
     }
-    expect(english).toHaveLength(44);
+    expect(english).toHaveLength(47);
   });
 
   it('keeps no page, translation or translated slug for a cut or merged route', async () => {
@@ -166,7 +171,7 @@ describe('OD-3 content routes (docs/00 §7)', () => {
 });
 
 describe('launch set and drafts (OD-2 / O-45, docs/06 §20)', () => {
-  it('indexes exactly the 25 rewritten pages; every other English page is a noindex draft', () => {
+  it('indexes exactly the 28 rewritten pages; every other English page is a noindex draft', () => {
     expect(
       english
         .filter((page) => !page.noindex)
@@ -354,7 +359,8 @@ describe('fact-check claims stay fixed (D-R12)', () => {
     for (const [locale, phrases] of Object.entries(FALSE_LOCALE)) {
       const files = [
         ...index.filter((page) => page.locale === locale).map((page) => page.file),
-        path.join(CONTENT, 'locale-home', `${locale}.ts`),
+        // The locale homes take their copy from the locale's UI catalog.
+        path.resolve('apps/web/src/i18n', `${locale}.json`),
       ];
       expect(files.length, locale).toBe(11);
       for (const file of files) {

@@ -21,14 +21,14 @@ Hub-and-spoke with one hub (`/`), five spoke families, one product family and on
 | Devices and browsers | `/on/{slug}` | 11 | "Devices" row | rewritten pages yes; drafts `noindex` (§20) |
 | Comparisons | `/vs/{slug}` | 7 | "Alternatives" | rewritten pages yes; drafts `noindex` (§20) |
 | OS how-tos | `/guides/{slug}` | 7 | Honest-limits callout | rewritten pages yes; drafts `noindex` (§20) |
-| Deep and developer | `/learn/{slug}` | 5 | Support matrix, footer | rewritten pages yes; drafts `noindex` (§20) |
+| Docs, deep and developer | `/learn/{slug}` | 8 | Support matrix, footer, header Resources menu | rewritten pages yes; drafts `noindex` (§20) |
 | Product | `/pro` `/pro/activate` `/pro/manage` `/extension` `/embed` `/kiosk` `/library` | 7 | Pro strip, product cards | `/pro/activate` `/pro/manage` `noindex`; rest yes |
 | Trust | `/about` `/privacy` `/terms` `/changelog` `/support-matrix` `/how-we-tested` | 6 | Footer, author box | yes |
 | Apps | `/embed/cook` `/pip` `/404` | 3 | — | no |
 
 Route conflicts to resolve (**PROPOSED — decide in 00-conventions.md**): `/support-matrix` duplicates `/learn/browser-support-matrix` and `/how-we-tested` duplicates `/learn/how-we-tested`. Recommendation: the short trust URLs `301` to the `/learn/*` articles, which carry the content; the trust pages then exist only as redirects, keeping one indexable URL per topic.
 
-The English content total is 44 pages after OD-3 (14 + 11 + 7 + 7 + 5; redesign B11, §20), of which 25 are indexable at launch and 19 are `noindex` drafts until rewritten. (The v1.0 plan was 66 indexable URLs with 51 content pages.) Locales replicate the content families and the tool routes; product pages localize in phase 3.
+The English content total is 47 pages (14 + 11 + 7 + 7 + 8): 44 after OD-3 (redesign B11, §20) and three `/learn` pages that took over the home page's story (§23). 28 are indexable and 19 are `noindex` drafts until rewritten. (The v1.0 plan was 66 indexable URLs with 51 content pages.) Locales replicate the content families and the tool routes; product pages localize in phase 3.
 
 ---
 
@@ -38,7 +38,7 @@ Every template shares: one `<h1>` matching the target intent; the answer in the 
 
 ### 2.1 `/` — home
 
-Sections in order (also in `05-frontend-spec.md` §4.2): tool → answer paragraph → how it works → honest limits → support matrix → scenarios grid → devices → comparisons → 8 FAQs → Pro strip and product cards → author box + footer. Word bar 1,200–1,800. `<h1>` "Keep your screen awake" (locale equivalents in `07-i18n.md`). Preset `p30`, mode `standard`.
+Sections in order (also in `05-frontend-spec.md` §4.2): tool → use cases (six cards and a link to all of them) → extension showcase → choose your level → closing band with one link to the docs → footer. The home sells; how it works, the limits, the support matrix and the FAQ live in `/learn` (the FAQPage schema goes there too). Word bar below the tool 120–800. `<h1>` "Keep your screen awake" (locale equivalents in `07-i18n.md`). Preset `p30`, mode `standard`.
 
 ### 2.2 Preset pages `/15m` … `/8h`
 
@@ -395,10 +395,13 @@ Honest limits below were corrected on 2026-09-27 (redesign B11, decision O-79) t
 | `second-monitor-turns-off` | second monitor turns off (absorbs `/for/second-monitor`, which 301s here) | `pinf` / `clock` | Signal-detection sleep, DisplayPort link drops and cables are outside any software's reach. |
 | `lock-screen-vs-sleep` | lock screen vs sleep (absorbs modern standby; `/guides/modern-standby` 301s here) | `p30` / `standard` | A wake lock prevents display sleep, not a "require sign-in after N minutes" policy, and it does not control what drivers do in Modern Standby once the screen is off. |
 
-### 12.5 `/learn/` — 5 deep and developer pages
+### 12.5 `/learn/` — 8 docs, deep and developer pages
 
 | Slug | Intent | Preset / mode | Honest limit |
 |---|---|---|---|
+| `how-awaketab-works` | how does awaketab work | `p30` / `standard` | A wake lock holds the display only while the tab is visible and only as long as the browser and OS allow it; AwakeTab shows when that stops. |
+| `honest-limits` | what awaketab cannot do | `p30` / `standard` | Each limit rests on documentation and engine source checked 26 September 2026; device results pending. |
+| `faq` | awaketab faq | `p30` / `standard` | Answers describe what browsers are built to do; device results pending. |
 | `screen-wake-lock-api-guide` | screen wake lock api | `p15` / `standard` | Secure contexts only; released when the document is hidden; `NotAllowedError` for a hidden document, a Permissions-Policy block, Safari without a tap, or Firefox at ≤ 5 % battery. |
 | `does-a-wake-lock-keep-teams-green` | does wake lock keep teams status green | `p30` / `standard` | No. Presence follows keyboard and mouse input (Microsoft and Slack documentation); AwakeTab will not change your status. |
 | `low-power-mode-and-wake-locks` | low power mode wake lock | `p30` / `standard` | iOS Low Power Mode sets Auto-Lock to 30 s; Chromium and WebKit have no battery-saver check; Firefox refuses at ≤ 5 % battery. Draft until device results exist. |
@@ -493,7 +496,9 @@ Applies owner decisions OD-3, OD-2 / O-45, O-15, O-23, O-49 and O-79 (`docs/rede
 
 ## 21. As built — Clear Night templates (redesign B5 · 2026-09-27)
 
-- **Templates.** `ArticlePage.astro` + `ContentLayout.astro` render every content page to the canvas boards (`ContentArticle` for `/for`; `GuideOn`, `GuideVs`, `GuideGuides`, `GuideLearn` for the other families); `HubPage.astro` renders the five hubs (`HubFor` board, `hub` prop); `HomeBelow.astro` renders the home below the tool. Layout and component values: `05-frontend-spec.md` §3.31; identifiers: `00-conventions.md` §13.21.
+- **Templates.** `ArticlePage.astro` + `ContentLayout.astro` render every content page to the canvas boards (`ContentArticle` for `/for`; `GuideOn`, `GuideVs`, `GuideGuides`, `GuideLearn` for the other families); `HubPage.astro` renders the `/for`, `/on`, `/vs` and `/guides` hubs (`HubFor` board, `hub` prop); `DocsHub.astro` renders `/learn` as the Docs landing (featured "Start here" pages when present, Reference, Behaviour and Trust groups, then Guides and Compare tiles); `HomeBelow.astro` renders the home below the tool. Layout and component values: `05-frontend-spec.md` §3.31; identifiers: `00-conventions.md` §13.21.
+
+- **Templates.** `ArticlePage.astro` + `ContentLayout.astro` render every content page to the canvas boards (`ContentArticle` for `/for`; `GuideOn`, `GuideVs`, `GuideGuides`, `GuideLearn` for the other families); `HubPage.astro` renders the `/for`, `/on` and `/learn` hubs (`HubFor` board, `hub` prop) and `HubGallery.astro` renders `/vs` and `/guides` as card galleries with an `ItemList` in their structured data; `HomeBelow.astro` renders the home below the tool. Layout and component values: `05-frontend-spec.md` §3.31; identifiers: `00-conventions.md` §13.21.
 - **Section order.** `/for`, `/on`, `/vs`: head → tool → body → honest limit → (related rows on `/for`) → FAQ → (related links on the guide boards) → author. `/guides`, `/learn`: head → body → honest limit → FAQ → tool ("Or skip the settings: open AwakeTab" / "Try it") → related → author: the tool is the shortcut after the how-to (§2.6, §2.7). The limit and FAQ stay inside `.at-prose`, so the word bars of §20 measure the same blocks as before (body, FAQ, related links on the tool-on-top pages).
 - **Badge (O-46).** "Sources checked {date}" (`content.verified`, all eight locales) in the head, on the author card of `/for` pages and on the device matrix; the stale notice reads "Sources checked over 6 months ago. Re-checking now.". "Tested on {device}" needs a recorded device run (the matrix is still `pending`), so nothing renders it yet.
 - **Hubs.** Groups, intro copy and one-line item summaries follow `HubFor.dc.html` (`src/lib/hubs.ts`); every page of the family is listed, drafts included (14 · 11 · 7 · 7 · 5), and a page no group names joins the last group. Items without a board line show their honest limit. The "Try it now" card links the tool with no end time (`/?preset=pinf&autostart=1`); hubs load no tool island.
@@ -514,3 +519,12 @@ The canvas boards draw more than prose: a lead under the h1, numbered step cards
 - **Word bars.** `test/seo/holding-page.test.ts` now counts the lead plus every `.at-prose` block (the guides and learn tail after the tool included), so the lead, which used to be the body's first paragraph, still counts.
 - **Tests.** `test/lib/article.test.ts` (block lines, inline Markdown, highlighter) · `test/seo/article-blocks.test.ts` (every indexed page has its lead and family blocks; no block line leaks; pill labels are contract copy; `/for/cooking` section order; per-page CSS) · `test/e2e/article-blocks.spec.ts` (checklist counter, tracked steps, Copy, axe).
 
+## 23. As built — the home page's story moves to /learn (2026-09-28)
+
+The home page now sells and starts the tool (hero, use cases, extension showcase, levels). Its explanatory sections moved into the Docs section so each has one indexable home (`00-conventions.md` §7, §13.24).
+
+- **New pages.** `/learn/how-awaketab-works` takes "What AwakeTab does", "How it works" (the three steps and the keyboard shortcuts) and the seven states, drawn with `::pills` so each pill shows its exact contract copy (`tool.pill.*`) beside its one-line meaning. `/learn/honest-limits` takes the six honest limits, each with the reason and what to use instead. `/learn/faq` takes all eight home questions, grouped under four headings, plus four getting-started questions; its frontmatter `faq` holds three further questions so the FAQ block never repeats the body (§8).
+- **Merged copy.** The home support table and its "below these versions" line join `/learn/browser-support-matrix`, with a new "Which page covers my device?" section for the device list. "How AwakeTab is checked" joins `/learn/how-we-tested` (the changelog line). "When something else is the better tool" is the `/vs` hub intro and "Or fix the setting itself" is the `/guides` hub intro; the scenario and device copy of "Pick the guide for what you are doing" was already in the `/for` and `/on` hub intros.
+- **Indexing and dates.** The three pages are indexable (`reviewed: true`), `published` 2026-09-28, `lastVerified` 2026-09-26 (the source check their facts come from). Their word counts sit in the `/learn` band of §20 (1,000–2,000).
+- **Structured data.** No `FAQPage` (§7): the home page never emitted it, so nothing moves. `/learn/faq` has `Article` and `BreadcrumbList` like every article.
+- **Hub order.** `/learn` lists How AwakeTab works, Honest limits and FAQ first, then the existing pages.

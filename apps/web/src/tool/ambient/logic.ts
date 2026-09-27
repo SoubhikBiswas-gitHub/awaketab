@@ -1,27 +1,19 @@
 import type { ISession, ISettings, TAmbientMode, TFeatureGate } from '@awaketab/core';
 
-export const AMBIENT_ORDER: readonly TAmbientMode[] = [
-  'standard',
-  'clock',
-  'focus',
-  'minimal',
-  'night',
-  'message',
-  'cook',
-];
+const AMBIENT_ORDER: readonly TAmbientMode[] = ['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook'];
 
-export const MODE_GATES: Partial<Record<TAmbientMode, TFeatureGate>> = { message: 'ambient.message' };
+const MODE_GATES: Partial<Record<TAmbientMode, TFeatureGate>> = { message: 'ambient.message' };
 
 export const PIXEL_SHIFT_MS = 60_000;
-export const PIXEL_SHIFT_PX = 2;
-export const NIGHT_DIM_AFTER_MS = 30_000;
-export const BURNIN_DIM_AFTER_MS = 30 * 60_000;
+const PIXEL_SHIFT_PX = 2;
+const NIGHT_DIM_AFTER_MS = 30_000;
+const BURNIN_DIM_AFTER_MS = 30 * 60_000;
 export const MESSAGE_PREVIEW_MS = 60_000;
 export const FOCUS_LONG_BREAK_MIN = 15;
 export const COOK_MAX_TIMERS = 3;
 export const COOK_NAME_MAX = 20;
-export const COOK_MIN_MS = 60_000;
-export const COOK_MAX_MS = 12 * 3_600_000;
+const COOK_MIN_MS = 60_000;
+const COOK_MAX_MS = 12 * 3_600_000;
 export const COOK_FLASH_MS = 10_000;
 
 export function modeAllowed(mode: TAmbientMode, has: (gate: TFeatureGate) => boolean): boolean {
@@ -55,7 +47,7 @@ export function activeElapsed(
 // ── Focus (Pomodoro) ────────────────────────────────────────────────────────────────────────────
 
 export type TFocusConfig = ISettings['ambient']['focus'];
-export type TFocusKind = 'work' | 'break' | 'long' | 'done';
+type TFocusKind = 'work' | 'break' | 'long' | 'done';
 
 export interface IFocusPhase {
   kind: TFocusKind;
@@ -101,10 +93,9 @@ export interface ICookTimer {
 }
 
 function isCookTimer(v: unknown): v is ICookTimer {
-  if (!v || typeof v !== 'object') return false;
-  const o = v as Record<string, unknown>;
+  const o = v as Partial<ICookTimer> | null;
   return (
-    typeof o.id === 'string' &&
+    typeof o?.id === 'string' &&
     typeof o.name === 'string' &&
     typeof o.durationMs === 'number' &&
     typeof o.endsAt === 'number' &&

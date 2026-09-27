@@ -118,7 +118,7 @@ describe('SponsorCard slots (docs/05 §3.23)', () => {
     store.set({ ui: { ask: { until: Date.now() + 60_000, fb: false } } });
     expect(tracked.filter(([e]) => e === 'sponsor_view')).toEqual([['sponsor_view', { sponsorId: 'acme' }]]);
     // Back to idle: no second view in the same page view.
-    store.set({ lock: 'idle', session: null, ui: { dialog: null } });
+    store.set({ lock: 'idle', session: null });
     expect(idle?.dataset.state).toBe('shown');
     expect(tracked.filter(([e]) => e === 'sponsor_view')).toHaveLength(1);
     root

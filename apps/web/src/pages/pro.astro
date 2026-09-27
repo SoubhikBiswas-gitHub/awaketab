@@ -1,19 +1,14 @@
 ---
-// /pro — AwakeTab Pro (docs/09 §2.11; canvas board Pro.dc.html; pricing decisions O-05, O-29, O-31, O-33, O-38, O-52,
-// D-R13 in docs/redesign/DECISIONS.md). Zero hydration (docs/03 ADR-013): the lamp preview and the history toggle
-// are native radios read by CSS (pro.css), the FAQ is <details name>, and one vanilla script (lib/pro-page.ts) runs
-// the plan helper, the message and schedule previews, the launch-price switch and opt-out-aware analytics.
+// Zero hydration: CSS reads the lamp radios; lib/pro-page.ts runs the launch-price switch and analytics.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/shell/Button.astro';
-import StatusPill from '../components/shell/StatusPill.astro';
 import ProRefund from '../components/pro/ProRefund.astro';
 import ProLampRing from '../components/pro/ProLampRing.astro';
 import { t } from '../i18n/load';
 import { articleSchema } from '../lib/seo';
 import { CHECKOUT_LINKS } from '../lib/checkout';
 import { PLAN_PRICES, PRO_LAUNCH_END } from '../lib/license';
-import { LAMPS, heatLevels, usd } from '../lib/pro-common';
-import type { TLockState } from '@awaketab/wake';
+import { LAMPS, usd } from '../lib/pro-common';
 import '../styles/pro.css';
 
 const p = (key: string, vars?: Record<string, string | number>) => t(`page.pro.${key}`, vars);
@@ -23,70 +18,72 @@ const canonical = `${site}/pro`;
 const title = t('page.pro.title');
 const description = t('page.pro.description');
 
-// D-R13 / O-52: the launch price is a runtime switch, never a strike-through. The build renders the side of
-// PRO_LAUNCH_END it was built on; pro-page.ts flips `data-launch` when the page is opened after the end.
+// The launch price is a runtime switch, never a strike-through: pro-page.ts flips `data-launch` after the end.
 const launch = Date.now() < PRO_LAUNCH_END;
 const yearly = usd(PLAN_PRICES.pro_yearly);
 const lifeLaunch = usd(PLAN_PRICES.pro_lifetime_launch);
 const lifeFull = usd(PLAN_PRICES.pro_lifetime);
+// PRO_LAUNCH_END is midnight UTC, so the last launch-price day is the one before it.
+const lastDay = new Date(PRO_LAUNCH_END - 1);
+const launchDate = `${lastDay.toLocaleDateString('en-GB', { weekday: 'long', timeZone: 'UTC' })}, ${lastDay.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}`;
 
-const q1 = [
-  ['me', p('fit.q1.me')],
-  ['site', p('fit.q1.site')],
-  ['screens', p('fit.q1.screens')],
-] as const;
-const wants = [
-  ['none', p('fit.q2.none')],
-  ['look', p('fit.q2.look')],
-  ['sched', p('fit.q2.sched')],
-  ['stats', p('fit.q2.stats')],
-  ['ads', p('fit.q2.ads')],
-] as const;
-
-type TResult = {
-  id: string;
-  title: string;
-  price: string;
-  per: string;
-  why: string;
-  whyAfter?: string;
-  cta: string;
-  href: string;
-  plan?: string;
-  lamp: boolean;
-  note: string;
-  noteAfter?: string;
-  priceAfter?: string;
-};
-const results: TResult[] = [
-  { id: 'embed', title: p('res.embed.title'), price: usd(PLAN_PRICES.biz_embed_site_yearly), per: p('res.embed.per'), why: p('res.embed.why'), cta: p('res.embed.cta'), href: '/embed', lamp: false, note: p('res.embed.note') },
-  { id: 'embedfree', title: p('res.embedfree.title'), price: usd(0), per: p('res.embedfree.per'), why: p('res.embedfree.why'), cta: p('res.embedfree.cta'), href: '/embed', lamp: false, note: p('res.embedfree.note', { price: usd(PLAN_PRICES.biz_embed_site_yearly) }) },
-  { id: 'kiosk', title: p('res.kiosk.title'), price: usd(PLAN_PRICES.biz_kiosk_site), per: p('res.kiosk.per', { five: usd(PLAN_PRICES.biz_kiosk_5) }), why: p('res.kiosk.why'), cta: p('res.kiosk.cta'), href: '/kiosk', lamp: true, note: p('res.kiosk.note') },
-  { id: 'kioskfree', title: p('res.kioskfree.title'), price: usd(0), per: p('res.kioskfree.per'), why: p('res.kioskfree.why'), cta: p('res.kiosk.cta'), href: '/kiosk', lamp: false, note: p('res.kioskfree.note') },
-  { id: 'free', title: p('res.free.title'), price: usd(0), per: p('res.free.per'), why: p('res.free.why'), cta: p('res.free.cta'), href: '/', lamp: false, note: p('res.free.note', { price: yearly }) },
-  { id: 'yearly', title: p('res.yearly.title'), price: yearly, per: p('res.yearly.per'), why: p('res.yearly.why'), cta: p('res.yearly.cta'), href: CHECKOUT_LINKS.pro_yearly, plan: 'pro_yearly', lamp: true, note: p('res.yearly.note') },
+type TCell = boolean | string;
+type TRow = { label: string; free: TCell; pro: TCell };
+const groups: Array<{ id: string; title: string; rows: TRow[] }> = [
   {
-    id: 'lifetime',
-    title: p('res.lifetime.title'),
-    price: lifeLaunch,
-    priceAfter: lifeFull,
-    per: p('res.lifetime.per'),
-    why: p('res.lifetime.why.launch', { price: lifeFull }),
-    whyAfter: p('res.lifetime.why'),
-    cta: p('res.lifetime.cta'),
-    href: CHECKOUT_LINKS.pro_lifetime,
-    plan: 'pro_lifetime',
-    lamp: true,
-    note: p('res.lifetime.note.launch'),
-    noteAfter: p('res.lifetime.note'),
+    id: 'web',
+    title: p('cmp.g.web'),
+    rows: [
+      { label: p('cmp.r.awake'), free: true, pro: true },
+      { label: p('cmp.r.lengths'), free: true, pro: true },
+      { label: p('cmp.r.faces'), free: true, pro: true },
+      { label: p('cmp.r.offline'), free: true, pro: true },
+      { label: p('cmp.r.lamps'), free: p('cmp.v.lamps.free'), pro: p('cmp.v.lamps.pro') },
+      { label: p('cmp.r.msg'), free: p('cmp.v.msg.free'), pro: true },
+      { label: p('cmp.r.stats'), free: p('cmp.v.stats.free'), pro: p('cmp.v.stats.pro') },
+      { label: p('cmp.r.pip'), free: true, pro: p('cmp.v.pip.pro') },
+    ],
+  },
+  {
+    id: 'ext',
+    title: p('cmp.g.ext'),
+    rows: [
+      { label: p('cmp.r.ext'), free: true, pro: true },
+      { label: p('cmp.r.sched'), free: false, pro: true },
+      { label: p('cmp.r.auto'), free: false, pro: true },
+    ],
+  },
+  {
+    id: 'ads',
+    title: p('cmp.g.ads'),
+    rows: [
+      { label: p('cmp.r.adsawake'), free: p('cmp.v.never'), pro: p('cmp.v.never') },
+      { label: p('cmp.r.adsguides'), free: p('cmp.v.ads.free'), pro: p('cmp.v.ads.pro') },
+    ],
   },
 ];
 
-const days = [0, 1, 2, 3, 4, 5, 6].map((i) => ({ i, short: p(`sch.short.${i}`), full: p(`sch.day.${i}`), on: i < 5 }));
-const levels = heatLevels();
-const dayRows = [p('hist.mon'), '', p('hist.wed'), '', p('hist.fri'), '', ''];
-const pills: TLockState[] = ['idle', 'requesting', 'held', 'lost', 'denied', 'unsupported', 'fallback'];
-const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }));
+const gets = [
+  { id: 'lamps', d: 'M12 3.5c3.3 3.7 5.5 6.6 5.5 9.5a5.5 5.5 0 0 1-11 0c0-2.9 2.2-5.8 5.5-9.5z' },
+  { id: 'msg', d: 'M4 5h16v11h-9l-4.5 3.5V16H4zM8 9h8M8 12h5' },
+  { id: 'stats', d: 'M4 20h16M6.5 16.5V12M11 16.5V7M15.5 16.5V10M20 16.5V5' },
+  { id: 'pip', d: 'M3.5 5h17v14h-17zM12.5 11.5h5.5v5h-5.5z' },
+  { id: 'sched', d: 'M4 6h16v14H4zM4 10.5h16M8.5 3.5v4M15.5 3.5v4M8.5 15l2 2 4-4' },
+  { id: 'ads', d: 'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17zM6 6l12 12' },
+].map((g) => ({ ...g, h: p(`get.${g.id}.h`), text: p(`get.${g.id}.p`) }));
+
+const steps = [1, 2, 3, 4].map((n) => ({ n, h: p(`how.s${n}.h`), text: p(`how.s${n}.p`) }));
+
+const trust = [
+  { id: 'polar', d: 'M3.5 6h17v12h-17zM3.5 10h17M7 14.5h4' },
+  { id: 'cancel', d: 'M4 6h16v14H4zM4 10.5h16M8.5 3.5v4M15.5 3.5v4M10 13.5l4 4M14 13.5l-4 4' },
+  { id: 'privacy', d: 'M12 3.5l7 3v5c0 4.3-3 7.8-7 9-4-1.2-7-4.7-7-9v-5zM9 12l2 2 4-4' },
+].map((x) => ({ ...x, h: p(`trust.${x.id}.h`), text: p(`trust.${x.id}.p`) }));
+
+const faq = [1, 5, 2, 3, 6, 7].map((n, i) => ({ i, q: p(`faq.q${n}`), a: p(`faq.a${n}`, { yearly }) }));
+
+const CHECK = 'M5 12.5l4.5 4.5L19 7.5';
+const DASH = 'M7 12h10';
 ---
 
 <BaseLayout
@@ -113,17 +110,21 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
       <section class="at-pro-hero" aria-labelledby="pro-h1">
         <div class="at-pro-hero-text">
           <p class="at-pro-kicker">{p('kicker')}</p>
-          <h1 id="pro-h1" class="at-pro-h1">{p('hero.h1')}</h1>
-          <p class="at-pro-lead at-pro-hero-lead">{p('hero.lead')}</p>
+          <h1 id="pro-h1" class="at-pro-h1">{p('hero.title')}</h1>
+          <p class="at-pro-lead at-pro-hero-lead">{p('hero.value')}</p>
+          <p class="at-pro-hero-price at-pro-num">
+            <span data-launch-only>{p('hero.price.launch', { yearly, once: lifeLaunch })}</span>
+            <span data-after-only>{p('hero.price', { yearly, once: lifeFull })}</span>
+          </p>
+          <div class="at-pro-hero-actions">
+            <Button variant="primary" href="#plans">{t('pro.cta')}</Button>
+            <a class="at-pro-link" href="#compare">{p('hero.compare')}</a>
+          </div>
           <ul class="at-pro-glance" aria-label={p('hero.glance')}>
             <li>{p('hero.devices')}</li>
             <li>{p('hero.account')}</li>
             <li>{p('hero.refund')}</li>
           </ul>
-          <div class="at-pro-hero-actions">
-            <Button variant="primary" href="#plans">{p('hero.cta')}</Button>
-            <a class="at-pro-link" href="/pro/activate">{t('pro.activate')}</a>
-          </div>
         </div>
 
         <figure class="at-pro-lamp" aria-labelledby="lamp-cap">
@@ -158,259 +159,98 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
         </figure>
       </section>
 
-      <section class="at-pro-helper" aria-labelledby="fit-h" data-helper>
-        <div class="at-pro-helper-q">
-          <div class="at-pro-head">
-            <h2 id="fit-h" class="at-pro-h2">{p('fit.h2')}</h2>
-            <p class="at-pro-body">{p('fit.lead')}</p>
-          </div>
-          <fieldset class="at-pro-q">
-            <legend>{p('fit.q1')}</legend>
-            <div class="at-pro-chips">
-              {
-                q1.map(([id, label]) => (
-                  <label class="at-chip at-pro-chip">
-                    <input class="sr-only" type="radio" name="use" value={id} checked={id === 'me'} />
-                    {label}
-                  </label>
-                ))
-              }
-            </div>
-          </fieldset>
-          <fieldset class="at-pro-q" data-q2="me">
-            <legend>{p('fit.q2.me')}</legend>
-            <div class="at-pro-chips">
-              {
-                wants.map(([id, label]) => (
-                  <label class="at-chip at-pro-chip">
-                    <input class="sr-only" type="checkbox" name="want" value={id} checked={id === 'look'} />
-                    {label}
-                  </label>
-                ))
-              }
-            </div>
-          </fieldset>
-          <fieldset class="at-pro-q" data-q2="site" hidden>
-            <legend>{p('fit.q2.site')}</legend>
-            <div class="at-pro-chips">
-              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="credit" value="fine" checked />{p('fit.q2.fine')}</label>
-              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="credit" value="remove" />{p('fit.q2.remove')}</label>
-            </div>
-          </fieldset>
-          <fieldset class="at-pro-q" data-q2="screens" hidden>
-            <legend>{p('fit.q2.screens')}</legend>
-            <div class="at-pro-chips">
-              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="logo" value="no" checked />{p('fit.q2.nologo')}</label>
-              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="logo" value="yes" />{p('fit.q2.logo')}</label>
-            </div>
-          </fieldset>
-          <fieldset class="at-pro-q" data-q3>
-            <legend>{p('fit.q3')}</legend>
-            <div class="at-pro-chips">
-              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="pay" value="once" checked />{p('fit.q3.once')}</label>
-              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="pay" value="year" />{p('fit.q3.year')}</label>
-            </div>
-          </fieldset>
+      <section id="compare" class="at-pro-cmp" aria-labelledby="cmp-h">
+        <div class="at-pro-head at-pro-head-narrow">
+          <h2 id="cmp-h" class="at-pro-h2">{p('cmp.h2')}</h2>
+          <p class="at-pro-body">{p('cmp.lead')}</p>
         </div>
-        <aside class="at-card at-pro-result" aria-labelledby="res-h" aria-live="polite" data-result="lifetime">
-          <p class="at-pro-kicker">{p('fit.kicker')}</p>
+        <div class="at-pro-cmp-wrap" role="region" aria-label={p('cmp.caption')} tabindex="0">
+          <div class="at-pro-cmp-cols" aria-hidden="true">
+            <span></span>
+            <span>
+              <span class="at-pro-cmp-plan">{p('cmp.col.free')}</span>
+              <span class="at-pro-cmp-sub">{p('cmp.col.free.sub')}</span>
+            </span>
+            <span class="at-pro-cmp-pro">
+              <span class="at-pro-cmp-plan">{p('cmp.col.pro')}</span>
+              <span class="at-pro-cmp-sub at-pro-num">{p('cmp.col.pro.sub', { price: yearly })}</span>
+            </span>
+          </div>
           {
-            results.map((r) => (
-              <div class="at-pro-result-body" data-res={r.id} data-lamp-cta={r.lamp ? '' : undefined} hidden={r.id !== 'lifetime'}>
-                <div class="at-pro-result-top">
-                  <h3 id={r.id === 'lifetime' ? 'res-h' : undefined} data-res-title>
-                    {r.title}
-                  </h3>
-                  <p class="at-pro-result-price at-pro-num">
-                    {r.priceAfter ? (
-                      <>
-                        <span class="at-pro-figure" data-launch-only>
-                          {r.price}
-                        </span>
-                        <span class="at-pro-figure" data-after-only>
-                          {r.priceAfter}
-                        </span>
-                      </>
-                    ) : (
-                      <span class="at-pro-figure">{r.price}</span>
-                    )}
-                    <span class="at-pro-small">{r.per}</span>
-                  </p>
-                </div>
-                <p class="at-pro-small at-pro-ink2">
-                  {r.whyAfter ? (
-                    <>
-                      <span data-launch-only>{r.why}</span>
-                      <span data-after-only>{r.whyAfter}</span>
-                    </>
-                  ) : (
-                    r.why
-                  )}
-                </p>
-                {r.lamp ? (
-                  <Button variant="primary" href={r.href} data-plan={r.plan} class="at-pro-wide">
-                    {r.cta}
-                  </Button>
-                ) : (
-                  <Button variant="secondary" href={r.href} class="at-pro-wide">
-                    {r.cta}
-                  </Button>
-                )}
-                <p class="at-pro-caption">
-                  {r.noteAfter ? (
-                    <>
-                      <span data-launch-only>{r.note}</span>
-                      <span data-after-only>{r.noteAfter}</span>
-                    </>
-                  ) : (
-                    r.note
-                  )}
-                </p>
-              </div>
+            groups.map((g) => (
+              <table class="at-pro-cmp-table">
+                <caption>{g.title}</caption>
+                <colgroup>
+                  <col class="at-pro-cmp-col-feature" />
+                  <col />
+                  <col />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col">
+                      <span class="sr-only">{p('cmp.col.feature')}</span>
+                    </th>
+                    <th scope="col">
+                      <span class="sr-only">{p('cmp.col.free')}</span>
+                    </th>
+                    <th scope="col" class="at-pro-cmp-pro">
+                      <span class="sr-only">{p('cmp.col.pro')}</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {g.rows.map((r) => (
+                    <tr>
+                      <th scope="row">{r.label}</th>
+                      {[r.free, r.pro].map((v, i) => (
+                        <td class:list={[i === 1 && 'at-pro-cmp-pro', v === false && 'at-pro-cmp-no', v === true && 'at-pro-cmp-yes']}>
+                          {typeof v === 'string' ? (
+                            v
+                          ) : (
+                            <>
+                              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                                <path d={v ? CHECK : DASH} />
+                              </svg>
+                              <span class="sr-only">{p(v ? 'cmp.yes' : 'cmp.no')}</span>
+                            </>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             ))
           }
-        </aside>
+        </div>
       </section>
 
-      <section class="at-pro-evening" aria-labelledby="eve-h">
+      <section class="at-pro-get" aria-labelledby="get-h">
         <div class="at-pro-head at-pro-head-narrow">
-          <h2 id="eve-h" class="at-pro-h2">{p('eve.h2')}</h2>
-          <p class="at-pro-body">{p('eve.lead')}</p>
+          <h2 id="get-h" class="at-pro-h2">{p('get.h2')}</h2>
+          <p class="at-pro-body">{p('get.lead')}</p>
         </div>
-
-        <article class="at-pro-moment" aria-labelledby="f-msg">
-          <div class="at-pro-moment-text">
-            <p class="at-pro-time">{p('msg.time')}</p>
-            <h3 id="f-msg" class="at-pro-h3">{p('msg.h3')}</h3>
-            <p class="at-pro-body">{p('msg.body')}</p>
-          </div>
-          <figure class="at-pro-fig" aria-labelledby="msg-cap" data-msg>
-            <div class="at-pro-screen" role="img" aria-label={p('msg.aria', { text: p('msg.default') })} data-msg-screen data-len="s" data-aria-tpl={p('msg.aria')}>
-              <div class="at-pro-screen-top">
-                <span>{p('msg.kicker')}</span>
-                <span class="at-pro-num at-pro-clock" data-msg-clock>{p('msg.clock')}</span>
-              </div>
-              <div class="at-pro-screen-msg" data-msg-text data-empty-text={p('msg.empty')}>{p('msg.default')}</div>
-              <div class="at-pro-screen-bar"><span></span></div>
-            </div>
-            <div class="at-pro-field">
-              <div class="at-pro-field-head">
-                <label for="pro-msg">{p('msg.label')}</label>
-                <span class="at-pro-num at-pro-caption" aria-live="polite" data-msg-count data-tpl={p('msg.count')}>
-                  {p('msg.count', { n: p('msg.default').length })}
+        <ul class="at-pro-get-grid">
+          {
+            gets.map((g) => (
+              <li class="at-pro-get-item">
+                <span class="at-pro-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path d={g.d} />
+                  </svg>
                 </span>
-              </div>
-              <input id="pro-msg" class="at-input at-pro-input" type="text" value={p('msg.default')} maxlength="80" autocomplete="off" data-msg-input />
-            </div>
-            <figcaption id="msg-cap" class="sr-only">{p('msg.caption')}</figcaption>
-          </figure>
-        </article>
-
-        <div class="at-pro-pair">
-          <article class="at-pro-moment-text at-pro-railed" aria-labelledby="f-cook">
-            <p class="at-pro-time">{p('cook.time')}</p>
-            <h3 id="f-cook" class="at-pro-h3">{p('cook.h3')}</h3>
-            <p class="at-pro-body">{p('cook.body')}</p>
-          </article>
-          <article class="at-pro-moment-text at-pro-railed" aria-labelledby="f-lamp">
-            <p class="at-pro-time">{p('night.time')}</p>
-            <h3 id="f-lamp" class="at-pro-h3">{p('night.h3')}</h3>
-            <p class="at-pro-body">
-              {
-                LAMPS.map((l) => (
-                  <span data-for-lamp={l.id}>{p(l.pro ? 'night.pro' : 'night.free', { name: p(`lamp.${l.id}`) })}</span>
-                ))
-              }{' '}
-              <a class="at-pro-lamplink" href="#top">{p('night.link')}</a>.
-            </p>
-          </article>
-        </div>
-
-        <article class="at-pro-moment" aria-labelledby="f-hist">
-          <div class="at-pro-moment-text">
-            <p class="at-pro-time">{p('hist.time')}</p>
-            <h3 id="f-hist" class="at-pro-h3">{p('hist.h3')}</h3>
-            <p class="at-pro-body">{p('hist.body')}</p>
-          </div>
-          <figure class="at-pro-fig at-pro-heat" aria-labelledby="heat-cap">
-            <div class="at-seg at-pro-seg" role="radiogroup" aria-label={p('hist.compare')} style="--at-seg-n: 2">
-              <span class="at-seg-ind" aria-hidden="true"></span>
-              <label class="at-seg-item"><input class="sr-only" type="radio" name="pro-heat" id="pro-heat-free" value="free" />{p('hist.free')}</label>
-              <label class="at-seg-item"><input class="sr-only" type="radio" name="pro-heat" id="pro-heat-pro" value="pro" checked />{p('hist.pro')}</label>
-            </div>
-            <div class="at-pro-heat-grid">
-              <div class="at-pro-heat-days" aria-hidden="true">
-                {dayRows.map((d) => <span>{d}</span>)}
-              </div>
-              <div class="at-pro-heat-cells" role="img" aria-label={p('hist.aria.pro')} data-aria-free={p('hist.aria.free')} data-aria-pro={p('hist.aria.pro')} data-heat-cells>
-                {levels.map((lv, i) => <span data-l={lv} data-old={i < 76 ? '' : undefined} />)}
-              </div>
-              <span class="at-tag at-pro-tag-surface at-pro-heat-lock">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
-                {p('hist.locked')}
-              </span>
-            </div>
-            <div class="at-pro-heat-foot">
-              <p id="heat-cap" class="at-pro-caption">{p('hist.caption')}</p>
-              <span class="at-tag at-pro-heat-export">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>
-                {p('hist.export')}
-              </span>
-              <span class="at-tag at-pro-heat-export-locked">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"></path></svg>
-                {p('hist.export.locked')}
-              </span>
-            </div>
-          </figure>
-        </article>
-
-        <article class="at-pro-moment" aria-labelledby="f-wall">
-          <div class="at-pro-moment-text">
-            <p class="at-pro-time">{p('wall.time')}</p>
-            <h3 id="f-wall" class="at-pro-h3">{p('wall.h3')}</h3>
-            <p class="at-pro-body">{p('wall.body')}</p>
-          </div>
-          <figure class="at-pro-fig at-pro-sched" aria-labelledby="sch-cap" data-sched>
-            <div class="at-pro-sched-head">
-              <span>{p('sch.title')}</span>
-              <span class="at-tag">{p('sch.tag')}</span>
-            </div>
-            <div class="at-pro-days" role="group" aria-label={p('sch.days')}>
-              {
-                days.map((d) => (
-                  <button type="button" class="at-pro-day" aria-pressed={d.on ? 'true' : 'false'} aria-label={d.full} data-day={d.i} data-full={d.full}>
-                    {d.short}
-                  </button>
-                ))
-              }
-            </div>
-            <div class="at-pro-tiles">
-              <div><span>{p('sch.from')}</span><span class="at-pro-num">{p('sch.from.v')}</span></div>
-              <div><span>{p('sch.to')}</span><span class="at-pro-num">{p('sch.to.v')}</span></div>
-              <div><span>{p('sch.level')}</span><span>{p('sch.level.v')}</span></div>
-            </div>
-            <p
-              id="sch-cap"
-              class="at-pro-small at-pro-ink2"
-              aria-live="polite"
-              data-sched-line
-              data-none={p('sch.none')}
-              data-every={p('sch.every')}
-              data-line={p('sch.line')}
-              data-on={p('sch.on')}
-              data-range={p('sch.range')}
-              data-and={p('sch.and')}
-            >
-              {p('sch.line', { span: p('sch.range', { from: days[0]?.full ?? '', to: days[4]?.full ?? '' }) })}
-            </p>
-          </figure>
-        </article>
+                <h3 class="at-pro-h3">{g.h}</h3>
+                <p class="at-pro-small at-pro-ink2">{g.text}</p>
+              </li>
+            ))
+          }
+        </ul>
       </section>
 
       <section id="plans" class="at-pro-plans" aria-labelledby="plans-h">
         <div class="at-pro-head at-pro-head-narrow">
           <h2 id="plans-h" class="at-pro-h2">{p('plans.h2')}</h2>
-          <p class="at-pro-body">{p('plans.lead')}</p>
+          <p class="at-pro-body">{p('plans.lead.all')}</p>
         </div>
         <div class="at-pro-plan-grid">
           <article class="at-card at-pro-plan" aria-labelledby="plan-yearly">
@@ -421,7 +261,11 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
             <h3 id="plan-yearly" class="at-pro-price at-pro-num">
               <span>{yearly}</span><span class="at-pro-per">{p('plans.per.year')}</span>
             </h3>
-            <p class="at-pro-small at-pro-ink2 at-pro-grow">{p('plans.renews')}</p>
+            <ul class="at-pro-plan-list at-pro-grow">
+              <li>{p('plans.all')}</li>
+              <li>{p('plans.renew')}</li>
+              <li>{p('plans.cancel')}</li>
+            </ul>
             <Button variant="secondary" href={CHECKOUT_LINKS.pro_yearly} data-plan="pro_yearly" aria-describedby="plan-yearly" class="at-pro-wide">
               {p('plans.cta.yearly')}
             </Button>
@@ -438,10 +282,11 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
               <span data-launch-only>{lifeLaunch}</span><span data-after-only>{lifeFull}</span><span class="at-pro-per">{p('plans.per.once')}</span>
             </h3>
             <ul class="at-pro-plan-list at-pro-grow">
-              <li data-launch-only>{p('plans.launch', { price: lifeFull })}</li>
+              <li>{p('plans.all')}</li>
+              <li>{p('plans.norenewal')}</li>
+              <li data-launch-only>{p('plans.launch.date', { date: launchDate, price: lifeFull })}</li>
               <li data-launch-only>{p('plans.launch.value')}</li>
               <li data-after-only>{p('plans.after.value')}</li>
-              <li>{p('plans.norenewal')}</li>
             </ul>
             <Button variant="primary" href={CHECKOUT_LINKS.pro_lifetime} data-plan="pro_lifetime" aria-describedby="plan-lifetime" class="at-pro-wide">
               {p('plans.cta.lifetime')}
@@ -449,46 +294,76 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
           </article>
         </div>
         <div class="at-pro-plan-notes">
-          <ProRefund />
-          <p class="at-pro-caption">{p('plans.shutdown')}</p>
           <p class="at-pro-caption">{p('plans.tax')}</p>
+          <p class="at-pro-caption">{p('plans.shutdown')}</p>
         </div>
       </section>
 
-      <div class="at-pro-duo">
-        <section class="at-pro-free" aria-labelledby="free-h">
-          <div class="at-pro-head at-pro-head-narrow">
-            <h2 id="free-h" class="at-pro-h2">{p('free.h2')}</h2>
-            <p class="at-pro-body">{p('free.lead')}</p>
-          </div>
-          <ul class="at-pro-pills at-pro-pills-xs" aria-label={p('free.pills')}>
-            {pills.map((s) => <li><StatusPill as="span" size="XS" state={s} label={t(`tool.pill.${s}`)} /></li>)}
-          </ul>
-          <ul class="at-pro-pills at-pro-pills-m" aria-label={p('free.pills')}>
-            {pills.map((s) => <li><StatusPill as="span" size="M" state={s} label={t(`tool.pill.${s}`)} /></li>)}
-          </ul>
-          <p class="at-pro-body at-pro-measure">{p('free.also')}</p>
-        </section>
+      <section class="at-pro-how" aria-labelledby="how-h">
+        <div class="at-pro-head at-pro-head-narrow">
+          <h2 id="how-h" class="at-pro-h2">{p('how.h2')}</h2>
+          <p class="at-pro-body">{p('how.lead')}</p>
+        </div>
+        <ol class="at-pro-steps">
+          {
+            steps.map((s) => (
+              <li class="at-pro-step">
+                <span class="at-pro-step-n at-pro-num" aria-hidden="true">
+                  {s.n}
+                </span>
+                <h3 class="at-pro-h3">{s.h}</h3>
+                <p class="at-pro-small at-pro-ink2">{s.text}</p>
+              </li>
+            ))
+          }
+        </ol>
+        <div class="at-pro-how-links">
+          <a class="at-pro-link" href="/pro/activate">{t('pro.activate')}</a>
+          <a class="at-pro-link" href="/pro/manage">{t('page.pro.activate.manage')}</a>
+        </div>
+      </section>
 
-        <section class="at-pro-faq" aria-labelledby="faq-h">
-          <h2 id="faq-h" class="at-pro-h2">{p('faq.h2')}</h2>
-          <div class="at-pro-faq-list">
-            {
-              faq.map((q) => (
-                <details name="pro-faq" open={q.n === 1}>
-                  <summary>
-                    <h3>{q.q}</h3>
-                    <span class="at-pro-faq-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
-                    </span>
-                  </summary>
-                  <p>{q.a}</p>
-                </details>
-              ))
-            }
-          </div>
-        </section>
-      </div>
+      <section class="at-pro-trust" aria-labelledby="trust-h">
+        <h2 id="trust-h" class="at-pro-h2">{p('trust.h2')}</h2>
+        <ul class="at-pro-trust-list">
+          <li class="at-pro-trust-item">
+            <ProRefund />
+          </li>
+          {
+            trust.map((x) => (
+              <li class="at-pro-trust-item">
+                <p class="at-pro-refund">
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                    <path d={x.d} />
+                  </svg>
+                  <span>
+                    <strong>{x.h}</strong> {x.text}
+                  </span>
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="at-pro-faq" aria-labelledby="faq-h">
+        <h2 id="faq-h" class="at-pro-h2">{p('faq.h2')}</h2>
+        <div class="at-pro-faq-list">
+          {
+            faq.map((q) => (
+              <details name="pro-faq" open={q.i === 0}>
+                <summary>
+                  <h3>{q.q}</h3>
+                  <span class="at-pro-faq-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 5v14M5 12h14" /></svg>
+                  </span>
+                </summary>
+                <p>{q.a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </section>
 
       <section class="at-pro-biz" aria-labelledby="biz-h">
         <h2 id="biz-h" class="at-pro-kicker">{p('biz.h2')}</h2>
@@ -502,6 +377,21 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
             <span>{p('biz.kiosk.text')}</span>
           </a>
         </div>
+      </section>
+
+      <section class="at-card at-pro-end" aria-labelledby="end-h">
+        <div class="at-pro-head">
+          <h2 id="end-h" class="at-pro-h2">{p('end.h2')}</h2>
+          <p class="at-pro-body">
+            <span data-launch-only>{p('end.lead', { yearly, once: lifeLaunch })}</span>
+            <span data-after-only>{p('end.lead', { yearly, once: lifeFull })}</span>
+          </p>
+        </div>
+        <div class="at-pro-end-actions">
+          <Button variant="primary" href={CHECKOUT_LINKS.pro_lifetime} data-plan="pro_lifetime">{p('plans.cta.lifetime')}</Button>
+          <Button variant="secondary" href={CHECKOUT_LINKS.pro_yearly} data-plan="pro_yearly">{p('plans.cta.yearly')}</Button>
+        </div>
+        <p class="at-pro-caption">{p('end.note')} <a class="at-pro-inline-link" href="/pro/activate">{t('pro.activate')}</a></p>
       </section>
     </main>
   </div>

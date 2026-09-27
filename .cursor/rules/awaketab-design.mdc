@@ -6,7 +6,7 @@ alwaysApply: false
 
 # AwakeTab design rules
 
-Start at `docs/redesign/README.md` (status, DECISIONS.md, briefs, research). Source of truth: `DESIGN.md` for the design system, `PRODUCT.md` for users, principles and anti-references, and `docs/05-frontend-spec.md` for the current component spec. Read the relevant section before editing UI.
+Start at `docs/redesign/DECISIONS.md`, the canvas links in `docs/redesign/CANVASES.md` and the shared UI numbers in `docs/redesign/PRIMITIVES.md`. Source of truth: `DESIGN.md` for the design system, `PRODUCT.md` for users, principles and anti-references, and `docs/05-frontend-spec.md` for the current component spec. Read the relevant section before editing UI.
 
 - **Strict system (DESIGN.md §11):** spacing 4·8·12·16·20·24·32·40·48·64·96 only; 1 px borders (dashed only for choose/add); radii 8·12·16·20·28·999; control heights 44/48/52/60/64; type scale tokens only, weights 400/500/600; one primary action; no nested cards.
 - **Pill strings are a contract; never change them:** Ready · Starting… · Screen awake · Paused — tab hidden · Blocked — here's the fix · Tap to use the fallback · Awake via video fallback.

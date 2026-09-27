@@ -35,7 +35,7 @@ describe('RTL readiness', () => {
 
   it('plumbs dir through the one document layout', async () => {
     const layout = await readFile(path.join(SRC, 'layouts/BaseLayout.astro'), 'utf8');
-    expect(layout).toMatch(/<html lang=\{localeMeta\.htmlLang\} dir=\{textDirection\(localeMeta\.htmlLang\)\}>/u);
+    expect(layout).toMatch(/<html lang=\{localeMeta\.htmlLang\} dir=\{textDirection\(localeMeta\.htmlLang\)\}[^>]*>/u);
     const pages = await files(path.join(SRC, 'pages'), /\.astro$/u);
     for (const page of pages) {
       const source = await readFile(page, 'utf8');

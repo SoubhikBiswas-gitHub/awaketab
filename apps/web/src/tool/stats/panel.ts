@@ -2,6 +2,7 @@ import { exportStatsCsv } from '@awaketab/core';
 import { hasFeature, type IToolCtx } from '../ctx.js';
 import { dtf, mins } from '../format.js';
 import { t } from '../i18n.js';
+import { openDialog } from '../ui/dialog.js';
 import { buildHeatmap, summarise } from './heatmap.js';
 
 export function formatMinutes(total: number): string {
@@ -84,7 +85,7 @@ export function renderHeatmap(
   );
 }
 
-export function downloadCsv(csv: string, filename: string): void {
+function downloadCsv(csv: string, filename: string): void {
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
   const a = document.createElement('a');
   a.href = url;
@@ -100,7 +101,7 @@ export function downloadCsv(csv: string, filename: string): void {
 
 let bound = false;
 
-export function openStats(ctx: IToolCtx): void {
+export function openStats(ctx: IToolCtx, opener?: Element | null): void {
   const dialog = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="stats"]');
   if (!dialog) return;
   const stats = ctx.storage.stats();
@@ -108,7 +109,6 @@ export function openStats(ctx: IToolCtx): void {
   const history = hasFeature(ctx, 'stats.history');
   const canExport = hasFeature(ctx, 'stats.export');
   const q = (sel: string) => dialog.querySelector<HTMLElement>(sel);
-  const btn = ctx.root.querySelector('.at-site-header [data-open-stats]');
   figure(q('[data-stats-today]'), hm(sum.todayMinutes));
   figure(q('[data-stats-week]'), hm(sum.weekMinutes));
   figure(q('[data-stats-streak]'), [
@@ -140,16 +140,6 @@ export function openStats(ctx: IToolCtx): void {
       const today = new Intl.DateTimeFormat('en-CA').format(new Date());
       downloadCsv(exportStatsCsv(ctx.storage.stats(), '1.0'), `awaketab-stats-${today}.csv`);
     });
-    q('[data-stats-close]')?.addEventListener('click', () => {
-      dialog.close();
-    });
-    dialog.addEventListener('close', () => {
-      btn?.setAttribute('aria-expanded', 'false');
-      ctx.store.set({ ui: { dialog: null } });
-    });
   }
-  ctx.root.querySelector<HTMLDialogElement>('[data-dialog="settings"]')?.close();
-  ctx.store.set({ ui: { dialog: 'stats' } });
-  btn?.setAttribute('aria-expanded', 'true');
-  if (!dialog.open) dialog.showModal();
+  openDialog(dialog, opener);
 }

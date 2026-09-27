@@ -6,8 +6,6 @@ export const EXTENSION_STORE_URLS = {
   edge: 'https://microsoftedge.microsoft.com/addons/search/AwakeTab',
 } as const;
 
-export type TExtensionStore = keyof typeof EXTENSION_STORE_URLS;
-
 export function unsupportedBrowser(ua: string): 'firefox' | 'safari' | null {
   if (/Firefox\/|FxiOS\//u.test(ua)) return 'firefox';
   if (/Safari\//u.test(ua) && !/Chrome\/|Chromium\/|CriOS\/|Edg\/|OPR\//u.test(ua)) return 'safari';

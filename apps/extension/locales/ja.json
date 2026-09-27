@@ -48,6 +48,7 @@
   "ext.popup.ends": "{time} に終了",
   "ext.popup.heldSpan": "{span} オン",
   "ext.popup.lengths": "セッションの長さ",
+  "ext.popup.noAnswer": "AwakeTab didn't answer. Close this popup and open it again.",
   "ext.popup.noEnd": "終了時刻はありません。終わったら停止してください。",
   "ext.popup.notRunning": "停止中",
   "ext.popup.openTab": "タブで AwakeTab を開く",

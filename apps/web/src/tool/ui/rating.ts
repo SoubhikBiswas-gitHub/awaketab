@@ -1,11 +1,12 @@
 import type { IMeta } from '@awaketab/core';
 import { hasFeature, type IToolCtx } from '../ctx.js';
 import { t } from '../i18n.js';
+import { openDialog } from './dialog.js';
 import { toast } from './toast.js';
 
 export const RATING_MIN_SESSIONS = 5;
 export const RATING_REARM_SESSIONS = 10;
-export const RATING_TEXT_MAX = 280;
+const RATING_TEXT_MAX = 280;
 
 export function ratingEligible(meta: Pick<IMeta, 'sessionCount' | 'ratingPrompt'>): boolean {
   const rp = meta.ratingPrompt;
@@ -20,7 +21,11 @@ function busy(ctx: IToolCtx): boolean {
   const live = s.session?.status === 'active' || s.session?.status === 'paused';
   // A licensed kiosk (`kiosk.branding`) never shows rating or upsell prompts (docs/09 §7.2).
   return (
-    live || s.lock === 'held' || s.ui.dialog !== null || s.ui.mode !== 'standard' || hasFeature(ctx, 'kiosk.branding')
+    live ||
+    s.lock === 'held' ||
+    !!document.querySelector('.at-dialog[open]') ||
+    s.ui.mode !== 'standard' ||
+    hasFeature(ctx, 'kiosk.branding')
   );
 }
 
@@ -108,25 +113,12 @@ export function maybeShowRating(ctx: IToolCtx): boolean {
     'close',
     () => {
       controller.abort();
-      // Dismissed with Esc: treat as "later" so the prompt is never shown twice in a row.
+      // Dismissed without a choice (Close, Esc, the backdrop): "later", so it is never shown twice in a row.
       if (ctx.storage.meta().ratingPrompt.action === null) record(ctx, 'later');
-      ctx.store.set({ ui: { dialog: null } });
     },
     { signal },
   );
-  const word = dialog.querySelector<HTMLElement>('[data-star-word]');
-  form.addEventListener(
-    'change',
-    () => {
-      const n = Number(new FormData(form).get('stars'));
-      if (word) word.textContent = n ? t('rating.star', { n }) : t('rating.stars');
-      if (error && n) error.textContent = '';
-    },
-    { signal },
-  );
-  ctx.store.set({ ui: { dialog: 'rating' } });
   // Extras board: a bottom sheet on phones; from 600 a card in the dock while the page stays live.
-  if (matchMedia('(width < 600px)').matches) dialog.showModal();
-  else dialog.show();
+  openDialog(dialog);
   return true;
 }

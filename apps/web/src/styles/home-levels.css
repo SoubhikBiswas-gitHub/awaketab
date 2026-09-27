@@ -1,0 +1,206 @@
+@layer properties, theme, base, components, utilities;
+
+@layer components {
+  .at-hl {
+    container: at-hl / inline-size;
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-8);
+    color: var(--at-ink);
+    visibility: visible;
+  }
+
+  .at-hl-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-4);
+  }
+
+  .at-hl h2 {
+    margin: 0;
+    color: var(--at-ink);
+    font: var(--at-type-h2);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .at-hl-lead {
+    max-inline-size: var(--at-measure);
+    margin: 0;
+    color: var(--at-ink-2);
+    font: var(--at-type-lead);
+    text-wrap: pretty;
+  }
+
+  .at-hl-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--at-s-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .at-hl-card {
+    display: grid;
+    grid-template-areas:
+      "top"
+      "price"
+      "gains"
+      "act";
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: var(--at-s-5);
+  }
+
+  .at-hl-rec {
+    border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
+    background:
+      radial-gradient(
+        120% 70% at 50% 0%,
+        light-dark(
+            color-mix(in srgb, var(--at-accent) 8%, transparent),
+            color-mix(in srgb, var(--at-accent) 12%, transparent)
+          )
+          0%,
+        transparent 70%
+      ),
+      var(--at-surface);
+  }
+
+  .at-hl-top {
+    display: flex;
+    flex-wrap: wrap;
+    grid-area: top;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--at-s-2) var(--at-s-3);
+  }
+
+  .at-hl h3 {
+    margin: 0;
+    color: var(--at-ink);
+    font: var(--at-type-h3);
+    letter-spacing: -0.01em;
+  }
+
+  .at-hl-price {
+    display: flex;
+    flex-direction: column;
+    grid-area: price;
+    gap: var(--at-s-1);
+  }
+
+  .at-hl-price > p {
+    margin: 0;
+  }
+
+  .at-hl-price > p:first-child {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--at-s-2);
+  }
+
+  .at-hl-figure {
+    color: var(--at-ink);
+    font: var(--at-type-price);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .at-hl-per {
+    color: var(--at-ink-2);
+    font: var(--at-type-small);
+  }
+
+  .at-hl-sub {
+    color: var(--at-muted);
+    font: var(--at-type-caption);
+  }
+
+  .at-hl-gains {
+    display: flex;
+    flex-direction: column;
+    grid-area: gains;
+    gap: var(--at-s-3);
+    margin: 0;
+    padding-block: var(--at-s-5) 0;
+    padding-inline: 0;
+    border-block-start: var(--at-border) solid var(--at-line);
+    list-style: none;
+  }
+
+  .at-hl-gains > li {
+    display: grid;
+    grid-template-columns: var(--at-icon-md) minmax(0, 1fr);
+    gap: var(--at-s-3);
+    align-items: start;
+    color: var(--at-ink-2);
+    font: var(--at-type-ui);
+    text-wrap: pretty;
+  }
+
+  .at-hl-gains svg {
+    inline-size: var(--at-icon-md);
+    block-size: var(--at-icon-md);
+    fill: none;
+    stroke: var(--at-accent-text);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+  }
+
+  .at-hl-keys {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--at-s-1);
+    vertical-align: middle;
+  }
+
+  .at-hl-act {
+    display: flex;
+    grid-area: act;
+  }
+
+  .at-hl-act > .at-button {
+    flex: 1;
+  }
+
+  @container at-hl (600px <= width < 1024px) {
+    .at-hl-card {
+      grid-template:
+        "top gains" auto
+        "price gains" auto
+        "act gains" 1fr / minmax(0, 2fr) minmax(0, 3fr);
+      column-gap: var(--at-s-8);
+    }
+
+    .at-hl-gains {
+      padding-block: 0;
+      padding-inline: var(--at-s-8) 0;
+      border-block-start: 0;
+      border-inline-start: var(--at-border) solid var(--at-line);
+    }
+
+    .at-hl-act {
+      align-self: end;
+    }
+  }
+
+  @container at-hl (width >= 1024px) {
+    .at-hl-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .at-hl-card {
+      grid-row: span 4;
+      grid-template-rows: subgrid;
+    }
+
+    .at-hl-act {
+      align-self: end;
+    }
+  }
+}

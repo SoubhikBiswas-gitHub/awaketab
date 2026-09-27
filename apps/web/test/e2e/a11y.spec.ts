@@ -21,14 +21,19 @@ async function expectNoViolations(page: Page, theme: TTheme): Promise<void> {
   if ((await html.getAttribute('data-theme')) !== 'oled' || theme === 'oled') {
     await expect(html).toHaveAttribute('data-theme', theme);
   }
-  // Entrance rises (0.7 s from opacity 0, DESIGN.md §8) must end first: mid-fade colours are not the resting
-  // colours axe must judge. Infinite loops (aura, halo) never end, so they are skipped.
+  // Wait for entrance rises and dialog slides; endless loops and scroll-driven rises are skipped.
   await page.waitForFunction(() =>
     document
       .getAnimations()
       .every(
         (a) =>
-          !(a instanceof CSSAnimation) || a.effect?.getTiming().iterations === Infinity || a.playState === 'finished',
+          !(
+            a instanceof CSSAnimation ||
+            (a instanceof CSSTransition && (a.effect as KeyframeEffect | null)?.target instanceof HTMLDialogElement)
+          ) ||
+          !(a.timeline instanceof DocumentTimeline) ||
+          a.effect?.getTiming().iterations === Infinity ||
+          a.playState === 'finished',
       ),
   );
   const results = await new AxeBuilder({ page }).analyze();
@@ -102,6 +107,8 @@ async function openTool(page: Page, url: string): Promise<void> {
 // The stored last custom length is one minute (useTheme below), so Custom + the lamp button runs a 1-minute session.
 async function customMinute(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Custom length' }).click();
+  // The panel opens once the lazy actions chunk has selected the custom length; start only after that.
+  await expect(page.locator('.at-lp-custom')).toBeVisible();
   await page.locator('#awaketab-tool .at-cta').click();
   await expect(pill(page)).toHaveText('Screen awake');
 }
@@ -235,6 +242,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
           .every(
             (a) =>
               !(a instanceof CSSAnimation) ||
+              !(a.timeline instanceof DocumentTimeline) ||
               a.effect?.getTiming().iterations === Infinity ||
               a.playState === 'finished',
           ),

@@ -68,6 +68,10 @@
       --at-rail-h: 600px;
     }
 
+    .at-cp .at-art {
+      grid-template-columns: minmax(0, var(--at-col-toc)) minmax(0, var(--at-col-main)) var(--at-col-rail);
+    }
+
     .at-ad-rail .at-ad-box:empty::after {
       content: attr(data-size);
     }
