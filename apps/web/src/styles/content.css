@@ -698,7 +698,9 @@
     display: none;
   }
 
-  .at-faq summary > span:first-child {
+  .at-faq-q {
+    margin: 0;
+    font: inherit;
     text-wrap: pretty;
   }
 
@@ -795,7 +797,8 @@
 
   .at-author-role {
     color: var(--at-ink-2);
-    font: var(--at-type-small);
+    font: var(--at-type-ui);
+    font-weight: 400;
     text-wrap: pretty;
   }
 

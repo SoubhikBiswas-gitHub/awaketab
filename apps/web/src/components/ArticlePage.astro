@@ -250,8 +250,8 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
   })}
 >
   {blockCss && <style is:inline slot="styles" set:html={blockCss} />}
-
   {tableCss && <style is:inline slot="styles" set:html={tableCss} />}
+
   {
     tracked && data.steps ? (
       <nav
@@ -498,14 +498,14 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
           data.faq.map((item, i) => (
             <details open={i === 0}>
               <summary>
-                <span>{item.q}</span>
+                <h3 class="at-faq-q">{item.q}</h3>
                 <span class="at-faq-icon" aria-hidden="true">
                   <span>
                     <svg viewBox="0 0 24 24" focusable="false"><path d="M12 5v14M5 12h14" /></svg>
                   </span>
                 </span>
               </summary>
-              <p>{item.a}</p>
+              <p set:html={inline(item.a)} />
             </details>
           ))
         }
@@ -518,13 +518,15 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
       variant === 'guide' && (
         <nav class="at-related-links" aria-labelledby="h-related">
           <h2 id="h-related">{t('content.related')}</h2>
-          <a class="at-start-pill" href={startHref}>
-            <svg class="at-button-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-              <path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
-              <circle cx="24" cy="9" r="4.6" fill="currentColor" />
-            </svg>
-            {startLabel}
-          </a>
+          {kind !== 'learn' && (
+            <a class="at-start-pill" href={startHref}>
+              <svg class="at-button-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+                <circle cx="24" cy="9" r="4.6" fill="currentColor" />
+              </svg>
+              {startLabel}
+            </a>
+          )}
           <div>
             {related.map((link) => (
               <a href={link.href} hreflang={link.lang} lang={link.lang}>
