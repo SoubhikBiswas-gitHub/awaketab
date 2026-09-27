@@ -6,59 +6,138 @@
     <title>AwakeTab</title>
   </head>
   <body>
-    <main class="pp" data-root hidden>
+    <main class="pp" data-root data-mode="ready" hidden>
+      <div class="pp-aura" aria-hidden="true"></div>
+
       <header class="pp-head">
-        <h1 class="pp-word" data-i18n="app.name"></h1>
-        <button class="pp-icon" type="button" data-options data-i18n-aria="settings.title">
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-            <path
-              fill="currentColor"
-              d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm8.1 4.6.02-1.1-.02-1.1 2.1-1.6a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.47 1a7.6 7.6 0 0 0-1.9-1.1L14.98 2.4a.5.5 0 0 0-.5-.4h-4a.5.5 0 0 0-.5.4l-.37 2.63c-.68.28-1.32.65-1.9 1.1l-2.47-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64l2.1 1.6L4.84 12l.02 1.1-2.1 1.6a.5.5 0 0 0-.12.64l2 3.46c.13.22.39.3.6.22l2.47-1c.58.45 1.22.82 1.9 1.1l.37 2.63c.04.24.25.4.5.4h4c.25 0 .46-.16.5-.4l.37-2.63c.68-.28 1.32-.65 1.9-1.1l2.47 1c.22.08.48 0 .6-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.1-1.6Z"
-            />
+        <div class="at-logo">
+          <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <path class="at-logo-ring" d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke-width="4.5" stroke-linecap="round"></path>
+            <circle class="at-logo-bead" cx="24" cy="9" r="7.5" opacity="0.28"></circle>
+            <circle class="at-logo-bead" cx="24" cy="9" r="4.2"></circle>
           </svg>
-        </button>
+          <h1 class="pp-word" data-i18n="app.name"></h1>
+        </div>
+        <div class="pp-head-end">
+          <a class="pp-new at-in" href="https://awaketab.com/changelog?source=ext" target="_blank" rel="noopener" data-new hidden>
+            <span class="pp-new-dot" aria-hidden="true"></span>
+            <span data-new-label></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+          </a>
+          <button class="pp-icon" type="button" data-options data-i18n-aria="settings.title" data-i18n-title="settings.title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+          </button>
+        </div>
       </header>
 
-      <div class="pp-status">
-        <svg class="pp-ring" viewBox="0 0 192 192" aria-hidden="true" focusable="false">
-          <circle class="pp-ring-track" data-ring-track cx="96" cy="96" r="88"></circle>
-          <circle class="pp-ring-progress" data-ring-progress cx="96" cy="96" r="88"></circle>
-          <circle class="pp-ring-dot" data-ring-dot cx="96" cy="8" r="6"></circle>
-        </svg>
-        <div class="pp-center">
-          <div class="pp-timer" data-timer></div>
-          <div class="pp-caption" data-caption></div>
+      <section class="pp-status" data-i18n-aria="ext.popup.status">
+        <div class="pp-ring" data-ring>
+          <div class="pp-ring-art">
+            <div class="pp-ticks" aria-hidden="true"></div>
+            <div class="pp-sweep" aria-hidden="true"></div>
+            <svg class="pp-ring-svg" width="124" height="124" viewBox="0 0 124 124" aria-hidden="true" focusable="false">
+              <defs><filter id="pp-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"></feGaussianBlur></filter></defs>
+              <circle class="pp-track" cx="62" cy="62" r="56"></circle>
+              <g transform="rotate(-90 62 62)">
+                <circle class="pp-arc pp-arc-glow" data-arc cx="62" cy="62" r="56" filter="url(#pp-glow)"></circle>
+                <circle class="pp-arc" data-arc cx="62" cy="62" r="56"></circle>
+              </g>
+              <g class="pp-tip" data-tip>
+                <circle class="pp-tip-halo" cx="62" cy="6" r="5"></circle>
+                <circle class="pp-tip-dot" cx="62" cy="6" r="4"></circle>
+              </g>
+            </svg>
+          </div>
+          <div class="pp-center" data-center>
+            <div class="pp-kicker" data-kicker hidden></div>
+            <div class="pp-timer at-num" role="timer" data-timer-box>
+              <span class="pp-days" data-days hidden></span>
+              <span class="pp-digits" data-timer><span data-timer-main></span><span class="pp-sec" data-timer-sec></span></span>
+            </div>
+            <div class="pp-caption" data-caption></div>
+          </div>
         </div>
-      </div>
 
-      <div class="pp-pill-wrap" role="status" aria-live="polite" aria-atomic="true">
-        <span class="at-pill" data-pill data-lock="idle"><span data-pill-text></span></span>
-        <span class="pp-extra" data-pill-extra hidden></span>
-      </div>
-      <p class="pp-advice" data-advice hidden></p>
-
-      <section class="pp-extend" data-extend hidden>
-        <p class="pp-extend-title" data-i18n="tool.extend.title"></p>
-        <div class="pp-extend-row">
-          <button class="pp-btn" type="button" data-extend-ms="900000" data-i18n="tool.extend.add15"></button>
-          <button class="pp-btn" type="button" data-extend-ms="1800000" data-i18n="tool.extend.add30"></button>
-          <button class="pp-btn" type="button" data-extend-ms="3600000" data-i18n="tool.extend.add60"></button>
-          <button class="pp-btn pp-ghost" type="button" data-dismiss data-i18n="tool.extend.stop"></button>
+        <div class="pp-state">
+          <output class="at-pill" data-pill data-lock="idle" aria-live="polite" aria-atomic="true">
+            <svg class="at-pill-glyph" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path data-pill-glyph d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg>
+            <span data-pill-text></span>
+          </output>
+          <p class="pp-line at-in" data-pill-extra hidden>
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M10.4 7.6A4.6 4.6 0 1 1 4.4 1.6a3.7 3.7 0 0 0 6 6z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+            <span data-i18n="ext.pill.system"></span>
+          </p>
+          <p class="pp-line at-in" data-origin hidden>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path data-origin-icon d=""></path></svg>
+            <span data-origin-text></span>
+          </p>
+          <p class="pp-meta" data-meta></p>
+          <p class="pp-meta2" data-meta2 hidden></p>
         </div>
       </section>
 
-      <button class="pp-primary" type="button" data-toggle></button>
-
-      <fieldset class="pp-levels" data-levels>
-        <legend class="pp-legend" data-i18n="ext.level.label"></legend>
-        <div class="pp-seg">
-          <label class="pp-seg-item"><input type="radio" name="level" value="display" /><span data-i18n="ext.level.display"></span></label>
-          <label class="pp-seg-item"><input type="radio" name="level" value="system" /><span data-i18n="ext.level.system"></span></label>
+      <section class="pp-card pp-private at-rise" aria-labelledby="pv-h" data-private hidden>
+        <span class="pp-card-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5h18M6.5 10.5l2-5h7l2 5M4 16a3 3 0 1 0 6 0a3 3 0 1 0-6 0zM14 16a3 3 0 1 0 6 0a3 3 0 1 0-6 0zM10 16h4"></path></svg></span>
+        <div class="pp-card-body">
+          <h2 id="pv-h" data-i18n="ext.private.title"></h2>
+          <p data-i18n="ext.private.body"></p>
         </div>
-        <p class="pp-help" data-level-help></p>
-      </fieldset>
+      </section>
 
-      <div class="pp-chips" role="group" data-chips data-i18n-aria="tool.presets">
+      <div class="pp-add at-rise" role="group" data-add hidden>
+        <button class="pp-add-btn" type="button" data-add-ms="900000" data-i18n="tool.extend.add15" data-i18n-aria="ext.extend.aria15"></button>
+        <button class="pp-add-btn" type="button" data-add-ms="1800000" data-i18n="tool.extend.add30" data-i18n-aria="ext.extend.aria30"></button>
+        <button class="pp-add-btn" type="button" data-add-ms="3600000" data-i18n="tool.extend.add60" data-i18n-aria="ext.extend.aria60"></button>
+      </div>
+
+      <section class="pp-extend at-rise" aria-labelledby="ex-h" data-extend hidden>
+        <h2 id="ex-h" class="at-sr" data-i18n="tool.extend.title"></h2>
+        <div class="pp-extend-row" role="group" aria-labelledby="ex-h">
+          <button class="pp-add-btn" type="button" data-extend-ms="900000" data-i18n="tool.extend.add15" data-i18n-aria="ext.extend.aria15"></button>
+          <button class="pp-add-btn" type="button" data-extend-ms="1800000" data-i18n="tool.extend.add30" data-i18n-aria="ext.extend.aria30"></button>
+          <button class="pp-add-btn" type="button" data-extend-ms="3600000" data-i18n="tool.extend.add60" data-i18n-aria="ext.extend.aria60"></button>
+        </div>
+        <button class="at-btn at-btn-stop" type="button" data-dismiss data-i18n="tool.extend.stop"></button>
+        <p class="pp-extend-note" data-extend-note></p>
+      </section>
+
+      <section class="pp-error at-rise" aria-labelledby="er-h" data-error hidden>
+        <h2 id="er-h">
+          <svg width="16" height="16" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M6 1L11.2 10.5H.8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+          <span data-error-title></span>
+        </h2>
+        <p data-error-body></p>
+      </section>
+
+      <div class="pp-primary" data-primary>
+        <button class="at-btn pp-main" type="button" data-toggle>
+          <svg class="pp-main-glyph" width="20" height="20" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>
+          <span data-toggle-label></span>
+        </button>
+        <div class="pp-retry" data-retry-row hidden>
+          <button class="at-btn at-btn-stop at-btn-medium" type="button" data-retry></button>
+          <a class="at-btn at-btn-sec at-btn-medium" href="https://awaketab.com/?source=ext" target="_blank" rel="noopener"><span data-i18n="ext.popup.open"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+        </div>
+        <a class="at-btn at-btn-lamp at-btn-full" href="https://awaketab.com/?source=ext" target="_blank" rel="noopener" data-open-tab hidden><span data-i18n="ext.popup.openTab"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+        <div class="pp-note" aria-live="polite" data-note hidden>
+          <p data-note-text></p>
+          <button class="pp-note-link" type="button" data-note-link hidden data-i18n="ext.autostart.change"></button>
+        </div>
+      </div>
+
+      <div class="pp-levels" role="radiogroup" data-levels data-i18n-aria="ext.level.label">
+        <div class="pp-levels-row">
+          <span class="pp-levels-label" aria-hidden="true" data-i18n="ext.level.label"></span>
+          <div class="at-seg">
+            <span class="at-seg-ind" aria-hidden="true"></span>
+            <label class="at-seg-item"><input class="at-sr" type="radio" name="level" value="display" /><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v11H3zM9 20h6M12 16v4"></path></svg><span data-i18n="ext.level.display"></span></label>
+            <label class="at-seg-item"><input class="at-sr" type="radio" name="level" value="system" /><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14v12H5zM3 20h18M9 10h6"></path></svg><span data-i18n="ext.level.system"></span></label>
+          </div>
+        </div>
+        <p class="pp-help" aria-live="polite" data-level-help></p>
+      </div>
+
+      <div class="pp-chips" role="group" data-chips data-i18n-aria="ext.popup.lengths">
         <button class="pp-chip" type="button" data-preset="p15" data-i18n="tool.preset.p15"></button>
         <button class="pp-chip" type="button" data-preset="p30" data-i18n="tool.preset.p30"></button>
         <button class="pp-chip" type="button" data-preset="p45" data-i18n="tool.preset.p45"></button>
@@ -66,21 +145,76 @@
         <button class="pp-chip" type="button" data-preset="p120" data-i18n="tool.preset.p120"></button>
         <button class="pp-chip" type="button" data-preset="p240" data-i18n="tool.preset.p240"></button>
         <button class="pp-chip" type="button" data-preset="pinf" data-i18n="tool.preset.pinf" data-i18n-aria="tool.preset.pinf.sr"></button>
-        <button class="pp-chip" type="button" data-until-open data-i18n="tool.preset.until"></button>
+        <button class="pp-chip pp-chip-add" type="button" data-until-open></button>
       </div>
 
-      <form class="pp-until" data-until hidden>
-        <label class="pp-until-label"><span data-i18n="tool.until.title"></span> <input type="time" name="wall" required data-until-input /></label>
-        <p class="pp-help" data-until-summary aria-live="polite"></p>
+      <form class="pp-until at-in" data-until hidden>
         <div class="pp-until-row">
-          <button class="pp-btn" type="submit" data-i18n="tool.until.start"></button>
-          <button class="pp-btn pp-ghost" type="button" data-until-cancel data-i18n="tool.until.cancel"></button>
+          <button class="pp-step" type="button" data-until-less data-i18n-aria="ext.until.earlier">−</button>
+          <div class="pp-until-mid">
+            <span class="at-kick" data-i18n="tool.until.title"></span>
+            <output class="pp-until-time at-num" data-until-time></output>
+          </div>
+          <button class="pp-step" type="button" data-until-more data-i18n-aria="ext.until.later">+</button>
+        </div>
+        <p class="pp-help pp-center-text" aria-live="polite" data-until-summary></p>
+        <div class="pp-until-actions">
+          <button class="at-btn" type="button" data-until-cancel data-i18n="tool.until.cancel"></button>
+          <button class="at-btn pp-until-start" type="submit" data-i18n="tool.until.start"></button>
         </div>
       </form>
 
-      <footer class="pp-foot">
-        <a class="pp-link" href="https://awaketab.com/?source=ext" target="_blank" rel="noopener" data-i18n="ext.popup.open"></a>
-        <p class="pp-limits" data-i18n="ext.popup.limits"></p>
+      <section class="pp-card pp-sched at-rise" aria-labelledby="sc-h" data-sched hidden>
+        <span class="pp-card-icon pp-card-icon-lamp" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h16v13H4zM4 10.5h16M8.5 3.5v5M15.5 3.5v5"></path></svg></span>
+        <div class="pp-card-body">
+          <h2 id="sc-h" data-sched-days></h2>
+          <span class="pp-sched-range" data-sched-range></span>
+        </div>
+        <button class="pp-card-action" type="button" data-sched-edit data-i18n="ext.schedule.edit" data-i18n-aria="ext.schedule.editAria"></button>
+      </section>
+
+      <button class="pp-prorow" type="button" aria-expanded="false" aria-controls="pp-pro" data-pro-row hidden>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5h16v13H4zM4 10.5h16M8.5 3.5v5M15.5 3.5v5"></path></svg>
+        <span class="pp-prorow-text" data-i18n="ext.pro.row"></span>
+        <span class="at-tag" data-i18n="pro.badge"></span>
+      </button>
+
+      <section class="pp-pro at-rise" id="pp-pro" aria-labelledby="pro-h" data-pro hidden>
+        <div class="pp-pro-head">
+          <h2 id="pro-h" data-i18n="ext.pro.locked"></h2>
+          <button class="pp-icon pp-close" type="button" data-pro-close data-i18n-aria="ext.close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+          </button>
+        </div>
+        <p data-i18n="ext.pro.body"></p>
+        <div class="pp-pro-actions">
+          <a class="at-btn at-btn-sec at-btn-medium" href="https://awaketab.com/pro?source=ext" target="_blank" rel="noopener"><span data-i18n="ext.pro.plans"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+          <button class="at-btn at-btn-quiet at-btn-medium pp-key" type="button" data-pro-key data-i18n="ext.pro.haveKey"></button>
+        </div>
+      </section>
+
+      <section class="pp-card pp-tips at-rise" aria-labelledby="tips-h" data-tips hidden>
+        <div class="pp-tips-head">
+          <h2 id="tips-h" class="at-kick" data-i18n="ext.tips.title"></h2>
+          <button class="at-btn pp-tips-ok" type="button" data-tips-ok data-i18n="ext.tips.ok"></button>
+        </div>
+        <ul class="pp-tips-list">
+          <li>
+            <span class="at-kbds" aria-hidden="true" data-tips-keys></span>
+            <span><span class="at-sr" data-tips-shortcut></span><span data-i18n="ext.tips.shortcut"></span></span>
+          </li>
+          <li>
+            <span class="pp-tips-icon" aria-hidden="true" data-placeholder="toolbar icon">
+              <svg width="20" height="20" viewBox="0 0 48 48"><path class="at-logo-ring" d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke-width="5.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="5.2" fill="currentColor"></circle></svg>
+              <span class="pp-tips-badge">25m</span>
+            </span>
+            <span data-i18n="ext.tips.pin"></span>
+          </li>
+        </ul>
+      </section>
+
+      <footer class="pp-foot" data-foot>
+        <a class="at-link at-link-ink" href="https://awaketab.com/?source=ext" target="_blank" rel="noopener"><span data-i18n="ext.popup.open"></span><svg class="at-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
       </footer>
     </main>
     <script type="module" src="./main.ts"></script>

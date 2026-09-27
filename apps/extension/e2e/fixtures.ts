@@ -39,7 +39,7 @@ export { expect };
 
 export async function openPopup(context: BrowserContext, extensionId: string): Promise<Page> {
   const page = await context.newPage();
-  await page.setViewportSize({ width: 320, height: 600 });
+  await page.setViewportSize({ width: 360, height: 600 });
   await page.goto(`chrome-extension://${extensionId}/popup.html`);
   await expect(page.locator('[data-root]')).toBeVisible();
   return page;

@@ -96,7 +96,7 @@ export interface IExtApi {
     getManifest(): { version: string };
     getURL(path: string): string;
     onStartup: IExtEvent<() => void>;
-    onInstalled: IExtEvent<(details: { reason: string }) => void>;
+    onInstalled: IExtEvent<(details: { reason: string; previousVersion?: string }) => void>;
     onMessage: IExtEvent<(message: unknown, sender: unknown, sendResponse: (response: unknown) => void) => boolean | undefined>;
     sendMessage(message: unknown): Promise<unknown>;
     openOptionsPage(): Promise<void>;
@@ -112,4 +112,6 @@ export interface IExtApi {
     onRemoved: IExtEvent<(tabId: number) => void>;
   };
   i18n?: { getUILanguage(): string };
+  /** `inIncognitoContext` is true for a popup opened from a private window (the private-window note). */
+  extension?: { inIncognitoContext?: boolean };
 }

@@ -6,172 +6,362 @@
     <title>AwakeTab</title>
   </head>
   <body>
-    <main class="op" data-root hidden>
+    <div class="op" data-root hidden>
+      <div class="op-aura" aria-hidden="true"></div>
       <header class="op-head">
-        <h1 class="op-title" data-i18n="ext.options.title"></h1>
-        <p class="op-saved" data-saved role="status" aria-live="polite"></p>
+        <div class="at-logo">
+          <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <path class="at-logo-ring" d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke-width="4.5" stroke-linecap="round"></path>
+            <circle class="at-logo-bead" cx="24" cy="9" r="7.5" opacity="0.28"></circle>
+            <circle class="at-logo-bead" cx="24" cy="9" r="4.2"></circle>
+          </svg>
+          <span data-i18n="app.name"></span><span class="at-logo-sub" data-i18n="ext.options.forChrome"></span>
+        </div>
+        <div class="op-head-end">
+          <output class="op-saved" data-saved aria-live="polite"></output>
+          <a class="at-link op-open" href="https://awaketab.com/?source=ext" target="_blank" rel="noopener"><span data-i18n="ext.popup.open"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+        </div>
       </header>
 
-      <section class="op-card" aria-labelledby="h-defaults">
-        <h2 id="h-defaults" data-i18n="ext.options.defaults"></h2>
-        <fieldset class="op-field">
-          <legend data-i18n="ext.level.label"></legend>
-          <label class="op-radio"><input type="radio" name="level" value="display" /><span><strong data-i18n="ext.level.display"></strong> <span class="op-help" data-i18n="ext.level.display.help"></span></span></label>
-          <label class="op-radio"><input type="radio" name="level" value="system" /><span><strong data-i18n="ext.level.system"></strong> <span class="op-help" data-i18n="ext.level.system.help"></span></span></label>
-        </fieldset>
-        <label class="op-row"><span data-i18n="settings.defaultPreset"></span>
-          <select name="defaultPreset">
-            <option value="p15" data-i18n="tool.preset.p15"></option>
-            <option value="p30" data-i18n="tool.preset.p30"></option>
-            <option value="p45" data-i18n="tool.preset.p45"></option>
-            <option value="p60" data-i18n="tool.preset.p60"></option>
-            <option value="p120" data-i18n="tool.preset.p120"></option>
-            <option value="p240" data-i18n="tool.preset.p240"></option>
-            <option value="pinf" data-i18n="tool.preset.pinf.sr"></option>
-          </select>
-        </label>
-      </section>
-
-      <section class="op-card" aria-labelledby="h-end">
-        <h2 id="h-end" data-i18n="settings.endBehaviour"></h2>
-        <fieldset class="op-field">
-          <legend class="op-sr" data-i18n="settings.endBehaviour"></legend>
-          <label class="op-radio"><input type="radio" name="endBehaviour" value="prompt_extend" /><span data-i18n="settings.endBehaviour.prompt_extend"></span></label>
-          <label class="op-radio"><input type="radio" name="endBehaviour" value="stop" /><span data-i18n="settings.endBehaviour.stop"></span></label>
-        </fieldset>
-        <label class="op-check"><input type="checkbox" name="notifications" /><span data-i18n="settings.notifications"></span></label>
-        <p class="op-help" data-notify-help data-i18n="ext.options.notifications.help"></p>
-        <p class="op-help op-warn" data-notify-blocked hidden data-i18n="settings.notifications.blocked"></p>
-        <label class="op-row"><span data-i18n="settings.sound"></span>
-          <select name="sound">
-            <option value="chime" data-i18n="settings.sound.chime"></option>
-            <option value="none" data-i18n="settings.sound.none"></option>
-          </select>
-        </label>
-        <p class="op-help" data-i18n="ext.options.sound.help"></p>
-      </section>
-
-      <section class="op-card" aria-labelledby="h-battery">
-        <h2 id="h-battery" data-i18n="ext.options.battery"></h2>
-        <label class="op-check"><input type="checkbox" name="batteryAutoStop" disabled aria-describedby="battery-help" /><span data-i18n="settings.battery.autoStop"></span></label>
-        <p class="op-help" id="battery-help" data-i18n="ext.options.battery.unavailable"></p>
-      </section>
-
-      <section class="op-card" aria-labelledby="h-look">
-        <h2 id="h-look" data-i18n="ext.options.appearance"></h2>
-        <label class="op-row"><span data-i18n="settings.theme"></span>
-          <select name="theme">
-            <option value="auto" data-i18n="settings.theme.auto"></option>
-            <option value="light" data-i18n="settings.theme.light"></option>
-            <option value="dark" data-i18n="settings.theme.dark"></option>
-            <option value="oled" data-i18n="settings.theme.oled"></option>
-          </select>
-        </label>
-        <label class="op-row"><span data-i18n="settings.locale"></span>
-          <select name="locale" data-locales>
-            <option value="" data-i18n="ext.options.locale.auto"></option>
-          </select>
-        </label>
-      </section>
-
-      <section class="op-card" aria-labelledby="h-keys">
-        <h2 id="h-keys" data-i18n="ext.options.keyboard"></h2>
-        <label class="op-check"><input type="checkbox" name="keyboardShortcuts" /><span data-i18n="settings.shortcuts"></span></label>
-        <p class="op-help" data-shortcut></p>
-        <p><button class="pp-btn" type="button" data-shortcut-change data-i18n="ext.options.shortcut.change"></button></p>
-      </section>
-
-      <section class="op-card" aria-labelledby="h-sched" data-gated="ext.schedules">
-        <h2 id="h-sched"><span data-i18n="ext.schedules.title"></span> <span class="op-badge" data-i18n="pro.badge"></span></h2>
-        <p class="op-help" data-i18n="ext.schedules.help"></p>
-        <p class="op-locked" data-locked hidden><span data-i18n="ext.pro.locked"></span> <a href="https://awaketab.com/pro" target="_blank" rel="noopener" data-i18n="pro.see"></a></p>
-        <ul class="op-list" data-schedules></ul>
-        <p class="op-help" data-schedules-empty data-i18n="ext.schedules.empty"></p>
-        <form class="op-form" data-schedule-form novalidate>
-          <fieldset class="op-days">
-            <legend data-i18n="ext.schedules.days"></legend>
-            <div class="op-days-row" data-days></div>
-          </fieldset>
-          <div class="op-form-row">
-            <label class="op-inline"><span data-i18n="ext.schedules.from"></span> <input type="time" name="start" value="09:00" required /></label>
-            <label class="op-inline"><span data-i18n="ext.schedules.to"></span> <input type="time" name="end" value="18:00" required /></label>
-            <label class="op-inline"><span data-i18n="ext.level.label"></span>
-              <select name="level">
-                <option value="display" data-i18n="ext.level.display"></option>
-                <option value="system" data-i18n="ext.level.system"></option>
-              </select>
-            </label>
+      <div class="op-layout">
+        <nav class="op-nav" data-i18n-aria="ext.options.sections">
+          <div class="op-nav-list" data-nav>
+            <span class="op-nav-ind" aria-hidden="true" data-nav-ind></span>
+            <a href="#defaults" data-nav-link="defaults"><span data-i18n="ext.options.defaults"></span></a>
+            <a href="#end" data-nav-link="end"><span data-i18n="settings.endBehaviour"></span></a>
+            <a href="#look" data-nav-link="look"><span data-i18n="ext.options.appearance"></span></a>
+            <a href="#keys" data-nav-link="keys"><span data-i18n="ext.options.keyboard"></span></a>
+            <a href="#schedules" data-nav-link="schedules"><span data-i18n="ext.schedules.title"></span><span class="at-tag" data-i18n="pro.badge"></span></a>
+            <a href="#autostart" data-nav-link="autostart"><span data-i18n="ext.autostart.title"></span><span class="at-tag" data-i18n="pro.badge"></span></a>
+            <a href="#licence" data-nav-link="licence"><span data-i18n="ext.license.title"></span></a>
+            <a href="#privacy" data-nav-link="privacy"><span data-i18n="ext.privacy.title"></span></a>
+            <a href="#about" data-nav-link="about"><span data-i18n="ext.about.title"></span></a>
           </div>
-          <p class="op-error" data-schedule-error role="alert" hidden></p>
-          <p><button class="pp-btn" type="submit" data-i18n="ext.schedules.add"></button></p>
-        </form>
-      </section>
+          <p class="op-nav-note" data-i18n="ext.options.navNote"></p>
+        </nav>
 
-      <section class="op-card" aria-labelledby="h-auto" data-gated="ext.autostart">
-        <h2 id="h-auto"><span data-i18n="ext.autostart.title"></span> <span class="op-badge" data-i18n="pro.badge"></span></h2>
-        <p class="op-locked" data-locked hidden><span data-i18n="ext.pro.locked"></span> <a href="https://awaketab.com/pro" target="_blank" rel="noopener" data-i18n="pro.see"></a></p>
-        <label class="op-check"><input type="checkbox" name="browserStart" /><span data-i18n="ext.autostart.browser"></span></label>
-        <h3 data-i18n="ext.autostart.sites"></h3>
-        <p class="op-help" data-i18n="ext.autostart.sites.help"></p>
-        <ul class="op-list" data-sites></ul>
-        <p class="op-help" data-sites-empty data-i18n="ext.autostart.empty"></p>
-        <form class="op-form" data-site-form novalidate>
-          <div class="op-form-row">
-            <label class="op-inline op-grow"><span data-i18n="ext.autostart.site"></span> <input type="text" name="host" inputmode="url" autocomplete="off" spellcheck="false" maxlength="253" /></label>
-            <label class="op-inline"><span data-i18n="ext.level.label"></span>
-              <select name="duration">
-                <option value="" data-i18n="ext.autostart.duration.open"></option>
-                <option value="30" data-i18n="tool.preset.p30"></option>
-                <option value="60" data-i18n="tool.preset.p60"></option>
-                <option value="120" data-i18n="tool.preset.p120"></option>
-                <option value="240" data-i18n="tool.preset.p240"></option>
-              </select>
-            </label>
+        <main class="op-main">
+          <div class="op-intro">
+            <h1 data-i18n="ext.options.title"></h1>
+            <p data-i18n="ext.options.lead"></p>
           </div>
-          <p class="op-error" data-site-error role="alert" hidden></p>
-          <p><button class="pp-btn" type="submit" data-i18n="ext.autostart.add"></button></p>
-        </form>
-      </section>
 
-      <section class="op-card" aria-labelledby="h-license">
-        <h2 id="h-license" data-i18n="ext.license.title"></h2>
-        <div data-license-active hidden>
-          <p class="op-ok" data-i18n="pro.activated"></p>
-          <p class="op-help" data-license-plan></p>
-          <p class="op-actions">
-            <button class="pp-btn" type="button" data-license-remove data-i18n="ext.license.remove"></button>
-            <a class="pp-btn pp-ghost" href="https://awaketab.com/pro/manage" target="_blank" rel="noopener" data-i18n="settings.pro.manage"></a>
-          </p>
-        </div>
-        <form class="op-form" data-license-form novalidate>
-          <label class="op-block"><span data-i18n="pro.activate"></span>
-            <input type="text" name="key" autocomplete="off" spellcheck="false" minlength="20" maxlength="80" aria-describedby="license-error license-devices" />
-          </label>
-          <p class="op-help" id="license-devices" data-i18n="ext.license.devices"></p>
-          <p class="op-error" id="license-error" data-license-error role="alert" hidden></p>
-          <p class="op-actions">
-            <button class="pp-btn" type="submit" data-license-submit data-i18n="ext.license.activate"></button>
-            <a class="pp-btn pp-ghost" href="https://awaketab.com/pro/activate?ext=1" target="_blank" rel="noopener" data-i18n="ext.license.get"></a>
-          </p>
-        </form>
-        <p class="op-help" data-license-status role="status" aria-live="polite"></p>
-      </section>
+          <!-- Defaults -->
+          <section class="op-section" id="defaults" aria-labelledby="h-defaults">
+            <h2 id="h-defaults" data-i18n="ext.options.defaults"></h2>
+            <div class="op-card">
+              <div class="op-block" role="radiogroup" aria-labelledby="lbl-level">
+                <div class="op-label" id="lbl-level" data-i18n="ext.level.label"></div>
+                <div class="op-levels">
+                  <label class="op-levelcard">
+                    <input class="at-sr" type="radio" name="level" value="display" />
+                    <span class="op-levelcard-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v11H3zM9 20h6M12 16v4"></path></svg></span>
+                    <span class="op-levelcard-text"><span class="op-levelcard-name" data-i18n="ext.level.display"></span><span class="op-levelcard-help" data-i18n="ext.level.display.help"></span></span>
+                    <span class="op-radio" aria-hidden="true"></span>
+                  </label>
+                  <label class="op-levelcard">
+                    <input class="at-sr" type="radio" name="level" value="system" />
+                    <span class="op-levelcard-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14v12H5zM3 20h18M9 10h6"></path></svg></span>
+                    <span class="op-levelcard-text"><span class="op-levelcard-name" data-i18n="ext.level.system"></span><span class="op-levelcard-help" data-i18n="ext.level.system.help"></span></span>
+                    <span class="op-radio" aria-hidden="true"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="op-block" role="radiogroup" aria-labelledby="lbl-dur" aria-describedby="help-dur">
+                <div class="op-text">
+                  <div class="op-label" id="lbl-dur" data-i18n="settings.defaultPreset"></div>
+                  <div class="op-help" id="help-dur" data-i18n="ext.options.duration.help"></div>
+                </div>
+                <div class="at-seg at-seg-sunken at-seg-lamp op-seg7" style="--n: 7">
+                  <span class="at-seg-ind" aria-hidden="true"></span>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="defaultPreset" value="p15" /><span data-i18n="tool.preset.p15"></span></label>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="defaultPreset" value="p30" /><span data-i18n="tool.preset.p30"></span></label>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="defaultPreset" value="p45" /><span data-i18n="tool.preset.p45"></span></label>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="defaultPreset" value="p60" /><span data-i18n="tool.preset.p60"></span></label>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="defaultPreset" value="p120" /><span data-i18n="tool.preset.p120"></span></label>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="defaultPreset" value="p240" /><span data-i18n="tool.preset.p240"></span></label>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="defaultPreset" value="pinf" /><span data-i18n="tool.preset.pinf.sr"></span></label>
+                </div>
+              </div>
+            </div>
+          </section>
 
-      <section class="op-card" aria-labelledby="h-privacy">
-        <h2 id="h-privacy" data-i18n="ext.privacy.title"></h2>
-        <label class="op-check"><input type="checkbox" name="telemetry" aria-describedby="telemetry-help" /><span data-i18n="settings.telemetry"></span></label>
-        <p class="op-help" id="telemetry-help" data-i18n="ext.privacy.telemetry.help"></p>
-        <p class="op-help" data-i18n="ext.privacy.stored"></p>
-        <p><a href="https://awaketab.com/privacy#extension" target="_blank" rel="noopener" data-i18n="ext.privacy.policy"></a></p>
-      </section>
+          <!-- When time is up -->
+          <section class="op-section" id="end" aria-labelledby="h-end">
+            <h2 id="h-end" data-i18n="settings.endBehaviour"></h2>
+            <div class="op-card">
+              <div class="op-row op-row-wide" role="radiogroup" aria-labelledby="lbl-endb" aria-describedby="help-endb">
+                <div class="op-text">
+                  <div class="op-label" id="lbl-endb" data-i18n="settings.endBehaviour"></div>
+                  <div class="op-help" id="help-endb" data-end-help></div>
+                </div>
+                <div class="at-seg at-seg-sunken op-seg-end" style="--n: 2">
+                  <span class="at-seg-ind" aria-hidden="true"></span>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="endBehaviour" value="prompt_extend" /><span data-i18n="settings.endBehaviour.prompt_extend"></span></label>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="endBehaviour" value="stop" /><span data-i18n="settings.endBehaviour.stop"></span></label>
+                </div>
+              </div>
+              <div class="op-row">
+                <div class="op-text">
+                  <label class="op-label" for="sw-notify" data-i18n="settings.notifications"></label>
+                  <div class="op-help" id="help-notify" data-i18n="ext.options.notifications.help"></div>
+                  <p class="at-error" data-notify-blocked hidden><span data-i18n="settings.notifications.blocked"></span></p>
+                </div>
+                <input class="at-switch" id="sw-notify" type="checkbox" role="switch" name="notifications" aria-describedby="help-notify" />
+              </div>
+              <div class="op-row op-row-select">
+                <div class="op-text">
+                  <label class="op-label" for="sel-sound" data-i18n="settings.sound"></label>
+                  <div class="op-help" id="help-sound" data-sound-help data-i18n="ext.options.sound.help"></div>
+                </div>
+                <select class="at-input op-select" id="sel-sound" name="sound" aria-describedby="help-sound">
+                  <option value="chime" data-i18n="settings.sound.chime"></option>
+                  <option value="none" data-i18n="settings.sound.none"></option>
+                </select>
+              </div>
+            </div>
+          </section>
 
-      <section class="op-card" aria-labelledby="h-about">
-        <h2 id="h-about" data-i18n="ext.about.title"></h2>
-        <p data-version></p>
-        <p class="op-help" data-i18n="ext.popup.limits"></p>
-        <p><a href="https://awaketab.com/changelog" target="_blank" rel="noopener" data-i18n="ext.about.changelog"></a></p>
-      </section>
-    </main>
+          <!-- Look and language -->
+          <section class="op-section" id="look" aria-labelledby="h-look">
+            <h2 id="h-look" data-i18n="ext.options.appearance"></h2>
+            <div class="op-card">
+              <div class="op-row op-row-theme" role="radiogroup" aria-labelledby="lbl-theme" aria-describedby="help-theme">
+                <div class="op-text">
+                  <div class="op-label" id="lbl-theme" data-i18n="settings.theme"></div>
+                  <div class="op-help" id="help-theme" data-theme-help></div>
+                </div>
+                <div class="at-seg at-seg-sunken" style="--n: 4">
+                  <span class="at-seg-ind" aria-hidden="true"></span>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="theme" value="auto" /><span data-i18n="settings.theme.auto"></span></label>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="theme" value="light" /><span data-i18n="settings.theme.light"></span></label>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="theme" value="dark" /><span data-i18n="settings.theme.dark"></span></label>
+                  <label class="at-seg-item"><input class="at-sr" type="radio" name="theme" value="oled" /><span data-i18n="settings.theme.oled"></span></label>
+                </div>
+              </div>
+              <div class="op-lang" data-lang>
+                <button class="op-lang-btn" type="button" id="lang-btn" aria-expanded="false" aria-controls="lang-list" data-lang-toggle>
+                  <span class="op-text">
+                    <span class="op-label" data-i18n="settings.locale"></span>
+                    <span class="op-help" data-i18n="ext.options.locale.help"></span>
+                  </span>
+                  <span class="op-lang-now">
+                    <span data-lang-now></span>
+                    <svg class="op-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+                  </span>
+                </button>
+                <div class="op-lang-list at-in" id="lang-list" role="radiogroup" aria-labelledby="lang-btn" data-lang-list hidden></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Keyboard -->
+          <section class="op-section" id="keys" aria-labelledby="h-keys">
+            <h2 id="h-keys" data-i18n="ext.options.keyboard"></h2>
+            <div class="op-card">
+              <div class="op-row">
+                <div class="op-text">
+                  <label class="op-label" for="sw-keys" data-i18n="settings.shortcuts"></label>
+                  <div class="op-help" id="help-keys" data-i18n="ext.options.shortcuts.help"></div>
+                </div>
+                <input class="at-switch" id="sw-keys" type="checkbox" role="switch" name="keyboardShortcuts" aria-describedby="help-keys" />
+              </div>
+              <div class="op-row">
+                <p class="op-shortcut" data-shortcut></p>
+                <button class="at-btn" type="button" data-shortcut-change data-i18n="ext.options.shortcut.change"></button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Schedules (Pro) -->
+          <section class="op-section" id="schedules" aria-labelledby="h-sched" data-gated="ext.schedules">
+            <div class="op-h2-row">
+              <h2 id="h-sched" data-i18n="ext.schedules.title"></h2>
+              <span class="at-tag" data-i18n="pro.badge"></span>
+            </div>
+            <p class="op-lead" data-i18n="ext.schedules.help"></p>
+            <p class="op-locked" data-locked hidden>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+              <span><span data-i18n="ext.pro.locked"></span> <span data-i18n="ext.options.lockedMore"></span></span>
+              <a href="https://awaketab.com/pro" target="_blank" rel="noopener" data-i18n="pro.see"></a>
+            </p>
+            <div class="op-card">
+              <div class="op-week" role="img" data-week>
+                <div class="op-week-row op-week-axis">
+                  <span class="at-kick" data-i18n="ext.schedules.week"></span>
+                  <div class="op-axis" aria-hidden="true" data-axis></div>
+                </div>
+                <div class="op-week-days" data-week-days></div>
+                <div class="op-legend" aria-hidden="true">
+                  <span><span class="op-sw op-sw-screen"></span><span data-i18n="ext.level.display"></span></span>
+                  <span><span class="op-sw op-sw-system"></span><span data-i18n="ext.level.system"></span></span>
+                  <span><span class="op-sw op-sw-draft"></span><span data-i18n="ext.schedules.legend.draft"></span></span>
+                  <span><span class="op-sw op-sw-now"></span><span data-legend-now></span></span>
+                </div>
+              </div>
+              <div class="op-listwrap">
+                <p class="op-empty" data-schedules-empty data-i18n="ext.schedules.empty"></p>
+                <ul class="op-list" data-schedules></ul>
+              </div>
+              <form class="op-new" data-schedule-form novalidate>
+                <div class="op-label" data-i18n="ext.schedules.new"></div>
+                <div class="op-new-grid">
+                  <div class="op-field" role="group" aria-labelledby="lbl-days">
+                    <span class="op-field-label" id="lbl-days" data-i18n="ext.schedules.days"></span>
+                    <div class="op-days" data-days></div>
+                  </div>
+                  <div class="op-field" role="group" aria-labelledby="lbl-from">
+                    <span class="op-field-label" id="lbl-from" data-i18n="ext.schedules.from"></span>
+                    <div class="op-stepper">
+                      <button type="button" data-step="start" data-delta="-30">−</button>
+                      <output class="at-num" data-step-value="start"></output>
+                      <button type="button" data-step="start" data-delta="30">+</button>
+                    </div>
+                  </div>
+                  <div class="op-field" role="group" aria-labelledby="lbl-to">
+                    <span class="op-field-label" id="lbl-to" data-i18n="ext.schedules.to"></span>
+                    <div class="op-stepper">
+                      <button type="button" data-step="end" data-delta="-30">−</button>
+                      <output class="at-num" data-step-value="end"></output>
+                      <button type="button" data-step="end" data-delta="30">+</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="op-new-foot">
+                  <div class="op-field" role="radiogroup" aria-labelledby="lbl-slevel">
+                    <span class="op-field-label" id="lbl-slevel" data-i18n="ext.level.label"></span>
+                    <div class="at-seg op-seg-slevel" style="--n: 2">
+                      <span class="at-seg-ind" aria-hidden="true"></span>
+                      <label class="at-seg-item"><input class="at-sr" type="radio" name="scheduleLevel" value="display" checked /><span data-i18n="ext.level.display"></span></label>
+                      <label class="at-seg-item"><input class="at-sr" type="radio" name="scheduleLevel" value="system" /><span data-i18n="ext.level.system"></span></label>
+                    </div>
+                  </div>
+                  <div class="op-new-actions">
+                    <p class="at-error" data-schedule-error role="alert" hidden></p>
+                    <span class="op-help" data-schedule-note hidden></span>
+                    <button class="at-btn at-btn-lamp op-add" type="submit" data-i18n="ext.schedules.add"></button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <!-- Auto-start (Pro) -->
+          <section class="op-section" id="autostart" aria-labelledby="h-auto" data-gated="ext.autostart">
+            <div class="op-h2-row">
+              <h2 id="h-auto" data-i18n="ext.autostart.title"></h2>
+              <span class="at-tag" data-i18n="pro.badge"></span>
+            </div>
+            <div class="op-card">
+              <div class="op-row">
+                <label class="op-label" for="sw-browser" data-i18n="ext.autostart.browser"></label>
+                <input class="at-switch" id="sw-browser" type="checkbox" role="switch" name="browserStart" />
+              </div>
+              <div class="op-sites">
+                <div class="op-sites-head">
+                  <h3 data-i18n="ext.autostart.sites"></h3>
+                  <p class="op-help" data-i18n="ext.autostart.sites.help"></p>
+                </div>
+                <div class="op-listwrap">
+                  <p class="op-empty" data-sites-empty data-i18n="ext.autostart.empty"></p>
+                  <ul class="op-list" data-sites></ul>
+                </div>
+                <form class="op-siteform" data-site-form novalidate>
+                  <label class="op-field">
+                    <span class="op-field-label" data-i18n="ext.autostart.site"></span>
+                    <input class="at-input at-mono" type="text" name="host" inputmode="url" autocomplete="off" spellcheck="false" maxlength="253" aria-describedby="site-error" />
+                  </label>
+                  <label class="op-field">
+                    <span class="op-field-label" data-i18n="ext.autostart.duration"></span>
+                    <select class="at-input" name="duration">
+                      <option value="" data-i18n="ext.autostart.duration.open"></option>
+                      <option value="30" data-i18n="tool.preset.p30"></option>
+                      <option value="60" data-i18n="tool.preset.p60"></option>
+                      <option value="120" data-i18n="tool.preset.p120"></option>
+                      <option value="240" data-i18n="tool.preset.p240"></option>
+                    </select>
+                  </label>
+                  <button class="at-btn at-btn-sec op-addsite" type="submit" data-i18n="ext.autostart.add"></button>
+                  <p class="at-error op-siteform-error" id="site-error" data-site-error role="alert" hidden></p>
+                </form>
+              </div>
+            </div>
+          </section>
+
+          <!-- Pro licence -->
+          <section class="op-section" id="licence" aria-labelledby="h-license">
+            <h2 id="h-license" data-i18n="ext.license.title"></h2>
+            <div class="op-card op-card-pad">
+              <div class="op-licence at-in" data-license-active hidden>
+                <span class="op-licence-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+                <div class="op-text">
+                  <div class="op-label" data-i18n="pro.activated"></div>
+                  <div class="op-help" data-license-plan></div>
+                </div>
+                <div class="op-licence-actions">
+                  <button class="at-btn" type="button" data-license-remove data-i18n="ext.license.remove"></button>
+                  <a class="at-link op-pad-link" href="https://awaketab.com/pro/manage" target="_blank" rel="noopener" data-i18n="settings.pro.manage"></a>
+                </div>
+              </div>
+              <form class="op-licform at-in" data-license-form novalidate>
+                <label class="op-field op-field-big">
+                  <span data-i18n="pro.activate"></span>
+                  <input class="at-input at-mono op-key" type="text" name="key" autocomplete="off" spellcheck="false" minlength="20" maxlength="80" aria-describedby="license-error license-devices" />
+                </label>
+                <p class="op-help" id="license-devices" data-i18n="ext.license.devices"></p>
+                <p class="at-error" id="license-error" data-license-error role="alert" hidden></p>
+                <div class="op-licform-actions">
+                  <button class="at-btn at-btn-stop at-btn-medium" type="submit" data-license-submit data-i18n="ext.license.activate"></button>
+                  <a class="at-link op-pad-link" href="https://awaketab.com/pro/activate?ext=1" target="_blank" rel="noopener" data-i18n="ext.license.get"></a>
+                  <span class="op-help" data-license-status role="status" aria-live="polite"></span>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <!-- Privacy -->
+          <section class="op-section" id="privacy" aria-labelledby="h-privacy">
+            <h2 id="h-privacy" data-i18n="ext.privacy.title"></h2>
+            <div class="op-card">
+              <div class="op-row">
+                <div class="op-text">
+                  <label class="op-label" for="sw-tele" data-i18n="settings.telemetry"></label>
+                  <div class="op-help" id="telemetry-help" data-i18n="ext.privacy.telemetry.help"></div>
+                </div>
+                <input class="at-switch" id="sw-tele" type="checkbox" role="switch" name="telemetry" aria-describedby="telemetry-help" />
+              </div>
+              <div class="op-row op-row-stack">
+                <p class="op-body" data-i18n="ext.privacy.stored"></p>
+                <a class="at-link" href="https://awaketab.com/privacy#extension" target="_blank" rel="noopener" data-i18n="ext.privacy.policy"></a>
+              </div>
+            </div>
+          </section>
+
+          <!-- About -->
+          <section class="op-section" id="about" aria-labelledby="h-about">
+            <h2 id="h-about" data-i18n="ext.about.title"></h2>
+            <div class="op-card op-card-pad op-about">
+              <div class="op-text">
+                <div class="op-label" data-version></div>
+                <p class="op-help" data-i18n="ext.popup.limits"></p>
+              </div>
+              <a class="at-link" href="https://awaketab.com/changelog" target="_blank" rel="noopener" data-i18n="ext.about.changelog"></a>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <footer class="at-foot">
+        <p data-i18n="ext.footer.honest"></p>
+        <nav data-i18n-aria="ext.footer.nav">
+          <a href="https://awaketab.com/privacy" target="_blank" rel="noopener" data-i18n="footer.privacy"></a>
+          <a href="https://awaketab.com/terms" target="_blank" rel="noopener" data-i18n="footer.terms"></a>
+          <a href="https://awaketab.com/changelog" target="_blank" rel="noopener" data-i18n="footer.changelog"></a>
+          <a href="https://awaketab.com/about" target="_blank" rel="noopener" data-i18n="ext.about.title"></a>
+          <a href="https://buymeacoffee.com/awaketab" target="_blank" rel="noopener" data-i18n="footer.donate"></a>
+        </nav>
+      </footer>
+    </div>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

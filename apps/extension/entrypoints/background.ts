@@ -15,7 +15,7 @@ export default defineBackground({
   main() {
     const real = browser as unknown as IExtApi;
     const api: IExtApi = __AT_TEST__
-      ? (Object.create(real, { power: { value: mockPower(real.storage.session) } }) as IExtApi)
+      ? (Object.create(real, { power: { value: mockPower(real.storage.session, real.storage.onChanged) } }) as IExtApi)
       : real;
     const ctl = createController({ api, catalogs });
     const run = (task: Promise<unknown>) => {
@@ -28,7 +28,7 @@ export default defineBackground({
       run(ctl.onStartup());
     });
     api.runtime.onInstalled.addListener((details) => {
-      run(ctl.onInstalled(details.reason));
+      run(ctl.onInstalled(details.reason, details.previousVersion));
     });
     api.alarms.onAlarm.addListener((alarm) => {
       run(ctl.onAlarm(alarm.name));
