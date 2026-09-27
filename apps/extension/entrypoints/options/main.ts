@@ -341,13 +341,7 @@ async function boot(): Promise<void> {
     return order.map((d) => dayName(d)).join(', ');
   }
 
-  function rangeOf(start: number, end: number): string {
-    const { t, time } = ctx;
-    return t('ext.time.span', {
-      from: time.wall(start),
-      to: end <= start ? t('ext.time.nextDay', { time: time.wall(end) }) : time.wall(end),
-    });
-  }
+  const rangeOf = (start: number, end: number): string => ctx.time.range(start, end);
 
   const levelName = (level: string) => ctx.t(level === 'system' ? 'ext.level.system' : 'ext.level.display');
 
@@ -451,14 +445,18 @@ async function boot(): Promise<void> {
         if (today) name.dataset.today = '';
         const track = document.createElement('div');
         track.className = 'op-track';
-        for (const blk of all.filter((b) => b.day === day)) {
+        const ofDay = all.filter((b) => b.day === day);
+        const saved = ofDay.filter((b) => b.kind === 'block');
+        // The draft sits under saved windows and drops its label where it overlaps one, so a saved label stays readable.
+        for (const blk of [...ofDay.filter((b) => b.kind === 'draft'), ...saved]) {
           const el = document.createElement('div');
           el.className = 'op-blk';
           el.dataset.kind = blk.kind;
           el.dataset.level = blk.level;
           el.style.insetInlineStart = pct(blk.a);
           el.style.inlineSize = pct(blk.b - blk.a);
-          if (blk.first && blk.b - blk.a >= 300) el.textContent = blk.label;
+          const covered = blk.kind === 'draft' && saved.some((s) => s.a < blk.b && blk.a < s.b);
+          if (blk.first && blk.b - blk.a >= 300 && !covered) el.textContent = blk.label;
           track.append(el);
         }
         if (today) {
@@ -716,6 +714,9 @@ async function boot(): Promise<void> {
       settings.endBehaviour === 'stop' ? 'ext.options.end.stopHelp' : 'ext.options.end.askHelp',
     );
     q(root, '[data-theme-help]').textContent = t(`ext.options.theme.${settings.theme}`);
+    q(root, '[data-schedules-intro]').textContent = t('ext.schedules.intro', {
+      range: ctx.time.range(9 * 60, 18 * 60),
+    });
     inputEl('notifications').checked = settings.notifications;
     const soundHelp = q(root, '[data-sound-help]');
     if (settings.notifications) delete soundHelp.dataset.warn;

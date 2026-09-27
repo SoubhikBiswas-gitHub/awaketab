@@ -54,6 +54,31 @@ describe('time wording (12-hour, tomorrow, weekday, full date)', () => {
   it('follows a 24-hour choice', () => {
     const h24 = createTimeFormat({ lang: 'en', clock24h: true, t });
     expect(h24.hm(at(26, 18, 5))).toBe('18:05');
+    expect(h24.hour(12)).not.toBe('Noon');
+    expect(h24.range(9 * 60, 18 * 60)).toBe('09:00 to 18:00');
+  });
+});
+
+describe('12-hour times as the options and popup boards print them', () => {
+  it('writes wall times with AM/PM, midnight and noon included, and keeps the minutes', () => {
+    expect(time.wall(0)).toBe('12:00 AM');
+    expect(time.wall(9 * 60)).toBe('9:00 AM');
+    expect(time.wall(9 * 60 + 30)).toBe('9:30 AM');
+    expect(time.wall(12 * 60)).toBe('12:00 PM');
+    expect(time.wall(12 * 60 + 45)).toBe('12:45 PM');
+    expect(time.wall(23 * 60 + 59)).toBe('11:59 PM');
+    expect(time.wall(24 * 60)).toBe('12:00 AM');
+  });
+
+  it('labels the week axis 12 AM, 6 AM, Noon, 6 PM, 12 AM', () => {
+    expect([0, 6, 12, 18, 24].map((h) => time.hour(h))).toEqual(['12 AM', '6 AM', 'Noon', '6 PM', '12 AM']);
+  });
+
+  it('writes schedule windows as "9:00 AM to 6:00 PM", with "next day" past midnight', () => {
+    expect(time.range(9 * 60, 18 * 60)).toBe('9:00 AM to 6:00 PM');
+    expect(time.range(22 * 60, 6 * 60)).toBe('10:00 PM to 6:00 AM next day');
+    expect(time.range(0, 12 * 60 + 30)).toBe('12:00 AM to 12:30 PM');
+    expect(time.range(23 * 60 + 30, 0)).toBe('11:30 PM to 12:00 AM next day');
   });
 
   it('counts calendar days and rounds end times to the minute', () => {

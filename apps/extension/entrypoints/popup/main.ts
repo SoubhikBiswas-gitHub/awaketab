@@ -196,6 +196,17 @@ async function boot(): Promise<void> {
     return week.map(name).join(', ');
   }
 
+  const WEEKDAYS = [1, 2, 3, 4, 5];
+  const daysLabel = (days: number[]): string =>
+    days.length === WEEKDAYS.length && WEEKDAYS.every((d) => days.includes(d)) ? t('ext.days.weekdays') : dayList(days);
+
+  // An auto-start session with no end reads as time awake so far (ExtEdge board, auto-start).
+  const autoOpen = (view: IExtState): boolean =>
+    view.lock === 'held' &&
+    isLive(view.session) &&
+    view.session.endsAt === null &&
+    (view.origin === 'startup' || view.origin === 'autostart');
+
   function render(s: IExtState | null = state): void {
     const view = s ?? fallbackState();
     const mode = modeOf(view);
@@ -206,6 +217,8 @@ async function boot(): Promise<void> {
     const now = Date.now();
     const origin = live ? view.origin : null;
     const isSched = held && origin === 'schedule';
+    const sched = isSched ? scheduleNow(now) : null;
+    const auto = autoOpen(view);
     const system = view.level === 'system';
     root.dataset.mode = mode;
 
@@ -242,7 +255,10 @@ async function boot(): Promise<void> {
     if (mode === 'starting') metaText = t('ext.popup.asking');
     if (held && session) {
       const rem = remainingMs(session, now);
-      if (isSched && session.endsAt !== null) metaText = t('ext.schedule.until', { time: time.hm(session.endsAt) });
+      if (isSched && session.endsAt !== null) {
+        metaText = t('ext.schedule.until', { time: time.hm(session.endsAt) });
+        if (sched) meta2 = daysLabel(sched.days);
+      } else if (auto) metaText = t('ext.popup.sinceMeta', { time: time.since(session.startedAt, now) });
       else if (rem === null) metaText = t('ext.popup.noEnd');
       else if (rem >= DAY) metaText = t('tool.timer.until', { wall: time.full(roundToMinute(now + rem)) });
       else metaText = t('ext.popup.started', { time: time.since(session.startedAt, now) });
@@ -335,7 +351,7 @@ async function boot(): Promise<void> {
     let help = t(system ? 'ext.level.system.help' : 'ext.level.display.help');
     if (isSched) help = ui.levelSaved ? t('ext.schedule.levelSaved') : t('ext.schedule.levelHelp');
     el.levelHelp.textContent = help;
-    show(el.levelHelp, isSched || (!held && !extendCard && !incognito && !tipsOn));
+    show(el.levelHelp, isSched || auto || (!held && !extendCard && !incognito && !tipsOn));
 
     // Length chips: the running preset while live, the default length in Ready.
     show(el.chips, !blocked && !isSched && !proPanel && !extendCard && !untilPanel);
@@ -358,16 +374,11 @@ async function boot(): Promise<void> {
     if (untilPanel) renderUntil();
 
     // Schedule card, Pro row and panel, tips, footer.
-    const sched = isSched ? scheduleNow(now) : null;
     if (show(el.sched, sched !== null) && sched) {
       el.schedDays.textContent = dayList(sched.days);
       const start = minutesOf(sched.start);
       const end = minutesOf(sched.end);
-      const range = t('ext.time.span', {
-        from: time.wall(start),
-        to: end <= start ? t('ext.time.nextDay', { time: time.wall(end) }) : time.wall(end),
-      });
-      el.schedRange.textContent = `${range} · ${t(sched.level === 'system' ? 'ext.level.system' : 'ext.level.display')}`;
+      el.schedRange.textContent = `${time.range(start, end)} · ${t(sched.level === 'system' ? 'ext.level.system' : 'ext.level.display')}`;
     }
     show(el.proRow, proRow);
     show(el.pro, proPanel);
@@ -395,8 +406,11 @@ async function boot(): Promise<void> {
       if (rem === null) {
         shown = now - session.startedAt - session.pausedMs;
         p = 1;
-        kicker = t('ext.popup.awakeFor');
-        caption = t('ext.popup.since', { time: time.since(session.startedAt, now) });
+        if (autoOpen(view)) caption = t('tool.timer.elapsedCaption');
+        else {
+          kicker = t('ext.popup.awakeFor');
+          caption = t('ext.popup.since', { time: time.since(session.startedAt, now) });
+        }
         timerAria = t('tool.timer.elapsed', { time: words(shown, t) });
       } else {
         shown = rem;

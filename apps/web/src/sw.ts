@@ -3,6 +3,7 @@ import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching';
 import { registerRoute, setCatchHandler } from 'workbox-routing';
 import { CacheFirst, NetworkFirst, NetworkOnly, StaleWhileRevalidate } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
+import { langOf, offlinePages } from './sw-fallback';
 
 interface IShellEntry {
   url: string;
@@ -17,10 +18,8 @@ declare const self: ServiceWorkerGlobalScope & {
 };
 
 const DAY_S = 86_400;
-const LOCALES = ['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
 const CONTENT =
   /^\/(?:(?:es|pt-br|de|fr|ja|zh|hi)\/)?(?:for|on|vs|guides|learn|about|privacy|terms|changelog|pro)(?:\/|$)/u;
-const NO_FALLBACK = [/^\/api\//u, /^\/embed\//u, /^\/pip$/u];
 const SHELL_CACHE = 'at-shell';
 const SHELL = self.__AT_SHELL;
 const PRECACHE = self.__WB_MANIFEST;
@@ -31,10 +30,6 @@ cleanupOutdatedCaches();
 precacheAndRoute(PRECACHE, { ignoreURLParametersMatching: [/.*/u] });
 
 const sameOrigin = (url: URL) => url.origin === self.location.origin;
-const langOf = (pathname: string) => {
-  const first = pathname.split('/')[1] ?? '';
-  return LOCALES.includes(first) ? first : 'en';
-};
 // Shell pages are stored under their URL plus revision, like Workbox's precache: an update fetches only the pages
 // whose revision changed, and the old copy keeps serving until the new worker activates.
 const shellKey = (url: string) => new URL(`${url}?at-rev=${REVISION.get(url) ?? ''}`, self.location.origin).href;
@@ -72,8 +67,8 @@ async function cacheContentPage(event: ExtendableEvent, pathname: string) {
 }
 
 // Install caches only what this visitor needs: the shell of the language of the page that registered the worker
-// (and of any language an earlier version had cached), plus that page itself. Other languages and pages are
-// cached when they are first opened.
+// (its home, its /pip floating timer and its web manifest, and those of any language an earlier version had cached),
+// plus that page itself. Other languages and pages are cached when they are first opened.
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
@@ -162,13 +157,12 @@ registerRoute(
 // Any other page goes to the network, so an offline navigation reaches the fallback below instead of an error page.
 registerRoute(({ url, request }) => sameOrigin(url) && request.mode === 'navigate', new NetworkOnly());
 
+// Offline and not cached: a floating timer opens a cached floating timer, any other page a cached home.
 setCatchHandler(async ({ request, url }) => {
-  if (request.mode !== 'navigate' || NO_FALLBACK.some((re) => re.test(url.pathname))) return Response.error();
+  if (request.mode !== 'navigate') return Response.error();
   const cache = await caches.open(SHELL_CACHE);
-  const own = langOf(url.pathname) === 'en' ? '/' : `/${langOf(url.pathname)}/`;
-  // The tool reads its preset or until-time from the URL, so the home page serves any tool URL offline.
-  for (const home of [own, '/', ...LOCALES.map((l) => `/${l}/`)]) {
-    const hit = await cache.match(shellKey(home));
+  for (const page of offlinePages(url.pathname)) {
+    const hit = await cache.match(shellKey(page));
     if (hit) return hit;
   }
   return Response.error();

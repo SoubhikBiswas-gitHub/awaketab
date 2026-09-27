@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
+import { langOf, offlinePages } from '../src/sw-fallback';
 import * as headerTools from './headers.mjs';
 import { buildServiceWorker, precacheManifest, SHELL_PAGES, shellManifest } from './sw.mjs';
 
@@ -136,6 +137,48 @@ describe('shellManifest: pages cached per language by src/sw.ts', () => {
     await expect(shellManifest(dist)).rejects.toThrow();
     await expect(precacheManifest(dist)).rejects.toThrow();
     await put('pip.html', `<!doctype html><title>pip</title>${pip}`);
+  });
+});
+
+describe('offline fallback in src/sw.ts (docs/05 §8.2, §9)', () => {
+  const homes = ['/', '/es/', '/pt-br/', '/de/', '/fr/', '/ja/', '/zh/', '/hi/'];
+  const pips = homes.map((h) => `${h === '/' ? '' : h.slice(0, -1)}/pip`);
+
+  it('opens a floating timer only in place of a floating timer, own language first, English next', () => {
+    expect(offlinePages('/pip')).toEqual(pips);
+    expect(offlinePages('/es/pip')).toEqual(['/es/pip', '/pip', ...pips.slice(2)]);
+    expect(offlinePages('/de/pip')[0]).toBe('/de/pip');
+    expect(offlinePages('/de/pip')[1]).toBe('/pip');
+    for (const pip of pips) {
+      expect(offlinePages(pip), pip).toHaveLength(8);
+      expect(
+        offlinePages(pip).some((p) => p.endsWith('/') || !p.endsWith('/pip')),
+        pip,
+      ).toBe(false);
+    }
+  });
+
+  it('opens a cached home for any other page, which reads its preset or end time from the URL', () => {
+    expect(offlinePages('/')).toEqual(homes);
+    expect(offlinePages('/30m')).toEqual(homes);
+    expect(offlinePages('/until/17-30')[0]).toBe('/');
+    expect(offlinePages('/es/30m').slice(0, 2)).toEqual(['/es/', '/']);
+    expect(offlinePages('/hi/')[0]).toBe('/hi/');
+  });
+
+  it('never falls back for the API or the embed', () => {
+    expect(offlinePages('/api/license')).toEqual([]);
+    expect(offlinePages('/embed/cook')).toEqual([]);
+  });
+
+  it('reads the language from the first path segment', () => {
+    expect(langOf('/pt-br/pip')).toBe('pt-br');
+    expect(langOf('/pip')).toBe('en');
+    expect(langOf('/learn/x')).toBe('en');
+  });
+
+  it('knows the same locales as the build', () => {
+    for (const l of LOCALES) expect(langOf(`/${l}/`)).toBe(l);
   });
 });
 
