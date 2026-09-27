@@ -14,6 +14,7 @@ const t = createT(locale);
 const parts = Astro.url.pathname.split('/').filter(Boolean);
 const first = parts[0] && (LOCALES as readonly string[]).includes(parts[0]) ? parts[1] : parts[0];
 // Hubs and product pages are English-only routes (docs/00 §7), so every locale links to them.
+const english = locale !== 'en';
 const nav = [
   ['for', '/for', t('header.nav.for')],
   ['on', '/on', t('header.nav.on')],
@@ -34,8 +35,9 @@ const nav = [
   <nav class="at-nav" aria-label={t('header.nav')}>
     {
       nav.map(([id, href, label]) => (
-        <a class="at-nav-link" href={href} aria-current={id === first ? 'page' : undefined}>
+        <a class="at-nav-link" href={href} hreflang={english ? 'en' : undefined} aria-current={id === first ? 'page' : undefined}>
           {label}
+          {english && <span class="sr-only"> {t('header.nav.english')}</span>}
         </a>
       ))
     }

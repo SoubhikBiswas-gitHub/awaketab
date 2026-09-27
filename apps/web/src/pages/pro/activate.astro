@@ -156,7 +156,7 @@ const CO: TCo[] = [
                 <path class="at-pro-ok-check" d="M16.5 24.5l5 5 10-10.5"></path>
               </svg>
               <div class="at-pro-ok-title">
-                <h2 class="at-pro-h3">{t('pro.activated')}</h2>
+                <h2 class="at-pro-h3" tabindex="-1">{t('pro.activated')}</h2>
                 <p class="at-pro-small at-pro-muted" data-ok-key data-tpl={a('ok.key')}>{a('ok.key', { tail: '····' })}</p>
               </div>
             </div>
@@ -181,7 +181,7 @@ const CO: TCo[] = [
           </div>
 
           <div role="status" class="at-pro-ext" data-ext-panel hidden>
-            <h2 id="ext-title" class="at-pro-h3">{t('page.pro.activate.ext.title')}</h2>
+            <h2 id="ext-title" class="at-pro-h3" tabindex="-1">{t('page.pro.activate.ext.title')}</h2>
             <p id="ext-copy" class="at-pro-ext-copy">{t('page.pro.activate.ext')}</p>
             <div class="at-pro-ext-row">
               <input class="at-input at-pro-key" type="text" readonly data-ext-key aria-labelledby="ext-title" aria-describedby="ext-copy" />
@@ -252,7 +252,7 @@ const CO: TCo[] = [
                     {c('showKey')}
                   </button>
                   <div id="co-key" class="at-pro-co-key" data-co-key-panel hidden>
-                    <input class="at-input at-pro-key" type="text" readonly aria-label={c('keyLabel')} data-co-key />
+                    <p class="at-pro-key-out"><span class="sr-only">{c('keyLabel')}: </span><code data-co-key></code></p>
                     <button type="button" class="at-button at-button-sm at-pro-copy" data-co-copy>
                       <span aria-live="polite"><span class="at-pro-copy-label">{a('copy')}</span><span class="at-pro-copied-label">{a('copied')}</span></span>
                     </button>
