@@ -22,7 +22,7 @@ Preview deployments send `X-Robots-Tag: noindex` from two host-keyed `_headers` 
 
 ## 2. Cloudflare setup (one-time)
 
-1. Pages project `awaketab` connected to `github.com/awaketab/awaketab`; build command `pnpm -F web build`, output `apps/web/dist`, Node 22.
+1. Pages project `awaketab` connected to `github.com/SoubhikBiswas-gitHub/awaketab`; build command `pnpm -F web build`, output `apps/web/dist`, Node 22.
 2. Custom domains: `awaketab.com` (apex, CNAME flattening) and `www.awaketab.com`. Redirect domains `awaketab.app`, `awaketab.page`, `awaketab.dev` added as zones with a Bulk Redirect rule → `https://awaketab.com/$1` (301, preserve path and query).
 3. KV namespaces `LICENSES` and `LICENSES_PREVIEW` bound to production/preview.
 4. Analytics Engine datasets `awaketab_events`, `awaketab_events_preview` bound as `EVENTS`.
