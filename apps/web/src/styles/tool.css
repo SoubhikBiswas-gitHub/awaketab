@@ -305,7 +305,6 @@
   position: absolute;
   inset: 0;
   display: none;
-  animation: at-in 0.7s var(--at-ease) both;
 }
 
 .at-face-ring,
