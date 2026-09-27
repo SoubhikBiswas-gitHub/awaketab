@@ -61,9 +61,9 @@ const pillLabels = (html: string): string[] =>
   );
 
 describe('structured article blocks (docs/06 §22)', () => {
-  it('gives each of the 25 indexed English pages its lead and its family blocks', async () => {
+  it('gives each of the 28 indexed English pages its lead and its family blocks', async () => {
     const routes = await indexedEnglish();
-    expect(routes).toHaveLength(25);
+    expect(routes).toHaveLength(28);
     for (const route of routes) {
       const html = await built(route);
       const family = route.split('/')[1] as TFamily;

@@ -21,6 +21,7 @@ lead: "Every current major browser supports the Screen Wake Lock API: Chrome and
 toc:
   which-browsers-support-the-screen-wake-lock-api: "Browser support"
   what-works-beyond-a-single-tab: "Beyond a single tab"
+  which-page-covers-my-device: "Your device"
   why-would-a-supported-browser-refuse-the-lock: "Why a lock is refused"
   what-does-the-operating-system-do-while-the-lock-holds: "What the OS does"
   how-is-this-table-checked: "How it is checked"
@@ -69,7 +70,7 @@ related:
   - "/learn/how-we-tested"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 ## Which browsers support the Screen Wake Lock API?
@@ -87,6 +88,8 @@ updated: 2026-09-27
 
 Other Chromium browsers, such as Brave, share Chrome's code, but their version floors are not listed here because we haven't checked them separately.
 
+Native support means the browser implements the Screen Wake Lock API. Below these versions, AwakeTab shows "Tap to use the fallback" and offers a silent one-frame video loop after one tap. While it runs, the pill reads "Awake via video fallback".
+
 ## What works beyond a single tab?
 
 Two AwakeTab features depend on browser support of their own.
@@ -99,6 +102,19 @@ Two AwakeTab features depend on browser support of their own.
 If your job needs a hidden tab to keep the screen on, [AwakeTab for Chrome](/extension) is the row that matters.
 
 ::ad
+
+## Which page covers my device?
+
+Wake locks behave differently on an iPhone, a managed Chromebook and a Windows laptop. These pages name the supported versions and the settings that still apply on each one:
+
+- [Keep your iPhone screen on in Safari](/on/iphone-safari)
+- [Keep your Android screen on in Chrome](/on/android-chrome)
+- [Keep the screen on in Windows 11 and 10](/on/windows-11)
+- [Keep your Mac screen awake from a browser tab](/on/macos)
+- [Keep a Chromebook screen on](/on/chromebook)
+- [Keep the screen on in Firefox](/on/firefox)
+
+Every device and browser page is listed on the [devices hub](/on).
 
 ## Why would a supported browser refuse the lock?
 

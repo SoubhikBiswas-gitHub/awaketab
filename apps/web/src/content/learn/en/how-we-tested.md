@@ -75,7 +75,7 @@ related:
   - "/about"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 ## What does each claim rest on today?
@@ -83,6 +83,8 @@ updated: 2026-09-27
 Each fact comes from one of four places, and its page says when it was last checked.
 
 ::rows basis
+
+When a browser changes, the matrix and the affected pages change with it, and the change is dated in the [changelog](/changelog).
 
 ## What did the source check find?
 

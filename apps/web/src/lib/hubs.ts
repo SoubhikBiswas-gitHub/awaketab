@@ -233,7 +233,7 @@ export const HUBS: Record<TContentKind, IHub> = {
   },
   vs: {
     crumb: 'Compare',
-    lead: 'Some tools keep the whole computer awake, some fake input, and some are tabs like this one. Each comparison says plainly when the other tool is the better pick.',
+    lead: 'AwakeTab is instant and needs no installation, but it is not always the right tool. A native utility beats it when the screen must stay on with the browser out of sight. Some tools keep the whole computer awake, some fake input, and some are tabs like this one; each comparison uses dated facts and says plainly when the other tool is the better pick.',
     jumpAria: 'Jump to a kind of tool',
     unit: ['comparison', 'comparisons'],
     groups: [
@@ -308,7 +308,7 @@ export const HUBS: Record<TContentKind, IHub> = {
   },
   guides: {
     crumb: 'Fixes',
-    lead: 'Step-by-step fixes for timeouts, greyed-out options and screens that go dark, grouped by system. Each says what AwakeTab can change and what it cannot.',
+    lead: 'Sometimes the real answer is a system setting, not a tab. These step-by-step fixes, grouped by system, show where the timeout lives, what to do when an option is greyed out, and when AwakeTab is the faster answer.',
     jumpAria: 'Jump to a system',
     unit: ['guide', 'guides'],
     groups: [
