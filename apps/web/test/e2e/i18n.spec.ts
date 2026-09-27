@@ -256,10 +256,13 @@ test.describe('RTL readiness (phase-2 ar)', () => {
     // Direction-implying icons flip.
     const separator = page.locator('[data-slot="breadcrumb-separator"] > svg').first();
     await expect(separator).toHaveCSS('transform', 'matrix(-1, 0, 0, 1, 0, 0)');
-    // The honest-limit accent bar sits on the inline start edge, i.e. the right edge in RTL.
+    // The honest-limit note's glyph sits on the inline start edge, i.e. the right edge in RTL. (Clear Night, B5:
+    // the note is a card with a leading glyph; side-stripe borders are banned, DESIGN.md §11.2.)
     const limit = page.locator('[role="note"]').first();
-    await expect(limit).toHaveCSS('border-right-width', '4px');
-    await expect(limit).not.toHaveCSS('border-left-width', '4px');
+    const [noteBox, glyphBox] = await Promise.all([limit.boundingBox(), limit.locator('> svg').boundingBox()]);
+    expect(noteBox).not.toBeNull();
+    expect(glyphBox).not.toBeNull();
+    if (noteBox && glyphBox) expect(glyphBox.x + glyphBox.width / 2).toBeGreaterThan(noteBox.x + noteBox.width / 2);
     // Start-aligned text follows the direction.
     await expect(page.locator('h1')).toHaveCSS('direction', 'rtl');
   });

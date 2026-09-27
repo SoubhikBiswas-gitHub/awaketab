@@ -34,7 +34,7 @@ The English content total is 44 pages after OD-3 (14 + 11 + 7 + 7 + 5; redesign 
 
 ## 2. Page templates
 
-Every template shares: one `<h1>` matching the target intent; the answer in the first 100 words; the tool island (`05-frontend-spec.md` §2) above the fold with the scenario preset via `data-preset` and `data-mode`; a 3–5 item FAQ as `<details>`; breadcrumbs; related links; the author box; a "Last verified" line where facts depend on software versions; and no ad slot above the fold on any page (`09-monetization-impl.md`).
+Every template shares: one `<h1>` matching the target intent; the answer in the first 100 words; the tool island (`05-frontend-spec.md` §2) above the fold with the scenario preset via `data-preset` and `data-mode`; a 3–5 item FAQ as `<details>`; breadcrumbs; related links; the author box; a "Sources checked {date}" line where facts depend on software versions (O-46; "Tested on {device}" once a device run is recorded); and no ad slot above the fold on any page (`09-monetization-impl.md`).
 
 ### 2.1 `/` — home
 
@@ -426,7 +426,7 @@ Honest limits below were corrected on 2026-09-27 (redesign B11, decision O-79) t
 | `/learn/*` research | On any contradicting evidence, else yearly re-test | Re-run the Teams test and OS sleep matrix |
 | `/changelog` | Monthly | One entry per release |
 
-A page whose `lastVerified` is older than 180 days shows "Last verified over 6 months ago — re-testing" and appears in the weekly freshness report (`14-devops.md`).
+A page whose `lastVerified` is older than 180 days shows "Sources checked over 6 months ago. Re-checking now." (O-46, B5) and appears in the weekly freshness report (`14-devops.md`).
 
 ## 15. Search Console, Bing, IndexNow
 
@@ -452,7 +452,7 @@ Targets follow the blueprint: day 30 — 60 URLs indexed; day 90 — top 10 for 
 - **FR-SEO-01** Given any indexable page, when built, then it has exactly one `<h1>`, a title ≤ 60 chars ending in " — AwakeTab" (or starting with "AwakeTab"), a unique description of 70–155 chars and a self canonical.
 - **FR-SEO-02** Given a page with translations, when built, then every alternate lists all others plus self and `x-default`, and the sitemap alternates match.
 - **FR-SEO-03** Given fewer than 25 ratings in `data/ratings.json`, when the home page is built, then the `WebApplication` object has no `aggregateRating` property.
-- **FR-CONTENT-01** Given any `/on/*` page, when built, then `lastVerified` is present and rendered as "Last verified: {date}".
+- **FR-CONTENT-01** Given any `/on/*` page, when built, then `lastVerified` is present and rendered as "Sources checked {date}" (decision O-46, redesign B5; was "Last verified: {date}").
 
 ## 18. PROPOSED identifiers (add to 00-conventions.md)
 
@@ -487,4 +487,14 @@ Applies owner decisions OD-3, OD-2 / O-45, O-15, O-23, O-49 and O-79 (`docs/rede
 - **Word bars as tested.** `test/seo/holding-page.test.ts` measures the built `.at-prose` block (body, FAQ, related links): indexable pages meet §2 (for 600–1,000, on 600–900, vs 700–1,000, guides 700–1,100, learn 1,000–2,000); drafts keep the old 600–1,000 band.
 - **Fact fixes.** The battery-saver refusal claim (decision D-R12), unrecorded device-test claims ("in our tests", "tested on Ubuntu"), the macOS idle-sleep claim, Caffeine's F15 key press on Mac, iPadOS 26 Split View, the floating window's Firefox 151+ support and the Windows Energy saver rename are fixed in every English page, in the 70 translations and in the seven locale homes (`src/content/locale-home/*.ts`), and in `src/data/support-matrix.json` (notes per engine; Edge platforms; the extension's 30 s alarm needs Chrome 120; unverified Brave, Arc and Opera removed from the extension row, O-41). `test/lib/content.test.ts` fails if a false claim, a banned term or an em dash in English prose comes back.
 - **Generator retired (O-15).** `scripts/write-content.mjs` wrote the 51 templated pages; it is deleted, and `test/lib/content.test.ts` fails if the file or an npm script running it comes back, so a re-run can never overwrite the rewrites.
-- **Not done here (UI or code follow-ups).** The "Last verified" badge copy (O-46: "Sources checked {date}" / "Tested on {device}") lives in `en.json` `content.verified` and `ArticlePage.astro`; the hub pages' intro copy and item lines (`HubPage.astro`, canvas `HubFor.dc.html`), and the home page's battery-saver and testing claims (`index.astro`) belong to B5; `tool.advice.battery_saver` in all locale catalogs is O-59.
+- **Not done here (UI or code follow-ups).** (Done in B5, §21.) The "Last verified" badge copy (O-46: "Sources checked {date}" / "Tested on {device}") lives in `en.json` `content.verified` and `ArticlePage.astro`; the hub pages' intro copy and item lines (`HubPage.astro`, canvas `HubFor.dc.html`), and the home page's battery-saver and testing claims (`index.astro`) belong to B5; `tool.advice.battery_saver` in all locale catalogs is O-59.
+
+## 21. As built — Clear Night templates (redesign B5 · 2026-09-27)
+
+- **Templates.** `ArticlePage.astro` + `ContentLayout.astro` render every content page to the canvas boards (`ContentArticle` for `/for`; `GuideOn`, `GuideVs`, `GuideGuides`, `GuideLearn` for the other families); `HubPage.astro` renders the five hubs (`HubFor` board, `hub` prop); `HomeBelow.astro` renders the home below the tool. Layout and component values: `05-frontend-spec.md` §3.31; identifiers: `00-conventions.md` §13.21.
+- **Section order.** `/for`, `/on`, `/vs`: head → tool → body → honest limit → (related rows on `/for`) → FAQ → (related links on the guide boards) → author. `/guides`, `/learn`: head → body → honest limit → FAQ → tool ("Or skip the settings: open AwakeTab" / "Try it") → related → author: the tool is the shortcut after the how-to (§2.6, §2.7). The limit and FAQ stay inside `.at-prose`, so the word bars of §20 measure the same blocks as before (body, FAQ, related links on the tool-on-top pages).
+- **Badge (O-46).** "Sources checked {date}" (`content.verified`, all eight locales) in the head, on the author card of `/for` pages and on the device matrix; the stale notice reads "Sources checked over 6 months ago. Re-checking now.". "Tested on {device}" needs a recorded device run (the matrix is still `pending`), so nothing renders it yet.
+- **Hubs.** Groups, intro copy and one-line item summaries follow `HubFor.dc.html` (`src/lib/hubs.ts`); every page of the family is listed, drafts included (14 · 11 · 7 · 7 · 5), and a page no group names joins the last group. Items without a board line show their honest limit. The "Try it now" card links the tool with no end time (`/?preset=pinf&autostart=1`); hubs load no tool island.
+- **Home below the tool.** The canvas copy, with the fact-check applied: no battery-saver refusal, no "in our tests" or "device on a shelf" claims, "hidden" rather than "lost focus", and no claim that it stops the lock screen. Hub link counts come from the collections ("All fourteen situations").
+- **Related anchors.** English pages use the target's `h1` (§10); site pages outside the collections (`/embed`, `/extension`, `/kiosk`, `/library`, `/pro`, `/about`) use their page `h1` key.
+- **Known gaps against the canvas (content, not template).** The boards show a lead paragraph under the h1 before the tool, screenshots, step lists with menu paths, checklists and a per-page matrix; the Markdown bodies carry their answer paragraph as the first body paragraph (styled as the lead) and have no structured steps or screenshots. A `lead` frontmatter field would let the template lift the answer above the tool.

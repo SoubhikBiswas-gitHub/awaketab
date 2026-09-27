@@ -1,12 +1,24 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-// After BaseLayout on purpose: tokens.css (Tailwind + layer order) and tool.css must precede this sheet.
+// After BaseLayout on purpose: tokens.css (Tailwind + layer order), tool.css and shell.css must precede this sheet.
 import '../styles/content.css';
 import AdSlot from '../components/AdSlot.astro';
 import type { TLocale } from '../i18n/locales';
 import type { TSchemaNode } from '../lib/seo';
 import { shouldRenderAdSlots } from '../lib/ads';
 
+/*
+ * Content article body (redesign B5; canvas ContentArticle, GuideOn/Vs/Guides/Learn). The shared header and
+ * footer come from BaseLayout (B2). This layout owns the article grid and the ad slots (docs/09 §3.1: AdSlot is
+ * rendered by ContentLayout only):
+ *   phone/tablet  head · tool · body            (toolAt "top": /for, /on, /vs)
+ *                 head · body · tool · tail     (toolAt "after": /guides, /learn; the tool is the shortcut)
+ *   desktop       toc (sticky) | head, tool, body | rail 160 × 600
+ * Slots: `head`, `tool`, `toc`, default (the article prose), `notes` (limit, FAQ: always in the prose), `tail`,
+ * `after` (page data outside the word band). The prose keeps its `.at-prose` wrapper, which the word-band test
+ * reads (test/seo/holding-page.test.ts); with the tool on top the tail sits inside it too.
+ * The inline ad follows the prose, so it never touches the tool card or the honest-limit callout.
+ */
 interface Props {
   title: string;
   description: string;
@@ -19,6 +31,10 @@ interface Props {
   alternates?: Array<{ locale: TLocale; href: string }> | undefined;
   /** Locale-switcher targets: the page's own translations (docs/07 §8 "links point to the same-locale page"). */
   localeLinks?: Partial<Record<TLocale, string>> | undefined;
+  /** Where the embedded tool sits (docs/06 §2.3–§2.7). */
+  toolAt?: 'top' | 'after';
+  /** Board family: `article` (ContentArticle, /for) or `guide` (GuideOn/Vs/Guides/Learn). */
+  variant?: 'article' | 'guide';
 }
 
 const {
@@ -32,9 +48,10 @@ const {
   schema,
   alternates,
   localeLinks,
+  toolAt = 'top',
+  variant = 'article',
 } = Astro.props;
-// Ads render only here, gated by PUBLIC_ADS_ENABLED (docs/00 §8.3, docs/09 §3.1). The rail slot
-// takes the second grid column on large screens; slot order in the DOM is unchanged.
+// Ads render only here, gated by PUBLIC_ADS_ENABLED (docs/00 §8.3, docs/09 §3.1).
 const showAds = shouldRenderAdSlots();
 ---
 
@@ -51,30 +68,38 @@ const showAds = shouldRenderAdSlots();
   localeLinks={localeLinks}
   contentPage
 >
-  <div
-    class:list={[
-      'at-content-layout grid grid-cols-1 gap-8',
-      showAds && 'lg:grid-cols-[minmax(0,1fr)_10rem]',
-    ]}
-  >
-    {showAds && <AdSlot kind="rail" />}
-    <main class="at-content mx-auto mt-8 w-full max-w-[45rem] text-base leading-normal lg:col-start-1 lg:row-start-1">
-      <article>
-        <slot />
-      </article>
-    </main>
-    {showAds && <AdSlot kind="inline" />}
-  </div>
-  {showAds && (
-    <script>
-      import { bootAds } from '../lib/ads';
-      void bootAds({
-        onSlot: (page) => {
-          void import('../lib/analytics.js').then((mod) => {
-            mod.track('ad_slot_loaded', { page }, { telemetry: true, source: 'web', locale: document.documentElement.lang || 'en' });
-          });
-        },
-      });
-    </script>
-  )}
+  <main class="at-cp">
+    <article class="at-art" data-tool-at={toolAt} data-variant={variant}>
+      <slot name="toc" />
+      <div class="at-head"><slot name="head" /></div>
+      {toolAt === 'top' && <slot name="tool" />}
+      <div class="at-body">
+        <div class="at-prose">
+          <div class="at-md"><slot /></div>
+          {showAds && <AdSlot kind="inline" />}
+          <slot name="notes" />
+          {toolAt === 'top' && <slot name="tail" />}
+        </div>
+        <slot name="after" />
+      </div>
+      {toolAt === 'after' && <slot name="tool" />}
+      {toolAt === 'after' && <div class="at-tail"><slot name="tail" /></div>}
+      {showAds && <AdSlot kind="rail" />}
+    </article>
+  </main>
+  {/* One script: Astro numbers a component's scripts at compile time, so a second, conditional <script> would
+      render the wrong one. bootAds() returns at once unless PUBLIC_ADS_ENABLED is set. */}
+  <script>
+    import { initContentNav } from '../lib/content-nav';
+    import { bootAds } from '../lib/ads';
+
+    initContentNav();
+    void bootAds({
+      onSlot: (page) => {
+        void import('../lib/analytics.js').then((mod) => {
+          mod.track('ad_slot_loaded', { page }, { telemetry: true, source: 'web', locale: document.documentElement.lang || 'en' });
+        });
+      },
+    });
+  </script>
 </BaseLayout>

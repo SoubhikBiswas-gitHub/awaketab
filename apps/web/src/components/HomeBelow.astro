@@ -1,0 +1,1008 @@
+---
+import { getCollection } from 'astro:content';
+import StatusPill from './shell/StatusPill.astro';
+import { t } from '../i18n/load';
+import matrix from '../data/support-matrix.json';
+import { CONTENT_KINDS, type TContentKind } from '../lib/content-i18n';
+
+/*
+ * Home, below the tool (redesign B5; canvas HomeBelow.dc.html). English home only (the locale homes keep their own
+ * copy). Sections, each 1 px line on top and --at-section apart: what AwakeTab does · how it works (three steps,
+ * then the seven pill states) · honest limits · browser support (from support-matrix.json) · guides and devices ·
+ * comparisons and fixes · FAQ (<details>) · how AwakeTab is checked. Desktop puts each heading in a sticky 300 px
+ * column beside its content. The `.at-prose` wrapper is what the home word-band test reads (1,200–1,800 words).
+ * Build-time markup only; styles are scoped to this component and load only with the home page.
+ */
+type TLock = 'idle' | 'requesting' | 'held' | 'lost' | 'denied' | 'unsupported' | 'fallback';
+
+const STATES: Array<[TLock, string]> = [
+  ['idle', 'Nothing requested yet. Pick a duration to start.'],
+  ['requesting', 'The request is in flight; the browser has not answered.'],
+  ['held', 'The browser confirmed the lock. Only now does the timer run.'],
+  ['lost', 'The tab was hidden, so the browser took the lock back. AwakeTab asks again when you return.'],
+  ['denied', 'The browser refused the request, for example Safari before your first tap. The panel names the cause and the fix.'],
+  ['unsupported', 'No Screen Wake Lock API here; a fallback is offered instead.'],
+  ['fallback', 'A silent one-frame video is holding the display. It needs this tab visible and uses a little more battery.'],
+];
+
+// Anchor text is the target page's h1 (docs/06 §10); a link whose page is gone (B11 merges) drops out.
+const h1s = new Map<string, string>();
+const counts: Record<TContentKind, number> = { for: 0, on: 0, vs: 0, guides: 0, learn: 0 };
+for (const kind of CONTENT_KINDS) {
+  for (const entry of await getCollection(kind)) {
+    if (entry.data.locale !== 'en') continue;
+    h1s.set(`/${kind}/${entry.id.replace(/^en\//u, '')}`, entry.data.h1);
+    counts[kind] += 1;
+  }
+}
+const links = (hrefs: string[]): Array<{ href: string; label: string }> =>
+  hrefs.flatMap((href) => {
+    const label = h1s.get(href);
+    return label ? [{ href, label }] : [];
+  });
+const scenarios = links(['/for/cooking', '/for/presentations', '/for/downloads', '/for/dashboards', '/for/night-clock', '/for/video-calls']);
+const devices = links(['/on/iphone-safari', '/on/android-chrome', '/on/windows-11', '/on/macos', '/on/chromebook', '/on/firefox']);
+const comparisons = links(['/vs/caffeine', '/vs/powertoys-awake', '/vs/nosleep-page', '/vs/mouse-jigglers']);
+const fixes = links([
+  '/guides/windows-11-screen-turns-off-after-1-minute',
+  '/guides/iphone-auto-lock-never-greyed-out',
+  '/guides/mac-prevent-sleep-lid-closed',
+]);
+const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
+const word = (n: number): string => WORDS[n] ?? String(n);
+const cap = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
+
+const rows = [
+  ...matrix.browsers.map((b) => ({ ...b, platforms: b.platforms.join(', ') })),
+  ...matrix.contexts.map((c) => ({ ...c, platforms: '' })),
+];
+const lastVerified = new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeZone: 'UTC' }).format(
+  new Date(`${matrix.lastUpdated}T00:00:00Z`),
+);
+const FAQ: Array<[string, string]> = [
+  ['Does it still work if I switch tabs or minimise the window?', `No. The browser releases the lock when the document is hidden. AwakeTab pauses and asks again when the tab is visible. For a display behind other windows, use the extension or the ${t('tool.header.pip').toLowerCase()}.`],
+  ['Will it keep my laptop awake with the lid closed?', 'No, and neither will any other web page. Lid-close behaviour is an OS decision. Change it in power settings, attach an external display, or use a native tool.'],
+  ['Does it keep Teams or Slack showing me as available?', 'No. Presence follows keyboard and mouse idle time, not a lit display. AwakeTab never sends synthetic input.'],
+  ['Does it stop the whole computer from sleeping, or only the screen?', 'The screen is the guarantee. Idle system sleep is a separate policy the page cannot control. For a machine awake with the display off, use a native utility.'],
+  ['Why does my iPhone lock the screen anyway?', 'Low Power Mode forces a 30-second Auto-Lock. Turn it off in Settings → Battery. Safari needs iOS 16.4; a Home Screen app needs iOS 18.4. Below those, AwakeTab offers the video fallback.'],
+  ['What is the video fallback, and when does it run?', `A silent one-frame loop so the browser treats media as playing. It runs only when there is no Screen Wake Lock API, and only after you tap. The pill says "${t('tool.pill.fallback')}".`],
+  ['How much battery does it use, and can I leave it running overnight?', `The lock costs almost nothing; the lit screen drains the battery. Plug in, dim the display, and consider night clock mode on OLED. In Chrome and Edge, "${t('settings.battery.autoStop')}" ends the session before the battery runs out.`],
+  ['Is it free, and what happens to my data?', 'Free, no sign-up. Settings, session and stats stay in this browser, with no cookies and no fingerprinting. The optional first-party beacon sends no identifiers and can be turned off. No ads on the awake screen, now or later.'],
+];
+const ARROW = 'M5 12h13M13 6l6 6-6 6';
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const RINGDOT = 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z';
+---
+
+<div class="at-hb">
+  <div class="at-hb-band">
+    <span class="at-hb-line" aria-hidden="true"></span>
+    <a class="at-hb-jump" href="#home-what">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M6 13l6 6 6-6"></path></svg>
+      How it works, limits and support
+    </a>
+  </div>
+  <div class="at-prose">
+    <section id="home-what" class="at-hb-sec" aria-labelledby="h-what">
+      <h2 id="h-what">What AwakeTab does</h2>
+      <div class="at-hb-stack at-hb-measure">
+        <p class="at-hb-lead">
+          AwakeTab uses the browser's Screen Wake Lock API while this tab is visible, and its status only says the screen
+          is awake after the browser confirms the lock.
+        </p>
+        <p>
+          Pick a duration, {t('tool.preset.p15')} to {t('tool.preset.p240')}, {t('tool.preset.custom')} up to seven days,
+          or {t('tool.preset.until')} a clock time, and the display stops dimming and sleeping (a work idle-lock policy can
+          still lock it). The pill reads <strong>{t('tool.pill.held')}</strong> only while the browser is actually holding
+          the lock. Hide this tab and the browser takes the lock back, so the pill switches to
+          <strong>{t('tool.pill.lost')}</strong> and the timer stops until you come back.
+        </p>
+        <p>
+          No account, no download, no extension: the whole tool is this page. Settings, the current session and your stats
+          stay in this browser, and nothing is sent unless you leave the optional usage beacon on. It works offline after
+          the first visit, and <strong>{t('pwa.install')}</strong> in the header puts it on a home screen or dock.
+        </p>
+      </div>
+    </section>
+
+    <section id="home-how" class="at-hb-sec" aria-labelledby="h-how">
+      <h2 id="h-how">How it works</h2>
+      <div class="at-hb-how">
+        <ol class="at-hb-steps">
+          <li>
+            <span class="at-hb-num" aria-hidden="true">1</span>
+            <span class="at-hb-step">
+              <strong>You pick a duration.</strong>
+              <span>A preset, a custom length or a clock time starts a session. Each choice is one keypress:</span>
+              <span class="at-hb-keys">
+                <span><kbd class="at-kbd">1</kbd>–<kbd class="at-kbd">6</kbd> presets</span>
+                <span><kbd class="at-kbd">0</kbd> no end time</span>
+                <span><kbd class="at-kbd">U</kbd> clock time</span>
+                <span><kbd class="at-kbd">Space</kbd> start or stop</span>
+              </span>
+            </span>
+          </li>
+          <li>
+            <span class="at-hb-num" aria-hidden="true">2</span>
+            <span class="at-hb-step">
+              <strong>The browser is asked for a screen wake lock.</strong>
+              <span>
+                The same Screen Wake Lock API a video player uses. The browser can accept, refuse, or take the lock back
+                later; all three answers show as they happen.
+              </span>
+            </span>
+          </li>
+          <li>
+            <span class="at-hb-num" aria-hidden="true">3</span>
+            <span class="at-hb-step">
+              <strong>The timer follows the lock, not the clock.</strong>
+              <span>
+                The countdown runs only while the lock is held, on system time, so a suspended laptop comes back with an
+                honest number. When time is up you get a chime and the choice to extend or stop.
+              </span>
+            </span>
+          </li>
+        </ol>
+        <div class="at-hb-stack">
+          <p class="at-hb-ink">A lock has exactly seven states, and the pill names the one you are in.</p>
+          <dl class="at-hb-states">
+            {
+              STATES.map(([state, meaning]) => (
+                <div>
+                  <dt>
+                    <StatusPill as="span" size="S" state={state} label={t(`tool.pill.${state}`)} />
+                  </dt>
+                  <dd>{meaning}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section id="home-limits" class="at-hb-sec" aria-labelledby="h-limits">
+      <h2 id="h-limits">Honest limits</h2>
+      <ul class="at-hb-limits">
+        <li>
+          <strong>A hidden tab cannot hold a wake lock.</strong>
+          <span>
+            Switching apps, minimising or changing tabs pauses the session. That is a platform rule. For a display awake
+            behind other windows, use the <a href="/extension">AwakeTab extension for Chrome and Edge</a>.
+          </span>
+        </li>
+        <li>
+          <strong>Closing the lid still puts the machine to sleep.</strong>
+          <span>No web page or extension can change that. It takes an OS setting, an external display or a native tool.</span>
+        </li>
+        <li>
+          <strong>Low Power Mode shortens Auto-Lock.</strong>
+          <span>
+            iPhone Low Power Mode forces a 30-second Auto-Lock. Separately, Firefox refuses a wake lock at 5% battery or
+            less while not charging; the pill then reads <strong>{t('tool.pill.denied')}</strong> and names the cause.
+          </span>
+        </li>
+        <li>
+          <strong>It does not touch your chat status.</strong>
+          <span>
+            Teams, Slack and Zoom presence follows keyboard and mouse idle time, not the display. AwakeTab never simulates
+            input to fake it.
+          </span>
+        </li>
+        <li>
+          <strong>Display sleep is not system sleep.</strong>
+          <span>A wake lock holds the screen, not the whole computer. For a machine awake with the screen off, use a native utility.</span>
+        </li>
+        <li>
+          <strong>Other software keeps its own rules.</strong>
+          <span>
+            A bank logout, a proctoring app, a monitor that sleeps on lost signal or a corporate lock-screen policy are
+            outside a wake lock's reach.
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <section id="home-support" class="at-hb-sec" aria-labelledby="h-support">
+      <h2 id="h-support">Browser and device support</h2>
+      <div class="at-hb-stack">
+        <p class="at-hb-measure">
+          Native support means the browser implements the Screen Wake Lock API. Where it is missing, a silent one-frame
+          video loop is offered after one tap.
+        </p>
+        <div class="at-hb-table" tabindex="0" role="region" aria-label="Browser support table">
+          <table>
+            <caption class="sr-only">Screen Wake Lock API support by browser</caption>
+            <thead>
+              <tr>
+                <th scope="col"><span class="at-hb-wide">Browser or context</span><span class="at-hb-narrow">Browser</span></th>
+                <th scope="col">From</th>
+                <th scope="col">Mechanism</th>
+                <th scope="col" class="at-hb-wide">What to expect</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                rows.map((row) => (
+                  <tr>
+                    <th scope="row">
+                      <span class="at-hb-cell">
+                        <span>{row.name}</span>
+                        {row.platforms && <span class="at-hb-plat at-hb-wide">{row.platforms}</span>}
+                      </span>
+                    </th>
+                    <td class="at-hb-num-cell">{row.minimumVersion ?? 'Any'}</td>
+                    <td>
+                      <span class="at-hb-mech">
+                        <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d={row.mechanism === 'fallback' ? RINGDOT : DOT} /></svg>
+                        <span class="at-hb-wide">{row.mechanism === 'fallback' ? 'Video fallback' : 'Native wake lock'}</span>
+                        <span class="at-hb-narrow">{row.mechanism === 'fallback' ? 'Fallback' : 'Native'}</span>
+                      </span>
+                    </td>
+                    <td class="at-hb-wide">{row.notes}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="at-hb-verified">
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.7 2.7L16.5 9.5"></path></svg>
+            Sources checked {lastVerified}
+          </span>
+          <a class="at-hb-link" href="/learn/browser-support-matrix">Per-version detail in the learn hub</a>
+        </div>
+        <p class="at-hb-small at-hb-measure">
+          Below these versions AwakeTab shows <strong>{t('tool.pill.unsupported')}</strong> and offers the video fallback.
+        </p>
+      </div>
+    </section>
+
+    <section id="home-guides" class="at-hb-sec" aria-labelledby="h-guides">
+      <h2 id="h-guides">Pick the guide for what you are doing</h2>
+      <div class="at-hb-pair">
+        <div class="at-hb-col">
+          <p>
+            Cooking, a talk, a long download, a wall dashboard: each has a sensible duration and its own honest limit, so
+            each gets a page with the tool already set up.
+          </p>
+          <ul class="at-hb-rows">
+            {scenarios.map((l) => <li><a href={l.href}><span>{l.label}</span><svg class="at-hb-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ARROW} /></svg></a></li>)}
+          </ul>
+          <a class="at-hb-link at-hb-strong" href="/for">All {word(counts.for)} situations</a>
+        </div>
+        <div class="at-hb-col">
+          <h3>Your device, specifically</h3>
+          <p>
+            Wake locks behave differently on an iPhone, a managed Chromebook and a Windows laptop. These pages name the
+            supported versions and the settings that still apply.
+          </p>
+          <ul class="at-hb-rows">
+            {devices.map((l) => <li><a href={l.href}><span>{l.label}</span><svg class="at-hb-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ARROW} /></svg></a></li>)}
+          </ul>
+          <a class="at-hb-link at-hb-strong" href="/on">{cap(word(counts.on))} browsers and platforms</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="home-alt" class="at-hb-sec" aria-labelledby="h-alt">
+      <h2 id="h-alt">When something else is the better tool</h2>
+      <div class="at-hb-pair">
+        <div class="at-hb-col">
+          <p>
+            AwakeTab is instant and needs no installation. A native utility beats it when the screen must stay on with the
+            browser out of sight. Comparisons use dated facts.
+          </p>
+          <ul class="at-hb-rows">
+            {comparisons.map((l) => <li><a href={l.href}><span>{l.label}</span><svg class="at-hb-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ARROW} /></svg></a></li>)}
+          </ul>
+          <a class="at-hb-link at-hb-strong" href="/vs">All {word(counts.vs)} comparisons</a>
+        </div>
+        <div class="at-hb-col">
+          <h3>Or fix the setting itself</h3>
+          <p>
+            Sometimes the real answer is a system setting. These walkthroughs show where the timeout lives, what to do when
+            it is greyed out, and when AwakeTab is faster.
+          </p>
+          <ul class="at-hb-rows">
+            {fixes.map((l) => <li><a href={l.href}><span>{l.label}</span><svg class="at-hb-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ARROW} /></svg></a></li>)}
+          </ul>
+          <span class="at-hb-links">
+            <a class="at-hb-link at-hb-strong" href="/guides">Troubleshooting guides</a>
+            <a class="at-hb-link at-hb-strong" href="/learn">Learn about wake locks</a>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section id="home-faq" class="at-hb-sec" aria-labelledby="h-faq">
+      <h2 id="h-faq">Questions we are asked most</h2>
+      <div class="at-hb-faq">
+        {
+          FAQ.map(([q, a], i) => (
+            <details open={i === 0}>
+              <summary>
+                <span>{q}</span>
+                <span class="at-hb-plus" aria-hidden="true">
+                  <span>
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M12 5v14M5 12h14" /></svg>
+                  </span>
+                </span>
+              </summary>
+              <p>{a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    <section id="home-who" class="at-hb-sec" aria-labelledby="h-who">
+      <h2 id="h-who">How AwakeTab is checked</h2>
+      <div class="at-hb-measure">
+        <div class="at-hb-card">
+          <div class="at-hb-who">
+            <span class="at-hb-avatar" aria-hidden="true">SB</span>
+            <span>
+              <span class="at-hb-name">Soubhik Biswas</span>
+              <span class="at-hb-small">Builds AwakeTab. Sources checked {lastVerified}.</span>
+            </span>
+          </div>
+          <p>
+            Support claims come from browser documentation and automated tests. Real-device results appear in the matrix
+            once recorded. When a browser changes, the matrix and the affected pages change with it.
+          </p>
+          <span class="at-hb-links">
+            <a class="at-hb-link" href="/about">About the maker and the test rig</a>
+            <a class="at-hb-link" href="/learn/how-we-tested">Testing notes</a>
+            <a class="at-hb-link" href="/changelog">Changelog</a>
+          </span>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<style>
+  /* Starts where the tool's ground ends so the page reads as one surface; painted edge to edge (ink overflow). */
+  .at-hb {
+    --at-type-row: 500 1rem/1.5rem var(--at-font);
+
+    border-image: linear-gradient(180deg, var(--at-ground-end) 0, var(--at-ground) 480px) fill 0 / 0 / 0 100vw;
+    color: var(--at-ink);
+  }
+
+  .at-hb-band {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--at-s-3);
+    padding-block-end: var(--at-s-6);
+  }
+
+  .at-hb-line {
+    inline-size: 1px;
+    block-size: var(--at-s-10);
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--at-accent) 45%, transparent));
+  }
+
+  .at-hb-jump {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--at-s-2);
+    min-block-size: var(--at-h-control);
+    padding-inline: var(--at-s-3) var(--at-s-4);
+    border: 1px solid var(--at-line);
+    border-radius: var(--at-r-pill);
+    background: var(--at-surface);
+    color: var(--at-ink-2);
+    font: var(--at-type-small);
+    font-weight: 500;
+    text-decoration: none;
+    animation: at-float 7s ease-in-out infinite;
+  }
+
+  .at-hb-jump svg,
+  .at-hb-verified svg {
+    inline-size: var(--at-icon-sm);
+    block-size: var(--at-icon-sm);
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .at-hb .at-prose {
+    max-inline-size: none;
+    margin: 0;
+    font: var(--at-type-body);
+    content-visibility: visible;
+  }
+
+  .at-hb-sec {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-5);
+    padding-block: var(--at-section);
+    border-block-start: 1px solid var(--at-line);
+    scroll-margin-block-start: var(--at-s-6);
+    content-visibility: auto;
+    contain-intrinsic-size: auto 720px;
+  }
+
+  .at-hb h2 {
+    margin: 0;
+    color: var(--at-ink);
+    font: var(--at-type-h2);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .at-hb h3 {
+    margin: 0;
+    color: var(--at-ink);
+    font: var(--at-type-h3);
+    letter-spacing: -0.01em;
+  }
+
+  .at-hb p {
+    max-inline-size: none;
+    margin: 0;
+    color: var(--at-ink-2);
+    text-wrap: pretty;
+  }
+
+  .at-hb strong {
+    color: var(--at-ink);
+    font-weight: 600;
+  }
+
+  .at-hb .at-prose a:not(.at-hb-link, .at-hb-rows a) {
+    color: var(--at-accent-text);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+
+  .at-hb-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-4);
+    min-inline-size: 0;
+  }
+
+  .at-hb-measure {
+    max-inline-size: 700px;
+  }
+
+  .at-hb .at-hb-lead {
+    color: var(--at-ink);
+    font: var(--at-type-lead);
+  }
+
+  .at-hb .at-hb-ink {
+    color: var(--at-ink);
+  }
+
+  .at-hb .at-hb-small,
+  .at-hb-verified {
+    color: var(--at-muted);
+    font: var(--at-type-small);
+  }
+
+  .at-hb-how {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-8);
+    min-inline-size: 0;
+  }
+
+  .at-hb-steps {
+    display: grid;
+    gap: var(--at-s-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .at-hb-steps > li {
+    display: grid;
+    grid-template-columns: var(--at-s-8) minmax(0, 1fr);
+    align-items: start;
+    column-gap: var(--at-s-3);
+    margin: 0;
+  }
+
+  .at-hb-num {
+    display: grid;
+    place-items: center;
+    inline-size: var(--at-s-8);
+    block-size: var(--at-s-8);
+    border: 1px solid color-mix(in srgb, var(--at-accent) 45%, transparent);
+    border-radius: var(--at-r-pill);
+    color: var(--at-accent-text);
+    font: var(--at-type-small);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .at-hb-step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-1);
+    min-inline-size: 0;
+    color: var(--at-ink-2);
+  }
+
+  .at-hb-keys {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--at-s-2) var(--at-s-3);
+    padding-block-start: var(--at-s-1);
+    color: var(--at-muted);
+    font: var(--at-type-small);
+  }
+
+  .at-hb-keys > span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--at-s-1);
+  }
+
+  .at-hb-states,
+  .at-hb-limits {
+    display: grid;
+    column-gap: var(--at-s-8);
+    margin: 0;
+    padding: 0;
+    border-block-start: 1px solid var(--at-line);
+    list-style: none;
+  }
+
+  .at-hb-states > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--at-s-2);
+    padding-block: var(--at-s-3);
+    border-block-end: 1px solid var(--at-line);
+  }
+
+  .at-hb-states dd {
+    margin: 0;
+    color: var(--at-ink-2);
+    font: var(--at-type-ui);
+    font-weight: 400;
+    text-wrap: pretty;
+  }
+
+  .at-hb-limits > li {
+    margin: 0;
+    padding-block: var(--at-s-3);
+    border-block-end: 1px solid var(--at-line);
+    color: var(--at-ink-2);
+  }
+
+  .at-hb-table {
+    overflow-x: auto;
+    border: 1px solid var(--at-line);
+    border-radius: var(--at-r-lg);
+    background: var(--at-surface);
+  }
+
+  .at-hb-table table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .at-hb-table :is(th, td) {
+    padding-block: var(--at-s-3);
+    padding-inline: 0 var(--at-s-4);
+    border-block-end: 1px solid var(--at-line);
+    color: var(--at-ink-2);
+    font: var(--at-type-small);
+    text-align: start;
+    vertical-align: top;
+  }
+
+  .at-hb-table tr > :first-child {
+    padding-inline-start: var(--at-s-4);
+  }
+
+  .at-hb-table tr > :last-child {
+    padding-inline-end: var(--at-s-4);
+  }
+
+  .at-hb-table tbody tr:last-child > * {
+    border-block-end: 0;
+  }
+
+  .at-hb-table thead th {
+    color: var(--at-muted);
+    font: var(--at-type-kicker);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .at-hb-table thead th:nth-child(2) {
+    inline-size: calc(44px + var(--at-s-4));
+  }
+
+  .at-hb-table thead th:nth-child(3) {
+    inline-size: calc(92px + 2 * var(--at-s-4));
+  }
+
+  .at-hb-cell {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-1);
+  }
+
+  .at-hb-table tbody th {
+    color: var(--at-ink);
+    font: var(--at-type-ui);
+    font-weight: 600;
+  }
+
+  .at-hb-table .at-hb-num-cell {
+    color: var(--at-ink);
+    font: var(--at-type-ui);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .at-hb-plat {
+    color: var(--at-muted);
+    font: var(--at-type-caption);
+  }
+
+  .at-hb-mech {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--at-s-2);
+  }
+
+  .at-hb-mech svg {
+    inline-size: var(--at-icon-xs);
+    block-size: var(--at-icon-xs);
+    flex-shrink: 0;
+    fill: var(--at-accent);
+    fill-rule: evenodd;
+  }
+
+  .at-hb-wide {
+    display: none;
+  }
+
+  .at-hb-verified {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--at-s-2) var(--at-s-5);
+  }
+
+  .at-hb-verified > span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--at-s-2);
+  }
+
+  .at-hb-verified svg {
+    stroke: var(--at-accent);
+  }
+
+  .at-hb .at-hb-link {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--at-h-control);
+    color: var(--at-accent-text);
+    font: var(--at-type-ui);
+    font-weight: 400;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+
+  .at-hb .at-hb-strong {
+    font-weight: 600;
+  }
+
+  .at-hb-links {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--at-s-5);
+  }
+
+  .at-hb-pair {
+    display: grid;
+    gap: var(--at-s-8);
+    min-inline-size: 0;
+  }
+
+  .at-hb-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-3);
+    min-inline-size: 0;
+  }
+
+  .at-hb-rows {
+    margin: 0;
+    padding: 0;
+    border-block-start: 1px solid var(--at-line);
+    list-style: none;
+  }
+
+  .at-hb-rows li {
+    margin: 0;
+  }
+
+  .at-hb .at-hb-rows a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--at-s-3);
+    min-block-size: var(--at-h-control);
+    padding-block: var(--at-s-3);
+    border-block-end: 1px solid var(--at-line);
+    color: var(--at-ink);
+    font: var(--at-type-row);
+    text-decoration: none;
+    transition: background-color 0.45s var(--at-ease);
+  }
+
+  .at-hb-rows a:hover {
+    background-color: color-mix(in srgb, var(--at-muted) 8%, transparent);
+  }
+
+  .at-hb-go {
+    inline-size: var(--at-icon-md);
+    block-size: var(--at-icon-md);
+    flex-shrink: 0;
+    fill: none;
+    stroke: var(--at-muted);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.6s var(--at-ease);
+  }
+
+  .at-hb-rows a:hover .at-hb-go {
+    transform: translateX(var(--at-s-1));
+  }
+
+  .at-hb-faq {
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 0;
+    border-block-start: 1px solid var(--at-line);
+  }
+
+  .at-hb-faq details {
+    border-block-end: 1px solid var(--at-line);
+  }
+
+  .at-hb-faq summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--at-s-3);
+    min-block-size: var(--at-h-row);
+    padding-block: var(--at-s-4);
+    color: var(--at-ink);
+    font: var(--at-type-row);
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .at-hb-faq summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .at-hb-plus {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    inline-size: var(--at-h-control);
+    block-size: var(--at-h-control);
+    margin-block: calc(-1 * var(--at-s-3));
+    color: var(--at-ink-2);
+  }
+
+  .at-hb-plus > span {
+    display: grid;
+    place-items: center;
+    inline-size: var(--at-s-8);
+    block-size: var(--at-s-8);
+    border: 1px solid var(--at-line-strong);
+    border-radius: var(--at-r-pill);
+  }
+
+  .at-hb-plus svg {
+    inline-size: var(--at-icon-sm);
+    block-size: var(--at-icon-sm);
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    transition: transform 0.6s var(--at-ease);
+  }
+
+  .at-hb-faq details[open] .at-hb-plus svg {
+    transform: rotate(45deg);
+  }
+
+  .at-hb .at-hb-faq details > p {
+    max-inline-size: 680px;
+    padding-block: 0 var(--at-s-4);
+    padding-inline: 0 var(--at-s-12);
+  }
+
+  .at-hb-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-4);
+    padding: var(--at-card-pad);
+    border: 1px solid var(--at-line);
+    border-radius: var(--at-r-lg);
+    background: var(--at-surface);
+    box-shadow: var(--at-elev);
+  }
+
+  .at-hb-who {
+    display: flex;
+    align-items: center;
+    gap: var(--at-s-3);
+  }
+
+  .at-hb-who > span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-1);
+  }
+
+  .at-hb-avatar {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    inline-size: var(--at-s-12);
+    block-size: var(--at-s-12);
+    border: 1px solid color-mix(in srgb, var(--at-accent) 45%, transparent);
+    border-radius: var(--at-r-pill);
+    background: color-mix(in srgb, var(--at-accent) 14%, transparent);
+    font: var(--at-type-ui);
+    font-weight: 600;
+  }
+
+  .at-hb-name {
+    font: var(--at-type-row);
+    font-weight: 600;
+  }
+
+  :is(.at-hb-jump, .at-hb-rows a, .at-hb-link, .at-hb-faq summary):focus-visible {
+    outline: 2px solid var(--at-focus);
+    outline-offset: 3px;
+  }
+
+  @keyframes at-float {
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+
+  @media (width >= 600px) {
+    .at-hb-sec {
+      gap: var(--at-s-6);
+    }
+
+    .at-hb-how {
+      gap: var(--at-s-10);
+    }
+
+    .at-hb-states,
+    .at-hb-limits,
+    .at-hb-pair {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .at-hb-limits {
+      column-gap: var(--at-s-10);
+    }
+
+    .at-hb-pair {
+      gap: var(--at-s-10);
+    }
+
+    .at-hb-states > div,
+    .at-hb-limits > li {
+      padding-block: var(--at-s-4);
+    }
+
+    .at-hb-limits > li {
+      display: flex;
+      flex-direction: column;
+      gap: var(--at-s-1);
+    }
+
+    .at-hb-wide {
+      display: revert;
+    }
+
+    .at-hb-narrow {
+      display: none;
+    }
+
+    .at-hb-table :is(th, td) {
+      padding-block: var(--at-s-4);
+    }
+
+    .at-hb-table thead th {
+      padding-block: var(--at-s-3);
+    }
+
+    .at-hb-table tr > :first-child {
+      padding-inline-start: var(--at-s-5);
+      inline-size: calc(168px + var(--at-s-4) + var(--at-s-5));
+    }
+
+    .at-hb-table tr > :last-child {
+      padding-inline-end: var(--at-s-5);
+    }
+
+    .at-hb-table thead th:nth-child(2) {
+      inline-size: calc(56px + var(--at-s-4));
+    }
+
+    .at-hb-table thead th:nth-child(3) {
+      inline-size: calc(140px + var(--at-s-4));
+    }
+  }
+
+  @media (width >= 1024px) {
+    .at-hb-band {
+      padding-block-end: var(--at-s-10);
+    }
+
+    .at-hb-line {
+      block-size: var(--at-s-16);
+    }
+
+    .at-hb-sec {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      align-items: start;
+      column-gap: var(--at-s-16);
+    }
+
+    .at-hb-sec > h2 {
+      position: sticky;
+      inset-block-start: var(--at-s-6);
+    }
+
+    .at-hb-steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--at-s-8);
+    }
+
+    .at-hb-table tr > :first-child {
+      inline-size: calc(184px + var(--at-s-4) + var(--at-s-5));
+    }
+
+    .at-hb-table thead th:nth-child(2) {
+      inline-size: calc(64px + var(--at-s-4));
+    }
+
+    .at-hb-table thead th:nth-child(3) {
+      inline-size: calc(152px + var(--at-s-4));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .at-hb-jump {
+      animation: none;
+    }
+  }
+</style>
