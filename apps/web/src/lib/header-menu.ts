@@ -1,8 +1,7 @@
 import type { TLocale } from '../i18n/locales';
 import { contentIndex, pagePath, type TContentKind } from './content-i18n';
 
-// The header menus (docs/05 §3.25): what each one lists. Labels and hints are i18n keys under header.menu.*;
-// the suggested length of a use case comes from its page's front matter, so the ring never disagrees with the page.
+// Suggested lengths come from each page's front matter so the ring matches the page.
 export const MENU_FOR = ['cooking', 'reading', 'presentations', 'dashboards', 'video-calls', 'downloads'] as const;
 
 export const MENU_ON = ['iphone-safari', 'ipad', 'android-chrome', 'macos', 'windows-11', 'chromebook'] as const;
@@ -22,10 +21,9 @@ export const MENU_RES = [
   { id: 'changelog', href: '/changelog', icon: 'M4.5 7h2M4.5 12h2M4.5 17h2M9.5 7h10M9.5 12h10M9.5 17h6' },
 ] as const;
 
-// Sections whose pages open under Resources, for the trigger's current-section mark.
 export const RES_SECTIONS: readonly string[] = ['guides', 'learn', 'vs', 'changelog'];
 
-// Suggested lengths on a four-hour dial, the longest preset; "until I stop" fills the ring.
+// Four-hour dial; "until I stop" fills the ring.
 const DIAL: Record<string, number> = { p15: 6.25, p30: 12.5, p45: 18.75, p60: 25, p120: 50, p240: 100, pinf: 100 };
 
 export interface IRing {
@@ -34,7 +32,6 @@ export interface IRing {
   y: number;
 }
 
-// An arc of p % drawn clockwise from 12 o'clock, and where its bead sits.
 export function arc(p: number, radius: number, centre: number): IRing {
   const a = (p / 100) * 2 * Math.PI;
   const round = (n: number) => Math.round(n * 100) / 100;
@@ -48,7 +45,6 @@ export interface IMenuLink {
   en: boolean;
 }
 
-// The page in the reader's language when it exists, else the English page (hreflang="en" and the "(English)" hint).
 export async function menuLink(kind: TContentKind, slug: string, locale: TLocale): Promise<IMenuLink> {
   const index = await contentIndex();
   const local = locale !== 'en' && index.some((p) => p.kind === kind && p.locale === locale && p.enSlug === slug);

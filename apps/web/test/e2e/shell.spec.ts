@@ -149,12 +149,10 @@ test.describe('header and footer on every surface', () => {
     await page.mouse.click(8, 400);
     await expect(page.locator('#at-hm-on')).toBeHidden();
 
-    // Phones: one Menu button opens a bottom sheet with the same groups.
     await page.setViewportSize({ width: 390, height: 800 });
     await page.locator('header button.at-hm-open').click();
     const sheet = page.locator('#at-hm-menu');
     await expect(sheet).toBeVisible();
-    // It rises into place; once settled its bottom edge is the viewport's.
     await expect
       .poll(async () => {
         const box = await sheet.boundingBox();
@@ -201,7 +199,6 @@ test.describe('header and footer on every surface', () => {
     await expect(header.locator('[data-theme-cycle]')).toBeHidden();
     await page.setViewportSize({ width: 320, height: 568 });
     await expect(header.getByRole('radiogroup')).toBeHidden();
-    // Below 360 px the logo keeps its ring and bead and drops the word, so the Menu fits.
     await expect(header.locator('.at-logo-word')).toBeHidden();
     await expect(header.locator('button.at-hm-open')).toBeVisible();
     const cycle = header.locator('[data-theme-cycle]');

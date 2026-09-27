@@ -11,8 +11,7 @@ interface Props {
   class?: string;
 }
 
-// One call to action per browser, picked in header-menus.css: the store where the extension runs, the Home Screen
-// guide on iOS, none elsewhere. CSS cannot tell Edge from Chrome, so boot.js sets <html data-edge>.
+// One add button per browser; CSS picks it, boot.js flags Edge.
 const { locale, store = true, class: className } = Astro.props;
 const t = createT(locale);
 const english = locale !== 'en';

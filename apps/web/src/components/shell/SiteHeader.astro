@@ -31,7 +31,7 @@ const links = [
   ['extension', '/extension', t('header.nav.extension')],
   ['pro', '/pro', t('header.nav.pro')],
 ] as const;
-// Tool pages load the menu styles with the tool's on-demand sheet (tool-more.css), outside the critical CSS budget.
+// Tool pages get menu styles from the on-demand sheet, outside the critical CSS.
 const css = tool ? '' : minifyCss(headerCss);
 const themes = [
   ['auto', t('settings.theme.auto')],
