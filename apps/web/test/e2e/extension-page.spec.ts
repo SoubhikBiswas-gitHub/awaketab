@@ -26,13 +26,16 @@ test('/extension: store links record extension_click, no ad code, axe clean in b
     }, theme);
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   }
+  // The hero and the closing band each carry a Chrome store button.
   const install = page.locator('[data-store="chrome"]');
+  await expect(install).toHaveCount(2);
   if (browserName === 'firefox' || browserName === 'webkit') {
     // FR-EXT-05: no install button where the extension cannot exist.
-    await expect(install).toBeHidden();
+    for (const link of await install.all()) await expect(link).toBeHidden();
+    await expect(page.getByRole('link', { name: 'Open AwakeTab' }).first()).toBeVisible();
     return;
   }
-  await install.click({ modifiers: ['ControlOrMeta'] });
+  await install.first().click({ modifiers: ['ControlOrMeta'] });
   await page.evaluate(() => {
     Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' });
     document.dispatchEvent(new Event('visibilitychange'));
