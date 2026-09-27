@@ -14,6 +14,8 @@ browsers: ["chrome", "edge"]
 os: ["windows"]
 lead: "Windows 11では、Chrome 84以降とEdge 84以降が画面のWake Lock（スリープ防止）にネイティブで対応しています。AwakeTabをタブで開いて開始を押せば、そのタブが表示されている間は、設定したタイムアウトを過ぎても画面が暗くなったり消えたりしません。インストールも管理者権限も要りません。同じ手順はWindows 10でもそのまま使えます。ただし、ノートパソコンのふたを閉じるとスリープします。モダンスタンバイはファームウェア側の別の話です。"
 crumb: "Windows 11・10"
+toc:
+  省エネ機能効率モードモダンスタンバイ: "省エネとモダンスタンバイ"
 facts:
   - label: "Chrome・Edge"
     value: "84以降"
@@ -33,6 +35,30 @@ steps:
   - title: "表示が「画面オン中」になったら準備完了です"
     text: "1時間たつと延長するか停止するかをたずねます。"
     shot: "ロックを保持しているときの表示"
+matrix:
+  label: "Windowsの対応状況（2026年9月9日時点の対応表）"
+  cols: ["環境", "結果", "知っておくこと"]
+  rows:
+    - what: "Chrome 84以降、Edge 84以降"
+      result: works
+      label: "対応"
+      text: "AwakeTabをタブで開いて開始を押せば、そのタブが表示されている間は、設定したタイムアウトを過ぎても画面が暗くなったり消えたりしません。"
+    - what: "Firefox 126以降"
+      result: works
+      label: "対応"
+      text: "ChromeとEdge以外では、Firefoxも126以降ならネイティブに動作します。"
+    - what: "古いFirefox"
+      result: fallback
+      label: "動画の代替方式"
+      text: "それより前のFirefoxでは「タップで代替方式を使用」と表示され、クリックすると動画の代替方式で画面を保ちます。こちらはネイティブのロックより電力を多く使います。"
+    - what: "ウィンドウを最小化したり、別のアプリを最大化したりしたとき"
+      result: pauses
+      label: "一時停止"
+      text: "AwakeTabが見えなくなるとロックは解除され、表示は「一時停止 — タブが非表示」になります。"
+    - what: "ChromeとEdge向けの拡張機能"
+      result: works
+      label: "対応"
+      text: "ほかのウィンドウの裏でも保ちたい場合は、ChromeとEdge向けの拡張機能があります。"
 rows:
   blockers:
     - title: "省エネ機能と効率モード"
@@ -68,7 +94,7 @@ updated: 2026-09-27
 
 ::steps
 
-ChromeとEdge以外では、Firefoxも126以降ならネイティブに動作します。それより前のFirefoxでは「タップで代替方式を使用」と表示され、クリックすると動画の代替方式で画面を保ちます。こちらはネイティブのロックより電力を多く使います。
+::matrix
 
 ::ad
 

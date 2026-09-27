@@ -14,6 +14,10 @@ lastVerified: 2026-09-09
 browsers: []
 os: []
 crumb: "Caffeine"
+toc:
+  比較表2026年9月9日時点: "比較表"
+  caffeineの方が向いている場面: "Caffeineが向く場面"
+  awaketabの方が向いている場面: "AwakeTabが向く場面"
 lead: "macOS用のCaffeineは、macOSに電源アサーションを出すことで、ウィンドウを何も表示していなくてもシステムを起こし続けます。キー入力は送りません（F15キーを押すのはWindows用のZhorn Caffeineです）。AwakeTabは、ブラウザ標準のScreen Wake Lock API（画面のスリープ防止）を使う、表示中のタブです。ウィンドウを隠したまま動かしたい場合は、Caffeineのようなネイティブアプリを選んでください。ふたを閉じたときの挙動はmacOSが決めます。追加のアプリを入れずに、状態を正直に示す表示で画面を保ちたいならAwakeTabが向いています。"
 compare:
   label: "AwakeTabとCaffeineの比較（2026年9月9日時点）"

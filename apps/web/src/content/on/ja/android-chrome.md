@@ -14,6 +14,9 @@ browsers: ["chrome"]
 os: ["android"]
 lead: "AndroidのChromeは、バージョン84から画面のWake Lock（スリープ防止）に対応しています。AwakeTabをChromeで開いて開始をタップすれば、タブが表示されている間は「画面消灯」の時間を過ぎても画面は消えません。専用アプリのインストールは不要です。ただし、Chromeから離れるとロックは解除されます。さらに一部のメーカーでは、独自の省電力設定が、離れたあとのChromeを閉じてしまうことがあります。"
 crumb: "AndroidのChrome"
+toc:
+  バッテリーセーバーとメーカー独自の省電力: "バッテリーセーバー"
+  設定の画面消灯との関係: "「画面消灯」との関係"
 facts:
   - label: "Chrome"
     value: "84以降"

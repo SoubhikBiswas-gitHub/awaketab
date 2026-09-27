@@ -14,6 +14,8 @@ browsers: ["chrome"]
 os: ["android"]
 lead: "安卓手机上的 Chrome 从 84 版起就支持屏幕唤醒锁（Wake Lock）。用 Chrome 打开 AwakeTab，默认时长 30 分钟，点按开始，状态标签显示“屏幕保持常亮”后，手机就不会按“屏幕超时”的设定熄屏。需要注意三件事：离开 Chrome 锁就会被收回；省电模式可能缩短熄屏时间或调暗屏幕；某些品牌的“休眠应用”设置还可能在你离开后把标签页结束掉。"
 crumb: "安卓 Chrome"
+toc:
+  屏幕还是熄了按这个顺序排查: "屏幕还是熄了"
 facts:
   - label: "Chrome"
     value: "84 及以上"
