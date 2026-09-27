@@ -367,7 +367,7 @@ test('shortcuts: 1–6 and 0 pick presets, D cycles the theme, F asks for fullsc
   const help = page.locator('dialog[data-dialog="shortcuts"]');
   await page.keyboard.press('Shift+Slash');
   await expect(help).toBeVisible();
-  await expect(help.locator('dt')).toHaveCount(11);
+  await expect(help.locator('dt')).toHaveCount(15);
   await page.keyboard.press('Escape');
   await expect(help).toBeHidden();
   // Esc closed the overlay, not the session (the pill itself now lives in the PiP window).

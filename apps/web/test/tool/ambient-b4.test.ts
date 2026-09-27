@@ -2,7 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount as mountCook } from '../../src/tool/ambient/cook.js';
 import { at, digits, short, split } from '../../src/tool/ambient/fmt.js';
 import { dateLong } from '../../src/tool/format.js';
-import { mount as mountFocus } from '../../src/tool/ambient/focus.js';
+import { KIT } from '../../src/tool/ambient/shell.js';
+import { mountFocus as mountFocusMode } from '../../src/tool/packs/extras/focus.js';
 import { mount as mountMessage } from '../../src/tool/ambient/message.js';
 import { togglePip } from '../../src/tool/ambient/pip-window.js';
 import { license, makeCtx } from './ctx-helper.js';
@@ -10,6 +11,8 @@ import type * as TLooks from '../../src/tool/packs/themes/looks.js';
 
 // The layer's lazily loaded stylesheet: a data URL, so the test DOM never fetches from a server.
 vi.mock('../../src/styles/ambient.css?url', () => ({ default: 'data:text/css,' }));
+vi.mock('../../src/tool/packs/extras/extras.css?url', () => ({ default: 'data:text/css,' }));
+const mountFocus = (stage: HTMLElement, ctx: Parameters<typeof mountFocusMode>[1]) => mountFocusMode(stage, ctx, KIT);
 // The preview helper opens the Pro sheet through ui/dialog.ts, which links tool-more.css on import.
 vi.mock('../../src/tool/ui/more-css.js', () => ({ moreCss: async () => undefined }));
 vi.mock('../../src/tool/packs/themes/looks.js', async (load) => ({
@@ -67,7 +70,8 @@ describe('focus mode (Ambient canvas)', () => {
     expect(q('.at-am-kicker')?.textContent).toBe('Focus block');
     expect(q('[data-focus-digits]')?.innerHTML).toBe('25<span>:00</span>');
     expect(q('[data-focus-label]')?.hidden).toBe(true);
-    expect(q('[data-focus-skip]')?.hidden).toBe(true);
+    // Skip and Pause share one row, hidden until a block runs.
+    expect(q('[data-focus-skip]')?.closest('[hidden]')).not.toBeNull();
 
     q('[data-focus-start]')?.click();
     await vi.waitFor(() => {

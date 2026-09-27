@@ -57,7 +57,7 @@ export interface ISettings {
 }
 ```
 
-Additive fields (28 September 2026; still `v: 1`, missing fields read as their defaults): `faceStyles` (per-face style id, `{}`; today only `analog`: `minimal` (read when absent) or `luxe`) · `palette` (`clear-night` | `paper` | `nord` | `solarized` | `midnight` | `forest` | `sunset` | `mono` | `contrast`, default `clear-night`) · `pattern` (`none` | `grain` | `dots` | `grid` | `topo` | `waves` | `aurora` | `stars` | `drift`, default `none`) · `vibrate` (`true`) · `tick` (`false`) · `focusSound { kind, volume 0.5, mix {}, stopAtEnd true }` (`kind`: `none` | `brown` | `pink` | `white` | `rain` | `cafe` | `fire` | `lofi` | `track:<id>`) · `intention` (≤ 80 chars, `''`) · `worldClock` (IANA zone or `null`) · `pomodoro { autoCycle false, longBreakMin 15 }`. `face` gains `flip` · `rolling` · `analog` · `rings` · `word` · `nixie` · `lcd` · `matrix`; `sound.id` gains `digital` · `birds`; `ambient.mode` gains `breathe`. A Pro item being previewed is never written here. How the sound fields are used (28 September 2026, `05-frontend-spec.md` §3.34): `sound.volume` is written by Settings → End sound volume; `focusSound.kind` is the last chosen focus sound (it never starts playing on load); a non-empty `focusSound.mix` (Pro) plays instead of `kind` and is cleared by picking a single sound; the pack reads every nested `focusSound` field defensively (`readFocus`: unknown kinds read as `none`, out-of-range levels and volumes are dropped).
+Additive fields (28 September 2026; still `v: 1`, missing fields read as their defaults): `faceStyles` (per-face style id, `{}`; today only `analog`: `minimal` (read when absent) or `luxe`) · `palette` (`clear-night` | `paper` | `nord` | `solarized` | `midnight` | `forest` | `sunset` | `mono` | `contrast`, default `clear-night`) · `pattern` (`none` | `grain` | `dots` | `grid` | `topo` | `waves` | `aurora` | `stars` | `drift`, default `none`) · `vibrate` (`true`) · `tick` (`false`) · `focusSound { kind, volume 0.5, mix {}, stopAtEnd true }` (`kind`: `none` | `brown` | `pink` | `white` | `rain` | `cafe` | `fire` | `lofi` | `track:<id>`) · `intention` (≤ 80 chars, `''`) · `worldClock` (IANA zone or `null`) · `pomodoro { autoCycle false, longBreakMin 15 }` (`autoCycle` needs `ambient.packs`; `longBreakMin` 5–45, free) · `breathe` (`'478'` \| `'box'`, optional: absent reads as `'478'`, so it has no default entry). `intention` and `worldClock` are read defensively (an unknown zone or a non-string reads as unset). `face` gains `flip` · `rolling` · `analog` · `rings` · `word` · `nixie` · `lcd` · `matrix`; `sound.id` gains `digital` · `birds`; `ambient.mode` gains `breathe`. A Pro item being previewed is never written here. How the sound fields are used (28 September 2026, `05-frontend-spec.md` §3.34): `sound.volume` is written by Settings → End sound volume; `focusSound.kind` is the last chosen focus sound (it never starts playing on load); a non-empty `focusSound.mix` (Pro) plays instead of `kind` and is cleared by picking a single sound; the pack reads every nested `focusSound` field defensively (`readFocus`: unknown kinds read as `none`, out-of-range levels and volumes are dropped).
 
 ### 2.1a `at.v1.notes` (IndexedDB)
 
@@ -108,7 +108,7 @@ export interface ISession {
   endedAt: number | null;
   endReason: TEndReason | null;
   awakeSeconds: number;     // seconds spent in lock `held` or `fallback`
-  modeState: Record<string, unknown>; // per-mode data merged by engine.updateSession(): { cookTimers?: ICookTimer[]; focusBlock?: true }
+  modeState: Record<string, unknown>; // per-mode data merged by engine.updateSession(): { cookTimers?: ICookTimer[]; focusBlock?: boolean; plus the focus keys below }
   source: 'web' | 'pwa' | 'pip' | 'ext' | 'embed';
 }
 ```
@@ -124,7 +124,7 @@ export interface ICookTimer {
 }
 ```
 
-`modeState.focusBlock` (M6 follow-ups) is `true` on a session started by focus mode's "Start a focus block". It is what makes the session count toward `at.v1.stats.dayFocus` when it completes (§2.3).
+`modeState.focusBlock` (M6 follow-ups) is `true` on a session started by focus mode's "Start a focus block". It is what makes the session count toward `at.v1.stats.dayFocus` when it completes (§2.3). Focus tools (28 September 2026) add, all optional and read defensively: `focusAuto` (`true` for an auto-cycle session, which is `indefinite` and has `focusBlock: false`) · `focusCfg` (`{ workMin, breakMin, cycles, longMin }` frozen at start) · `focusSkip` · `focusPauseAt` (epoch ms while the Pomodoro timer is paused, else 0) · `focusPaused` (ms paused so far) · `focusAdded` (ms added to a single block's end during the current pause) · `focusRounds` (auto-cycle blocks already counted). An auto-cycle session adds one to `dayFocus` for each block it finishes, whatever its end reason.
 
 At most 3 timers. The reader is defensive: a non-array or malformed entry is dropped (localStorage is user-editable). Focus-mode phases are not stored — they are derived from `startedAt`, `pausedMs` and `settings.ambient.focus` on every repaint. Since M6 the session also changes through `addTime(ms)` (an `until` plan may become a `duration` plan with the same deadline) and `pause({ keepLock: true })` (cook mode; `04-engine-spec.md` §9).
 

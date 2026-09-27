@@ -83,6 +83,9 @@ const shortcuts = [
   ['P', '', t('tool.shortcuts.pip')],
   ['S', '', t('tool.shortcuts.sound')],
   ['N', '', t('tool.shortcuts.notes')],
+  ['T', '', t('tool.shortcuts.focus')],
+  ['B', '', t('tool.shortcuts.breathe')],
+  ['I', '', t('tool.shortcuts.intention')],
   ['Esc', '', t('tool.shortcuts.esc')],
   ['?', '', t('tool.shortcuts.help')],
 ] as const;
@@ -684,6 +687,12 @@ const eight = ready.chip === 'custom';
               <path d={NOTE_ICON.pad} />
             </svg>
             {t('tool.notes.open')}
+          </Button>
+          <Button size="sm" variant="quiet" data-act="intention" kbd="I" aria-keyshortcuts="I">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" />
+            </svg>
+            {t('tool.intention.open')}
           </Button>
         </div>
       )
@@ -1556,6 +1565,10 @@ const eight = ready.chip === 'custom';
         name="showSeconds"
       />
     </label>
+  </section>
+
+  <section aria-labelledby="st-focus" data-focus-tools>
+    <h3 class="at-kicker" id="st-focus">{t('settings.focus')}</h3>
   </section>
 
   <section aria-labelledby="st-end">

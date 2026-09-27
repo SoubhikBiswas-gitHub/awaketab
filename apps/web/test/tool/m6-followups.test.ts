@@ -1,12 +1,15 @@
 import { dayKey, DEFAULT_STATS } from '@awaketab/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { mount as mountFocus } from '../../src/tool/ambient/focus.js';
+import { KIT } from '../../src/tool/ambient/shell.js';
+import { mountFocus as mountFocusMode } from '../../src/tool/packs/extras/focus.js';
 import { mirrorAmbient, PIP_PRO_SIZE, PIP_SIZE, pipPath, togglePip } from '../../src/tool/ambient/pip-window.js';
 import { mountSponsor } from '../../src/tool/sponsor.js';
 import { license, makeCtx } from './ctx-helper.js';
 
 // The layer's lazily loaded stylesheet: a data URL, so the test DOM never fetches from a server.
 vi.mock('../../src/styles/ambient.css?url', () => ({ default: 'data:text/css,' }));
+vi.mock('../../src/tool/packs/extras/extras.css?url', () => ({ default: 'data:text/css,' }));
+const mountFocus = (stage: HTMLElement, ctx: Parameters<typeof mountFocusMode>[1]) => mountFocusMode(stage, ctx, KIT);
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 

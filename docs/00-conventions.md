@@ -132,7 +132,7 @@ Only `held` and `fallback` may show a running timer. Transitions are specified i
 | Plan type | `indefinite` · `duration` (`ms`) · `until` (`endsAt` epoch ms, local clock) |
 | End reason | `completed` · `user` · `lost_timeout` · `denied` · `battery` · `error` |
 | Preset IDs | `p15` (15 min) · `p30` · `p45` · `p60` · `p120` · `p240` · `pinf` (∞) · `custom` · `until` |
-| Ambient modes | `standard` · `clock` · `focus` · `minimal` · `night` · `message` · `cook` |
+| Ambient modes | `standard` · `clock` · `focus` · `breathe` · `minimal` · `night` · `message` · `cook` (the `M` order) |
 | Theme | `auto` · `light` · `dark` · `oled` |
 | End behaviour | `stop` · `prompt_extend` (default) |
 
@@ -140,9 +140,7 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 
 ### 5.3 Keyboard shortcuts (web + PiP)
 
-`Space` toggle · `1`–`6` presets p15…p240 · `0` indefinite · `U` until… · `F` fullscreen · `D` cycle theme · `M` cycle ambient mode · `P` PiP · `S` Sounds sheet · `Esc` close the innermost layer (dialog → ambient mode → stop the session) · `?` shortcuts overlay.
-
-`Space` toggle · `1`–`6` presets p15…p240 · `0` indefinite · `U` until… · `F` fullscreen · `D` cycle theme · `M` cycle ambient mode · `P` PiP · `N` notes drawer · `Esc` close the innermost layer (dialog → ambient mode → stop the session) · `?` shortcuts overlay.
+`Space` toggle · `1`–`6` presets p15…p240 · `0` indefinite · `U` until… · `F` fullscreen · `D` cycle theme · `M` cycle ambient mode · `P` PiP · `S` Sounds sheet · `N` notes drawer · `T` Focus mode on or off · `B` Breathe mode on or off · `I` edit what you're working on · `Esc` close the innermost layer (dialog → ambient mode → stop the session) · `?` shortcuts overlay.
 
 ---
 
@@ -213,7 +211,7 @@ Content slugs (English canonical; translated slugs for the Latin-script locales 
 
 `ambient.packs` · `ambient.message` · `ambient.logo` · `schedules` · `sounds.custom` · `stats.history` (beyond 7 days) · `stats.export` · `pip.pro` (PiP with ambient modes) · `ext.autostart` · `ext.schedules` · `ads.free` · `embed.noattrib` (Business) · `kiosk.branding` (Business).
 
-Free always includes: the lock, every preset, custom duration, until-time, session restore, standard + clock + minimal ambient, one chime, notifications, 7-day stats, PiP basic, keyboard shortcuts, PWA, all languages, the colour themes Clear Night, Paper and Nord, the lamps Aqua, Violet, Amber and Teal, the backgrounds None, Grain, Dots and Grid, and the presets built from them. `ambient.packs` unlocks the other colour themes, lamps (and the custom lamp), backgrounds and presets; every one of them previews for 5 minutes first (§13.25).
+Free always includes: the lock, every preset, custom duration, until-time, session restore, standard + clock + minimal + breathe ambient, the Focus timer (one block at a time, with pause and skip), the session intention and the second time zone, one chime, notifications, 7-day stats, PiP basic, keyboard shortcuts, PWA, all languages, the colour themes Clear Night, Paper and Nord, the lamps Aqua, Violet, Amber and Teal, the backgrounds None, Grain, Dots and Grid, and the presets built from them. `ambient.packs` unlocks the other colour themes, lamps (and the custom lamp), backgrounds and presets, and the Focus timer's auto-cycle (§13.27); every one of them previews for 5 minutes first (§13.25).
 
 ### 8.3 Monetization gates (from the blueprint)
 
@@ -945,6 +943,24 @@ Accepted on 2026-09-28. Spec: `05-frontend-spec.md` §3.34; storage: `08-data-st
 | Permissions-Policy | `microphone=(self)` (was `microphone=()`), so the page's own dictation can ask for the microphone; camera, geolocation and payment stay off |
 | Shortcut | `N` opens the drawer (not while typing or while another dialog is open). In the editor: `Mod+B`, `Mod+I`, `Mod+Shift+S`, `Mod+Alt+1–3`, `Mod+Shift+7/8/9`, `Mod+Z`; Esc stops dictation, then closes |
 | i18n keys | Page-rendered `notes.*` (drawer copy, toolbar labels, help, the voice notice) · island `tool.notes.*` (runtime states, voice commands `tool.notes.voice.cmdLine` / `cmdItem` / `cmdStop`) · `tool.notes.open` · `tool.tools` · `tool.shortcuts.notes` · `settings.notes`, `settings.notes.label`, `settings.notes.help`, `settings.notes.open` |
+
+### 13.27 Focus tools (extras pack): Pomodoro auto-cycle, intention, breathing, second time zone
+
+Accepted on 2026-09-28. Spec: `05-frontend-spec.md` §3.14, §3.35; storage: `08-data-storage.md` §2.1, §2.2. The seven lock states, the pill copy, routes and budgets do not change. Focus mode moved out of the ambient chunk into the pack, which should more than pay for the new glue in total JS; critical JS is unchanged.
+
+| Identifier | Decision |
+|---|---|
+| Ambient mode `breathe` | Free; `AMBIENT_ORDER` and the mode bar: `clock` · `focus` · `breathe` · `minimal` · `night` · `message` · `cook` |
+| Settings | `intention` (≤ 80 characters, one plain line) · `worldClock` (IANA zone or `null`) · `pomodoro.autoCycle` (`ambient.packs`) · `pomodoro.longBreakMin` (5–45, default 15; free) · `breathe` (`'478'` \| `'box'`, optional, reads as `'478'`) · `ambient.focus` ranges work 5–90, break 1–30, cycles 1–8 (`FOCUS_LIMITS`) |
+| Session `modeState` (focus) | `focusBlock` (a single block; its completion counts) · `focusAuto` · `focusCfg` (`{ workMin, breakMin, cycles, longMin }`, frozen at start) · `focusSkip` · `focusPauseAt` (0 when running) · `focusPaused` · `focusAdded` (ms added to a single block's end while paused) · `focusRounds` (auto-cycle blocks already counted) |
+| Plans | A single block: `duration` of `focusPlanMs()`, `presetId: 'custom'`. Auto-cycle: `indefinite`, `presetId: 'pinf'`; each finished block adds one to `at.v1.stats.dayFocus` |
+| Preview | `startPreview` kind `pomodoro`, id `auto`, label `settings.focus.autoName`; the running preview lives only in the pack (`setAutoPreview`) |
+| Keyboard | `T` Focus on or off · `B` Breathe on or off · `I` edit the intention (`tool.shortcuts.focus`, `.breathe`, `.intention`) |
+| Modules | `src/tool/packs/extras/`: `index.ts` (`focus`, `breathe`, `panel`, `lines`, `intention`, `key`) · `focus.ts` (`mountFocus`) · `pomodoro.ts` (`focusConfig`, `focusPhase`, `focusPlanMs`, `focusElapsed`, `readClock`, `frozenConfig`, `FOCUS_LIMITS`) · `breathe.ts` (`mountBreathe`, `breathPhase`, `breathOf`) · `lines.ts` (`mountLines`) · `panel.ts` (`mountPanel`) · `zones.ts` (`allZones`, `searchZones`, `zoneOffset`, `diffMin`, `zoneTime`, `zoneName`) · `common.ts` · `extras.css` (linked with `?url`) |
+| Tool glue | `ambient/shell.ts` (`KIT` and the `pack()` mode loader) · `ui/settings.ts` (`[data-focus-tools]`) · `ui/actions.ts` (action `intention`) · `shortcuts.ts` (`B` `I` `T`) · `extras.ts` (lines after load + idle when set). `ambient/focus.ts` and the focus maths in `ambient/logic.ts` are gone (`FOCUS_LONG_BREAK_MIN` is now the default of `pomodoro.longBreakMin`) |
+| Libraries | None. `Intl` gives the zone list, offsets and generic names, the session engine's timestamps already give drift-free phases, and `shortcuts.ts` already maps single keys, so `dayjs`, `easytimer.js` and `hotkeys-js` would only add bytes |
+| Markup hooks | Dock `[data-act="intention"]` · Settings `section[data-focus-tools]` · `.at-lines[data-lines]` (`.is-float` from 1024 px) with `[data-intent-edit]`, `[data-intent-form]`, `[data-intent-clear]`, `[data-world]` · Focus `[data-focus-pause]`, `[data-focus-intention]`, stage `data-paused` · Breathe `.at-br[data-breathe][data-step][data-still]`, `[data-breath]` |
+| i18n keys | `ambient.mode.breathe` · `ambient.breathe.*` · `ambient.focus.` `blockAuto`, `introAuto`, `on`, `paused`, `pausedNote`, `pause`, `resume`, `pausedSaid`, `resumedSaid`, `cycleRound`, `nextRound`, `skipRound` · `tool.intention.*` · `tool.world.*` · `tool.shortcuts.focus`, `.breathe`, `.intention` · `settings.focus` and `settings.focus.*` |
 
 ## 14. Writing conventions for these docs
 

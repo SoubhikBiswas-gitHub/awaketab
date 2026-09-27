@@ -1,6 +1,15 @@
-import type { ISession, ISettings, TAmbientMode, TFeatureGate } from '@awaketab/core';
+import type { ISession, TAmbientMode, TFeatureGate } from '@awaketab/core';
 
-const AMBIENT_ORDER: readonly TAmbientMode[] = ['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook'];
+const AMBIENT_ORDER: readonly TAmbientMode[] = [
+  'standard',
+  'clock',
+  'focus',
+  'breathe',
+  'minimal',
+  'night',
+  'message',
+  'cook',
+];
 
 const MODE_GATES: Partial<Record<TAmbientMode, TFeatureGate>> = { message: 'ambient.message' };
 
@@ -8,7 +17,6 @@ export const PIXEL_SHIFT_MS = 60_000;
 const PIXEL_SHIFT_PX = 2;
 const NIGHT_DIM_AFTER_MS = 30_000;
 const BURNIN_DIM_AFTER_MS = 30 * 60_000;
-export const FOCUS_LONG_BREAK_MIN = 15;
 export const COOK_MAX_TIMERS = 3;
 export const COOK_NAME_MAX = 20;
 const COOK_MIN_MS = 60_000;
@@ -43,43 +51,7 @@ export function activeElapsed(
   return Math.max(0, now - session.startedAt - session.pausedMs - pausing);
 }
 
-// ── Focus (Pomodoro) ────────────────────────────────────────────────────────────────────────────
-
-export type TFocusConfig = ISettings['ambient']['focus'];
-type TFocusKind = 'work' | 'break' | 'long' | 'done';
-
-export interface IFocusPhase {
-  kind: TFocusKind;
-  cycle: number;
-  index: number;
-  remainingMs: number;
-  phaseMs: number;
-}
-
-function focusSequence(cfg: TFocusConfig): Array<{ kind: Exclude<TFocusKind, 'done'>; ms: number; cycle: number }> {
-  const seq: Array<{ kind: Exclude<TFocusKind, 'done'>; ms: number; cycle: number }> = [];
-  const cycles = Math.max(1, Math.floor(cfg.cycles));
-  for (let c = 1; c <= cycles; c += 1) {
-    seq.push({ kind: 'work', ms: cfg.workMin * 60_000, cycle: c });
-    if (c < cycles) seq.push({ kind: 'break', ms: cfg.breakMin * 60_000, cycle: c });
-  }
-  seq.push({ kind: 'long', ms: FOCUS_LONG_BREAK_MIN * 60_000, cycle: cycles });
-  return seq;
-}
-
-export function focusPlanMs(cfg: TFocusConfig): number {
-  return focusSequence(cfg).reduce((sum, p) => sum + p.ms, 0);
-}
-
-export function focusPhase(elapsedMs: number, cfg: TFocusConfig): IFocusPhase {
-  const seq = focusSequence(cfg);
-  let t = Math.max(0, elapsedMs);
-  for (const [index, p] of seq.entries()) {
-    if (t < p.ms) return { kind: p.kind, cycle: p.cycle, index, remainingMs: p.ms - t, phaseMs: p.ms };
-    t -= p.ms;
-  }
-  return { kind: 'done', cycle: Math.max(1, cfg.cycles), index: seq.length, remainingMs: 0, phaseMs: 0 };
-}
+// Focus (Pomodoro) maths live in the extras pack: packs/extras/pomodoro.ts.
 
 // ── Cook (kitchen timers in session.modeState.cookTimers) ───────────────────────────────────────
 

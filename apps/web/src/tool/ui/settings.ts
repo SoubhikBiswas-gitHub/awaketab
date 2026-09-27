@@ -9,7 +9,7 @@ import { notificationsState } from '../signal.js';
 import { applyTheme } from '../theme.js';
 import { openDialog } from './dialog.js';
 
-const MODES = new Set<TAmbientMode>(['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook']);
+const MODES = new Set<TAmbientMode>(['standard', 'clock', 'focus', 'breathe', 'minimal', 'night', 'message', 'cook']);
 const FACES = new Set<TFace>([
   'ring',
   'bold',
@@ -239,9 +239,16 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
   // Colour themes, lamps, patterns and presets are the themes pack, loaded on first open; the sheet waits briefly
   // for it so the section does not pop in.
   const looks = q('[data-appearance]');
-  const ready = looks && import('../packs/themes/appearance.js').then((m) => m.mountAppearance(ctx, looks));
+  const tools = q('[data-focus-tools]');
+  const ready = Promise.all([
+    looks && import('../packs/themes/appearance.js').then((m) => m.mountAppearance(ctx, looks)),
+    tools &&
+      import('../packs/extras/index.js').then((m) => {
+        m.panel(ctx, tools);
+      }),
+  ]);
   // A failed pack load still opens the sheet; only the gallery is missing.
-  void Promise.race([ready?.catch(() => undefined), new Promise((r) => setTimeout(r, 400))]).then(() => {
+  void Promise.race([ready.catch(() => undefined), new Promise((r) => setTimeout(r, 400))]).then(() => {
     openDialog(dialog, opener);
   });
 }

@@ -4,8 +4,6 @@ import {
   addCookTimer,
   COOK_MAX_TIMERS,
   cookName,
-  focusPhase,
-  focusPlanMs,
   modeAllowed,
   nextMode,
   pixelShift,
@@ -15,6 +13,7 @@ import {
   shouldDim,
 } from '../../src/tool/ambient/logic.js';
 import { cycleMode, mountAmbient } from '../../src/tool/ambient/shell.js';
+import { focusPhase, focusPlanMs } from '../../src/tool/packs/extras/pomodoro.js';
 import { license, makeCtx } from './ctx-helper.js';
 
 // The layer's lazily loaded stylesheet: a data URL, so the test DOM never fetches from a server.
@@ -26,7 +25,7 @@ const all = () => true;
 
 describe('ambient mode gating (E10-T01)', () => {
   it('only message is gated; ambient.packs gates palettes, not layouts', () => {
-    for (const mode of ['standard', 'clock', 'focus', 'minimal', 'night', 'cook'] as const) {
+    for (const mode of ['standard', 'clock', 'focus', 'breathe', 'minimal', 'night', 'cook'] as const) {
       expect(modeAllowed(mode, none)).toBe(true);
     }
     expect(modeAllowed('message', none)).toBe(false);
@@ -174,6 +173,7 @@ describe('AmbientShell DOM', () => {
     expect([...(bar ?? [])].map((b) => b.dataset.amMode)).toEqual([
       'clock',
       'focus',
+      'breathe',
       'minimal',
       'night',
       'message',
