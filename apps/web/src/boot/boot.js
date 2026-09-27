@@ -15,7 +15,7 @@
   /** @param {string} theme */
   const apply = (theme) => {
     const resolved = theme === 'auto' ? (dark.matches ? 'dark' : 'light') : theme;
-    // base.css holds every transition for two frames, so a theme change repaints at once instead of fading piecemeal.
+    // Transitions pause for two frames so a theme change repaints at once.
     root.dataset.swap = '';
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
