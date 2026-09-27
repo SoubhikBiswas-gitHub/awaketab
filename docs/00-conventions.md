@@ -752,6 +752,21 @@ Accepted on 2026-09-27 with milestone B5 (`docs/redesign/BUILD-PLAN.md`). Specs:
 | i18n keys | New in all 8 locales: `content.toc` · `content.backToTool` · `content.limit` · `content.ad` · `content.byline` · `content.try.title` · `content.try.body` · `content.skip.title` · `content.skip.body`. Changed (O-46): `content.verified` → "Sources checked {date}" (all locales), `content.stale` (en). English copy: `page.hub.{on,vs,guides,learn}.h1` and `page.hub.{on,guides,learn}.description` follow the canvas and the fact-check; `content.author.role` "Builds AwakeTab." |
 | Responsive sweep | `responsive.spec.ts` also sweeps `/for` and `/guides/iphone-auto-lock-never-greyed-out` |
 
+### 13.22 Structured article blocks
+
+Accepted on 2026-09-27. Spec: `06-content-seo-spec.md` §22; canvas `ContentArticle`, `GuideOn`, `GuideVs`, `GuideGuides`, `GuideLearn`. Routes, slugs, storage keys, lock states and pill copy, budgets and the ad rules do not change.
+
+| Identifier | Decision |
+|---|---|
+| Block lines | A Markdown body line `::name` or `::name key` places a block: `steps` · `figures` · `pills` · `checklist` · `matrix` · `rows <key>` · `compare` · `picks <key>` · `code <file>` · `note <key>` · `lifecycle` · `limit` (`limit inline`) · `ad` |
+| Frontmatter fields | All optional, shared by the five collections: `lead` · `crumb` · `toc` · `facts` · `steps` (`title`, `text`, `path`, `shot`, `short`) · `stepsDone` · `figures` · `pills` · `checklist` · `matrix` · `rows` · `compare` · `picks` · `code` · `notes` · `lifecycle` · `toolNote` |
+| Components and modules | `components/article/*` (`ArticleParts`, `Steps`, `Figures`, `PillStates`, `Checklist`, `Matrix`, `Rows`, `Compare`, `Picks`, `CodeBlock`, `Note`, `Lifecycle`, `Limit`) · `src/lib/article.ts` (`splitArticle`, `placedBlocks`, `inline`, `plain`, `tokenize`) · `src/lib/article-css.ts` (`articleCss`, per-page block CSS) · `src/lib/content-nav.ts` gains the checklist, tracked steps and Copy |
+| Stylesheets | `src/styles/article/{steps,shots,track,for,box,rows,grid,code,lifecycle}.css`, inlined per page; with `hub.css` and `device-matrix.css` on the strict token lint. New local roles in `content.css`: `--at-col-key` 112 · `--at-col-state` 144 · `--at-col-pill` 240 · `--at-col-fig` 112 → 160 · `--at-shot-w` / `--at-shot-h` 112 × 224 → 160 × 320 · `--at-code-line` · `--at-type-code-file` (mono 13/18, the code block file name) · `--at-hatch` (placeholder and ad hatching) · `--at-type-diagram` (+ `-mono`, `-node`). The Shiki `--astro-code-*` mapping of §13.21 is gone: code goes through `::code` |
+| Classes | `.at-steps` (+ `-shots`, `-track`) · `.at-step-n` · `.at-step-head` · `.at-step-k` · `.at-step-link` · `.at-path` · `.at-rail` · `.at-next` · `.at-done` · `.at-alldone` · `.at-reset` · `.at-bar` (+ `-top`) · `.at-toc-steps` · `.at-prog` · `.at-jump-tool` · `.at-figs` · `.at-fig` (+ `-phone`, `-desktop`) · `.at-shot` (+ `-frame`) · `.at-states` · `.at-check` · `.at-box` · `.at-count` · `.at-sec` · `.at-sec-h` · `.at-facts` · `.at-grid` (+ `-h`) · `.at-mx` · `.at-cmp` (+ `-c`, `-k`) · `.at-dot` (+ `-us`) · `.at-rl` · `.at-kv` · `.at-picks` · `.at-codeb` (+ `-bar`) · `.at-copy` · `.at-code` · `.at-ln` · `.k-*` tokens · `.at-note-lamp` · `.at-lc` (+ `-w`, `-t`, `-n`, `-e`, `-o`, `-edge`) |
+| Attributes | `data-check` · `data-counter` · `data-steps` · `data-step` · `data-state` (`next`, `done`) · `data-progress` · `data-prog` · `data-all-done` · `data-reset` · `data-copy` · `data-placeholder` · `data-r` (matrix result) |
+| i18n keys | New in all 8 locales: `content.step` · `content.stepLink` · `content.nextUp` · `content.done` · `content.markDone` · `content.clearProgress` · `content.progress` · `content.progressCount` · `content.progressNext` · `content.progressAll` · `content.stepsNav` · `content.jumpTool` · `content.screenshot` · `content.placeholder` · `content.placeholderAlt` · `content.same` · `content.copy` · `content.copied` · `content.copyFile` · `content.codeScroll` · `content.checked` · `content.related.for` |
+| Storage | None. Ticks and step progress are not stored |
+
 ## 14. Writing conventions for these docs
 
 - Requirements are testable sentences with "must/should/may"; every FR has at least one acceptance criterion in Given/When/Then form.

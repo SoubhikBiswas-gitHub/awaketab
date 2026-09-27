@@ -13,6 +13,54 @@ translationOf: "macos"
 lastVerified: 2026-09-09
 browsers: ["chrome", "safari", "firefox"]
 os: ["macos"]
+crumb: "macOS"
+lead: "Safari 16.4+, Chrome 84+ et Firefox 126+ peuvent garder l’écran d’un Mac allumé depuis un onglet visible. AwakeTab s’appuie sur ce Wake Lock pour empêcher l’affichage de s’assombrir puis de s’éteindre, sans rien installer. Tant que l’écran reste allumé, le Mac ne se met pas non plus en veille pour inactivité, d’après la documentation d’Apple. En revanche, un capot fermé le met en veille, sauf en mode clamshell avec secteur et écran externe."
+facts:
+  - label: "Safari"
+    value: "16.4 et plus"
+  - label: "Chrome et Edge"
+    value: "84 et plus"
+  - label: "Firefox"
+    value: "126 et plus"
+  - label: "Opera"
+    value: "70 et plus"
+toc:
+  écran-contre-système--ce-que-macos-distingue: "Écran contre système"
+  capot-fermé--aucune-page-web-ny-peut-rien: "Capot fermé"
+steps:
+  - title: "Ouvrez awaketab.com dans votre navigateur"
+    text: "La durée « 1 h » est présélectionnée ici. Sur un MacBook, restez branché pour les longues sessions."
+    shot: "AwakeTab dans Safari sur un Mac"
+  - title: "Appuyez sur Espace ou cliquez sur Démarrer"
+    text: "Attendez « Écran allumé » dans la pastille."
+    shot: "la pastille d’AwakeTab pendant une session"
+  - title: "Laissez la fenêtre visible"
+    text: "Si vous travaillez dans d’autres apps, redimensionnez-la en petite fenêtre dans un coin au lieu de l’envoyer dans le Dock ; sous Chrome, Edge ou Firefox 151+, la « Fenêtre flottante » de l’en-tête fait le même travail."
+    shot: "une petite fenêtre AwakeTab dans un coin"
+matrix:
+  label: "Navigateurs pris en charge sur macOS, matrice vérifiée le 9 septembre 2026"
+  cols: ["Navigateur", "Résultat", "Mécanisme"]
+  rows:
+    - what: "Safari 16.4 et plus"
+      result: works
+      label: "Pris en charge"
+      text: "natif ; un clic est nécessaire au démarrage"
+    - what: "Chrome 84 et plus"
+      result: works
+      label: "Pris en charge"
+      text: "natif"
+    - what: "Firefox 126 et plus"
+      result: works
+      label: "Pris en charge"
+      text: "natif ; vidéo de secours sur les versions antérieures"
+    - what: "Edge 84 et plus"
+      result: works
+      label: "Pris en charge"
+      text: "natif"
+    - what: "Opera 70 et plus"
+      result: works
+      label: "Pris en charge"
+      text: "natif (base Chromium)"
 faq:
   - q: "AwakeTab peut-il laisser mon Mac finir une tâche longue écran éteint ?"
     a: "Pas écran éteint. Tant qu’AwakeTab garde l’écran allumé, le Mac ne se met pas en veille pour inactivité (documentation IOKit d’Apple). Mais pour un rendu ou une sauvegarde sans écran, utilisez un outil natif comme la commande caffeinate -i."
@@ -33,43 +81,32 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## L’écran, et le Mac avec lui
+## Mise en route sur le Mac
 
-Safari 16.4+, Chrome 84+ et Firefox 126+ peuvent garder l’écran d’un Mac allumé depuis un onglet visible. AwakeTab s’appuie sur ce Wake Lock pour empêcher l’affichage de s’assombrir puis de s’éteindre, sans rien installer. Tant que l’écran reste allumé, le Mac ne se met pas non plus en veille pour inactivité, d’après la documentation d’Apple. En revanche, un capot fermé le met en veille, sauf en mode clamshell avec secteur et écran externe.
+::steps
+
+::ad
 
 ## Navigateurs pris en charge sur macOS
 
-| Navigateur | Version minimale | Mécanisme |
-|---|---|---|
-| Safari | 16.4 | natif ; un clic est nécessaire au démarrage |
-| Chrome | 84 | natif |
-| Firefox | 126 | natif ; vidéo de secours sur les versions antérieures |
-| Edge | 84 | natif |
-| Opera | 70 | natif (base Chromium) |
-
 Matrice vérifiée le 9 septembre 2026.
 
-## Mise en route sur le Mac
+::matrix
 
-1. Ouvrez awaketab.com dans votre navigateur. La durée « 1 h » est présélectionnée ici.
-2. Appuyez sur Espace ou cliquez sur Démarrer ; attendez « Écran allumé » dans la pastille.
-3. Laissez la fenêtre visible. Si vous travaillez dans d’autres apps, redimensionnez-la en petite fenêtre dans un coin au lieu de l’envoyer dans le Dock ; sous Chrome, Edge ou Firefox 151+, la « Fenêtre flottante » de l’en-tête fait le même travail.
-4. Sur un MacBook, restez branché pour les longues sessions.
-
-## Écran contre système : ce que macOS distingue
+## Écran contre système : ce que macOS distingue
 
 macOS gère séparément l’extinction de l’écran et la mise en veille de l’ordinateur. Un Wake Lock demande la première, mais d’après la documentation IOKit d’Apple, le Mac ne se met alors pas en veille pour inactivité non plus (sources consultées le 26 septembre 2026). Vérifiez-le avec `pmset -g assertions` dans le Terminal. Tout cela suppose un onglet visible et un écran allumé. Pour finir un téléchargement, un rendu ou une sauvegarde écran éteint, la commande `caffeinate -di` dans le Terminal empêche à la fois la veille pour inactivité et celle de l’écran, et des applications comme Amphetamine ou [Caffeine](/fr/vs/caffeine) agissent au niveau du système.
 
 ## Les réglages de macOS à connaître
 
-Les délais d’extinction se règlent dans Réglages Système → Écran verrouillé, et les options d’alimentation dans la section Énergie ou Batterie selon votre Mac. Sur un portable, le mode Économie d’énergie peut réduire la luminosité, mais Safari et Chrome ne refusent pas le verrou pour autant ; si la pastille affiche « Bloqué — voici la solution », la cause (par exemple un clic manquant dans Safari) est indiquée juste en dessous.
+Les délais d’extinction se règlent dans Réglages Système → Écran verrouillé, et les options d’alimentation dans la section Énergie ou Batterie selon votre Mac. Sur un portable, le mode Économie d’énergie peut réduire la luminosité, mais Safari et Chrome ne refusent pas le verrou pour autant ; si la pastille affiche « Bloqué — voici la solution », la cause (par exemple un clic manquant dans Safari) est indiquée juste en dessous.
 
-## Capot fermé : aucune page web n’y peut rien
+## Capot fermé : aucune page web n’y peut rien
 
 C’est la question qui revient le plus souvent. Un MacBook dont on rabat l’écran s’endort, point. Seuls un écran externe avec alimentation, un réglage `pmset` ou un utilitaire natif changent ce comportement. AwakeTab ne le prétend pas et ne le fera jamais.
 
 ## Pourquoi faire confiance à la pastille
 
-AwakeTab considère le navigateur comme seule source de vérité. Tant que Safari, Chrome ou Firefox n’a pas confirmé le verrou, la pastille n’affiche pas « Écran allumé » et le minuteur ne tourne pas. Si l’écran s’éteint quand même, vous saurez pourquoi : onglet masqué, refus du navigateur, ou règle de verrouillage d’une autre nature.
+AwakeTab considère le navigateur comme seule source de vérité. Tant que Safari, Chrome ou Firefox n’a pas confirmé le verrou, la pastille n’affiche pas « Écran allumé » et le minuteur ne tourne pas. Si l’écran s’éteint quand même, vous saurez pourquoi : onglet masqué, refus du navigateur, ou règle de verrouillage d’une autre nature.
 
-Dernière vérification : 9 septembre 2026.
+Dernière vérification : 9 septembre 2026.

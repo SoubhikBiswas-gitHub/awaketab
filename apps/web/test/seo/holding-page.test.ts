@@ -22,10 +22,8 @@ async function htmlFiles(directory: URL): Promise<URL[]> {
   return files;
 }
 
-function extractProse(html: string): string {
-  const open = /<div class="at-prose"[^>]*>/u.exec(html);
-  if (!open || open.index === undefined) return '';
-  let i = open.index + open[0].length;
+function proseBlock(html: string, start: number, openLength: number): string {
+  let i = start + openLength;
   let depth = 1;
   while (i < html.length && depth > 0) {
     const nextOpen = html.indexOf('<div', i);
@@ -36,17 +34,25 @@ function extractProse(html: string): string {
       i = nextOpen + 4;
     } else {
       depth -= 1;
-      if (depth === 0) {
-        const prose = html.slice(open.index + open[0].length, nextClose);
-        return prose
-          .replace(/<script[\s\S]*?<\/script>/gu, ' ')
-          .replace(/<style[\s\S]*?<\/style>/gu, ' ')
-          .replace(/<[^>]+>/gu, ' ');
-      }
+      if (depth === 0) return html.slice(start + openLength, nextClose);
       i = nextClose + 6;
     }
   }
   return '';
+}
+
+// The page's reading text: the lead under the h1 plus every `.at-prose` block (the body, and on /guides and /learn
+// the part after the embedded tool: honest limit, FAQ, related links).
+function extractProse(html: string): string {
+  const lead = /<p class="at-lead"[^>]*>([\s\S]*?)<\/p>/u.exec(html)?.[1] ?? '';
+  const blocks = [...html.matchAll(/<div class="at-prose(?: [^"]*)?"[^>]*>/gu)].map((m) =>
+    proseBlock(html, m.index, m[0].length),
+  );
+  return [lead, ...blocks]
+    .join(' ')
+    .replace(/<script[\s\S]*?<\/script>/gu, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gu, ' ')
+    .replace(/<[^>]+>/gu, ' ');
 }
 
 function unescapeHtml(value: string): string {

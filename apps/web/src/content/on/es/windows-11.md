@@ -13,6 +13,15 @@ translationOf: "windows-11"
 lastVerified: 2026-09-09
 browsers: ["chrome", "edge"]
 os: ["windows"]
+crumb: "Windows 11"
+lead: "En Windows 11, Chrome 84+ y Edge 84+ conceden un Wake Lock nativo a cualquier pestaña visible. Abre AwakeTab, deja la sesión de 1 hora que trae esta página o elige otra duración, y espera a que el indicador diga “Pantalla despierta”. Desde ese momento, Windows no atenúa ni apaga la pantalla mientras la pestaña siga a la vista, y tampoco entra en suspensión por inactividad. Los mismos pasos sirven en Windows 10. Tres cosas quedan fuera de su alcance: minimizar la ventana u ocultar la pestaña libera el bloqueo, cerrar la tapa suspende el equipo y Modern Standby es un tema aparte que depende del firmware."
+facts:
+  - label: "Chrome y Edge"
+    value: "84 o posterior"
+  - label: "Firefox"
+    value: "126 o posterior"
+  - label: "Opera"
+    value: "70 o posterior"
 faq:
   - q: "¿Funciona igual en Edge que en Chrome?"
     a: "Sí. Los dos tienen Wake Lock nativo desde la versión 84 en Windows. El modo de eficiencia de Edge no rechaza el bloqueo, porque Edge usa el mismo código de Chromium; si el indicador no llega a “Pantalla despierta”, el motivo aparece debajo."
@@ -34,9 +43,19 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## La respuesta para Windows 11
+## Dónde dejar la ventana
 
-En Windows 11, Chrome 84+ y Edge 84+ conceden un Wake Lock nativo a cualquier pestaña visible. Abre AwakeTab, deja la sesión de 1 hora que trae esta página o elige otra duración, y espera a que el indicador diga “Pantalla despierta”. Desde ese momento, Windows no atenúa ni apaga la pantalla mientras la pestaña siga a la vista, y tampoco entra en suspensión por inactividad. Los mismos pasos sirven en Windows 10. Tres cosas quedan fuera de su alcance: minimizar la ventana u ocultar la pestaña libera el bloqueo, cerrar la tapa suspende el equipo y Modern Standby es un tema aparte que depende del firmware.
+- **Al lado de tu trabajo.** Con Win + las flechas puedes dejar AwakeTab en una esquina mientras usas otra app.
+- **En un segundo monitor.** El bloqueo cubre el tiempo de apagado de pantalla del sistema; lo importante es que la pestaña siga visible.
+- **Ventana flotante.** En Chrome, Edge y Firefox 151+, el botón “Ventana flotante” deja un temporizador pequeño por encima de todo.
+
+Si minimizas el navegador o cambias de pestaña, el indicador pasa a “En pausa — pestaña oculta” y la cuenta regresiva se detiene hasta que vuelves.
+
+::ad
+
+## Otros navegadores en Windows
+
+Según la documentación de los navegadores (revisada el 26 de septiembre de 2026), Firefox 126+ y Opera 70+ también tienen Wake Lock nativo en Windows. Con un Firefox más antiguo, AwakeTab ofrece un video de respaldo que requiere un clic y consume más energía.
 
 ## Sin tocar la configuración de energía
 
@@ -51,18 +70,6 @@ En Windows 11 24H2, el ahorro de batería pasó a llamarse ahorro de energía (�
 ## Modern Standby y la tapa cerrada
 
 Muchas laptops con Windows 11 usan Modern Standby, un estado de reposo que maneja el firmware y tiene sus propias rarezas. Un Wake Lock del navegador no controla ese nivel. Lo mismo con la tapa: al cerrarla, el equipo hace lo que indique la acción de la tapa en Windows (normalmente, suspenderse), sin importar lo que diga cualquier página web o extensión.
-
-## Dónde dejar la ventana
-
-- **Al lado de tu trabajo.** Con Win + las flechas puedes dejar AwakeTab en una esquina mientras usas otra app.
-- **En un segundo monitor.** El bloqueo cubre el tiempo de apagado de pantalla del sistema; lo importante es que la pestaña siga visible.
-- **Ventana flotante.** En Chrome, Edge y Firefox 151+, el botón “Ventana flotante” deja un temporizador pequeño por encima de todo.
-
-Si minimizas el navegador o cambias de pestaña, el indicador pasa a “En pausa — pestaña oculta” y la cuenta regresiva se detiene hasta que vuelves.
-
-## Otros navegadores en Windows
-
-Según la documentación de los navegadores (revisada el 26 de septiembre de 2026), Firefox 126+ y Opera 70+ también tienen Wake Lock nativo en Windows. Con un Firefox más antiguo, AwakeTab ofrece un video de respaldo que requiere un clic y consume más energía.
 
 ## Lo que no cambia
 

@@ -13,6 +13,54 @@ translationOf: "iphone-safari"
 lastVerified: 2026-09-09
 browsers: ["safari"]
 os: ["ios"]
+lead: "Desde o iOS 16.4, o Safari no iPhone tem Wake Lock (a API que mantém a tela acesa) nativo. Basta abrir o AwakeTab no Safari e iniciar uma sessão: com “Tela ligada” no indicador, o iPhone não bloqueia enquanto a aba seguir aberta na frente. Dois cuidados: o Modo de Pouca Energia continua deixando a opção Nunca do Bloqueio Automático em cinza e trava o Bloqueio Automático em 30 segundos; e sair do Safari libera o bloqueio. Esta página sugere uma sessão de 30 minutos."
+crumb: "iPhone no Safari"
+facts:
+  - label: "Safari no iPhone"
+    value: "iOS 16.4"
+  - label: "App na Tela de Início"
+    value: "iOS 18.4"
+toc:
+  o-que-o-ios-faz-por-conta-própria: "O que o iOS faz sozinho"
+  se-aparecer-bloqueado--veja-como-corrigir: "Se aparecer Bloqueado"
+steps:
+  - title: "Confira o Modo de Pouca Energia"
+    path: "Ajustes › Bateria"
+    text: "Se o ícone da bateria estiver amarelo, ele está ativo e o Bloqueio Automático fica em 30 segundos. Se a tela apagar mesmo com o AwakeTab, desative-o."
+    shot: "o ícone da bateria em amarelo"
+  - title: "Abra o AwakeTab no Safari e escolha a duração"
+    text: "Os tempos vão de 15 min a 4 h, ou “∞” para até você parar."
+    shot: "o AwakeTab no Safari com as durações"
+  - title: "Toque em iniciar"
+    text: "O indicador passa por “Iniciando…” e deve chegar a “Tela ligada”."
+    shot: "o indicador mostrando “Tela ligada”"
+  - title: "Deixe o Safari aberto na aba do AwakeTab"
+    text: "Se precisar ler outra coisa, prefira o iPad, com apps em janelas no iPadOS 26 (Split View no iPadOS 18 ou anterior); no iPhone só um app fica na frente, então a aba do AwakeTab precisa ficar na tela."
+    shot: "o Safari na frente com a aba do AwakeTab"
+matrix:
+  label: "Versões mínimas no iPhone, conferidas em 26 de setembro de 2026"
+  cols: ["Contexto", "Resultado", "O que acontece"]
+  rows:
+    - what: "Safari no iPhone, iOS 16.4 ou posterior"
+      result: works
+      label: "Compatível"
+      text: "Wake Lock nativo com a aba visível."
+    - what: "App na Tela de Início, iOS 18.4 ou posterior"
+      result: works
+      label: "Compatível"
+      text: "Wake Lock nativo com o app aberto."
+    - what: "Safari anterior ao 16.4"
+      result: fallback
+      label: "Vídeo alternativo"
+      text: "Só o vídeo alternativo, após um toque."
+rows:
+  blockers:
+    - title: "Modo de Pouca Energia"
+      text: "Define o Bloqueio Automático em 30 segundos (Suporte da Apple). O Safari não recusa o Wake Lock por causa dele; se a tela ainda apaga com o modo ligado é algo que ainda não registramos num teste em aparelho."
+    - title: "Trocar de app ou de aba"
+      text: "O iOS retira o bloqueio na hora. O cronômetro para e só volta a correr quando a aba aparece de novo."
+    - title: "Tela de bloqueio por botão"
+      text: "Apertar o botão lateral apaga a tela, com ou sem AwakeTab."
 faq:
   - q: "Se eu for para o Instagram e voltar, a tela continua segura?"
     a: "Enquanto você está em outro app, não. Sair do Safari ou trocar de aba libera o bloqueio e o indicador mostra “Pausado — aba oculta”. Ao voltar para a aba do AwakeTab, o bloqueio é pedido de novo; espere aparecer “Tela ligada”."
@@ -34,34 +82,23 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Resposta direta para o iPhone
-
-Desde o iOS 16.4, o Safari no iPhone tem Wake Lock (a API que mantém a tela acesa) nativo. Basta abrir o AwakeTab no Safari e iniciar uma sessão: com “Tela ligada” no indicador, o iPhone não bloqueia enquanto a aba seguir aberta na frente. Dois cuidados: o Modo de Pouca Energia continua deixando a opção Nunca do Bloqueio Automático em cinza e trava o Bloqueio Automático em 30 segundos; e sair do Safari libera o bloqueio. Esta página sugere uma sessão de 30 minutos.
-
-## Versões mínimas
-
-| Contexto | Versão mínima | Resultado |
-|---|---|---|
-| Safari no iPhone | iOS 16.4 | Wake Lock nativo com a aba visível |
-| App na Tela de Início | iOS 18.4 | Wake Lock nativo com o app aberto |
-| Safari anterior ao 16.4 | — | Só o vídeo alternativo, após um toque |
-
-Conferido na documentação da Apple e do WebKit em 26 de setembro de 2026.
-
 ## Passo a passo no Safari
 
-1. Confira o Modo de Pouca Energia em Ajustes → Bateria: se o ícone da bateria estiver amarelo, ele está ativo e o Bloqueio Automático fica em 30 segundos. Se a tela apagar mesmo com o AwakeTab, desative-o.
-2. Abra o AwakeTab no Safari e escolha a duração. Os tempos vão de 15 min a 4 h, ou “∞” para até você parar.
-3. Toque em iniciar. O indicador passa por “Iniciando…” e deve chegar a “Tela ligada”.
-4. Deixe o Safari aberto na aba do AwakeTab. Se precisar ler outra coisa, prefira o iPad, com apps em janelas no iPadOS 26 (Split View no iPadOS 18 ou anterior); no iPhone só um app fica na frente, então a aba do AwakeTab precisa ficar na tela.
+::steps
 
 Se você prefere mudar o próprio sistema, o caminho é Ajustes → Tela e Brilho → Bloqueio Automático → Nunca. Se a opção estiver cinza, veja [por que o Bloqueio Automático Nunca fica em cinza](/pt-br/guides/iphone-bloqueio-automatico-nunca-cinza).
 
+::ad
+
+## Versões mínimas
+
+Conferido na documentação da Apple e do WebKit em 26 de setembro de 2026.
+
+::matrix
+
 ## O que o iOS faz por conta própria
 
-- **Modo de Pouca Energia**: define o Bloqueio Automático em 30 segundos (Suporte da Apple). O Safari não recusa o Wake Lock por causa dele; se a tela ainda apaga com o modo ligado é algo que ainda não registramos num teste em aparelho.
-- **Trocar de app ou de aba**: o iOS retira o bloqueio na hora. O cronômetro para e só volta a correr quando a aba aparece de novo.
-- **Tela de bloqueio por botão**: apertar o botão lateral apaga a tela, com ou sem AwakeTab.
+::rows blockers
 
 ## Se aparecer “Bloqueado — veja como corrigir”
 

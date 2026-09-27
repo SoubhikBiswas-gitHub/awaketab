@@ -1,0 +1,30 @@
+---
+interface Props {
+  figures: Array<{
+    frame: 'phone' | 'desktop';
+    label: string;
+    alt: string;
+    caption: string;
+  }>;
+  t: (key: string, vars?: Record<string, string | number>) => string;
+}
+const { figures, t } = Astro.props;
+---
+
+<div class="at-figs">
+  {
+    figures.map((fig) => (
+      <figure>
+        <div
+          class={`at-fig at-fig-${fig.frame}`}
+          data-placeholder={`${fig.frame} screenshot`}
+          role="img"
+          aria-label={t('content.placeholderAlt', { what: fig.alt })}
+        >
+          {fig.label}
+        </div>
+        <figcaption>{fig.caption}</figcaption>
+      </figure>
+    ))
+  }
+</div>

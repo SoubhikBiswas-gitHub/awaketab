@@ -1,0 +1,144 @@
+/* stylelint-disable no-descending-specificity */
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-lc {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-5);
+    min-inline-size: 0;
+    margin: 0;
+    padding: var(--at-card-pad);
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-lg);
+    background: var(--at-surface);
+  }
+
+  .at-lc svg[role="img"] {
+    inline-size: 100%;
+    overflow: visible;
+    font: var(--at-type-diagram);
+  }
+
+  .at-lc-w {
+    display: none;
+  }
+
+  .at-lc-t {
+    display: block;
+  }
+
+  .at-lc-e path,
+  .at-lc-edge path {
+    fill: none;
+    stroke: var(--at-muted);
+    stroke-width: 1.5;
+  }
+
+  .at-lc marker path {
+    fill: var(--at-muted);
+    stroke: none;
+  }
+
+  .at-lc text {
+    fill: var(--at-ink-2);
+  }
+
+  .at-lc .at-lc-mono {
+    font: var(--at-type-diagram-mono);
+  }
+
+  .at-lc-n {
+    --at-tone: var(--at-muted);
+  }
+
+  .at-lc-n:is([data-lock="requesting"], [data-lock="held"]) {
+    --at-tone: var(--at-accent);
+  }
+
+  .at-lc-n[data-lock="lost"] {
+    --at-tone: var(--at-warn);
+  }
+
+  .at-lc-n rect {
+    fill: color-mix(in srgb, var(--at-tone) 12%, transparent);
+    stroke: color-mix(in srgb, var(--at-tone) 38%, transparent);
+  }
+
+  .at-lc-n path {
+    fill: none;
+    fill-rule: evenodd;
+    stroke: var(--at-tone);
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+
+  .at-lc-n .at-lc-f {
+    fill: var(--at-tone);
+  }
+
+  .at-lc .at-lc-n text {
+    fill: var(--at-ink);
+    font: var(--at-type-diagram-node);
+  }
+
+  .at-lc-o {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-3);
+    padding-block-start: var(--at-s-5);
+    border-block-start: var(--at-border) solid var(--at-line);
+  }
+
+  .at-cp .at-lc-o p {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--at-s-2);
+    margin: 0;
+    padding-block: var(--at-s-1);
+  }
+
+  .at-lc-edge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--at-s-1);
+    color: var(--at-ink-2);
+    font: var(--at-type-caption);
+    white-space: nowrap;
+  }
+
+  .at-cp .at-md .at-lc-edge code {
+    padding: 0;
+    background: none;
+    color: inherit;
+    font: var(--at-type-caption);
+    font-family: var(--at-font-mono);
+  }
+
+  .at-lc-edge svg {
+    inline-size: var(--at-icon-sm);
+    block-size: var(--at-s-3);
+  }
+
+  .at-lc-edge path {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .at-lc figcaption {
+    color: var(--at-muted);
+    font: var(--at-type-small);
+    text-wrap: pretty;
+  }
+
+  @media (width >= 600px) {
+    .at-lc-w {
+      display: block;
+    }
+
+    .at-lc-t {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,26 @@
+---
+import { inline } from '../../lib/article';
+
+interface Props {
+  items: string[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="at-check" data-check>
+  {
+    items.map((item) => (
+      <li>
+        <label>
+          <input type="checkbox" />
+          <span class="at-box" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M5 12.5l4.5 4.5L19 7.5" />
+            </svg>
+          </span>
+          <span set:html={inline(item)} />
+        </label>
+      </li>
+    ))
+  }
+</ul>

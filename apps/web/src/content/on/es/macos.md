@@ -13,6 +13,27 @@ translationOf: "macos"
 lastVerified: 2026-09-09
 browsers: ["chrome", "safari", "firefox"]
 os: ["macos"]
+crumb: "macOS"
+lead: "Safari 16.4+, Chrome 84+ y Firefox 126+ pueden mantener encendida la pantalla de tu Mac desde una pestaña visible, sin instalar ninguna app. Inicia la sesión de una hora que trae esta página, o cualquier otra duración; estará activa cuando el indicador marque “Pantalla despierta”. Mientras la pantalla siga encendida, la Mac tampoco entra en reposo por inactividad. Ten presentes dos límites: cerrar la tapa la pone en reposo, y minimizar la ventana o cambiar de pestaña libera el bloqueo."
+facts:
+  - label: "Safari"
+    value: "16.4 o posterior"
+  - label: "Chrome"
+    value: "84 o posterior"
+  - label: "Firefox"
+    value: "126 o posterior"
+toc:
+  pantalla-encendida-no-es-lo-mismo-que-mac-despierta: "Pantalla encendida y Mac despierta"
+steps:
+  - title: "Abre AwakeTab en Safari, Chrome o Firefox y elige la duración"
+    text: "Conecta la MacBook al cargador si la sesión va a ser larga."
+    shot: "AwakeTab en Safari en una Mac con la duración elegida"
+  - title: "Revisa el indicador"
+    text: "Debe decir “Pantalla despierta”. Si dice “Bloqueado — aquí está la solución”, el motivo aparece justo debajo."
+    shot: "el indicador de AwakeTab con la sesión activa"
+  - title: "Deja la ventana a la vista"
+    text: "Puede estar en un costado de la pantalla o en un monitor externo, pero no minimizada."
+    shot: "una ventana pequeña de AwakeTab junto a otra app"
 faq:
   - q: "¿AwakeTab evita que la Mac entre en reposo?"
     a: "Sí, mientras la pantalla siga encendida. Chrome sostiene una aserción que impide el reposo de la pantalla y, según la documentación de Apple, la Mac tampoco entra en reposo por inactividad mientras está activa. Si necesitas el equipo activo con la pantalla apagada, usa caffeinate u otra utilidad nativa."
@@ -34,22 +55,17 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Qué consigues en macOS
+## Cómo dejarlo listo
 
-Safari 16.4+, Chrome 84+ y Firefox 126+ pueden mantener encendida la pantalla de tu Mac desde una pestaña visible, sin instalar ninguna app. Inicia la sesión de una hora que trae esta página, o cualquier otra duración; estará activa cuando el indicador marque “Pantalla despierta”. Mientras la pantalla siga encendida, la Mac tampoco entra en reposo por inactividad. Ten presentes dos límites: cerrar la tapa la pone en reposo, y minimizar la ventana o cambiar de pestaña libera el bloqueo.
+::steps
+
+Los ajustes del sistema que controlan cuándo se apaga la pantalla están en Ajustes del Sistema → Pantalla bloqueada y en Energía (o Batería en una MacBook). AwakeTab no los cambia: solo evita que ese tiempo corra mientras la pestaña sigue al frente.
+
+::ad
 
 ## Pantalla encendida no es lo mismo que Mac despierta
 
 macOS separa dos cosas: el reposo de la pantalla y el reposo del sistema. Un Wake Lock del navegador está diseñado para la primera, pero arrastra la segunda: Chrome sostiene una aserción que impide el reposo de la pantalla y, según la documentación de Apple (IOKit, revisada el 26 de septiembre de 2026), mientras está activa la Mac no entra en reposo por inactividad. Puedes comprobarlo con `pmset -g assertions` en la Terminal. Pero si tu objetivo es que termine una copia larga o una exportación con la pantalla apagada, AwakeTab no es la herramienta: necesitas una utilidad nativa, como el comando caffeinate que trae macOS. Comparamos ese enfoque con una pestaña en [Caffeine vs. AwakeTab](/es/vs/caffeine).
-
-## Cómo dejarlo listo
-
-1. Conecta la MacBook al cargador si la sesión va a ser larga.
-2. Abre AwakeTab en Safari, Chrome o Firefox y elige la duración.
-3. Revisa que el indicador diga “Pantalla despierta”. Si dice “Bloqueado — aquí está la solución”, el motivo aparece justo debajo.
-4. Deja la ventana a la vista. Puede estar en un costado de la pantalla o en un monitor externo, pero no minimizada.
-
-Los ajustes del sistema que controlan cuándo se apaga la pantalla están en Ajustes del Sistema → Pantalla bloqueada y en Energía (o Batería en una MacBook). AwakeTab no los cambia: solo evita que ese tiempo corra mientras la pestaña sigue al frente.
 
 ## La tapa cerrada
 

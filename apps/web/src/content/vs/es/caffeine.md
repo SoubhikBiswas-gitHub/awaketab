@@ -12,6 +12,47 @@ translationOf: "caffeine"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+lead: "Caffeine para macOS le pide al sistema que no se duerma con una aserción de energía, sin pulsar teclas, y lo hace aunque no tengas ninguna ventana abierta (según su código fuente, a 26 de septiembre de 2026). AwakeTab es una pestaña del navegador que pide un Wake Lock con la API estándar y te muestra con honestidad si lo tiene. Elige Caffeine si necesitas que funcione sin nada visible; elige AwakeTab si quieres un indicador que no mienta y no instalar otra app."
+crumb: "Caffeine"
+toc:
+  cuándo-caffeine-es-mejor-opción: "Cuándo es mejor Caffeine"
+  cuándo-awaketab-es-mejor-opción: "Cuándo es mejor AwakeTab"
+  en-la-mac-qué-esperar-de-la-pestaña: "En la Mac"
+compare:
+  label: "AwakeTab comparado con Caffeine para macOS"
+  what: "Aspecto"
+  cols:
+    - name: "AwakeTab"
+      us: true
+    - name: "Caffeine"
+  rows:
+    - what: "Cómo funciona"
+      cells: ["Pide un Screen Wake Lock al navegador", "Aserción de energía de macOS, sin pulsar teclas"]
+    - what: "Instalación"
+      cells: ["Ninguna: es una página web", "App para macOS"]
+    - what: "¿Necesita algo visible?"
+      cells: ["Sí, la pestaña tiene que estar a la vista", "No"]
+    - what: "Ventana minimizada"
+      cells: ["Se pausa: “En pausa — pestaña oculta”", "Sigue activo"]
+    - what: "Estado del bloqueo"
+      cells: ["Indicador que solo dice “Pantalla despierta” si el navegador lo confirma", "Ícono en la barra de menús"]
+    - what: "Dónde funciona"
+      cells: ["Navegadores en Mac, Windows, Linux, Android, iPhone y iPad", "macOS (la versión que comparamos)"]
+    - what: "Tapa cerrada"
+      cells: ["La Mac entra en reposo (salvo en modo de tapa cerrada)", "Sin evidencia de que evite el reposo"]
+picks:
+  them:
+    - title: "Vas a trabajar en otras apps a pantalla completa"
+      text: "Si no quieres ver nada del navegador, Caffeine resuelve eso porque actúa a nivel del sistema. Una pestaña no puede: los navegadores solo permiten el Wake Lock a la pestaña que está enfrente, y esa regla no la cambia ninguna página web."
+    - title: "Quieres mantener la Mac despierta con la pantalla apagada"
+      text: "También conviene una utilidad nativa; la comparación con el comando caffeinate está entre las páginas relacionadas."
+  us:
+    - title: "No puedes o no quieres instalar nada"
+      text: "En una computadora del trabajo o prestada, basta con abrir la página."
+    - title: "Quieres saber si realmente funciona"
+      text: "El indicador tiene siete estados, y solo dos muestran la pantalla como despierta: “Pantalla despierta” y “Despierta con video de respaldo”. Si el navegador rechaza el bloqueo, verás “Bloqueado — aquí está la solución” con el motivo."
+    - title: "Usas otros dispositivos"
+      text: "La misma página sirve en el teléfono para una [receta en la cocina](/es/for/cocinar) o en una PC con Windows."
 faq:
   - q: "¿AwakeTab sirve como alternativa online a Caffeine?"
     a: "Sí, si puedes dejar una pestaña a la vista. AwakeTab mantiene la pantalla encendida sin instalar nada y te muestra con un indicador si el bloqueo está activo. Si necesitas que funcione sin ninguna ventana visible, Caffeine encaja mejor."
@@ -33,31 +74,19 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## La comparación en una frase
-
-Caffeine para macOS le pide al sistema que no se duerma con una aserción de energía, sin pulsar teclas, y lo hace aunque no tengas ninguna ventana abierta (según su código fuente, a 26 de septiembre de 2026). AwakeTab es una pestaña del navegador que pide un Wake Lock con la API estándar y te muestra con honestidad si lo tiene. Elige Caffeine si necesitas que funcione sin nada visible; elige AwakeTab si quieres un indicador que no mienta y no instalar otra app.
-
 ## Tabla comparativa
 
-| Aspecto | Caffeine | AwakeTab |
-|---|---|---|
-| Cómo funciona | Aserción de energía de macOS, sin pulsar teclas | Pide un Screen Wake Lock al navegador |
-| Instalación | App para macOS | Ninguna: es una página web |
-| ¿Necesita algo visible? | No | Sí, la pestaña tiene que estar a la vista |
-| Ventana minimizada | Sigue activo | Se pausa: “En pausa — pestaña oculta” |
-| Estado del bloqueo | Ícono en la barra de menús | Indicador que solo dice “Pantalla despierta” si el navegador lo confirma |
-| Dónde funciona | macOS (la versión que comparamos) | Navegadores en Mac, Windows, Linux, Android, iPhone y iPad |
-| Tapa cerrada | Sin evidencia de que evite el reposo | La Mac entra en reposo (salvo en modo de tapa cerrada) |
+::compare
+
+::ad
 
 ## Cuándo Caffeine es mejor opción
 
-Si vas a trabajar en otras apps a pantalla completa y no quieres ver nada del navegador, Caffeine resuelve eso porque actúa a nivel del sistema. Una pestaña no puede: los navegadores solo permiten el Wake Lock a la pestaña que está enfrente, y esa regla no la cambia ninguna página web. Para mantener la Mac despierta con la pantalla apagada, también conviene una utilidad nativa; la comparación con el comando caffeinate está entre las páginas relacionadas.
+::picks them
 
 ## Cuándo AwakeTab es mejor opción
 
-- **No puedes o no quieres instalar nada.** En una computadora del trabajo o prestada, basta con abrir la página.
-- **Quieres saber si realmente funciona.** El indicador tiene siete estados, y solo dos muestran la pantalla como despierta: “Pantalla despierta” y “Despierta con video de respaldo”. Si el navegador rechaza el bloqueo, verás “Bloqueado — aquí está la solución” con el motivo.
-- **Usas otros dispositivos.** La misma página sirve en el teléfono para una [receta en la cocina](/es/for/cocinar) o en una PC con Windows.
+::picks us
 
 ## En la Mac: qué esperar de la pestaña
 

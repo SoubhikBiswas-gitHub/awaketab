@@ -2,6 +2,7 @@
 title: "Screen Wake Lock API: guide and error handling — AwakeTab"
 description: "How navigator.wakeLock.request('screen') works, why it throws NotAllowedError, how to re-acquire after visibilitychange, and support as of September 2026."
 h1: "Screen Wake Lock API: a practical guide with error handling"
+crumb: "Screen Wake Lock API"
 intent: "screen wake lock api"
 secondaryQueries:
   - "navigator.wakeLock.request"
@@ -16,6 +17,111 @@ reviewed: true
 lastVerified: 2026-09-26
 browsers: ["chrome", "edge", "firefox", "safari", "samsung-internet", "opera"]
 os: []
+lead: "`navigator.wakeLock.request('screen')` asks the browser to keep the display on. It works only on a secure (HTTPS) page that is visible. The browser releases the lock when the page is hidden and never asks again by itself. This guide gives you code for each step, the reasons a request fails, and support as of 26 September 2026."
+toc:
+  which-browsers-support-it: "Browser support"
+  how-do-i-ask-for-a-wake-lock: "Ask for a lock"
+  why-did-request-throw-notallowederror: "NotAllowedError"
+  why-a-request-fails-by-engine: "By engine"
+  what-happens-when-the-tab-is-hidden: "When the tab is hidden"
+  what-does-the-whole-lifecycle-look-like: "The lifecycle"
+  can-a-page-in-an-iframe-ask-for-one: "Inside an iframe"
+  how-do-i-let-go-on-purpose: "Let go on purpose"
+  the-video-fallback-trade-off: "The video fallback"
+  what-can-a-wake-lock-not-do: "Limits"
+rows:
+  support:
+    - title: "Chrome and Edge"
+      value: "84 and later"
+    - title: "Opera"
+      value: "70 and later"
+    - title: "Samsung Internet"
+      value: "14 and later"
+    - title: "Firefox"
+      value: "126 and later (May 2024)"
+    - title: "Safari on Mac, iPhone and iPad"
+      value: "16.4 and later (March 2023)"
+    - title: "iPhone and iPad Home Screen web apps"
+      value: "iOS 18.4 and later"
+  errors:
+    - title: "The page is hidden or not active"
+      text: "The request is rejected, and a held lock is released. AwakeTab shows \"Paused — tab hidden\" and asks again when you come back."
+    - title: "A Permissions-Policy blocks it"
+      text: "Common in an iframe without `allow=\"screen-wake-lock\"`. AwakeTab shows \"Blocked — here's the fix\"."
+    - title: "Safari has not had a tap yet"
+      text: "Safari wants a recent tap on the page. AwakeTab shows \"Blocked — here's the fix\", and tapping Retry is that tap."
+    - title: "Firefox is at 5 % battery or less and not charging"
+      text: "Firefox refuses new locks and releases held ones. Plug in, then tap Retry."
+    - title: "The page is not on HTTPS"
+      text: "There is no `navigator.wakeLock`, so nothing is rejected. AwakeTab calls this unsupported and offers the video fallback after a tap."
+notes:
+  hidden:
+    kicker: "Good to know"
+    text: "The browser releases the lock the moment the page is hidden, and it never asks again by itself. Listen for `visibilitychange` and request a new lock when the page is visible again."
+code:
+  wake-lock.js:
+    lang: js
+    text: |
+      let sentinel = null;
+      let wanted = false;
+
+      async function keepScreenOn() {
+        wanted = true;
+        if (!('wakeLock' in navigator)) return 'unsupported';
+        try {
+          const s = await navigator.wakeLock.request('screen');
+          s.addEventListener('release', () => {
+            if (sentinel === s) sentinel = null;
+          });
+          sentinel = s;
+          return 'held';
+        } catch (err) {
+          // NotAllowedError: page hidden, Permissions-Policy,
+          // no tap yet in Safari, or Firefox at 5% battery or less
+          console.warn(`${err.name}: ${err.message}`);
+          return 'refused';
+        }
+      }
+
+      startButton.addEventListener('click', keepScreenOn);
+  resume.js:
+    lang: js
+    text: |
+      document.addEventListener('visibilitychange', () => {
+        if (wanted && !sentinel && document.visibilityState === 'visible') {
+          keepScreenOn();
+        }
+      });
+  embed.html:
+    lang: html
+    text: |
+      <iframe src="https://widget.example.com/timer" allow="screen-wake-lock"></iframe>
+  headers.txt:
+    lang: text
+    text: |
+      Permissions-Policy: screen-wake-lock=(self "https://widget.example.com")
+  stop.js:
+    lang: js
+    text: |
+      async function letScreenSleep() {
+        wanted = false;
+        const s = sentinel;
+        sentinel = null;
+        await s?.release();
+      }
+
+      stopButton.addEventListener('click', letScreenSleep);
+lifecycle:
+  title: "Wake lock lifecycle"
+  desc: "Ready moves to Starting when the page calls request. Starting moves to Screen awake when the browser grants the lock. Screen awake moves to Paused, tab hidden, when the page is hidden. When the page is visible again it requests a new lock and returns to Starting."
+  edges:
+    granted: "granted"
+    hidden: "tab hidden"
+    visible: "visible again"
+    noApi: "no wakeLock in navigator"
+    tap: "tap"
+  others: "Other ways out"
+  caption: "Labels are the exact pill copy. A timer runs only in \"Screen awake\" and \"Awake via video fallback\"."
 faq:
   - q: "Does the Screen Wake Lock API show a permission prompt?"
     a: "Not in Chromium: its screen-wake-lock permission is allowed by default, so a visible, top-level HTTPS page gets the lock without asking. Safari's condition is a recent tap on the page, and Firefox's is a battery above 5 % or a charger."
@@ -40,74 +146,25 @@ published: 2026-09-09
 updated: 2026-09-27
 ---
 
-`navigator.wakeLock.request('screen')` asks the browser to keep the display on and returns a `WakeLockSentinel`. It works only on HTTPS in a visible document. The browser releases it when the page is hidden, so request it again on `visibilitychange`. It rejects with `NotAllowedError` when the document is hidden, a Permissions-Policy blocks `screen-wake-lock`, Safari has no recent tap, or Firefox is at 5 % battery or less.
+## Which browsers support it?
 
-## The whole pattern in one block
+Versions as of 26 September 2026. Support claims come from browser documentation and engine source; real-device results appear in the [wake lock browser support matrix](/learn/browser-support-matrix) once recorded, with platforms, notes and sources for each row.
 
-```js
-let sentinel = null;
-let wanted = false;
+::rows support
 
-async function keepScreenOn() {
-  wanted = true;
-  if (!('wakeLock' in navigator)) return 'unsupported';
-  try {
-    const s = await navigator.wakeLock.request('screen');
-    s.addEventListener('release', () => {
-      if (sentinel === s) sentinel = null;
-    });
-    sentinel = s;
-    return 'held';
-  } catch (err) {
-    console.warn(`${err.name}: ${err.message}`);
-    return 'refused';
-  }
-}
+## How do I ask for a wake lock?
 
-async function letScreenSleep() {
-  wanted = false;
-  const s = sentinel;
-  sentinel = null;
-  await s?.release();
-}
+Call `request('screen')` from a visible page served over HTTPS. Keep the object it returns: it is your only proof that the lock is held, and its `release` event tells you when it is gone. The `wakeLock` property only exists in secure contexts, so check with `'wakeLock' in navigator` rather than calling and catching: calling `request` on `undefined` throws a `TypeError` that looks like a bug in your code. `https://` pages and `http://localhost` count as secure.
 
-document.addEventListener('visibilitychange', () => {
-  if (wanted && !sentinel && document.visibilityState === 'visible') {
-    keepScreenOn();
-  }
-});
+::code wake-lock.js
 
-startButton.addEventListener('click', keepScreenOn);
-stopButton.addEventListener('click', letScreenSleep);
-```
+Start the request from a click handler: that click is the tap Safari needs. The `wanted` flag separates "the user asked for the screen to stay on" from "the browser currently holds a lock". The browser can drop the second at any time; only the user should change the first. `@awaketab/wake` wraps this pattern, with a gesture-aware video fallback and a `change` event every time the state moves. Its source is MIT on GitHub, and the npm package is coming soon; the [@awaketab/wake library page](/library) runs a live demo.
 
-Start the request from a click handler: that click is the tap Safari needs. A missing `wakeLock` means an http page or an old browser; a rejection is almost always a `NotAllowedError` for one of the four causes above. The `wanted` flag separates "the user asked for the screen to stay on" from "the browser currently holds a lock". The browser can drop the second at any time; only the user should change the first.
+## Why did request() throw NotAllowedError?
 
-## Feature detection and secure contexts
+The browser rejects the promise with `NotAllowedError` for a small set of reasons. Battery saver modes are not one of them in Chromium or Safari. Here is what each cause looks like and what AwakeTab shows.
 
-The `wakeLock` property only exists in secure contexts. On a page served over plain http, `navigator.wakeLock` is undefined, so the right state is "unsupported", not "refused": there is nothing to ask. `https://` pages and `http://localhost` count as secure. Check with `'wakeLock' in navigator` rather than calling and catching, because calling `request` on `undefined` throws a `TypeError` that looks like a bug in your code.
-
-## Release, and asking again
-
-A sentinel has a `released` boolean, a `type` (always `'screen'` today), a `release()` method and a `release` event. The event fires when you call `release()`, when the page becomes hidden, and when the browser takes the lock back for its own reasons.
-
-The browser treats a page as hidden when the user switches tabs or apps, minimises the window, or locks the phone. A visible window that has lost focus keeps its lock. When the page comes back, nothing restores the lock for you: listen for `visibilitychange` and request again, as the block above does. Safari usually accepts that second request thanks to the earlier tap; if it rejects, show a button so the next tap can ask.
-
-## Iframes and Permissions-Policy
-
-The `screen-wake-lock` feature is allowed for the page's own origin by default. A cross-origin iframe needs the embedding page to delegate it:
-
-```html
-<iframe src="https://widget.example.com/timer" allow="screen-wake-lock"></iframe>
-```
-
-A site can also switch the feature off, or allow named origins, with a response header:
-
-```http
-Permissions-Policy: screen-wake-lock=(self "https://widget.example.com")
-```
-
-`screen-wake-lock=()` blocks it everywhere on that page, including in the top-level document. In both cases the request rejects with `NotAllowedError`, which is why "iframe without `allow`" is the first thing to check when a widget works on its own and fails when embedded.
+::rows errors
 
 ## Why a request fails, by engine
 
@@ -126,18 +183,46 @@ Sources: [Chromium wake_lock.cc](https://chromium.googlesource.com/chromium/src/
 
 The battery-saver row matters because many pages, including earlier versions of ours, blamed battery savers for `NotAllowedError`. The engines don't check for them. A saver can still change how long the device waits before the display goes dark, but that happens in the operating system's settings, outside the browser, and your promise never rejects because of it.
 
-## Support floors
+::ad
 
-Chromium browsers have had the API since Chrome 84 (Edge 84, Opera 70, Samsung Internet 14). Safari added it in 16.4 on Mac, iPhone and iPad, and Firefox in 126. Installed Home Screen apps on Apple's mobile devices got it later, in 18.4. The [wake lock browser support matrix](/learn/browser-support-matrix) has platforms, notes and sources for each row.
+## What happens when the tab is hidden?
+
+Switching tabs or apps, minimising the window or locking the phone hides the document. A visible window that has lost focus keeps its lock. The sentinel fires `release`, and your page should show that honestly instead of a running timer. The same event fires when you call `release()` yourself and when the browser takes the lock back for its own reasons.
+
+::note hidden
+
+::code resume.js
+
+Safari usually accepts that second request thanks to the earlier tap; if it rejects, show a button so the next tap can ask.
+
+## What does the whole lifecycle look like?
+
+Each box is one of AwakeTab's pill messages. The dashed line is the step most pages forget: asking again when the tab comes back.
+
+::lifecycle
+
+## Can a page in an iframe ask for one?
+
+Only if the parent page allows it. The `screen-wake-lock` feature is allowed for the page's own origin by default; a cross-origin iframe needs the embedding page to delegate it with `allow="screen-wake-lock"`. Without it, the Permissions-Policy blocks the request and it fails with `NotAllowedError`, which is why "iframe without `allow`" is the first thing to check when a widget works on its own and fails when embedded.
+
+::code embed.html
+
+A site can also switch the feature off, or allow named origins, with a response header. `screen-wake-lock=()` blocks it everywhere on that page, including in the top-level document.
+
+::code headers.txt
+
+## How do I let go on purpose?
+
+When the user stops or the time is up, release the lock and clear the flag that says they wanted it. Otherwise your `visibilitychange` handler will ask again the next time the tab is shown.
+
+::code stop.js
 
 ## The video fallback trade-off
 
 Before the API, libraries kept screens on by playing a tiny silent video in a loop. It still works as a fallback for browsers without the API, with three costs. It needs a user gesture, because browsers block video autoplay until someone interacts. It uses more power than a native lock, since the media pipeline stays busy. And your code can't easily tell whether it is working, only whether `play()` resolved. Use it only when `wakeLock` is missing, never as a second attempt after a `NotAllowedError`. [NoSleep.js vs @awaketab/wake](/vs/nosleep-js) compares two libraries that handle this differently.
 
-## If you'd rather not write this yourself
-
-`@awaketab/wake` wraps the pattern above: feature detection, the re-request on `visibilitychange`, a gesture-aware video fallback, and a `change` event every time the state moves. Its source is MIT on GitHub, and the npm package is coming soon. The [@awaketab/wake library page](/library) runs a live demo.
-
-## What a wake lock can't do
+## What can a wake lock not do?
 
 It keeps the display on while the page is visible. It can't hold from a hidden tab, stop a laptop sleeping when the lid closes, or change an operating system rule such as a work sign-in lock. It sends no input, so it doesn't change a chat app's Away timer. On desktop Chrome or Edge, an extension with the `power` permission, such as [AwakeTab for Chrome](/extension), can keep the screen on from a hidden tab; a web page can't.
+
+::limit inline

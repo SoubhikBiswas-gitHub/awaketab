@@ -2,6 +2,7 @@
 title: "Caffeine alternative in a browser tab — AwakeTab"
 description: "Caffeine keeps a Mac or PC awake with no window open. AwakeTab needs no install, but it only holds while its tab stays visible. Here is which fits."
 h1: "AwakeTab vs Caffeine"
+crumb: "Caffeine"
 intent: "caffeine alternative"
 secondaryQueries:
   - "caffeine alternative mac"
@@ -15,6 +16,58 @@ reviewed: true
 lastVerified: 2026-09-26
 browsers: ["chrome", "edge", "firefox", "safari"]
 os: ["macos", "windows"]
+lead: "If you can install apps and want your Mac awake while you work in anything at all, use Caffeine: it sits in the menu bar, holds a macOS power assertion, and needs no window in front. If you can't install software, or you want the screen on for a set time with a status you can trust, AwakeTab does that from a browser tab, as long as the tab stays visible."
+toc:
+  side-by-side: "Side by side"
+  when-caffeine-is-the-better-choice: "When Caffeine is better"
+  when-awaketab-is-the-better-choice: "When AwakeTab is better"
+  neither-one-keeps-a-closed-macbook-awake: "A closed MacBook"
+  check-which-one-is-holding-your-mac-awake: "Check which one holds it"
+compare:
+  label: "AwakeTab compared with Caffeine for Mac and Caffeine for Windows, checked 26 September 2026"
+  what: "What"
+  cols:
+    - name: "AwakeTab"
+      us: true
+    - name: "Caffeine for Mac"
+    - name: "Caffeine for Windows"
+  rows:
+    - what: "How it keeps the screen on"
+      cells: ["Screen Wake Lock API in the browser", "macOS power assertion", "Simulated F15 key press every 59 seconds, or `-stes` mode"]
+    - what: "With the tab hidden or no window open"
+      cells: ["Stops. The pill says \"Paused — tab hidden\" and asks again when you return.", "Keeps holding", "Keeps holding"]
+    - what: "Sends keys or moves the pointer"
+      cells: ["No", "No", "Yes, by default"]
+    - what: "Install"
+      cells: ["None, open a web page", "Drag into Applications", "Download and run"]
+    - what: "Platforms"
+      cells: ["Chrome and Edge 84+, Firefox 126+, Safari 16.4+", "macOS", "Windows"]
+    - what: "Price"
+      cells: ["Free, with optional Pro", "Free", "Free"]
+    - what: "Last release"
+      cells: ["Web app, see the [changelog](/changelog)", "Its page lists no version or date", "v1.98, November 2024"]
+    - what: "Facts checked"
+      cells: ["26 September 2026", "26 September 2026", "26 September 2026"]
+      same: true
+picks:
+  them:
+    - title: "You work full screen in other apps all day"
+      text: "A menu-bar cup holds whatever is in front. A browser tab loses its lock the moment you switch away, and the pill changes to \"Paused — tab hidden\"."
+    - title: "The browser won't be open"
+      text: "A render or a large copy can run with every browser window closed; a web page can't."
+    - title: "You want a Windows tray tool"
+      text: "Zhorn's Caffeine works with any app in front."
+  us:
+    - title: "You can't install apps"
+      text: "On a managed laptop without admin rights, a web page is often the option left. It leaves your organisation's lock policies alone."
+    - title: "You want it to end by itself"
+      text: "Pick 30 min, 1 h or a clock time such as 11:30 AM. Hidden time doesn't count toward a timed session."
+    - title: "You want to see that it's working"
+      text: "The pill turns to \"Screen awake\" once your browser has granted the lock, not when you press the button."
+    - title: "You're on a phone or tablet"
+      text: "AwakeTab works in Safari 16.4 or later (after one tap) and in Chrome on Android."
+    - title: "You want a hidden tab to count"
+      text: "On desktop Chrome or Edge, [AwakeTab for Chrome](/extension) uses Chrome's own power setting, so it keeps working when the tab is hidden or the window is minimised."
 faq:
   - q: "Is AwakeTab a web version of Caffeine?"
     a: "Not quite. Both ask the operating system to keep the display on, but Caffeine holds with nothing on screen, while AwakeTab holds only while its tab is in view. AwakeTab adds timed sessions, an end time and a readable status."
@@ -36,45 +89,30 @@ published: 2026-09-09
 updated: 2026-09-27
 ---
 
-If you can install apps and want your Mac awake while you work in anything at all, use Caffeine: it sits in the menu bar, holds a macOS power assertion, and needs no window in front. If you can't install software, or you want the screen on for a set time with a status you can trust, AwakeTab does that from a browser tab, as long as the tab stays visible.
+## Side by side
 
-## Two different apps share the name
+Two different apps share the name, so each gets its own column. **Caffeine for Mac**, from IntelliScape, is a menu-bar cup that holds a macOS power assertion, the mechanism a video player uses. **Caffeine for Windows**, from Zhorn Software, is a different app: by default it simulates an F15 key press every 59 seconds, so other apps see input, and its `-stes` option asks Windows not to sleep instead. AwakeTab is closer to the Mac app. It asks the browser for a wake lock and never sends keys or moves the pointer. Rows marked Same are real ties.
 
-**Caffeine for Mac**, from IntelliScape, is a menu-bar cup: fill it and the app asks macOS not to dim the display or sleep. It uses a power assertion, the mechanism a video player uses, and presses no keys.
+::compare
 
-**Caffeine for Windows**, from Zhorn Software, is a different app. By default it simulates an F15 key press every 59 seconds, so Windows behaves as if someone is typing (Zhorn Software, checked 26 September 2026). Other apps see that as input. Its `-stes` option asks Windows not to sleep instead.
+::ad
 
-AwakeTab is closer to the Mac app. It asks the browser for a wake lock through the Screen Wake Lock API, and the browser passes that to the operating system. It never sends keys or moves the pointer.
+## When Caffeine is the better choice
 
-## Caffeine and AwakeTab compared (as of 26 September 2026)
+It is a good app. In these cases we would send you there.
 
-| Feature | Caffeine for Mac (IntelliScape) | Caffeine for Windows (Zhorn) | AwakeTab |
-|---|---|---|---|
-| Mechanism | macOS power assertion | Simulated F15 key press, or `-stes` mode | Screen Wake Lock API in the browser |
-| Works with the tab hidden or no window open | Yes | Yes | No: the tab must stay visible |
-| Install | Drag into Applications | Download and run | None, open a web page |
-| Platforms | macOS | Windows | Chrome and Edge 84+, Firefox 126+, Safari 16.4+ |
-| Price | Free | Free | Free, with optional Pro |
-| Last release | Its page lists no version or date | v1.98, November 2024 | Web app, see the [changelog](/changelog) |
+::picks them
 
-## When Caffeine is the better pick
+## When AwakeTab is the better choice
 
-- **You work full screen in other apps all day.** A menu-bar cup holds whatever is in front. A browser tab loses its lock the moment you switch away, and the pill changes to "Paused — tab hidden".
-- **The browser won't be open.** A render or a large copy can run with every browser window closed; a web page can't.
-- **You want a Windows tray tool.** Zhorn's Caffeine works with any app in front.
+These are the jobs AwakeTab was built for.
 
-## When AwakeTab is the better pick
-
-- **You can't install apps.** On a managed laptop without admin rights, a web page is often the option left. It leaves your organisation's lock policies alone.
-- **You want it to end by itself.** Pick 30 min, 1 h or a clock time such as 11:30 AM. Hidden time doesn't count toward a timed session.
-- **You want to see that it's working.** The pill turns to "Screen awake" once your browser has granted the lock, not when you press the button.
-- **You're on a phone or tablet.** AwakeTab works in Safari 16.4 or later (after one tap) and in Chrome on Android.
-- **You want a hidden tab to count.** On desktop Chrome or Edge, [AwakeTab for Chrome](/extension) uses Chrome's own power setting, so it keeps working when the tab is hidden or the window is minimised.
+::picks us
 
 ## Neither one keeps a closed MacBook awake
 
-Closing the lid puts a MacBook to sleep whatever a menu-bar app or a tab asks, unless it is running in clamshell mode, plugged in and driving an external display. For the settings and apps that can help, see our guide to [keeping a Mac awake with the lid closed](/guides/mac-prevent-sleep-lid-closed).
+Closing the lid puts a MacBook to sleep whatever a menu-bar app or a tab asks, unless it is running in clamshell mode, plugged in and driving an external display. See the guide to [keeping a Mac awake with the lid closed](/guides/mac-prevent-sleep-lid-closed).
 
 ## Check which one is holding your Mac awake
 
-Run `pmset -g assertions` in Terminal. With Caffeine on, you should see an assertion owned by Caffeine. With AwakeTab in Chrome showing "Screen awake", the browser holds a PreventUserIdleDisplaySleep or NoDisplaySleep assertion, and macOS does not idle-sleep meanwhile. [Keep your Mac screen awake from a browser tab](/on/macos) covers the check in detail.
+Run `pmset -g assertions` in Terminal. With Caffeine on, you should see an assertion owned by Caffeine. With AwakeTab showing "Screen awake" in Chrome, the browser holds a PreventUserIdleDisplaySleep or NoDisplaySleep assertion, and macOS does not idle-sleep meanwhile.

@@ -13,6 +13,48 @@ translationOf: "caffeine"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+lead: "O Caffeine para macOS usa uma asserção de energia do sistema, sem apertar teclas, para manter o Mac acordado, mesmo sem nenhuma janela aberta (segundo o código-fonte dele, em 26 de setembro de 2026). O AwakeTab é uma aba do navegador que usa a API padrão Screen Wake Lock. Escolha o Caffeine quando precisar de algo que funcione sem nenhuma janela visível; escolha o AwakeTab quando quiser um indicador honesto, nada para instalar e algo que funcione também fora do Mac."
+crumb: "Caffeine"
+toc:
+  quando-o-caffeine-é-a-melhor-escolha: "Quando o Caffeine é melhor"
+  quando-o-awaketab-é-a-melhor-escolha: "Quando o AwakeTab é melhor"
+  como-testar-o-awaketab-no-lugar-do-caffeine: "Como testar o AwakeTab"
+compare:
+  label: "AwakeTab comparado com o Caffeine para macOS, dados conferidos em 26 de setembro de 2026"
+  what: "Aspecto"
+  cols:
+    - name: "AwakeTab"
+      us: true
+    - name: "Caffeine"
+  rows:
+    - what: "Mecanismo"
+      cells: ["API Screen Wake Lock do navegador", "Asserção de energia do macOS"]
+    - what: "Funciona com a janela oculta"
+      cells: ["Não — a aba precisa ficar visível", "Sim"]
+    - what: "Simula teclado ou mouse"
+      cells: ["Nunca", "Não (a tecla F15 é do Caffeine para Windows, outro app)"]
+      same: true
+    - what: "Instalação"
+      cells: ["Nenhuma, é uma página", "App nativo"]
+    - what: "Plataformas"
+      cells: ["Qualquer sistema com um navegador compatível (Chrome, Edge, Firefox, Safari, Samsung Internet, Opera)", "macOS"]
+    - what: "Status mostrado"
+      cells: ["“Tela ligada” só quando o navegador confirma", "Ícone na barra de menus"]
+picks:
+  them:
+    - title: "Você não quer nenhuma janela à vista"
+      text: "O Caffeine trabalha em segundo plano; uma aba escondida do AwakeTab não segura nada."
+    - title: "O que importa é o Mac acordado, não só a tela"
+      text: "O Caffeine atua no sistema, sem depender de uma janela. O AwakeTab também evita o repouso por inatividade, mas só enquanto a aba estiver visível e a tela ligada."
+  us:
+    - title: "Você não pode ou não quer instalar apps"
+      text: "Por exemplo, num computador emprestado ou gerenciado."
+    - title: "Você quer saber a verdade"
+      text: "O indicador só diz “Tela ligada” quando o navegador confirma o bloqueio. Se o navegador recusar, aparece “Bloqueado — veja como corrigir”, com a causa."
+    - title: "Você não está no Mac"
+      text: "O mesmo endereço funciona no Windows, no Android, no iPhone e no Linux."
+    - title: "Você prefere uma API padrão do navegador"
+      text: "O AwakeTab nunca aperta teclas nem mexe o mouse, o que importa se a política de TI da sua empresa proíbe simuladores de entrada."
 faq:
   - q: "O AwakeTab funciona com a aba escondida, como o Caffeine funciona sem janela?"
     a: "Não. É a maior diferença entre os dois. Quando a aba do AwakeTab fica oculta ou o navegador é minimizado, o bloqueio é liberado e o indicador mostra “Pausado — aba oculta”. O Caffeine atua no sistema inteiro sem nada visível."
@@ -34,36 +76,23 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Veredito em uma frase
-
-O Caffeine para macOS usa uma asserção de energia do sistema, sem apertar teclas, para manter o Mac acordado, mesmo sem nenhuma janela aberta (segundo o código-fonte dele, em 26 de setembro de 2026). O AwakeTab é uma aba do navegador que usa a API padrão Screen Wake Lock. Escolha o Caffeine quando precisar de algo que funcione sem nenhuma janela visível; escolha o AwakeTab quando quiser um indicador honesto, nada para instalar e algo que funcione também fora do Mac.
-
 ## Comparação lado a lado
-
-| Aspecto | Caffeine | AwakeTab |
-|---|---|---|
-| Mecanismo | Asserção de energia do macOS | API Screen Wake Lock do navegador |
-| Funciona com a janela oculta | Sim | Não — a aba precisa ficar visível |
-| Simula teclado ou mouse | Não (a tecla F15 é do Caffeine para Windows, outro app) | Nunca |
-| Instalação | App nativo | Nenhuma, é uma página |
-| Plataformas | macOS | Qualquer sistema com um navegador compatível (Chrome, Edge, Firefox, Safari, Samsung Internet, Opera) |
-| Status mostrado | Ícone na barra de menus | “Tela ligada” só quando o navegador confirma |
 
 Dados conferidos em 26 de setembro de 2026, na documentação dos navegadores e no código-fonte do Caffeine.
 
+::compare
+
+::ad
+
 ## Quando o Caffeine é a melhor escolha
 
-- **Você não quer nenhuma janela à vista.** O Caffeine trabalha em segundo plano; uma aba escondida do AwakeTab não segura nada.
-- **O que importa é o Mac acordado, não só a tela.** O Caffeine atua no sistema, sem depender de uma janela. O AwakeTab também evita o repouso por inatividade, mas só enquanto a aba estiver visível e a tela ligada.
+::picks them
 
 Tampa fechada não é motivo para escolher nenhum dos dois: com a tampa fechada, quem decide é o macOS, e uma aba do AwakeTab não muda isso.
 
 ## Quando o AwakeTab é a melhor escolha
 
-- **Você não pode ou não quer instalar apps**, como num computador emprestado ou gerenciado.
-- **Você quer saber a verdade.** O indicador só diz “Tela ligada” quando o navegador confirma o bloqueio. Se o navegador recusar, aparece “Bloqueado — veja como corrigir”, com a causa.
-- **Você não está no Mac.** O mesmo endereço funciona no Windows, no Android, no iPhone e no Linux.
-- **Você prefere uma API padrão do navegador.** O AwakeTab nunca aperta teclas nem mexe o mouse, o que importa se a política de TI da sua empresa proíbe simuladores de entrada.
+::picks us
 
 ## Como testar o AwakeTab no lugar do Caffeine
 

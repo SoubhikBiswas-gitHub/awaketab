@@ -1,0 +1,148 @@
+---
+import Button from '../shell/Button.astro';
+import { inline } from '../../lib/article';
+
+interface Props {
+  steps: Array<{
+    title: string;
+    text: string;
+    path?: string | undefined;
+    shot?: string | undefined;
+  }>;
+  variant: 'card' | 'shots' | 'track';
+  t: (key: string, vars?: Record<string, string | number>) => string;
+  done?: string | undefined;
+}
+const { steps, variant, t, done } = Astro.props;
+const ICON_LINK =
+  'M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1';
+const ICON_TICK = 'M5 12.5l4.5 4.5L19 7.5';
+---
+
+{
+  variant === 'card' && (
+    <ol class="at-steps">
+      {steps.map((step, i) => (
+        <li>
+          <span class="at-step-n" aria-hidden="true">
+            {i + 1}
+          </span>
+          <span>
+            <strong set:html={inline(step.title)} />
+            <span set:html={inline(step.text)} />
+          </span>
+        </li>
+      ))}
+    </ol>
+  )
+}
+{
+  variant === 'shots' && (
+    <ol class="at-steps at-steps-shots">
+      {steps.map((step, i) => (
+        <li id={`step-${i + 1}`}>
+          <div>
+            <span class="at-step-n" aria-hidden="true">
+              {i + 1}
+            </span>
+            <h3>
+              <span class="sr-only">{t('content.step', { n: i + 1 })}: </span>
+              <Fragment set:html={inline(step.title)} />
+            </h3>
+            {step.path && <span class="at-path">{step.path}</span>}
+            <p set:html={inline(step.text)} />
+          </div>
+          {step.shot && (
+            <figure class="at-shot">
+              <div
+                class="at-shot-frame"
+                data-placeholder="screenshot"
+                aria-hidden="true"
+              >
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <rect x="3.5" y="4.5" width="17" height="15" rx="3" />
+                  <circle cx="9" cy="10" r="1.8" />
+                  <path d="M20.5 16l-5-5-8 8.5" />
+                </svg>
+                <span>{t('content.screenshot')}</span>
+              </div>
+              <figcaption>
+                {t('content.placeholder', { what: step.shot })}
+              </figcaption>
+            </figure>
+          )}
+        </li>
+      ))}
+    </ol>
+  )
+}
+{
+  variant === 'track' && (
+    <>
+      <ol class="at-steps at-steps-track" data-steps>
+        {steps.map((step, i) => (
+          <li id={`step-${i + 1}`} data-step>
+            <span class="at-rail" aria-hidden="true">
+              <span class="at-step-n">
+                <span>{i + 1}</span>
+              </span>
+            </span>
+            <div>
+              <div class="at-step-head">
+                <h3>
+                  <span class="at-step-k">
+                    {t('content.step', { n: i + 1 })} ·{' '}
+                  </span>
+                  <Fragment set:html={inline(step.title)} />
+                </h3>
+                <a
+                  class="at-step-link"
+                  href={`#step-${i + 1}`}
+                  aria-label={t('content.stepLink', { n: i + 1 })}
+                  title={t('content.stepLink', { n: i + 1 })}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d={ICON_LINK} />
+                  </svg>
+                </a>
+              </div>
+              <span class="at-kicker at-next" hidden>
+                {t('content.nextUp')}
+              </span>
+              {step.path && <span class="at-path">{step.path}</span>}
+              <p set:html={inline(step.text)} />
+              <Button
+                size="sm"
+                class="at-done"
+                role="checkbox"
+                aria-checked="false"
+                data-on={t('content.done')}
+                data-off={t('content.markDone')}
+                hidden
+              >
+                <span class="at-box" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d={ICON_TICK} />
+                  </svg>
+                </span>
+                <span>{t('content.markDone')}</span>
+              </Button>
+            </div>
+          </li>
+        ))}
+      </ol>
+      {done && (
+        <div class="at-alldone" role="status" data-all-done hidden>
+          <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" />
+            <circle cx="24" cy="9" r="4.6" />
+          </svg>
+          <span>{done}</span>
+        </div>
+      )}
+      <button type="button" class="at-reset" data-reset hidden>
+        {t('content.clearProgress')}
+      </button>
+    </>
+  )
+}

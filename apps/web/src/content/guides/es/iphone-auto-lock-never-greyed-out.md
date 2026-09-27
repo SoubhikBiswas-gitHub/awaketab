@@ -13,6 +13,31 @@ translationOf: "iphone-auto-lock-never-greyed-out"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+lead: "Entras a Ajustes → Pantalla y brillo → Bloqueo automático y la opción Nunca no se deja tocar. En casi todos los casos la causa es el Modo de bajo consumo: se activa cuando tú lo enciendes o cuando aceptas la sugerencia de iOS con poca batería, y mientras está encendido iOS fija el bloqueo en 30 segundos. La otra causa es un perfil del trabajo o la escuela que limita el Bloqueo automático. La solución es desactivar el modo primero. Después, Safari 16.4 o posterior puede mantener la pantalla encendida con un Wake Lock hasta que salgas de la pestaña."
+crumb: "Bloqueo automático en gris"
+toc:
+  cómo-desbloquear-la-opción-en-dos-minutos: "Desbloquear la opción"
+  por-qué-una-pestaña-es-mejor-que-dejarlo-en-nunca: "Una pestaña o Nunca"
+  lo-que-el-modo-de-bajo-consumo-le-hace-a-awaketab: "Modo de bajo consumo y AwakeTab"
+  cuándo-sí-vale-la-pena-dejarlo-en-nunca: "Cuándo dejarlo en Nunca"
+steps:
+  - title: "Apaga Modo de bajo consumo"
+    short: "Apaga el Modo de bajo consumo"
+    path: "Ajustes › Batería"
+    text: "También puedes hacerlo desde el Centro de control si tienes el botón de la batería."
+  - title: "Fíjate en el ícono de la batería"
+    short: "Revisa el ícono de la batería"
+    text: "Si ya no está amarillo, el modo quedó apagado."
+  - title: "Regresa a Bloqueo automático"
+    short: "Vuelve a Bloqueo automático"
+    path: "Ajustes › Pantalla y brillo › Bloqueo automático"
+    text: "Nunca debería aparecer disponible otra vez."
+  - title: "Si sigue en gris, busca un perfil"
+    short: "Busca un perfil"
+    path: "Ajustes › General › VPN y gestión de dispositivos"
+    text: "Un perfil del trabajo o la escuela puede limitarlo, y solo su administrador puede cambiarlo."
+stepsDone: "Listo: completaste los cuatro pasos."
+toolNote: "Si prefieres no dejar el iPhone en Nunca todo el día, conserva tu ajuste normal y usa AwakeTab solo cuando lo necesites."
 faq:
   - q: "¿Por qué la opción Nunca está en gris en Bloqueo automático?"
     a: "Porque el Modo de bajo consumo está activado, ya sea porque lo encendiste tú o porque aceptaste la sugerencia de iOS cuando la batería bajó. En ese modo iOS fija el Bloqueo automático en 30 segundos y no deja elegir otro valor hasta que lo desactives. Si está apagado y Nunca sigue en gris, puede ser un perfil del trabajo o la escuela (MDM)."
@@ -34,18 +59,13 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Por qué Nunca está en gris
-
-Entras a Ajustes → Pantalla y brillo → Bloqueo automático y la opción Nunca no se deja tocar. En casi todos los casos la causa es el Modo de bajo consumo: se activa cuando tú lo enciendes o cuando aceptas la sugerencia de iOS con poca batería, y mientras está encendido iOS fija el bloqueo en 30 segundos. La otra causa es un perfil del trabajo o la escuela que limita el Bloqueo automático. La solución es desactivar el modo primero. Después, Safari 16.4 o posterior puede mantener la pantalla encendida con un Wake Lock hasta que salgas de la pestaña.
-
 ## Cómo desbloquear la opción en dos minutos
 
-1. Abre Ajustes → Batería y apaga Modo de bajo consumo. También puedes hacerlo desde el Centro de control si tienes el botón de la batería.
-2. Fíjate en el ícono de la batería: si ya no está amarillo, el modo quedó apagado.
-3. Regresa a Ajustes → Pantalla y brillo → Bloqueo automático. Nunca debería aparecer disponible otra vez. Si sigue en gris, mira Ajustes → General → VPN y gestión de dispositivos: un perfil del trabajo o la escuela puede limitarlo, y solo su administrador puede cambiarlo.
-4. Si prefieres no dejar el iPhone en Nunca todo el día, conserva tu ajuste normal y usa AwakeTab solo cuando lo necesites.
+::steps
 
 Si el Modo de bajo consumo se vuelve a encender solo, conecta el iPhone al cargador: con poca batería, iOS te lo va a sugerir de nuevo.
+
+::ad
 
 ## Por qué una pestaña es mejor que dejarlo en Nunca
 

@@ -1,0 +1,49 @@
+---
+import Button from '../shell/Button.astro';
+import { tokenize } from '../../lib/article';
+
+interface Props {
+  file: string;
+  lang: string;
+  code: string;
+  t: (key: string, vars?: Record<string, string | number>) => string;
+}
+const { file, lang, code, t } = Astro.props;
+const lines = code
+  .replace(/\n$/u, '')
+  .split('\n')
+  .map((line) => tokenize(line, lang));
+---
+
+<div class="at-codeb">
+  <div class="at-codeb-bar">
+    <code>{file}</code>
+    <Button
+      variant="quiet"
+      size="sm"
+      class="at-copy"
+      data-copy
+      data-copied={t('content.copied')}
+      aria-label={t('content.copyFile', { file })}
+      hidden
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+        ><rect x="8.5" y="8.5" width="11" height="11" rx="2.5"></rect><path
+          d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"
+        ></path></svg
+      >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+        ><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg
+      >
+      <span aria-live="polite">{t('content.copy')}</span>
+    </Button>
+  </div>
+  <div
+    class="at-code"
+    role="region"
+    tabindex="0"
+    aria-label={t('content.codeScroll', { file })}
+  >
+    <pre>{lines.map((toks) => <span class="at-ln"><code>{toks.map(([kind, text]) => <span class={`k-${kind}`}>{text}</span>)}</code></span>)}</pre>
+  </div>
+</div>

@@ -13,6 +13,8 @@ translationOf: "browser-support-matrix"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+crumb: "Tabela de suporte"
+lead: "Pela tabela de suporte do AwakeTab, baseada na documentação e no código-fonte dos navegadores (conferidos em 26 de setembro de 2026), o Wake Lock de tela funciona de forma nativa a partir do Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 e Opera 70. Apps web adicionados à Tela de Início do iPhone precisam do iOS 18.4. Versões mais antigas, como Firefox anterior ao 126, usam o vídeo alternativo depois de um toque. Combinações que não conferimos não entram na tabela: não afirmamos suporte sem fonte."
 faq:
   - q: "Suporte ao Wake Lock significa que a tela fica ligada com a aba em segundo plano?"
     a: "Não. Em todos os navegadores da tabela, o bloqueio só vale enquanto a aba está visível. Minimizar, trocar de aba ou de app libera o bloqueio, e o AwakeTab mostra “Pausado — aba oculta” até você voltar."
@@ -35,10 +37,6 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Resumo
-
-Pela tabela de suporte do AwakeTab, baseada na documentação e no código-fonte dos navegadores (conferidos em 26 de setembro de 2026), o Wake Lock de tela funciona de forma nativa a partir do Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 e Opera 70. Apps web adicionados à Tela de Início do iPhone precisam do iOS 18.4. Versões mais antigas, como Firefox anterior ao 126, usam o vídeo alternativo depois de um toque. Combinações que não conferimos não entram na tabela: não afirmamos suporte sem fonte.
-
 ## Tabela de compatibilidade
 
 | Navegador ou contexto | Versão mínima | Mecanismo | Plataformas | Observação |
@@ -60,6 +58,16 @@ Pela tabela de suporte do AwakeTab, baseada na documentação e no código-fonte
 
 **Observação** lista o que costuma derrubar o bloqueio mesmo numa versão compatível: aba oculta, página incorporada sem a permissão `screen-wake-lock`, Safari sem um toque antes ou Firefox com bateria em 5 % ou menos. Uma página sem HTTPS nem tem Wake Lock: o AwakeTab oferece a alternativa.
 
+::ad
+
+## Por que só estas versões
+
+Esta tabela vem de um único arquivo de dados do AwakeTab, e todas as páginas do site citam as mesmas versões. Nenhuma página promete um número diferente do que aparece aqui. Quando um navegador mudar, a tabela e a data de verificação mudam juntas.
+
+## Guias por navegador
+
+Se você usa iPhone, veja [tela do iPhone sempre acesa no Safari](/pt-br/on/iphone-safari). Para Android, o caminho está em [tela do celular sempre ligada com o Chrome](/pt-br/on/android-chrome). Para as fontes e os testes em aparelhos, ainda pendentes, consulte [como testamos](/learn/how-we-tested).
+
 ## O que nenhum navegador da tabela faz
 
 - Segurar a tela com a aba oculta, o navegador minimizado ou o celular em outro app.
@@ -67,10 +75,4 @@ Pela tabela de suporte do AwakeTab, baseada na documentação e no código-fonte
 - Manter seu status verde no Teams, no Slack ou no Zoom. A presença segue o teclado e o mouse.
 - Impedir que a economia de energia do sistema escureça a tela. Ela não recusa o bloqueio, mas continua valendo.
 
-## Guias por navegador
-
-Se você usa iPhone, veja [tela do iPhone sempre acesa no Safari](/pt-br/on/iphone-safari). Para Android, o caminho está em [tela do celular sempre ligada com o Chrome](/pt-br/on/android-chrome). Para as fontes e os testes em aparelhos, ainda pendentes, consulte [como testamos](/learn/how-we-tested).
-
-## Por que só estas versões
-
-Esta tabela vem de um único arquivo de dados do AwakeTab, e todas as páginas do site citam as mesmas versões. Nenhuma página promete um número diferente do que aparece aqui. Quando um navegador mudar, a tabela e a data de verificação mudam juntas.
+::limit inline

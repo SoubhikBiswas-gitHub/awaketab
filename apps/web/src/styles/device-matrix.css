@@ -1,0 +1,84 @@
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-dm {
+    --at-dm-min: 44rem;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-4);
+    min-inline-size: 0;
+  }
+
+  .at-dm h2 {
+    margin: 0;
+    color: var(--at-ink);
+    font: var(--at-type-h2);
+    letter-spacing: -0.02em;
+  }
+
+  .at-dm ol {
+    margin: 0;
+    padding-inline-start: var(--at-s-6);
+    color: var(--at-ink-2);
+    font: var(--at-type-small);
+    list-style: decimal;
+  }
+
+  .at-dm li + li {
+    margin-block-start: var(--at-s-2);
+  }
+
+  .at-dm-verified {
+    margin: 0;
+    color: var(--at-muted);
+    font: var(--at-type-small);
+  }
+
+  .at-dm-scroll {
+    overflow-x: auto;
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-lg);
+    background: var(--at-surface);
+  }
+
+  .at-dm table {
+    inline-size: 100%;
+    min-inline-size: var(--at-dm-min);
+    border-collapse: collapse;
+  }
+
+  .at-dm th {
+    padding-block: var(--at-s-3);
+    padding-inline: var(--at-s-4);
+    background: var(--at-sunken);
+    color: var(--at-muted);
+    font: var(--at-type-kicker);
+    letter-spacing: 0.14em;
+    text-align: start;
+    text-transform: uppercase;
+  }
+
+  .at-dm td {
+    padding: var(--at-s-4);
+    border-block-start: var(--at-border) solid var(--at-line);
+    color: var(--at-ink-2);
+    font: var(--at-type-small);
+    vertical-align: top;
+  }
+
+  .at-dm td:first-child {
+    color: var(--at-ink);
+    font-weight: 600;
+  }
+
+  .at-dm td p {
+    margin: 0;
+    margin-block-start: var(--at-s-1);
+  }
+
+  .at-dm .at-muted {
+    color: var(--at-muted);
+    font-weight: 400;
+  }
+}

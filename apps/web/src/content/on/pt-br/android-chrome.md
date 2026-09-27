@@ -13,6 +13,64 @@ translationOf: "android-chrome"
 lastVerified: 2026-09-09
 browsers: ["chrome"]
 os: ["android"]
+crumb: "Android no Chrome"
+lead: "O Chrome 84 ou posterior no Android aceita o pedido de Wake Lock de qualquer aba que esteja à vista. Inicie o AwakeTab e espere o “Tela ligada”; daí em diante o celular não escurece enquanto o Chrome mostrar essa aba. Não precisa instalar app nenhum. Duas coisas podem atrapalhar: sair do Chrome libera o bloqueio, e listas de “apps em suspensão” de algumas fabricantes podem encerrar a aba depois que você sai. A Economia de bateria pode escurecer a tela, mas o Chrome não recusa o pedido por causa dela. Esta página sugere 30 minutos."
+facts:
+  - label: "Chrome"
+    value: "84 ou posterior"
+  - label: "Samsung Internet"
+    value: "14 ou posterior"
+  - label: "Firefox"
+    value: "126 ou posterior"
+  - label: "Opera"
+    value: "70 ou posterior"
+toc:
+  versões-e-navegadores-no-android: "Versões e navegadores"
+  economia-de-bateria-e-fabricantes: "Bateria e fabricantes"
+steps:
+  - title: "Abra o AwakeTab no Chrome e escolha a duração"
+    text: "Para sessões longas, ligue o celular no carregador."
+    shot: "o AwakeTab no Chrome para Android com a duração escolhida"
+  - title: "Inicie a sessão"
+    text: "Aguarde “Tela ligada” aparecer no indicador; antes disso ele mostra “Iniciando…”."
+    shot: "o indicador do AwakeTab com a sessão ativa"
+  - title: "Precisa ver outra coisa ao mesmo tempo?"
+    text: "Use a tela dividida com o AwakeTab numa metade. Assim a aba continua visível."
+    shot: "a tela dividida com o AwakeTab numa metade"
+matrix:
+  label: "Versões e navegadores no Android, conferido em 26 de setembro de 2026"
+  cols: ["Navegador", "Resultado", "Mecanismo"]
+  rows:
+    - what: "Chrome 84 ou posterior"
+      result: works
+      label: "Compatível"
+      text: "Wake Lock nativo"
+    - what: "Samsung Internet 14 ou posterior"
+      result: works
+      label: "Compatível"
+      text: "Wake Lock nativo"
+    - what: "Firefox 126 ou posterior"
+      result: works
+      label: "Compatível"
+      text: "Wake Lock nativo"
+    - what: "Opera 70 ou posterior"
+      result: works
+      label: "Compatível"
+      text: "Wake Lock nativo (base Chromium)"
+    - what: "Versões mais antigas"
+      result: fallback
+      label: "Vídeo alternativo"
+      text: "Vídeo alternativo, com um toque seu"
+rows:
+  blockers:
+    - title: "Economia de bateria"
+      text: "O Chrome não recusa o Wake Lock por causa dela (segundo o código-fonte do Chromium, conferido em 26 de setembro de 2026), mas ela pode encurtar o tempo limite ou escurecer a tela. Se aparecer “Bloqueado — veja como corrigir”, o AwakeTab mostra a causa real."
+    - title: "Apps em suspensão"
+      text: "Samsung, Xiaomi e outras marcas podem colocar o Chrome para dormir depois que você o deixa em segundo plano. Se a sessão sumir sozinha, confira essas listas nas configurações de bateria."
+    - title: "Tela dividida"
+      text: "Se o AwakeTab ocupar uma das metades, ele continua visível e segura o bloqueio; se ficar só na lista de apps recentes, não."
+    - title: "Parada por bateria fraca"
+      text: "No Chrome, as Configurações do AwakeTab têm “Parar automaticamente com bateria fraca”, com o limite que você escolher."
 faq:
   - q: "Se eu abrir o YouTube ou outro app, a tela continua ligada?"
     a: "Não pelo AwakeTab. Quando o Chrome vai para segundo plano, o bloqueio é liberado e o indicador mostra “Pausado — aba oculta”. Volte para a aba e o AwakeTab pede o bloqueio de novo. Com a tela dividida, os dois ficam visíveis ao mesmo tempo."
@@ -34,39 +92,25 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## O que funciona no Android
+## Configurando no celular
 
-O Chrome 84 ou posterior no Android aceita o pedido de Wake Lock de qualquer aba que esteja à vista. Inicie o AwakeTab e espere o “Tela ligada”; daí em diante o celular não escurece enquanto o Chrome mostrar essa aba. Não precisa instalar app nenhum. Duas coisas podem atrapalhar: sair do Chrome libera o bloqueio, e listas de “apps em suspensão” de algumas fabricantes podem encerrar a aba depois que você sai. A Economia de bateria pode escurecer a tela, mas o Chrome não recusa o pedido por causa dela. Esta página sugere 30 minutos.
+::steps
+
+::ad
 
 ## Versões e navegadores no Android
 
-| Navegador | Versão mínima | Mecanismo |
-|---|---|---|
-| Chrome | 84 | Wake Lock nativo |
-| Samsung Internet | 14 | Wake Lock nativo |
-| Firefox | 126 | Wake Lock nativo |
-| Opera | 70 | Wake Lock nativo (base Chromium) |
-| Versões mais antigas | — | Vídeo alternativo, com um toque seu |
-
 Conferido na documentação dos navegadores em 26 de setembro de 2026.
 
-## Configurando no celular
+::matrix
 
-1. Para sessões longas, ligue o celular no carregador.
-2. Abra o AwakeTab no Chrome e escolha a duração.
-3. Inicie a sessão e aguarde “Tela ligada” aparecer no indicador; antes disso ele mostra “Iniciando…”.
-4. Precisa ver outra coisa ao mesmo tempo? Use a tela dividida com o AwakeTab numa metade. Assim a aba continua visível.
+## Economia de bateria e fabricantes
+
+::rows blockers
 
 ## Mudando o tempo de tela do próprio Android
 
 Se preferir mexer no sistema, o caminho padrão é Configurações → Tela → Tempo limite da tela (no Pixel: Configurações → Tela e toque). O nome exato muda um pouco conforme a marca. O problema é que essa opção vale para o celular inteiro, não só para um app — o Android puro não tem tempo de tela por app. O AwakeTab cobre só o navegador, mas volta ao normal sozinho quando a sessão termina.
-
-## Economia de bateria e fabricantes
-
-- **Economia de bateria**: o Chrome não recusa o Wake Lock por causa dela (segundo o código-fonte do Chromium, conferido em 26 de setembro de 2026), mas ela pode encurtar o tempo limite ou escurecer a tela. Se aparecer “Bloqueado — veja como corrigir”, o AwakeTab mostra a causa real.
-- **Apps em suspensão**: Samsung, Xiaomi e outras marcas podem colocar o Chrome para dormir depois que você o deixa em segundo plano. Se a sessão sumir sozinha, confira essas listas nas configurações de bateria.
-- **Tela dividida**: se o AwakeTab ocupar uma das metades, ele continua visível e segura o bloqueio; se ficar só na lista de apps recentes, não.
-- **Parada por bateria fraca**: no Chrome, as Configurações do AwakeTab têm “Parar automaticamente com bateria fraca”, com o limite que você escolher.
 
 ## Quando não esperar milagre
 

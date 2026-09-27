@@ -13,6 +13,34 @@ translationOf: "presentations"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+lead: "Sie reden, niemand klickt, und nach ein paar Minuten wird die Leinwand schwarz. Präsentationsprogramme wechseln meist in den Vollbildmodus und verdecken dabei den Browser. AwakeTab kann das Display nur so lange anlassen, wie es selbst sichtbar bleibt: als schwebendes Fenster in Chrome, Edge oder Firefox am Desktop, als zweites Fenster oder auf einem Kontrollmonitor, der den Tab weiter zeigt. Die Voreinstellung dieser Seite ist „2 Std.“, genug für einen typischen Vortrag samt Fragerunde."
+crumb: "Präsentationen"
+toc:
+  drei-wege-awaketab-sichtbar-zu-halten: "Drei Wege"
+  welche-browser-taugen-für-den-vortrag: "Welche Browser"
+  grenzen-die-sie-kennen-sollten: "Grenzen"
+  checkliste-fünf-minuten-vor-dem-vortrag: "Checkliste"
+figures:
+  - frame: phone
+    label: "Handy-Screenshot"
+    alt: "das schwebende Fenster von AwakeTab mit der Meldung Bildschirm bleibt an"
+    caption: "Das schwebende Fenster."
+  - frame: desktop
+    label: "Desktop-Screenshot"
+    alt: "Folien im Vollbild in Chrome mit dem schwebenden Fenster von AwakeTab in einer Ecke"
+    caption: "Folien im Vollbild mit dem schwebenden Fenster in einer Ecke."
+pills:
+  - state: held
+    text: "Diese Meldung muss die Anzeige zeigen."
+  - state: fallback
+    text: "Oder diese, wenn die Video-Ersatzlösung läuft."
+  - state: lost
+    text: "Steht dort diese Meldung, ist AwakeTab verdeckt."
+checklist:
+  - "Läuft die Seite über HTTPS und ist der Tab sichtbar?"
+  - "Ist das Netzteil eingesteckt? Im Akkubetrieb kann ein Energiesparmodus das Display dimmen oder früher abschalten."
+  - "Zeigt die Statusanzeige wirklich, dass der Bildschirm an bleibt? Verlassen Sie sich nicht auf eine Uhr, die gerade noch hell ist."
+  - "Reicht die Dauer? Nach Ablauf der gewählten Zeit fragt AwakeTab nach einer Verlängerung, etwa „+30 Min.“. Einen unbegrenzten Lock gibt es nur mit „∞“."
 faq:
   - q: "Bleibt der Bildschirm an, wenn PowerPoint oder Keynote in den Vollbildmodus wechselt?"
     a: "Nur, wenn AwakeTab weiterhin irgendwo sichtbar ist: im schwebenden Fenster, in einem zweiten Fenster auf einem anderen Monitor oder in der Referentenansicht. Verdeckt die Präsentation den Tab vollständig, gibt der Browser den Wake Lock frei und die Anzeige zeigt „Pausiert — Tab ausgeblendet“."
@@ -34,10 +62,6 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Das Problem mit dem Vollbild
-
-Sie reden, niemand klickt, und nach ein paar Minuten wird die Leinwand schwarz. Präsentationsprogramme wechseln meist in den Vollbildmodus und verdecken dabei den Browser. AwakeTab kann das Display nur so lange anlassen, wie es selbst sichtbar bleibt: als schwebendes Fenster in Chrome, Edge oder Firefox am Desktop, als zweites Fenster oder auf einem Kontrollmonitor, der den Tab weiter zeigt. Die Voreinstellung dieser Seite ist „2 Std.“, genug für einen typischen Vortrag samt Fragerunde.
-
 ## Drei Wege, AwakeTab sichtbar zu halten
 
 **Schwebendes Fenster.** Starten Sie die Sitzung und klicken Sie oben auf „Schwebendes Fenster“. Die kleine Statusanzeige liegt dann über den Folien. Das klappt am Desktop in Chrome und Edge ab 116 sowie in Firefox ab 151; Safari öffnet stattdessen ein kleines Fenster. Ob der Lock hält, während der Tab selbst verdeckt ist, haben wir noch nicht auf einem Gerät geprüft.
@@ -48,16 +72,13 @@ Sie reden, niemand klickt, und nach ein paar Minuten wird die Leinwand schwarz. 
 
 Testen Sie Ihre Variante am besten schon bei der Probe im leeren Raum, nicht erst vor Publikum. Dann wissen Sie, ob Beamer, Kabel und Browser zusammenspielen.
 
-In allen drei Fällen gilt: Die Anzeige muss „Bildschirm bleibt an“ oder „Bildschirm bleibt per Video an“ melden. Steht dort „Pausiert — Tab ausgeblendet“, ist AwakeTab verdeckt.
+In allen drei Fällen gilt:
 
-## Checkliste fünf Minuten vor dem Vortrag
+::pills
 
-- Läuft die Seite über HTTPS und ist der Tab sichtbar?
-- Ist das Netzteil eingesteckt? Im Akkubetrieb kann ein Energiesparmodus das Display dimmen oder früher abschalten.
-- Zeigt die Statusanzeige wirklich, dass der Bildschirm an bleibt? Verlassen Sie sich nicht auf eine Uhr, die gerade noch hell ist.
-- Reicht die Dauer? Nach Ablauf der gewählten Zeit fragt AwakeTab nach einer Verlängerung, etwa „+30 Min.“. Einen unbegrenzten Lock gibt es nur mit „∞“.
+::figures
 
-Wer die Abschaltzeit lieber direkt im System anpasst: unter Windows unter Einstellungen → System → Netzbetrieb und Akku, auf dem Mac unter Systemeinstellungen → Sperrbildschirm. Beide Geräte stellen wir ausführlicher vor, unter [Windows 11](/de/on/windows-11) und [macOS](/de/on/macos).
+::ad
 
 ## Welche Browser taugen für den Vortrag
 
@@ -68,3 +89,11 @@ Präsentieren Sie vom iPad oder einem Android-Tablet, gilt dieselbe Regel: Der L
 ## Grenzen, die Sie kennen sollten
 
 Der Beamer folgt der Abschaltzeit des Betriebssystems, sobald kein Lock gehalten wird. Klappen Sie den Laptop zu, schläft er ein; dagegen hilft kein Browser-Tab. Hardware mit eigener Abschaltung, etwa ein Monitor, der ohne Signal einschläft, oder eine Sperrbildschirm-Richtlinie Ihrer Firma liegen außerhalb dessen, was ein Browser steuern kann.
+
+::limit
+
+## Checkliste fünf Minuten vor dem Vortrag
+
+::checklist
+
+Wer die Abschaltzeit lieber direkt im System anpasst: unter Windows unter Einstellungen → System → Netzbetrieb und Akku, auf dem Mac unter Systemeinstellungen → Sperrbildschirm. Beide Geräte stellen wir ausführlicher vor, unter [Windows 11](/de/on/windows-11) und [macOS](/de/on/macos).

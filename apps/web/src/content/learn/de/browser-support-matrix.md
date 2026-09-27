@@ -13,6 +13,8 @@ translationOf: "browser-support-matrix"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+crumb: "Browser-Übersicht"
+lead: "Einen nativen Screen Wake Lock gewähren Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 und Opera 70; Web-Apps auf dem iPhone-Home-Bildschirm ab iOS 18.4. Das ist der Stand unserer Datei `support-matrix.json` vom 9. September 2026. Ältere Firefox-Versionen kommen nur über die Video-Ersatzlösung ans Ziel. Kombinationen, die wir nicht geprüft haben, stehen nicht in der Tabelle und werden auch nicht beansprucht."
 faq:
   - q: "Gilt die Tabelle auch, wenn der Tab im Hintergrund liegt?"
     a: "Nein. In jedem aufgeführten Browser gilt der Wake Lock nur für ein sichtbares Dokument. Minimieren Sie das Fenster, wechseln Sie den Tab oder am Handy die App, gibt der Browser den Lock frei, und die Anzeige zeigt „Pausiert — Tab ausgeblendet“."
@@ -35,10 +37,6 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Kurzfassung
-
-Einen nativen Screen Wake Lock gewähren Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 und Opera 70; Web-Apps auf dem iPhone-Home-Bildschirm ab iOS 18.4. Das ist der Stand unserer Datei `support-matrix.json` vom 9. September 2026. Ältere Firefox-Versionen kommen nur über die Video-Ersatzlösung ans Ziel. Kombinationen, die wir nicht geprüft haben, stehen nicht in der Tabelle und werden auch nicht beansprucht.
-
 ## Browser und Mindestversionen
 
 | Browser | Nativ ab Version | Plattformen | Hinweis |
@@ -57,13 +55,11 @@ Einen nativen Screen Wake Lock gewähren Chrome 84, Edge 84, Firefox 126, Safari
 | Web-App auf dem iOS-Home-Bildschirm | 18.4 | nativ | Auf älteren Versionen AwakeTab besser in Safari nutzen. |
 | Video-Ersatzlösung | – | Ersatz | Braucht ein Tippen oder einen Klick und verbraucht mehr Strom als der native Lock. |
 
+::ad
+
 ## Was „nativ“ in der Praxis heißt
 
 AwakeTab ruft `navigator.wakeLock.request('screen')` aus einer sicheren, sichtbaren Seite auf. Die Statusanzeige kennt sieben Zustände, von „Bereit“ über „Wird gestartet…“ bis „Tippen für die Ersatzlösung“. Einen laufenden Timer zeigt sie nur, wenn der Browser den Lock hält („Bildschirm bleibt an“) oder die Ersatzlösung läuft („Bildschirm bleibt per Video an“). Nimmt der Browser den Lock zurück, heißt es „Pausiert — Tab ausgeblendet“; lehnt er ab, „Blockiert — so beheben Sie es“. Ein vorgetäuschtes „gehalten“ gibt es nicht.
-
-## Was die Tabelle nicht aussagt
-
-Eine Versionsnummer bedeutet Unterstützung der Schnittstelle, keine Garantie im Einzelfall. Ein ausgeblendeter Tab, eine Permissions-Policy, die `screen-wake-lock` sperrt, Safari ohne vorheriges Tippen und Firefox bei 5 % Akku oder weniger führen auch in unterstützten Browsern zur Ablehnung; ohne HTTPS fehlt die Schnittstelle ganz. Außerdem zielt der Lock auf das Display. Solange es an bleibt, schlafen Windows und macOS auch nicht bei Inaktivität ein, doch einen zugeklappten Laptop hält kein Browser wach. Die Anwesenheit in Teams oder Slack beeinflusst er ebenfalls nicht, weil diese Dienste auf Eingaben achten.
 
 ## Methodik und Datum
 
@@ -72,3 +68,9 @@ Jede Zeile beruht auf Browser-Dokumentation und Quellcode (zuletzt geprüft am 2
 ## Selbst ausprobieren
 
 Das eingebettete Tool startet hier mit „15 Min.“. Tippen Sie auf „Bildschirm eingeschaltet lassen“ und prüfen Sie, welche Meldung Ihr Browser liefert. Zeigt die Anzeige „Tippen für die Ersatzlösung“, fehlt Ihrem Browser der native Lock.
+
+## Was die Tabelle nicht aussagt
+
+Eine Versionsnummer bedeutet Unterstützung der Schnittstelle, keine Garantie im Einzelfall. Ein ausgeblendeter Tab, eine Permissions-Policy, die `screen-wake-lock` sperrt, Safari ohne vorheriges Tippen und Firefox bei 5 % Akku oder weniger führen auch in unterstützten Browsern zur Ablehnung; ohne HTTPS fehlt die Schnittstelle ganz. Außerdem zielt der Lock auf das Display. Solange es an bleibt, schlafen Windows und macOS auch nicht bei Inaktivität ein, doch einen zugeklappten Laptop hält kein Browser wach. Die Anwesenheit in Teams oder Slack beeinflusst er ebenfalls nicht, weil diese Dienste auf Eingaben achten.
+
+::limit inline

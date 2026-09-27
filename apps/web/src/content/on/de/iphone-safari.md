@@ -12,6 +12,27 @@ translationOf: "iphone-safari"
 lastVerified: 2026-09-09
 browsers: ["safari"]
 os: ["ios"]
+lead: "Seit Safari 16.4 kann das iPhone eine Webseite um einen nativen Bildschirm-Lock bitten, ganz ohne App aus dem App Store. AwakeTab nutzt genau das: Solange der Tab in Safari vorne ist, bleibt der Bildschirm an, unabhängig davon, was unter „Automatische Sperre“ eingestellt ist. Jeder Wechsel in eine andere App beendet den Lock. Und der Stromsparmodus stellt die automatische Sperre auf 30 Sekunden; ob ein Safari-Lock dagegen hält, haben wir noch nicht auf einem Gerät geprüft."
+crumb: "iPhone in Safari"
+facts:
+  - label: "Safari"
+    value: "ab 16.4"
+  - label: "Web-App auf dem Home-Bildschirm"
+    value: "ab iOS 18.4"
+toc:
+  stromsparmodus-und-automatische-sperre: "Stromsparmodus"
+  was-die-anzeige-auf-dem-iphone-bedeutet: "Was die Anzeige bedeutet"
+steps:
+  - title: "Öffnen Sie awaketab.com in Safari"
+    path: "Safari › awaketab.com"
+    text: "Diese Seite startet mit „30 Min.“; tippen Sie auf eine andere Dauer, wenn Sie länger brauchen."
+    shot: "AwakeTab in Safari mit der Dauer „30 Min.“"
+  - title: "Tippen Sie auf „Bildschirm eingeschaltet lassen“"
+    text: "Warten Sie, bis die Anzeige „Bildschirm bleibt an“ meldet. Erst dann hält Safari den Lock wirklich."
+    shot: "die Anzeige mit „Bildschirm bleibt an“"
+  - title: "Legen Sie das iPhone hin, ohne die App zu wechseln"
+    text: "Sobald Sie eine andere App öffnen, ist der Lock weg."
+    shot: "das iPhone mit Safari im Vordergrund"
 faq:
   - q: "Was passiert, wenn ich kurz zu Nachrichten oder zur Kamera wechsle?"
     a: "Dann gibt Safari den Wake Lock frei, und die Anzeige zeigt „Pausiert — Tab ausgeblendet“. Der Timer bleibt stehen. Öffnen Sie Safari wieder mit dem AwakeTab-Tab im Vordergrund und warten Sie, bis „Bildschirm bleibt an“ erscheint, bevor Sie das iPhone hinlegen."
@@ -33,20 +54,15 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Die Antwort für Ihr iPhone
-
-Seit Safari 16.4 kann das iPhone eine Webseite um einen nativen Bildschirm-Lock bitten, ganz ohne App aus dem App Store. AwakeTab nutzt genau das: Solange der Tab in Safari vorne ist, bleibt der Bildschirm an, unabhängig davon, was unter „Automatische Sperre“ eingestellt ist. Jeder Wechsel in eine andere App beendet den Lock. Und der Stromsparmodus stellt die automatische Sperre auf 30 Sekunden; ob ein Safari-Lock dagegen hält, haben wir noch nicht auf einem Gerät geprüft.
-
 ## So geht es in Safari
 
-1. Öffnen Sie awaketab.com in Safari. Diese Seite startet mit „30 Min.“; tippen Sie auf eine andere Dauer, wenn Sie länger brauchen.
-2. Tippen Sie auf „Bildschirm eingeschaltet lassen“.
-3. Warten Sie, bis die Anzeige „Bildschirm bleibt an“ meldet. Erst dann hält Safari den Lock wirklich.
-4. Legen Sie das iPhone hin, ohne die App zu wechseln. Sobald Sie eine andere App öffnen, ist der Lock weg.
+::steps
 
 Läuft die gewählte Zeit ab, fragt AwakeTab, ob Sie verlängern möchten. Ohne Antwort endet die Sitzung, und das iPhone folgt wieder der automatischen Sperre.
 
 Praktisch ist das für alles, worauf Sie nur ab und zu blicken: ein Rezept, Noten auf dem Pult, eine Checkliste in der Werkstatt. Die Einstellung in iOS bleibt dabei unangetastet, Sie müssen hinterher also nichts zurückstellen.
+
+::ad
 
 ## Stromsparmodus und automatische Sperre
 

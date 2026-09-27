@@ -1,0 +1,54 @@
+/* stylelint-disable no-descending-specificity */
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .at-cp .at-steps li + li {
+    margin: 0;
+  }
+
+  .at-step-n {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    inline-size: var(--at-s-8);
+    block-size: var(--at-s-8);
+    border: var(--at-border) solid color-mix(in srgb, var(--at-accent) 45%, transparent);
+    border-radius: var(--at-r-pill);
+    color: var(--at-ink);
+    font: var(--at-type-small);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .at-steps:not(.at-steps-shots, .at-steps-track) > li {
+    display: grid;
+    grid-template-columns: var(--at-s-8) minmax(0, 1fr);
+    align-items: start;
+    column-gap: var(--at-s-3);
+  }
+
+  .at-steps > li > span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-1);
+    min-inline-size: 0;
+  }
+
+  .at-cp .at-steps strong {
+    color: var(--at-ink);
+    font-weight: 600;
+  }
+
+  .at-steps :is(p, h3) {
+    margin: 0;
+  }
+}

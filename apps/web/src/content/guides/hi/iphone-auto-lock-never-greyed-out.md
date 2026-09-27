@@ -13,6 +13,26 @@ translationOf: "iphone-auto-lock-never-greyed-out"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+crumb: "ऑटो-लॉक Never ग्रे"
+lead: "आप Settings → Display & Brightness → Auto-Lock (सेटिंग्ज़ → डिस्प्ले और ब्राइटनेस → ऑटो-लॉक) खोलते हैं और Never वाला विकल्प फीका पड़ा है, दबता ही नहीं। ऐसा आम तौर पर Low Power Mode चालू होने पर होता है: बैटरी आइकन पीला दिखे तो समझिए वही चालू है, और iOS ऑटो-लॉक को 30 सेकंड कर देता है। दूसरी वजह ऑफ़िस या स्कूल का (MDM) प्रोफ़ाइल है, जो ऑटो-लॉक की सीमा तय कर सकता है। हल: Low Power Mode बंद करें, या प्रोफ़ाइल जाँचें। उसके बाद Safari 16.4+ में AwakeTab स्क्रीन को तब तक जगाए रख सकता है जब तक आप टैब न छोड़ें।"
+steps:
+  - title: "Low Power Mode बंद करें"
+    short: "Low Power Mode बंद"
+    path: "Settings › Battery"
+    text: "Control Center खोलें और बैटरी वाले बटन से Low Power Mode बंद करें (या Settings → Battery में जाकर)।"
+  - title: "Auto-Lock पर लौटें"
+    short: "Auto-Lock में Never"
+    path: "Settings › Display & Brightness › Auto-Lock"
+    text: "Settings → Display & Brightness → Auto-Lock पर लौटें। Never अब चुना जा सकता है।"
+  - title: "अब भी ग्रे है तो प्रोफ़ाइल देखें"
+    short: "प्रोफ़ाइल देखें"
+    path: "Settings › General › VPN & Device Management"
+    text: "अगर अब भी ग्रे है, तो Settings → General → VPN & Device Management में प्रोफ़ाइल देखें; उसकी सीमा सिर्फ़ उसका एडमिन हटा सकता है।"
+  - title: "या Safari में AwakeTab चलाएँ"
+    short: "या AwakeTab चलाएँ"
+    text: "अगर आप हमेशा के लिए Never नहीं चाहते, तो ऑटो-लॉक सामान्य रहने दें और जिस काम के लिए स्क्रीन जगानी है, उसके लिए Safari में AwakeTab चलाएँ।"
+stepsDone: "चारों कदम पूरे हो गए।"
+toolNote: "इस गाइड पर अवधि 30 मिनट पहले से चुनी है। टूल चालू होने पर जब पिल “स्क्रीन ऑन है” दिखाए, तभी फोन को रख दें।"
 faq:
   - q: "Auto-Lock में Never दबा ही नहीं पा रहा, ठीक कैसे करूँ?"
     a: "ज़्यादातर वजह Low Power Mode होती है। Control Center में बैटरी वाला बटन दबाकर या Settings → Battery में जाकर Low Power Mode बंद करें, फिर Settings → Display & Brightness → Auto-Lock खोलें। Never फिर भी ग्रे हो, तो ऑफ़िस या स्कूल का प्रोफ़ाइल इसे सीमित कर रहा है; उसे सिर्फ़ उसका एडमिन बदल सकता है।"
@@ -34,17 +54,11 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Never ग्रे क्यों दिखता है
-
-आप Settings → Display & Brightness → Auto-Lock (सेटिंग्ज़ → डिस्प्ले और ब्राइटनेस → ऑटो-लॉक) खोलते हैं और Never वाला विकल्प फीका पड़ा है, दबता ही नहीं। ऐसा आम तौर पर Low Power Mode चालू होने पर होता है: बैटरी आइकन पीला दिखे तो समझिए वही चालू है, और iOS ऑटो-लॉक को 30 सेकंड कर देता है। दूसरी वजह ऑफ़िस या स्कूल का (MDM) प्रोफ़ाइल है, जो ऑटो-लॉक की सीमा तय कर सकता है। हल: Low Power Mode बंद करें, या प्रोफ़ाइल जाँचें। उसके बाद Safari 16.4+ में AwakeTab स्क्रीन को तब तक जगाए रख सकता है जब तक आप टैब न छोड़ें।
-
 ## दो मिनट में ठीक करें
 
-1. Control Center खोलें और बैटरी वाले बटन से Low Power Mode बंद करें (या Settings → Battery में जाकर)।
-2. Settings → Display & Brightness → Auto-Lock पर लौटें। Never अब चुना जा सकता है। अगर अब भी ग्रे है, तो Settings → General → VPN & Device Management में प्रोफ़ाइल देखें; उसकी सीमा सिर्फ़ उसका एडमिन हटा सकता है।
-3. अगर आप हमेशा के लिए Never नहीं चाहते, तो ऑटो-लॉक सामान्य रहने दें और जिस काम के लिए स्क्रीन जगानी है, उसके लिए Safari में AwakeTab चलाएँ।
+::steps
 
-इस गाइड पर अवधि 30 मिनट पहले से चुनी है। टूल चालू होने पर जब पिल “स्क्रीन ऑन है” दिखाए, तभी फोन को रख दें।
+::ad
 
 ## AwakeTab यहाँ क्या कर सकता है और क्या नहीं
 

@@ -13,6 +13,59 @@ translationOf: "windows-11"
 lastVerified: 2026-09-09
 browsers: ["chrome", "edge"]
 os: ["windows"]
+crumb: "Windows 11"
+lead: "Sous Windows 11, Chrome 84+ et Edge 84+ accordent un Wake Lock natif, à condition que l’onglet AwakeTab reste visible. C’est la façon la plus simple d’empêcher l’écran de s’éteindre sans toucher aux paramètres d’alimentation ni installer de logiciel. Tant que l’écran reste allumé, Windows ne se met pas non plus en veille pour inactivité. Deux limites : fermer le capot met le PC en veille, et la veille moderne (Modern Standby) obéit à ses propres règles de micrologiciel. Les mêmes étapes fonctionnent sous Windows 10."
+facts:
+  - label: "Chrome et Edge"
+    value: "84 et plus"
+  - label: "Firefox"
+    value: "126 et plus"
+  - label: "Opera"
+    value: "70 et plus"
+toc:
+  économiseur-dénergie-mode-efficacité-veille-moderne: "Économiseur, mode efficacité, veille"
+steps:
+  - title: "Ouvrez awaketab.com dans Chrome ou Edge"
+    path: "Chrome ou Edge › awaketab.com"
+    text: "Sur cette page, la durée « 1 h » est présélectionnée."
+    shot: "AwakeTab dans Edge sous Windows 11"
+  - title: "Cliquez sur Démarrer (ou touche Espace)"
+    text: "Contrôlez ensuite la pastille : elle doit indiquer « Écran allumé »."
+    shot: "la pastille d’AwakeTab pendant une session"
+  - title: "Laissez la fenêtre AwakeTab visible"
+    text: "Pour travailler dans d’autres applications, laissez-la dans un coin, ou ouvrez la « Fenêtre flottante » depuis l’en-tête."
+    shot: "une petite fenêtre AwakeTab dans un coin"
+  - title: "Sur un portable, restez sur secteur pour les longues sessions"
+    text: "Sur batterie, l’« Économiseur d’énergie » peut baisser la luminosité."
+    shot: "un portable Windows sur secteur"
+matrix:
+  label: "Navigateurs pris en charge sous Windows, matrice vérifiée le 9 septembre 2026"
+  cols: ["Navigateur", "Résultat", "Remarque"]
+  rows:
+    - what: "Chrome 84 et plus"
+      result: works
+      label: "Pris en charge"
+      text: "onglet visible requis ; fenêtre flottante dès 116"
+    - what: "Edge 84 et plus"
+      result: works
+      label: "Pris en charge"
+      text: "onglet visible requis ; fenêtre flottante dès 116"
+    - what: "Firefox 126 et plus"
+      result: works
+      label: "Pris en charge"
+      text: "versions antérieures : vidéo de secours après un clic"
+    - what: "Opera 70 et plus"
+      result: works
+      label: "Pris en charge"
+      text: "base Chromium, onglet visible requis"
+rows:
+  blockers:
+    - title: "Économiseur d’énergie"
+      text: "Depuis Windows 11 24H2, l’ancien « Économiseur de batterie » s’appelle « Économiseur d’énergie » (Energy saver). Il peut baisser la luminosité ou raccourcir les délais, mais ne refuse pas le verrou de Chrome ou d’Edge : Chromium ne le vérifie pas. Si la pastille affiche « Bloqué — voici la solution », la cause est ailleurs et s’affiche avec elle."
+    - title: "Mode efficacité d’Edge"
+      text: "Aucune source ne montre qu’il agit sur le verrou, et nous ne l’avons pas encore vérifié sur un appareil. Si la pastille repasse en pause sans raison apparente, vérifiez ce réglage."
+    - title: "Veille moderne"
+      text: "Beaucoup de portables récents utilisent cet état de veille « toujours connecté ». Un Wake Lock ne décide que de l’écran ; les pilotes et le firmware gèrent le reste, d’où des comportements variables d’un modèle à l’autre."
 faq:
   - q: "Si je réduis Chrome ou change d’onglet, l’écran reste-t-il allumé ?"
     a: "Non. Réduire la fenêtre ou passer à un autre onglet masque la page, et le navigateur libère le verrou. La pastille indique « En pause — onglet masqué » jusqu’à votre retour. Pour travailler dans d’autres fenêtres, gardez AwakeTab visible à côté ou utilisez la fenêtre flottante."
@@ -33,42 +86,28 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Chrome et Edge tiennent l’écran, tant que l’onglet est visible
+## Pas à pas sur un PC Windows 11
 
-Sous Windows 11, Chrome 84+ et Edge 84+ accordent un Wake Lock natif, à condition que l’onglet AwakeTab reste visible. C’est la façon la plus simple d’empêcher l’écran de s’éteindre sans toucher aux paramètres d’alimentation ni installer de logiciel. Tant que l’écran reste allumé, Windows ne se met pas non plus en veille pour inactivité. Deux limites : fermer le capot met le PC en veille, et la veille moderne (Modern Standby) obéit à ses propres règles de micrologiciel. Les mêmes étapes fonctionnent sous Windows 10.
+::steps
+
+::ad
 
 ## Navigateurs pris en charge sous Windows
 
-| Navigateur | Version minimale | Remarque |
-|---|---|---|
-| Chrome | 84 | onglet visible requis ; fenêtre flottante dès 116 |
-| Edge | 84 | onglet visible requis ; fenêtre flottante dès 116 |
-| Firefox | 126 | versions antérieures : vidéo de secours après un clic |
-| Opera | 70 | base Chromium, onglet visible requis |
-
 Matrice vérifiée le 9 septembre 2026.
 
-## Pas à pas sur un PC Windows 11
-
-1. Ouvrez awaketab.com dans Chrome ou Edge. Sur cette page, la durée « 1 h » est présélectionnée.
-2. Cliquez sur Démarrer (ou touche Espace), puis contrôlez la pastille : elle doit indiquer « Écran allumé ».
-3. Pour travailler dans d’autres applications, laissez la fenêtre AwakeTab visible dans un coin, ou ouvrez la « Fenêtre flottante » depuis l’en-tête.
-4. Sur un portable, restez sur secteur pour les longues sessions : sur batterie, l’« Économiseur d’énergie » peut baisser la luminosité.
-
-## Les paramètres de Windows à connaître
-
-Les délais d’extinction de l’écran et de mise en veille se trouvent dans Paramètres → Système → Alimentation et batterie. Si vous avez les droits d’administration, les allonger est une solution durable. Sur un PC géré par une entreprise, ces réglages sont souvent verrouillés par une stratégie : AwakeTab reste alors utilisable, mais seulement tant que son onglet est visible. Notre guide sur l’écran qui s’éteint au bout d’une minute détaille ces cas.
+::matrix
 
 ## Économiseur d’énergie, mode efficacité, veille moderne
 
-**Économiseur d’énergie.** Depuis Windows 11 24H2, l’ancien « Économiseur de batterie » s’appelle « Économiseur d’énergie » (Energy saver). Il peut baisser la luminosité ou raccourcir les délais, mais ne refuse pas le verrou de Chrome ou d’Edge : Chromium ne le vérifie pas. Si la pastille affiche « Bloqué — voici la solution », la cause est ailleurs et s’affiche avec elle.
+::rows blockers
 
-**Mode efficacité d’Edge.** Aucune source ne montre qu’il agit sur le verrou, et nous ne l’avons pas encore vérifié sur un appareil. Si la pastille repasse en pause sans raison apparente, vérifiez ce réglage.
+## Les paramètres de Windows à connaître
 
-**Veille moderne.** Beaucoup de portables récents utilisent cet état de veille « toujours connecté ». Un Wake Lock ne décide que de l’écran ; les pilotes et le firmware gèrent le reste, d’où des comportements variables d’un modèle à l’autre.
+Les délais d’extinction de l’écran et de mise en veille se trouvent dans Paramètres → Système → Alimentation et batterie. Si vous avez les droits d’administration, les allonger est une solution durable. Sur un PC géré par une entreprise, ces réglages sont souvent verrouillés par une stratégie : AwakeTab reste alors utilisable, mais seulement tant que son onglet est visible. Notre guide sur l’écran qui s’éteint au bout d’une minute détaille ces cas.
 
 ## Ce que la page ne peut pas faire
 
 Fermer le capot endort le PC, et aucun onglet n’y peut rien. Un verrouillage de session imposé par l’entreprise ou le retrait d’une carte à puce n’est pas le délai d’extinction de l’écran, et AwakeTab ne le contourne pas. Pour un long transfert, voyez aussi notre page [téléchargements](/fr/for/telechargements).
 
-Dernière vérification : 9 septembre 2026.
+Dernière vérification : 9 septembre 2026.

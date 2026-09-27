@@ -13,6 +13,24 @@ translationOf: "iphone-auto-lock-never-greyed-out"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+lead: "Se você abre Ajustes → Tela e Brilho → Bloqueio Automático e a opção Nunca está apagada, sem responder ao toque, a causa quase sempre é o Modo de Pouca Energia. Ele é ativado por você ou sugerido pelo iPhone quando a bateria cai bastante, e enquanto estiver ligado trava o Bloqueio Automático em 30 segundos. A solução é desativar o Modo de Pouca Energia primeiro. Depois disso, você pode escolher Nunca — ou deixar o sistema como está e usar o Safari 16.4+ com o AwakeTab, que segura a tela até você sair da aba."
+crumb: "Bloqueio Automático em cinza"
+toc:
+  passo-a-passo-para-liberar-a-opção-nunca: "Liberar a opção Nunca"
+steps:
+  - title: "Desative o Modo de Pouca Energia"
+    short: "Desative o Modo de Pouca Energia"
+    path: "Ajustes › Bateria"
+    text: "O ícone da bateria deixa de ficar amarelo."
+  - title: "Volte para o Bloqueio Automático"
+    short: "Volte ao Bloqueio Automático"
+    path: "Ajustes › Tela e Brilho › Bloqueio Automático"
+    text: "Agora a opção **Nunca** deve responder ao toque."
+  - title: "Escolha Nunca"
+    short: "Escolha Nunca"
+    text: "Escolha essa opção se quiser que a tela nunca apague sozinha."
+stepsDone: "Pronto. Se o Nunca continuar em cinza, veja a próxima seção."
+toolNote: "Mudar o Bloqueio Automático para Nunca vale para o iPhone inteiro, e é fácil esquecer de voltar. Se você só precisa da tela acesa durante uma receita, uma partitura ou um treino, abra o AwakeTab no Safari, toque em iniciar e confira o indicador: com “Tela ligada”, o Safari confirmou o bloqueio, e a tela fica acesa enquanto a aba estiver na frente."
 faq:
   - q: "Por que o Bloqueio Automático volta sozinho para 30 segundos?"
     a: "Porque o Modo de Pouca Energia está ativo. Enquanto ele estiver ligado, o iOS trava o Bloqueio Automático em 30 segundos e deixa Nunca em cinza. Desative o modo em Ajustes → Bateria e o menu volta ao normal. Se ele estiver desligado e o Nunca continuar em cinza, um perfil do trabalho ou da escola (MDM) pode estar limitando o ajuste."
@@ -34,16 +52,9 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Por que o Nunca fica em cinza
-
-Se você abre Ajustes → Tela e Brilho → Bloqueio Automático e a opção Nunca está apagada, sem responder ao toque, a causa quase sempre é o Modo de Pouca Energia. Ele é ativado por você ou sugerido pelo iPhone quando a bateria cai bastante, e enquanto estiver ligado trava o Bloqueio Automático em 30 segundos. A solução é desativar o Modo de Pouca Energia primeiro. Depois disso, você pode escolher Nunca — ou deixar o sistema como está e usar o Safari 16.4+ com o AwakeTab, que segura a tela até você sair da aba.
-
 ## Passo a passo para liberar a opção Nunca
 
-1. Abra **Ajustes → Bateria**.
-2. Desative **Modo de Pouca Energia**. O ícone da bateria deixa de ficar amarelo.
-3. Volte para **Ajustes → Tela e Brilho → Bloqueio Automático**.
-4. Agora a opção **Nunca** deve responder ao toque. Escolha-a se quiser que a tela nunca apague sozinha.
+::steps
 
 Se a bateria estiver muito baixa, o iPhone pode sugerir o Modo de Pouca Energia de novo. Ligue o aparelho no carregador para não cair no mesmo ciclo.
 
@@ -52,18 +63,12 @@ Se a bateria estiver muito baixa, o iPhone pode sugerir o Modo de Pouca Energia 
 - **O Modo de Pouca Energia voltou**: confira outra vez em Ajustes → Bateria. Ele pode ter sido reativado por um atalho ou pela Central de Controle.
 - **Bateria quase no fim**: carregue um pouco antes de insistir.
 - **Perfil do trabalho ou da escola**: um perfil de gerenciamento (MDM) pode limitar o Bloqueio Automático. Veja em Ajustes → Geral → VPN e Gerenciamento de Dispositivos; só o administrador pode mudar isso.
-- **O problema é só o tempo, não o Nunca**: talvez você não precise mudar nada no sistema. Veja a próxima seção.
+- **O problema é só o tempo, não o Nunca**: talvez você não precise mudar nada no sistema.
 
-## Ou pule os ajustes: use o AwakeTab no Safari
-
-Mudar o Bloqueio Automático para Nunca vale para o iPhone inteiro, e é fácil esquecer de voltar. Se você só precisa da tela acesa durante uma receita, uma partitura ou um treino, abra o AwakeTab no Safari, toque em iniciar e confira o indicador:
-
-- **“Tela ligada”**: o Safari confirmou o bloqueio; a tela fica acesa enquanto a aba estiver na frente.
-- **“Bloqueado — veja como corrigir”**: o Safari recusou o pedido, quase sempre porque faltou um toque na página ou a aba não estava na frente. O AwakeTab mostra a causa logo abaixo.
-- **“Pausado — aba oculta”**: você saiu do Safari ou trocou de aba. Volte e o pedido é refeito.
-
-O Wake Lock no Safari existe desde o iOS 16.4. Como app adicionado à Tela de Início, ele precisa do iOS 18.4 ou posterior. Em versões mais antigas, o AwakeTab oferece o vídeo alternativo, que depende de um toque seu e consome mais bateria. O guia completo do navegador está em [manter a tela do iPhone ligada no Safari](/pt-br/on/iphone-safari).
+::ad
 
 ## Um aviso sobre bateria
 
-Tela acesa por horas esquenta o iPhone e acaba com a carga. O Modo de Pouca Energia existe justamente para isso, então só desative-o quando o aparelho estiver no carregador ou com carga de sobra. No Safari não há parada automática por bateria fraca — ela só existe em navegadores Chromium —, então fique de olho na porcentagem. Versões conferidas na documentação da Apple e do WebKit em 26 de setembro de 2026.
+Tela acesa por horas esquenta o iPhone e acaba com a carga. O Modo de Pouca Energia existe justamente para isso, então só desative-o quando o aparelho estiver no carregador ou com carga de sobra. No Safari não há parada automática por bateria fraca — ela só existe em navegadores Chromium —, então fique de olho na porcentagem você mesmo.
+
+O Wake Lock no Safari existe desde o iOS 16.4. Como app adicionado à Tela de Início, ele precisa do iOS 18.4 ou posterior. Em versões mais antigas, o AwakeTab oferece o vídeo alternativo, que depende de um toque seu e consome mais bateria. O guia completo do navegador está em [manter a tela do iPhone ligada no Safari](/pt-br/on/iphone-safari). Versões conferidas na documentação da Apple e do WebKit em 26 de setembro de 2026.

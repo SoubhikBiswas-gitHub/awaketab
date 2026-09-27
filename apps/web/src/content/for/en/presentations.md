@@ -15,6 +15,41 @@ reviewed: true
 lastVerified: 2026-09-26
 browsers: ["chrome", "edge", "firefox"]
 os: ["windows", "macos", "chromeos", "linux"]
+lead: "Yes, AwakeTab can keep the screen on while you present, with one catch. When your slides go full screen, they hide the AwakeTab tab, and the browser stops keeping the screen on. So keep AwakeTab visible another way: the floating window in desktop Chrome, Edge or Firefox; AwakeTab for Chrome, which works with the tab hidden; a second window on your own screen; or a longer display timeout for the talk."
+crumb: "Presentations"
+toc:
+  set-it-up-before-youre-introduced: "Set it up"
+  what-to-expect-during-the-talk: "What to expect"
+  four-ways-to-keep-it-on: "Four ways to keep it on"
+  the-projector-and-second-displays: "Projectors and second displays"
+steps:
+  - title: "Start a session that ends with your slot."
+    text: "Pick 2 h, or tap \"Until…\" and choose the end of your slot, such as 11:30 AM. Tap Start and wait for \"Screen awake\"."
+  - title: "Open the floating window, or turn on the extension."
+    text: "Start the slideshow. The floating window should still say \"Screen awake\"."
+  - title: "Rehearse once."
+    text: "Leave the slideshow running, untouched, for longer than your display timeout. If the screen stays on, you're set."
+figures:
+  - frame: phone
+    label: "Phone screenshot"
+    alt: "the AwakeTab floating window reading Screen awake"
+    caption: "The floating window."
+  - frame: desktop
+    label: "Desktop screenshot"
+    alt: "full-screen slides in Chrome with the AwakeTab floating window in a corner"
+    caption: "Full-screen slides with the floating window in a corner."
+pills:
+  - state: held
+    text: "With a running time, the display, and the projector with it, is being kept on."
+  - state: lost
+    text: "Full-screen slides cover AwakeTab, and the normal display timeout is back in charge."
+  - state: denied
+    text: "The browser refused the lock. Check the card before you go on stage: it names the cause and the fix, such as Safari wanting one more tap."
+checklist:
+  - "The session covers your slot: 2 h, or \"Until…\" set to its end."
+  - "In Settings, \"When time is up\" is \"Just stop\" and the end sound is None."
+  - "On an extended display, AwakeTab is on your laptop and the slides on the projector."
+  - "A rehearsal past your display timeout kept the screen on."
 faq:
   - q: "My slides app is in full screen. Why did the pill change?"
     a: "Full screen covers the AwakeTab tab, and browsers only keep the screen on for a page you can see. The pill reads “Paused — tab hidden” until the tab is visible again."
@@ -37,41 +72,45 @@ published: 2026-09-09
 updated: 2026-09-27
 ---
 
-Yes, AwakeTab can keep the screen on while you present, with one catch. When your slides go full screen, they hide the AwakeTab tab, and the browser stops keeping the screen on. So keep AwakeTab visible another way: the floating window in desktop Chrome, Edge or Firefox; AwakeTab for Chrome, which works with the tab hidden; a second window on your own screen; or a longer display timeout for the talk.
+## Set it up before you're introduced
 
-## Why full-screen slides stop it
+::steps
 
-A browser keeps the screen on only for a page that is visible. PowerPoint, Keynote or Google Slides in full screen covers the AwakeTab tab, so the browser releases the wake lock and the pill says "Paused — tab hidden". From that moment, your computer's normal display timeout is running again.
+::figures
+
+::ad
+
+## What to expect during the talk
+
+A browser keeps the screen on only for a page that is visible. PowerPoint, Keynote or Google Slides in full screen covers the AwakeTab tab, so the browser releases the wake lock. From that moment, your computer's normal display timeout runs again.
+
+The pill at the top of the tool tells you what the browser is doing:
+
+::pills
 
 ## Four ways to keep it on
 
 | Option | Where it works | What to know |
 |---|---|---|
-| Floating window | Desktop Chrome and Edge 116 or later, Firefox 151 or later | A small window that stays on top of other windows. Not in Safari or on Android |
+| Floating window | Desktop Chrome and Edge 116 or later, Firefox 151 or later | Stays on top of other windows. Not in Safari or on Android |
 | AwakeTab for Chrome | Chrome and Edge on a computer | Uses Chrome's power setting, so the tab can be hidden or minimised |
 | A second window on your screen | Any browser, with an extended display | Slides full screen on the projector, AwakeTab visible on the laptop |
 | A longer display timeout | Any computer where you can change settings | Free and certain, but remember to set it back |
 
-**The floating window** is the quickest. Open it with the "Floating window" button in the AwakeTab header; the browser may ask you to allow pop-ups for awaketab.com. Whether it keeps the screen on while full-screen slides cover the main AwakeTab tab has not been device-tested yet; we will publish that result on our how-we-tested page. Until then, run the check in the last section before the talk.
+**The floating window** is the quickest. Open it with the "Floating window" button in the AwakeTab header; the browser may ask you to allow pop-ups for awaketab.com. Whether it keeps the screen on while full-screen slides cover the main tab is not yet device-tested; the result will go on our how-we-tested page. Until then, rehearse.
 
-**[AwakeTab for Chrome](/extension)** is the most dependable choice for full-screen PowerPoint or Keynote on Chrome or Edge. Its Screen level keeps the display on while Chrome is running, whatever window is in front.
+**[AwakeTab for Chrome](/extension)** is the most dependable choice for full-screen slides. Its Screen level keeps the display on while Chrome runs, whatever window is in front.
 
 **A longer timeout** is the right answer on your own laptop if you present often. The steps are in [Keep the screen on in Windows 11](/on/windows-11) and on [the Mac page](/on/macos).
 
 ## The projector and second displays
 
-A projector or second monitor follows the same display timeout as your laptop. When AwakeTab keeps the display on, it stays on too. When the wake lock is released, the projector goes dark on the same timer as your laptop screen. A projector that turns itself off after losing the signal is using its own setting; [Fix a second monitor that turns off](/guides/second-monitor-turns-off) covers that case.
+A projector or second monitor follows your laptop's display timeout, so it stays on while AwakeTab keeps the display on. A projector that turns itself off after losing the signal is using its own setting; [Fix a second monitor that turns off](/guides/second-monitor-turns-off) covers that case.
 
-A locked screen is a different matter. If your laptop locks during a long Q&A because of a work lock policy, AwakeTab won't prevent that. [Lock screen versus display sleep](/guides/lock-screen-vs-sleep) explains the difference.
+A work lock policy is different: if your laptop locks during a long Q&A, AwakeTab won't prevent that. [Lock screen versus display sleep](/guides/lock-screen-vs-sleep) explains the difference. Teaching a class? See [keep the classroom screen on while you teach](/for/classroom).
 
-## Set it up before you're introduced
+::limit
 
-1. Open AwakeTab and pick 2 h, or tap "Until…" and choose the end of your slot, such as 11:30 AM.
-2. Tap Start and wait for the pill to change from "Starting…" to "Screen awake".
-3. Open the floating window, or turn on the extension.
-4. Start the slideshow. The floating window should still say "Screen awake".
-5. Rehearse once: leave the slideshow running, untouched, for longer than your display timeout. If the screen stays on, you're set.
+## Before the talk starts
 
-## What you'll see during the talk
-
-A running time and "Screen awake" mean the display is covered. "Paused — tab hidden" means the slides are covering AwakeTab and the normal timeout is back in charge. If the browser refuses, for example because a school or work administrator has switched wake locks off, the pill reads "Blocked — here's the fix" and tells you why. Teaching a class? See [keep the classroom screen on while you teach](/for/classroom).
+::checklist

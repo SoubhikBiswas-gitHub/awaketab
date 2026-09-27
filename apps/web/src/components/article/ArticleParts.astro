@@ -1,0 +1,182 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Steps from './Steps.astro';
+import Figures from './Figures.astro';
+import PillStates from './PillStates.astro';
+import Checklist from './Checklist.astro';
+import Matrix from './Matrix.astro';
+import Rows from './Rows.astro';
+import Compare from './Compare.astro';
+import Picks from './Picks.astro';
+import CodeBlock from './CodeBlock.astro';
+import Note from './Note.astro';
+import Lifecycle from './Lifecycle.astro';
+import Limit from './Limit.astro';
+import type { ISection, TArticlePart } from '../../lib/article';
+import type { TContentKind } from '../../lib/content-i18n';
+
+interface Props {
+  list: TArticlePart[];
+  data: CollectionEntry<TContentKind>['data'];
+  t: (key: string, vars?: Record<string, string | number>) => string;
+  id: string;
+  kind: TContentKind;
+}
+const { list, data, t, id, kind } = Astro.props;
+// Step cards: screenshot rows when steps carry `shot` (GuideOn), tracked with "Mark as done" on /guides
+// (GuideGuides), numbered cards otherwise (ContentArticle).
+const stepVariant = data.steps?.some((s) => s.shot)
+  ? 'shots'
+  : kind === 'guides'
+    ? 'track'
+    : 'card';
+// The "n of m" counter beside a checklist's or tracked steps' heading; lib/content-nav.ts fills `{n}` in `data-tpl`.
+const counter = (section: ISection): { text: string; tpl: string } | null => {
+  for (const p of section.parts) {
+    if (p.kind !== 'block') continue;
+    const key =
+      p.name === 'checklist' && data.checklist
+        ? 'content.checked'
+        : p.name === 'steps' && stepVariant === 'track'
+          ? 'content.progressCount'
+          : null;
+    const total =
+      p.name === 'checklist'
+        ? (data.checklist?.length ?? 0)
+        : (data.steps?.length ?? 0);
+    if (key)
+      return {
+        text: t(key, { n: 0, total }),
+        tpl: t(key, { n: '{n}', total }),
+      };
+  }
+  return null;
+};
+const fail = (name: string, arg: string): never => {
+  throw new Error(
+    `${id}: block ::${name}${arg ? ` ${arg}` : ''} has no frontmatter data`,
+  );
+};
+---
+
+{
+  list.map((part) =>
+    part.kind === 'limit' ? (
+      <Limit text={data.honestLimit} label={t('content.limit')} />
+    ) : part.kind === 'section' ? (
+      <section class="at-sec at-md" aria-labelledby={part.id}>
+        {part.heading &&
+          (counter(part) ? (
+            <>
+              <div class="at-sec-h">
+                <Fragment set:html={part.heading} />
+                <span
+                  class="at-count"
+                  aria-live="polite"
+                  data-counter={counter(part)?.tpl}
+                >
+                  {counter(part)?.text}
+                </span>
+              </div>
+              {stepVariant === 'track' &&
+                part.parts.some(
+                  (p) => p.kind === 'block' && p.name === 'steps',
+                ) && (
+                  <span class="at-bar at-bar-top" aria-hidden="true">
+                    <span />
+                  </span>
+                )}
+            </>
+          ) : (
+            <Fragment set:html={part.heading} />
+          ))}
+        {part.parts.map((p) =>
+          p.kind === 'html' ? (
+            <Fragment set:html={p.html} />
+          ) : p.name === 'steps' ? (
+            data.steps ? (
+              <Steps
+                steps={data.steps}
+                variant={stepVariant}
+                t={t}
+                done={data.stepsDone}
+              />
+            ) : (
+              fail(p.name, p.arg)
+            )
+          ) : p.name === 'figures' ? (
+            data.figures ? (
+              <Figures figures={data.figures} t={t} />
+            ) : (
+              fail(p.name, p.arg)
+            )
+          ) : p.name === 'pills' ? (
+            data.pills ? (
+              <PillStates pills={data.pills} t={t} />
+            ) : (
+              fail(p.name, p.arg)
+            )
+          ) : p.name === 'checklist' ? (
+            data.checklist ? (
+              <Checklist items={data.checklist} />
+            ) : (
+              fail(p.name, p.arg)
+            )
+          ) : p.name === 'matrix' ? (
+            data.matrix ? (
+              <Matrix matrix={data.matrix} />
+            ) : (
+              fail(p.name, p.arg)
+            )
+          ) : p.name === 'rows' ? (
+            data.rows?.[p.arg] ? (
+              <Rows rows={data.rows[p.arg] ?? []} />
+            ) : (
+              fail(p.name, p.arg)
+            )
+          ) : p.name === 'compare' ? (
+            data.compare ? (
+              <Compare compare={data.compare} t={t} />
+            ) : (
+              fail(p.name, p.arg)
+            )
+          ) : p.name === 'picks' ? (
+            data.picks?.[p.arg] ? (
+              <Picks picks={data.picks[p.arg] ?? []} />
+            ) : (
+              fail(p.name, p.arg)
+            )
+          ) : p.name === 'code' ? (
+            data.code?.[p.arg] ? (
+              <CodeBlock
+                file={p.arg}
+                lang={data.code[p.arg]?.lang ?? 'js'}
+                code={data.code[p.arg]?.text ?? ''}
+                t={t}
+              />
+            ) : (
+              fail(p.name, p.arg)
+            )
+          ) : p.name === 'note' ? (
+            data.notes?.[p.arg] ? (
+              <Note
+                kicker={data.notes[p.arg]?.kicker ?? ''}
+                text={data.notes[p.arg]?.text ?? ''}
+              />
+            ) : (
+              fail(p.name, p.arg)
+            )
+          ) : p.name === 'lifecycle' ? (
+            data.lifecycle ? (
+              <Lifecycle data={data.lifecycle} t={t} />
+            ) : (
+              fail(p.name, p.arg)
+            )
+          ) : (
+            <Limit text={data.honestLimit} label={t('content.limit')} inline />
+          ),
+        )}
+      </section>
+    ) : null,
+  )
+}

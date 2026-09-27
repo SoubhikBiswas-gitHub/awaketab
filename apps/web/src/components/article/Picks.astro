@@ -1,0 +1,22 @@
+---
+import { inline } from '../../lib/article';
+
+interface Props {
+  picks: Array<{ title: string; text: string }>;
+}
+const { picks } = Astro.props;
+---
+
+<ol class="at-picks">
+  {
+    picks.map((pick, i) => (
+      <li>
+        <span aria-hidden="true">{i + 1}</span>
+        <span>
+          <strong set:html={inline(pick.title)} />
+          <span set:html={inline(pick.text)} />
+        </span>
+      </li>
+    ))
+  }
+</ol>

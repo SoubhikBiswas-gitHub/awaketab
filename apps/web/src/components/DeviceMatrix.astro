@@ -3,6 +3,7 @@
 // records the manual run, the matrix is `pending`: the page says "Results pending" and claims nothing.
 // Build-time markup only (docs/03 ADR-013). Clear Night (redesign B5): the board's matrix card (r16, kicker header,
 // tone tags for verdicts, never colour alone: the verdict word is the tag text) and the honest-limit note shape.
+import '../styles/device-matrix.css';
 import raw from '../../../../docs/metrics/device-matrix.json';
 import { parseDeviceMatrix, type TDeviceVerdict } from '../lib/device-matrix';
 import support from '../data/support-matrix.json';

@@ -1,0 +1,210 @@
+/* stylelint-disable no-descending-specificity */
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-grid {
+    min-inline-size: 0;
+    overflow: hidden;
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-lg);
+    background: var(--at-surface);
+    color: var(--at-ink);
+    font: var(--at-type-ui);
+    font-weight: 400;
+  }
+
+  .at-grid > [role="rowgroup"]:first-child {
+    display: none;
+  }
+
+  .at-grid [role="rowheader"] {
+    font-weight: 600;
+    text-wrap: pretty;
+  }
+
+  .at-grid [role="cell"] {
+    text-wrap: pretty;
+  }
+
+  .at-grid code {
+    white-space: nowrap;
+  }
+
+  .at-mx [role="row"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--at-s-2) var(--at-s-3);
+    padding: var(--at-s-4);
+  }
+
+  .at-mx [role="row"] + [role="row"] {
+    border-block-start: var(--at-border) solid var(--at-line);
+  }
+
+  .at-mx [role="cell"]:last-child {
+    grid-column: 1 / -1;
+    color: var(--at-ink-2);
+  }
+
+  .at-mx .at-tag:is([data-r="works"], [data-r="fallback"]) {
+    --at-tone: var(--at-accent);
+  }
+
+  .at-mx .at-tag[data-r="pauses"] {
+    --at-tone: var(--at-warn);
+  }
+
+  .at-mx .at-tag[data-r="blocked"] {
+    --at-tone: var(--at-bad);
+  }
+
+  .at-mx .at-tag:is([data-r="no"], [data-r="untested"]) {
+    color: var(--at-ink);
+  }
+
+  .at-cmp {
+    overflow: visible;
+    border: 0;
+    background: none;
+  }
+
+  .at-cmp > [role="rowgroup"]:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-3);
+  }
+
+  .at-cmp [role="row"] {
+    display: grid;
+    grid-template-columns: var(--at-col-key) minmax(0, 1fr);
+    gap: var(--at-s-2) var(--at-s-3);
+    padding: var(--at-card-pad);
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-lg);
+    background: var(--at-surface);
+  }
+
+  .at-cmp [role="rowheader"] {
+    display: flex;
+    grid-column: 1 / -1;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--at-s-3);
+    margin-block-end: var(--at-s-1);
+    font: var(--at-type-row);
+    font-weight: 600;
+  }
+
+  .at-cmp [role="cell"] {
+    display: contents;
+  }
+
+  .at-cmp-k,
+  .at-cmp-c {
+    display: flex;
+    align-items: center;
+    gap: var(--at-s-2);
+    font-weight: 600;
+  }
+
+  .at-dot {
+    flex-shrink: 0;
+    inline-size: var(--at-s-2);
+    block-size: var(--at-s-2);
+    border: var(--at-border) solid var(--at-ink-2);
+    border-radius: var(--at-r-pill);
+  }
+
+  .at-dot-us {
+    border-color: var(--at-accent);
+    background: var(--at-accent);
+  }
+
+  @media (width >= 600px) {
+    .at-grid > [role="rowgroup"]:first-child {
+      display: block;
+    }
+
+    .at-grid-h {
+      align-items: center;
+      background: var(--at-sunken);
+    }
+
+    .at-grid [role="row"] {
+      display: grid;
+      grid-template-columns: var(--at-cols);
+      gap: 0;
+      padding: 0;
+    }
+
+    .at-grid [role="rowgroup"] + [role="rowgroup"] [role="row"] {
+      border-block-start: var(--at-border) solid var(--at-line);
+    }
+
+    .at-grid :is([role="rowheader"], [role="cell"]) {
+      padding: var(--at-s-4);
+    }
+
+    .at-grid [role="columnheader"] {
+      padding-block: var(--at-s-3);
+      padding-inline: var(--at-s-4);
+      color: var(--at-muted);
+      font: var(--at-type-kicker);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .at-mx {
+      --at-cols: minmax(0, 1.1fr) var(--at-col-state) minmax(0, 1.4fr);
+    }
+
+    .at-mx [role="cell"]:last-child {
+      grid-column: auto;
+    }
+
+    .at-cmp {
+      --at-cols: minmax(0, 0.8fr) repeat(var(--at-n, 2), minmax(0, 1.2fr));
+
+      overflow: hidden;
+      border: var(--at-border) solid var(--at-line);
+      background: var(--at-surface);
+    }
+
+    .at-cmp > [role="rowgroup"]:last-child {
+      display: block;
+    }
+
+    .at-cmp [role="row"] {
+      border: 0;
+      border-radius: 0;
+      background: none;
+    }
+
+    .at-cmp [role="rowheader"] {
+      flex-direction: column;
+      grid-column: auto;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: var(--at-s-2);
+      margin: 0;
+      font: var(--at-type-ui);
+      font-weight: 600;
+    }
+
+    .at-cmp [role="cell"] {
+      display: block;
+    }
+
+    .at-cmp .at-grid-h .at-cmp-c {
+      color: var(--at-ink);
+      font: var(--at-type-ui);
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .at-cmp-k {
+      display: none;
+    }
+  }
+}

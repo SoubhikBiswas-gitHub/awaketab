@@ -72,6 +72,7 @@ const t = createT(locale);
       alternates={alternates}
     />
     <script is:inline set:html={bootJs} />
+    <slot name="head" />
   </head>
   <body>
     {

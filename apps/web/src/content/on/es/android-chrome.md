@@ -13,6 +13,27 @@ translationOf: "android-chrome"
 lastVerified: 2026-09-09
 browsers: ["chrome"]
 os: ["android"]
+crumb: "Android en Chrome"
+lead: "Desde Chrome 84, Android permite que una pestaña visible pida un Wake Lock nativo y evite que la pantalla se apague. Esta página viene con una sesión de 30 minutos: tócala y fíjate que aparezca “Pantalla despierta”. Hay dos cosas que pueden arruinarlo: salir de Chrome libera el bloqueo, y las listas de “apps en suspensión” de algunos fabricantes pueden cerrar la pestaña cuando te vas. El Ahorro de batería puede atenuar la pantalla, pero Chrome no rechaza el bloqueo por él."
+facts:
+  - label: "Chrome"
+    value: "84 o posterior"
+  - label: "Samsung Internet"
+    value: "14 o posterior"
+  - label: "Firefox"
+    value: "126 o posterior"
+  - label: "Opera"
+    value: "70 o posterior"
+steps:
+  - title: "Abre AwakeTab en Chrome y elige la duración"
+    text: "Si la sesión va a ser larga, conecta el cargador."
+    shot: "AwakeTab en Chrome para Android con la duración elegida"
+  - title: "Mira el indicador"
+    text: "Debe decir “Pantalla despierta”."
+    shot: "el indicador de AwakeTab con la sesión activa"
+  - title: "Si quieres usar otra app al mismo tiempo"
+    text: "Activa la pantalla dividida y deja AwakeTab en una de las mitades."
+    shot: "la pantalla dividida con AwakeTab en una mitad"
 faq:
   - q: "¿Por qué AwakeTab dice “Bloqueado — aquí está la solución” en mi celular?"
     a: "Casi siempre la pestaña no estaba a la vista cuando AwakeTab pidió el bloqueo, o la página está dentro de un marco (iframe) que no lo permite; el motivo aparece debajo del indicador. El Ahorro de batería no es la causa: Chrome no rechaza el Wake Lock por él. Repetir el intento sin cambiar esa condición da el mismo rechazo."
@@ -34,18 +55,17 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Lo que necesitas saber en Android
-
-Desde Chrome 84, Android permite que una pestaña visible pida un Wake Lock nativo y evite que la pantalla se apague. Esta página viene con una sesión de 30 minutos: tócala y fíjate que aparezca “Pantalla despierta”. Hay dos cosas que pueden arruinarlo: salir de Chrome libera el bloqueo, y las listas de “apps en suspensión” de algunos fabricantes pueden cerrar la pestaña cuando te vas. El Ahorro de batería puede atenuar la pantalla, pero Chrome no rechaza el bloqueo por él.
-
 ## Configura el celular en un minuto
 
-1. Si la sesión va a ser larga, conecta el cargador.
-2. Abre AwakeTab en Chrome y elige la duración.
-3. Mira el indicador: debe decir “Pantalla despierta”.
-4. Si quieres usar otra app al mismo tiempo, activa la pantalla dividida y deja AwakeTab en una de las mitades.
+::steps
 
 El tiempo de apagado normal del sistema está en Ajustes → Pantalla → Tiempo de espera de la pantalla (en un Pixel: Ajustes → Pantalla y función táctil). AwakeTab no lo modifica: solo evita que corra mientras la pestaña está al frente. Cuando termina la sesión, tu ajuste vuelve a aplicar tal como estaba.
+
+::ad
+
+## Otros navegadores en Android
+
+Según nuestra [matriz de compatibilidad](/es/learn/matriz-compatibilidad-navegadores), basada en la documentación de los navegadores revisada el 26 de septiembre de 2026, además de Chrome 84+ tienen Wake Lock nativo en Android Samsung Internet 14+, Firefox 126+ y Opera 70+. Con un Firefox más antiguo verás “Toca para usar el respaldo”: es un video mudo que consume más batería. Para el iPhone, las reglas cambian un poco: [así funciona en Safari](/es/on/iphone-safari).
 
 ## El Ahorro de batería y los fabricantes
 
@@ -56,10 +76,6 @@ Samsung y otros fabricantes agregan sus propias listas para poner en suspensión
 ## Qué pasa cuando sales de Chrome
 
 Android solo deja mantener la pantalla encendida a la pestaña que está enfrente. Al abrir otra app, ir al inicio o cambiar de pestaña, Chrome suelta el bloqueo de inmediato. AwakeTab lo refleja al instante: “En pausa — pestaña oculta”. Mientras tanto, el tiempo de la sesión no avanza. Al regresar, AwakeTab lo vuelve a pedir; espera a ver “Pantalla despierta” antes de dejar el celular.
-
-## Otros navegadores en Android
-
-Según nuestra [matriz de compatibilidad](/es/learn/matriz-compatibilidad-navegadores), basada en la documentación de los navegadores revisada el 26 de septiembre de 2026, además de Chrome 84+ tienen Wake Lock nativo en Android Samsung Internet 14+, Firefox 126+ y Opera 70+. Con un Firefox más antiguo verás “Toca para usar el respaldo”: es un video mudo que consume más batería. Para el iPhone, las reglas cambian un poco: [así funciona en Safari](/es/on/iphone-safari).
 
 ## Límites en Android
 
