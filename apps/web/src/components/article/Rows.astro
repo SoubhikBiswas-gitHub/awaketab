@@ -1,0 +1,32 @@
+---
+import { inline } from '../../lib/article';
+
+interface Props {
+  rows: Array<{
+    title: string;
+    text?: string | undefined;
+    value?: string | undefined;
+    link?: { label: string; href: string } | undefined;
+  }>;
+}
+const { rows } = Astro.props;
+---
+
+<ul class="at-rl">
+  {
+    rows.map((row) =>
+      row.value !== undefined ? (
+        <li class="at-kv">
+          <span set:html={inline(row.title)} />
+          <span>{row.value}</span>
+        </li>
+      ) : (
+        <li>
+          <strong set:html={inline(row.title)} />
+          {row.text && <span set:html={inline(row.text)} />}
+          {row.link && <a href={row.link.href}>{row.link.label}</a>}
+        </li>
+      ),
+    )
+  }
+</ul>

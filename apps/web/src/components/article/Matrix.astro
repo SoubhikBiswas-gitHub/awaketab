@@ -1,0 +1,41 @@
+---
+import { inline } from '../../lib/article';
+
+interface Props {
+  matrix: {
+    label: string;
+    cols: [string, string, string];
+    rows: Array<{ what: string; result: string; label: string; text: string }>;
+  };
+}
+const { matrix } = Astro.props;
+---
+
+<div class="at-grid at-mx" role="table" aria-label={matrix.label}>
+  <div role="rowgroup">
+    <div role="row" class="at-grid-h">
+      {matrix.cols.map((col) => <span role="columnheader">{col}</span>)}
+    </div>
+  </div>
+  <div role="rowgroup">
+    {
+      matrix.rows.map((row) => (
+        <div role="row">
+          <span role="rowheader" set:html={inline(row.what)} />
+          <span role="cell">
+            <span
+              class:list={[
+                'at-tag',
+                { 'at-tag-tone': !['no', 'untested'].includes(row.result) },
+              ]}
+              data-r={row.result}
+            >
+              {row.label}
+            </span>
+          </span>
+          <span role="cell" set:html={inline(row.text)} />
+        </div>
+      ))
+    }
+  </div>
+</div>

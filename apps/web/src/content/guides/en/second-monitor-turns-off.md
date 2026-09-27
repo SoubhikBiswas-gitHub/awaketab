@@ -2,6 +2,7 @@
 title: "Second monitor turns off? Causes and fixes — AwakeTab"
 description: "If only your second monitor turns off, check the cable, DisplayPort and the monitor's own auto-off. If both follow the OS timeout, a wake lock helps."
 h1: "Second monitor keeps turning off: how to fix it"
+crumb: "Second monitor turns off"
 intent: "second monitor turns off"
 secondaryQueries:
   - "keep second monitor from turning off"
@@ -20,6 +21,28 @@ browsers:
 os:
   - windows
   - macos
+lead: "If only the second monitor goes dark while the main screen stays on, the cause is usually the monitor or its connection: a loose cable, a DisplayPort link that drops, or the monitor's own power saving. Work through the checks below. If both screens go dark at the same moment, your operating system's display timeout is doing it, and a visible AwakeTab tab on either screen can hold that timeout."
+steps:
+  - title: "Swap the cable"
+    short: "Swap the cable"
+    text: "Use a known-good cable. If you can, try the other port type, such as HDMI in place of DisplayPort."
+  - title: "Connect the monitor directly"
+    short: "Skip the dock"
+    text: "Plug the monitor straight into the computer, without the dock, adapter or daisy chain."
+  - title: "Turn off the monitor's power saving"
+    short: "Power saving off"
+    path: "Monitor menu › Power saving, Eco or Auto power-off"
+    text: "Turn off power saving, eco mode and any auto power-off timer. Names differ by maker."
+  - title: "Set the input to your port"
+    short: "Fix the input"
+    path: "Monitor menu › Input"
+    text: "Choose the port you use, not automatic. An automatic input scans for a signal and sleeps when it finds none, and fixing it often cures \"No signal\" after wake."
+  - title: "Update the graphics driver"
+    short: "Update the driver"
+    path: "Settings › Windows Update › Advanced options › Optional updates"
+    text: "An old driver can mishandle sleep and wake on external screens. On Windows, check here or the website of your PC or graphics card maker. On a Mac, drivers come with macOS updates."
+stepsDone: "All five done. If the second screen still goes dark, read the next section to find out whether the timeout is the cause."
+toolNote: "Rather than change the timeout, let the AwakeTab timer hold it. It opens in clock mode and runs until you stop it, so it doubles as a wall clock on the spare screen. Kept visible in Chrome or Edge, it sends one request to keep the displays on, and that covers both screens."
 faq:
   - q: "Why do my windows jump to the main screen when the second monitor sleeps?"
     a: "Some DisplayPort monitors look unplugged to the computer once they sleep, so the system moves their windows to the screen that is left. Keeping the displays on stops that sleep. If windows jump while both screens are awake, the link is dropping: try another cable."
@@ -39,7 +62,21 @@ published: 2026-09-09
 updated: 2026-09-27
 ---
 
-If only the second monitor goes dark while the main screen stays on, the cause is usually the monitor or its connection: a loose cable, a DisplayPort link that drops, or the monitor's own power saving. If both screens go dark at the same moment, your operating system's display timeout is doing it, and a visible AwakeTab tab on either screen can hold that timeout.
+## Fix the second monitor in 5 steps
+
+These steps are the same on Windows and Mac. Change one thing, then wait long enough to know whether it helped.
+
+::steps
+
+If the menu will not open or ignores changes, some monitors have a menu lock; the manual says how to release it.
+
+## If the screen still goes dark
+
+1. Start AwakeTab and wait for "Screen awake".
+2. On Windows, run `powercfg /requests` in an administrator terminal and look for the browser under DISPLAY. On a Mac, run `pmset -g assertions` and look for a NoDisplaySleep entry.
+3. If the request is there and the second screen still goes dark, the timeout is not the cause. Go back to the cable and monitor steps.
+
+::ad
 
 ## Which pattern do you have?
 
@@ -48,26 +85,7 @@ If only the second monitor goes dark while the main screen stays on, the cause i
 - **The second screen shows "No signal" after the computer wakes:** DisplayPort re-detection or the monitor's automatic input search.
 - **Both screens go dark together:** the system display timeout.
 
-## When only the second monitor goes dark
-
-The causes, most likely first:
-
-1. **The cable or adapter.** A loose plug, a long or low-grade cable, or a USB-C adapter or dock in the chain.
-2. **The DisplayPort link.** DisplayPort connections can drop and reconnect, more often through docks or when monitors are daisy-chained (MST). A monitor that drops the link can look unplugged to the computer for a moment.
-3. **The monitor's own settings.** Many monitors have a power-saving, eco or auto power-off option, and an automatic input setting that scans for a signal and sleeps when it finds none. Names differ by maker.
-4. **The graphics driver.** An old driver can mishandle sleep and wake on external screens.
-
-## Fix it, one step at a time
-
-Change one thing, then wait long enough to know whether it helped.
-
-1. Swap the cable for a known-good one. If you can, try the other port type, such as HDMI in place of DisplayPort.
-2. Connect the monitor straight to the computer, without the dock, adapter or daisy chain.
-3. In the monitor's on-screen menu, turn off power saving, eco mode and any auto power-off timer.
-4. Set the monitor's input to the port you use, not automatic. This often cures "No signal" after wake.
-5. Update the graphics driver. On Windows, check Settings > Windows Update > Advanced options > Optional updates, or the website of your PC or graphics card maker. On a Mac, drivers come with macOS updates.
-
-If the menu will not open or ignores changes, some monitors have a menu lock; the manual says how to release it.
+DisplayPort connections can drop and reconnect, more often through docks or when monitors are daisy-chained (MST). A monitor that drops the link can look unplugged to the computer for a moment.
 
 ## When both screens go dark together
 
@@ -78,16 +96,8 @@ Windows and macOS use one display timeout for all screens. To change it:
 
 On a work computer these may be greyed out because IT sets them. In that case, leave them as they are.
 
-## Hold the timeout from a tab
-
-Rather than change the timeout, you can let the AwakeTab timer above hold it. It opens in clock mode and runs until you stop it, so it doubles as a wall clock on the spare screen. Kept visible in Chrome or Edge, it sends one request to keep the displays on, and that covers both screens.
+## Where to put the AwakeTab tab
 
 Put it where nothing covers it. A tab in a minimised window counts as hidden, and one fully covered by another window can too; the pill then shows "Paused — tab hidden". A window that is visible but not focused is fine.
 
-For a wall screen running all day, see [keeping a dashboard screen on](/for/dashboards). If you present from a laptop onto the second screen, [presenting with AwakeTab](/for/presentations) explains the floating window. Browser setup for each system is on [the Windows 11 page](/on/windows-11) and [the Mac page](/on/macos).
-
-## Confirm which cause it is
-
-1. Start AwakeTab and wait for "Screen awake".
-2. On Windows, run `powercfg /requests` in an administrator terminal and look for the browser under DISPLAY. On a Mac, run `pmset -g assertions` and look for a NoDisplaySleep entry.
-3. If the request is there and the second screen still goes dark, the timeout is not the cause. Go back to the cable and monitor steps.
+For a wall screen running all day, see [keeping a dashboard screen on](/for/dashboards). If you present from a laptop onto the second screen, see [presenting with AwakeTab](/for/presentations). Browser setup for each system is on [the Windows 11 page](/on/windows-11) and [the Mac page](/on/macos).

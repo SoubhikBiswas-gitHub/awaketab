@@ -1,0 +1,37 @@
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-box {
+    display: grid;
+    place-items: center;
+    inline-size: var(--at-icon-lg);
+    block-size: var(--at-icon-lg);
+    margin-block-start: var(--at-border);
+    border: var(--at-border) solid var(--at-line-strong);
+    border-radius: var(--at-r-sm);
+    color: var(--at-on-accent);
+    transition:
+      background-color var(--at-d-slide) var(--at-ease),
+      border-color var(--at-d-slide) var(--at-ease);
+  }
+
+  .at-box svg {
+    inline-size: var(--at-icon-sm);
+    block-size: var(--at-icon-sm);
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+  }
+
+  :is(.at-check input:checked + .at-box, .at-done[aria-checked="true"] .at-box) {
+    border-color: var(--at-accent);
+    background: var(--at-accent);
+  }
+
+  :is(.at-check input:checked + .at-box, .at-done[aria-checked="true"] .at-box) svg {
+    opacity: 1;
+  }
+}

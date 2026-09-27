@@ -13,6 +13,8 @@ translationOf: "browser-support-matrix"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+crumb: "Matriz de compatibilidad"
+lead: "Estas son las versiones mínimas con Wake Lock nativo según la documentación y el código fuente de los navegadores (revisados el 26 de septiembre de 2026): Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 y Opera 70. Las apps web instaladas en la pantalla de inicio del iPhone lo tienen desde iOS 18.4. Un Firefox más antiguo usa el video de respaldo. Si una combinación no aparece en la tabla, es porque no la revisamos, y no afirmamos que funcione."
 faq:
   - q: "¿Qué navegadores mantienen la pantalla encendida sin usar el respaldo?"
     a: "Los que tienen Wake Lock nativo: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+ y Opera 70+. En todos, la pestaña tiene que estar visible para que el bloqueo se mantenga."
@@ -34,10 +36,6 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Resumen de la tabla
-
-Estas son las versiones mínimas con Wake Lock nativo según la documentación y el código fuente de los navegadores (revisados el 26 de septiembre de 2026): Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 y Opera 70. Las apps web instaladas en la pantalla de inicio del iPhone lo tienen desde iOS 18.4. Un Firefox más antiguo usa el video de respaldo. Si una combinación no aparece en la tabla, es porque no la revisamos, y no afirmamos que funcione.
-
 ## Tabla de compatibilidad
 
 | Navegador | Versión mínima | Mecanismo | Plataformas | Nota |
@@ -57,14 +55,18 @@ Estas son las versiones mínimas con Wake Lock nativo según la documentación y
 
 **Nativo** significa que AwakeTab usa la API del navegador directamente. **Respaldo** significa que reproduce un video silencioso de un cuadro para mantener la pantalla encendida; solo arranca después de que tocas la pantalla y gasta más batería.
 
-## Lo que ninguna fila cambia
+::ad
 
-Todas las filas comparten las mismas reglas de la plataforma. El bloqueo solo existe mientras la pestaña está visible: ocultarla, minimizar la ventana o cambiar de app lo libera. Cerrar la tapa de una laptop suspende el equipo, salvo excepciones como el modo de tapa cerrada de la Mac con pantalla externa. Y ningún navegador de la lista mantiene tu estado “disponible” en Teams, Slack o Zoom, porque esas apps miden actividad de teclado y mouse.
+## Fecha y actualizaciones
+
+Cada fila se revisó con la documentación y el código fuente de los navegadores el 26 de septiembre de 2026. Aún no registramos pruebas en dispositivos; cuando existan, aparecerán en nuestra página sobre cómo probamos. Si tu versión es anterior a la mínima, actualiza el navegador o usa el video de respaldo; AwakeTab te lo propone con “Toca para usar el respaldo”.
 
 ## Guías por dispositivo
 
 Si ya sabes qué navegador usas, las guías específicas explican los ajustes del sistema y los límites de cada caso: [iPhone con Safari](/es/on/iphone-safari), [Android con Chrome](/es/on/android-chrome) y [Windows 11](/es/on/windows-11). Para la Mac y otros equipos, revisa las páginas relacionadas.
 
-## Fecha y actualizaciones
+## Lo que ninguna fila cambia
 
-Cada fila se revisó con la documentación y el código fuente de los navegadores el 26 de septiembre de 2026. Aún no registramos pruebas en dispositivos; cuando existan, aparecerán en nuestra página sobre cómo probamos. Si tu versión es anterior a la mínima, actualiza el navegador o usa el video de respaldo; AwakeTab te lo propone con “Toca para usar el respaldo”.
+Todas las filas comparten las mismas reglas de la plataforma. El bloqueo solo existe mientras la pestaña está visible: ocultarla, minimizar la ventana o cambiar de app lo libera. Cerrar la tapa de una laptop suspende el equipo, salvo excepciones como el modo de tapa cerrada de la Mac con pantalla externa. Y ningún navegador de la lista mantiene tu estado “disponible” en Teams, Slack o Zoom, porque esas apps miden actividad de teclado y mouse.
+
+::limit inline

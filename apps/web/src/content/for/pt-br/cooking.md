@@ -12,6 +12,35 @@ translationOf: "cooking"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+lead: "Você está no meio da receita, com a mão cheia de massa, e a tela do celular escurece. O AwakeTab resolve isso sem instalar nada: ele pede ao navegador um Wake Lock (o recurso que impede a tela de apagar) e segura a tela acesa enquanto a aba dele fica visível — sozinha, ao lado da receita em tela dividida ou numa janela vizinha. Esta página já abre a ferramenta no modo Cozinha e sem horário de término (“∞”), porque ninguém sabe quanto tempo o feijão vai levar."
+crumb: "Cozinha"
+toc:
+  celular-e-tablet-o-que-o-sistema-pode-atrapalhar: "Celular e tablet"
+steps:
+  - title: "Deixe o celular ou tablet na tomada, se puder."
+    text: "Uma tela acesa por uma hora gasta bateria."
+  - title: "Toque em iniciar e confira o indicador."
+    text: "Só quando ele mostrar “Tela ligada” é que o navegador confirmou o bloqueio."
+  - title: "Se a receita estiver em outro site ou app, coloque os dois lado a lado."
+    text: "Tela dividida no Android, apps em janelas no iPadOS 26 (Split View no iPadOS 18 ou anterior), uma segunda janela no computador. No iPhone, só um app fica na frente."
+figures:
+  - frame: phone
+    label: "Captura do celular"
+    alt: "o AwakeTab no modo Cozinha num iPhone"
+    caption: "O modo Cozinha num iPhone."
+  - frame: desktop
+    label: "Captura do computador"
+    alt: "a receita e o AwakeTab lado a lado em duas janelas no computador"
+    caption: "A receita e o AwakeTab lado a lado em duas janelas no computador."
+pills:
+  - state: held
+    text: "O navegador está segurando o bloqueio de verdade. O cronômetro só anda neste estado."
+  - state: lost
+    text: "Você mudou de app ou de aba. É o comportamento esperado, não um defeito; volte para a aba e o bloqueio é pedido de novo."
+  - state: denied
+    text: "O navegador recusou, quase sempre porque a aba não estava visível ou porque o Safari precisa de um toque antes (no Firefox, também com bateria em 5 % ou menos sem carregar). Resolva essa causa antes de tentar de novo."
+  - state: fallback
+    text: "Seu navegador não tem Wake Lock nativo e você aceitou o vídeo silencioso, que consome mais bateria."
 faq:
   - q: "Se eu abrir o app de receitas ou o WhatsApp, a tela continua ligada?"
     a: "Não. Quando você troca de app ou a aba fica oculta, o navegador libera o bloqueio e o indicador passa para “Pausado — aba oculta”. Volte para a aba do AwakeTab e espere aparecer “Tela ligada” de novo antes de voltar para a panela."
@@ -33,24 +62,19 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## A resposta curta
-
-Você está no meio da receita, com a mão cheia de massa, e a tela do celular escurece. O AwakeTab resolve isso sem instalar nada: ele pede ao navegador um Wake Lock (o recurso que impede a tela de apagar) e segura a tela acesa enquanto a aba dele fica visível — sozinha, ao lado da receita em tela dividida ou numa janela vizinha. Esta página já abre a ferramenta no modo Cozinha e sem horário de término (“∞”), porque ninguém sabe quanto tempo o feijão vai levar.
-
 ## Montando na cozinha em 30 segundos
 
-1. Deixe o celular ou tablet na tomada, se puder. Uma tela acesa por uma hora gasta bateria.
-2. Toque em iniciar e confira o indicador. Só quando ele mostrar “Tela ligada” é que o navegador confirmou o bloqueio.
-3. Se a receita estiver em outro site ou app, coloque os dois lado a lado: tela dividida no Android, apps em janelas no iPadOS 26 (Split View no iPadOS 18 ou anterior), uma segunda janela no computador. No iPhone, só um app fica na frente.
+::steps
 
-No modo Cozinha, você também pode adicionar até três temporizadores de cozinha (5, 10, 15, 30 ou 60 min), cada um toca ao chegar a zero, e tocar no número grande pausa a contagem sem apagar a tela.
+::figures
+
+::ad
 
 ## O que o indicador vai mostrar
 
-- **“Tela ligada”**: o navegador está segurando o bloqueio de verdade. O cronômetro só anda neste estado.
-- **“Pausado — aba oculta”**: você mudou de app ou de aba. É o comportamento esperado, não um defeito; volte para a aba e o bloqueio é pedido de novo.
-- **“Bloqueado — veja como corrigir”**: o navegador recusou, quase sempre porque a aba não estava visível ou porque o Safari precisa de um toque antes (no Firefox, também com bateria em 5 % ou menos sem carregar). Resolva essa causa antes de tentar de novo.
-- **“Tela ligada por vídeo alternativo”**: seu navegador não tem Wake Lock nativo e você aceitou o vídeo silencioso, que consome mais bateria.
+No modo Cozinha, você também pode adicionar até três temporizadores de cozinha (5, 10, 15, 30 ou 60 min), cada um toca ao chegar a zero, e tocar no número grande pausa a contagem sem apagar a tela.
+
+::pills
 
 ## Celular e tablet: o que o sistema pode atrapalhar
 
@@ -61,6 +85,8 @@ No Android, o tempo limite fica em Configurações → Tela → Tempo limite da 
 ## Navegadores compatíveis
 
 Na cozinha, o que costuma estar à mão é um celular ou tablet. No iPhone e no iPad, vale o Safari 16.4 ou mais novo. No Android, o Chrome desde a versão 84, o Samsung Internet desde a 14 e o Firefox desde a 126. Se você instalou o AwakeTab na Tela de Início do iPhone, o iOS precisa estar na versão 18.4 ou mais nova. Firefox antigo pode usar o vídeo alternativo, que só começa depois de um toque seu. Esses números seguem a documentação dos navegadores, conferida em 26 de setembro de 2026.
+
+::limit
 
 ## Antes de ir para o fogão
 

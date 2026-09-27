@@ -13,6 +13,37 @@ translationOf: "presentations"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+lead: "Les logiciels de présentation passent en plein écran et recouvrent le navigateur. Or AwakeTab ne peut garder l’écran allumé que s’il reste une surface visible. Trois montages le permettent : la fenêtre flottante dans Chrome, Edge ou Firefox 151+, une seconde fenêtre du navigateur sur l’écran du portable, ou un moniteur de retour qui affiche encore l’onglet. Sans l’un d’eux, l’onglet est masqué, le verrou est libéré et le projecteur retombe sur le délai d’extinction réglé dans le système."
+crumb: "Présentations"
+toc:
+  lire-la-pastille-en-pleine-intervention: "Lire la pastille"
+  trois-configurations-courantes: "Trois configurations"
+  les-limites-à-garder-en-tête: "Les limites"
+steps:
+  - title: "Ouvrez cette page."
+    text: "La durée « 2 h » est présélectionnée : de quoi couvrir une intervention et les questions."
+  - title: "Touchez Démarrer."
+    text: "La pastille doit indiquer « Écran allumé »."
+  - title: "Dans Chrome, Edge ou Firefox 151+, cliquez sur « Fenêtre flottante » dans l’en-tête."
+    text: "Si le navigateur bloque la fenêtre, autorisez les fenêtres contextuelles pour awaketab.com. Que le verrou tienne quand l’onglet lui-même est masqué n’a pas encore été vérifié sur un appareil : surveillez la pastille."
+  - title: "Branchez le portable."
+    text: "Sur batterie, l’économiseur peut baisser la luminosité ou raccourcir les délais."
+figures:
+  - frame: phone
+    label: "Capture du téléphone"
+    alt: "la fenêtre flottante d’AwakeTab qui indique Écran allumé"
+    caption: "La fenêtre flottante."
+  - frame: desktop
+    label: "Capture d’ordinateur"
+    alt: "des diapositives en plein écran dans Chrome avec la fenêtre flottante d’AwakeTab dans un coin"
+    caption: "Diapositives en plein écran, fenêtre flottante dans un coin."
+pills:
+  - state: held
+    text: "Le navigateur détient bien le verrou."
+  - state: lost
+    text: "Les diapositives ont recouvert la page : revenez-y ou ouvrez la fenêtre flottante."
+  - state: denied
+    text: "Un refus, par exemple une page intégrée sans autorisation ou Safari qui attend un clic ; la cause est affichée. Retoucher Démarrer sans rien changer reproduit le même refus."
 faq:
   - q: "Mes diapositives sont en plein écran. AwakeTab tient-il encore l’écran ?"
     a: "Seulement si AwakeTab reste visible quelque part : fenêtre flottante sous Chrome, Edge ou Firefox 151+, seconde fenêtre sur l’écran du portable, ou moniteur de retour. Si les diapositives recouvrent complètement l’onglet, il est masqué, le navigateur libère le verrou et la pastille passe à « En pause — onglet masqué »."
@@ -33,17 +64,21 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Le piège du plein écran
-
-Les logiciels de présentation passent en plein écran et recouvrent le navigateur. Or AwakeTab ne peut garder l’écran allumé que s’il reste une surface visible. Trois montages le permettent : la fenêtre flottante dans Chrome, Edge ou Firefox 151+, une seconde fenêtre du navigateur sur l’écran du portable, ou un moniteur de retour qui affiche encore l’onglet. Sans l’un d’eux, l’onglet est masqué, le verrou est libéré et le projecteur retombe sur le délai d’extinction réglé dans le système.
-
 ## Avant d’entrer en salle
 
-1. Ouvrez cette page. La durée « 2 h » est présélectionnée : de quoi couvrir une intervention et les questions.
-2. Touchez Démarrer ; la pastille doit indiquer « Écran allumé ».
-3. Dans Chrome, Edge ou Firefox 151+, cliquez sur « Fenêtre flottante » dans l’en-tête. Que le verrou tienne quand l’onglet lui-même est masqué n’a pas encore été vérifié sur un appareil : surveillez la pastille.
-4. Si le navigateur bloque la fenêtre, autorisez les fenêtres contextuelles pour awaketab.com.
-5. Branchez le portable : sur batterie, l’économiseur peut baisser la luminosité ou raccourcir les délais.
+::steps
+
+::figures
+
+::ad
+
+## Lire la pastille en pleine intervention
+
+Un coup d’œil suffit.
+
+::pills
+
+À la fin des deux heures, une invite propose de prolonger (+15 min, +30 min ou +1 h) : ne supposez pas que la session continue indéfiniment.
 
 ## Trois configurations courantes
 
@@ -53,10 +88,6 @@ Les logiciels de présentation passent en plein écran et recouvrent le navigate
 
 **Moniteur de retour.** Si un écran de contrôle face à vous affiche le bureau, placez-y l’onglet AwakeTab : il reste visible, donc le verrou reste accordé.
 
-## Lire la pastille en pleine intervention
-
-Un coup d’œil suffit. « Écran allumé » signifie que le navigateur détient bien le verrou. « En pause — onglet masqué » signifie que les diapositives ont recouvert la page : revenez-y ou ouvrez la fenêtre flottante. « Bloqué — voici la solution » signale un refus, par exemple une page intégrée sans autorisation ou Safari qui attend un clic ; la cause est affichée. Retoucher Démarrer sans rien changer reproduit le même refus. À la fin des deux heures, une invite propose de prolonger (+15 min, +30 min ou +1 h) : ne supposez pas que la session continue indéfiniment.
-
 ## Les limites à garder en tête
 
 - Fermer le capot du portable met fin au verrou jusqu’à ce que vous le rouvriez.
@@ -64,3 +95,5 @@ Un coup d’œil suffit. « Écran allumé » signifie que le navigateur déti
 - Si vous présentez dans Teams ou Zoom, votre statut de présence suit toujours le clavier et la souris.
 
 Pour un écran secondaire qui s’éteint tout seul, voyez notre page sur le second moniteur ; pour les réglages système, consultez [Windows 11](/fr/on/windows-11) ou [macOS](/fr/on/macos).
+
+::limit

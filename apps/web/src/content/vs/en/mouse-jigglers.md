@@ -2,6 +2,7 @@
 title: "A mouse jiggler alternative that fakes no input — AwakeTab"
 description: "Mouse jigglers fake pointer movement so chat apps see activity. AwakeTab only keeps the display on, sends no input and won't change your status."
 h1: "AwakeTab vs mouse jigglers"
+crumb: "Mouse jigglers"
 intent: "mouse jiggler alternative"
 secondaryQueries:
   - "mouse jiggler vs keep screen awake"
@@ -15,6 +16,46 @@ reviewed: true
 lastVerified: 2026-09-26
 browsers: ["chrome", "edge", "firefox", "safari"]
 os: ["windows", "macos", "linux", "chromeos"]
+lead: "They do different jobs. A mouse jiggler fakes pointer movement, from a USB device or an app, so the computer and your chat apps think someone is at the desk. AwakeTab keeps the display on through the browser's Screen Wake Lock API and sends no input at all. The screen stays lit, and Teams or Slack still set you to Away when you stop typing."
+toc:
+  side-by-side: "Side by side"
+  when-a-jiggler-is-the-better-choice: "When a jiggler is better"
+  when-awaketab-is-the-better-choice: "When AwakeTab is better"
+  presence-policy-and-the-wells-fargo-case: "Presence and policy"
+compare:
+  label: "AwakeTab compared with USB and software mouse jigglers, checked 26 September 2026"
+  what: "What"
+  cols:
+    - name: "AwakeTab"
+      us: true
+    - name: "USB mouse jiggler"
+    - name: "Software jiggler"
+  rows:
+    - what: "How it keeps the screen on"
+      cells: ["Screen Wake Lock API, no input", "A device the computer treats as a mouse", "An app that moves the pointer or sends keys"]
+    - what: "With the tab hidden or no window open"
+      cells: ["Stops. The pill says \"Paused — tab hidden\" and asks again when you return.", "Keeps working, no tab involved", "Keeps working"]
+    - what: "Changes chat status"
+      cells: ["No", "Yes, it looks like activity", "Usually"]
+    - what: "Install"
+      cells: ["None, open a web page", "Plug in", "Install an app"]
+    - what: "Platforms"
+      cells: ["Current Chrome, Edge, Firefox and Safari", "Any computer with USB", "Depends on the app"]
+    - what: "Price"
+      cells: ["Free, with optional Pro", "About $4 to $40 (Banking Dive, June 2024)", "Often free"]
+picks:
+  them:
+    - title: "Your own machine has no usable browser"
+      text: "An old computer or a dedicated rig running one native app full screen can't show a tab beside it. A USB device needs no software on the machine at all."
+    - title: "An app on your own computer times out on input"
+      text: "Some programs log out or pause after a spell without input, and keeping the screen lit does nothing for them. There a jiggler addresses that timer and AwakeTab can't."
+  us:
+    - title: "You need the screen on for a reason anyone can see"
+      text: "Reading a long report, watching a dashboard, following a recipe or presenting. [Keep a work laptop display awake](/for/work-laptop) covers the office case."
+    - title: "You'd rather not have to explain it"
+      text: "AwakeTab doesn't fake activity, doesn't change your status and leaves sign-in and lock policies alone. If your employer has rules about screen locking, follow them."
+    - title: "You want to know it's working"
+      text: "Read the state at a glance: \"Screen awake\" while the lock holds, \"Paused — tab hidden\" after you switch away."
 faq:
   - q: "Is AwakeTab a mouse jiggler?"
     a: "No. It never moves the pointer or presses a key. It asks your browser to keep the display on, the same request a video player makes during playback, and it shows you whether the browser said yes."
@@ -36,41 +77,30 @@ published: 2026-09-09
 updated: 2026-09-27
 ---
 
-They do different jobs. A mouse jiggler fakes pointer movement, from a USB device or an app, so the computer and your chat apps think someone is at the desk. AwakeTab keeps the display on through the browser's Screen Wake Lock API and sends no input at all. The screen stays lit, and Teams or Slack still set you to Away when you stop typing.
-
-## What each one actually does
+## Side by side
 
 A **hardware jiggler** plugs into USB, presents itself as a mouse and nudges the pointer now and then. A **software jiggler** does the same from an app, or sends key presses. Either way the operating system sees input, so every idle timer resets: the screen timeout, sleep, and the inactivity timers chat apps use for presence.
 
 **AwakeTab** makes a different request. The browser asks the operating system to keep the display on, the way a video player does during playback. Nothing is typed and nothing moves, so the timers that watch for input keep counting. Microsoft Teams sets Away after about 5 minutes without keyboard or mouse activity (Microsoft Learn), and Slack after about 10 minutes of desktop inactivity (Slack Help), both checked 26 September 2026. [Does keeping your screen on keep Teams green?](/learn/does-a-wake-lock-keep-teams-green) walks through what sets each status.
 
-## Jigglers and AwakeTab compared on 26 September 2026
+::compare
 
-| Feature | USB mouse jiggler | Software jiggler | AwakeTab |
-|---|---|---|---|
-| Mechanism | A device the computer treats as a mouse | An app that moves the pointer or sends keys | Screen Wake Lock API, no input |
-| Works with the tab hidden | Yes, no tab involved | Yes | No: the tab must stay visible |
-| Changes chat status | Yes, it looks like activity | Usually | No |
-| Install | Plug in | Install an app | None |
-| Platforms | Any computer with USB | Depends on the app | Current Chrome, Edge, Firefox and Safari |
-| Price | About $4 to $40 (Banking Dive, June 2024) | Often free | Free, with optional Pro |
-| Last release | Not applicable | Varies by app | Web app, see the [changelog](/changelog) |
+::ad
 
-## When a jiggler is the better pick
+## When a jiggler is the better choice
 
-- **Your own machine has no usable browser.** An old computer or a dedicated rig running one native app full screen can't show a tab beside it. A USB device needs no software on the machine at all.
-- **An app on your own computer times out on input, not on display sleep.** Some programs log out or pause after a spell without input, and keeping the screen lit does nothing for them. On a computer you own, where no one else's rules apply, a jiggler addresses that timer and AwakeTab can't.
+A jiggler does a real job on a computer you own. In these cases we would send you there. On a work computer, whether simulated input is acceptable is your employer's call, not a tool's.
 
-On a work computer, whether simulated input is acceptable is your employer's call, not a tool's.
+::picks them
 
-## When AwakeTab is the better pick
+## When AwakeTab is the better choice
 
-- **You need the screen on for a reason anyone can see.** Reading a long report, watching a dashboard, following a recipe or presenting. [Keep a work laptop display awake](/for/work-laptop) covers the office case.
-- **You'd rather not have to explain it.** AwakeTab doesn't fake activity, doesn't change your status and leaves sign-in and lock policies alone. It keeps the display on the same way a video player does. If your employer has rules about screen locking, follow them.
-- **You want to know it's working.** You can read the state at a glance: "Screen awake" while the lock holds, "Paused — tab hidden" after you switch away.
+These are the jobs AwakeTab was built for.
+
+::picks us
 
 ## Presence, policy and the Wells Fargo case
 
-Employers can treat simulated activity as misconduct. Bloomberg reported in June 2024 that Wells Fargo had dismissed more than a dozen employees over "simulation of keyboard activity". That is why AwakeTab refuses to fake input, and why it won't add a mode that does.
+Employers can treat simulated activity as misconduct. Bloomberg reported in June 2024 that Wells Fargo had dismissed more than a dozen employees over "simulation of keyboard activity". That is why AwakeTab refuses to fake input.
 
 If the worry is a grey dot while you read, the fixes are human ones: a status that says what you're doing, time blocked in your calendar, a word with your manager. For how a lit screen differs from a locked one, see [Lock screen versus display sleep](/guides/lock-screen-vs-sleep).

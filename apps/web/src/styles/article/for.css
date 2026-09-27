@@ -1,0 +1,129 @@
+/* stylelint-disable no-descending-specificity */
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-figs {
+    display: grid;
+    grid-template-columns: var(--at-col-fig) minmax(0, 1fr);
+    align-items: start;
+    column-gap: var(--at-s-4);
+  }
+
+  .at-figs figure {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-2);
+    min-inline-size: 0;
+    margin: 0;
+  }
+
+  .at-fig {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1 / 2;
+    padding: var(--at-s-2);
+    border: var(--at-border) dashed var(--at-line-strong);
+    border-radius: var(--at-r-lg);
+    background: var(--at-sunken);
+    color: var(--at-muted);
+    font: var(--at-type-caption);
+    text-align: center;
+  }
+
+  .at-fig-desktop {
+    aspect-ratio: 16 / 10;
+  }
+
+  .at-figs figcaption {
+    color: var(--at-muted);
+    font: var(--at-type-caption);
+    text-wrap: pretty;
+  }
+
+  .at-states {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    border-block-start: var(--at-border) solid var(--at-line);
+  }
+
+  .at-states > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    place-items: start;
+    gap: var(--at-s-2) var(--at-s-4);
+    padding-block: var(--at-s-4);
+    border-block-end: var(--at-border) solid var(--at-line);
+  }
+
+  .at-states dt {
+    max-inline-size: 100%;
+  }
+
+  .at-states .at-pill-s {
+    max-inline-size: 100%;
+    white-space: normal;
+  }
+
+  .at-states dd {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  .at-check {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-lg);
+    background: var(--at-surface);
+    list-style: none;
+  }
+
+  .at-cp .at-check li {
+    margin: 0;
+  }
+
+  .at-check li + li {
+    border-block-start: var(--at-border) solid var(--at-line);
+  }
+
+  .at-check label {
+    display: grid;
+    grid-template-columns: var(--at-icon-lg) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--at-s-3);
+    min-block-size: var(--at-h-row);
+    padding: var(--at-s-4);
+    color: var(--at-ink);
+    cursor: pointer;
+    transition: background-color var(--at-d-slow) var(--at-ease);
+  }
+
+  .at-check label:hover {
+    background-color: color-mix(in srgb, var(--at-muted) 8%, transparent);
+  }
+
+  .at-check input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .at-check input:checked ~ span:last-child {
+    color: var(--at-ink-2);
+  }
+
+  .at-check input:focus-visible + .at-box {
+    outline: 2px solid var(--at-focus);
+    outline-offset: 3px;
+  }
+
+  @media (width >= 600px) {
+    .at-states > div {
+      grid-template-columns: var(--at-col-pill) minmax(0, 1fr);
+    }
+  }
+}

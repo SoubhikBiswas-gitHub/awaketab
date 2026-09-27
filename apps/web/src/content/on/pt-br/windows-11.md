@@ -13,6 +13,55 @@ translationOf: "windows-11"
 lastVerified: 2026-09-09
 browsers: ["chrome", "edge"]
 os: ["windows"]
+crumb: "Windows 11"
+lead: "No Windows 11, o Chrome 84+ e o Edge 84+ aceitam o Wake Lock nativo enquanto a aba aparece na tela. Clique em iniciar; assim que surgir “Tela ligada”, o monitor deixa de apagar e de bloquear por inatividade enquanto a janela estiver à vista. Enquanto isso, o Windows também não entra em suspensão por inatividade. Sem instalar programa e sem mexer nas configurações de energia; os mesmos passos valem para o Windows 10. Limites: minimizar o navegador libera o bloqueio, fechar a tampa suspende o notebook, e o Modern Standby é uma história à parte, decidida por firmware. Esta página sugere uma sessão de 1 hora."
+facts:
+  - label: "Chrome e Edge"
+    value: "84 ou posterior"
+  - label: "Firefox"
+    value: "126 ou posterior"
+  - label: "Opera"
+    value: "70 ou posterior"
+toc:
+  economia-de-energia-modo-de-eficiência-e-modern-standby: "Economia de energia e Modern Standby"
+steps:
+  - title: "Abra o AwakeTab no Chrome ou no Edge e escolha a duração"
+    text: "1 h já vem sugerida. Em sessões longas, ligue o notebook na tomada."
+    shot: "o AwakeTab no Edge no Windows 11 com a duração escolhida"
+  - title: "Clique em iniciar ou aperte Espaço"
+    text: "Espere o indicador chegar a “Tela ligada”."
+    shot: "o indicador do AwakeTab com a sessão ativa"
+  - title: "Vai usar outros programas?"
+    text: "Encaixe a janela do AwakeTab num canto da tela, ou abra a “Janela flutuante”, que fica por cima das outras."
+    shot: "a janela do AwakeTab num canto da tela"
+matrix:
+  label: "Navegadores no Windows 11 e 10, conferido em 26 de setembro de 2026"
+  cols: ["Navegador", "Resultado", "Observação"]
+  rows:
+    - what: "Chrome 84 ou posterior"
+      result: works
+      label: "Compatível"
+      text: "A aba precisa continuar visível"
+    - what: "Edge 84 ou posterior"
+      result: works
+      label: "Compatível"
+      text: "Base Chromium; o Modo de eficiência não recusa o bloqueio"
+    - what: "Firefox 126 ou posterior"
+      result: works
+      label: "Compatível"
+      text: "Versões antigas usam o vídeo alternativo após um toque"
+    - what: "Opera 70 ou posterior"
+      result: works
+      label: "Compatível"
+      text: "Base Chromium; a aba precisa continuar visível"
+rows:
+  blockers:
+    - title: "Economia de energia do Windows"
+      text: "No Windows 11 24H2, a Economia de bateria passou a se chamar Economia de energia (“Energy saver”). Ela pode escurecer a tela, mas não faz o navegador recusar o Wake Lock: o Chromium não verifica esse modo (código-fonte conferido em 26 de setembro de 2026)."
+    - title: "Modo de eficiência do Edge"
+      text: "Também não recusa o bloqueio, porque o Edge usa o mesmo código do Chromium."
+    - title: "Modern Standby"
+      text: "O Wake Lock mexe na tela, não nos estados de baixo consumo que o firmware decide."
 faq:
   - q: "Posso minimizar o Chrome e continuar trabalhando no Excel?"
     a: "Minimizado, não. Uma aba minimizada ou coberta por completo fica oculta, e o Windows recebe de volta o controle da tela; o indicador mostra “Pausado — aba oculta”. Deixe a janela do AwakeTab visível num canto ou use a janela flutuante do Chrome, do Edge ou do Firefox 151+."
@@ -34,37 +83,25 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## A resposta para o Windows 11
+## Configurando em um minuto
 
-No Windows 11, o Chrome 84+ e o Edge 84+ aceitam o Wake Lock nativo enquanto a aba aparece na tela. Clique em iniciar; assim que surgir “Tela ligada”, o monitor deixa de apagar e de bloquear por inatividade enquanto a janela estiver à vista. Enquanto isso, o Windows também não entra em suspensão por inatividade. Sem instalar programa e sem mexer nas configurações de energia; os mesmos passos valem para o Windows 10. Limites: minimizar o navegador libera o bloqueio, fechar a tampa suspende o notebook, e o Modern Standby é uma história à parte, decidida por firmware. Esta página sugere uma sessão de 1 hora.
+::steps
+
+::ad
 
 ## Navegadores no Windows 11 e 10
 
-| Navegador | Versão mínima | Observação |
-|---|---|---|
-| Chrome | 84 | A aba precisa continuar visível |
-| Edge | 84 | Base Chromium; o Modo de eficiência não recusa o bloqueio |
-| Firefox | 126 | Versões antigas usam o vídeo alternativo após um toque |
-| Opera | 70 | Base Chromium; a aba precisa continuar visível |
-
 Conferido na documentação dos navegadores em 26 de setembro de 2026.
 
-## Configurando em um minuto
+::matrix
 
-1. Em sessões longas, ligue o notebook na tomada.
-2. Abra o AwakeTab no Chrome ou no Edge e escolha a duração (1 h já vem sugerida).
-3. Clique em iniciar ou aperte Espaço. Espere o indicador chegar a “Tela ligada”.
-4. Vai usar outros programas? Encaixe a janela do AwakeTab num canto da tela, ou abra a “Janela flutuante”, que fica por cima das outras.
+## Economia de energia, Modo de eficiência e Modern Standby
+
+::rows blockers
 
 ## O jeito do sistema, se você preferir
 
 O tempo de tela do Windows 11 fica em Configurações → Sistema → Energia e bateria, na seção de tela e suspensão. Mudar ali vale para o computador todo e fica assim até você lembrar de voltar. Se a tela apaga 1 minuto depois que você bloqueia o PC, isso é um padrão do Windows para a tela de bloqueio, separado do tempo limite normal; o guia [a tela do Windows 11 desliga depois de 1 minuto](/guides/windows-11-screen-turns-off-after-1-minute) explica como mudar.
-
-## Economia de energia, Modo de eficiência e Modern Standby
-
-- **Economia de energia do Windows**: no Windows 11 24H2, a Economia de bateria passou a se chamar Economia de energia (“Energy saver”). Ela pode escurecer a tela, mas não faz o navegador recusar o Wake Lock: o Chromium não verifica esse modo (código-fonte conferido em 26 de setembro de 2026).
-- **Modo de eficiência do Edge**: também não recusa o bloqueio, porque o Edge usa o mesmo código do Chromium.
-- **Modern Standby**: o Wake Lock mexe na tela, não nos estados de baixo consumo que o firmware decide.
 
 ## O que o AwakeTab não faz no Windows
 

@@ -1,0 +1,100 @@
+/* stylelint-disable no-descending-specificity */
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-picks,
+  .at-rl {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    border-block-start: var(--at-border) solid var(--at-line);
+    list-style: none;
+  }
+
+  .at-cp :is(.at-picks, .at-rl) li {
+    margin: 0;
+    border-block-end: var(--at-border) solid var(--at-line);
+  }
+
+  .at-picks li {
+    display: grid;
+    grid-template-columns: var(--at-s-8) minmax(0, 1fr);
+    gap: var(--at-s-3);
+    padding-block: var(--at-s-4);
+  }
+
+  .at-picks li > span:first-child {
+    color: var(--at-muted);
+    font: var(--at-type-row);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .at-picks li > span:last-child,
+  .at-rl li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-1);
+    min-inline-size: 0;
+  }
+
+  .at-rl li {
+    justify-content: center;
+    min-block-size: var(--at-h-row);
+    padding-block: var(--at-s-4);
+  }
+
+  .at-cp :is(.at-picks, .at-rl) strong {
+    color: var(--at-ink);
+    font: var(--at-type-row);
+    font-weight: 600;
+    text-wrap: pretty;
+  }
+
+  .at-rl span {
+    text-wrap: pretty;
+  }
+
+  .at-cp .at-rl li > a {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    min-block-size: var(--at-h-control);
+    font: var(--at-type-ui);
+  }
+
+  .at-rl .at-kv {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--at-s-3);
+  }
+
+  .at-kv > span:first-child {
+    color: var(--at-ink);
+    font: var(--at-type-row);
+  }
+
+  .at-kv > span:last-child {
+    color: var(--at-ink-2);
+    font: var(--at-type-ui);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  .at-note-lamp path {
+    fill: none;
+    stroke: var(--at-accent);
+    stroke-width: 4.5;
+    stroke-linecap: round;
+  }
+
+  .at-note-lamp circle {
+    fill: var(--at-accent);
+  }
+
+  .at-cp .at-note-lamp .at-kicker {
+    margin: 0;
+  }
+}

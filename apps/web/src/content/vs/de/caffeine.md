@@ -13,6 +13,44 @@ translationOf: "caffeine"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+lead: "Caffeine für macOS hält über eine Energiezusicherung von macOS das System wach, ohne Tastendrücke und auch, wenn kein Fenster zu sehen ist. AwakeTab ist dagegen ein sichtbarer Browser-Tab, der die standardisierte Screen Wake Lock API nutzt. Nehmen Sie Caffeine, wenn nichts sichtbar bleiben soll und der Mac trotzdem wach bleiben muss. Nehmen Sie AwakeTab, wenn Sie eine ehrliche Statusanzeige wollen und keine zusätzliche App installieren möchten oder dürfen."
+crumb: "Caffeine"
+toc:
+  wann-caffeine-die-bessere-wahl-ist: "Wann Caffeine besser ist"
+  was-awaketab-auf-dem-mac-leistet-und-was-nicht: "AwakeTab auf dem Mac"
+compare:
+  label: "AwakeTab im Vergleich mit Caffeine für macOS, Stand 26. September 2026"
+  what: "Merkmal"
+  cols:
+    - name: "AwakeTab"
+      us: true
+    - name: "Caffeine"
+  rows:
+    - what: "Mechanismus"
+      cells: ["Screen Wake Lock API des Browsers", "Energiezusicherung von macOS, keine Tastendrücke"]
+    - what: "Wirkt ohne sichtbares Fenster"
+      cells: ["nein, der Tab muss sichtbar sein", "ja"]
+    - what: "Installation"
+      cells: ["keine, eine Webseite", "Mac-App"]
+    - what: "Plattformen"
+      cells: ["jeder unterstützte Browser, auch Windows, Linux, iPhone, Android", "macOS"]
+    - what: "Statusanzeige"
+      cells: ["zeigt, ob der Browser den Lock wirklich hält", "Symbol in der Menüleiste"]
+picks:
+  them:
+    - title: "Sie wollen gar kein Fenster sehen"
+      text: "Caffeine arbeitet im Hintergrund, AwakeTab verliert den Lock, sobald der Tab ausgeblendet ist."
+    - title: "Sie brauchen den Mac ohne sichtbares Browserfenster wach"
+      text: "Etwa für einen Render-Job, während Sie in einer Vollbild-App arbeiten."
+  us:
+    - title: "Sie dürfen nichts installieren"
+      text: "Etwa auf einem verwalteten Firmen-Mac. AwakeTab ist nur eine Seite und braucht weder Konto noch Download."
+    - title: "Sie wollen Gewissheit statt Hoffnung"
+      text: "Die Anzeige wechselt zwischen „Bildschirm bleibt an“, „Pausiert — Tab ausgeblendet“ und „Blockiert — so beheben Sie es“, je nachdem, was der Browser tatsächlich tut."
+    - title: "Sie sind nicht am Mac"
+      text: "Auf iPhone, Android-Handy oder Windows-PC hilft Caffeine nicht. Wie es auf dem Mac selbst mit dem Browser aussieht, erklärt [unsere Mac-Seite](/de/on/macos)."
+    - title: "Sie wollen sofort loslegen"
+      text: "Seite öffnen, Dauer wählen, starten: Es gibt nichts herunterzuladen, zu entpacken oder in den Programme-Ordner zu ziehen."
 faq:
   - q: "Kann AwakeTab wie Caffeine im Hintergrund weiterlaufen?"
     a: "Nein. Sobald der Tab ausgeblendet ist, weil Sie minimieren, den Tab wechseln oder am Handy die App verlassen, gibt der Browser den Wake Lock frei. Die Anzeige zeigt „Pausiert — Tab ausgeblendet“, bis Sie zurückkehren. Wer ohne sichtbares Fenster auskommen muss, ist mit Caffeine besser bedient."
@@ -34,35 +72,23 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Das Urteil vorweg
-
-Caffeine für macOS hält über eine Energiezusicherung von macOS das System wach, ohne Tastendrücke und auch, wenn kein Fenster zu sehen ist. AwakeTab ist dagegen ein sichtbarer Browser-Tab, der die standardisierte Screen Wake Lock API nutzt. Nehmen Sie Caffeine, wenn nichts sichtbar bleiben soll und der Mac trotzdem wach bleiben muss. Nehmen Sie AwakeTab, wenn Sie eine ehrliche Statusanzeige wollen und keine zusätzliche App installieren möchten oder dürfen.
-
 ## Der Vergleich
-
-| Merkmal | Caffeine | AwakeTab |
-|---|---|---|
-| Mechanismus | Energiezusicherung von macOS, keine Tastendrücke | Screen Wake Lock API des Browsers |
-| Wirkt ohne sichtbares Fenster | ja | nein, der Tab muss sichtbar sein |
-| Installation | Mac-App | keine, eine Webseite |
-| Plattformen | macOS | jeder unterstützte Browser, auch Windows, Linux, iPhone, Android |
-| Statusanzeige | Symbol in der Menüleiste | zeigt, ob der Browser den Lock wirklich hält |
 
 Stand der Angaben ist der 26. September 2026.
 
+::compare
+
+::ad
+
 ## Wann Caffeine die bessere Wahl ist
 
-- **Sie wollen gar kein Fenster sehen.** Caffeine arbeitet im Hintergrund, AwakeTab verliert den Lock, sobald der Tab ausgeblendet ist.
-- **Sie brauchen den Mac ohne sichtbares Browserfenster wach**, etwa für einen Render-Job, während Sie in einer Vollbild-App arbeiten.
+::picks them
 
 Der zugeklappte Deckel ist kein Kriterium für die Wahl: Das entscheidet macOS, und ein zugeklapptes MacBook schläft bei AwakeTab immer ein.
 
 ## Wann AwakeTab besser passt
 
-- **Sie dürfen nichts installieren**, etwa auf einem verwalteten Firmen-Mac. AwakeTab ist nur eine Seite und braucht weder Konto noch Download.
-- **Sie wollen Gewissheit statt Hoffnung.** Die Anzeige wechselt zwischen „Bildschirm bleibt an“, „Pausiert — Tab ausgeblendet“ und „Blockiert — so beheben Sie es“, je nachdem, was der Browser tatsächlich tut.
-- **Sie sind nicht am Mac.** Auf iPhone, Android-Handy oder Windows-PC hilft Caffeine nicht. Wie es auf dem Mac selbst mit dem Browser aussieht, erklärt [unsere Mac-Seite](/de/on/macos).
-- **Sie wollen sofort loslegen.** Seite öffnen, Dauer wählen, starten: Es gibt nichts herunterzuladen, zu entpacken oder in den Programme-Ordner zu ziehen.
+::picks us
 
 ## Was AwakeTab auf dem Mac leistet und was nicht
 

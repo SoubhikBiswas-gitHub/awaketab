@@ -1,0 +1,274 @@
+/* stylelint-disable no-descending-specificity */
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-hub {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-12);
+  }
+
+  .at-hub-intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-6);
+    min-inline-size: 0;
+  }
+
+  .at-hub-note {
+    margin: 0;
+    color: var(--at-muted);
+    font: var(--at-type-small);
+    text-wrap: pretty;
+  }
+
+  .at-try {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-4);
+    overflow: hidden;
+    padding: var(--at-card-pad);
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-lg);
+    background: var(--at-surface);
+    box-shadow: var(--at-elev);
+  }
+
+  .at-try::before {
+    content: "";
+    position: absolute;
+    inset-block-start: -40%;
+    inset-inline-start: -30%;
+    inline-size: 160%;
+    block-size: 180%;
+    background: radial-gradient(
+      40% 40% at 70% 40%,
+      color-mix(in srgb, var(--at-accent) 5%, transparent) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+    animation: at-aura 26s ease-in-out infinite alternate;
+  }
+
+  .at-try > * {
+    position: relative;
+  }
+
+  .at-try-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--at-s-3);
+  }
+
+  .at-try-digits {
+    color: var(--at-ink-2);
+    font: var(--at-type-count-l);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .at-try-digits > span {
+    color: var(--at-muted);
+  }
+
+  .at-cp .at-try-cta {
+    inline-size: 100%;
+  }
+
+  .at-try-note {
+    margin: 0;
+    color: var(--at-muted);
+    font: var(--at-type-small);
+    text-wrap: pretty;
+  }
+
+  .at-try-link {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: var(--at-s-2);
+    min-block-size: var(--at-h-control);
+    color: var(--at-accent-text);
+    font: var(--at-type-ui);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .at-jump {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--at-n, 4), minmax(0, 1fr));
+    padding: var(--at-s-1);
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-pill);
+    background: var(--at-surface);
+  }
+
+  .at-jump-ind {
+    position: absolute;
+    inset-block-start: var(--at-s-1);
+    inset-inline-start: var(--at-s-1);
+    inline-size: calc((100% - 2 * var(--at-s-1)) / var(--at-n, 4));
+    block-size: var(--at-h-control);
+    border: var(--at-border) solid color-mix(in srgb, var(--at-accent) 45%, transparent);
+    border-radius: var(--at-r-pill);
+    background: color-mix(in srgb, var(--at-accent) 14%, transparent);
+    transform: translateX(calc(var(--at-i, 0) * 100%));
+    transition: transform var(--at-d-slide) var(--at-ease);
+  }
+
+  [dir="rtl"] .at-jump-ind {
+    transform: translateX(calc(var(--at-i, 0) * -100%));
+  }
+
+  .at-jump a {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-inline-size: 0;
+    block-size: var(--at-h-control);
+    border-radius: var(--at-r-pill);
+    color: var(--at-ink-2);
+    font: var(--at-type-small);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .at-jump a[aria-current="location"] {
+    color: var(--at-ink);
+    font-weight: 600;
+  }
+
+  .at-hub-groups {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-12);
+    min-inline-size: 0;
+  }
+
+  .at-hub-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-3);
+    scroll-margin-block-start: var(--at-s-6);
+  }
+
+  .at-hub-group-head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-1);
+  }
+
+  .at-hub-group-head > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--at-s-3);
+  }
+
+  .at-cp .at-hub-group-head h2 {
+    margin: 0;
+    color: var(--at-ink);
+    font: var(--at-type-h2);
+    letter-spacing: -0.02em;
+  }
+
+  .at-hub-count {
+    color: var(--at-muted);
+    font: var(--at-type-caption);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .at-hub-group-head p {
+    margin: 0;
+    color: var(--at-muted);
+    font: var(--at-type-body);
+  }
+
+  .at-hub-list {
+    margin: 0;
+    padding: 0;
+    border-block-start: var(--at-border) solid var(--at-line);
+    list-style: none;
+  }
+
+  .at-hub-list li {
+    border-block-end: var(--at-border) solid var(--at-line);
+  }
+
+  .at-hub-list a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--at-icon-md);
+    align-items: center;
+    gap: var(--at-s-4);
+    padding-block: var(--at-s-4);
+    color: var(--at-ink);
+    text-decoration: none;
+    transition: background-color var(--at-d-slow) var(--at-ease);
+  }
+
+  .at-hub-list a:hover {
+    background-color: color-mix(in srgb, var(--at-muted) 8%, transparent);
+  }
+
+  .at-hub-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-1);
+    min-inline-size: 0;
+  }
+
+  .at-hub-title {
+    font: var(--at-type-h3);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .at-hub-line {
+    color: var(--at-ink-2);
+    font: var(--at-type-ui);
+    font-weight: 400;
+    text-wrap: pretty;
+  }
+
+  .at-hub-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--at-s-2);
+    color: var(--at-muted);
+    font: var(--at-type-caption);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (width >= 600px) {
+    .at-hub-groups {
+      gap: var(--at-s-16);
+    }
+  }
+
+  @media (width >= 1024px) {
+    .at-hub {
+      display: grid;
+      grid-template-columns: minmax(0, var(--at-col-intro)) minmax(0, var(--at-col-list));
+      justify-content: center;
+      align-items: start;
+      column-gap: var(--at-section);
+    }
+
+    .at-hub-intro {
+      position: sticky;
+      inset-block-start: var(--at-s-6);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .at-try::before {
+      animation: none;
+    }
+  }
+}

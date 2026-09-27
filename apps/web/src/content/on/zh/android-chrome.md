@@ -12,6 +12,60 @@ translationOf: "android-chrome"
 lastVerified: 2026-09-09
 browsers: ["chrome"]
 os: ["android"]
+lead: "安卓手机上的 Chrome 从 84 版起就支持屏幕唤醒锁（Wake Lock）。用 Chrome 打开 AwakeTab，默认时长 30 分钟，点按开始，状态标签显示“屏幕保持常亮”后，手机就不会按“屏幕超时”的设定熄屏。需要注意三件事：离开 Chrome 锁就会被收回；省电模式可能缩短熄屏时间或调暗屏幕；某些品牌的“休眠应用”设置还可能在你离开后把标签页结束掉。"
+crumb: "安卓 Chrome"
+facts:
+  - label: "Chrome"
+    value: "84 及以上"
+  - label: "Samsung Internet"
+    value: "14 及以上"
+  - label: "Firefox"
+    value: "126 及以上"
+  - label: "Opera"
+    value: "70 及以上"
+steps:
+  - title: "在 Chrome 中打开 awaketab.com"
+    path: "Chrome › awaketab.com"
+    text: "确保地址是 HTTPS。"
+    shot: "安卓版 Chrome 中打开的 AwakeTab"
+  - title: "选时长"
+    text: "30 分钟、1 小时，或“∞”（直到我停止）。"
+    shot: "时长选项"
+  - title: "点按开始，看状态标签"
+    text: "只有它显示“屏幕保持常亮”，屏幕常亮才是真的。如果显示“已被阻止 — 这样解决”，按提示处理原因即可，不必反复点按。"
+    shot: "点按开始后的状态标签"
+matrix:
+  label: "安卓浏览器支持情况（2026年9月9日的支持矩阵）"
+  cols: ["环境", "结果", "说明"]
+  rows:
+    - what: "Chrome 84 及以上"
+      result: works
+      label: "支持"
+      text: "状态标签显示“屏幕保持常亮”后，手机就不会按“屏幕超时”的设定熄屏。"
+    - what: "Samsung Internet 14、Firefox 126、Opera 70 及以上"
+      result: works
+      label: "支持"
+      text: "在安卓上都支持原生唤醒锁。"
+    - what: "离开 Chrome"
+      result: pauses
+      label: "暂停"
+      text: "离开 Chrome 锁就会被收回。"
+    - what: "更旧的 Firefox"
+      result: fallback
+      label: "视频备用方案"
+      text: "可以在你点按后使用视频备用方案，状态显示“通过视频备用方案常亮”，但更耗电。"
+rows:
+  blockers:
+    - title: "看状态标签"
+      text: "如果不是“屏幕保持常亮”，说明锁根本没有拿到，或已经被收回。"
+    - title: "看地址栏"
+      text: "必须是 HTTPS 地址；从其他网站嵌入的页面可能没有获得唤醒锁权限，直接打开 awaketab.com 即可。"
+    - title: "看是否切走过"
+      text: "按过电源键、切到其他应用或标签页后，锁会被收回，回到本页等状态恢复即可。"
+    - title: "看 Chrome 版本"
+      text: "在 Chrome 的“设置 → 关于 Chrome”中确认版本不低于 84。"
+    - title: "看厂商设置"
+      text: "如果离开后回来页面被重新加载，检查电池优化或休眠应用列表。"
 faq:
   - q: "切到其他 App 或按电源键锁屏后，还会保持常亮吗？"
     a: "不会。标签页一旦不可见，Chrome 就会收回唤醒锁，状态标签显示“已暂停 — 标签页已隐藏”，计时也会停下。回到 Chrome 中的这个标签页，等状态重新变为“屏幕保持常亮”后才会继续。"
@@ -33,17 +87,21 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## 结论
-
-安卓手机上的 Chrome 从 84 版起就支持屏幕唤醒锁（Wake Lock）。用 Chrome 打开 AwakeTab，默认时长 30 分钟，点按开始，状态标签显示“屏幕保持常亮”后，手机就不会按“屏幕超时”的设定熄屏。需要注意三件事：离开 Chrome 锁就会被收回；省电模式可能缩短熄屏时间或调暗屏幕；某些品牌的“休眠应用”设置还可能在你离开后把标签页结束掉。
-
 ## 三步用起来
 
-1. 在 Chrome 中打开 awaketab.com，确保地址是 HTTPS。
-2. 选时长：30 分钟、1 小时，或“∞”（直到我停止）。
-3. 点按开始，看状态标签。只有它显示“屏幕保持常亮”，屏幕常亮才是真的。
+::steps
 
-如果显示“已被阻止 — 这样解决”，按提示处理原因即可，不必反复点按。
+::ad
+
+## 其他安卓浏览器
+
+完整列表见[浏览器支持一览表](/zh/learn/browser-support-matrix)。
+
+::matrix
+
+## 屏幕还是熄了？按这个顺序排查
+
+::rows blockers
 
 ## 省电模式与厂商的后台管理
 
@@ -56,18 +114,6 @@ Chrome 没有因为省电模式而拒绝屏幕唤醒锁的机制，安卓原生�
 ## 分屏与多窗口
 
 安卓平板或支持分屏的手机上，可以把 AwakeTab 和导航、菜谱或文档并排放置。只要 AwakeTab 在屏幕上可见，锁就保持有效；它被完全遮住或退到后台，就会暂停。在厨房里的具体用法可参考[做饭时屏幕常亮](/zh/for/cooking)。
-
-## 其他安卓浏览器
-
-根据 2026年9月9日的支持矩阵：Samsung Internet 14、Firefox 126、Opera 70 及以上版本在安卓上都支持原生唤醒锁。更旧的 Firefox 可以在你点按后使用视频备用方案，状态显示“通过视频备用方案常亮”，但更耗电。完整列表见[浏览器支持一览表](/zh/learn/browser-support-matrix)。
-
-## 屏幕还是熄了？按这个顺序排查
-
-1. **看状态标签**：如果不是“屏幕保持常亮”，说明锁根本没有拿到，或已经被收回。
-2. **看地址栏**：必须是 HTTPS 地址；从其他网站嵌入的页面可能没有获得唤醒锁权限，直接打开 awaketab.com 即可。
-3. **看是否切走过**：按过电源键、切到其他应用或标签页后，锁会被收回，回到本页等状态恢复即可。
-4. **看 Chrome 版本**：在 Chrome 的“设置 → 关于 Chrome”中确认版本不低于 84。
-5. **看厂商设置**：如果离开后回来页面被重新加载，检查电池优化或休眠应用列表。
 
 ## 电量提醒
 

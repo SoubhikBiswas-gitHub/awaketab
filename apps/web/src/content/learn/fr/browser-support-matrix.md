@@ -13,6 +13,14 @@ translationOf: "browser-support-matrix"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+crumb: "Tableau de compatibilité"
+lead: "D’après notre fichier de référence daté du 9 septembre 2026, le Wake Lock natif (l’API Screen Wake Lock, qui garde l’écran allumé) est disponible à partir de Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 et Opera 70, ainsi que dans les applications web ajoutées à l’écran d’accueil sous iOS 18.4. Un Firefox plus ancien passe par la vidéo de secours. Un navigateur ou une plateforme sans ligne vérifiée n’est pas revendiqué."
+rows:
+  refusals:
+    - title: "L’onglet est masqué (autre onglet, fenêtre réduite, autre application)."
+    - title: "La page est intégrée dans un cadre sans l’autorisation `screen-wake-lock`."
+    - title: "Safari n’a pas reçu de toucher ou de clic récent."
+    - title: "Firefox est à 5 % de batterie ou moins, hors charge."
 faq:
   - q: "Mon navigateur n’est pas dans le tableau. AwakeTab fonctionnera-t-il ?"
     a: "Nous ne revendiquons que les lignes vérifiées. Ouvrez AwakeTab : si le Wake Lock natif est absent, la pastille affiche « Touchez pour utiliser la solution de secours ». La vidéo de secours démarre après ce toucher et consomme davantage d’énergie."
@@ -34,10 +42,6 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## Résumé
-
-D’après notre fichier de référence daté du 9 septembre 2026, le Wake Lock natif (l’API Screen Wake Lock, qui garde l’écran allumé) est disponible à partir de Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 et Opera 70, ainsi que dans les applications web ajoutées à l’écran d’accueil sous iOS 18.4. Un Firefox plus ancien passe par la vidéo de secours. Un navigateur ou une plateforme sans ligne vérifiée n’est pas revendiqué.
-
 ## Le tableau de prise en charge
 
 | Navigateur | Version minimale | Mécanisme | Plateformes | Remarque |
@@ -56,14 +60,13 @@ D’après notre fichier de référence daté du 9 septembre 2026, le Wake Lock 
 | Application web sur l’écran d’accueil iOS | 18.4 | natif | en dessous, utilisez AwakeTab dans Safari |
 | Vidéo de secours | aucune | secours | exige un geste de l’utilisateur et consomme plus qu’un verrou natif |
 
+::ad
+
 ## Comment lire ce tableau
 
 Une version minimale indique à partir de quand le navigateur expose l’API. Elle ne garantit pas que le verrou sera accordé à chaque fois. Même dans un navigateur récent, la demande échoue ou le verrou est perdu dans ces situations :
 
-- l’onglet est masqué (autre onglet, fenêtre réduite, autre application) ;
-- elle est intégrée dans un cadre sans l’autorisation `screen-wake-lock` ;
-- Safari n’a pas reçu de toucher ou de clic récent ;
-- Firefox est à 5 % de batterie ou moins, hors charge.
+::rows refusals
 
 Sans HTTPS, l’API est absente : la pastille propose alors « Touchez pour utiliser la solution de secours ». L’économiseur de batterie et le mode Économie d’énergie ne refusent pas la demande.
 
@@ -76,3 +79,5 @@ Toutes les lignes proviennent d’un seul fichier de données, mis à jour le 9 
 ## Et la veille du système ?
 
 Ce tableau ne concerne que l’écran. Tant que l’écran reste allumé, ni Windows ni macOS ne se mettent en veille pour inactivité, mais un capot fermé endort un portable. Le détail par système figure sur les pages [Windows 11](/fr/on/windows-11) et [macOS](/fr/on/macos).
+
+::limit inline

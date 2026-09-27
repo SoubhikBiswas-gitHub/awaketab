@@ -1,0 +1,180 @@
+---
+import type { TLockState } from '@awaketab/wake';
+import StatusPill from '../shell/StatusPill.astro';
+
+interface Props {
+  data: {
+    title: string;
+    desc: string;
+    edges: {
+      granted: string;
+      hidden: string;
+      visible: string;
+      noApi: string;
+      tap: string;
+    };
+    others: string;
+    caption: string;
+  };
+  t: (key: string, vars?: Record<string, string | number>) => string;
+}
+const { data, t } = Astro.props;
+const pill = (state: TLockState): string => t(`tool.pill.${state}`);
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const PAUSE = 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z';
+type TNode = { state: TLockState } | { edge: string; mono?: boolean };
+const chains: TNode[][] = [
+  [
+    { state: 'requesting' },
+    { edge: 'NotAllowedError', mono: true },
+    { state: 'denied' },
+  ],
+  [
+    { state: 'idle' },
+    { edge: data.edges.noApi },
+    { state: 'unsupported' },
+    { edge: data.edges.tap },
+    { state: 'fallback' },
+  ],
+  [{ state: 'held' }, { edge: 'release()', mono: true }, { state: 'idle' }],
+];
+// [x, y, width, state, glyph, filled] per layout.
+const wide: Array<[number, number, number, TLockState, string, boolean]> = [
+  [0, 24, 150, 'idle', DOT, false],
+  [235, 24, 160, 'requesting', DOT, false],
+  [480, 24, 200, 'held', DOT, true],
+  [480, 156, 200, 'lost', PAUSE, true],
+];
+const tall = wide.map(
+  ([, , , state, glyph, filled], i) =>
+    [0, i * 96, 236, state, glyph, filled] as const,
+);
+const ARROW = 'M0 0L8 4L0 8z';
+---
+
+<figure class="at-lc">
+  <svg
+    class="at-lc-w"
+    role="img"
+    aria-labelledby="lc-t lc-d"
+    viewBox="0 0 680 210"
+  >
+    <title id="lc-t">{data.title}</title>
+    <desc id="lc-d">{data.desc}</desc>
+    <defs
+      ><marker
+        id="lc-a"
+        viewBox="0 0 8 8"
+        refX="7"
+        refY="4"
+        markerWidth="8"
+        markerHeight="8"
+        orient="auto-start-reverse"><path d={ARROW}></path></marker
+      ></defs
+    >
+    <g class="at-lc-e">
+      <path d="M152 46H231" marker-end="url(#lc-a)"></path>
+      <path d="M397 46H476" marker-end="url(#lc-a)"></path>
+      <path d="M580 70V152" marker-end="url(#lc-a)"></path>
+      <path d="M478 178H315V72" stroke-dasharray="4 5" marker-end="url(#lc-a)"
+      ></path>
+    </g>
+    <text x="192" y="36" text-anchor="middle" class="at-lc-mono">request()</text
+    >
+    <text x="437" y="36" text-anchor="middle">{data.edges.granted}</text>
+    <text x="570" y="116" text-anchor="end">{data.edges.hidden}</text>
+    <text x="396" y="170" text-anchor="middle">{data.edges.visible}</text>
+    {
+      wide.map(([x, y, w, state, glyph, filled]) => (
+        <g class="at-lc-n" data-lock={state}>
+          <rect x={x} y={y} width={w} height="44" rx="22" />
+          <path
+            transform={`translate(${x + 16} ${y + 16})`}
+            d={glyph}
+            class:list={{ 'at-lc-f': filled }}
+          />
+          <text x={x + 38} y={y + 27}>
+            {pill(state)}
+          </text>
+        </g>
+      ))
+    }
+  </svg>
+  <svg
+    class="at-lc-t"
+    role="img"
+    aria-labelledby="lc-t2 lc-d2"
+    viewBox="0 0 358 334"
+  >
+    <title id="lc-t2">{data.title}</title>
+    <desc id="lc-d2">{data.desc}</desc>
+    <defs
+      ><marker
+        id="lc-a2"
+        viewBox="0 0 8 8"
+        refX="7"
+        refY="4"
+        markerWidth="8"
+        markerHeight="8"
+        orient="auto-start-reverse"><path d={ARROW}></path></marker
+      ></defs
+    >
+    <g class="at-lc-e">
+      <path d="M118 46V92" marker-end="url(#lc-a2)"></path>
+      <path d="M118 142V188" marker-end="url(#lc-a2)"></path>
+      <path d="M118 238V284" marker-end="url(#lc-a2)"></path>
+      <path
+        d="M236 310H300V118H240"
+        stroke-dasharray="4 5"
+        marker-end="url(#lc-a2)"></path>
+    </g>
+    <text x="130" y="73" class="at-lc-mono">request()</text>
+    <text x="130" y="169">{data.edges.granted}</text>
+    <text x="130" y="265">{data.edges.hidden}</text>
+    <text x="318" y="214" text-anchor="middle" transform="rotate(90 318 214)"
+      >{data.edges.visible}</text
+    >
+    {
+      tall.map(([x, y, w, state, glyph, filled]) => (
+        <g class="at-lc-n" data-lock={state}>
+          <rect x={x} y={y} width={w} height="44" rx="22" />
+          <path
+            transform={`translate(${x + 16} ${y + 16})`}
+            d={glyph}
+            class:list={{ 'at-lc-f': filled }}
+          />
+          <text x={x + 38} y={y + 27}>
+            {pill(state)}
+          </text>
+        </g>
+      ))
+    }
+  </svg>
+  <div class="at-lc-o">
+    <span class="at-kicker">{data.others}</span>
+    {
+      chains.map((chain) => (
+        <p>
+          {chain.map((node) =>
+            'state' in node ? (
+              <StatusPill
+                as="span"
+                size="S"
+                state={node.state}
+                label={pill(node.state)}
+              />
+            ) : (
+              <span class="at-lc-edge">
+                {node.mono ? <code>{node.edge}</code> : node.edge}
+                <svg viewBox="0 0 16 10" aria-hidden="true" focusable="false">
+                  <path d="M0 5H13M9 1l4 4-4 4" />
+                </svg>
+              </span>
+            ),
+          )}
+        </p>
+      ))
+    }
+  </div>
+  <figcaption>{data.caption}</figcaption>
+</figure>

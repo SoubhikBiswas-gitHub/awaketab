@@ -2,6 +2,7 @@
 title: "PowerToys Awake alternative in a browser — AwakeTab"
 description: "PowerToys Awake keeps Windows awake, with the screen off by default or on. AwakeTab needs no install but only holds while its tab is visible."
 h1: "AwakeTab vs PowerToys Awake"
+crumb: "PowerToys Awake"
 intent: "powertoys awake alternative"
 secondaryQueries:
   - "powertoys awake keep screen on"
@@ -15,6 +16,59 @@ reviewed: true
 lastVerified: 2026-09-26
 browsers: ["chrome", "edge", "firefox"]
 os: ["windows"]
+lead: "If you can install PowerToys, Awake is the stronger Windows tool: it keeps the PC awake whatever is in front, for a set time or until a date and time, with the screen off or on. AwakeTab fits when you can't install software, or when you want a countdown and a status you can see. It holds only while its browser tab stays visible."
+toc:
+  side-by-side: "Side by side"
+  when-powertoys-awake-is-the-better-choice: "When Awake is better"
+  when-awaketab-is-the-better-choice: "When AwakeTab is better"
+  neither-keeps-a-locked-pcs-screen-on: "A locked PC"
+  confirm-which-one-is-working: "Confirm which one works"
+compare:
+  label: "AwakeTab compared with PowerToys Awake, checked 26 September 2026"
+  what: "What"
+  cols:
+    - name: "AwakeTab"
+      us: true
+    - name: "PowerToys Awake"
+  rows:
+    - what: "How it keeps Windows awake"
+      cells: ["Screen Wake Lock API; the browser asks Windows to keep the display on", "Power request from a background app"]
+    - what: "With the tab hidden or no window open"
+      cells: ["Stops. The pill says \"Paused — tab hidden\" and asks again when you return.", "Keeps holding. It has no tab."]
+    - what: "Screen"
+      cells: ["On while the lock holds", "Off by default, on with \"Keep screen on\""]
+    - what: "When it ends"
+      cells: ["After a set time, at a clock time such as 5:30 PM, or when you stop it", "With no end, after a time interval, or at a date and time"]
+    - what: "Install"
+      cells: ["None, open a web page", "PowerToys installer; may need admin rights on a managed PC"]
+    - what: "Platforms"
+      cells: ["Windows, macOS, Linux, ChromeOS, Android, iPhone, iPad", "Windows"]
+    - what: "Price"
+      cells: ["Free, with optional Pro", "Free, open source"]
+    - what: "Last release"
+      cells: ["Web app, see the [changelog](/changelog)", "PowerToys 0.101, August 2026"]
+    - what: "Facts checked"
+      cells: ["26 September 2026", "26 September 2026"]
+      same: true
+picks:
+  them:
+    - title: "A long job where the screen can go dark"
+      text: "A build, a large download or an AI agent in a terminal needs the PC awake, not the display. Awake does that and saves the power a lit screen would use. [Keep your computer awake while an AI agent or long build runs](/for/ai-agents) compares the options."
+    - title: "You live in other apps all day"
+      text: "Awake holds while you work full screen in Excel or a game. A tab can't."
+    - title: "You script your setup"
+      text: "The command-line flags tie Awake to a task's lifetime."
+  us:
+    - title: "You can't install PowerToys"
+      text: "On a work laptop with no admin rights, a web page may be the only tool available. It leaves sign-in and lock policies as IT set them."
+    - title: "You want to see the state from across the room"
+      text: "Presenting, a wall dashboard or a report you read without touching: the pill says \"Screen awake\" only once the browser grants the lock."
+    - title: "You want a timed session with an end you can see"
+      text: "Pick 1 h or an end time such as 5:30 PM. A chime and a \"Time's up\" prompt let you add 15 minutes."
+    - title: "You also use a Mac, Chromebook or phone"
+      text: "The same page works there."
+    - title: "You like Awake's two levels"
+      text: "[AwakeTab for Chrome](/extension) has a similar pair for Chrome and Edge: Screen keeps the display on, System keeps only the computer awake, and both keep working when the tab is hidden."
 faq:
   - q: "Why does my screen still turn off with PowerToys Awake on?"
     a: "By default Awake keeps the computer awake but lets the displays turn off. Turn on the “Keep screen on” switch in Awake's settings, or pass --display-on true when you run it from the command line."
@@ -34,40 +88,25 @@ published: 2026-09-09
 updated: 2026-09-27
 ---
 
-If you can install PowerToys, Awake is the stronger Windows tool: it keeps the PC awake whatever is in front, for a set time or until a date and time, with the screen off or on. AwakeTab fits when you can't install software, or when you want a countdown and a status you can see. It holds only while its browser tab stays visible.
+## Side by side
 
-## How each one keeps Windows awake
+PowerToys Awake is one of Microsoft's PowerToys utilities. It tells Windows the machine must stay awake without touching your power plan. It also runs from the command line as `PowerToys.Awake.exe`, and `--pid` ends it when a given process exits. AwakeTab works through the browser: in Chrome or Edge, a visible AwakeTab tab asks Windows to keep the display on, and while it does, Windows does not idle-sleep. Facts about Awake come from Microsoft Learn, checked 26 September 2026. Rows marked Same are real ties.
 
-PowerToys Awake is one of Microsoft's PowerToys utilities. It tells Windows the machine must stay awake without touching your power plan. You choose a mode: keep awake with no end, "Keep awake for a time interval", or "Keep awake until expiration" at a date and time. By default the displays still turn off; the "Keep screen on" switch keeps them lit. It also runs from the command line as `PowerToys.Awake.exe`, and `--pid` ends it when a given process exits (Microsoft Learn, checked 26 September 2026).
+::compare
 
-AwakeTab works through the browser. In Chrome or Edge, a visible AwakeTab tab asks Windows to keep the display on, and while it does, Windows does not idle-sleep. Switch tabs or minimise the window and the browser releases the lock; the pill says "Paused — tab hidden" until you come back.
+::ad
 
-## PowerToys Awake and AwakeTab at a glance, as of 26 September 2026
+## When PowerToys Awake is the better choice
 
-| Feature | PowerToys Awake | AwakeTab |
-|---|---|---|
-| Mechanism | Power request from a background app | Screen Wake Lock API; the browser asks Windows to keep the display on |
-| Works with the tab hidden | Yes, it has no tab | No: the tab must stay visible |
-| Screen | Off by default, on with "Keep screen on" | On while the lock holds |
-| Install | PowerToys installer; may need admin rights on a managed PC | None |
-| Platforms | Windows | Windows, macOS, Linux, ChromeOS, Android, iPhone, iPad |
-| Price | Free, open source | Free, with optional Pro |
-| Last release | PowerToys 0.101, August 2026 | Web app, see the [changelog](/changelog) |
+It is a good tool. In these cases we would send you there.
 
-## When PowerToys Awake is the better pick
+::picks them
 
-- **A long job where the screen can go dark.** A build, a large download or an AI agent in a terminal needs the PC awake, not the display. Awake does that and saves the power a lit screen would use. [Keep your computer awake while an AI agent or long build runs](/for/ai-agents) compares the options.
-- **You live in other apps all day.** Awake holds while you work full screen in Excel or a game. A tab can't.
-- **You script your setup.** The command-line flags tie Awake to a task's lifetime.
+## When AwakeTab is the better choice
 
-## When AwakeTab fits better
+These are the jobs AwakeTab was built for.
 
-- **You can't install PowerToys.** On a work laptop with no admin rights, a web page may be the only tool available. It leaves sign-in and lock policies as IT set them.
-- **You want to see the state from across the room.** Presenting, a wall dashboard or a report you read without touching: the status pill switches to "Screen awake" only when the browser reports the lock is in place.
-- **You want a timed session with an end you can see.** Pick 1 h or an end time such as 5:30 PM; a chime and a "Time's up" prompt let you add 15 minutes.
-- **You also use a Mac, Chromebook or phone.** The same page works there.
-
-If you like Awake's two levels, [AwakeTab for Chrome](/extension) has a similar pair for Chrome and Edge: Screen keeps the display on, System keeps only the computer awake, and both keep working when the tab is hidden.
+::picks us
 
 ## Neither keeps a locked PC's screen on
 

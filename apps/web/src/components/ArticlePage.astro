@@ -1,11 +1,21 @@
 ---
-import { render, type CollectionEntry } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
 import ToolIsland from './ToolIsland.astro';
 import Button from './shell/Button.astro';
+import Limit from './article/Limit.astro';
+import ArticleParts from './article/ArticleParts.astro';
 import { createT, t as tEn } from '../i18n/load';
 import { LOCALE_META } from '../i18n/locales';
 import { articleSchema } from '../lib/seo';
+import {
+  inline,
+  placedBlocks,
+  splitArticle,
+  type TArticlePart,
+  type TBlockName,
+} from '../lib/article';
+import { articleCss } from '../lib/article-css';
 import {
   contentIndex,
   pageAlternates,
@@ -33,11 +43,20 @@ const PRESET_HREF = {
   custom: '/8h',
   until: '/',
 } as const;
+// docs/06 §10: the down-link names the duration it starts ("Start a 30-minute session"); English only.
+const PRESET_WORDS: Partial<Record<keyof typeof PRESET_HREF, string>> = {
+  p15: '15-minute',
+  p30: '30-minute',
+  p45: '45-minute',
+  p60: '1-hour',
+  p120: '2-hour',
+  p240: '4-hour',
+};
 
 const { kind, entry } = Astro.props;
 const data = entry.data;
-const { Content, headings } = await render(entry);
-const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const site =
+  Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const { locale, enSlug } = splitEntryId(entry.id);
 const english = locale === 'en';
 const t = createT(locale);
@@ -68,21 +87,28 @@ const stale =
 const startHref = english
   ? PRESET_HREF[data.preset]
   : `${homeHref}?preset=${data.preset}${data.mode === 'standard' ? '' : `&mode=${data.mode}`}`;
-const ogImage = english ? `/og/${kind}-en.png` : pageOgImage(kind, enSlug, locale);
+const startWords = english ? PRESET_WORDS[data.preset] : undefined;
+const startLabel = startWords
+  ? `Start a ${startWords} session`
+  : t('content.start');
+const ogImage = english
+  ? `/og/${kind}-en.png`
+  : pageOgImage(kind, enSlug, locale);
+const crumbLabel = data.crumb ?? data.h1;
 const breadcrumbs = english
   ? [
       { name: 'AwakeTab', url: site },
       { name: hubH1, url: `${site}/${kind}` },
-      { name: data.h1, url: canonical },
+      { name: crumbLabel, url: canonical },
     ]
   : [
       { name: 'AwakeTab', url: `${site}${homeHref}` },
-      { name: data.h1, url: canonical },
+      { name: crumbLabel, url: canonical },
     ];
 const crumbs: Array<{ href?: string; label: string }> = [
   { href: homeHref, label: t('app.name') },
   ...(english ? [{ href: `/${kind}`, label: hubH1 }] : []),
-  { label: data.h1 },
+  { label: crumbLabel },
 ];
 
 // Related links: English pages use the target's h1 as anchor text (docs/06 §10); translations link the
@@ -117,17 +143,76 @@ const englishHref = translations.en;
 const variant = kind === 'for' ? 'article' : 'guide';
 const toolAt = kind === 'guides' || kind === 'learn' ? 'after' : 'top';
 const toolCopy = kind === 'guides' ? 'skip' : 'try';
-// "On this page": the article's own h2s (Astro gives them ids), then the template sections in page order.
-const toc = [
-  ...headings.filter((h) => h.depth === 2).map((h) => ({ href: `#${h.slug}`, label: h.text })),
-  { href: '#s-limit', label: t('content.limit') },
-  ...(variant === 'article' ? [{ href: '#s-related', label: t('content.related') }] : []),
-  { href: '#faq', label: t('content.faq') },
-  ...(toolAt === 'after' ? [{ href: '#s-tool', label: t(`content.${toolCopy}.title`) }] : []),
-];
+
+// Body: the rendered Markdown cut into sections and page-level markers (lib/article.ts).
+const parts: TArticlePart[] = splitArticle(entry.rendered?.html ?? '');
+const adAt = parts.findIndex((part) => part.kind === 'ad');
+const before = adAt < 0 ? parts : parts.slice(0, adAt);
+const after = adAt < 0 ? [] : parts.slice(adAt + 1);
+const limitPlaced =
+  parts.some((part) => part.kind === 'limit') ||
+  parts.some(
+    (p) =>
+      p.kind === 'section' &&
+      p.parts.some((b) => b.kind === 'block' && b.name === 'limit'),
+  );
+// /guides: the honest limit and FAQ follow the tool with the related links (GuideGuides); /learn keeps its FAQ in
+// the body (GuideLearn). Everywhere else they close the body.
+const notesAfterTool = kind === 'guides';
+
+const stepVariant = data.steps?.some((st) => st.shot)
+  ? 'shots'
+  : kind === 'guides'
+    ? 'track'
+    : 'card';
+const tracked = stepVariant === 'track' && (data.steps?.length ?? 0) > 0;
+const blockCss = articleCss(
+  placedBlocks(parts).map((b) => b.split(' ')[0] as TBlockName),
+  data.steps ? stepVariant : null,
+);
+
+// "On this page": the page's own sections and template sections in page order.
+const sectionToc = (
+  list: TArticlePart[],
+): Array<{ href: string; label: string }> =>
+  list.flatMap((part) => {
+    if (part.kind === 'limit')
+      return [{ href: '#s-limit', label: t('content.limit') }];
+    if (part.kind === 'section' && part.id && part.title)
+      return [
+        { href: `#${part.id}`, label: data.toc?.[part.id] ?? part.title },
+      ];
+    return [];
+  });
+const limitEntry = limitPlaced
+  ? []
+  : [{ href: '#s-limit', label: t('content.limit') }];
+const toolEntry =
+  toolAt === 'after'
+    ? [
+        {
+          href: '#s-tool',
+          label: data.toc?.['s-tool'] ?? t(`content.${toolCopy}.title`),
+        },
+      ]
+    : [];
+const faqEntry = [{ href: '#faq', label: t('content.faq') }];
+const toc = notesAfterTool
+  ? [...sectionToc(parts), ...toolEntry, ...limitEntry, ...faqEntry]
+  : [
+      ...sectionToc(parts),
+      ...limitEntry,
+      ...(variant === 'article'
+        ? [{ href: '#s-related', label: t('content.related.for') }]
+        : []),
+      ...faqEntry,
+      ...toolEntry,
+    ];
 const author = 'Soubhik Biswas';
 const ICON_CHECK = 'M8 12.5l2.7 2.7L16.5 9.5';
 const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
+const ICON_TICK = 'M5 12.5l4.5 4.5L19 7.5';
+const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
 ---
 
 <ContentLayout
@@ -142,6 +227,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
   localeLinks={translations}
   toolAt={toolAt}
   variant={variant}
+  notesAfterTool={notesAfterTool}
   schema={articleSchema({
     canonical,
     title: data.h1,
@@ -153,32 +239,111 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
     breadcrumbs,
   })}
 >
-  <nav slot="toc" class="at-toc" aria-label={t('content.toc')} data-spy>
-    <div class="at-toc-list">
-      <span class="at-kicker" aria-hidden="true">{t('content.toc')}</span>
-      {
-        toc.map((item, i) => (
-          <a href={item.href} aria-current={i === 0 ? 'location' : undefined}>
-            <span class="at-toc-dot" aria-hidden="true" />
-            {item.label}
-          </a>
-        ))
-      }
-    </div>
-    <a class="at-toc-card" href="#tool" data-tool-mirror>
-      <span class="at-pill at-pill-bare" data-lock="idle" data-mirror-pill>
-        <svg class="at-pill-glyph" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
-          <path class="at-g-dot" d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path>
-          <path class="at-g-pause" d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z"></path>
-          <path class="at-g-tri" d="M6 1L11.2 10.5H.8z"></path>
-          <path class="at-g-ring" d="M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z"></path>
-        </svg>
-        <span data-mirror-text>{t('tool.pill.idle')}</span>
-      </span>
-      <span class="at-toc-digits" data-mirror-digits aria-hidden="true">00:00</span>
-      <span class="at-toc-back">{t('content.backToTool')} <span aria-hidden="true">↑</span></span>
-    </a>
-  </nav>
+  {blockCss && <style is:inline slot="styles" set:html={blockCss} />}
+
+  {
+    tracked && data.steps ? (
+      <nav
+        slot="toc"
+        class="at-toc at-toc-steps"
+        aria-label={t('content.stepsNav')}
+        data-progress
+      >
+        <div class="at-toc-list">
+          <span class="at-kicker" aria-hidden="true">
+            {t('content.progress')}
+          </span>
+          <span class="at-bar" aria-hidden="true">
+            <span data-bar />
+          </span>
+          <span
+            class="at-prog"
+            aria-live="polite"
+            data-prog
+            data-count={t('content.progressCount', {
+              n: '{n}',
+              total: '{total}',
+            })}
+            data-next={t('content.progressNext', {
+              n: '{n}',
+              total: '{total}',
+              next: '{next}',
+            })}
+            data-all={t('content.progressAll', { total: '{total}' })}
+          >
+            {t('content.progressNext', {
+              n: 0,
+              total: data.steps.length,
+              next: 1,
+            })}
+          </span>
+        </div>
+        <ol>
+          {data.steps.map((step, i) => (
+            <li>
+              <a
+                href={`#step-${i + 1}`}
+                aria-current={i === 0 ? 'step' : undefined}
+              >
+                <span class="at-step-n" aria-hidden="true">
+                  <span>{i + 1}</span>
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d={ICON_TICK} />
+                  </svg>
+                </span>
+                <span>{step.short ?? step.title}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+        <a class="at-jump-tool" href="#tool">
+          {t('content.jumpTool')} <span aria-hidden="true">↓</span>
+        </a>
+      </nav>
+    ) : (
+      <nav slot="toc" class="at-toc" aria-label={t('content.toc')} data-spy>
+        <div class="at-toc-list">
+          <span class="at-kicker" aria-hidden="true">
+            {t('content.toc')}
+          </span>
+          {toc.map((item, i) => (
+            <a href={item.href} aria-current={i === 0 ? 'location' : undefined}>
+              <span class="at-toc-dot" aria-hidden="true" />
+              {item.label}
+            </a>
+          ))}
+        </div>
+        <a class="at-toc-card" href="#tool" data-tool-mirror>
+          <span class="at-pill at-pill-bare" data-lock="idle" data-mirror-pill>
+            <svg
+              class="at-pill-glyph"
+              viewBox="0 0 12 12"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                class="at-g-dot"
+                d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"
+              />
+              <path class="at-g-pause" d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z" />
+              <path class="at-g-tri" d="M6 1L11.2 10.5H.8z" />
+              <path
+                class="at-g-ring"
+                d="M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z"
+              />
+            </svg>
+            <span data-mirror-text>{t('tool.pill.idle')}</span>
+          </span>
+          <span class="at-toc-digits" data-mirror-digits aria-hidden="true">
+            00:00
+          </span>
+          <span class="at-toc-back">
+            {t('content.backToTool')} <span aria-hidden="true">↑</span>
+          </span>
+        </a>
+      </nav>
+    )
+  }
 
   <Fragment slot="head">
     <nav class="at-crumbs" aria-label={english ? 'Breadcrumb' : t('content.breadcrumb')}>
@@ -200,6 +365,11 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
       </ol>
     </nav>
     <h1 class="at-h1-page">{data.h1}</h1>
+    {
+      variant === 'article' && data.lead && (
+        <p class="at-lead" set:html={inline(data.lead)} />
+      )
+    }
     <div class="at-meta">
       {
         verified && (
@@ -231,13 +401,30 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
       }
       <span class="at-meta-by">{t('content.byline', { name: author })}</span>
     </div>
+    {
+      variant === 'guide' && data.lead && (
+        <p class="at-lead" set:html={inline(data.lead)} />
+      )
+    }
+    {
+      data.facts && (
+        <ul class="at-facts">
+          {data.facts.map((fact) => (
+            <li>
+              <span>{fact.label}</span>
+              <strong>{fact.value}</strong>
+            </li>
+          ))}
+        </ul>
+      )
+    }
   </Fragment>
 
   {
     toolAt === 'after' ? (
       <section slot="tool" id="s-tool" class="at-tool-area" aria-labelledby="h-tool">
         <h2 id="h-tool">{t(`content.${toolCopy}.title`)}</h2>
-        <p>{t(`content.${toolCopy}.body`)}</p>
+        <p set:html={inline(toolLine)} />
         <div id="tool" class="at-tool-card">
           <ToolIsland embed heading={data.h1} autostart="0" preset={data.preset} mode={data.mode} locale={locale} />
         </div>
@@ -249,23 +436,32 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
     )
   }
 
-  <Content />
+  <Fragment slot="intro"
+    ><ArticleParts
+      list={before}
+      data={data}
+      t={t}
+      id={entry.id}
+      kind={kind}
+    /></Fragment
+  >
+  <ArticleParts list={after} data={data} t={t} id={entry.id} kind={kind} />
 
   <Fragment slot="notes">
-    <aside id="s-limit" class="at-limit-note" aria-labelledby="h-limit">
-      <div role="note" class="at-note">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.01" /></svg>
-        <div>
-          <h2 id="h-limit" class="at-kicker">{t('content.limit')}</h2>
-          <p>{data.honestLimit}</p>
-        </div>
-      </div>
-    </aside>
+    {
+      !limitPlaced && (
+        <Limit text={data.honestLimit} label={t('content.limit')} />
+      )
+    }
 
     {
       variant === 'article' && (
-        <section id="s-related" class="at-related-sec" aria-labelledby="h-related">
-          <h2 id="h-related">{t('content.related')}</h2>
+        <section
+          id="s-related"
+          class="at-related-sec"
+          aria-labelledby="h-related"
+        >
+          <h2 id="h-related">{t('content.related.for')}</h2>
           <ul class="at-rows">
             {related.map((link) => (
               <li>
@@ -277,7 +473,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
             ))}
           </ul>
           <Button class="at-start" href={startHref} glyph>
-            {t('content.start')}
+            {startLabel}
           </Button>
         </section>
       )
@@ -315,7 +511,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
               <path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
               <circle cx="24" cy="9" r="4.6" fill="currentColor" />
             </svg>
-            {t('content.start')}
+            {startLabel}
           </a>
           <div>
             {related.map((link) => (

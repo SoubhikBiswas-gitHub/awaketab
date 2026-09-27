@@ -80,8 +80,9 @@ export function articleSchema(input: IArticleSchemaInput): TSchemaNode {
     datePublished: input.published,
     dateModified: input.updated ?? input.published,
     inLanguage: LOCALE_META[input.locale].hreflang,
-    author: { '@id': `${SITE}/about#person` },
-    publisher: { '@id': `${SITE}/#org` },
+    // Google does not resolve an @id on another page, so the article names its author and publisher inline.
+    author: { '@type': 'Person', '@id': `${SITE}/about#person`, name: 'Soubhik Biswas', url: `${SITE}/about` },
+    publisher: { '@type': 'Organization', '@id': `${SITE}/#org`, name: 'AwakeTab', url: `${SITE}/` },
   };
   if (input.image) article.image = input.image;
   return {

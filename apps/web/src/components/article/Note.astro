@@ -1,0 +1,22 @@
+---
+import { inline } from '../../lib/article';
+
+interface Props {
+  kicker: string;
+  text: string;
+}
+const { kicker, text } = Astro.props;
+---
+
+<div role="note" class="at-note at-note-lamp">
+  <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"
+    ><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle
+      cx="24"
+      cy="9"
+      r="4.6"></circle></svg
+  >
+  <div>
+    <span class="at-kicker">{kicker}</span>
+    <p set:html={inline(text)} />
+  </div>
+</div>

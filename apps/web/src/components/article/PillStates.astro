@@ -1,0 +1,29 @@
+---
+import type { TLockState } from '@awaketab/wake';
+import StatusPill from '../shell/StatusPill.astro';
+import { inline } from '../../lib/article';
+
+interface Props {
+  pills: Array<{ state: TLockState; text: string }>;
+  t: (key: string, vars?: Record<string, string | number>) => string;
+}
+const { pills, t } = Astro.props;
+---
+
+<dl class="at-states">
+  {
+    pills.map((row) => (
+      <div>
+        <dt>
+          <StatusPill
+            as="span"
+            size="S"
+            state={row.state}
+            label={t(`tool.pill.${row.state}`)}
+          />
+        </dt>
+        <dd set:html={inline(row.text)} />
+      </div>
+    ))
+  }
+</dl>

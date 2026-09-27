@@ -2,6 +2,7 @@
 title: "NoSleep.js vs the Wake Lock API — AwakeTab"
 description: "NoSleep.js last shipped in December 2020 and uses the Wake Lock API where present. @awaketab/wake does too, and tells your code what happened."
 h1: "NoSleep.js vs @awaketab/wake"
+crumb: "NoSleep.js"
 intent: "nosleep.js alternative"
 secondaryQueries:
   - "nosleep.js vs wake lock"
@@ -16,6 +17,75 @@ reviewed: true
 lastVerified: 2026-09-26
 browsers: ["chrome", "edge", "firefox", "safari", "samsung-internet", "opera"]
 os: []
+lead: "NoSleep.js 0.12.0, its last release (16 December 2020), already calls the Screen Wake Lock API when the browser has it, and falls back to a hidden looping video when it doesn't. If it works for you, there is no emergency. `@awaketab/wake` takes the same first step, then tells your code what happened: seven states, and a reason with every change. It is an actively maintained alternative, MIT-licensed."
+toc:
+  side-by-side: "Side by side"
+  when-nosleepjs-is-the-better-choice: "When NoSleep.js is better"
+  when-awaketabwake-is-the-better-choice: "When @awaketab/wake is better"
+  the-same-job-in-code: "The same job in code"
+compare:
+  label: "@awaketab/wake compared with NoSleep.js 0.12.0, checked 26 September 2026"
+  what: "What"
+  cols:
+    - name: "@awaketab/wake"
+      us: true
+    - name: "NoSleep.js 0.12.0"
+  rows:
+    - what: "How it keeps the screen on"
+      cells: ["Wake Lock API; a video fallback after a tap, only where the API is missing", "Wake Lock API if present; hidden looping video otherwise; a page-reload timer on very old iOS"]
+    - what: "With the tab hidden"
+      cells: ["No", "No"]
+      same: true
+    - what: "Install"
+      cells: ["Copy `packages/wake` from the repository; npm package coming soon", "The npm package `nosleep.js`"]
+    - what: "Platforms"
+      cells: ["Browsers; returns an inert handle during server rendering", "Browsers"]
+    - what: "Status"
+      cells: ["Seven states, with a `change` event carrying `from`, `to`, `reason` and `advice`", "`isEnabled`, a boolean"]
+    - what: "Asks again after the tab returns"
+      cells: ["Yes, on both, controlled by `reacquireOnVisible`", "Yes, on `visibilitychange` and `fullscreenchange`"]
+    - what: "When the browser takes the lock back"
+      cells: ["Moves to `lost` with a reason", "Logs a console message"]
+    - what: "Licence and price"
+      cells: ["MIT, free", "MIT, free"]
+      same: true
+    - what: "Last release"
+      cells: ["Source on GitHub; not yet published", "0.12.0, 16 December 2020"]
+picks:
+  them:
+    - title: "It already works and you only show an on/off switch"
+      text: "On current browsers it makes the same API call. Switching buys you status reporting, not a stronger lock."
+    - title: "You need a package from npm today"
+      text: "`@awaketab/wake` isn't published yet, and some teams can't vendor source."
+  us:
+    - title: "Your users see the status"
+      text: "A kiosk or dashboard that says \"awake\" should only say it while the lock holds. `held` means a live lock, and `fallback` means the video is really playing."
+    - title: "You need to know why it failed"
+      text: "A missing `allow=\"screen-wake-lock\"` on an iframe, a hidden page and an http origin each get their own advice code."
+    - title: "You use a framework"
+      text: "`@awaketab/wake/react`, `/preact` and `/vue` export a `useWakeLock()` hook that returns the state with `request` and `release`."
+code:
+  nosleep.js:
+    lang: js
+    text: |
+      import NoSleep from 'nosleep.js';
+
+      const noSleep = new NoSleep();
+      startButton.addEventListener('click', () => {
+        noSleep.enable().catch((err) => console.warn(err.name));
+      });
+      stopButton.addEventListener('click', () => noSleep.disable());
+  wake.ts:
+    lang: ts
+    text: |
+      import { createWakeLock } from '@awaketab/wake';
+
+      const lock = createWakeLock();
+      lock.on('change', ({ from, to, reason, advice }) => {
+        console.log(`${from} -> ${to} (${reason})`, advice ?? '');
+      });
+      startButton.addEventListener('click', () => lock.request());
+      stopButton.addEventListener('click', () => lock.release());
 faq:
   - q: "Does NoSleep.js still work in 2026?"
     a: "On browsers with the Screen Wake Lock API, yes: version 0.12.0 calls navigator.wakeLock.request('screen') first. Its video path is only reached where the API is missing. We have not re-checked that video path on current iOS."
@@ -37,66 +107,36 @@ published: 2026-09-09
 updated: 2026-09-27
 ---
 
-NoSleep.js 0.12.0, its last release (16 December 2020), already calls the Screen Wake Lock API when the browser has it, and falls back to a hidden looping video when it doesn't. If it works for you, there is no emergency. `@awaketab/wake` takes the same first step, then tells your code what happened: seven states, and a reason with every change. It is an actively maintained alternative, MIT-licensed.
+## Side by side
 
-## What changed since 2020
+When NoSleep.js was written, a silent video was the only way to keep most phones awake. The Screen Wake Lock API arrived in Chrome and Edge 84 (July 2020), Safari 16.4 (March 2023) and Firefox 126 (May 2024). For the API itself, see [Screen Wake Lock API: a practical guide with error handling](/learn/screen-wake-lock-api-guide). Facts about NoSleep.js come from its source on GitHub. Rows marked Same are real ties.
 
-When NoSleep.js was written, a silent video was the only way to keep most phones awake. The Screen Wake Lock API arrived in Chrome and Edge 84 (July 2020), Safari 16.4 (March 2023) and Firefox 126 (May 2024). On current browsers both libraries take the native path, so the difference is no longer how the screen stays on. It is what your page knows about it. For the API itself, see [Screen Wake Lock API: a practical guide with error handling](/learn/screen-wake-lock-api-guide).
+::compare
 
-## The two libraries compared, as of 26 September 2026
+::ad
 
-| Feature | NoSleep.js 0.12.0 | `@awaketab/wake` |
-|---|---|---|
-| Mechanism | Wake Lock API if present; hidden looping video otherwise; a page-reload timer on very old iOS | Wake Lock API; video fallback only where the API is missing, and it needs a user gesture |
-| Works with the tab hidden | No | No |
-| Install | The npm package `nosleep.js` | Copy `packages/wake` from the repository; npm package coming soon |
-| Platforms | Browsers | Browsers; returns an inert handle during server rendering |
-| Status | `isEnabled`, a boolean | Seven states, with a `change` event carrying `from`, `to`, `reason` and `advice` |
-| Asks again after the tab returns | Yes, on `visibilitychange` and `fullscreenchange` | Yes, on both, controlled by `reacquireOnVisible` |
-| When the browser takes the lock back | Logs a console message | Moves to `lost` with a reason |
-| Licence and price | MIT, free | MIT, free |
-| Last release | 0.12.0, 16 December 2020 | Source on GitHub; not yet published |
+## When NoSleep.js is the better choice
+
+It is a good library. In these cases we would send you there.
+
+::picks them
+
+## When @awaketab/wake is the better choice
+
+These are the jobs `@awaketab/wake` was built for.
+
+::picks us
 
 ## The same job in code
 
 NoSleep.js:
 
-```js
-import NoSleep from 'nosleep.js';
-
-const noSleep = new NoSleep();
-startButton.addEventListener('click', () => {
-  noSleep.enable().catch((err) => console.warn(err.name));
-});
-stopButton.addEventListener('click', () => noSleep.disable());
-```
+::code nosleep.js
 
 `@awaketab/wake`:
 
-```ts
-import { createWakeLock } from '@awaketab/wake';
+::code wake.ts
 
-const lock = createWakeLock();
-lock.on('change', ({ from, to, reason, advice }) => {
-  console.log(`${from} -> ${to} (${reason})`, advice ?? '');
-});
-startButton.addEventListener('click', () => lock.request());
-stopButton.addEventListener('click', () => lock.release());
-```
+`request()` does not throw. It resolves with the resulting state: `held` when the browser grants the lock, `fallback` when the video is playing, `denied` or `unsupported` when neither worked. When a state changes for a reason you can act on, `advice` names it, for example `hidden_document`, `permissions_policy`, `iframe_no_allow` or `insecure_context`.
 
-`request()` does not throw. It resolves with the resulting state: `held` when the browser grants the lock, `fallback` when the video is playing, `denied` or `unsupported` when neither worked. The seven states are `idle`, `requesting`, `held`, `lost`, `denied`, `unsupported` and `fallback`. When a state changes for a reason you can act on, `advice` names it, for example `hidden_document`, `permissions_policy`, `iframe_no_allow` or `insecure_context`.
-
-## When NoSleep.js is the better pick
-
-- **It already works and you only show an on/off switch.** On current browsers it makes the same API call. Switching buys you status reporting, not a stronger lock.
-- **You need a package from npm today.** `@awaketab/wake` isn't published yet, and some teams can't vendor source.
-- **You want the smallest surface.** Two methods and a boolean, with years of tutorials behind them.
-
-## When @awaketab/wake is the better pick
-
-- **Your users see the status.** A kiosk, a recipe site or a dashboard that says "awake" should only say it while the browser holds the lock. `held` means the browser holds a live lock, and `fallback` means the video is really playing.
-- **You need to know why it failed.** A missing `allow="screen-wake-lock"` on an iframe, a hidden page and an http origin each get their own advice code.
-- **You use a framework.** `@awaketab/wake/react`, `/preact` and `/vue` export a `useWakeLock()` hook that returns the state with `request` and `release`.
-- **You render on the server.** Without a `window`, `createWakeLock()` returns an inert handle instead of throwing.
-
-The [@awaketab/wake library page](/library) has a live demo of every state. If you came here looking for a ready-made page rather than code, nosleep.page is a website unrelated to NoSleep.js; [nosleep.page vs AwakeTab](/vs/nosleep-page) compares the two.
+The [@awaketab/wake library page](/library) has a live demo of every state.

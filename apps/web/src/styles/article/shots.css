@@ -1,0 +1,81 @@
+/* stylelint-disable no-descending-specificity */
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-cp .at-steps-shots {
+    gap: 0;
+    border-block-start: var(--at-border) solid var(--at-line);
+  }
+
+  .at-steps-shots > li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--at-shot-w);
+    align-items: start;
+    gap: var(--at-s-4);
+    padding-block: var(--at-s-6);
+    border-block-end: var(--at-border) solid var(--at-line);
+  }
+
+  .at-steps-shots > li > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-3);
+    min-inline-size: 0;
+  }
+
+  .at-steps-shots .at-step-n {
+    background: color-mix(in srgb, var(--at-accent) 14%, transparent);
+  }
+
+  .at-cp .at-steps :is(.at-steps-shots h3, .at-step-head h3) {
+    margin: 0;
+  }
+
+  .at-shot {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-2);
+    inline-size: var(--at-shot-w);
+    margin: 0;
+  }
+
+  .at-shot-frame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--at-s-2);
+    block-size: var(--at-shot-h);
+    border: var(--at-border) dashed var(--at-line-strong);
+    border-radius: var(--at-r-xl);
+    background: var(--at-hatch), var(--at-sunken);
+    color: var(--at-muted);
+    font: var(--at-type-kicker);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .at-shot-frame svg {
+    inline-size: var(--at-icon-lg);
+    block-size: var(--at-icon-lg);
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .at-shot figcaption {
+    color: var(--at-muted);
+    font: var(--at-type-kicker);
+    letter-spacing: 0;
+    font-weight: 400;
+    text-wrap: pretty;
+  }
+
+  @media (width >= 600px) {
+    .at-steps-shots > li {
+      gap: var(--at-s-8);
+    }
+  }
+}

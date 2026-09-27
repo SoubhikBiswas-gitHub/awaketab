@@ -12,6 +12,30 @@ translationOf: "android-chrome"
 lastVerified: 2026-09-09
 browsers: ["chrome"]
 os: ["android"]
+crumb: "Android in Chrome"
+lead: "Chrome ab Version 84 kann auf Android-Geräten einen nativen Bildschirm-Lock vergeben, solange der Tab sichtbar ist. Sie brauchen dafür weder eine App noch Root-Rechte: AwakeTab fragt den Lock an, und die Statusanzeige zeigt, ob Chrome zustimmt. Drei Dinge sollten Sie kennen: Das Verlassen von Chrome gibt den Lock frei, manche Hersteller legen den Tab nach dem Wechsel komplett schlafen, und der Energiesparmodus kann die Abschaltzeit verkürzen."
+facts:
+  - label: "Chrome"
+    value: "ab 84"
+  - label: "Samsung Internet"
+    value: "ab 14"
+  - label: "Firefox"
+    value: "ab 126"
+  - label: "Opera"
+    value: "ab 70"
+toc:
+  die-android-einstellung-die-sie-kennen-sollten: "Die Android-Einstellung"
+steps:
+  - title: "Öffnen Sie awaketab.com in Chrome"
+    path: "Chrome › awaketab.com"
+    text: "Voreingestellt ist „30 Min.“; wählen Sie bei Bedarf „1 Std.“, „2 Std.“ oder „∞“."
+    shot: "AwakeTab in Chrome unter Android mit gewählter Dauer"
+  - title: "Starten Sie mit „Bildschirm eingeschaltet lassen“"
+    text: "Lesen Sie die Anzeige: „Bildschirm bleibt an“ bedeutet, Chrome hält den Lock wirklich. Erst dann legen Sie das Handy ab."
+    shot: "die Statusanzeige von AwakeTab bei laufender Sitzung"
+  - title: "Brauchen Sie parallel eine andere App?"
+    text: "Nutzen Sie den geteilten Bildschirm oder die Pop-up-Ansicht. AwakeTab muss dabei sichtbar bleiben."
+    shot: "geteilter Bildschirm mit AwakeTab in einer Hälfte"
 faq:
   - q: "Bleibt das Display an, wenn ich kurz zu Maps oder YouTube springe?"
     a: "Nein. Verlassen Sie Chrome oder wechseln Sie den Tab, gibt der Browser den Wake Lock frei, und die Anzeige zeigt „Pausiert — Tab ausgeblendet“. Kommen Sie zurück, fordert AwakeTab ihn neu an. Legen Sie das Handy erst weg, wenn wieder „Bildschirm bleibt an“ zu sehen ist."
@@ -33,18 +57,17 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## So bleibt Ihr Android-Display an
-
-Chrome ab Version 84 kann auf Android-Geräten einen nativen Bildschirm-Lock vergeben, solange der Tab sichtbar ist. Sie brauchen dafür weder eine App noch Root-Rechte: AwakeTab fragt den Lock an, und die Statusanzeige zeigt, ob Chrome zustimmt. Drei Dinge sollten Sie kennen: Das Verlassen von Chrome gibt den Lock frei, manche Hersteller legen den Tab nach dem Wechsel komplett schlafen, und der Energiesparmodus kann die Abschaltzeit verkürzen.
-
 ## Schritt für Schritt in Chrome
 
-1. Öffnen Sie awaketab.com in Chrome. Voreingestellt ist „30 Min.“; wählen Sie bei Bedarf „1 Std.“, „2 Std.“ oder „∞“.
-2. Starten Sie mit „Bildschirm eingeschaltet lassen“.
-3. Lesen Sie die Anzeige: „Bildschirm bleibt an“ bedeutet, Chrome hält den Lock wirklich. Erst dann legen Sie das Handy ab.
-4. Brauchen Sie parallel eine andere App, nutzen Sie den geteilten Bildschirm oder die Pop-up-Ansicht. AwakeTab muss dabei sichtbar bleiben.
+::steps
 
 Nach Ablauf der Dauer erscheint eine Frage, ob Sie verlängern möchten, etwa um „+15 Min.“. Wer eine feste Dauer gewählt hat, bekommt keinen unbegrenzten Lock.
+
+::ad
+
+## Welche Android-Browser was können
+
+Laut Support-Matrix vom 9. September 2026 gewähren Chrome 84+, Samsung Internet 14+, Firefox 126+ und Opera 70+ unter Android einen nativen Lock. Ältere Firefox-Versionen können nach einem Tippen auf ein kleines stummes Video als Ersatzlösung ausweichen; das kostet mehr Akku.
 
 ## Die Android-Einstellung, die Sie kennen sollten
 
@@ -55,10 +78,6 @@ Die normale Abschaltzeit finden Sie unter Einstellungen → Display → Bildschi
 Den Energiesparmodus prüft Chrome nicht; er lehnt den Lock also nicht ab. Er kann aber die Abschaltzeit verkürzen oder das Display dimmen. Ob er sich über einen gehaltenen Lock hinwegsetzt, haben wir noch nicht auf einem Gerät geprüft. „Blockiert — so beheben Sie es“ erscheint nur, wenn Chrome wirklich ablehnt, und darunter steht die Ursache.
 
 Heikler sind die eigenen Energiesparlisten mancher Hersteller. Bei Samsung heißen sie zum Beispiel „Apps im Standby“ und „Apps im Tiefschlaf“, bei anderen Marken gibt es ähnliche Menüs. Landet Chrome dort, kann das System den Tab beenden, sobald Sie die App verlassen. Beim Zurückkehren lädt die Seite dann neu, und Sie müssen die Sitzung erneut starten.
-
-## Welche Android-Browser was können
-
-Laut Support-Matrix vom 9. September 2026 gewähren Chrome 84+, Samsung Internet 14+, Firefox 126+ und Opera 70+ unter Android einen nativen Lock. Ältere Firefox-Versionen können nach einem Tippen auf ein kleines stummes Video als Ersatzlösung ausweichen; das kostet mehr Akku.
 
 ## Was Chrome auf Android nicht kann
 

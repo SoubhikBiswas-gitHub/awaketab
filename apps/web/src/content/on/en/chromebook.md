@@ -2,6 +2,7 @@
 title: "Keep a Chromebook screen on — AwakeTab"
 description: "Keep a Chromebook screen on from a Chrome tab. School or work policies can still force sleep; closing the lid sleeps unless that setting is off."
 h1: "Keep a Chromebook screen on"
+crumb: "Chromebook"
 intent: "keep chromebook screen on"
 secondaryQueries:
   - "stop chromebook screen turning off"
@@ -15,6 +16,70 @@ reviewed: true
 lastVerified: 2026-09-26
 browsers: ["chrome"]
 os: ["chromeos"]
+lead: "Chrome on a Chromebook keeps the screen on from a visible AwakeTab tab. Tap Start and the display stays lit while the tab is showing, then the Chromebook goes back to its own setting when you stop. School and work Chromebooks follow their administrator's power rules, and closing the lid sleeps unless \"Sleep when cover is closed\" is off."
+facts:
+  - label: "Chrome"
+    value: "84 or later"
+  - label: "Extension"
+    value: "AwakeTab for Chrome"
+  - label: "Managed Chromebook"
+    value: "admin rules apply"
+toc:
+  set-it-up-on-your-chromebook: "Set it up"
+  which-chromebook-setups-keep-the-screen-on: "Which setups work"
+  what-turns-the-screen-off-anyway: "What turns it off"
+steps:
+  - title: "Open AwakeTab in Chrome and tap Start"
+    path: "Chrome › awaketab.com"
+    text: "Pick a length, an \"Until…\" time or ∞, then tap Start. Wait for the pill to say \"Screen awake\"."
+    shot: "AwakeTab in Chrome on a Chromebook with the pill reading Screen awake"
+  - title: "Keep the tab showing"
+    path: "No minimising while it runs"
+    text: "To work at the same time, drag another window to the edge of the display to snap the two side by side. Switch tabs or minimise, and the pill changes to \"Paused — tab hidden\"."
+    shot: "two snapped windows with AwakeTab on one side"
+  - title: "Optional: change the ChromeOS setting"
+    path: "Clock › Settings › System preferences › Power"
+    text: "Older versions list Power under Device. Under the idle option, choose to keep the display on. Labels differ slightly between versions, and a managed Chromebook may grey them out."
+    shot: "the Power settings with the idle option"
+matrix:
+  label: "Chromebook support, sources checked 26 September 2026"
+  cols: ["Setup", "Result", "What to know"]
+  rows:
+    - what: "Chrome 84 or later, tab showing"
+      result: works
+      label: "Supported"
+      text: "Chromebooks receive Chrome updates with ChromeOS."
+    - what: "Another tab in front, or the window minimised"
+      result: pauses
+      label: "Pauses"
+      text: "The lock is let go until the tab is back."
+    - what: "A plain http page"
+      result: fallback
+      label: "Video fallback"
+      text: "There is no wake lock there, so AwakeTab suggests \"Tap to use the fallback\"."
+    - what: "Managed school or work Chromebook"
+      result: untested
+      label: "Not yet tested"
+      text: "Admin rules can force the screen off, force sleep or block extensions. AwakeTab does not work around them."
+    - what: "AwakeTab for Chrome extension"
+      result: works
+      label: "Supported"
+      text: "[AwakeTab for Chrome](/extension) uses Chrome's own power setting, so it keeps the display on (Screen) or only the Chromebook awake (System) with the tab hidden."
+    - what: "Google's Keep Awake extension"
+      result: works
+      label: "Supported"
+      text: "A separate extension from Google. In September 2026 its listing shows about 1,000,000 users and a last update on 4 August 2023 (version 1.9)."
+rows:
+  blockers:
+    - title: "Closing the lid"
+      text: "The Chromebook sleeps unless \"Sleep when cover is closed\" is off in the Power settings. The tab and the extension cannot stop lid sleep."
+    - title: "An administrator's policy"
+      text: "If the pill never reaches \"Screen awake\", or the screen still sleeps, the school or work policy is in charge. Only the administrator can change it."
+      link:
+        label: "Keep the classroom screen on"
+        href: "/for/classroom"
+    - title: "Battery saver"
+      text: "It may dim the screen, but Chrome has no battery-saver check on the wake lock."
 faq:
   - q: "Why are the power settings greyed out on my school Chromebook?"
     a: "Your school or employer manages the device, and its administrator sets the power rules from the Google Admin console. You cannot change them from the Chromebook. A visible AwakeTab tab may still help within those rules, but if the screen keeps going dark, ask the administrator."
@@ -35,41 +100,22 @@ published: 2026-09-09
 updated: 2026-09-27
 ---
 
-ChromeOS has its own switch: in Settings, the Power section can keep the display on while the Chromebook is idle. If you'd rather leave that alone, open AwakeTab in Chrome and tap Start: the display stays lit while that tab is showing. School and work Chromebooks may lock these settings. Closing the lid sleeps unless "Sleep when cover is closed" is turned off.
+## Set it up on your Chromebook
 
-## ChromeOS power settings
+Three steps. The screenshots are placeholders until real-device captures are recorded.
 
-1. Select the clock at the bottom right, then the gear icon to open Settings.
-2. Find Power. On recent ChromeOS versions it sits under System preferences; older versions list it under Device.
-3. Under the idle option, choose to keep the display on. Some versions offer separate choices for charging and for battery.
-4. If you want the Chromebook to keep running when you close it, turn off "Sleep when cover is closed".
+::steps
 
-Labels can differ slightly between versions, and a managed Chromebook may grey them out.
+::ad
 
-## Why a tab instead of the setting
+## Which Chromebook setups keep the screen on
 
-The ChromeOS setting stays until you change it back. A tab suits one task with an end: a lesson on the projector until 11:30, or a status board for a shift. Pick a length, an "Until…" time or ∞; the Chromebook returns to its own setting when you stop. [Keeping teacher laptops awake in class](/for/classroom) covers the classroom case, and [keeping a dashboard screen on](/for/dashboards) covers wall displays.
+Support claims come from browser documentation and automated tests. Real-device results appear in the matrix once recorded. Sources checked 26 September 2026.
 
-## Browser support on ChromeOS
+::matrix
 
-Chrome has supported the Screen Wake Lock API since version 84 (July 2020), and Chromebooks receive Chrome updates with ChromeOS. A plain http page has no wake lock, so AwakeTab suggests its video fallback there ("Tap to use the fallback"). See the [browser support matrix](/learn/browser-support-matrix) for version details.
+## What turns the screen off anyway
 
-## Managed Chromebooks
+If the screen still goes dark, one of these is usually the reason.
 
-Schools and companies set power and extension rules centrally. Those rules can force the screen off, force sleep or block extensions. AwakeTab does not work around them. If the pill never reaches "Screen awake", or the screen still sleeps, the policy is in charge.
-
-## AwakeTab for Chrome on a Chromebook
-
-A tab has to stay visible. AwakeTab for Chrome, the [extension](/extension), uses Chrome's own power setting instead, so it keeps the display on (Screen) or only the Chromebook awake (System) with the tab hidden, for as long as Chrome is running. It cannot stop sleep when the lid closes.
-
-Google publishes its own Keep Awake extension for ChromeOS. As of September 2026 its Chrome Web Store listing shows about 1,000,000 users, and its last update was on 4 August 2023 (version 1.9). AwakeTab for Chrome is an actively maintained alternative with timers and a status badge. Both do the core job; choose the one that fits.
-
-## What stops it on a Chromebook
-
-- **Leaving the tab.** Open another tab in that window, or minimise it, and the lock is let go; the pill changes to "Paused — tab hidden".
-- **Closing the lid.** The Chromebook sleeps unless "Sleep when cover is closed" is off.
-- **Battery saver.** It may dim the screen, but Chrome has no battery-saver check on the wake lock.
-
-## What we have checked
-
-The Chromium source and the Chrome Web Store listing behind this page date from 26 September 2026. No Chromebook has been through our device run yet, so there is no result to show; /learn/how-we-tested will carry it.
+::rows blockers

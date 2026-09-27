@@ -1,0 +1,62 @@
+---
+import { inline } from '../../lib/article';
+
+interface Props {
+  compare: {
+    label: string;
+    what: string;
+    cols: Array<{ name: string; us: boolean }>;
+    rows: Array<{ what: string; cells: string[]; same: boolean }>;
+  };
+  t: (key: string, vars?: Record<string, string | number>) => string;
+}
+const { compare, t } = Astro.props;
+const n = compare.cols.length;
+---
+
+<div
+  class="at-grid at-cmp"
+  role="table"
+  aria-label={compare.label}
+  style={`--at-n: ${n}`}
+>
+  <div role="rowgroup">
+    <div role="row" class="at-grid-h">
+      <span role="columnheader">{compare.what}</span>
+      {
+        compare.cols.map((col) => (
+          <span role="columnheader" class="at-cmp-c">
+            <i
+              class:list={['at-dot', { 'at-dot-us': col.us }]}
+              aria-hidden="true"
+            />
+            {col.name}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+  <div role="rowgroup">
+    {
+      compare.rows.map((row) => (
+        <div role="row">
+          <span role="rowheader">
+            <span set:html={inline(row.what)} />
+            {row.same && <span class="at-tag">{t('content.same')}</span>}
+          </span>
+          {row.cells.map((cell, i) => (
+            <span role="cell">
+              <span class="at-cmp-k" aria-hidden="true">
+                <i
+                  class:list={['at-dot', { 'at-dot-us': compare.cols[i]?.us }]}
+                />
+                {compare.cols[i]?.name}
+              </span>
+              <span set:html={inline(cell)} />
+            </span>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</div>

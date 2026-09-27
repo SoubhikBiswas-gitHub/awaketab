@@ -2,6 +2,7 @@
 title: "Keep your Mac awake from a browser tab — AwakeTab"
 description: "In Chrome or Edge, a visible tab keeps your Mac's display on, and the Mac does not idle-sleep while it does. Closing the lid still puts it to sleep."
 h1: "Keep your Mac screen awake from a browser tab"
+crumb: "Mac"
 intent: "keep mac screen awake"
 secondaryQueries:
   - "prevent mac display sleep"
@@ -15,6 +16,87 @@ reviewed: true
 lastVerified: 2026-09-26
 browsers: ["chrome", "edge", "safari", "firefox"]
 os: ["macos"]
+lead: "Chrome, Edge, Safari and Firefox can all keep your Mac's display on from a visible tab. In Chrome or Edge, the Mac also does not idle-sleep while the display is held. Closing the lid still sleeps the Mac, unless it runs in clamshell mode with power and an external display."
+facts:
+  - label: "Chrome and Edge"
+    value: "84 or later"
+  - label: "Safari"
+    value: "16.4 or later"
+  - label: "Firefox"
+    value: "126 or later"
+  - label: "Admin rights"
+    value: "not needed"
+toc:
+  set-it-up-on-your-mac: "Set it up"
+  which-mac-setups-keep-the-screen-on: "Which setups work"
+  what-turns-the-screen-off-anyway: "What turns it off"
+steps:
+  - title: "Open AwakeTab in Chrome or Edge and press Start"
+    path: "Chrome or Edge › awaketab.com"
+    text: "Safari and Firefox keep the display on too, but Chrome and Edge also stop the Mac idle-sleeping. Wait for the pill to say \"Screen awake\"."
+    shot: "AwakeTab in Chrome on a Mac with the pill reading Screen awake"
+  - title: "Keep the tab visible"
+    path: "No minimising while it runs"
+    text: "The window can sit behind another app while part of it stays on screen. Minimise it or switch tabs and the pill changes to \"Paused — tab hidden\"."
+    shot: "a small AwakeTab window beside another app"
+  - title: "Check it in Terminal"
+    path: "Terminal › pmset -g assertions"
+    text: "Run `pmset -g assertions`. Look for a PreventUserIdleDisplaySleep or NoDisplaySleep line that names your browser. Hide the tab, run it again, and the line is gone."
+    shot: "Terminal with the browser's display-sleep line"
+  - title: "Optional: change the Mac's own timeout"
+    path: "Apple menu › System Settings › Lock Screen"
+    text: "This sets the display-off times for every app, with one for battery and one for the power adapter on a laptop. It stays changed until you set it back."
+    shot: "the Lock Screen pane with the display-off times"
+matrix:
+  label: "Mac support, sources checked 26 September 2026"
+  cols: ["Setup", "Result", "What to know"]
+  rows:
+    - what: "Chrome or Edge 84 or later, tab visible"
+      result: works
+      label: "Supported"
+      text: "Holds a \"no display sleep\" power assertion, so the Mac does not idle-sleep either."
+    - what: "Safari 16.4 or later, tab visible"
+      result: works
+      label: "Supported"
+      text: "Keeps the display on after one click."
+    - what: "Firefox 126 or later, tab visible"
+      result: works
+      label: "Supported"
+      text: "Refuses at 5 % battery or less when unplugged."
+    - what: "Window partly visible behind another app"
+      result: works
+      label: "Supported"
+      text: "The lock holds. A window that is completely covered may count as hidden."
+    - what: "Window minimised or another tab in front"
+      result: pauses
+      label: "Pauses"
+      text: "The lock is released until the tab is back in front."
+    - what: "Low Power Mode on"
+      result: untested
+      label: "Not yet tested"
+      text: "Set in System Settings › Battery, it may shorten display timeouts."
+    - what: "Lid closed"
+      result: "no"
+      label: "Not supported"
+      text: "The Mac sleeps. Clamshell mode with power and an external display is the exception."
+    - what: "AwakeTab browser extension"
+      result: works
+      label: "Supported"
+      text: "[AwakeTab for Chrome](/extension), also for Edge, carries on with the tab hidden or the window minimised."
+rows:
+  blockers:
+    - title: "Closing the lid"
+      text: "The Mac sleeps, whatever the tab asked for, unless it is in clamshell mode."
+      link:
+        label: "Keep a Mac awake with the lid closed"
+        href: "/guides/mac-prevent-sleep-lid-closed"
+    - title: "A work Mac's lock rules"
+      text: "A management profile can lock the screen on its own schedule. That is separate from display sleep, and a tab does not change it."
+      link:
+        label: "Lock screen versus display sleep"
+        href: "/guides/lock-screen-vs-sleep"
+    - title: "A hidden tab"
+      text: "A minimised window or a different tab in front lets the display go. Bring the tab back and AwakeTab asks again."
 faq:
   - q: "Does the Mac stay awake if the AwakeTab window is behind another app?"
     a: "Yes, as long as part of the window is still on screen and the AwakeTab tab is the one showing in it. The browser releases the wake lock when the window is minimised or you switch to a different tab in it, and a window that is completely covered may count as hidden too."
@@ -36,46 +118,22 @@ published: 2026-09-09
 updated: 2026-09-27
 ---
 
-In Chrome or Edge on a Mac, a visible AwakeTab tab asks macOS to keep the display on. While it does, the Mac doesn't idle-sleep either (Apple's power-assertion rules). To check, run `pmset -g assertions` in Terminal while the pill says "Screen awake". Closing the lid still sleeps the Mac unless it's in clamshell mode, with power and an external display.
+## Set it up on your Mac
 
-## The Mac's own setting
+Four steps. The screenshots are placeholders until real-device captures are recorded.
 
-To change the timeout for every app, open Apple menu > System Settings > Lock Screen. It holds the display-off times for an inactive Mac (on a laptop, one for battery and one for the power adapter). Choose a longer time or Never, then set it back later. Sleep options sit in the Battery or Energy pane and vary by Mac.
+::steps
 
-## When a tab is the better choice
+::ad
 
-Settings stay changed until you undo them. A tab fits a task with an end, such as a lecture that finishes at 11:30. Pick a length or an "Until…" time, and your normal timeouts return on their own. On a managed Mac, a management profile can still lock the screen on its own schedule.
+## Which Mac setups keep the screen on
 
-## Browser support on macOS
+Support claims come from browser documentation and automated tests. Real-device results appear in the matrix once recorded. Sources checked 26 September 2026.
 
-| Browser | First version | What happens |
-|---|---|---|
-| Chrome, Edge | 84 (July 2020) | Holds a "no display sleep" power assertion, so the Mac does not idle-sleep either |
-| Safari | 16.4 (March 2023) | Keeps the display on from a visible tab after one click |
-| Firefox | 126 (May 2024) | Keeps the display on from a visible tab; refuses at 5 % battery or less when unplugged |
+::matrix
 
-The version dates and sources are in the [browser support matrix](/learn/browser-support-matrix).
+## What turns the screen off anyway
 
-## Check it in Terminal
+If the screen still goes dark, one of these is usually the reason.
 
-1. Start a session and wait for the pill to say "Screen awake".
-2. Open Terminal and run `pmset -g assertions`.
-3. Look for a PreventUserIdleDisplaySleep or NoDisplaySleep line that names your browser.
-4. Switch to another tab and run it again. The line should be gone, and the pill should read "Paused — tab hidden".
-
-## What stops it on a Mac
-
-- **Hiding the tab.** A minimised window, or a different tab in front, lets the display go. A window that stays partly visible behind another app keeps it.
-- **Closing the lid.** The Mac sleeps. The exception is clamshell mode with power and an external display. [Keeping a Mac awake with the lid closed](/guides/mac-prevent-sleep-lid-closed) covers the options.
-- **Low Power Mode.** Set in System Settings > Battery, it may shorten display timeouts. We have not recorded how it interacts with a tab that holds the display.
-
-## When another tool fits better
-
-- **A terminal job with nothing to watch.** `caffeinate -di` keeps both the display and the system awake while Terminal runs it; `caffeinate -i` lets the display sleep.
-- **A menu bar switch.** Caffeine for Mac holds a macOS power assertion with no window open; [Caffeine compared with a tab](/vs/caffeine) sets out the trade-offs.
-- **An AI agent or long build.** [Keeping your computer awake while an agent runs](/for/ai-agents) explains when a tab is enough.
-- **A hidden tab.** The [AwakeTab for Chrome extension](/extension), also for Edge, carries on when the tab is hidden or the window is minimised.
-
-## What we have checked
-
-Apple's IOKit documentation for the display-sleep assertion and the Chromium source were checked on 26 September 2026. No Mac result is recorded yet; it will be published on /learn/how-we-tested after the device run.
+::rows blockers

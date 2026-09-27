@@ -13,6 +13,35 @@ translationOf: "presentations"
 lastVerified: 2026-09-09
 browsers: []
 os: []
+lead: "Estás a mitad de la presentación, te detienes a responder una pregunta y la pantalla se oscurece frente a todo el público. AwakeTab lo evita, con una condición: tiene que seguir siendo una superficie visible. Las diapositivas en pantalla completa tapan el navegador, y un navegador oculto no puede mantener el Wake Lock. Por eso la configuración correcta depende de dónde quede AwakeTab mientras presentas: en la ventana flotante, en una segunda ventana o en un monitor del presentador que siga mostrando la pestaña."
+crumb: "Presentaciones"
+toc:
+  si-la-pantalla-se-apaga-de-todos-modos: "Si la pantalla se apaga"
+  tres-formas-de-dejar-awaketab-a-la-vista: "Tres formas"
+  navegadores-con-wake-lock-nativo: "Navegadores"
+steps:
+  - title: "Enchufa la laptop antes de empezar."
+    text: "El ahorro de energía de Windows (“Energy saver”) y el Modo de bajo consumo de macOS no rechazan el bloqueo, pero pueden atenuar la pantalla."
+  - title: "Abre esta página: ya viene con una sesión de 2 horas."
+    text: "Si la charla se alarga, al terminar el tiempo suena una campanilla y puedes extender la sesión o detenerla."
+  - title: "Coloca AwakeTab en la ventana flotante o en tu monitor."
+    text: "Confirma que el indicador dice “Pantalla despierta”."
+  - title: "Pon las diapositivas en pantalla completa."
+    text: "Revisa que el temporizador flotante siga corriendo."
+figures:
+  - frame: phone
+    label: "Captura del teléfono"
+    alt: "la ventana flotante de AwakeTab con el indicador en Pantalla despierta"
+    caption: "La ventana flotante."
+  - frame: desktop
+    label: "Captura de escritorio"
+    alt: "diapositivas en pantalla completa en Chrome con la ventana flotante de AwakeTab en una esquina"
+    caption: "Diapositivas en pantalla completa con la ventana flotante en una esquina."
+pills:
+  - state: held
+    text: "Si el sistema oscurece la pantalla con este indicador, la causa es otra política: el bloqueo de sesión de la empresa, una tarjeta inteligente o un monitor que se apaga cuando pierde señal. Un Wake Lock no controla nada de eso."
+  - state: denied
+    text: "Lee el motivo que aparece debajo y corrige esa condición; volver a tocar Iniciar sin cambiar nada da el mismo resultado."
 faq:
   - q: "¿Funciona si pongo PowerPoint, Keynote o Google Slides en pantalla completa?"
     a: "La pantalla completa tapa la pestaña de AwakeTab y el navegador libera el bloqueo. Para evitarlo, abre la ventana flotante en Chrome, Edge o Firefox 151+ de escritorio, o deja AwakeTab en una segunda ventana o en el monitor del presentador, donde siga a la vista."
@@ -34,9 +63,19 @@ published: 2026-09-26
 updated: 2026-09-27
 ---
 
-## El problema con las diapositivas en pantalla completa
+## Antes de subir al escenario
 
-Estás a mitad de la presentación, te detienes a responder una pregunta y la pantalla se oscurece frente a todo el público. AwakeTab lo evita, con una condición: tiene que seguir siendo una superficie visible. Las diapositivas en pantalla completa tapan el navegador, y un navegador oculto no puede mantener el Wake Lock. Por eso la configuración correcta depende de dónde quede AwakeTab mientras presentas: en la ventana flotante, en una segunda ventana o en un monitor del presentador que siga mostrando la pestaña.
+::steps
+
+::figures
+
+::ad
+
+## Si la pantalla se apaga de todos modos
+
+::pills
+
+Para ajustar el tiempo de apagado de la pantalla del sistema, revisa las guías de [Windows 11](/es/on/windows-11) y [macOS](/es/on/macos).
 
 ## Tres formas de dejar AwakeTab a la vista
 
@@ -46,19 +85,6 @@ Estás a mitad de la presentación, te detienes a responder una pregunta y la pa
 
 **Extensión para Chrome y Edge.** Si prefieres no tener nada visible, la extensión de AwakeTab mantiene la pantalla despierta detrás de otras ventanas.
 
-## Antes de subir al escenario
-
-1. Enchufa la laptop antes de empezar: el ahorro de energía de Windows (“Energy saver”) y el Modo de bajo consumo de macOS no rechazan el bloqueo, pero pueden atenuar la pantalla.
-2. Abre esta página: ya viene con una sesión de 2 horas. Si la charla se alarga, al terminar el tiempo suena una campanilla y puedes extender la sesión o detenerla.
-3. Coloca AwakeTab en la ventana flotante o en tu monitor, y confirma que el indicador dice “Pantalla despierta”.
-4. Pon las diapositivas en pantalla completa y revisa que el temporizador flotante siga corriendo.
-
-## Si la pantalla se apaga de todos modos
-
-Si el sistema oscurece la pantalla con el indicador en “Pantalla despierta”, la causa es otra política: el bloqueo de sesión de la empresa, una tarjeta inteligente o un monitor que se apaga cuando pierde señal. Un Wake Lock no controla nada de eso. Si ves “Bloqueado — aquí está la solución”, lee el motivo que aparece debajo y corrige esa condición; volver a tocar Iniciar sin cambiar nada da el mismo resultado.
-
-Para ajustar el tiempo de apagado de la pantalla del sistema, revisa las guías de [Windows 11](/es/on/windows-11) y [macOS](/es/on/macos).
-
 ## Navegadores con Wake Lock nativo
 
 Para presentar desde la laptop sirven Chrome 84+, Edge 84+, Safari 16.4+, Firefox 126+ y Opera 70+, según la documentación de los navegadores (revisada el 26 de septiembre de 2026). La ventana flotante con temporizador necesita Chrome o Edge 116+ o Firefox 151+ en escritorio; Safari no la tiene. Un Firefox anterior puede usar el video de respaldo tras un clic, con un poco más de consumo.
@@ -66,3 +92,5 @@ Para presentar desde la laptop sirven Chrome 84+, Edge 84+, Safari 16.4+, Firefo
 ## Lo que no hace
 
 AwakeTab no mueve el mouse, no avanza tus diapositivas y no cambia tu estado en Teams. Tampoco evita que el equipo se suspenda si cierras la tapa. Su trabajo es uno: que la pantalla no se apague mientras presentas, y decirte con honestidad cuándo lo está logrando.
+
+::limit
