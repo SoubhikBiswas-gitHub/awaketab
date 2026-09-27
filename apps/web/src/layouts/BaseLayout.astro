@@ -57,7 +57,7 @@ const t = createT(locale);
     <meta name="theme-color" content="#F2F6FA" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-    <link rel="manifest" href={localePath(locale, '/manifest.webmanifest')} />
+    {header && <link rel="manifest" href={localePath(locale, '/manifest.webmanifest')} />}
     <meta name="apple-mobile-web-app-title" content="AwakeTab" />
     <SeoHead
       title={title}

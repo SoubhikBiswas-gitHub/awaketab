@@ -1,9 +1,10 @@
 ---
 import '../styles/tool.css';
 import { createT } from '../i18n/load';
-import type { TLocale } from '../i18n/locales';
+import { localePath, type TLocale } from '../i18n/locales';
 import ToolPanel from './ToolPanel.astro';
 import SiteHeader from './shell/SiteHeader.astro';
+import { POLAR_PORTAL_URL } from '../lib/pro-common';
 
 interface Props {
   heading: string;
@@ -55,7 +56,17 @@ const ICON = {
   settings: 'M4 7h10M18 7h2M4 17h4M12 17h8',
   share: 'M12 3.5v11M8 7.5l4-4 4 4M5.5 12v6.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12',
   install: 'M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14',
+  grace: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 7.5V12l3 2',
+  lapsed: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 11v5.5M12 7.6v.3',
+  arrow: 'M5 12h14M13 6l6 6-6 6',
 } as const;
+// The lapse notice's date goes into a <time> the island fills (Sys "prolapsed" boards).
+const dated = (key: string) => t(key, { date: '\u0000' }).split('\u0000') as [string, string];
+const lapses = [
+  ['grace', 'grace', POLAR_PORTAL_URL],
+  ['lapsed', 'ended', '/pro'],
+] as const;
+const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
 ---
 
 {
@@ -75,6 +86,7 @@ const ICON = {
   data-status="ready"
   data-open=""
   data-auto={auto ? '' : undefined}
+  data-manifest={embed ? undefined : localePath(locale, '/manifest.webmanifest')}
 >
   {
     auto && (
@@ -102,6 +114,52 @@ const ICON = {
           <div />
         </div>
         <span class="at-ig-bead" aria-hidden="true" />
+        <section class="at-lapse" data-lapse hidden aria-label={t('tool.notifications')}>
+          {lapses.map(([state, k, href]) => {
+            const [before, after] = dated(`pro.lapse.${k}.body`);
+            return (
+              <div class="at-lapse-card" role="status" data-lapse-for={state}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d={ICON[state]} />
+                </svg>
+                <div class="at-lapse-text">
+                  <h2>{t(`pro.lapse.${k}.title`)}</h2>
+                  <p>
+                    {before}
+                    <time data-lapse-date />
+                    {after}
+                  </p>
+                  {state === 'lapsed' && (
+                    <ul>
+                      {lapseFalls.map((f) => (
+                        <li>
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d={ICON.arrow} />
+                          </svg>
+                          {t(`pro.lapse.ended.${f}`)}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <p class="at-lapse-keep">{t(`pro.lapse.${k}.keep`)}</p>
+                </div>
+                <div class="at-lapse-acts">
+                  <a class="at-button at-button-sm" href={href}>
+                    {t(`pro.lapse.${k}.action`)}
+                  </a>
+                  <button class="at-button at-button-sm at-button-quiet" type="button" data-lapse-dismiss>
+                    {t('pro.lapse.later')}
+                  </button>
+                  <button class="at-icon-button" type="button" data-lapse-dismiss aria-label={t('pro.lapse.dismiss')}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                      <path d="M6 6l12 12M18 6L6 18" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </section>
         <SiteHeader locale={locale} tool>
           <p class="at-dateline at-dateline-hdr" aria-hidden="true">
             <time class="at-date" data-t="date" />
@@ -110,6 +168,7 @@ const ICON = {
           <span class="at-tag at-pro-badge" data-pro-badge hidden>
             {t('pro.badge')}
           </span>
+          <span class="at-install-slot">
           <button
             class="at-icon-button at-phone-only"
             type="button"
@@ -150,6 +209,7 @@ const ICON = {
             </svg>
             {t('pwa.install.short')}
           </button>
+          </span>
           <button
             class="at-icon-button at-phone-hide"
             type="button"
@@ -259,6 +319,7 @@ const ICON = {
           </button>
         </SiteHeader>
         <main class="at-main">
+          <slot name="top" />
           <div class="at-first">
             <p class="at-dateline">
               <time class="at-date" data-t="date" />

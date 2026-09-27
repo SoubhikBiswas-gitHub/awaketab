@@ -55,6 +55,11 @@ export function mountPwa(
   sessionStatus: () => string | undefined,
   onInstall: () => void,
 ): void {
+  // Tool pages link their manifest after the first paint (its fetch sat on the LCP path); the header's Install slot
+  // is reserved, so the button showing later moves nothing.
+  const manifest = root.dataset.manifest;
+  if (manifest)
+    document.head.append(Object.assign(document.createElement('link'), { rel: 'manifest', href: manifest }));
   const buttons = [...root.querySelectorAll<HTMLElement>('[data-install]')];
   const card = root.querySelector<HTMLElement>('[data-install-card]');
   const body = card?.querySelector<HTMLElement>('[data-install-body]');
@@ -97,7 +102,7 @@ export function mountPwa(
   // Offline: the tool keeps working from the precached shell; say so once instead of failing silently.
   const offline = () => {
     pushToast(store, {
-      kind: 'info',
+      kind: 'offline',
       text: t('tool.offline'),
       sticky: true,
       id: 'offline',

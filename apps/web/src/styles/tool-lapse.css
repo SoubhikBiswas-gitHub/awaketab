@@ -1,0 +1,102 @@
+.at-lapse {
+  position: relative;
+  z-index: 4;
+}
+
+.at-lapse-card {
+  display: grid;
+  grid-template-columns: var(--at-icon-md) minmax(0, 1fr);
+  gap: var(--at-gap-item);
+  padding-block: var(--at-s-4) var(--at-s-5);
+  padding-inline: var(--at-gutter);
+  border-block-end: 1px solid var(--at-line-strong);
+  background: var(--at-surface);
+}
+
+.at-lapse-card > svg {
+  inline-size: var(--at-icon-md);
+  block-size: var(--at-icon-md);
+  margin-block-start: var(--at-s-1);
+  color: var(--at-ink-2);
+}
+
+[data-lapse-for="grace"] {
+  border-color: color-mix(in srgb, var(--at-warn) 38%, transparent);
+}
+
+[data-lapse-for="grace"] > svg {
+  color: var(--at-warn);
+}
+
+.at-lapse-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--at-s-1);
+  min-inline-size: 0;
+  color: var(--at-ink-2);
+  font: var(--at-type-small);
+}
+
+.at-lapse-text h2 {
+  margin: 0;
+  color: var(--at-ink);
+  font: var(--at-tl-type-card);
+}
+
+.at-lapse-text p {
+  max-inline-size: 72ch;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.at-lapse-text ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--at-s-2) var(--at-s-6);
+  margin: 0;
+  padding-block: var(--at-s-1) 0;
+  padding-inline: 0;
+  color: var(--at-ink);
+  list-style: none;
+}
+
+.at-lapse-text li {
+  display: flex;
+  align-items: center;
+  gap: var(--at-gap-tight);
+}
+
+.at-lapse-text li > svg {
+  inline-size: var(--at-icon-sm);
+  block-size: var(--at-icon-sm);
+  color: var(--at-muted);
+}
+
+.at-lapse-text .at-lapse-keep {
+  color: var(--at-muted);
+  font: var(--at-type-caption);
+}
+
+.at-lapse-acts {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 2;
+  align-items: center;
+  gap: var(--at-gap-tight);
+}
+
+@media (width >= 600px) {
+  .at-lapse-card {
+    grid-template-columns: var(--at-icon-md) minmax(0, 1fr) auto;
+  }
+
+  .at-lapse-acts {
+    grid-column: 3;
+    align-self: start;
+  }
+}
+
+.at-lapse:not([data-lapse="grace"]) [data-lapse-for="grace"],
+.at-lapse:not([data-lapse="lapsed"]) [data-lapse-for="lapsed"] {
+  display: none;
+}
