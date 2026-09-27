@@ -103,15 +103,15 @@ ul,ol{margin:0;padding:0;list-style:none}
       <sc-if value="{{showMeta}}" hint-placeholder-val="{{true}}">
         <p class="{{metaCls}}" style="font-size: 13px; line-height: 18px; font-weight: {{metaWeight}}; color: {{metaColor}}; text-wrap: pretty">{{meta}}</p>
       </sc-if>
-      <sc-if value="{{showExtend}}" hint-placeholder-val="{{false}}">
-        <div class="at-rise" role="group" aria-label="{{extendLabel}}" style="align-self: stretch; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
-          <sc-for list="{{extendOpts}}" as="x" hint-placeholder-count="3">
-            <button onClick="{{x.pick}}" aria-label="{{x.aria}}" style="height: 44px; border-radius: 12px; border: 1px solid {{x.border}}; background: {{x.bg}}; font-size: 13px; line-height: 18px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">{{x.label}}</button>
-          </sc-for>
-        </div>
-      </sc-if>
     </div>
   </section>
+  <sc-if value="{{showExtend}}" hint-placeholder-val="{{false}}">
+    <div class="at-rise" role="group" aria-label="{{extendLabel}}" style="margin-top: 12px; flex-shrink: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <sc-for list="{{extendOpts}}" as="x" hint-placeholder-count="3">
+        <button onClick="{{x.pick}}" aria-label="{{x.aria}}" style="height: 44px; border-radius: 12px; border: 1px solid {{x.border}}; background: {{x.bg}}; font-size: 13px; line-height: 18px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">{{x.label}}</button>
+      </sc-for>
+    </div>
+  </sc-if>
 
   <sc-if value="{{showPrimary}}" hint-placeholder-val="{{true}}">
     <div style="margin-top: 12px; flex-shrink: 0">
@@ -137,7 +137,7 @@ ul,ol{margin:0;padding:0;list-style:none}
         </sc-for>
       </div>
     </div>
-    <p aria-live="polite" style="min-height: 36px; font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{levelHelp}}</p>
+    <sc-if value="{{showLevelHelp}}" hint-placeholder-val="{{true}}"><p aria-live="polite" style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{levelHelp}}</p></sc-if>
   </div>
 
   <div style="margin-top: 12px; flex-shrink: 0">
@@ -168,8 +168,7 @@ ul,ol{margin:0;padding:0;list-style:none}
     </sc-if>
   </div>
 
-  <footer style="margin-top: auto; padding-top: 8px; border-top: 1px solid {{t.line}}; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0">
-    <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">Works while Chrome runs, even with the tab hidden or the window minimised. It can't stop sleep when you close the lid.</p>
+  <footer style="margin-top: auto; padding-top: 8px; border-top: 1px solid {{t.line}}; display: flex; flex-direction: column; flex-shrink: 0">
     <a href="https://awaketab.com/?source=ext" target="_blank" rel="noopener" style="align-self: flex-start; min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; text-decoration: none">Open AwakeTab<svg style="color: {{lampText}}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
   </footer>
 
@@ -399,7 +398,7 @@ class Component extends DCLogic {
     // The receipt is the lamp-off moment: what really ran, from and to.
     const r = s.receipt;
     const heldFor = r ? this.words(Math.max(60, Math.round((r.to - r.from) / 60000) * 60)) : '';
-    let meta = 'Works with the tab hidden.';
+    let meta = "Works while Chrome is running, even with the tab hidden or the window minimised. It can't stop sleep when you close the lid."; // ext.popup.limits
     if (mode === 'starting') meta = 'Asking Chrome…';
     if (held) meta = noLimit ? 'No end time. Stop when you are done.' : multi ? 'Until ' + this.fullDate(endMs) : 'Started ' + this.since(s.startedAt);
     if (mode === 'ready' && r) meta = 'Held ' + heldFor + ', ' + this.span(r.from, r.to) + '.';
@@ -457,7 +456,7 @@ class Component extends DCLogic {
       arcOp: mode === 'ready' && !off ? 0.45 : mode === 'ended' || off ? 0 : 1, glowOp: held ? 0.5 : 0,
       tipDeg: (360 * p).toFixed(2) + 'deg', tipOp: held && !noLimit && p > 0 ? 1 : 0,
       tipCls: igniting ? 'at-ignite' : '', igniteOn: igniting,
-      showExtend: showExtend && s.panel === 'none', extendOpts, extendLabel: mode === 'ended' ? 'Keep going' : 'Add time',
+      showExtend: showExtend && s.panel === 'none', showLevelHelp: !held && mode !== 'ended', extendOpts, extendLabel: mode === 'ended' ? 'Keep going' : 'Add time',
       showPrimary: s.panel === 'none',
       startLabel: 'Start · ' + (s.preset === 'until' ? 'until ' + this.when(s.untilAt) : this.secsFor(s.preset, s.untilAt) ? this.words(this.secsFor(s.preset, s.untilAt)) : '∞'),
       startAria: s.preset !== 'until' && !this.secsFor(s.preset, s.untilAt) ? 'Start, until I stop' : null,

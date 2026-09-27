@@ -125,12 +125,12 @@ ul,ol{margin:0;padding:0;list-style:none}
   <sc-if value="{{showExtendCard}}" hint-placeholder-val="{{false}}">
     <section class="at-rise" aria-labelledby="ex-h" style="margin-top: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; padding: 12px; border-radius: 16px; background: {{lampFaint}}; border: 1px solid {{lampLine}}">
       <h2 id="ex-h" class="at-sr">Time's up. Keep going?</h2>
-      <div role="group" aria-labelledby="ex-h" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+      <div role="group" aria-labelledby="ex-h" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
         <sc-for list="{{extendOpts}}" as="x" hint-placeholder-count="3">
           <button onClick="{{x.pick}}" aria-label="{{x.aria}}" style="height: 44px; border-radius: 12px; border: 1px solid {{lampLine}}; background: {{t.surface}}; font-size: 13px; line-height: 18px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">{{x.label}}</button>
         </sc-for>
-        <button onClick="{{dismiss}}" style="height: 44px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; font-size: 13px; line-height: 18px; font-weight: 600; color: {{t.ink2}}">Stop</button>
       </div>
+      <button onClick="{{dismiss}}" style="height: 44px; box-sizing: border-box; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
       <p style="padding: 0 4px; font-size: 13px; line-height: 18px; color: {{t.ink2}}; text-wrap: pretty">{{extendNote}}</p>
     </section>
   </sc-if>
@@ -188,7 +188,7 @@ ul,ol{margin:0;padding:0;list-style:none}
         </div>
       </div>
       <sc-if value="{{showLevelHelp}}" hint-placeholder-val="{{true}}">
-        <p aria-live="polite" style="min-height: 36px; font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{levelHelp}}</p>
+        <p aria-live="polite" style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{levelHelp}}</p>
       </sc-if>
     </div>
   </sc-if>
@@ -480,7 +480,7 @@ class Component extends DCLogic {
     if (ended) caption = 'Session complete';
     if (blocked) caption = 'Not running';
 
-    let meta = 'Works with the tab hidden.';
+    let meta = "Works while Chrome is running, even with the tab hidden or the window minimised. It can't stop sleep when you close the lid."; // ext.popup.limits
     let meta2 = '';
     if (starting) meta = 'Asking Chrome…';
     if (held) meta = (noLimit ? 'Since ' : 'Started ') + this.hm(s.startedAt);
@@ -545,7 +545,7 @@ class Component extends DCLogic {
     const showTips = edge === 'firstopen' && s.tips;
     const showLevel = !showProPanel && !showErrorCard;
     const showLevelHelp = !showPrivate && !showTips && !showExtendCard;
-    const showChips = !isSched && !showProPanel && !showErrorCard;
+    const showChips = !isSched && !showProPanel && !showErrorCard && !showExtendCard; // the time's-up card already offers the next length
     const compact = showPrivate || showTips || edge === 'prolocked' || edge === 'autostart' || showExtendCard;
 
     const errTitle = denied ? 'Your browser or organisation blocked keeping this device awake.' : "This browser doesn't give extensions the power API.";
@@ -597,7 +597,7 @@ class Component extends DCLogic {
       closePro: () => this.setState({ proOpen: false }),
       showTips, closeTips: () => this.setState({ tips: false }),
       keyCaps: ['Alt', 'Shift', 'A'],
-      showFooter: !showTips && !showPrivate && !showErrorCard, showLimits: !compact,
+      showFooter: !showTips && !showPrivate && !showErrorCard, showLimits: false, /* the limits line lives in the Ready status column (same as ExtPopup) */
       noop: () => {}
     });
   }
