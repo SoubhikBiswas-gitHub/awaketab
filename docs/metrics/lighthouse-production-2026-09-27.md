@@ -89,3 +89,17 @@ Each cell is the median of 3 runs. The LCP column also lists all three runs in b
 5. **Decide how CI should judge LCP.** LHCI passes a URL if its best run meets the budget. If the budget is meant as a median, set `aggregationMethod: 'median'` on the LCP assertion in `lighthouserc.cjs`. With today's numbers that would fail `/30m` and `/es/` too, so the owner should choose.
 
 Raw Lighthouse reports (JSON and HTML, 30 runs) were kept outside the repository.
+
+## Production, measured on GitHub Actions
+
+Run: https://github.com/SoubhikBiswas-gitHub/awaketab/actions/runs/36322585254 (Lighthouse workflow, `base_url=https://awaketab.pages.dev`, mobile, 3 runs per URL, 27 Sep 2026 7:04 PM IST).
+
+| Page | LCP median | LCP best | CLS max | TBT median | Performance |
+|---|---|---|---|---|---|
+| `/` | 1.41 s | 1.22 s | 0.001 | 21 ms | 100 |
+| `/30m` | 1.23 s | 1.21 s | 0 | 8 ms | 100 |
+| `/es/` | 1.24 s | 1.22 s | 0 | 18 ms | 100 |
+| `/for/cooking` | 1.87 s | 1.48 s | 0 | 9 ms | 99 |
+| `/guides/lock-screen-vs-sleep` | 1.88 s | 1.42 s | 0 | 15 ms | 99 |
+
+Every page misses the 1.2 s LCP budget on the median, and the content pages by about 0.7 s. CLS on `/` is 0.001 against a budget of 0. The fixes to try first: preload only the font the largest text uses, start content-page scripts after the first paint, and remove the layout shift of the blocked notice.
