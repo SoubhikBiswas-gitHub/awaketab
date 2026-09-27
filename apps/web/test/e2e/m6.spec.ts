@@ -175,6 +175,7 @@ test('rating prompt after the 5th counted session, once only', async ({ page }) 
     await page.goto('/?autostart=0');
     await page.locator('#awaketab-tool[data-booted]').waitFor();
     await page.getByRole('button', { name: 'Custom length' }).click();
+    await expect(page.locator('.at-lp-custom')).toBeVisible();
     await page.locator('#awaketab-tool .at-cta').click();
     await expect(pillText(page)).toHaveText('Screen awake');
     // runFor (not fastForward) fires every 1 s tick, so awakeSeconds reaches the 5-minute counting floor.
@@ -316,7 +317,10 @@ async function settled(page: Page): Promise<void> {
       .getAnimations()
       .every(
         (a) =>
-          !(a instanceof CSSAnimation) ||
+          !(
+            a instanceof CSSAnimation ||
+            (a instanceof CSSTransition && (a.effect as KeyframeEffect | null)?.target instanceof HTMLDialogElement)
+          ) ||
           !(a.timeline instanceof DocumentTimeline) ||
           a.effect?.getTiming().iterations === Infinity ||
           a.playState === 'finished',
