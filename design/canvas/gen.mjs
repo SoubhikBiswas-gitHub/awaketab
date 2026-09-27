@@ -33,7 +33,7 @@ v.stop(); v = c.renderVals(); console.log('stopped:', v.statusLabel, v.primaryLa
 console.log('holes checked:', holes.length, 'missing:', bad);
 
 // 2. Wrapper boards that mount Main with fixed props.
-const wrap = (file, title, props, w = 390, h = 844) => writeFileSync(new URL(file, dir), `<!doctype html>
+const wrap = (file, title, props, w = 390, h = 844) => process.env.WRITE_WRAPPERS && writeFileSync(new URL(file, dir), `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">

@@ -116,7 +116,7 @@ const boards = {};
 const wrap = (file, child, title, props) => {
   const [w, h] = size(child + '.dc.html', props);
   const attrs = Object.entries(props).map(([k, v]) => `${k}="${v}"`).join(' ');
-  writeFileSync(new URL(file, dir), `<!doctype html>
+  if (process.env.WRITE_WRAPPERS) writeFileSync(new URL(file, dir), `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">

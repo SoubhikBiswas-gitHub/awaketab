@@ -13,3 +13,6 @@ if ! fc-list | grep -q Geist; then
     curl -sS -A "Mozilla/5.0 Chrome/141" "https://fonts.googleapis.com/css2?family=$q" | grep -o "https://[^)]*\.ttf"
   done | sort -u | while read -r u; do curl -sS -O "$u"; done ); fc-cache -f >/dev/null
 fi
+# Note: the wrapper generators (gen.mjs, ProSmoke.mjs, content-agent smoke, ExtEdgeWrap.mjs, ext-tools/bigscreens/pages-agent
+# wrappers.mjs, growth/b*.mjs) are history. Smoke tests only rewrite wrappers with WRITE_WRAPPERS=1; never rerun a generator,
+# or it recreates the boards D-R18 removed (tools/final/dedupe-applied.json).
