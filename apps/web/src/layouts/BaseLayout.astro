@@ -43,7 +43,7 @@ const {
   bare = false,
 } = Astro.props;
 const localeMeta = LOCALE_META[locale];
-// Tool pages paint once the whole tool is parsed, so slow connections never show it half built.
+// Tool pages paint once the whole tool is parsed, other pages once the header is, so nothing shows half built.
 const wholeTool = !header && !bare;
 const t = createT(locale);
 ---
@@ -75,6 +75,7 @@ const t = createT(locale);
     />
     <script is:inline set:html={bootJs} />
     {wholeTool && <link rel="expect" href="#at-tabs-late" blocking="render" />}
+    {header && <link rel="expect" href="#at-hm-menu" blocking="render" />}
     <slot name="head" />
   </head>
   <body>

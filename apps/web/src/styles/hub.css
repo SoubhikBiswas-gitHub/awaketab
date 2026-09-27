@@ -38,10 +38,11 @@
   .at-try::before {
     content: "";
     position: absolute;
-    inset-block-start: -40%;
+    inset-block-start: 0;
     inset-inline-start: -30%;
     inline-size: 160%;
     block-size: 180%;
+    translate: 0 -22.222%;
     background: radial-gradient(
       40% 40% at 70% 40%,
       color-mix(in srgb, var(--at-accent) 5%, transparent) 0%,

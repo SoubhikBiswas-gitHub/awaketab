@@ -273,10 +273,11 @@
   .at-tool-card::before {
     content: "";
     position: absolute;
-    inset-block-start: -30%;
+    inset-block-start: 0;
     inset-inline-start: -20%;
     inline-size: 140%;
     block-size: 160%;
+    translate: 0 -18.75%;
     background: radial-gradient(
       40% 45% at 30% 50%,
       color-mix(in srgb, var(--at-accent) var(--at-aura, 5%), transparent) 0%,

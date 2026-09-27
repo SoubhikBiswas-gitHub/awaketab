@@ -67,9 +67,6 @@ const themes = [
                   <path d="M6 9l6 6 6-6" />
                 </svg>
               </button>
-              <div class="at-hm-panel at-hm-drop" id={`at-hm-${id}`} data-kind={id} popover style={`position-anchor:--at-hm-${id}`}>
-                <HeaderMenuGroup locale={locale} kind={id} scope="drop" path={path} feature={id === 'for'} />
-              </div>
             </li>
           ))}
           {links.map(([id, href, label]) => (
@@ -138,4 +135,12 @@ const themes = [
       }
     </div>
   </div>
+  {
+    !tool &&
+      menus.map(([id]) => (
+        <div class="at-hm-panel at-hm-drop" id={`at-hm-${id}`} data-kind={id} popover style={`position-anchor:--at-hm-${id}`}>
+          <HeaderMenuGroup locale={locale} kind={id} scope="drop" path={path} feature={id === 'for'} />
+        </div>
+      ))
+  }
 </header>

@@ -64,12 +64,17 @@
     transition: transform var(--at-d-slide) var(--at-ease);
   }
 
-  :is(.at-hm-trigger, .at-hm-open):has(+ .at-hm-panel:popover-open) {
+  .at-hm-open:has(+ .at-hm-panel:popover-open),
+  .at-site-header:has(#at-hm-for:popover-open) [popovertarget="at-hm-for"],
+  .at-site-header:has(#at-hm-on:popover-open) [popovertarget="at-hm-on"],
+  .at-site-header:has(#at-hm-res:popover-open) [popovertarget="at-hm-res"] {
     background: var(--at-raised);
     color: var(--at-ink);
   }
 
-  .at-hm-trigger:has(+ .at-hm-panel:popover-open) .at-hm-chev {
+  .at-site-header:has(#at-hm-for:popover-open) [popovertarget="at-hm-for"] .at-hm-chev,
+  .at-site-header:has(#at-hm-on:popover-open) [popovertarget="at-hm-on"] .at-hm-chev,
+  .at-site-header:has(#at-hm-res:popover-open) [popovertarget="at-hm-res"] .at-hm-chev {
     transform: rotate(180deg);
   }
 
