@@ -30,6 +30,7 @@ export const APP_ASSET_DIR = '/embed/assets/';
 export const HASHED_APP_RE = /^\/embed\/assets\/app\.[0-9a-f]{10}\.js$/u;
 const BANNER = '/*! AwakeTab Embed loader · https://awaketab.com/embed */';
 const ALIAS = {
+  '@awaketab/wake/video': path.join(REPO, 'packages/wake/src/video.ts'),
   '@awaketab/wake': path.join(REPO, 'packages/wake/src/index.ts'),
   '@awaketab/core': path.join(REPO, 'packages/core/src/index.ts'),
 };

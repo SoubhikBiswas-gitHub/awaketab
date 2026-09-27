@@ -70,7 +70,7 @@ describe('embed kitchen timers (full size, docs/11 §2)', () => {
     el.querySelector<HTMLButtonElement>('[data-embed-add="5"]')?.click();
     vi.advanceTimersByTime(5 * 60_000 + 1000);
     expect(deps.onFinished).toHaveBeenCalledTimes(1);
-    expect(deps.announce).toHaveBeenCalledWith('Timer 1 — done');
+    expect(deps.announce).toHaveBeenCalledWith('Timer 1 is done');
     expect(stored()[0]?.doneAt).not.toBeNull();
     const row = el.querySelector('[data-embed-timer="t1"]');
     expect(row?.hasAttribute('data-done')).toBe(true);

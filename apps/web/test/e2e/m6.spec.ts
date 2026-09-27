@@ -84,7 +84,7 @@ test('cook mode: tap pauses the clock but keeps the lock; kitchen timer finishes
 
   await page.clock.fastForward(5 * 60_000 + 1000);
   await expect(card).toHaveAttribute('data-done', '');
-  await expect(toasts(page)).toContainText('Timer 1 — done');
+  await expect(toasts(page)).toContainText('Timer 1 is done');
   await expect(pillText(page)).toHaveText('Screen awake');
 });
 

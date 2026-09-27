@@ -55,9 +55,16 @@ export const ISLAND_PREFIXES = [
   'kiosk.',
 ] as const;
 
+// Rendered at build time by ToolIsland.astro, so the client never needs them.
+export const ISLAND_EXCLUDED_PREFIXES = ['pro.lapse.'] as const;
+
 export function islandCatalog(locale: TLocale): TCatalog {
   return Object.fromEntries(
-    Object.entries(catalogs[locale]).filter(([key]) => ISLAND_PREFIXES.some((prefix) => key.startsWith(prefix))),
+    Object.entries(catalogs[locale]).filter(
+      ([key]) =>
+        ISLAND_PREFIXES.some((prefix) => key.startsWith(prefix)) &&
+        !ISLAND_EXCLUDED_PREFIXES.some((prefix) => key.startsWith(prefix)),
+    ),
   );
 }
 
