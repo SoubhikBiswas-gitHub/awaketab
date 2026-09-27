@@ -9,6 +9,10 @@
     );
   }
 
+  .at-404 {
+    --at-pg-type-row: 500 1rem/1.5rem var(--at-font);
+  }
+
   .at-404 main.at-shell {
     display: flex;
     flex-direction: column;
@@ -110,8 +114,7 @@
   }
 
   .at-404-title {
-    font: var(--at-type-body);
-    font-weight: 500;
+    font: var(--at-pg-type-row);
   }
 
   .at-404-guides li > a:hover .at-404-title {

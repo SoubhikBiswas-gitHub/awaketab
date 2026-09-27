@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { applyLaunch, deviceLabel, heatLevels, launchEnded, telemetryOn } from '../../src/lib/pro-common';
@@ -170,5 +173,15 @@ describe('/pro plan helper in the page', () => {
     expect(root.querySelector<HTMLElement>('[data-q2="site"]')?.hidden).toBe(false);
     expect(root.querySelector<HTMLElement>('[data-q2="me"]')?.hidden).toBe(true);
     expect(root.querySelector('[data-res="embedfree"] [data-res-title]')?.id).toBe('res-h');
+  });
+});
+
+describe('/pro history preview', () => {
+  it('says in its visible caption that the grid is sample data, in every locale', () => {
+    for (const locale of ['en', 'es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi']) {
+      const file = path.resolve('apps/web/src/i18n', `${locale}.json`);
+      const strings = JSON.parse(readFileSync(file, 'utf8')) as Record<string, string>;
+      expect(strings['page.pro.hist.caption'], locale).toMatch(/^Sample/u);
+    }
   });
 });

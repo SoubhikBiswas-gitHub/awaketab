@@ -106,7 +106,7 @@ const ICONS = {
               <div role="row" class="at-pro-dev-head">
                 <div role="columnheader">{t('page.pro.manage.col.device')}</div>
                 <div role="columnheader" class="at-pro-dev-head-at">{t('page.pro.manage.col.activated')}</div>
-                <div role="columnheader"><span class="at-pro-sr">{t('page.pro.manage.remove')}</span></div>
+                <div role="columnheader"><span class="sr-only">{t('page.pro.manage.remove')}</span></div>
               </div>
             </div>
             <div role="rowgroup" class="at-pro-dev-body" data-devices></div>
@@ -131,13 +131,13 @@ const ICONS = {
             </div>
             <div role="cell" class="at-pro-dev-at"><span class="at-pro-dev-at-label">{m('activated')} </span><time data-device-at></time></div>
             <div role="cell" class="at-pro-dev-act">
-              <button type="button" class="at-pro-remove" data-device-remove>{t('page.pro.manage.remove')}</button>
+              <button type="button" class="at-button at-button-sm at-pro-remove" data-device-remove>{t('page.pro.manage.remove')}</button>
             </div>
             <div role="cell" class="at-pro-dev-confirm" data-device-confirm hidden>
               <span data-confirm-text></span>
               <span class="at-pro-confirm-btns">
-                <button type="button" class="at-pro-keep" data-keep>{m('keep')}</button>
-                <button type="button" class="at-pro-confirm-remove" data-confirm-remove>{m('removeDevice')}</button>
+                <button type="button" class="at-button at-button-sm" data-keep>{m('keep')}</button>
+                <button type="button" class="at-button at-button-sm at-pro-confirm-remove" data-confirm-remove>{m('removeDevice')}</button>
               </span>
             </div>
           </div>
