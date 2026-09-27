@@ -48,6 +48,7 @@
   "ext.popup.ends": "fin {time}",
   "ext.popup.heldSpan": "Maintenu {span}",
   "ext.popup.lengths": "Durée de la session",
+  "ext.popup.noAnswer": "AwakeTab didn't answer. Close this popup and open it again.",
   "ext.popup.noEnd": "Pas d’heure de fin. Arrêtez quand vous avez fini.",
   "ext.popup.notRunning": "À l’arrêt",
   "ext.popup.openTab": "Ouvrir AwakeTab dans un onglet",

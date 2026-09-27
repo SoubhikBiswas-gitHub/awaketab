@@ -48,6 +48,7 @@
   "ext.popup.ends": "{time} 结束",
   "ext.popup.heldSpan": "保持 {span}",
   "ext.popup.lengths": "会话时长",
+  "ext.popup.noAnswer": "AwakeTab didn't answer. Close this popup and open it again.",
   "ext.popup.noEnd": "没有结束时间。完成后请停止。",
   "ext.popup.notRunning": "未运行",
   "ext.popup.openTab": "在标签页中打开 AwakeTab",
