@@ -43,7 +43,7 @@ function mount(): HTMLElement {
           <button type="button" data-retry>Retry</button>
           <a href="/pro/manage" data-err-manage hidden>Manage devices</a>
         </div>
-        <div role="status" data-ok><p data-ok-key data-tpl="Key ending {tail}"></p><button type="button" data-reset>Use a different key</button></div>
+        <div role="status" data-ok><h2 tabindex="-1">Pro is active</h2><p data-ok-key data-tpl="Key ending {tail}"></p><button type="button" data-reset>Use a different key</button></div>
         <div data-ext-panel="" hidden>
           <input data-ext-key="" readonly />
           <button type="button" data-ext-copy>Copy</button>
@@ -63,7 +63,7 @@ function mount(): HTMLElement {
           <div data-co-tail-row hidden><dd data-co-tail data-tpl="ending {tail}"></dd></div>
         </dl>
         <button type="button" aria-expanded="false" data-co-show data-show="Show my key" data-hide="Hide my key">Show my key</button>
-        <div data-co-key-panel hidden><input data-co-key readonly /></div>
+        <div data-co-key-panel hidden><code data-co-key></code></div>
       </main>
     </div>`;
   const root = document.querySelector<HTMLElement>('[data-activate-root]');
@@ -294,6 +294,8 @@ describe('activate page', () => {
       expect(root.dataset.state).toBe('success');
       expect(root.querySelector('[data-ok-key]')?.textContent).toBe('Key ending 7F2Q');
       expect(location.pathname).toBe('/pro/activate');
+      // The form hides on success, so focus lands on the success heading instead of <body>.
+      expect(document.activeElement).toBe(root.querySelector('[data-ok] h2'));
     });
 
     it('sends a readable device label, never a user-agent slice (C5)', async () => {
@@ -337,7 +339,7 @@ describe('activate page', () => {
       show?.click();
       expect(show?.getAttribute('aria-expanded')).toBe('true');
       expect(root.querySelector<HTMLElement>('[data-co-key-panel]')?.hidden).toBe(false);
-      expect(root.querySelector<HTMLInputElement>('[data-co-key]')?.value).toBe('AWAKE-3C9D-81F0-7F2Q-ABCD');
+      expect(root.querySelector('[data-co-key]')?.textContent).toBe('AWAKE-3C9D-81F0-7F2Q-ABCD');
     });
 
     it('an unknown, expired or failed checkout shows the failed page', async () => {

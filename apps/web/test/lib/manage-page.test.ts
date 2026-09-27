@@ -27,13 +27,13 @@ const DAY_S = 86_400;
 function mount(withTemplate = true): HTMLElement {
   document.body.innerHTML = `
     <div data-manage-root data-state="loading">
-      <span data-meter-label data-tpl="{n} of 5 devices"></span>
+      <span data-meter-label data-tpl="{n} of 5 devices" data-loading="Checking your devices…"></span>
       <span data-meter-left data-tpl="{n} activations left" data-one="1 activation left" data-none="No activations left"></span>
       <div role="meter" data-meter-bar aria-valuenow="0"><span></span><span></span><span></span><span></span><span></span></div>
       <span data-lapse-fill data-tpl="Pro stays on until {date}" id="grace-title"></span>
       <span data-lapse-fill data-tpl="Yearly · ended {ended}" id="ended-kicker"></span>
-      <div role="status" data-manage-empty="" hidden>No licence on this device yet.</div>
-      <div role="alert" data-manage-offline="" hidden>You're offline <button type="button" data-manage-retry>Retry</button></div>
+      <div role="status" data-manage-empty="" tabindex="-1" hidden>No licence on this device yet.</div>
+      <div role="alert" data-manage-offline="" tabindex="-1" hidden>You're offline <button type="button" data-manage-retry>Retry</button></div>
       <div data-devices-wrap="" hidden>
         <div role="table"><div role="rowgroup" data-devices=""></div></div>
       </div>
@@ -147,6 +147,19 @@ describe('manage page', () => {
     const labels = rowsOf(root).map((el) => el.querySelector('[data-device-label]')?.textContent);
     expect(labels).toEqual(['Chrome · macOS']);
     expect(root.querySelector('[data-meter-left]')?.textContent).toBe('4 activations left');
+    // Focus moves to the row now in the removed row's place (the last one here), not to <body>.
+    expect(document.activeElement).toBe(rowsOf(root)[0]?.querySelector('[data-device-remove]'));
+  });
+
+  it('shows the loading state with the devices card while the list is on its way', () => {
+    store();
+    fetchRows.mockReturnValue(new Promise(() => undefined));
+    const root = mount();
+    bootManagePage(root, NOW);
+
+    expect(root.dataset.state).toBe('loading');
+    expect(root.querySelector('[data-meter-label]')?.textContent).toBe('Checking your devices…');
+    expect(root.querySelector<HTMLElement>('[data-devices-wrap]')?.hidden).toBe(false);
   });
 
   it('removing this device clears its stored licence and shows the empty state', async () => {
@@ -166,6 +179,7 @@ describe('manage page', () => {
     expect(localStorage.getItem('at.v1.license')).toBeNull();
     expect(root.dataset.state).toBe('empty');
     expect(root.querySelector<HTMLElement>('[data-devices-wrap]')?.hidden).toBe(true);
+    expect(document.activeElement).toBe(root.querySelector('[data-manage-empty]'));
   });
 
   it('hides the table when the last device is removed', async () => {
@@ -205,6 +219,11 @@ describe('manage page', () => {
     expect(root.querySelector<HTMLElement>('[data-manage-offline]')?.hidden).toBe(false);
     expect(root.querySelector<HTMLElement>('[data-devices-wrap]')?.hidden).toBe(true);
     expect(root.querySelector<HTMLElement>('[data-manage-empty]')?.hidden).toBe(true);
+
+    fetchRows.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+    root.querySelector<HTMLButtonElement>('[data-manage-retry]')?.click();
+    await flush();
+    expect(document.activeElement).toBe(root.querySelector('[data-manage-offline]'));
 
     fetchRows.mockResolvedValueOnce({ revoked: false, activations: ROWS });
     root.querySelector<HTMLButtonElement>('[data-manage-retry]')?.click();

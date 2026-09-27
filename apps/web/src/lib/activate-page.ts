@@ -94,17 +94,20 @@ export function bootActivatePage(root: HTMLElement): void {
     input?.setAttribute('aria-invalid', 'true');
   };
 
-  const showKey = (key: string) => {
+  // The form hides on success, so focus moves to the heading of what replaced it (board: success panel).
+  const showKey = (key: string, focus = false) => {
     clearError();
     if (extKey) extKey.value = key;
     if (extPanel) extPanel.hidden = false;
     setState('ext-success');
+    if (focus) extPanel?.querySelector<HTMLElement>('h2')?.focus();
   };
 
   const showSuccess = (key: string) => {
     const tail = root.querySelector<HTMLElement>('[data-ok-key]');
     if (tail) tail.textContent = fill(tail.dataset.tpl ?? '{tail}', { tail: keyTail(key) });
     setState('success');
+    root.querySelector<HTMLElement>('[data-ok] h2')?.focus();
   };
 
   const activate = async (key?: string, fromCheckout = false) => {
@@ -184,7 +187,7 @@ export function bootActivatePage(root: HTMLElement): void {
       return;
     }
     const key = normaliseLicenseKey(typed);
-    if (key) showKey(key);
+    if (key) showKey(key, true);
     else fail('invalid_key');
   });
 
@@ -253,7 +256,7 @@ async function checkoutSuccess(
 
   const showBtn = root.querySelector<HTMLButtonElement>('[data-co-show]');
   const panel = root.querySelector<HTMLElement>('[data-co-key-panel]');
-  const keyInput = root.querySelector<HTMLInputElement>('[data-co-key]');
+  const keyOut = root.querySelector<HTMLElement>('[data-co-key]');
   const missing = root.querySelector<HTMLElement>('[data-co-key-missing]');
   let key: string | null = null;
   showBtn?.addEventListener('click', () => {
@@ -265,7 +268,7 @@ async function checkoutSuccess(
   });
   const copy = root.querySelector<HTMLElement>('[data-co-copy]');
   copy?.addEventListener('click', () => {
-    if (keyInput?.value) void copyText(keyInput.value, copy);
+    if (key) void copyText(key, copy);
   });
 
   const [lookup, rows] = await Promise.all([
@@ -274,7 +277,7 @@ async function checkoutSuccess(
   ]);
   if (lookup.ok) {
     key = lookup.key;
-    if (keyInput) keyInput.value = key;
+    if (keyOut) keyOut.textContent = key;
     const tail = root.querySelector<HTMLElement>('[data-co-tail]');
     const tailRow = root.querySelector<HTMLElement>('[data-co-tail-row]');
     if (tail && tailRow) {

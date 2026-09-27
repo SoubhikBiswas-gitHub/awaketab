@@ -14,7 +14,15 @@ import { LOCALE_META } from '../../../web/src/i18n/locales';
 import type { IExtApi } from '../../src/api';
 import { keyCaps } from '../../src/format';
 import { LOCALES, resolveLocale } from '../../src/i18n';
-import { activate, deactivate, deviceLabel, LICENSE_ERROR_KEYS, licenseState, NO_LICENSE } from '../../src/license';
+import {
+  activate,
+  deactivate,
+  deviceLabel,
+  LICENSE_ERROR_KEYS,
+  licenseState,
+  NO_LICENSE,
+  osLabel,
+} from '../../src/license';
 import { applyTheme, loadPage, q, switchLocale, translateTree } from '../../src/page';
 import { minutesOf } from '../../src/schedules';
 import {
@@ -618,7 +626,9 @@ async function boot(): Promise<void> {
     const active = license.valid && record !== null;
     q(root, '[data-license-active]').hidden = !active;
     licenseForm.hidden = active;
-    q(root, '[data-license-plan]').textContent = active ? `${ctx.t('pro.title')} · ${record?.deviceLabel ?? ''}` : '';
+    // The API keeps the full device label; the row names this browser the way the ExtOptions board does.
+    const device = ctx.t('ext.license.device', { os: osLabel(navigator.userAgent) });
+    q(root, '[data-license-plan]').textContent = active ? `${ctx.t('pro.title')} · ${device}` : '';
   }
 
   licenseForm.addEventListener('submit', (event) => {
