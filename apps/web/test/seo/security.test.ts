@@ -110,7 +110,7 @@ describe('no secrets in client files', () => {
     // exception is a production-mode build made before N-03 (no production key yet, check-keys waived): it
     // trusts no key at all, so there is nothing to find.
     const pro = await readFile(path.join(dist, servedFile('/pro')), 'utf8');
-    const productionMode = !pro.includes('https://sandbox.polar.sh/');
+    const productionMode = !/https:\/\/sandbox(?:-api)?\.polar\.sh\//u.test(pro);
     if (!productionMode || Object.keys(PRODUCTION_LICENSE_PUBLIC_KEYS).length > 0) expect(publicJwks).toBeGreaterThan(0);
   });
 });

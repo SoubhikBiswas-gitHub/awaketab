@@ -147,7 +147,8 @@ describe('F-06 / N-03 · Polar server and licence keys in the bundle', () => {
     const pro = await page('/pro');
     const links = [...pro.matchAll(/href="(https:\/\/[^"]*polar\.sh[^"]*)"/gu)].map((m) => m[1] ?? '');
     expect(links.length).toBeGreaterThanOrEqual(2);
-    const sandbox = links.every((href) => href.startsWith('https://sandbox.polar.sh/'));
+    // Sandbox checkout links live on sandbox-api.polar.sh (real links, checkout.ts) or sandbox.polar.sh.
+    const sandbox = links.every((href) => /^https:\/\/sandbox(?:-api)?\.polar\.sh\//u.test(href));
     const production = links.every((href) => !href.includes('sandbox'));
     expect(sandbox || production, 'checkout links mix sandbox and production').toBe(true);
     return sandbox ? 'sandbox' : 'production';
