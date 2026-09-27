@@ -130,7 +130,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #5BE0E8;outline-offset:3p
         <sc-if value="{{isRunning}}" hint-placeholder-val="{{false}}">
           <div class="at-rise" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
             <button onClick="{{extend}}" aria-label="{{extendAria}}" style="height: 60px; padding: 0 16px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.ink}}">+15 min</button>
-            <button onClick="{{stop}}" style="height: 60px; padding: 0 16px; border-radius: 20px; border: 0; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
+            <button onClick="{{stop}}" style="height: 60px; padding: 0 16px; border-radius: 20px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
           </div>
         </sc-if>
       </div>
@@ -203,12 +203,12 @@ const C = 2 * Math.PI * 146;
 const DARK = {
   bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%, #070A11 100%)',
   surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE',
-  track: '#1A2336', tick: '#2A3752', primaryBg: '#EAF0F7', primaryInk: '#0A0E16', raised: AT_TOK.dark.raised, sunken: AT_TOK.dark.sunken
+  track: '#1A2336', tick: '#2A3752', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C', raised: AT_TOK.dark.raised, sunken: AT_TOK.dark.sunken
 };
 const LIGHT = {
   bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)',
   surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779',
-  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#0E1726', primaryInk: '#F4F7FB', raised: AT_TOK.light.raised, sunken: AT_TOK.light.sunken
+  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA', raised: AT_TOK.light.raised, sunken: AT_TOK.light.sunken
 };
 const GROUND = { dark: 'linear-gradient(180deg, #070A11 0px, #0A0E16 360px), #0A0E16', light: 'linear-gradient(180deg, #EEF3F8 0px, #F2F6FA 360px), #F2F6FA' };
 // Route /until/07-30. Nearby routes exist every 5 minutes (/until/HH-MM).

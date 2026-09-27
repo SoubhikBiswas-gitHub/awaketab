@@ -121,7 +121,7 @@ Every button sets an explicit padding on the scale (the UA default 1px 6px is a 
 ```html
 <button style="width: 100%; height: 60px; padding: 0 16px; border-radius: 20px; border: 0; background: {{p.lampFill}}; color: {{p.lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}">…</button>
 ```
-Stop: same geometry, `background: {{t.primaryBg}}; color: {{t.primaryInk}}` (ink fill), no glow.
+Stop: same geometry, `border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; color: {{t.primaryInk}}`, no glow. primaryBg = `raised` (dark #26324B / light #E3E9F1), primaryLine = `line-strong` (#33405C / #C3CDDA), primaryInk = `ink` (#EAF0F7 / #0E1726). It follows the theme; never an inverted ink slab (D-R20). 2b boards name the same values stopBg / stopLine / stopInk.
 Secondary: `height: 52px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600`.
 Small: `height: 44px; border-radius: 12px; padding: 0 16px;` + secondary colours. Chips: 44 r999.
 One lamp-filled action per screen.

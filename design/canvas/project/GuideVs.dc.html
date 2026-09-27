@@ -146,7 +146,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid 
               <sc-if value="{{canExtend}}" hint-placeholder-val="{{true}}">
                 <button onClick="{{extend}}" aria-label="Add 15 minutes" style="height: 60px; padding: 0 16px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.ink}}">+15 min</button>
               </sc-if>
-              <button onClick="{{stop}}" style="height: 60px; padding: 0 16px; border-radius: 20px; border: 0; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
+              <button onClick="{{stop}}" style="height: 60px; padding: 0 16px; border-radius: 20px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
             </div>
           </sc-if>
         </div>
@@ -355,11 +355,11 @@ const AT_TYPE = {
 };
 const DARK = Object.assign({
   surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE',
-  track: '#1A2336', tick: '#2A3752', primaryBg: '#EAF0F7', primaryInk: '#0A0E16'
+  track: '#1A2336', tick: '#2A3752', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C'
 }, { raised: AT_TOK.dark.raised, sunken: AT_TOK.dark.sunken });
 const LIGHT = Object.assign({
   surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779',
-  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#0E1726', primaryInk: '#F2F6FA'
+  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA'
 }, { raised: AT_TOK.light.raised, sunken: AT_TOK.light.sunken });
 // Long-page ground: the same night lift as the tool, anchored to the top.
 const PAGE = {

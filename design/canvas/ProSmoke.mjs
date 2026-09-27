@@ -1,7 +1,7 @@
 // Smoke test for the Pro boards: every prop combination resolves every {{hole}}, tags balance,
 // handlers work (lamp picker, message, schedule, heatmap, FAQ, activate flow, device removal).
 // Then writes the wrapper boards with sizes taken from each component's own W/H.
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, existsSync } from 'node:fs';
 import { dir, load, missing, balance } from './ProLib.mjs';
 
 let bad = 0, combos = 0;
@@ -151,7 +151,7 @@ wrap('ProActivatePhone.dc.html', 'ProActivate', 'Activate · phone · dark · su
 wrap('ProActivateDesk.dc.html', 'ProActivate', 'Activate · desktop · light · error', { layout: 'desktop', theme: 'light', state: 'error' });
 wrap('ProManageDesk.dc.html', 'ProManage', 'Manage devices · desktop · dark', { layout: 'desktop', theme: 'dark' });
 wrap('ProManagePhoneEmpty.dc.html', 'ProManage', 'Manage devices · phone · light · empty', { layout: 'phone', theme: 'light', empty: 'true' });
-for (const f of Object.keys(boards)) { const off = balance(f); if (off.length) { bad++; console.log('FAIL wrapper', f, off); } }
+for (const f of Object.keys(boards).filter((f) => existsSync(new URL(f, dir)))) { /* D-R18 removed some wrappers */ const off = balance(f); if (off.length) { bad++; console.log('FAIL wrapper', f, off); } }
 const base = {
   'Pro.dc.html': { w: 390, h: size('Pro.dc.html', {})[1], title: '▶ Pro · play me · follows your system', is_interactive: true },
   'ProActivate.dc.html': { w: 390, h: size('ProActivate.dc.html', {})[1], title: '▶ Activate · idle · try the flow', is_interactive: true },

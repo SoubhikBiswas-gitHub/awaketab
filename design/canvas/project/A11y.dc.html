@@ -255,7 +255,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #5BE0
         <sc-if value="{{dockRun}}" hint-placeholder-val="{{false}}">
           <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
             <button style="height: 60px; padding: 0 16px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.ink}}">+15 min</button>
-            <button style="height: 60px; padding: 0 16px; border-radius: 20px; border: {{ctaBorder}}; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
+            <button style="height: 60px; padding: 0 16px; border-radius: 20px; border: {{stopBorder}}; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
           </div>
         </sc-if>
 
@@ -423,12 +423,12 @@ const AT_TYPE = {
 const DARK = {
   bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%, ' + AT_TOK.dark.groundEnd + ' 100%)', ground: '#0A0E16',
   surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE',
-  track: '#1A2336', tick: '#2A3752', primaryBg: '#EAF0F7', primaryInk: '#0A0E16', raised: AT_TOK.dark.raised, sunken: AT_TOK.dark.sunken
+  track: '#1A2336', tick: '#2A3752', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C', raised: AT_TOK.dark.raised, sunken: AT_TOK.dark.sunken
 };
 const LIGHT = {
   bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, ' + AT_TOK.light.groundEnd + ' 100%)', ground: '#F2F6FA',
   surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779',
-  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#0E1726', primaryInk: '#F2F6FA', raised: AT_TOK.light.raised, sunken: AT_TOK.light.sunken
+  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA', raised: AT_TOK.light.raised, sunken: AT_TOK.light.sunken
 };
 // Windows High Contrast system colours (classic High Contrast Black / White schemes). Under forced colours the system
 // replaces every author colour, so these are intentionally off-token (exempt from the --at-* rule, DESIGN.md §11.2).
@@ -531,7 +531,7 @@ class Component extends DCLogic {
 
     // Screen tokens: normal theme, or the forced-colours simulation.
     const t = forced
-      ? { bg: hc.Canvas, ground: hc.Canvas, surface: hc.Canvas, line: hc.CanvasText, line2: hc.CanvasText, ink: hc.CanvasText, ink2: hc.CanvasText, muted: hc.CanvasText, track: hc.CanvasText, tick: 'transparent', primaryBg: hc.ButtonFace, primaryInk: hc.ButtonText, raised: hc.Highlight, sunken: hc.Canvas }
+      ? { bg: hc.Canvas, ground: hc.Canvas, surface: hc.Canvas, line: hc.CanvasText, line2: hc.CanvasText, ink: hc.CanvasText, ink2: hc.CanvasText, muted: hc.CanvasText, track: hc.CanvasText, tick: 'transparent', primaryBg: hc.ButtonFace, primaryInk: hc.ButtonText, primaryLine: hc.ButtonText, raised: hc.Highlight, sunken: hc.Canvas }
       : r0;
     const lamp = forced ? hc.CanvasText : lampN;
     const lampInk = dark ? '#04232A' : '#FFFFFF';
@@ -737,7 +737,7 @@ class Component extends DCLogic {
       dockSetup: smode === 'ready' || ended, dockRun: live, dockAsk: smode === 'timesup',
       ctaLabel: ended ? 'Again · until 10:30 PM' : 'Keep awake · 30 min',
       ctaBg: forced ? hc.ButtonFace : lampN, ctaInk: forced ? hc.ButtonText : lampInk,
-      ctaBorder: forced ? '1px solid ' + hc.ButtonText : '0', ctaShadow: forced ? 'none' : '0 10px 30px -8px ' + this.rgba(lampN, 0.55),
+      ctaBorder: forced ? '1px solid ' + hc.ButtonText : '0', stopBorder: '1px solid ' + (forced ? hc.ButtonText : t.primaryLine), ctaShadow: forced ? 'none' : '0 10px 30px -8px ' + this.rgba(lampN, 0.55),
       lampSoft: forced ? hc.Canvas : this.rgba(lampN, 0.14), lampLine: forced ? hc.CanvasText : this.rgba(lampN, 0.45),
       fold: text200 ? { on: true, y: '844px', label: 'First screen ends here (844 px)' } : reflow ? { on: true, y: '256px', label: 'Viewport at 400% zoom: 320 × 256' } : { on: false, y: '0px', label: '' },
       railKicker: rail[0], railTitle: rail[1], railLead: rail[2], notes: (text200 ? ['Violet line: the first screen ends at 844 px; the rest scrolls.'] : reflow ? ['Violet line: the 320 × 256 viewport at 400% zoom; the rest scrolls vertically only.'] : []).concat(rail[3]).map((text) => ({ text })),

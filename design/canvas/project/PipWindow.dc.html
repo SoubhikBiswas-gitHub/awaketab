@@ -53,7 +53,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #5BE0E8;outline-offset:3p
       <div role="timer" aria-label="{{timerAria}}" style="font-family: Geist, system-ui, sans-serif; font-weight: 300; font-size: {{digitSize}}; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{t.ink}}">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
       <div style="display: flex; gap: 8px; flex-shrink: 0">
         <button onClick="{{extend}}" aria-label="Add 15 minutes" style="width: 52px; height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">+15</button>
-        <button onClick="{{stop}}" style="width: 60px; height: 44px; padding: 0 12px; border-radius: 12px; border: 0; background: {{t.primaryBg}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
+        <button onClick="{{stop}}" style="width: 60px; height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
       </div>
     </div>
   </sc-if>
@@ -80,11 +80,11 @@ const AT_TYPE = {
 };
 const DARK = {
   bg: 'radial-gradient(120% 90% at 30% 20%, #13203A 0%, #0A0E16 70%)',
-  surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', primaryBg: '#EAF0F7', primaryInk: '#0A0E16'
+  surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C'
 };
 const LIGHT = {
   bg: 'radial-gradient(120% 90% at 30% 20%, #FFFFFF 0%, #F2F6FA 70%)',
-  surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', primaryBg: '#0E1726', primaryInk: '#F4F7FB'
+  surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA'
 };
 const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
 const GLYPH = { awake: DOT, ready: DOT, paused: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z', fallback: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z' };

@@ -121,7 +121,7 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 - **Header:** logo lockup (ring + lamp bead) · desktop nav (Use cases, Devices, Extension, Pro) · theme switch (Light · Dark · Auto, sliding indicator, 44 px segments) · Stats (desktop) · Settings.
 - **Segmented bars** (face tabs, presets, theme): surface pill with one sliding indicator (`translateX(index × 100%)`, 600 ms ease-out), selected text ink 600, others ink-2 500.
 - **Status pill:** see §11.4 pill sizes; tone 12 % fill + 38 % border, glyph 12 px, `<output aria-live="polite">`.
-- **Primary CTA:** lamp fill, on-accent text, logo glyph, soft lamp shadow. **Stop:** ink fill. **Secondary:** surface + strong line.
+- **Primary CTA:** lamp fill, on-accent text, logo glyph, soft lamp shadow. **Stop** (and every strong neutral action: Retry, Stop for today, Send, Install, Exit): `raised` fill + 1 px `line-strong` + `ink` text, so it follows the theme (dark button on dark, light button on light; decision D-R20). **Secondary:** surface + strong line.
 - **Inline panels, not modals:** Until a time (4 half-hour slots with `today`/`tomorrow` sub-labels) and Custom (± 5 min stepper) replace the preset bar in place.
 - **Blocked card:** tinted bad 8% with 32% border, title + one-paragraph fix; actions become "Use video fallback" · "Try again".
 - **Settings sheet:** bottom sheet on phone, side sheet on desktop; sections Appearance (theme, lamp colour, clock face), Time (12/24 h, show seconds), Behaviour (existing settings from docs/05 §3.18).
@@ -217,7 +217,7 @@ TV / kiosk scale (≥ 1920 wide): meta 32, date 40, message 96–128, clock digi
 - A device or window mock (popup inside a browser, widget inside a host page) is not a nested card; explanatory cards inside cards are.
 
 ### 11.7 Composition rules
-- One primary action per screen (lamp fill). Stop is ink fill. Everything else secondary or quiet.
+- One primary action per screen (lamp fill). Stop is the strong neutral: `raised` fill, 1 px `line-strong`, `ink` text; it follows the theme and never inverts (D-R20). Everything else secondary or quiet.
 - Align to a 4 px baseline; left edges of text in a column share one x.
 - Consistent order in every product: status → time → primary control → options.
 - Every page ends with the same footer (links, honest line "No ads on the awake screen, now or later."; wording depends on owner decision O-04 about the sponsor card).
