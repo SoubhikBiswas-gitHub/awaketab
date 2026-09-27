@@ -1,14 +1,3 @@
-/*
- * AwakeTab Pro pages (milestone B7): /pro, /pro/activate (incl. the checkout-return states) and /pro/manage (incl.
- * the renewal-grace and lapsed states). Canvas boards Pro, ProActivate, ProManage and Sys (checkout, prolapsed) in
- * design/canvas/project/; DESIGN.md §2, §6, §11, §12. Markup: src/pages/pro*.astro and src/components/pro/*.
- * Behaviour: src/lib/pro-page.ts, activate-page.ts, manage-page.ts.
- *
- * Like shell.css, every size is a §12 token by name (stylelint enforces it). Type roles and measures the boards
- * use that §12 has no token for yet are declared once below as --at-type-pro-* / --at-pro-*, page-scoped.
- * Shell primitives (Button, tag, chip, card, seg, input) are reused; the few Pro-only variants are modifier classes
- * under .at-pro, never edits to the shared classes.
- */
 @layer properties, theme, base, components, utilities;
 
 /* stylelint-disable no-descending-specificity -- unrelated parts share element selectors (svg, span); every rule is
@@ -27,8 +16,6 @@
   --at-type-pro-key: 400 0.875rem/1.25rem var(--at-font-mono);
   --at-type-pro-key-md: 400 0.9375rem/1.375rem var(--at-font-mono);
   --at-type-pro-key-lg: 400 1rem/1.5rem var(--at-font-mono);
-
-  /* Measures and fixed art sizes from the boards. */
   --at-pro-side: 400px;
   --at-pro-aside: 360px;
   --at-pro-ring: 224px;
@@ -57,8 +44,6 @@
   --at-pro-co-aura: 800px;
 }
 
-/* Page-scoped sizes per breakpoint (unlayered, like the base values above). The 12-week grid needs 14 px cells
-   below 360 px so it never pushes a 320 px page sideways. */
 @media (width < 360px) {
   :root {
     --at-pro-cell: 14px;
@@ -83,7 +68,6 @@
   }
 }
 
-/* ── Lamp preview (/pro): the page follows the picked lamp; nothing is saved (board Pro, O-01) ─────────────── */
 :root:has(.at-pro-page) {
   --at-pro-aqua: var(--at-lamp-aqua-light);
   --at-pro-violet: var(--at-lamp-violet-light);
@@ -121,7 +105,6 @@
 }
 
 @layer components {
-  /* ── Page frame ── */
   .at-pro {
     --at-pro-aura-a: 10%;
 
@@ -133,7 +116,6 @@
     --at-pro-aura-a: 16%;
   }
 
-  /* The lamp aura behind the top of the page (boards: .at-aura). z-index -1 keeps it under every in-flow box. */
   .at-pro-aura {
     position: absolute;
     z-index: -1;
@@ -184,7 +166,6 @@
     border: 0;
   }
 
-  /* ── Type roles ── */
   .at-pro-kicker {
     color: var(--at-muted);
     font: var(--at-type-kicker);
@@ -262,7 +243,6 @@
     max-inline-size: var(--at-pro-narrow);
   }
 
-  /* Underlined text link (the boards' secondary links): 44 tall, ui semibold, line-strong underline. */
   .at-pro-link {
     display: inline-flex;
     align-items: center;
@@ -280,13 +260,11 @@
     font-weight: 400;
   }
 
-  /* Full-width actions inside cards (the boards' block CTAs). */
   .at-pro .at-pro-wide {
     display: flex;
     inline-size: 100%;
   }
 
-  /* Tags: the lamp tag carries a 45 % lamp line and 12 % fill; the plain tag reads in ink. */
   .at-pro .at-pro-tag-lamp {
     border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
     background: color-mix(in srgb, var(--at-accent) 12%, transparent);
@@ -312,13 +290,11 @@
     stroke-width: 2;
   }
 
-  /* Launch price switch (O-52): pro-common.ts sets data-launch; one side of each pair shows. */
   .at-pro[data-launch="on"] [data-after-only],
   .at-pro[data-launch="off"] [data-launch-only] {
     display: none;
   }
 
-  /* ── /pro hero ── */
   .at-pro-hero {
     display: flex;
     flex-direction: column;
@@ -490,7 +466,6 @@
     letter-spacing: -0.02em;
   }
 
-  /* One name and one tag show, picked by the checked lamp radio. */
   .at-pro-page [data-for-lamp] {
     display: none;
   }
@@ -578,7 +553,6 @@
     text-wrap: pretty;
   }
 
-  /* ── Plan helper ── */
   .at-pro-helper {
     display: flex;
     flex-direction: column;
@@ -665,7 +639,6 @@
     color: var(--at-ink-2);
   }
 
-  /* ── The evening: moments with a 1 px rail from 600 ── */
   .at-pro-evening {
     display: flex;
     flex-direction: column;
@@ -729,7 +702,6 @@
     background: var(--at-sunken);
   }
 
-  /* Message preview */
   .at-pro-screen {
     position: relative;
     display: flex;
@@ -827,7 +799,6 @@
     background: var(--at-surface);
   }
 
-  /* History preview */
   .at-pro .at-pro-seg .at-seg-item {
     font: var(--at-type-small);
     font-weight: 500;
@@ -838,7 +809,6 @@
     font-weight: 600;
   }
 
-  /* shell.css moves the indicator with a nested :has(), which browsers reject; the radio ids do it here. */
   .at-pro .at-pro-seg:has(#pro-heat-pro:checked) {
     --at-seg-i: 1;
   }
@@ -941,7 +911,6 @@
     display: inline-flex;
   }
 
-  /* Schedule preview */
   .at-pro-sched {
     gap: var(--at-gap-item);
   }
@@ -955,7 +924,6 @@
     font-weight: 600;
   }
 
-  /* Seven 44 px days fit the 390 board exactly; narrower phones (320) shrink them, never the page. */
   .at-pro-days {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, var(--at-h-control)));
@@ -1005,7 +973,6 @@
     font-weight: 400;
   }
 
-  /* ── Plans ── */
   .at-pro-plans {
     display: flex;
     flex-direction: column;
@@ -1102,7 +1069,6 @@
     font-weight: 400;
   }
 
-  /* ── What stays free · Questions ── */
   .at-pro-duo {
     display: flex;
     flex-direction: column;
@@ -1198,7 +1164,6 @@
     text-wrap: pretty;
   }
 
-  /* ── For your website or your screens ── */
   .at-pro-biz {
     display: flex;
     flex-direction: column;
@@ -1243,7 +1208,6 @@
     font-weight: 400;
   }
 
-  /* ── Tablet (600) ── */
   @media (width >= 600px) {
     .at-pro-main {
       padding-block-start: calc(var(--at-s-10) - var(--at-s-4));
@@ -1307,7 +1271,6 @@
     }
   }
 
-  /* ── Desktop (1024) ── */
   @media (width >= 1024px) {
     .at-pro-main {
       padding-block-start: calc(var(--at-s-12) - var(--at-s-4));
@@ -1369,13 +1332,10 @@
   }
 }
 
-/* ════ /pro/activate: the activation form (board ProActivate) and the checkout return (board Sys, checkout) ════ */
 @layer components {
   .at-pro-act {
     --at-pro-aura-a: 6%;
     --at-pro-aura-c: var(--at-accent);
-
-    /* Board: 70 % of the page, header included; a percentage of the page box never adds scroll height. */
     --at-pro-aura-h: 75%;
   }
 
@@ -1401,7 +1361,6 @@
     background: radial-gradient(45% 45% at 50% 30%, color-mix(in srgb, var(--at-pro-aura-c) var(--at-pro-aura-a), transparent) 0%, transparent 70%);
   }
 
-  /* The checkout return: a wider, softer light from the upper left; red-tinted when the payment failed. */
   .at-pro-act:is([data-state="checkout-success"], [data-state="cancelled"], [data-state="failed"], [data-state="help"]) {
     --at-pro-aura-a: 8%;
     --at-pro-aura-h: 600px;
@@ -1423,7 +1382,6 @@
     background: radial-gradient(40% 40% at 40% 40%, color-mix(in srgb, var(--at-pro-aura-c) var(--at-pro-aura-a), transparent) 0%, transparent 70%);
   }
 
-  /* ── Activation form layout ── */
   .at-pro-act-main {
     display: flex;
     flex-direction: column;
@@ -1547,7 +1505,6 @@
     font-weight: 400;
   }
 
-  /* Error card: tone 8 % fill, 32 % line; amber while the purchase syncs or the connection is down. */
   .at-pro-err {
     --at-pro-tone: var(--at-bad);
 
@@ -1612,7 +1569,6 @@
     padding-inline: var(--at-s-6);
   }
 
-  /* Success on this device */
   .at-pro-ok {
     display: none;
     flex-direction: column;
@@ -1730,7 +1686,6 @@
     cursor: pointer;
   }
 
-  /* Key for the extension */
   .at-pro-ext {
     display: flex;
     flex-direction: column;
@@ -1795,7 +1750,6 @@
     display: inline;
   }
 
-  /* If activation fails */
   .at-pro-act-aside {
     display: flex;
     flex-direction: column;
@@ -1849,7 +1803,6 @@
     padding-block-start: var(--at-s-1);
   }
 
-  /* ── Checkout return layout ── */
   .at-pro-co {
     padding-block-start: calc(var(--at-s-6) - var(--at-s-4));
   }
@@ -2196,8 +2149,6 @@
   }
 }
 
-/* ════ /pro/manage: devices (board ProManage) and the renewal-grace / lapsed view (board Sys, prolapsed) ════ */
-
 @layer components {
   .at-pro-man {
     --at-pro-aura-a: 10%;
@@ -2236,7 +2187,6 @@
     max-inline-size: none;
   }
 
-  /* Loading shows the heading only; each state brings its own parts. */
   .at-pro-meter-wrap,
   .at-pro-lapse,
   .at-pro-lapse-aside,
@@ -2278,7 +2228,6 @@
     display: none;
   }
 
-  /* Meter: five slots, lit in the lamp. */
   .at-pro-meter-wrap {
     flex-direction: column;
     gap: var(--at-gap-tight);
@@ -2313,7 +2262,6 @@
     box-shadow: 0 0 8px color-mix(in srgb, var(--at-accent) 45%, transparent);
   }
 
-  /* Device list: one role=table; rows are a two-line list on phones and a three-column table from 600. */
   .at-pro-devices {
     padding: 0;
     overflow: hidden;
@@ -2424,7 +2372,6 @@
     cursor: progress;
   }
 
-  /* Inline confirm: the row turns bad-tinted and asks; nothing is removed until "Remove device". */
   .at-pro-dev[data-confirming] {
     display: block;
     background: color-mix(in srgb, var(--at-bad) 7%, transparent);
@@ -2453,7 +2400,6 @@
     gap: var(--at-gap-tight);
   }
 
-  /* Empty */
   .at-pro-empty {
     display: flex;
     flex-direction: column;
@@ -2512,7 +2458,6 @@
     align-self: flex-start;
   }
 
-  /* Renewal grace (amber line) and lapsed (neutral) */
   .at-pro-lapse {
     --at-pro-tone: var(--at-warn);
 
@@ -2741,7 +2686,6 @@
       flex-shrink: 0;
     }
 
-    /* Grace and lapsed (Sys board): no icons, a 140 px remove column, 8 px cell padding, no shadow. */
     .at-pro-man:is([data-state="grace"], [data-state="lapsed"]) :is(.at-pro-dev-head, .at-pro-dev) {
       grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) var(--at-pro-lapse-remove-col);
     }

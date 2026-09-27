@@ -15,7 +15,6 @@ function cellLabel(cell: IHeatCell, fmt: Intl.DateTimeFormat): string {
   return t('stats.heatmap.label', { date: fmt.format(cell.date), minutes: cell.minutes });
 }
 
-/** Renders the 7 × 12 heatmap table body. Intensity is carried by colour *and* a dot count (docs/05 §3.17). */
 export function renderHeatmap(table: HTMLTableElement, days: Record<string, number>, opts: { history: boolean; now?: number }): void {
   const locale = document.documentElement.lang || 'en';
   const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short' });

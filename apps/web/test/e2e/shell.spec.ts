@@ -2,12 +2,6 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { installFakeWakeLock } from './fake-wakelock';
 
-/*
- * Shared shell (milestone B2; DESIGN.md §6, §9, §11.4, §11.6, §11.7; PRIMITIVES.md P-HEADER, P-THEME, P-FOOTER,
- * P-LANG, P-PILL): the one header and footer on every product surface, the theme switch run by the inline boot
- * script, the language switcher's panel / sheet and its keyboard contract, and the status pill primitive.
- */
-
 const SURFACES = ['/', '/for/cooking', '/about', '/pro', '/pro/activate', '/es/'] as const;
 
 async function axe(page: Page): Promise<void> {
@@ -22,8 +16,6 @@ const focused = (page: Page) =>
     return el ? `${el.tagName.toLowerCase()}${el.getAttribute('hreflang') ? `[${el.getAttribute('hreflang') ?? ''}]` : ''}#${el.id}` : '';
   });
 
-/** Opens the footer language switcher once the page below the fold has settled (content-visibility sections
- *  take their real height when scrolled into view, which would move the trigger between press and release). */
 async function openLang(page: Page): Promise<void> {
   await page.evaluate(() => {
     window.scrollTo(0, document.documentElement.scrollHeight);

@@ -1,6 +1,4 @@
-/**
- * @vitest-environment node
- */
+// @vitest-environment node
 import { describe, expect, it } from 'vitest';
 import { createWakeLock, isWakeLockSupported } from '../src/index.js';
 

@@ -26,7 +26,6 @@ export interface IIndexedPage {
   entry: CollectionEntry<TContentKind>;
 }
 
-/** Entry ids are `{locale}/{enSlug}` (files live at src/content/{kind}/{locale}/{enSlug}.md). */
 export function splitEntryId(id: string): { locale: TLocale; enSlug: string } {
   const [first = '', ...rest] = id.split('/');
   if (!isLocale(first) || rest.length !== 1 || !rest[0]) throw new Error(`Unexpected content entry id: ${id}`);
@@ -35,7 +34,6 @@ export function splitEntryId(id: string): { locale: TLocale; enSlug: string } {
 
 let cached: Promise<IIndexedPage[]> | undefined;
 
-/** Every content page in every locale, read once per build. */
 export function contentIndex(): Promise<IIndexedPage[]> {
   cached ??= (async () => {
     const pages: IIndexedPage[] = [];
@@ -93,7 +91,6 @@ export function pageAlternates(
   );
 }
 
-/** Locale-switcher targets: every existing version of the page (reviewed or not), by locale. */
 export function pageTranslations(
   index: readonly IIndexedPage[],
   kind: TContentKind,

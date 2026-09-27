@@ -22,7 +22,6 @@ async function htmlFiles(dir) {
   return out;
 }
 
-/** Returns the rewritten HTML, or null when the page has no tool entry (or no island root to carry it). */
 export function deferMain(html) {
   const entry = ENTRY.exec(html);
   if (!entry || !ROOT.test(html)) return null;

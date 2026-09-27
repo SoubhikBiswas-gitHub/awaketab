@@ -1,8 +1,3 @@
-/**
- * /library "Use it" tabs (B6, canvas board PageLibrary): a tablist over code panels (ARIA tabs pattern: one Tab stop,
- * arrow keys, Home and End move and select), the matching note beside it, and a Copy button per panel that
- * confirms in place for 2 s.
- */
 export function bindCodeTabs(root: HTMLElement, win: Window = window): void {
   const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
   const select = (tab: HTMLButtonElement, focus = false) => {

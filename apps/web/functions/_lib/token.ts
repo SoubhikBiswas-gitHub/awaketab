@@ -4,7 +4,6 @@ import { PLAN_FEATURES, type ILicenseRecord, type TPlanId } from './license';
 
 const DAY_S = 86_400;
 
-/** Token `exp` per docs/09 §2.4 (seconds). `periodEnd` only applies to subscription plans. */
 export function tokenExp(plan: TPlanId, periodEnd: number | null, nowSec: number): number {
   if (plan === 'pro_yearly' || plan === 'biz_embed_site_yearly') {
     return (periodEnd ?? nowSec + 30 * DAY_S) + 7 * DAY_S;
@@ -13,10 +12,6 @@ export function tokenExp(plan: TPlanId, periodEnd: number | null, nowSec: number
   return nowSec + 365 * DAY_S;
 }
 
-/**
- * Subscription plans carry `periodEnd + 7 d` in the record; every other plan is a rolling
- * window from "now", so a re-minted token must not reuse the `exp` stored at first activation.
- */
 export function currentExp(record: ILicenseRecord, nowSec: number): number {
   if (record.plan === 'pro_yearly' || record.plan === 'biz_embed_site_yearly') return record.exp;
   return tokenExp(record.plan, null, nowSec);

@@ -46,25 +46,18 @@ import { createTelemetry } from './telemetry';
 
 // Alarm names, cadences and windows of the extension worker (docs/00 §13.9).
 export const ALARMS = { tick: 'at.tick', end: 'at.end', license: 'at.license' } as const;
-/** docs/10 §4: MV3 alarms tick at most every 30 s. */
 export const TICK_PERIOD_MIN = 0.5;
-/** docs/09 §2.6: re-validation is checked on start-up and hourly. */
 export const LICENSE_PERIOD_MIN = 60;
-/** The popup's extend prompt stays offered this long after a session completes (web ExtendPrompt: 5 min). */
 export const EXTEND_WINDOW_MS = 5 * 60_000;
-/** A session that ended while the worker slept is only announced if it ended this recently. */
 export const STALE_NOTIFY_MS = 5 * 60_000;
 export const SYNC_DEBOUNCE_MS = 2_000;
-/** Same tag as the web's end notification (docs/00 §13.8). */
 export const NOTIFICATION_ID = 'at-end';
-/** Opened once, on first install (O-25). */
 export const WELCOME_PAGE = 'welcome.html';
 
 type TFetch = (input: string, init?: RequestInit) => Promise<Response>;
 
 export interface IControllerOptions {
   api: IExtApi;
-  /** Background string subsets per locale (virtual:at-catalogs-bg in the build). */
   catalogs: Partial<Record<TLocale, TCatalog>>;
   now?: () => number;
   fetchFn?: TFetch;
@@ -210,7 +203,6 @@ export function createController(opts: IControllerOptions): IController {
     }
   }
 
-  /** A finite session whose end passed while the worker slept (or Chrome was closed). */
   async function finalizeExpired(stored: ISession): Promise<void> {
     const endedAt = stored.endsAt ?? now();
     const done: ISession = { ...stored, status: 'completed', endReason: 'completed', endedAt };
@@ -355,11 +347,6 @@ export function createController(opts: IControllerOptions): IController {
     await startPlan({ type: 'duration', ms }, 'custom', levelOf(last, ext().level), 'user');
   }
 
-  /**
-   * First install opens the welcome page and records the version (at.v1.meta.lastSeenVersion), so the popup's
-   * "New in" chip appears only after a later update. An update from a build that never recorded a version
-   * records the previous one, so the chip shows once for it too.
-   */
   async function installed(reason: string, previousVersion: string | undefined): Promise<void> {
     const version = api.runtime.getManifest().version;
     const meta = storage.meta();

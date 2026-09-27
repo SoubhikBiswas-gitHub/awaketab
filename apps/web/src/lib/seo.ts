@@ -14,7 +14,6 @@ export interface IArticleSchemaInput {
   locale: TLocale;
   published: string;
   updated?: string;
-  /** Absolute OG image URL (docs/06 §7.2). */
   image?: string;
   breadcrumbs: Array<{ name: string; url: string }>;
 }
@@ -125,7 +124,6 @@ export interface ISoftwareSchemaInput {
   breadcrumbs: Array<{ name: string; url: string }>;
 }
 
-/** Product pages (docs/06 §288): SoftwareApplication with a free offer, never an aggregateRating. */
 export function softwareSchema(input: ISoftwareSchemaInput): TSchemaNode {
   return {
     '@context': 'https://schema.org',

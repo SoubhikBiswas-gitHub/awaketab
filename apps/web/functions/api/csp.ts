@@ -9,11 +9,6 @@ interface ICspReport {
   body?: { documentURL?: unknown };
 }
 
-/**
- * `_headers` sends `report-to csp` (Reporting API: `application/reports+json`, an array of
- * `{ type, url, body: { documentURL } }`); older engines POST `{ "csp-report": { "document-uri" } }`.
- * Only the pathname is kept, matching the `blob1` contract in docs/08 §5.
- */
 function reportPath(parsed: unknown): string {
   const first: unknown = Array.isArray(parsed) ? parsed[0] : parsed;
   if (!first || typeof first !== 'object') return '';
@@ -27,10 +22,6 @@ function reportPath(parsed: unknown): string {
   }
 }
 
-/**
- * Same guards as `/api/e` (docs/09 §2.10): the salted-IP-hash limiter (`rl:csp:{hash}:{bucket}`, no IP stored)
- * answers 429 + `Retry-After`, and a body over `MAX_BODY_BYTES` (8 KB) answers 413 without being read in full.
- */
 export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   const ip = await clientIp(context.request);
   if (!(await rateLimit(context.env, 'csp', ip))) return rateLimited();

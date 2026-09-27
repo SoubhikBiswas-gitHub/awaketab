@@ -2,7 +2,6 @@ import { activateLicense, deviceId, fetchActivations } from './license';
 import { lookupCheckoutKey, normaliseLicenseKey } from './license-lookup';
 import { applyLaunch, deviceLabel, fill, trackPro } from './pro-common';
 
-/** API error code → the aside row (activate.astro) that carries its title, tone and copy (docs/09 §2.10). */
 const ERR_ROW: Record<string, string> = {
   invalid_key: 'invalid_key',
   activation_limit: 'activation_limit',
@@ -15,16 +14,9 @@ const ERR_ROW: Record<string, string> = {
   bad_request: 'invalid_key',
 };
 
-/** The page states (`data-state` on the root). The last four use the checkout-return layout (Sys board). */
 export type TActivateState = 'idle' | 'checking' | 'error' | 'success' | 'ext-success' | 'checkout-success' | 'cancelled' | 'failed' | 'help';
 const CHECKOUT_STATES: readonly TActivateState[] = ['checkout-success', 'cancelled', 'failed', 'help'];
 
-/**
- * F-08 (docs/09 §2.3b): Polar creates the order, benefit grant and licence key a few seconds after the checkout
- * succeeds, so the auto-fill that runs right after the redirect is often answered `polar_unavailable` ("still
- * syncing", HTTP 503). It re-asks after each of these waits: about 21 s and 4 requests in all, well inside the 10
- * a minute that `/api/license/*` allows.
- */
 export const CHECKOUT_RETRY_MS: readonly number[] = [3000, 6000, 12000];
 
 async function whileSyncing<T extends { ok: boolean; error?: string }>(attempt: () => Promise<T>, onWait: (code: string) => void): Promise<T> {
@@ -38,17 +30,6 @@ async function whileSyncing<T extends { ok: boolean; error?: string }>(attempt: 
   return result;
 }
 
-/**
- * `/pro/activate` (docs/09 §2.3). Without `ext=1` the page activates THIS browser as a device and then says so on
- * the page ("Pro is active", O-26), never redirecting. With `ext=1` (the hand-off from AwakeTab for Chrome, docs/10
- * §5) it never activates anything: a pasted key is checked for shape client-side and a `checkout_id` is resolved
- * through the non-activating lookup (docs/09 §2.3a), then the copy panel shows the key so the extension performs
- * the single activation the purchase spends.
- *
- * Checkout return (O-26): `checkout_id` without `ext=1` auto-activates and lands on the checkout success page; an
- * unknown, expired or failed checkout (`invalid_key`) shows the failed page, and a purchase still syncing after
- * every retry shows the help page. `?checkout=cancelled|failed|help` opens those pages directly.
- */
 export function bootActivatePage(root: HTMLElement): void {
   const form = root.querySelector<HTMLFormElement>('[data-activate]');
   const error = root.querySelector<HTMLElement>('[data-activate-error]');
@@ -121,7 +102,6 @@ export function bootActivatePage(root: HTMLElement): void {
     setState('success');
   };
 
-  /** `fromCheckout`: the automatic auto-fill after checkout, which waits out Polar's sync (F-08). */
   const activate = async (key?: string, fromCheckout = false) => {
     clearError();
     setState('checking');
@@ -217,7 +197,6 @@ export function bootActivatePage(root: HTMLElement): void {
   });
 }
 
-/** "7F2Q": the last four characters of a key, as the receipt shows them. */
 export function keyTail(key: string): string {
   return key.replace(/\s/gu, '').slice(-4).toUpperCase() || '····';
 }
@@ -234,11 +213,6 @@ function copyText(text: string, button: HTMLElement): Promise<void> {
   );
 }
 
-/**
- * Checkout success (Sys board, O-26): fill "Your purchase" from the activation, then look the key up (the
- * non-activating lookup, docs/09 §2.3a) for its last four characters and the "Show my key" panel, and count the
- * devices. Both extra requests are optional: a failure only leaves the row hidden.
- */
 async function checkoutSuccess(root: HTMLElement, checkoutId: string, result: { token: string; plan: string; exp: number }): Promise<void> {
   const plan = root.querySelector<HTMLElement>('[data-co-plan]');
   const price = root.querySelector<HTMLElement>('[data-co-price]');

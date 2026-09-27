@@ -1,14 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { installFakeWakeLock } from './fake-wakelock';
 
-/*
- * Keyboard-only run of journeys 1–7 (docs/13 §6, docs/19 §E, docs/17 §2): only page.keyboard — Tab /
- * Shift+Tab / Enter / Space / Esc and the documented single-key shortcuts (1–6, 0, U, F, D, M, P, ?).
- * No mouse clicks anywhere. Every control that receives focus must show a focus indicator (:focus-visible
- * with a non-none outline or ring), and focus must never get stuck (no trap outside modal dialogs, and
- * every modal lets Esc out).
- */
-
 type TKeys = { tab: string; shiftTab: string };
 
 // WebKit follows Safari: plain Tab skips links and buttons unless "Press Tab to highlight each item" is on;
@@ -22,8 +14,6 @@ interface IFocus {
   indicator: boolean;
 }
 
-/** Describes document.activeElement and whether it (or, for a visually hidden input, its label) shows focus. */
-/** The island boots after first paint (src/boot/boot.js); keys pressed before that would go nowhere. */
 async function open(page: Page, url: string): Promise<void> {
   await page.goto(url);
   await page.locator('#awaketab-tool[data-booted]').waitFor();
@@ -85,7 +75,6 @@ async function expectVisibleFocus(page: Page): Promise<IFocus> {
   return f;
 }
 
-/** Tabs forward until `selector` has focus, asserting a visible indicator on every stop on the way. */
 async function tabTo(page: Page, keys: TKeys, selector: string, max = 80, back = false): Promise<void> {
   for (let i = 0; i < max; i += 1) {
     await page.keyboard.press(back ? keys.shiftTab : keys.tab);

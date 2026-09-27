@@ -2,19 +2,6 @@ import type { IEnv } from './env';
 import { KEY_RE } from './http';
 import { planFromBenefit, type createPolar, type IPolarBenefitGrant } from './polar';
 
-/**
- * F-08 (docs/09 §2.3b): Polar's `Checkout` carries no licence key and no order id, so a checkout reaches its key
- * in four organisation-token reads (OpenAPI 2026-10):
- *
- * 1. `GET /v1/checkouts/{id}` → `status`, `customer_id`, `subscription_id`;
- * 2. one-time purchases only: `GET /v1/orders/?checkout_id=` → the order the checkout created;
- * 3. `GET /v1/benefit-grants/?customer_id=` → the grant of a mapped License Keys benefit that belongs to THIS
- *    checkout's subscription or order (never another purchase by the same customer) → `properties.license_key_id`;
- * 4. `GET /v1/license-keys/{id}` → `key`.
- *
- * Polar creates the order and the benefit grant asynchronously after the checkout succeeds, so the first call
- * right after the redirect can find nothing yet: that is `syncing` (retryable), not `invalid`.
- */
 export type TCheckoutKey =
   | { kind: 'key'; key: string; subscriptionId: string | null; orderId: string | null; grantId: string; licenseKeyId: string }
   | { kind: 'syncing' }
@@ -22,13 +9,11 @@ export type TCheckoutKey =
 
 type TPolarClient = ReturnType<typeof createPolar>;
 
-/** Paid-for but not settled yet (`confirmed`), or the buyer is still on the checkout (`open`). */
 const PENDING_STATUSES: ReadonlySet<string> = new Set(['open', 'confirmed']);
 
 const SYNCING: TCheckoutKey = { kind: 'syncing' };
 const INVALID: TCheckoutKey = { kind: 'invalid' };
 
-/** Throws `PolarError` (`invalid_key` for an unknown checkout, `polar_unavailable` for an outage). */
 export async function resolveCheckoutKey(env: IEnv, polar: TPolarClient, checkoutId: string): Promise<TCheckoutKey> {
   const checkout = await polar.checkout(checkoutId);
   if (checkout.status !== 'succeeded') return PENDING_STATUSES.has(checkout.status) ? SYNCING : INVALID;
@@ -74,11 +59,6 @@ export async function resolveCheckoutKey(env: IEnv, polar: TPolarClient, checkou
   };
 }
 
-/**
- * Several grants can belong to one purchase (a re-granted benefit, or two mapped licence benefits on one product):
- * prefer a live grant over a revoked one, then the newest. A revoked grant is still returned so the key path can
- * answer `revoked` / `refunded` instead of "still syncing".
- */
 function pickGrant(grants: IPolarBenefitGrant[]): IPolarBenefitGrant | null {
   const live = (grant: IPolarBenefitGrant): number => (grant.is_granted && !grant.is_revoked ? 1 : 0);
   const at = (grant: IPolarBenefitGrant): number => Date.parse(grant.granted_at ?? grant.created_at) || 0;

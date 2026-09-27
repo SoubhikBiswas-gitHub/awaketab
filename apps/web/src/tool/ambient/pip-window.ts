@@ -5,7 +5,6 @@ import { ambientCss, at, digits as writeDigits } from './fmt.js';
 import { el, everySecond } from './tick.js';
 
 export const PIP_SIZE = { width: 280, height: 120 } as const;
-/** `pip.pro` asks for a taller window so the ambient digits fit above the pill (docs/05 §9). */
 export const PIP_PRO_SIZE = { width: 280, height: 160 } as const;
 export const PIP_ADD_MS = 15 * 60_000;
 
@@ -16,19 +15,11 @@ interface IDocPip {
 
 let current: Window | null = null;
 
-/** The popup in the opener's language: `/pip` for English, `/{lang}/pip` for the seven other locales. */
 export function pipPath(htmlLang: string): string {
   const lang = htmlLang.toLowerCase().replace('-hans', '');
   return /^(?:es|pt-br|de|fr|ja|zh|hi)$/u.test(lang) ? `/${lang}/pip` : '/pip';
 }
 
-/**
- * `pip.pro` (docs/05 §9): the ambient layer's digits — the clock (`clock`/`night`) or a running focus block's
- * interval countdown — replace the session digits, with a kicker line ("Focus · Cycle 2 of 4") under the pill.
- * They are clones of what the ambient mode module renders in the page, so the maths lives in one place and
- * nothing here chimes or notifies twice. The pill, the honest lock state, never steps aside. Other modes, and
- * focus before a block starts, keep the free layout.
- */
 export function mirrorAmbient(ctx: IToolCtx, body: HTMLElement): () => void {
   const box = el('div', { class: 'at-pip-ambient' });
   body.querySelector('.at-pip-top')?.after(box);
@@ -56,13 +47,6 @@ export function mirrorAmbient(ctx: IToolCtx, body: HTMLElement): () => void {
   };
 }
 
-/**
- * `P` / the header button (docs/05 §9). Document PiP moves — never clones — the pill and timer into a
- * 280 × 120 window (PipWindow canvas: logo, pill and "until" on top, the digits with +15 and Stop below);
- * the page keeps an empty slot of the same size (CLS 0). Without Document PiP, the /pip popup mirrors state
- * over BroadcastChannel('awaketab') (pip-mirror.ts). A second `P` closes the window. Closing never stops the
- * session.
- */
 export async function togglePip(ctx: IToolCtx): Promise<'document' | 'popup' | 'blocked' | 'closed'> {
   if (current && !current.closed) {
     current.close();

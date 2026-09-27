@@ -25,7 +25,6 @@ async function tempDir(): Promise<string> {
   return dir;
 }
 
-/** Bundles the web app's licence module the way the production build does: define + minify + tree-shake. */
 async function bundleLicense(devKey: boolean): Promise<string> {
   const result = await build({
     entryPoints: [path.join(REPO, 'apps/web/src/lib/license.ts')],

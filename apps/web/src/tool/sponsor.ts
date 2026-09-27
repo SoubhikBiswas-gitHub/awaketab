@@ -8,7 +8,6 @@ export interface ISponsorConfig {
   url: string;
 }
 
-/** Validates /config/sponsor.json — first-party, but still treated as untrusted input. */
 export function parseSponsor(raw: unknown): ISponsorConfig | null {
   if (!raw || typeof raw !== 'object') return null;
   const o = raw as Record<string, unknown>;
@@ -36,14 +35,6 @@ async function loadSponsor(): Promise<ISponsorConfig | null> {
   }
 }
 
-/**
- * SponsorCard (docs/05 §3.23, docs/09): one disclosed card in fixed 300 × 100 slots rendered at build time only
- * when PUBLIC_SPONSOR_ENABLED=1 — `[data-sponsor="idle"]` below the chips (visible in `idle` only) and
- * `[data-sponsor="extend"]` inside the ExtendPrompt. The idle slot keeps its size when empty or hidden
- * (visibility, not display), so CLS stays 0; the extend slot is collapsed before the dialog can ever open when
- * there is nothing to show (Pro `ads.free`, no or invalid config). No third-party request: the config is
- * same-origin and the card is a plain link. `sponsor_view` fires once per page view, whichever slot shows first.
- */
 export async function mountSponsor(ctx: IToolCtx): Promise<() => void> {
   const extend = ctx.root.querySelector<HTMLElement>('[data-sponsor="extend"]');
   const cfg = hasFeature(ctx, 'ads.free') ? null : await loadSponsor();

@@ -5,14 +5,6 @@ import { t } from '../i18n/load';
 import matrix from '../data/support-matrix.json';
 import { CONTENT_KINDS, type TContentKind } from '../lib/content-i18n';
 
-/*
- * Home, below the tool (redesign B5; canvas HomeBelow.dc.html). English home only (the locale homes keep their own
- * copy). Sections, each 1 px line on top and --at-section apart: what AwakeTab does · how it works (three steps,
- * then the seven pill states) · honest limits · browser support (from support-matrix.json) · guides and devices ·
- * comparisons and fixes · FAQ (<details>) · how AwakeTab is checked. Desktop puts each heading in a sticky 300 px
- * column beside its content. The `.at-prose` wrapper is what the home word-band test reads (1,200–1,800 words).
- * Build-time markup only; styles are scoped to this component and load only with the home page.
- */
 type TLock = 'idle' | 'requesting' | 'held' | 'lost' | 'denied' | 'unsupported' | 'fallback';
 
 const STATES: Array<[TLock, string]> = [
@@ -364,7 +356,6 @@ const RINGDOT = 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 
 </div>
 
 <style>
-  /* Starts where the tool's ground ends so the page reads as one surface; painted edge to edge (ink overflow). */
   .at-hb {
     --at-type-row: 500 1rem/1.5rem var(--at-font);
 

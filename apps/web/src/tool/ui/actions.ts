@@ -6,11 +6,6 @@ import { applyTheme, nextTheme } from '../theme.js';
 import { bindCustomDialog, bindUntilDialog } from './dialogs.js';
 import { toast } from './toast.js';
 
-/*
- * Header and shortcut actions that are not needed for the first paint or the wake-lock request. They live
- * outside main.ts so the critical chunk stays within docs/00 §11 (≤ 15 KB gz); main imports them on use.
- */
-
 function dialog(ctx: IToolCtx, name: 'custom' | 'until' | 'share'): HTMLDialogElement | null {
   const el = ctx.root.querySelector<HTMLDialogElement>(`[data-dialog="${name}"]`);
   if (el && el.dataset.closeBound !== '1') {
@@ -73,7 +68,6 @@ const SHARE_ROUTES: Partial<Record<TPresetId, string>> = {
   pinf: '/',
 };
 
-/** Shortest equivalent link (docs/05 §3.20); custom durations share as `/`, and `ref=` is never appended. */
 export function sharePath(ctx: Pick<IToolCtx, 'store'>): string {
   const s = ctx.store.get();
   const preset = s.session?.presetId ?? s.selectedPreset;
@@ -101,7 +95,6 @@ export function openShare(ctx: IToolCtx): void {
 
 export { toggleFullscreen } from '../fullscreen.js';
 
-/** `D` and the header theme button: cycle auto → light → dark → oled and persist. */
 export function cycleTheme(ctx: IToolCtx, theme: TTheme = nextTheme(ctx.store.get().settings.theme)): void {
   const next = { ...ctx.store.get().settings, theme };
   ctx.storage.writeSettings(next);

@@ -1,11 +1,3 @@
-/**
- * `/embed/cook` — the AwakeTab Embed iframe app (docs/11 §2–§3, E12-T01; Clear Night boards EmbedWidget,
- * EmbedCook, EmbedEdge). A trimmed island: the real @awaketab/wake lock and @awaketab/core session engine, the
- * seven-state pill (XS in compact, S in full), big digits, Start/Stop (Retry after a denial), cook mode's
- * tap-to-pause (clock paused, lock kept) and — in the `full` size — up to three kitchen timers. The pill is a
- * projection of the lock state only; a running timer shows only while the lock is `held` or `fallback`. The credit
- * line is not in this frame: the loader puts it in the host page (O-47).
- */
 import { textDirection } from '../../i18n/locales';
 import {
   createSession,
@@ -44,16 +36,11 @@ import {
 } from './protocol.js';
 import { readEmbedSettings, safeLocalStorage, writeEmbedSettings } from './settings.js';
 
-/** Where "How to fix" points when the host page dropped `allow="screen-wake-lock"`. */
 export const EMBED_FIX_URL = 'https://awaketab.com/embed#allow';
 
 const RUNNING = new Set(['held', 'fallback']);
 const HTML_LANG: Record<string, string> = { 'pt-br': 'pt-BR', zh: 'zh-Hans' };
 
-/**
- * Pill glyphs, 12 × 12 (DESIGN.md §2.3): the shape carries the state, never colour alone. Idle and requesting
- * draw the dot hollow (embed.css).
- */
 const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
 export const PILL_GLYPH: Record<string, string> = {
   lost: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
@@ -74,7 +61,6 @@ function isLive(s: ISession | null): s is ISession {
   return !!s && (s.status === 'active' || s.status === 'paused');
 }
 
-/** Plan for a start: explicit command fields win over the widget's configured preset. */
 export function planFor(params: Pick<IEmbedParams, 'preset' | 'until'>, cmd?: Extract<TPageMessage, { type: 'awaketab:start' }>): {
   plan: TPlan;
   presetId: TPresetId;
@@ -89,7 +75,6 @@ export function planFor(params: Pick<IEmbedParams, 'preset' | 'until'>, cmd?: Ex
 const wallTime = (locale: string, at: number) =>
   new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(at);
 
-/** What the big digits show. Only `held`/`fallback` may show a *running* session timer (docs/00 §5.1). */
 export function digitsFor(input: {
   mode: IEmbedParams['mode'];
   lock: string;
@@ -223,11 +208,6 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
     mode: params.mode,
   });
 
-  /**
-   * Compact (320 × 104): the pill shares its row with Start/Stop while it fits; a longer state (or a language
-   * with longer words) takes its own row and the frame asks for 116 (board EmbedEdge). Measured, not guessed,
-   * so every locale gets the right layout. Under 300 px (EMBED_NARROW) it always uses the two-row layout.
-   */
   const fitPill = () => {
     if (params.size !== 'compact' || !pill || !toggle) return;
     const width = root.clientWidth;

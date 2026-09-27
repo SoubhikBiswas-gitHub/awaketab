@@ -54,14 +54,6 @@ const contentRoutes = [
   ),
 ];
 
-/**
- * F-03 / docs/14 §1: every `*.pages.dev` host — the production alias `awaketab.pages.dev`, per-commit previews
- * `<hash>.awaketab.pages.dev` and branch aliases `<branch>.awaketab.pages.dev` — answers `X-Robots-Tag: noindex`.
- * Host-keyed `_headers` rules (Cloudflare's documented recipe) cost nothing per request; a root
- * `functions/_middleware.ts` would turn every static asset into a Functions invocation. They sit last so a
- * `! X-Robots-Tag` on a path rule (the /embed landing page) cannot detach them. Pages never applies `_headers`
- * to Functions responses; `functions/api/_middleware.ts` marks `/api/*` noindex itself.
- */
 export const PREVIEW_HOST_RULES = ['https://:project.pages.dev/*', 'https://:version.:project.pages.dev/*'];
 
 // Routes are the URLs Pages serves with a 200 (scripts/served.mjs): `/embed`, `/pip`, `/for/cooking` — never
@@ -144,18 +136,12 @@ ${PREVIEW_HOST_RULES.map((route) => `${route}
 `;
 }
 
-/**
- * OD-3 content merges (docs/00 §7, docs/06 §20; redesign B11): each retired URL 301s to the page that now answers
- * the same question. The four cut /for pages (navigation, live-streams, exams-proctoring, baby-monitor) have no
- * redirect: they were never indexed, nothing links to them, and a plain 404 is the honest answer for a page that
- * no longer exists (Pages `_redirects` cannot send 410).
- */
-export const CONTENT_REDIRECTS = /** @type {const} */ ([
+export const CONTENT_REDIRECTS = [
   ['/for/second-monitor', '/guides/second-monitor-turns-off'],
   ['/on/windows-10', '/on/windows-11'],
   ['/guides/modern-standby', '/guides/lock-screen-vs-sleep'],
   ['/learn/nosleep-js-vs-wake-lock', '/vs/nosleep-js'],
-]);
+];
 
 export function generateRedirects() {
   return `https://www.awaketab.com/* https://awaketab.com/:splat 301
@@ -167,7 +153,6 @@ ${CONTENT_REDIRECTS.map(([from, to]) => `${from} ${to} 301`).join('\n')}
 `;
 }
 
-/** Header rules in file order: `{ route, set: [[name, value]], detach: [name] }` (Cloudflare `_headers` syntax). */
 export function parseHeaderRules(text) {
   const rules = [];
   for (const line of text.split('\n')) {
@@ -193,7 +178,6 @@ function pathMatches(route, pathname) {
   return new RegExp(`^${escaped}$`, 'u').test(pathname);
 }
 
-/** `https://:a.:b.pages.dev/*`: a `:placeholder` matches one host label, like Cloudflare's absolute-URL rules. */
 function hostMatches(pattern, host) {
   const escaped = pattern.replace(/[.+?^${}()|[\]\\]/gu, '\\$&').replace(/:[A-Za-z]\w*/gu, '[^./]+');
   return new RegExp(`^${escaped}$`, 'iu').test(host);
@@ -205,12 +189,6 @@ function routeMatches(route, pathname, host) {
   return !!m && hostMatches(m[1], host) && pathMatches(m[2], pathname);
 }
 
-/**
- * The headers Cloudflare Pages would send for `pathname`: every matching rule applies in file order; `! Name`
- * detaches a header set by an earlier (less specific) rule; a header set twice is joined with ", ".
- * Rules written as absolute URLs (`https://:project.pages.dev/*`) apply only when `host` matches.
- * Header names are lower-cased. Used by tests to assert the per-route security contract (docs/14 §3).
- */
 export function resolveHeaders(text, pathname, host = 'awaketab.com') {
   const out = new Map();
   for (const rule of parseHeaderRules(text)) {

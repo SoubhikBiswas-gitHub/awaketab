@@ -1,11 +1,6 @@
 import { uaClass } from '../../web/src/lib/analytics';
 import { API_ORIGIN } from './license';
 
-/**
- * Opt-in first-party telemetry (docs/10 §8): off by default, the same `POST /api/e` beacon as the web with
- * `source: 'ext'`. Only four events leave the extension, and never a URL, tab title or hostname — auto-start
- * rules are matched locally and not reported.
- */
 export const EXT_EVENTS = ['session_start', 'session_end', 'pro_activated', 'client_error'] as const; // docs/10 §8
 
 const PARAMS: Record<(typeof EXT_EVENTS)[number], readonly string[]> = {

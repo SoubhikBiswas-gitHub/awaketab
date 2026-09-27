@@ -20,10 +20,6 @@ export interface ISessionOptions {
   notify?: (title: string, body: string) => Promise<void>;
   track?: (event: string, params?: Record<string, string | number | boolean>) => void;
   timeZone?: string;
-  /**
-   * How long an `indefinite` session stays resumable after a reload (default 12 h, the web resume banner).
-   * The extension worker restarts many times per session and passes `Infinity`.
-   */
   resumeIndefiniteMs?: number;
 }
 
@@ -40,14 +36,11 @@ export interface ISessionEngine {
   readonly session: ISession | null;
   readonly lockState: TLockState;
   start(plan: TPlan, meta: { presetId: TPresetId; mode: TAmbientMode; source?: string }): Promise<TLockState>;
-  /** `keepLock` pauses the clock but keeps the screen awake (cook mode, docs/05 §3.16). */
   pause(opts?: { keepLock?: boolean }): void;
   resume(): Promise<TLockState>;
   stop(): void;
   extend(ms: number | 'indefinite'): Promise<TLockState>;
-  /** Adds time to the running finite plan without restarting it (PiP `+15`). */
   addTime(ms: number): void;
-  /** Persists the ambient mode and per-mode data (`modeState.cookTimers`, …) on the live session. */
   updateSession(patch: { mode?: TAmbientMode; modeState?: Record<string, unknown> }): void;
   getResumable(): ISession | null;
   resumeSession(): Promise<TLockState>;

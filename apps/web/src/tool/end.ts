@@ -6,18 +6,13 @@ import { EXTEND_AUTO_STOP_MS } from './params.js';
 import { chime, notify } from './signal.js';
 import { toast } from './ui/toast.js';
 
-/** Title flash cadence: 1 Hz, well under the 3-flashes-per-second limit (docs/05 §7). */
 export const TITLE_FLASH_MS = 1000;
-/** The flash always runs at least this long so a user glancing at the tab strip sees it. */
 export const TITLE_FLASH_MIN_MS = 3000;
-/** The rating prompt waits this long after the extend prompt closes (docs/05 §3.22). */
 export const RATING_DELAY_MS = 2000;
-/** meta.sessionCount counts completed sessions of at least this length (docs/08 §2.5). */
 export const COUNTED_SESSION_S = 5 * 60;
 
 let stopFlash: (() => void) | null = null;
 
-/** Alternates document.title until the tab is visible and focused (docs/04 §10 step 5). */
 export function flashTitle(text: string, doc: Document = document): () => void {
   stopFlash?.();
   const original = doc.title;
@@ -90,10 +85,6 @@ function openExtend(ctx: IToolCtx, onClose: () => void): void {
   });
 }
 
-/**
- * End-of-session pipeline (docs/04 §10 steps 3–6, docs/05 §3.9). Steps run for every end except a
- * user stop and a denial (the capability notice already explains that one).
- */
 export function onEnded(ctx: IToolCtx, reason: TEndReason, session: ISession): void {
   if (reason === 'user' || reason === 'denied') return;
   const s = ctx.store.get();

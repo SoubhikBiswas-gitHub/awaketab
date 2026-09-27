@@ -26,17 +26,11 @@ export interface IReencryptOptions {
 export interface IReencryptSummary {
   apply: boolean;
   scanned: number;
-  /** Re-encrypted with the new key (dry run: would be). */
   rotated: number;
-  /** Already encrypted with the new key. */
   alreadyNew: number;
-  /** Records without a string `keyEnc` (left alone). */
   noKeyEnc: number;
-  /** Expiring within 60 s: KV cannot take the write, and the record is about to disappear anyway. */
   expiring: number;
-  /** Changed between read and write; run again. */
   changed: string[];
-  /** Neither key decrypts `keyEnc`, or the value is not JSON. Never written. */
   failed: string[];
 }
 

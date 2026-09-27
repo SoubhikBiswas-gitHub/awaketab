@@ -42,7 +42,6 @@ export async function exportNamespace(store: IKvStore, options: IExportOptions):
   return { bytes, backup };
 }
 
-/** Reads a backup file's bytes: encrypted envelopes need the key; plain JSONL is accepted for local fixtures. */
 export async function readBackupFile(bytes: Uint8Array, encryptionKey: string | undefined): Promise<IBackup> {
   if (isEncryptedBackup(bytes)) {
     if (!encryptionKey) throw new Error('This backup is encrypted: set BACKUP_ENCRYPTION_KEY');

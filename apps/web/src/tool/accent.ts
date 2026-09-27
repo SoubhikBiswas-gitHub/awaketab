@@ -1,9 +1,3 @@
-/**
- * Lamp colours (DESIGN.md §2.2, docs/05 §1.1a). Settings store the light-theme hex (docs/08 §2.1); the lamp id
- * goes on <html data-accent> and tokens.css swaps the `--at-accent*` values per theme. Aqua is the default and
- * has no attribute. Mint and Sky are the `ambient.packs` lamps. src/boot/boot.js mirrors this map (and the
- * legacy one) so the lamp paints before first frame.
- */
 export const ACCENTS = {
   '#087B87': 'aqua',
   '#5A47CF': 'violet',
@@ -13,7 +7,6 @@ export const ACCENTS = {
 
 export type TAccentId = (typeof ACCENTS)[keyof typeof ACCENTS];
 
-/** Pre-Clear-Night palette hexes still found in stored settings → the lamp that replaces them. */
 export const LEGACY_ACCENTS: Readonly<Record<string, keyof typeof ACCENTS>> = {
   '#B86E00': '#087B87', // amber → aqua
   '#4F46E5': '#5A47CF', // indigo → violet
@@ -24,7 +17,6 @@ export const LEGACY_ACCENTS: Readonly<Record<string, keyof typeof ACCENTS>> = {
 export const PACK_ACCENTS: ReadonlySet<string> = new Set(['#167A50', '#255FBD']);
 export const DEFAULT_ACCENT = '#087B87';
 
-/** The stored value as a current lamp hex: legacy hexes migrate, unknown values become the default. */
 export function accentHex(hex: string): keyof typeof ACCENTS {
   const up = hex.toUpperCase();
   const key = (LEGACY_ACCENTS[up] ?? up) as keyof typeof ACCENTS;

@@ -13,7 +13,6 @@ export interface IRestorePlan {
   conflict: IKvRecord[];
   same: IKvRecord[];
   expired: IKvRecord[];
-  /** Records left out by a `--prefix` filter. */
   filtered: number;
 }
 

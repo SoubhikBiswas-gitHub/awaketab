@@ -8,7 +8,6 @@ export function jsonError(error: string, status: number, extra: Record<string, u
   return Response.json({ error, ...extra }, { status, headers: { 'cache-control': 'no-store' } });
 }
 
-/** 429 with `Retry-After` = seconds left in the current fixed rate-limit bucket (docs/09 §2.10). */
 export function rateLimited(now = Date.now()): Response {
   const retryAfter = RATE_WINDOW_S - (Math.floor(now / 1000) % RATE_WINDOW_S);
   return Response.json(
@@ -17,14 +16,8 @@ export function rateLimited(now = Date.now()): Response {
   );
 }
 
-/** Seconds a client should wait before re-asking about a paid checkout whose licence key Polar is still creating. */
 export const SYNCING_RETRY_S = 5;
 
-/**
- * F-08 (docs/09 §2.3b): the checkout is paid or being paid, but Polar has not created its order, benefit grant or
- * licence key yet. Same code as an outage (`polar_unavailable`, which `/pro/activate` shows as "still syncing"),
- * but 503 with `Retry-After`: retrying soon is expected to succeed.
- */
 export function syncing(): Response {
   return Response.json(
     { error: 'polar_unavailable' },
@@ -53,10 +46,6 @@ export function parseActivateBody(body: unknown): { key: string; deviceId: strin
   return { key, deviceId, deviceLabel };
 }
 
-/**
- * `{ checkoutId, lookup: true }` — resolve a paid checkout to its licence key without activating a device
- * (docs/09 §2.3a: the `/pro/activate?ext=1&checkout_id=…` hand-off, so the extension spends the only activation).
- */
 export function parseLookupBody(body: unknown): { checkoutId: string } | null {
   if (!body || typeof body !== 'object') return null;
   const row = body as Record<string, unknown>;

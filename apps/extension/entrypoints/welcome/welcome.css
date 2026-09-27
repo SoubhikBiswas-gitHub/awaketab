@@ -1,8 +1,3 @@
-/*
- * Welcome page (O-25, Welcome canvas board): opened once after install. Hero with the pin demo, three
- * moments, Screen or System, the shortcut, what it can't do and what it can see, then Settings.
- * One column below 1024 px; the canvas layout from 1024 (DESIGN.md §5).
- */
 .wl {
   position: relative;
   display: flex;
@@ -114,7 +109,6 @@
   color: var(--at-muted);
 }
 
-/* ── Hero ───────────────────────────────────────────────────────────────────────────────────────── */
 .wl-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -190,7 +184,6 @@
   color: var(--at-accent-text);
 }
 
-/* The browser mock is an illustration (data-placeholder): exempt from the card rules (DESIGN.md §11.2). */
 .wl-mock {
   position: relative;
   block-size: 400px;
@@ -308,7 +301,6 @@
   block-size: 15px;
   padding-inline: var(--at-s-1);
   border-radius: var(--at-r-sm);
-  /* Chrome's badge: Screen level #087B87 with white text (DESIGN.md §2.1). */
   background: #087b87;
   box-shadow: 0 0 0 1.5px var(--bar);
   font: 600 0.75rem/15px var(--at-font);
@@ -518,7 +510,6 @@
   opacity: 0;
 }
 
-/* ── Three moments ──────────────────────────────────────────────────────────────────────────────── */
 .wl-section {
   display: flex;
   flex-direction: column;
@@ -553,7 +544,6 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  /* A 1 px timeline rule is one of the allowed single-side rules (DESIGN.md §11.2). */
   .wl-how-rule {
     position: absolute;
     inset-block-start: 17px;
@@ -723,7 +713,6 @@
   font-weight: 600;
 }
 
-/* ── Screen or System ───────────────────────────────────────────────────────────────────────────── */
 .wl-level-head {
   display: flex;
   flex-direction: column;
@@ -765,7 +754,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  /* A 1 px column divider between the two columns (DESIGN.md §11.2 allowed rule). */
   .wl-levelcard + .wl-levelcard {
     border-block-start: 0;
     border-inline-start: 1px solid var(--at-line);
@@ -894,7 +882,6 @@
   color: #fff;
 }
 
-/* Toolbar badge colours (DESIGN.md §2.1): Screen #087B87, System #2B3A67, white text. */
 .wl-badgetag-screen {
   background: #087b87;
 }
@@ -940,7 +927,6 @@
   fill: var(--at-accent);
 }
 
-/* ── Shortcut ───────────────────────────────────────────────────────────────────────────────────── */
 .wl-key {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -987,7 +973,6 @@
   justify-self: start;
 }
 
-/* ── Limits and privacy ─────────────────────────────────────────────────────────────────────────── */
 .wl-two {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -1035,7 +1020,6 @@
   color: var(--at-accent);
 }
 
-/* ── Next step ──────────────────────────────────────────────────────────────────────────────────── */
 .wl-next {
   display: flex;
   flex-wrap: wrap;

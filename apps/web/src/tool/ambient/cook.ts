@@ -23,7 +23,6 @@ function live(ctx: IToolCtx): boolean {
   return st === 'active' || st === 'paused';
 }
 
-/** "10 min", "45 min", "1 h 30 min", "2 h". */
 function length(ms: number): string {
   const min = Math.round(ms / 60_000);
   const hours = Math.floor(min / 60);
@@ -32,11 +31,6 @@ function length(ms: number): string {
   return minutes ? t('stats.hours', { hours, minutes }) : t('ambient.cook.timer.hours', { hours });
 }
 
-/**
- * Cook mode (docs/05 §3.16): big elapsed timer, tap anywhere to pause the *clock* — the lock stays held
- * (engine.pause({ keepLock: true })) so the screen never goes dark mid-recipe — and up to three kitchen
- * timers persisted in session.modeState.cookTimers so a reload resumes them. Targets are ≥ 64 px (CSS).
- */
 export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   const h24 = () => ctx.store.get().settings.ambient.clock24h;
   const kicker = el('span', { class: 'at-am-kicker' });

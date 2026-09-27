@@ -11,14 +11,12 @@ export interface IOgInput {
   title: string;
   eyebrow: string;
   locale: string;
-  /** Bottom line; defaults to `awaketab.com · {locale}`. Locale pages pass the language's own name. */
   footer?: string;
   fonts: IOgFont[];
 }
 
 const FULL_WIDTH = /[\u1100-\u115F\u2E80-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFF60\uFFE0-\uFFE6]/u;
 
-/** Display width with full-width (CJK) characters counted twice, so long titles step down in size. */
 export function titleFontSize(title: string): number {
   let width = 0;
   for (const char of title) width += FULL_WIDTH.test(char) ? 2 : 1;

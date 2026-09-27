@@ -17,14 +17,6 @@ import {
   type TContentKind,
 } from '../lib/content-i18n';
 
-/*
- * Content article (redesign B5). Canvas: ContentArticle (/for: "article" variant) and GuideOn / GuideVs /
- * GuideGuides / GuideLearn ("guide" variant; /guides and /learn put the tool after the body, docs/06 §2.6–§2.7).
- * Head: breadcrumb, h1, "Sources checked" (O-46) and byline (chips on the guide boards). Notes (inside the prose,
- * so they count toward the word band as before): honest-limit note, FAQ (<details>, docs/06 §8) and, on /for,
- * the related rows. Tail: the guide boards' related links with the start link, and the author card. Desktop adds the sticky "On this page"
- * list with a "Back to the tool" card that mirrors the tool's pill (lib/content-nav.ts).
- */
 interface Props {
   kind: TContentKind;
   entry: CollectionEntry<TContentKind>;
@@ -349,6 +341,5 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
     </div>
   </Fragment>
 
-  {/* Page-specific data after the prose (e.g. the device matrix on /learn/how-we-tested). */}
   <slot name="after" slot="after" />
 </ContentLayout>

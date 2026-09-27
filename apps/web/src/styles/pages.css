@@ -1,19 +1,5 @@
-/*
- * Clear Night site pages (milestone B6): /about, /changelog, /privacy, /terms, /extension, /kiosk,
- * /library and /embed. DESIGN.md §6, §11, §12; canvas boards PageAbout, PageChangelog, PageLegal, PageExtension,
- * PageKiosk, PageLibrary and EmbedShowcase. Imported only by those pages, so none of it reaches a tool page's CSS
- * budget (the 404 page is a tool page and has its own small page-404.css). The shared shell (header, footer, buttons, pill, segmented bar, card, tag, input) comes
- * from shell.css and is reused as is.
- *
- * Every spacing, radius, type and control size is a §12 token by name (stylelint's strict override covers this
- * file). The few off-scale sizes that belong to one illustration or mock (the 1.0 numeral, the popup preview, the
- * kiosk screen, the state diagram, the host page) are named once below as --at-pg-* and used by name.
- *
- * Layer order is restated for the same reason as content.css: `components` must never become the lowest layer.
- */
 @layer properties, theme, base, components, utilities;
 
-/* Each page section styles its own components; specificity ordering across unrelated sections is not meaningful. */
 /* stylelint-disable no-descending-specificity */
 
 @layer components {
@@ -39,8 +25,6 @@
     --at-pg-type-popup-caption: 500 0.8125rem/1rem var(--at-font);
     --at-pg-type-badge: 600 0.75rem/1rem var(--at-font);
     --at-pg-type-mono-code: 400 0.875rem/1.5rem var(--at-font-mono);
-
-    /* Kiosk screen drawing: canvas sizes on a 640-wide screen, in container units (see .at-k-bezel). */
     --at-pg-type-kp-12: 600 calc(100cqi * 12 / 640) / calc(100cqi * 16 / 640) var(--at-font);
     --at-pg-type-kp-13: 600 calc(100cqi * 13 / 640) / 1.4 var(--at-font);
     --at-pg-type-kp-14: 600 calc(100cqi * 14 / 640) / 1 var(--at-font);
@@ -102,7 +86,6 @@
     }
   }
 
-  /* ── Page frame: the shell gives the gutter and the 1200 max; the page sets its own top (12 phone, 32 from 600) ── */
   .at-shell:has(> .at-page) {
     padding-block-start: 0;
   }
@@ -112,8 +95,6 @@
     color: var(--at-ink);
   }
 
-  /* The site pages' ground (canvas pageRoles): the night lift is a 1400 × 900 glow above the top edge that fades
-     into the plain ground, so long pages keep one even colour below the fold. /embed keeps the shell's ground. */
   body:has(.at-page:not(.at-embed)) {
     background-image: radial-gradient(1400px 900px at 50% -160px, var(--at-lift) 0%, color-mix(in srgb, var(--at-ground) 0%, transparent) 72%);
   }
@@ -122,7 +103,6 @@
     font-weight: 600;
   }
 
-  /* ── Type and text roles (DESIGN.md §11.5) ── */
   .at-pg-h1 {
     margin: 0;
     font: var(--at-type-h1);
@@ -213,7 +193,6 @@
     text-decoration-thickness: 2px;
   }
 
-  /* A standalone text link (Privacy policy, All guides): a 44 px target, ui weight 500. */
   .at-pg-textlink {
     display: inline-flex;
     align-self: flex-start;
@@ -229,7 +208,6 @@
     font-weight: 500;
   }
 
-  /* Inline code (§11.5): 14 px fixed, r4, padding 0 4, sunken. */
   .at-pg-code,
   .at-cl-body code,
   .at-legal-body code {
@@ -251,7 +229,6 @@
     font-feature-settings: "tnum" 1, "zero" 0;
   }
 
-  /* Stacks (§12.7): space comes from gap on the parent. */
   .at-pg-stack-4,
   .at-pg-stack-8,
   .at-pg-stack-12,
@@ -299,7 +276,6 @@
     min-inline-size: 0;
   }
 
-  /* Page tags read in ink (canvas atTag); the tone variant adds its 38 % border. */
   .at-pg-tag {
     color: var(--at-ink);
   }
@@ -319,7 +295,6 @@
     stroke-width: 2.4;
   }
 
-  /* ── Breadcrumb ── */
   .at-crumbs ol {
     display: flex;
     flex-wrap: wrap;
@@ -353,7 +328,6 @@
     text-underline-offset: 3px;
   }
 
-  /* ── Lock-state glyph (12 px): shape per state, tone per state; Ready and Starting… are hollow ── */
   .at-pg-glyph {
     --at-tone: var(--at-accent);
 
@@ -387,12 +361,10 @@
     fill: transparent;
   }
 
-  /* ── Segmented bars of native radios (SegRadio.astro) ── */
   .at-pg-seg .at-seg-item {
     overflow: hidden;
   }
 
-  /* The indicator follows the checked radio (shell.css matches aria state; :has() cannot nest, so radios are here). */
   .at-pg-seg:has(> .at-seg-item:nth-of-type(2) > input:checked) {
     --at-seg-i: 1;
   }
@@ -444,7 +416,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* ── Cards, tables, notes and chips shared by the product pages ── */
   .at-pg-panel {
     border: var(--at-border) solid var(--at-line);
     border-radius: var(--at-r-lg);
@@ -452,7 +423,6 @@
     overflow: hidden;
   }
 
-  /* A comparison table drawn as rows (role=table): header row small 600, rows body, 1 px line between. */
   .at-pg-table {
     display: flex;
     flex-direction: column;
@@ -498,7 +468,6 @@
     font-weight: 500;
   }
 
-  /* Phone variant of a comparison: a definition list, kicker label, two labelled lines. */
   .at-pg-dl {
     display: flex;
     flex-direction: column;
@@ -560,7 +529,6 @@
     background: var(--at-accent);
   }
 
-  /* Honest-limit note: warn 8 % fill, 32 % border, r16, icon column. */
   .at-pg-note {
     display: grid;
     grid-template-columns: var(--at-icon-md) minmax(0, 1fr);
@@ -591,7 +559,6 @@
     text-wrap: pretty;
   }
 
-  /* Related links: 44 px pill chips with a muted arrow. */
   .at-pg-related {
     display: flex;
     flex-wrap: wrap;
@@ -617,8 +584,6 @@
     background: var(--at-raised);
   }
 
-  /* Link arrows are drawn (→, ↗): the self-hosted Geist subset has no arrow glyphs, and a fallback font's would
-     be wider than the canvas's. */
   .at-pg-arrow,
   .at-about-links .at-pg-arrow {
     inline-size: var(--at-icon-sm);
@@ -631,7 +596,6 @@
     stroke-width: 1.8;
   }
 
-  /* Form fields: label 14/600 ink-2, 48 px input (shell .at-input), 13 px hint; the hint turns warn when invalid. */
   .at-pg-field {
     display: flex;
     flex-direction: column;
@@ -690,7 +654,6 @@
     pointer-events: none;
   }
 
-  /* Switch (§11.4): 52 × 32 track, 24 knob; lamp when on. */
   .at-pg-switch {
     position: relative;
     inline-size: var(--at-pg-switch-w);
@@ -723,7 +686,6 @@
     transform: translateX(calc(var(--at-seg-dir) * var(--at-s-5)));
   }
 
-  /* Copy buttons that confirm in place (kiosk link, library code, embed snippet). */
   .at-pg-copy > svg {
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
@@ -740,7 +702,6 @@
     font-weight: 600;
   }
 
-  /* The slow ambient aura behind hero panels (DESIGN.md §8: transform only, off with reduced motion). */
   .at-pg-aura {
     position: absolute;
     pointer-events: none;
@@ -761,7 +722,6 @@
     animation: at-rise var(--at-d-rise) var(--at-ease) both;
   }
 
-  /* ────────────────────────────── /about ────────────────────────────── */
   .at-about {
     display: grid;
     grid-template-areas: "intro" "side" "body";
@@ -943,7 +903,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* ────────────────────────────── /changelog ────────────────────────────── */
   .at-cl {
     display: flex;
     flex-direction: column;
@@ -1095,8 +1054,6 @@
     font-weight: 600;
   }
 
-  /* The timeline rule (§11.2: a 1 px rule is allowed) runs down the entries below 1024. The first visible entry's
-     top line is clipped, so a filtered list never starts with a divider. */
   .at-cl-items {
     display: flex;
     flex-direction: column;
@@ -1142,7 +1099,6 @@
     text-underline-offset: 3px;
   }
 
-  /* The filter (CSS only): hide entries of other types, dates left empty and, for Fixed and Changed, the release. */
   .at-cl:has(.at-cl-filter input[value="new"]:checked) .at-cl-entry:not([data-type="new"]),
   .at-cl:has(.at-cl-filter input[value="fixed"]:checked) .at-cl-entry:not([data-type="fixed"]),
   .at-cl:has(.at-cl-filter input[value="changed"]:checked) .at-cl-entry:not([data-type="changed"]),
@@ -1153,7 +1109,6 @@
     display: none;
   }
 
-  /* ────────────────────────────── /privacy, /terms ────────────────────────────── */
   .at-legal {
     display: grid;
     grid-template-areas: "head" "toc" "body";
@@ -1233,7 +1188,6 @@
     color: var(--at-ink);
   }
 
-  /* Current section: ink 600 + a lamp dot, never a side stripe (§11.2). */
   .at-legal-toc a[aria-current] {
     color: var(--at-ink);
     font-weight: 600;
@@ -1331,7 +1285,6 @@
     font-weight: 400;
   }
 
-  /* ────────────────────────────── /extension ────────────────────────────── */
   .at-pg-ink2 {
     color: var(--at-ink-2);
   }
@@ -1383,8 +1336,6 @@
     display: none;
   }
 
-  /* Popup preview: the 360 × 600 popup with its 1 px border, 16 px clear on every side; it narrows with the column
-     on small phones (the stage bleeds into the phone gutter, as on the canvas). */
   .at-ext-stage {
     position: relative;
     display: flex;
@@ -1778,7 +1729,6 @@
     stroke-width: 2;
   }
 
-  /* Screen or System: the page's switch drives the preview, the laptop and the badge (CSS only). */
   .at-xp-system {
     display: none;
   }
@@ -2129,7 +2079,6 @@
     text-wrap: balance;
   }
 
-  /* ────────────────────────────── /kiosk, /library, /embed (product pages) ────────────────────────────── */
   .at-prod {
     display: flex;
     flex-direction: column;
@@ -2158,7 +2107,6 @@
     font: var(--at-pg-type-mono-small);
   }
 
-  /* ── /kiosk builder ── */
   .at-k-builder {
     display: grid;
     grid-template-areas: "head" "preview" "form" "url";
@@ -2259,8 +2207,6 @@
     color: var(--at-accent-text);
   }
 
-  /* The kiosk screen drawing (an aria-hidden illustration, DESIGN.md §11.2): drawn on a 640 × 360 grid that scales
-     with its column through container units, in the kiosk's own theme (not the page's). */
   /* stylelint-disable declaration-property-value-allowed-list -- illustration geometry in container units */
   .at-k-bezel {
     position: relative;
@@ -2724,7 +2670,6 @@
     font-weight: 400;
   }
 
-  /* ── /library ── */
   .at-lib-h1code {
     font-family: var(--at-font-mono);
     font-weight: 400;
@@ -2888,7 +2833,6 @@
     white-space: normal;
   }
 
-  /* Disabled simulate buttons read as unavailable, not faded (text stays AA). */
   .at-lib-sim:disabled {
     border-color: var(--at-line);
     background: transparent;
@@ -2907,7 +2851,6 @@
     grid-area: diag;
   }
 
-  /* The state diagram: pills on a 3 × 3 grid, arrows between them; sizes follow the box (container units). */
   /* stylelint-disable declaration-property-value-allowed-list -- diagram geometry in container units */
   .at-lib-graph {
     --gw: 316;
@@ -3267,7 +3210,6 @@
     --at-pg-dl-label: 88px;
   }
 
-  /* ── /embed ── */
   .at-embed {
     position: relative;
     display: flex;
@@ -3402,7 +3344,6 @@
     font: var(--at-pg-type-mono-code);
   }
 
-  /* The placeholder recipe page (an illustration of a host site, DESIGN.md §11.2: its own colours and serif). */
   /* stylelint-disable declaration-property-value-allowed-list -- host-page mock in the host's own sizes */
   .at-host {
     order: 1;
@@ -3654,7 +3595,6 @@
   }
   /* stylelint-enable declaration-property-value-allowed-list */
 
-  /* ── Tablet and up ── */
   @media (width >= 600px) {
     .at-page {
       padding-block-start: var(--at-s-8);
@@ -3832,7 +3772,6 @@
     }
   }
 
-  /* ── Desktop ── */
   @media (width >= 1024px) {
     .at-about {
       grid-template-areas: "intro side" "body side";

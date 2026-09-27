@@ -134,13 +134,6 @@ export async function deactivateDevice(
   };
 }
 
-/**
- * Re-validates the stored licence (docs/09 §5): on load when the plan's interval has passed or the token no
- * longer verifies offline. A fresh token from /api/license/validate replaces the stored one only after it
- * verifies offline for this device. Network failures and 5xx never downgrade (offline grace until `exp`).
- * - 'revoked': refunded/cancelled/revoked on the server → licence removed.
- * - 'reactivate': the server rejects this token (401) or removed this device → licence removed, user re-activates.
- */
 export async function revalidateStoredLicense(): Promise<'ok' | 'revoked' | 'reactivate' | 'skip'> {
   const raw = localStorage.getItem(LICENSE_KEY);
   if (!raw) return 'skip';

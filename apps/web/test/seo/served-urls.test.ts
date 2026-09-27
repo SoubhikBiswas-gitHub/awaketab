@@ -6,14 +6,6 @@ import { describe, expect, it } from 'vitest';
 import { parseHeaderRules } from '../../scripts/headers.mjs';
 import { isServedPath, LOCALES, servedFile, servedPath } from '../../scripts/served.mjs';
 
-/*
- * Every URL we publish must be one Cloudflare Pages answers with a 200, not a 308 (docs/14 §2.1). Pages serves
- * `x.html` at `/x` and `x/index.html` at `/x/` and redirects the other spelling, so for each published URL the
- * built file must sit exactly where Pages looks: `/x` → x.html, `/es/` → es/index.html, `/` → index.html.
- * Published URLs = sitemap <loc> and alternates, every canonical, hreflang, og:url and JSON-LD URL, every
- * internal <a href>, and the page routes `_headers` names.
- */
-
 const dist = process.env.AT_DIST ? path.resolve(process.env.AT_DIST) : path.resolve(import.meta.dirname, '../../dist');
 const ORIGIN = 'https://awaketab.com';
 
@@ -35,10 +27,8 @@ const html = new Map(await Promise.all(pages.map(async (file) => [file, await re
 const NO_CANONICAL = new Set(['embed/cook.html']);
 const sitemaps = all.filter((file) => /^sitemap-[a-z-]+\.xml$/u.test(file) && file !== 'sitemap-index.xml');
 
-/** Pathname of an absolute site URL; `https://awaketab.com` (no slash) is the home, `/`. */
 const pathnameOf = (href: string): string => new URL(href).pathname;
 
-/** Null when `pathname` is a served URL whose file exists; otherwise why it is not. */
 function problem(pathname: string): string | null {
   if (!isServedPath(pathname)) return `${pathname} is a spelling Cloudflare Pages redirects (308)`;
   const file = servedFile(pathname);

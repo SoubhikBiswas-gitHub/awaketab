@@ -1,12 +1,3 @@
-/**
- * AwakeTab Embed loader — the one script tag a site pastes (docs/11 §1). Built by scripts/embed-loader.mjs into
- * `public/embed.js` (IIFE, ≤ 3 KB gz, no dependencies). It replaces its own `<script>` with a lazy, sandboxed
- * iframe of `/embed/cook` that carries `allow="screen-wake-lock"`, puts the "Keep awake by AwakeTab" credit
- * right after it in the page's own HTML (O-47; removed for a licensed domain), and exposes `window.AwakeTabEmbed`
- * for the postMessage API (docs/11 §3). Origin checks: messages are accepted only from an iframe this loader
- * created *and* only when their origin is the loader's own origin; commands are posted with that origin as the
- * target.
- */
 import {
   EMBED_BOX,
   EMBED_CREDIT_CLASS,
@@ -25,18 +16,10 @@ import {
   type TPageMessage,
 } from './protocol.js';
 
-/**
- * `allow-popups-to-escape-sandbox` on top of docs/11 §7's three tokens: the "How to fix" link opens
- * awaketab.com in a new tab, which would otherwise inherit this sandbox (no forms → no checkout).
- * Decision under docs/19 C4; it widens nothing for the host page (docs/00 §13.10).
- */
 export const EMBED_SANDBOX = 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox';
 
-/** Localized strings the loader needs, inlined at build time (scripts/embed-loader.mjs), keyed by locale. */
 export interface ILoaderStrings {
-  /** `embed.frame.title`: the iframe's accessible name. */
   titles: Record<string, string>;
-  /** `embed.attribution`: the host-page credit link text (O-47). */
   credits: Record<string, string>;
 }
 
@@ -49,9 +32,7 @@ export interface IEmbedEventDetail extends Partial<IEmbedState> {
 
 export interface IAwakeTabEmbed {
   readonly version: string;
-  /** Subscribe to `ready` or `state` (every lock/status change); returns an unsubscribe function. */
   on(event: TEmbedEvent, cb: (detail: IEmbedEventDetail) => void): () => void;
-  /** Start every widget on the page. Call it from a user gesture (the video fallback needs one). */
   start(opts?: { preset?: string; ms?: number; until?: string }): void;
   stop(): void;
   setTheme(theme: TEmbedTheme): void;
@@ -60,7 +41,6 @@ export interface IAwakeTabEmbed {
 interface IFrameRecord {
   el: HTMLIFrameElement;
   origin: string;
-  /** The box reserved before load; resize requests never go below it (no layout shift on the host page). */
   minHeight: number;
   ready: boolean;
   queue: TPageMessage[];
@@ -132,11 +112,6 @@ export function createRegistry(win: Window): IEmbedRegistry {
   };
 }
 
-/**
- * O-47 credit: a plain `nofollow` link in the host page's own HTML, directly after the iframe. Minimal, neutral
- * inline styles (the host's font and colour, 13 px, underlined) on a fixed 24 px line, so it suits any site and
- * never shifts the page. Class `awaketab-credit` (docs/11 §11.2).
- */
 export function mountCredit(frame: HTMLIFrameElement, text: string): HTMLElement {
   const doc = frame.ownerDocument;
   const box = doc.createElement('div');
@@ -152,11 +127,6 @@ export function mountCredit(frame: HTMLIFrameElement, text: string): HTMLElement
   return box;
 }
 
-/**
- * Whether the page keeps the credit: `false` only when `GET /api/embed/config?domain=<this page's hostname>`
- * answers `{ licensed: true, attribution: false }`. An error, a non-JSON body or any other shape keeps it (free
- * by default, docs/11 §11.4). One request per widget origin per page, however many widgets it holds.
- */
 export function keepsCredit(win: Window, origin: string, cache: Record<string, Promise<boolean>> = {}): Promise<boolean> {
   const host = win.location.hostname;
   if (!isHostname(host)) return Promise.resolve(true);
@@ -168,10 +138,6 @@ export function keepsCredit(win: Window, origin: string, cache: Record<string, P
   return cache[origin];
 }
 
-/**
- * Replaces one loader `<script>` with the widget iframe and the credit line after it. Returns the iframe, or
- * null for an unusable tag.
- */
 export function mountFrame(script: HTMLScriptElement, registry: IEmbedRegistry, strings: ILoaderStrings): HTMLIFrameElement | null {
   const doc = script.ownerDocument;
   let origin: string;
@@ -207,7 +173,6 @@ export function mountFrame(script: HTMLScriptElement, registry: IEmbedRegistry, 
   return frame;
 }
 
-/** Entry point of the built loader. Idempotent across several tags on one page. */
 export function install(win: Window, current: HTMLScriptElement | null, strings: ILoaderStrings): void {
   const w = win as TWindow;
   w.AwakeTabEmbed ??= createRegistry(win);

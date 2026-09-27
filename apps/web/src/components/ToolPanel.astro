@@ -63,8 +63,6 @@ const shortcuts = [
 ] as const;
 ---
 
-<!-- The island root `#awaketab-tool` (with its data-* params) is rendered by ToolIsland.astro so that the
-     header controls main.ts binds through root.querySelector() are inside it; this is the panel body. -->
 <div class="at-tool" data-panel>
   <script is:inline type="application/json" data-i18n-catalog set:html={catalogJson}></script>
   <div data-pip-slot>

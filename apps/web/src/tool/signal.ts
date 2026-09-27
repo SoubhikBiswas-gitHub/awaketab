@@ -20,7 +20,6 @@ const TONES: Record<TChime, Array<[number, number]>> = {
   ],
 };
 
-/** Plays a chime through the AudioContext primed on the first gesture. Silent when sound is `none`. */
 export function chime(ctx: Pick<IToolCtx, 'store' | 'audio'>, kind: TChime): boolean {
   const sound = ctx.store.get().settings.sound;
   if (sound.id === 'none') return false;
@@ -47,11 +46,6 @@ export function notificationsState(): 'granted' | 'denied' | 'default' | 'unavai
   return typeof Notification === 'undefined' ? 'unavailable' : Notification.permission;
 }
 
-/**
- * Shows a notification through the service worker (works with the tab in the background; the only way on
- * iOS Home-Screen apps), falling back to the page Notification constructor. Only when the user turned
- * notifications on and the browser granted permission — this function never asks.
- */
 export async function notify(
   ctx: Pick<IToolCtx, 'store'>,
   title: string,

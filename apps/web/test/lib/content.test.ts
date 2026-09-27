@@ -121,10 +121,6 @@ const FALSE_EN_NEGATIVE: ReadonlyArray<[RegExp, string]> = [
   [/idle (?:system )?sleep (?:was|is) not held|macOS did not|(?:did|does) not hold idle/giu, 'macOS idle sleep not held'],
 ];
 
-/**
- * Every affirmative match of `pattern` in `text`. Not a claim: a negated span, a question ("Do battery savers block
- * a wake lock?") or a dated correction note ("Earlier versions of this page said … That was wrong").
- */
 function falseClaims(text: string, pattern: RegExp): string[] {
   return [...text.matchAll(pattern)]
     .filter((match) => {

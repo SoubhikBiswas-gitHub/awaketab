@@ -1,9 +1,5 @@
 import { defineConfig } from '@playwright/test';
 
-/**
- * Extension journeys (docs/13 §10): the unpacked test build (`AT_EXT_TEST=1` — chrome.power replaced by a
- * recorder) loaded into Chromium with a persistent profile per test. Run with `pnpm test:e2e:ext`.
- */
 export default defineConfig({
   testDir: './e2e',
   globalSetup: './e2e/global-setup.ts',

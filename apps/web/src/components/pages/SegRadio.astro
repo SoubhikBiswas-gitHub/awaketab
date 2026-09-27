@@ -1,14 +1,7 @@
 ---
-/*
- * Segmented bar of native radios (DESIGN.md §6, §11.4; shell.css `.at-seg`): 1 px line + 4 px padding + 44 px
- * items, one sliding indicator that follows `:checked` with CSS alone. Arrow keys move and select, one Tab stop.
- * Used by the site pages' filters and builders (changelog, kiosk, embed, extension). `small` is the 14 px label
- * size the canvas uses for these bars (13 px on phones); `count` adds a muted tabular count after the label.
- */
 interface IOption {
   value: string;
   label: string;
-  /** Accessible name when the visible label is short or carries a count. */
   aria?: string | undefined;
   count?: number | undefined;
 }
@@ -16,14 +9,11 @@ interface Props {
   name: string;
   options: readonly IOption[];
   checked: string;
-  /** Accessible name of the group (or pass `labelledby`). */
   label?: string | undefined;
   labelledby?: string | undefined;
   small?: boolean;
-  /** 13 px labels on phones (the kiosk and library bars). */
   compactPhone?: boolean;
   class?: string | undefined;
-  /** Extra data attribute hook for page scripts. */
   hook?: string | undefined;
 }
 const { name, options, checked, label, labelledby, small = false, compactPhone = false, class: className, hook } = Astro.props;

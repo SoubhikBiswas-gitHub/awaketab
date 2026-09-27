@@ -1,14 +1,3 @@
-/**
- * /library live state machine (docs/12 §6, E12-T04). Drives the *published* IIFE build (`window.AwakeTabWake`,
- * loaded from /library/awaketab-wake.iife.js) — only types come from the workspace package. Four scenarios
- * make all seven states reachable in any browser:
- *
- *   real        this browser's own Screen Wake Lock API
- *   simulated   an injected wake-lock API + document whose "tab hidden" releases the sentinel (docs/12 §6's
- *               synthetic visibilitychange with a stubbed visibilityState) → lost, then re-acquired
- *   denied      an injected API that rejects with NotAllowedError → denied + advice
- *   unsupported no API → unsupported; Request (a click) starts the real inlined video fallback → fallback
- */
 import type { IChangeEvent, IWakeLockHandle, IWakeLockOptions, TLockState } from '@awaketab/wake';
 
 export interface IWakeGlobal {
@@ -17,7 +6,6 @@ export interface IWakeGlobal {
 
 export type TDemoScenario = 'real' | 'simulated' | 'denied' | 'unsupported';
 
-/** Latency of the simulated API so `requesting` is visible for a moment. */
 export const DEMO_REQUEST_MS = 350;
 
 class DemoSentinel extends EventTarget {
@@ -38,7 +26,6 @@ export interface IDemoWorld {
   show(): void;
 }
 
-/** Builds the injected API/document for a scenario (`real` injects nothing). */
 export function demoWorld(scenario: TDemoScenario, ua: string): IDemoWorld {
   if (scenario === 'real') return { options: {}, hide() {}, show() {} };
   if (scenario === 'unsupported') return { options: { wakeLock: null }, hide() {}, show() {} };

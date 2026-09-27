@@ -18,10 +18,6 @@ const BASE = new URL(process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:4321')
 const WIDGET = BASE.origin;
 const HOST = `http://localhost:${BASE.port}`;
 
-/**
- * Headless Chromium denies real wake locks, so every frame gets a fake — one that, like the browser, rejects with
- * NotAllowedError when the document's Permissions-Policy does not allow `screen-wake-lock` (the no-`allow` iframe).
- */
 async function installPolicyAwareWakeLock(page: Page): Promise<void> {
   await page.addInitScript(() => {
     class FakeSentinel extends EventTarget {

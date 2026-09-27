@@ -2,16 +2,10 @@ import type { IStore } from './store.js';
 import { t } from './i18n.js';
 import { dismiss, toast as pushToast } from './ui/toast.js';
 
-/** True while a session holds or pauses the screen; an update must never interrupt it (FR-PWA-01). */
 export function sessionBusy(status: string | undefined): boolean {
   return status === 'active' || status === 'paused';
 }
 
-/**
- * Service-worker update flow (docs/05 §8.2, `registerType: 'prompt'`): when a new worker is waiting, offer a
- * sticky "Update available" toast — but only once no session is active. "Reload" posts SKIP_WAITING and
- * reloads after `controllerchange`, never on its own.
- */
 export function watchUpdates(
   reg: Pick<ServiceWorkerRegistration, 'waiting' | 'installing' | 'addEventListener'>,
   store: IStore,

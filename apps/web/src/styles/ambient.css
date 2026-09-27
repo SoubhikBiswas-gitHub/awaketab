@@ -1,19 +1,5 @@
 /* stylelint-disable no-descending-specificity -- mode rules refine the base rule above them, in canvas order. */
 
-/*
- * Ambient modes and the floating window (B4, Clear Night). Source of truth: design/canvas/project/Ambient.dc.html
- * (every Ambient* board), PipWindow.dc.html (PipDark, PipLight, PipOverDesk); values from DESIGN.md §2, §3, §8,
- * §11. Imported by tool/ambient/shell.ts and tool/pip.ts (Astro inlines it into the tool page) and by the /pip page.
- *
- * Deliberately unlayered: it must win over the pre-redesign ambient rules still in tool.css (@layer components)
- * and over the shadcn utility classes on the three bar buttons rendered by ToolPanel.astro, whatever their
- * specificity. Every selector is scoped to `.at-ambient`, `.at-pip-body` or the `--am-*` theme variables.
- *
- * Canvas sizes are drawn at phone 390, tablet 1180 and desktop 1280. Below 600 the phone values apply; from 600 the
- * wide values, with the tablet → desktop steps interpolated so 1180 and 1280 land exactly on the drawn numbers
- * (clamp(tablet, slope, desktop)) and every other width stays fluid (DESIGN.md §5 responsive contract).
- */
-
 :root,
 [data-theme="light"] {
   --am-bg: radial-gradient(120% 70% at 50% 26%, #fff 0%, #f2f6fa 60%, #eef3f8 100%);
@@ -40,7 +26,6 @@
   --am-good-a: 10%;
 }
 
-/* OLED keeps pure black (DESIGN.md §2.1): no lifted ground. */
 [data-theme="oled"] {
   --am-bg: #000;
   --am-flat: #000;
@@ -61,7 +46,6 @@
   }
 }
 
-/* Focus breaks take the second lamp from the blue–violet band, never amber or red (canvas ALT map). */
 [data-accent="violet"] {
   --am-alt: #087b87;
 }
@@ -87,8 +71,6 @@
   --am-i-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5l5 5 10-11'/%3E%3C/svg%3E");
 }
 
-/* ── Status tone, logo and pill (shared by the layer and the floating window) ────────────────────────── */
-
 :is(.at-ambient, .at-pip-body) {
   --am-tone: var(--at-accent);
   --am-logo: 26px;
@@ -108,7 +90,6 @@
   --am-tone: var(--at-muted);
 }
 
-/* The logo is a status light: ring in ink, lamp bead (with a 28 % halo) in the current tone. */
 :is(.at-am-top, .at-pip-top)::before {
   content: "";
   grid-area: logo;
@@ -150,7 +131,6 @@
     color 0.5s var(--am-ease);
 }
 
-/* The pill is a real control only when it offers the fix: then it keeps the 44 px target. */
 :is(.at-ambient, .at-pip-body) [data-pill]:is([data-lock="denied"], [data-lock="unsupported"]) {
   min-block-size: var(--at-h-control);
   cursor: pointer;
@@ -165,7 +145,6 @@
   display: none;
 }
 
-/* Glyph (DESIGN.md §2.3): dot with glow when awake, hollow when ready, pause bars, dot in ring, triangle. */
 :is(.at-ambient, .at-pip-body) [data-pill]::before {
   content: "";
   flex: none;
@@ -214,15 +193,11 @@
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
 }
 
-/* A shell StatusPill (moved in from the tool page) brings its own SVG glyph: one glyph only. */
 :is(.at-ambient, .at-pip-body) [data-pill]:has(> .at-pill-glyph)::before {
   content: none;
 }
 
-/* ── The layer ─────────────────────────────────────────────────────────────────────────────────────────── */
-
 .at-ambient {
-  /* Phone (< 600): the 390 × 844 boards. */
   --am-pad: 20px;
   --am-top: 64px;
   --am-top-pt: 8px;
@@ -328,7 +303,6 @@
   }
 }
 
-/* Portrait tablets (600–1023): cook stacks like the phone board, so five 64 px quick buttons keep their width. */
 @media (600px <= width < 1024px) {
   .at-ambient {
     --am-cook-cols: minmax(0, 1fr);
@@ -337,8 +311,6 @@
   }
 }
 
-/* Short screens and landscape phones (≤ 568 tall, DESIGN.md §11.4): nothing shrinks, so the middle scrolls
-   instead of squeezing controls; the top-right notes join the flow so the scroller cannot clip them. */
 @media (height <= 568px) {
   .at-ambient-content:not(:has(.at-cook-tap)) {
     justify-content: safe center;
@@ -360,7 +332,6 @@
   background: var(--at-ground);
 }
 
-/* The lamp aura: one slow 26 s drift behind everything (DESIGN.md §8). */
 .at-ambient::before {
   content: "";
   position: absolute;
@@ -393,7 +364,6 @@
   background: var(--am-flat);
 }
 
-/* Top row: logo · pill · session note … session line · ring. The PiP slot's children join the grid. */
 .at-am-top {
   position: relative;
   z-index: 2;
@@ -524,7 +494,6 @@
   }
 }
 
-/* Stage: the pixel-shifted middle; each mode lays out its content inside. */
 .at-ambient-stage {
   position: relative;
   z-index: 1;
@@ -558,13 +527,10 @@
   display: none;
 }
 
-/* Burn-in dim on OLED (E10-T07): the whole middle steps down; night dims only its digits (below). */
 .at-ambient[data-dim]:not([data-mode="night"]) .at-ambient-content {
   opacity: 0.65;
 }
 
-/* Notices never cover the pill or the primary control: centred in the top row's free middle on wide
-   screens, just above the mode bar on phones. */
 .at-ambient .at-toasts {
   position: absolute;
   z-index: 5;
@@ -594,8 +560,6 @@
     max-inline-size: 100%;
   }
 }
-
-/* ── Mode bar and controls (auto-hide after 3 s; never under a keyboard user) ────────────────────────── */
 
 .at-ambient-bar {
   position: relative;
@@ -761,7 +725,6 @@
   }
 }
 
-/* Hidden controls: the pill softens (6 % / 22 %, no glow) but never hides (docs/05 §3.13). */
 .at-ambient[data-controls="hidden"] [data-pill] {
   border-color: color-mix(in srgb, var(--am-tone) 22%, transparent);
   background: color-mix(in srgb, var(--am-tone) 6%, transparent);
@@ -772,7 +735,6 @@
   box-shadow: none;
 }
 
-/* Quiet modes (night, minimal): an outlined, muted pill (decision O-09). */
 .at-ambient:is([data-mode="night"], [data-mode="minimal"]) {
   --am-logo-ink: var(--at-muted);
 }
@@ -786,8 +748,6 @@
 .at-ambient:is([data-mode="night"], [data-mode="minimal"]) [data-pill]::before {
   box-shadow: none;
 }
-
-/* ── Night: forced OLED, only the night tokens so nothing blue reaches night vision ─────────────────── */
 
 .at-ambient[data-mode="night"] {
   --at-ink: var(--at-night-ink-2);
@@ -814,7 +774,6 @@
   background: #000;
 }
 
-/* Beats the lock-tone :has() rules: night never shows lamp, amber or red (DESIGN.md §11.4, O-09). */
 .at-ambient.at-ambient[data-mode="night"][open] {
   --am-tone: var(--at-night-muted);
 }
@@ -855,8 +814,6 @@
   display: none;
 }
 
-/* ── Minimal: flat ground; logo, pill and the session line sit low, above the mode bar ───────────────── */
-
 .at-ambient[data-mode="minimal"] .at-am-top {
   --am-logo: 24px;
   --am-bead: var(--am-logo-dot-lg);
@@ -873,8 +830,6 @@
 .at-ambient[data-mode="minimal"] .at-ambient-bar {
   order: 2;
 }
-
-/* ── Clock ─────────────────────────────────────────────────────────────────────────────────────────── */
 
 .at-ambient[data-mode="night"] .at-ambient-content {
   gap: var(--at-s-6);
@@ -1004,8 +959,6 @@
     letter-spacing: 0.02em;
   }
 }
-
-/* ── Focus ─────────────────────────────────────────────────────────────────────────────────────────── */
 
 .at-ambient[data-mode="focus"] .at-ambient-content {
   --am-ph-c: var(--am-ph, var(--at-accent));
@@ -1212,7 +1165,6 @@
   font-size: 0.9375rem;
 }
 
-/* Wide screens: "3 focus blocks today" sits at the end of the top row, centred on the pill. */
 @media (width >= 600px) {
   .at-am-today,
   .at-am-preview {
@@ -1227,8 +1179,6 @@
     color: var(--at-ink-2);
   }
 }
-
-/* ── Message ───────────────────────────────────────────────────────────────────────────────────────── */
 
 .at-ambient[data-mode="message"] .at-ambient-content {
   gap: var(--am-msg-gap);
@@ -1261,7 +1211,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Free, no shared link: the message steps away (opacity 0) behind the honest Pro card. */
 .at-ambient-content[data-scrim] > :is(.at-ambient-message, .at-am-meta) {
   opacity: 0;
   transition: opacity 0.9s var(--am-ease);
@@ -1443,8 +1392,6 @@
     font-size: 1.25rem;
   }
 }
-
-/* ── Cook: propped-up phone, wet hands — every target ≥ 64 px (docs/05 §3.16) ────────────────────────── */
 
 .at-ambient[data-mode="cook"] .at-ambient-content {
   display: grid;
@@ -1828,8 +1775,6 @@
   font: var(--at-type-action);
 }
 
-/* ── Floating window: Document PiP body and the /pip popup (PipWindow canvas, 280 × 120 / 160) ───────── */
-
 .at-pip-body {
   --am-logo: 20px;
 
@@ -2040,8 +1985,6 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
-
-/* ── Motion (DESIGN.md §8): ease-out, no bounce; reduced motion stops every loop and transition ──────── */
 
 @keyframes am-in {
   from {

@@ -1,14 +1,9 @@
-/*
- * Toolbar popup (docs/10 §5, ExtPopup + ExtEdge canvas boards): 360 wide, 12 px rhythm between blocks,
- * 20 px below the last row (DESIGN.md §11.1 dock rule). Chrome sizes the popup to its content (max 600 tall).
- */
 body {
   inline-size: 360px;
   background: var(--at-ground);
 }
 
 .pp {
-  /* The state tone drives the logo bead, the ring and the halo (DESIGN.md §2.3). */
   --ext-tone: var(--at-muted);
   --ring-tone: var(--at-accent);
   --aura: 6%;
@@ -66,7 +61,6 @@ body {
   position: absolute;
 }
 
-/* ── Header ─────────────────────────────────────────────────────────────────────────────────────── */
 .pp-head {
   display: flex;
   align-items: center;
@@ -129,7 +123,6 @@ body {
   animation: at-breathe 3.4s var(--ext-ease) infinite alternate;
 }
 
-/* ── Status: ring 124 + pill column ─────────────────────────────────────────────────────────────── */
 .pp-status {
   display: grid;
   grid-template-columns: 124px minmax(0, 1fr);
@@ -204,7 +197,6 @@ body {
   stroke-opacity: 0.5;
 }
 
-/* Ready: the full arc in lamp at 45 % (DESIGN.md §2.3). */
 .pp[data-mode="ready"] .pp-arc:not(.pp-arc-glow) {
   stroke-opacity: 0.45;
 }
@@ -213,7 +205,6 @@ body {
   stroke-opacity: 0;
 }
 
-/* Blocked: nothing runs, so the ring shrinks to its red dotted pattern and the pill gets the room. */
 .pp[data-mode="blocked"] .pp-status {
   grid-template-columns: 72px minmax(0, 1fr);
 }
@@ -301,7 +292,6 @@ body {
   white-space: nowrap;
 }
 
-/* 20 px is the size at which "12:59:59" fits inside the 88 px ring without wrapping. */
 .pp-digits[data-long] {
   font-size: 20px;
 }
@@ -344,7 +334,6 @@ body {
   color: var(--at-muted);
 }
 
-/* ── Add time, time's up, error ──────────────────────────────────────────────────────────────────── */
 .pp-add,
 .pp-extend-row {
   display: grid;
@@ -412,7 +401,6 @@ body {
   text-wrap: pretty;
 }
 
-/* ── Primary action ─────────────────────────────────────────────────────────────────────────────── */
 .pp-primary {
   display: flex;
   flex-direction: column;
@@ -477,7 +465,6 @@ body {
   color: var(--at-accent-text);
 }
 
-/* ── Level switch ───────────────────────────────────────────────────────────────────────────────── */
 .pp-levels {
   display: flex;
   flex-direction: column;
@@ -507,7 +494,6 @@ body {
   text-align: center;
 }
 
-/* ── Length chips: four columns, all seven presets + Until… (O-74) ───────────────────────────────── */
 .pp-chips {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -536,7 +522,6 @@ body {
   color: var(--at-ink);
 }
 
-/* "Until…" is a choose affordance: dashed line-strong (DESIGN.md §11.2). */
 .pp-chip-add {
   border-style: dashed;
   border-color: var(--at-line-strong);
@@ -550,7 +535,6 @@ body {
   opacity: 0.5;
 }
 
-/* ── Until panel (inline, replaces the chips) ───────────────────────────────────────────────────── */
 .pp-until {
   display: flex;
   flex-direction: column;
@@ -598,7 +582,6 @@ body {
   color: var(--at-on-accent);
 }
 
-/* ── Cards: schedule, private window, tips, Pro ─────────────────────────────────────────────────── */
 .pp-card {
   display: grid;
   grid-template-columns: 32px minmax(0, 1fr);
@@ -795,13 +778,11 @@ body {
   block-size: 16px;
   padding-inline: var(--at-s-1);
   border-radius: var(--at-r-xs);
-  /* Chrome draws the real badge: Screen level #087B87 (DESIGN.md §2.1). */
   background: #087b87;
   font: 600 0.75rem/1rem var(--at-font);
   color: #fff;
 }
 
-/* ── Footer ─────────────────────────────────────────────────────────────────────────────────────── */
 .pp-foot {
   display: flex;
   flex-direction: column;

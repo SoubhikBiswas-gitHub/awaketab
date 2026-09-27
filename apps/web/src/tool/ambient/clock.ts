@@ -3,11 +3,6 @@ import { t } from '../i18n.js';
 import { dateLong } from './fmt.js';
 import { el, everySecond } from './tick.js';
 
-/**
- * `clock` and `night` share one layout (Ambient canvas): big H:MM with AM/PM and seconds beside it (stacked on
- * phones), a 60-tick seconds track with the lamp, and the long date. Night's red digits, the hidden track, the
- * dimming note and the forced OLED palette are CSS (docs/05 §3.13). 12/24 h follows the locale unless set.
- */
 export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   const lang = document.documentElement.lang || 'en';
   const h = el('span');

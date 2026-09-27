@@ -1,11 +1,3 @@
-/**
- * Content pages (redesign B5): the two small behaviours the canvas draws beside the article, done without the
- * tool island (docs/03 ADR-013: build-time markup, a few lines of vanilla script).
- * - `[data-spy]` navs (the article's "On this page" list, a hub's jump bar) mark the section in view with
- *   `aria-current="location"`; a jump bar also moves its sliding indicator (`--at-i`, CSS does the motion).
- * - `[data-tool-mirror]` (the "Back to the tool" card) repeats the embedded tool's pill state and digits, so the
- *   card never claims a state the tool is not in.
- */
 function spy(nav: HTMLElement): void {
   const links = [...nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
   const targets = links.map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))));

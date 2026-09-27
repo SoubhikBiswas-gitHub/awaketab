@@ -10,7 +10,6 @@ const MAGIC = new TextEncoder().encode('ATKVBK01');
 const IV_BYTES = 12;
 const TAG_BYTES = 16;
 
-/** Decodes and validates a base64 AES-256 key (`openssl rand -base64 32`). */
 export function parseAesKey(keyB64: string, name: string): Uint8Array<ArrayBuffer> {
   const trimmed = keyB64.trim();
   if (!/^[A-Za-z0-9+/]+={0,2}$/u.test(trimmed)) throw new Error(`${name} must be base64 (openssl rand -base64 32)`);
@@ -55,7 +54,6 @@ export async function decryptBackup(bytes: Uint8Array, keyB64: string): Promise<
   return new TextDecoder().decode(pt);
 }
 
-/** Same output format as `encryptUtf8` in functions/_lib/license.ts. */
 export async function encryptKeyEnc(plain: string, keyB64: string): Promise<string> {
   const key = await importKey(parseAesKey(keyB64, 'LICENSE_KEY_ENC_KEY'), 'encrypt');
   const iv = crypto.getRandomValues(new Uint8Array(IV_BYTES));
@@ -66,7 +64,6 @@ export async function encryptKeyEnc(plain: string, keyB64: string): Promise<stri
   return Buffer.from(packed).toString('base64');
 }
 
-/** Returns the plaintext, or `null` when `keyB64` is not the key this value was encrypted with. */
 export async function tryDecryptKeyEnc(packedB64: string, keyB64: string): Promise<string | null> {
   const packed = new Uint8Array(Buffer.from(packedB64, 'base64'));
   if (packed.byteLength < IV_BYTES + TAG_BYTES) return null;

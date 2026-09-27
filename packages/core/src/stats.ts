@@ -71,7 +71,6 @@ export function pruneDays(days: Record<string, number>, now = Date.now(), timeZo
   return next;
 }
 
-/** Adds one to the local day of `now` in a per-day counter (`IStats.daySessions`, `IStats.dayFocus`). */
 export function countDay(rec: Record<string, number> | undefined, now: number, timeZone?: string): Record<string, number> {
   const next = rec ?? {};
   const key = dayKey(now, timeZone);
@@ -91,10 +90,6 @@ export function creditMinutes(
   stats.totalMinutes += minutes;
 }
 
-/**
- * `date,awake_minutes,sessions`, one row per local day with minutes or sessions. The sessions cell is empty
- * where no per-day count exists (days recorded before `daySessions`), never a guessed 0 (docs/08 §6).
- */
 export function exportStatsCsv(stats: { days: Record<string, number>; daySessions?: Record<string, number> }, ver = '0.0.0'): string {
   const per = stats.daySessions ?? {};
   const rows = [...new Set([...Object.keys(stats.days), ...Object.keys(per)])]

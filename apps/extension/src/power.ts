@@ -2,16 +2,8 @@ import type { TAdviceCode, TLockState } from '@awaketab/core';
 import type { IChangeEvent, IWakeLockHandle } from '@awaketab/wake';
 import type { IExtApi, TPowerLevel } from './api';
 
-/**
- * `IWakeLockHandle` over `chrome.power` (docs/04 §16, docs/10 §3). `requestKeepAwake` cannot fail
- * asynchronously the way `navigator.wakeLock` can, so the only states are `idle`, `requesting`, `held`,
- * `unsupported` (API missing — some Chromium forks) and `denied` (the call threw, e.g. enterprise policy).
- * `lost` and `fallback` never occur in the extension.
- */
 export interface IPowerLock extends IWakeLockHandle {
-  /** The level last passed to `requestKeepAwake`, or `null` while nothing is held. */
   readonly level: TPowerLevel | null;
-  /** Re-issues the keep-awake request at the current level (onStartup, onInstalled, every alarm tick). */
   reassert(): void;
 }
 

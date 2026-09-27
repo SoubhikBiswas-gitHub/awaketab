@@ -1,12 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { installFakeWakeLock } from './fake-wakelock';
 
-/*
- * Responsive sweep (DESIGN.md §5 "Gate", §12.8): every route at every 40 px step from 320 to 2560 wide must
- * not scroll horizontally, and the shared header and footer keep 44 px targets 16 px clear of the edges. One page load per route, resized through the sweep; Chromium only
- * (layout is engine-independent enough here, and 57 widths × 8 routes × 3 engines would not pay for itself).
- */
-
 const ROUTES = [
   '/',
   '/30m',

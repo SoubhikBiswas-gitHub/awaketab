@@ -5,11 +5,6 @@ import type { IExtApi } from '../src/api';
 import { createController } from '../src/controller';
 import { mockPower } from '../src/test-hooks';
 
-/**
- * MV3 service worker (docs/10 §4). Every listener is registered synchronously on start so Chrome can wake
- * the worker for it; the controller loads chrome.storage lazily on the first event and re-hydrates the
- * session, re-issuing the keep-awake request.
- */
 export default defineBackground({
   type: 'module',
   main() {

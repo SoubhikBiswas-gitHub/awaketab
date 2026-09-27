@@ -5,7 +5,6 @@ export interface ILicenseActivation {
   polarActivationId?: string;
 }
 
-/** `canceled` = subscription will not renew; features continue until `exp` (docs/09 §2.7). */
 export type TLicenseStatus = 'active' | 'canceled' | 'revoked' | 'refunded' | 'expired';
 
 export type TPlanId = 'pro_yearly' | 'pro_lifetime' | 'biz_embed_site_yearly' | 'biz_kiosk_site' | 'biz_kiosk_5';
@@ -29,13 +28,8 @@ export interface ILicenseRecord {
   plan: TPlanId;
   status: TLicenseStatus;
   keyEnc: string;
-  /** Polar order id ('' until known: a `benefit_grant.*` or key-bearing `order.created` webhook fills it). */
   polarOrderId: string;
   customerId: string;
-  /**
-   * D-06 (docs/08 §4): Polar ids that key-less webhooks carry instead of the licence key. Optional because
-   * records written before D-06 lack them; those still resolve through the raw key or `cus:{customerId}`.
-   */
   polarLicenseKeyId?: string;
   polarSubscriptionId?: string;
   polarGrantId?: string;

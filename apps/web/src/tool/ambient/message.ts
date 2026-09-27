@@ -9,12 +9,6 @@ import { el, everySecond } from './tick.js';
 // The shared-link preview is spent once per page view; coming back to the mode shows the Pro card.
 let previewSpent = false;
 
-/**
- * One line of user text (docs/05 §3.15). The text is re-sanitised here and only ever written with
- * textContent — `msg=` can never inject markup. Without `ambient.message` a shared link previews for 60 s
- * (Pro tag and countdown top right), otherwise the text is hidden behind the honest Pro card. Pro edits the
- * saved message in place (the same at.v1.settings field as Settings).
- */
 export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   const pro = hasFeature(ctx, 'ambient.message');
   const view = resolveMessage({

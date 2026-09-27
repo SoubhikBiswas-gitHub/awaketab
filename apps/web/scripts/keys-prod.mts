@@ -15,7 +15,6 @@ export interface IProdKeyPair {
   privateJwk: Record<string, string>;
 }
 
-/** The next `ver`: above every production key and above the dev key's ver, so the two never collide. */
 export function nextVer(existing: readonly number[] = Object.keys(PRODUCTION_LICENSE_PUBLIC_KEYS).map(Number)): number {
   return Math.max(DEV_LICENSE_KEY_VER, ...existing) + 1;
 }

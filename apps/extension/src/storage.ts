@@ -1,28 +1,16 @@
 import { STORAGE_KEYS, type IStorageAdapter } from '@awaketab/core';
 import type { IStorageAreaApi, IStorageChange } from './api';
 
-/** Time a session write that only advances `awakeSeconds` may wait before it reaches chrome.storage. */
 export const SESSION_COALESCE_MS = 10_000;
 
 export interface IChromeStorageAdapter extends IStorageAdapter {
-  /** Reads every `at.*` key once; the core storage layer then works synchronously against the cache. */
   load(): Promise<void>;
-  /** Mirrors a `chrome.storage.onChanged` batch from another context (popup, options) into the cache. */
   apply(changes: Record<string, IStorageChange>): string[];
-  /** Parsed value for `key`, as stored (objects, not JSON strings). */
   raw(key: string): unknown;
-  /** Writes a parsed value straight through (pages and the controller's own keys). */
   put(key: string, value: unknown): Promise<void>;
-  /** Forces any coalesced session write out now. */
   flush(): Promise<void>;
 }
 
-/**
- * The `IStorageAdapter` of docs/04 §16 over `chrome.storage.local`. `@awaketab/core` reads storage
- * synchronously, so the adapter keeps a write-through cache that `load()` fills and `apply()` keeps in step
- * with writes from other extension pages. Values are stored as objects (docs/08 §3: "the same shapes"), and
- * the engine's once-per-second session writes are coalesced when only `awakeSeconds` moved.
- */
 export function createChromeStorageAdapter(
   area: IStorageAreaApi,
   opts: { coalesceMs?: number; setTimeout?: typeof setTimeout; clearTimeout?: typeof clearTimeout } = {},

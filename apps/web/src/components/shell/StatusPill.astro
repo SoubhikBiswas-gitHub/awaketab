@@ -2,16 +2,9 @@
 import type { TLockState } from '@awaketab/wake';
 import type { HTMLAttributes } from 'astro/types';
 
-/*
- * Status pill (DESIGN.md §2.3, §11.4; PRIMITIVES.md P-PILL; docs/05 §3.2). One of the seven exact lock-state
- * strings, alone, with a shape glyph and the state's tone (12 % fill, 38 % border). The glyph is one SVG with
- * all four shapes; CSS shows the one for `data-lock`, so the island only writes `data-lock` and the text.
- * Sizes: L 48 (kiosk, xl) · M 38 (tool; may wrap to two lines, O-62) · S 32 (popup, PiP, full embed) · XS 26.
- */
 interface Props extends HTMLAttributes<'output'> {
   state?: TLockState;
   size?: 'L' | 'M' | 'S' | 'XS';
-  /** `button` while the pill can open the fix (the tool, denied / unsupported); otherwise an `<output>` or `<span>`. */
   as?: 'output' | 'button' | 'span';
   label?: string;
 }

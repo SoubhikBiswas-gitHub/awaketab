@@ -1,9 +1,3 @@
-/**
- * The slice of the `chrome.*` extension API AwakeTab uses, typed narrowly so the background controller and
- * the pages can run against an in-memory fake in unit tests (test/unit/fake-chrome.ts). The entrypoints pass
- * WXT's `browser` object, cast once to this shape.
- */
-
 export type TPowerLevel = 'display' | 'system';
 
 export interface IExtEvent<TFn extends (...args: never[]) => unknown> {
@@ -112,6 +106,5 @@ export interface IExtApi {
     onRemoved: IExtEvent<(tabId: number) => void>;
   };
   i18n?: { getUILanguage(): string };
-  /** `inIncognitoContext` is true for a popup opened from a private window (the private-window note). */
   extension?: { inIncognitoContext?: boolean };
 }

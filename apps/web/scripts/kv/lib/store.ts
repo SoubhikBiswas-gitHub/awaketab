@@ -4,26 +4,21 @@ import type { IKvRecord } from './format.ts';
 
 export interface IKvKeyInfo {
   name: string;
-  /** Absolute expiry, Unix seconds. */
   expiration?: number;
   metadata?: unknown;
 }
 
 export interface IKvListPage {
   keys: IKvKeyInfo[];
-  /** Absent (or empty) on the last page. */
   cursor?: string;
 }
 
 export interface IKvStore {
   list(prefix: string, cursor?: string): Promise<IKvListPage>;
-  /** Values for up to any number of keys; a missing key maps to `null`. */
   getMany(keys: string[]): Promise<Map<string, string | null>>;
-  /** Writes each record with its `expiration` and `metadata`; throws if any key was not written. */
   putMany(records: IKvRecord[]): Promise<void>;
 }
 
-/** Iterates every listing page under `prefix`. */
 export async function* listPages(store: IKvStore, prefix: string): AsyncGenerator<IKvKeyInfo[]> {
   let cursor: string | undefined;
   do {
@@ -33,7 +28,6 @@ export async function* listPages(store: IKvStore, prefix: string): AsyncGenerato
   } while (cursor);
 }
 
-/** Joins a listing page with its values. Keys deleted between list and get are dropped. */
 export async function readPage(store: IKvStore, keys: IKvKeyInfo[]): Promise<IKvRecord[]> {
   if (keys.length === 0) return [];
   const values = await store.getMany(keys.map((row) => row.name));
@@ -49,7 +43,6 @@ export async function readPage(store: IKvStore, keys: IKvKeyInfo[]): Promise<IKv
   return out;
 }
 
-/** Every live record under the given prefixes, sorted by key. */
 export async function readAll(
   store: IKvStore,
   prefixes: readonly string[],
@@ -65,7 +58,6 @@ export async function readAll(
   return out.sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));
 }
 
-/** KV rejects an absolute `expiration` less than 60 s ahead; such a record cannot be written back. */
 export function isExpiredForWrite(row: { expiration?: number }, nowMs: number): boolean {
   return row.expiration !== undefined && row.expiration * 1000 < nowMs + 60_000;
 }

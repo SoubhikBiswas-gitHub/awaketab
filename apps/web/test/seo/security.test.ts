@@ -6,15 +6,6 @@ import { describe, expect, it } from 'vitest';
 import { PRODUCTION_LICENSE_PUBLIC_KEYS } from '../../../../packages/core/src/license';
 import { servedFile } from '../../scripts/served.mjs';
 
-/*
- * Security checks over the built site (docs/19 §E, docs/17 §2, docs/14 §3):
- * 1. no secret — by name or by its .dev.vars.example value — and no private key material in any file that
- *    ships to the browser;
- * 2. every route class gets the docs/14 §3 security headers from the generated _headers, resolved the way
- *    Cloudflare Pages applies them (all matching rules in order; `! Name` detaches; a header set again by a
- *    later matching rule is joined with ", ").
- */
-
 const dist = process.env.AT_DIST ? path.resolve(process.env.AT_DIST) : path.resolve(import.meta.dirname, '../../dist');
 const devVars = path.resolve(import.meta.dirname, '../../.dev.vars.example');
 
@@ -146,7 +137,6 @@ function matches(pattern: string, pathname: string): boolean {
   return re.test(pathname);
 }
 
-/** Effective headers for a path, applying every matching rule in file order as Cloudflare Pages does. */
 function effective(rules: IRule[], pathname: string): Map<string, string> {
   const out = new Map<string, string>();
   for (const rule of rules) {

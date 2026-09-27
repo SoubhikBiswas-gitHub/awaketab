@@ -7,7 +7,6 @@ export const RATING_MIN_SESSIONS = 5;
 export const RATING_REARM_SESSIONS = 10;
 export const RATING_TEXT_MAX = 280;
 
-/** docs/05 §3.22: once after the 5th counted session; `later` re-arms 10 sessions on; `never`/`rated` are final. */
 export function ratingEligible(meta: Pick<IMeta, 'sessionCount' | 'ratingPrompt'>): boolean {
   const rp = meta.ratingPrompt;
   if (meta.sessionCount < RATING_MIN_SESSIONS) return false;
@@ -34,7 +33,6 @@ function record(ctx: IToolCtx, action: 'rated' | 'later' | 'never', stars?: numb
   ctx.storage.writeMeta(meta);
 }
 
-/** Shows the rating dialog when eligible and nothing else is going on; never during an active session. */
 export function maybeShowRating(ctx: IToolCtx): boolean {
   const dialog = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="rating"]');
   const form = dialog?.querySelector('form');

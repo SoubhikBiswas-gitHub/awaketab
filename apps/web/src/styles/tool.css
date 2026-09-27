@@ -1,11 +1,3 @@
-/*
- * Tool-route stylesheet — docs/05-frontend-spec.md §1–§3, §13; docs/03-architecture.md ADR-013.
- * Shared `.at-*` rules live in `@layer components` so shadcn/ui utility classes placed on the same
- * element (cva helpers such as buttonVariants()) win the cascade. Bespoke pieces (ring, pill, timer)
- * stay hand-written but read their colours from the shadcn semantic tokens bridged in tokens.css.
- * Every class referenced by src/tool/** (JS-generated toast nodes, `is-*` state classes) is kept.
- */
-
 /* stylelint-disable-next-line at-rule-no-unknown */
 @reference "./tokens.css";
 
@@ -40,13 +32,10 @@
 }
 
 @layer components {
-  /* Buttons — shadcn `outline` look at a 44 px target. Server-rendered controls use buttonVariants()
-     directly; this rule covers JS-generated nodes (src/tool/ui/toast.ts) and pages outside the island. */
   .at-btn {
     @apply inline-flex min-h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border bg-background px-4 py-2 text-sm font-medium whitespace-nowrap text-foreground shadow-xs transition-all outline-none hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 dark:border-input dark:bg-input/30 dark:hover:bg-input/50;
   }
 
-  /* Card surface for the second-tab / language / resume banners (shadcn Card). */
   .at-banner {
     @apply grid gap-3 rounded-xl border bg-card p-4 text-sm text-card-foreground shadow-sm;
   }
@@ -55,7 +44,6 @@
     @apply m-0;
   }
 
-  /* Capability notice — shadcn Alert surface (docs/05 §3.10). */
   .at-notice {
     @apply grid gap-2 rounded-lg border bg-card px-4 py-3 text-sm text-card-foreground;
   }
@@ -73,7 +61,6 @@
     @apply flex flex-wrap items-center gap-2;
   }
 
-  /* Toasts are built in src/tool/ui/toast.ts with `at-toast at-toast--{kind}` (docs/05 §3.7). */
   .at-toast {
     @apply flex items-center gap-2 rounded-lg border bg-card p-3 text-sm text-card-foreground shadow-lg;
 
@@ -146,7 +133,6 @@
     @apply self-center;
   }
 
-  /* Honest-limit aside — shadcn Alert with a warning rail; also used by hub/article pages. */
   .at-limit {
     @apply my-6 grid w-full gap-1 rounded-lg border bg-card px-4 py-3 text-sm text-card-foreground;
 
@@ -179,19 +165,12 @@
   }
 }
 
-/*
- * Colour never animates (deliberately unlayered so it beats shadcn's `transition-all` / `transition-colors`):
- * a theme switch (D key, `data-theme`) must repaint text and backgrounds at once so contrast is always what the
- * tokens promise — axe and screen-reader colour queries read computed values immediately. Shadows, transforms,
- * opacity, borders and the ring's stroke-dashoffset still ease (docs/05 §1.4).
- */
 *,
 *::before,
 *::after {
   transition-property: border-color, box-shadow, opacity, transform, stroke-dashoffset, outline-color;
 }
 
-/* Layout, ring, pill, timer, dialogs and prose — also in `components` so utilities on the element win. */
 @layer components {
   .at-skip {
     position: absolute;
@@ -214,7 +193,6 @@
     overflow: hidden;
   }
 
-  /* Page body between the shared header and footer (DESIGN.md §12.7): gutter padding, content max 1200. */
   .at-shell {
     max-inline-size: calc(var(--at-content-max) + 2 * var(--at-gutter));
     margin-inline: auto;
@@ -222,12 +200,10 @@
     padding-block-start: var(--at-s-4);
   }
 
-  /* The skip link's target on pages without the tool; it is not a control, so it draws no ring. */
   .at-shell:focus {
     outline: none;
   }
 
-  /* Tool actions that left the header (B2): Share, floating window, shortcuts, Stats on phones, Install. */
   .at-tool-more {
     display: grid;
     grid-template-columns: repeat(5, var(--at-h-control));
@@ -243,7 +219,6 @@
     gap: var(--at-gap-tight);
   }
 
-  /* "until 10:30 PM" beside the exact pill string: secondary weight, so the state reads first. */
   .at-pill-extra {
     color: var(--at-ink-2);
     font-weight: 500;
@@ -263,7 +238,6 @@
     gap: var(--at-s-4);
   }
 
-  /* Ring — docs/05 §3.1. Geometry is fixed; only colours come from tokens. */
   .at-ring {
     inline-size: clamp(160px, 50vw, 192px);
     block-size: auto;
@@ -325,7 +299,6 @@
     }
   }
 
-  /* Timer — docs/05 §3.6. */
   .at-timer {
     text-align: center;
   }
@@ -348,22 +321,16 @@
     font-size: var(--at-t-sm);
   }
 
-  /* The slot spans the panel so a wider pill or caption after autostart never re-centres it (CLS 0). Only
-     in its home position: ambient modes move the slot into their own layer and style it there. */
   .at-tool > [data-pip-slot] {
     display: grid;
     justify-items: center;
     justify-self: stretch;
   }
 
-  /* The timer spans the slot and its caption line is reserved before the session starts, so neither the
-     timer nor the chips below move when the caption fills. */
   .at-tool > [data-pip-slot] > .at-timer {
     justify-self: stretch;
   }
 
-  /* Ring-wide pill: "Ready" → "Starting…" → "Screen awake" fit in every locale (widest: de, 168 px), so autostart
-     changes the words, not the pill's box. Longer states (lost, denied, fallback) may still widen it. */
   .at-tool > [data-pip-slot] > .at-pill {
     justify-content: center;
     min-inline-size: 12rem;
@@ -378,8 +345,6 @@
     min-block-size: 1lh;
   }
 
-  /* Stop appears when a session starts; on the full tool its row is reserved so the article below the
-     tool does not move on autostart. Embedded tools start on a click, which CLS already excludes. */
   .at-stop-slot {
     display: grid;
     justify-items: center;
@@ -391,8 +356,6 @@
     min-block-size: 0;
   }
 
-  /* The one-time language suggestion (docs/07 §2) arrives after load, so it floats above the page bottom
-     instead of pushing the tool down. */
   .at-tool > .at-banner[data-lang-suggest] {
     position: fixed;
     inset-inline: var(--at-s-4);
@@ -405,7 +368,6 @@
     @apply shadow-lg;
   }
 
-  /* Preset chips — docs/05 §3.3: nothing is ever hidden at any width. */
   .at-chips {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
@@ -428,12 +390,11 @@
     z-index: 30;
   }
 
-  /* Native <dialog> styled like shadcn DialogContent; the island opens them with showModal(). */
   dialog {
     inline-size: calc(100% - 2rem);
     max-inline-size: 24rem;
     max-block-size: calc(100% - 2rem);
-    margin: auto; /* Tailwind preflight zeroes margins; native <dialog> centres through margin: auto */
+    margin: auto;
     padding: var(--at-s-6);
     overflow: auto;
     border: 1px solid var(--border);
@@ -460,7 +421,6 @@
     font-size: var(--at-t-sm);
   }
 
-  /* Prose used by home, preset, pro and trust pages (Tailwind preflight zeroes margins, so restore them). */
   .at-prose,
   .at-article {
     max-inline-size: 45rem;
@@ -628,11 +588,6 @@
   }
 }
 
-/*
- * M6 engagement layer — ambient modes (docs/05 §3.13–§3.16), stats (§3.17), rating (§3.22), sponsor (§3.23)
- * and the /pip popup (§9). The ambient layer is a modal <dialog> so the page behind it is inert and focus
- * stays inside; the ring, pill and timer are re-parented into it (one DOM, one truth).
- */
 @layer components {
   .at-ambient {
     position: fixed;
@@ -695,7 +650,6 @@
     opacity: 0;
   }
 
-  /* The honest status never hides; it steps down to the muted ink (still ≥ 4.5:1) instead of fading. */
   .at-ambient[data-controls="hidden"] .at-pill {
     color: var(--muted-foreground);
   }
@@ -731,7 +685,6 @@
     min-inline-size: 12rem;
   }
 
-  /* clock: the ring shrinks to 96 px in the top corner; the session timer sits small under the date. */
   .at-ambient[data-mode="clock"] .at-ring,
   .at-ambient[data-mode="focus"] .at-ring,
   .at-ambient[data-mode="message"] .at-ring {
@@ -745,7 +698,6 @@
     font-size: var(--at-t-xl);
   }
 
-  /* night: OLED palette (forced by the shell), red digits preserve night vision, no ring. */
   .at-ambient[data-mode="night"] .at-ring,
   .at-ambient[data-mode="minimal"] .at-ring,
   .at-ambient[data-mode="cook"] .at-ring {
@@ -760,7 +712,6 @@
     color: var(--at-night-digit);
   }
 
-  /* cook shows elapsed time in its own tap card; the session timer would only repeat it. */
   .at-ambient[data-mode="cook"] [data-timer] {
     display: none;
   }
@@ -769,7 +720,6 @@
     color: var(--at-muted);
   }
 
-  /* minimal: ground only; pill and a small timer in the bottom corner. */
   .at-ambient[data-mode="minimal"] [data-pip-slot] {
     position: absolute;
     inset-block-end: 0;
@@ -787,7 +737,6 @@
     font-size: var(--at-t-sm);
   }
 
-  /* message: one balanced line; free users see it behind a scrim with the Pro card. */
   .at-ambient-message {
     max-inline-size: 18ch;
     margin: 0;
@@ -828,7 +777,6 @@
     background: color-mix(in srgb, var(--at-accent) 40%, transparent);
   }
 
-  /* cook: propped-up phone, wet hands — every target ≥ 64 px (docs/05 §3.16). */
   .at-ambient[data-mode="cook"] .at-ambient-stage {
     align-content: start;
     overflow-y: auto;
@@ -853,8 +801,6 @@
     cursor: pointer;
   }
 
-  /* HH:MM:SS is twice as wide as the clock's HH:MM: size it to the ≤ 36rem card so it never overflows
-     (an overflowing min-content width widened the whole stage past the viewport at 390 px). */
   .at-ambient .at-cook-tap .at-ambient-digits {
     font-size: clamp(2.5rem, 16vw, 7rem);
   }
@@ -905,8 +851,6 @@
     gap: var(--at-s-2);
   }
 
-  /* Stats panel (docs/05 §3.17): colour plus a visible dot count, so intensity is never colour-only.
-     Tints stop at 40 % so --at-ink dots stay ≥ 4.5:1 on every palette and theme. */
   dialog[data-dialog="stats"] {
     max-inline-size: 40rem;
   }
@@ -989,7 +933,6 @@
     opacity: 0.4;
   }
 
-  /* Rating stars — 44 × 44 radio labels (docs/05 §3.22). */
   .at-stars {
     display: flex;
     flex-wrap: wrap;
@@ -1039,7 +982,6 @@
     background: var(--at-swatch);
   }
 
-  /* SponsorCard slot: fixed 300 × 100, reserved even when empty or hidden (CLS 0). */
   .at-sponsor {
     display: grid;
     align-content: center;
@@ -1058,7 +1000,6 @@
     visibility: hidden;
   }
 
-  /* ExtendPrompt slot: collapsed (never while the dialog is open) when there is nothing to show. */
   .at-sponsor[hidden] {
     display: none;
   }
@@ -1072,7 +1013,6 @@
     color: var(--muted-foreground);
   }
 
-  /* /pip popup and the Document PiP window: pill, timer, Stop and +15 only (docs/05 §9). */
   .at-pip-body {
     display: grid;
     justify-items: center;
@@ -1092,7 +1032,6 @@
     gap: var(--at-s-2);
   }
 
-  /* pip.pro: the ambient mode's digits (cloned from the page) above the pill; the session timer steps aside. */
   .at-pip-ambient {
     display: grid;
     justify-items: center;
@@ -1134,8 +1073,6 @@
     }
   }
 
-  /* Kiosk licence (docs/09 §7.2, src/tool/embed/kiosk.ts): `kiosk.branding` hides the wordmark; the
-     operator's `logo=` image sits above the timer and at the top of the ambient screen. */
   [data-kiosk] .at-wordmark {
     visibility: hidden;
   }

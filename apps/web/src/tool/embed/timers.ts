@@ -5,7 +5,6 @@ import { formatClock } from './clock.js';
 
 const SVG = 'http://www.w3.org/2000/svg';
 
-/** The 16 px close glyph of the remove button (DESIGN.md §11.4 icons: stroke 1.8, round caps). */
 function closeIcon(): SVGSVGElement {
   const svg = document.createElementNS(SVG, 'svg');
   svg.setAttribute('viewBox', '0 0 24 24');
@@ -17,13 +16,11 @@ function closeIcon(): SVGSVGElement {
   return svg;
 }
 
-/** Quick-add durations in the widget (a subset of the app's cook mode; no free-text names in an embed). */
 export const EMBED_QUICK_MIN = [5, 10, 15, 30, 60] as const;
 
 export interface ITimerDeps {
   read(): ICookTimer[];
   write(list: ICookTimer[]): void;
-  /** Starts an indefinite session when none is live, so the screen stays awake while timers run. */
   ensureSession(): Promise<void>;
   onFinished(timer: ICookTimer): void;
   announce(text: string): void;
@@ -31,10 +28,6 @@ export interface ITimerDeps {
   id?: () => string;
 }
 
-/**
- * Up to three kitchen timers inside the `full` widget (docs/11 §2) — the same `ICookTimer` data and limits as
- * the app's cook mode (docs/00 §13.8), persisted in `at.v1.embed.settings` instead of the session.
- */
 export function mountTimers(section: HTMLElement, deps: ITimerDeps): () => void {
   const list = section.querySelector<HTMLElement>('[data-embed-timer-list]');
   const quick = section.querySelector<HTMLElement>('[data-embed-quick]');

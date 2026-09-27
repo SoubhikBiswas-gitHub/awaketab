@@ -15,7 +15,6 @@ export function mountShortcuts(
     startPreset: (id: ReturnType<typeof chipShortcut>) => void;
     openUntil: () => void;
     fullscreen: () => void;
-    /** Called with no theme: the action picks the next one when it runs, after any earlier press has applied. */
     cycleTheme: (theme?: TTheme) => void;
     cycleMode: () => void;
     exitMode: () => void;

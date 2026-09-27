@@ -9,17 +9,11 @@ import { el, everySecond } from './tick.js';
 
 const PHASE = { work: 'ambient.focus.work', break: 'ambient.focus.break', long: 'ambient.focus.long', done: 'tool.timer.complete' };
 
-/** A cycle's dot: done once its work interval is over, `now` while it runs. */
 function dotState(cycle: number, p: IFocusPhase): 'done' | 'now' | 'todo' {
   if (cycle < p.cycle || (cycle === p.cycle && p.kind !== 'work')) return 'done';
   return cycle === p.cycle ? 'now' : 'todo';
 }
 
-/**
- * Pomodoro (docs/05 §3.14): the whole block is one `duration` session (130 min with the defaults) so the
- * lock is held through breaks; phases are derived from active elapsed time on every repaint. "Skip" moves the
- * phase clock forward by the rest of the current interval (session.modeState.focusSkip); the lock is untouched.
- */
 export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   const kicker = el('span', { class: 'at-am-kicker' }, t('ambient.focus.block'));
   const row = el('div', { class: 'at-am-frow', 'data-focus-label': '' });

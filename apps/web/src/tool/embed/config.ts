@@ -1,9 +1,3 @@
-/**
- * Licensed rendering inside the frame (docs/11 §2, docs/09 §7.1): `GET /api/embed/config?domain=<verified parent
- * host>`. A licensed domain's brand colour and scheme apply; any error, timeout or unexpected shape renders the
- * free variant. Brand colours are applied only from a validated `#RRGGBB`. (The credit line lives in the host
- * page and the loader asks the same endpoint for it, loader.ts `keepsCredit()`.)
- */
 export type TEmbedScheme = 'auto' | 'light' | 'dark';
 
 export interface IEmbedConfig {
@@ -15,7 +9,6 @@ export interface IEmbedConfig {
 
 export const FREE_CONFIG: IEmbedConfig = { licensed: false, attribution: true, accent: null, scheme: null };
 
-/** A licensed site that never answers must not hold the reader's widget hostage: give up after this long. */
 export const EMBED_CONFIG_TIMEOUT_MS = 4000;
 
 const HEX = /^#[0-9a-f]{6}$/iu;
@@ -52,7 +45,6 @@ export async function fetchEmbedConfig(
   }
 }
 
-/** Relative luminance (WCAG) of `#rrggbb`. */
 export function luminance(hex: string): number {
   const ch = (i: number) => {
     const c = parseInt(hex.slice(i, i + 2), 16) / 255;
@@ -61,17 +53,11 @@ export function luminance(hex: string): number {
   return 0.2126 * ch(1) + 0.7152 * ch(3) + 0.0722 * ch(5);
 }
 
-/** Black or white, whichever reads better on the brand accent (so a licensed colour never breaks AA). */
 export function onAccent(hex: string): '#000000' | '#ffffff' {
   const l = luminance(hex);
   return (l + 0.05) / 0.05 >= 1.05 / (l + 0.05) ? '#000000' : '#ffffff';
 }
 
-/**
- * A licensed brand colour fills the Start button only, with a computed black/white label so AA holds for any
- * colour (board EmbedEdge "licensed"). The pill, glyphs and focus ring keep the lamp and state tones, so a
- * state never changes meaning. The credit line is not in the frame any more (O-47): the loader drops it.
- */
 export function applyBranding(root: HTMLElement, cfg: IEmbedConfig): void {
   if (!cfg.accent) return;
   root.style.setProperty('--at-embed-brand', cfg.accent);

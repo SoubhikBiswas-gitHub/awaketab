@@ -64,7 +64,6 @@ export function parseSigningKey(raw: string | undefined): JsonWebKey {
   return JSON.parse(raw) as JsonWebKey;
 }
 
-/** The public half of the P-256 signing key (the same point without `d`); null when the JWK has no point. */
 export function publicJwk(priv: JsonWebKey): JsonWebKey | null {
   if (typeof priv.x !== 'string' || typeof priv.y !== 'string') return null;
   return { kty: 'EC', crv: 'P-256', x: priv.x, y: priv.y };

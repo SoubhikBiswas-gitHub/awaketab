@@ -1,12 +1,6 @@
 import type { TPowerLevel } from './api';
 import type { ISchedule } from './settings';
 
-/**
- * Weekly schedules (Pro `ext.schedules`, docs/10 §4, E11-T05). All times are local wall-clock times,
- * built with `Date#setHours` on each calendar day, so a window keeps its wall times across DST changes;
- * the controller recomputes every alarm when one fires instead of trusting a stored offset.
- */
-
 export const SCHEDULE_ALARM_PREFIX = 'at.sched.';
 const LOOKAROUND_DAYS = 8;
 
@@ -27,7 +21,6 @@ function at(day: Date, hhmm: string): number {
   return d.getTime();
 }
 
-/** Raw windows of one schedule whose start falls within ±8 local days of `now`. Overnight windows end next day. */
 export function windowsOf(schedule: ISchedule, now: number): IWindow[] {
   const base = new Date(now);
   const out: IWindow[] = [];
@@ -45,10 +38,6 @@ export function windowsOf(schedule: ISchedule, now: number): IWindow[] {
   return out;
 }
 
-/**
- * Overlapping or touching windows merge into one (E11-T05 AC). A merged window keeps the screen on
- * (`display`) if any part of it asks for `display`, since that level also keeps the system awake.
- */
 export function mergeWindows(windows: readonly IWindow[]): IWindow[] {
   const sorted = [...windows].sort((a, b) => a.start - b.start || a.end - b.end);
   const merged: IWindow[] = [];
@@ -68,15 +57,10 @@ export function allWindows(schedules: readonly ISchedule[], now: number): IWindo
   return mergeWindows(schedules.flatMap((s) => windowsOf(s, now)));
 }
 
-/** The merged window covering `now`, if any. */
 export function activeWindow(schedules: readonly ISchedule[], now: number): IWindow | null {
   return allWindows(schedules, now).find((w) => w.start <= now && now < w.end) ?? null;
 }
 
-/**
- * Two alarms per schedule — its next start and its next end after `now` (docs/10 §4). Recomputed on every
- * fire, so a DST change moves the next occurrence to the right wall time.
- */
 export function scheduleAlarms(schedules: readonly ISchedule[], now: number): Array<{ name: string; when: number }> {
   const alarms: Array<{ name: string; when: number }> = [];
   for (const schedule of schedules) {

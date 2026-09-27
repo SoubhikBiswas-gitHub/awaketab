@@ -32,7 +32,6 @@ export function checkIds(device: IDeviceMatrix, support: ISupportMatrix): string
   return device.rows.filter((r) => !known.has(r.browser)).map((r) => `${r.id}: unknown browser id "${r.browser}"`);
 }
 
-/** Returns the updated support matrix, or null when there is nothing to write (pending run). */
 export function applyResults(device: IDeviceMatrix, support: ISupportMatrix): ISupportMatrix | null {
   if (device.status !== 'complete' || !device.updatedAt) return null;
   const dates = verifiedDates(device);

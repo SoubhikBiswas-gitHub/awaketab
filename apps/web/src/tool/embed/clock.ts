@@ -1,7 +1,3 @@
-/**
- * Widget digits, DESIGN.md §4 (the same rule on every surface): "MM:SS" under an hour, "H:MM:SS" from one hour,
- * "1d 02:15:00" from 24 hours. Tabular digits in CSS keep the width steady while it counts.
- */
 const pad = (n: number) => String(n).padStart(2, '0');
 
 export function formatClock(ms: number): string {

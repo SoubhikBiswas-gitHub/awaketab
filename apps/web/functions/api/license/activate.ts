@@ -167,7 +167,6 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   return mint(env, record, keyHash, devHash, nowSec);
 };
 
-/** Writes `lic:`, the `cus:` index and (D-06) the `lk:` link with its reverse indexes. */
 async function saveLicense(kv: KVNamespace, keyHash: string, record: ILicenseRecord): Promise<void> {
   await writeLicense(kv, keyHash, record);
   if (record.customerId) {
@@ -207,11 +206,6 @@ function polarFailure(err: unknown): Response {
   return jsonError(err.code, err.code === 'invalid_key' ? 404 : 403);
 }
 
-/**
- * F-08: a checkout → its licence key (`_lib/checkout-key.ts`), or the response to send instead. Unknown, expired,
- * failed and foreign checkouts all answer 404 `invalid_key` (no checkout-ID probing); open or confirmed checkouts
- * and purchases whose order, grant or key Polar has not created yet answer the retryable 503 (`syncing()`).
- */
 async function checkoutKey(
   env: IEnv,
   polar: ReturnType<typeof createPolar>,
@@ -234,14 +228,6 @@ async function checkoutKey(
   }
 }
 
-/**
- * `{ checkoutId, lookup: true }` → `{ key, plan }` without activating anything (docs/09 §2.3a). Used by
- * `/pro/activate?ext=1&checkout_id=…` so the browser that finished checkout does not spend one of the five
- * activations before the extension activates itself. Same rate-limit bucket as activation (checked by the
- * caller) and the same checkout resolution as the activating path (`checkoutKey`). Holding the checkout ID already
- * authorises activating its key through this endpoint, so returning the key to that holder grants nothing new
- * (Polar shows the same key on its receipt page). No KV write, no Polar activation.
- */
 async function lookupCheckout(env: IEnv, checkoutId: string): Promise<Response> {
   const kv = env.LICENSES;
   if (!kv) return jsonError('polar_unavailable', 502);

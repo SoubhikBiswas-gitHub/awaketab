@@ -1,36 +1,30 @@
 import { dayKey } from '@awaketab/core';
 
 export const HEATMAP_WEEKS = 12;
-/** Free users see this many most-recent local days; `stats.history` unlocks the rest (docs/08 §3). */
 export const FREE_HISTORY_DAYS = 7;
 
 export interface IHeatCell {
   key: string;
   date: Date;
   minutes: number;
-  /** 0 = no activity; 1–4 = quartile of the visible non-zero days (five steps, docs/05 §3.17). */
   level: 0 | 1 | 2 | 3 | 4;
   locked: boolean;
   future: boolean;
 }
 
 export interface IHeatmap {
-  /** Seven rows, Monday first; each row holds HEATMAP_WEEKS cells, oldest week first. */
   rows: IHeatCell[][];
 }
 
-/** Local-calendar date `offset` days from `base`, pinned to noon so DST shifts never change the day. */
 function localDay(base: Date, offset: number): Date {
   return new Date(base.getFullYear(), base.getMonth(), base.getDate() + offset, 12);
 }
 
-/** Calendar key of a Date built by localDay(): its own y/m/d fields, so no time-zone conversion applies. */
 function ymd(date: Date): string {
   const p = (n: number) => String(n).padStart(2, '0');
   return `${String(date.getFullYear())}-${p(date.getMonth() + 1)}-${p(date.getDate())}`;
 }
 
-/** Noon on the local calendar day of `now` in `timeZone` (the same day dayKey() reports). */
 function todayLocal(now: number, timeZone?: string): Date {
   const [y, m, d] = dayKey(now, timeZone).split('-').map(Number) as [number, number, number];
   return new Date(y, m - 1, d, 12);
@@ -79,7 +73,6 @@ export function buildHeatmap(
 
 export interface IStatsSummary {
   todayMinutes: number;
-  /** Sessions ended today (`daySessions`); 0 when the record predates per-day counts. */
   todaySessions: number;
   weekMinutes: number;
   streakDays: number;

@@ -1,11 +1,5 @@
 import type { IExtApi, IStorageAreaApi, TPowerLevel } from './api';
 
-/**
- * Test builds only (`AT_EXT_TEST=1` → `__AT_TEST__`, docs/10 §11 "chrome.power mocked via a test build
- * flag"). Replaces `chrome.power` with a recorder so the Playwright suite can assert every keep-awake call
- * without holding a real one on the test machine. The log lives in `chrome.storage.session`, so it survives
- * a forced service-worker restart. Production bundles never contain this module (dead-code eliminated).
- */
 export const POWER_LOG_KEY = 'at.test.power';
 
 export interface IPowerCall {
@@ -14,7 +8,6 @@ export interface IPowerCall {
   at: number;
 }
 
-/** Test builds only: while `chrome.storage.session['at.test.deny']` is true, requests throw like a policy block. */
 export const POWER_DENY_KEY = 'at.test.deny';
 
 export function mockPower(

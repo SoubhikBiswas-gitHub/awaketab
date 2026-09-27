@@ -83,12 +83,7 @@ export interface IStats {
   longestStreakDays: number;
   currentStreakDays: number;
   lastSessionAt: number | null;
-  /**
-   * Sessions of at least 1 min that ended on each local day (same keys and pruning as `days`). Optional:
-   * data written before the M6 follow-ups has no per-day counts, and readers treat a missing day as unknown.
-   */
   daySessions?: Record<string, number>;
-  /** Focus blocks (sessions started by focus mode, `modeState.focusBlock`) that completed on each local day. */
   dayFocus?: Record<string, number>;
 }
 

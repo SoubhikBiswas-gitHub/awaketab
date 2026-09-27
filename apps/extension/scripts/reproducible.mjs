@@ -21,7 +21,6 @@ function run(args, env = {}) {
   if (result.status !== 0) throw new Error(`${args.join(' ')} failed:\n${result.stdout}\n${result.stderr}`);
 }
 
-/** One clean production build into `outDir`; returns the zip bytes. */
 export async function buildZip(outDir) {
   run([path.join(ROOT, 'scripts/icons.mjs')]);
   run([WXT_CLI, 'build'], { AT_EXT_OUT: outDir, AT_EXT_TEST: '0' });

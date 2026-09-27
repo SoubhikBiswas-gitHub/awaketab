@@ -7,7 +7,6 @@ import { el } from './tick.js';
 
 const p2 = (n: number) => String(n).padStart(2, '0');
 
-/** Display digits split for a dimmed tail (DESIGN.md §4): `["18", ":41"]`, `["1:24", ":17"]`. */
 export function split(ms: number): [string, string] {
   const s = Math.max(0, Math.floor(ms / 1000));
   const h = Math.floor(s / 3600);
@@ -15,13 +14,11 @@ export function split(ms: number): [string, string] {
   return [h ? `${String(h)}:${m}` : m, `:${p2(s % 60)}`];
 }
 
-/** Compact countdown: `24:15`, `9:05`, `1:24:17`. */
 export function short(ms: number): string {
   const [a, b] = split(ms);
   return a.replace(/^0(?=\d$)/u, '') + b;
 }
 
-/** Writes split digits into `node`: the leading part as text, the tail in a dimmed span. Returns the text. */
 export function digits(node: HTMLElement, ms: number): string {
   const [a, b] = split(ms);
   node.replaceChildren(a, el('span', {}, b));
@@ -30,7 +27,6 @@ export function digits(node: HTMLElement, ms: number): string {
 
 const lang = () => document.documentElement.lang || 'en';
 
-/** `5:28 PM` in the page language; `h24` is the 12/24 h setting (null = locale default). */
 export function hm(ms: number, h24: boolean | null = null): string {
   return new Intl.DateTimeFormat(lang(), {
     hour: 'numeric',
@@ -40,14 +36,12 @@ export function hm(ms: number, h24: boolean | null = null): string {
   }).format(ms);
 }
 
-/** A time rounded to the minute, with "tomorrow" once it crosses midnight (DESIGN.md §4). */
 export function at(ms: number, now: number, h24: boolean | null): string {
   const r = Math.round(ms / 60_000) * 60_000;
   const time = hm(r, h24);
   return new Date(r).toDateString() === new Date(now).toDateString() ? time : t('ambient.tomorrow', { time });
 }
 
-/** `Saturday, 26 September 2026` (DESIGN.md §4); other locales use their own long order. */
 export function dateLong(ms: number): string {
   const l = lang();
   const f = (o: Intl.DateTimeFormatOptions, loc = l) => new Intl.DateTimeFormat(loc, o).format(ms);
@@ -58,10 +52,6 @@ export function dateLong(ms: number): string {
 
 let css: Promise<unknown> | undefined;
 
-/**
- * The layer's stylesheet (styles/ambient.css), fetched on first use: it is only needed once an ambient mode or
- * the floating window opens, so it stays out of the tool page's inline critical CSS (docs/00 §11: ≤ 20 KB).
- */
 export function ambientCss(): Promise<unknown> {
   return (css ??= new Promise((resolve) => {
     // Absolute, so the <link> pip-window.ts clones into the about:blank PiP document still resolves.

@@ -5,12 +5,8 @@
 //     bundle trusts the dev licence key (`__AT_LICENSE_DEV_KEY__`, @awaketab/core);
 //   - at run time by the Pages Functions (`functions/_lib/polar.ts` picks the Polar API base from it).
 
-export const POLAR_SERVERS = /** @type {const} */ (['sandbox', 'production']);
+export const POLAR_SERVERS = ['sandbox', 'production'];
 
-/**
- * @param {Record<string, string | undefined>} [env]
- * @returns {'sandbox' | 'production'}
- */
 export function polarServer(env = process.env) {
   const value = env.PUBLIC_POLAR_SERVER?.trim() ?? '';
   if (value === '') return 'sandbox';
@@ -18,10 +14,6 @@ export function polarServer(env = process.env) {
   throw new Error(`PUBLIC_POLAR_SERVER must be "sandbox" or "production" (got ${JSON.stringify(value)})`);
 }
 
-/**
- * The `define` entries every bundle of the web app and the extension gets.
- * @param {Record<string, string | undefined>} [env]
- */
 export function polarDefines(env = process.env) {
   const server = polarServer(env);
   return {

@@ -24,11 +24,6 @@ export function normalizeDomain(raw: string): string | null {
   return HOST_RE.test(host) ? host : null;
 }
 
-/**
- * A licence covers the registrable domain and its subdomains (docs/09 §7.1: activation stores `embed:{eTLD+1}`),
- * so `staging.example.com` and `www.example.com` resolve to `embed:example.com`. Walk up the labels, most
- * specific first, never below two labels.
- */
 export function candidateDomains(host: string): string[] {
   const labels = host.split('.');
   const out: string[] = [];

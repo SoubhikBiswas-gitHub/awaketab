@@ -57,7 +57,6 @@ const link = (hreflang, href) => `<xhtml:link rel="alternate" hreflang="${hrefla
 const url = (loc, alternates) =>
   `<url><loc>${escapeXml(loc)}</loc><lastmod>${modified}</lastmod>${alternates.join('')}</url>`;
 
-/** @type {Record<string, string[]>} */
 const urls = Object.fromEntries(LOCALES.map((locale) => [locale, []]));
 for (const pathname of ENGLISH_PATHS) {
   const href = `${SITE}${pathname === '/' ? '' : pathname}`;

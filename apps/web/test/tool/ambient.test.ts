@@ -128,7 +128,6 @@ const SHELL_HTML = `
     <div data-ambient-controls><button data-ambient-next>Next</button><button data-ambient-fullscreen>FS</button><button data-ambient-exit>Exit</button></div>
   </dialog>`;
 
-/** The layer opens only once its lazily loaded stylesheet is in; the test DOM never fetches it, so fire its load. */
 async function stylesheetLoaded(): Promise<void> {
   for (const link of document.head.querySelectorAll('link[rel="stylesheet"]')) link.dispatchEvent(new Event('load'));
   await Promise.resolve();

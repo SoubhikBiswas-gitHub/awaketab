@@ -1,7 +1,3 @@
-/**
- * /library "Use it" examples and their build-time highlighting (B6, canvas board PageLibrary). Kept out of the
- * .astro frontmatter because a template-literal line that starts with `import` would be hoisted there.
- */
 export type TCodeTab = readonly [id: string, label: string, file: string, code: string, note: string];
 
 const ADAPTER_NOTE = 'Each adapter is < 400 B and imports the core, so you get one lock instance.';
@@ -63,12 +59,10 @@ const { state, request, release } = useWakeLock();
   ];
 }
 
-/** Token kinds: c comment · s string · k keyword · t tag; '' is plain text. */
 export type TTok = '' | 'c' | 's' | 'k' | 't';
 
 const TOKEN = /(\/\/.*$|<!--.*?-->)|('[^']*'|"[^"]*"|`[^`]*`)|\b(import|from|export|function|const|return|let|await|async|new)\b|(<\/?[A-Za-z][\w-]*|\/?(?<!=)>)/gu;
 
-/** Splits code into lines of [text, kind] segments (the canvas highlighter). */
 export function highlight(code: string): Array<Array<[string, TTok]>> {
   return code.split('\n').map((line) => {
     const segs: Array<[string, TTok]> = [];

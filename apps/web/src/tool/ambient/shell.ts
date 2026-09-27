@@ -16,20 +16,17 @@ import { el, everySecond } from './tick.js';
 // The floating window ships in this chunk too (tool/pip.ts re-exports it): one lazy chunk, one gzip stream.
 export { mirrorAmbient, PIP_ADD_MS, PIP_PRO_SIZE, PIP_SIZE, pipPath, togglePip } from './pip-window.js';
 
-/** What a mode module gets: its stage element and the shared context. It returns its unmount. */
 export type TModeMount = (stage: HTMLElement, ctx: IToolCtx) => () => void;
 
 // One lazy chunk for the whole layer (shell + modes): the modes are small and share most of their code, so a
 // single gzip stream is ~1.4 KB lighter than one chunk per mode against the 40 KB page budget (docs/00 §11).
 const MODES: Partial<Record<TAmbientMode, TModeMount>> = { clock, night: clock, focus, message, cook };
-/** The mode bar, in the `M` cycle order (docs/05 §3.13). */
 const BAR: readonly TAmbientMode[] = ['clock', 'focus', 'minimal', 'night', 'message', 'cook'];
 
 let warnedGate = false;
 
 const has = (ctx: IToolCtx) => (gate: TFeatureGate) => hasFeature(ctx, gate);
 
-/** `M`: next mode, skipping gated ones with a one-time toast (docs/05 §3.13). */
 export function cycleMode(ctx: IToolCtx): void {
   const { mode, skipped } = nextMode(ctx.store.get().ui.mode, has(ctx));
   if (skipped.includes('message') && !warnedGate) {

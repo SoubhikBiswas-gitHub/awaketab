@@ -1,27 +1,8 @@
-/**
- * D-06 (docs/08 §4, docs/09 §2.7): Polar id → licence indexes.
- *
- * Polar's order, refund and subscription webhooks never carry the licence key, and benefit-grant webhooks carry
- * only `properties.license_key_id` (docs/09 §2.7.1, verified against Polar's OpenAPI 2026-04 and 2026-10). So
- * the licence is found through ids:
- *
- * - `lk:{polarLicenseKeyId}` is the hub (`ILicenseLink`): the key hash(es) once a device has activated, plus
- *   the grant / order / subscription / customer / benefit ids once a `benefit_grant.*` webhook has named them.
- *   Either side can arrive first; a status that arrives before activation waits in `pending`.
- * - `grant:{benefitGrantId}` → licence-key id, `sub:{subscriptionId}` → licence-key ids, and `ord:{orderId}`
- *   (the order record, docs/08 §4) gains `lks: licence-key ids`.
- *
- * Index values name licence-key ids, not key hashes, because a grant usually arrives before the buyer activates
- * and the hash is unknown until then. `lk:` is the only place a hash is joined to Polar's ids.
- */
 import type { ILicenseRecord, TLicenseStatus, TPlanId } from './license';
 
-/** `lk:`, `grant:` and `sub:` live 3 years from their last write; the ids also sit on `lic:` (customer fallback). */
 export const LINK_TTL_S = 3 * 365 * 86_400;
-/** `ord:{orderId}`: 2 years (reporting), unchanged from M5. */
 export const ORDER_TTL_S = 2 * 365 * 86_400;
 
-/** Plans sold as Polar subscriptions (docs/09 §2.1). Everything else is a one-time order. */
 export const SUBSCRIPTION_PLANS: ReadonlySet<TPlanId> = new Set<TPlanId>(['pro_yearly', 'biz_embed_site_yearly']);
 
 export interface IPolarIds {
@@ -34,14 +15,12 @@ export interface IPolarIds {
 }
 
 export interface ILicenseLink {
-  /** sha256 of every key string seen for this Polar licence key (Polar can rotate the string, not the id). */
   keyHashes: string[];
   grantId?: string;
   orderId?: string;
   subscriptionId?: string;
   customerId?: string;
   benefitId?: string;
-  /** A status change that arrived before any activation; applied when the key is activated. */
   pending?: TLicenseStatus;
   at: number;
 }
@@ -52,16 +31,11 @@ export interface IOrderRecord {
   currency?: string;
   customerId?: string;
   at?: number;
-  /** D-06: licence-key ids granted by this order (from `benefit_grant.*`). */
   lks?: string[];
 }
 
 const TERMINAL: ReadonlySet<TLicenseStatus> = new Set<TLicenseStatus>(['revoked', 'refunded']);
 
-/**
- * The status after `next` is applied to `current`, or null for no change. `revoked` and `refunded` are
- * terminal: a late or out-of-order cancel / uncancel must not re-open access.
- */
 export function transition(current: TLicenseStatus, next: TLicenseStatus, onlyFrom?: TLicenseStatus): TLicenseStatus | null {
   if (onlyFrom && current !== onlyFrom) return null;
   if (TERMINAL.has(current) && (next === 'active' || next === 'canceled')) return null;
@@ -105,7 +79,6 @@ export async function readOrder(kv: KVNamespace, orderId: string): Promise<IOrde
   }
 }
 
-/** Merges fields into `ord:{orderId}` and keeps its `lks`; the 2-year TTL restarts. */
 export async function mergeOrder(kv: KVNamespace, orderId: string, patch: IOrderRecord): Promise<void> {
   const existing = (await readOrder(kv, orderId)) ?? {};
   const lks = [...new Set([...ids(existing.lks), ...ids(patch.lks)])];
@@ -115,11 +88,6 @@ export async function mergeOrder(kv: KVNamespace, orderId: string, patch: IOrder
   await kv.put(`ord:${orderId}`, JSON.stringify(next), { expirationTtl: ORDER_TTL_S });
 }
 
-/**
- * Records `found` against licence-key `licenseKeyId`: merges it into `lk:{id}` and writes the reverse indexes
- * `grant:`, `sub:` and `ord:`.lks. Values already stored win over absent ones; a new non-empty id replaces an
- * old one. Returns the merged link.
- */
 export async function linkLicenseKey(
   kv: KVNamespace,
   licenseKeyId: string,
@@ -154,7 +122,6 @@ export async function linkLicenseKey(
   return link;
 }
 
-/** Copies Polar ids onto a licence record. Returns true when something changed. */
 export function applyIds(record: ILicenseRecord, found: IPolarIds): boolean {
   let changed = false;
   const set = <K extends 'polarLicenseKeyId' | 'polarGrantId' | 'polarOrderId' | 'polarSubscriptionId' | 'customerId' | 'benefitId'>(
@@ -176,7 +143,6 @@ export function applyIds(record: ILicenseRecord, found: IPolarIds): boolean {
   return changed;
 }
 
-/** Licence-key ids stored under `grant:`, `sub:` or `ord:`.lks. */
 export async function licenseKeyIdsFor(kv: KVNamespace, kind: 'grant' | 'sub' | 'ord', id: string): Promise<string[]> {
   if (kind === 'grant') {
     const lk = await kv.get(`grant:${id}`);

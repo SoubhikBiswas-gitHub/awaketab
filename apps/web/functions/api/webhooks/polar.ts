@@ -13,11 +13,6 @@ import {
 } from '../../_lib/links';
 import { verifyStandardWebhook } from '../../_lib/webhook';
 
-/**
- * The fields read from Polar's `data` object (docs/09 §2.7.1). Order, Subscription, Refund and
- * BenefitGrantLicenseKeysWebhook share `id` and `customer_id`; none of them carries the licence key.
- * `license_key` is kept for key-bearing payloads (tests, a future Polar shape) and is the first thing tried.
- */
 interface IPolarData {
   id?: string;
   customer_id?: string;
@@ -40,9 +35,7 @@ interface IPolarWebhook {
 }
 
 interface IEventIds extends IPolarIds {
-  /** Benefits the event is about: a grant's `benefit_id`, or a subscription product's benefits. */
   benefitIds: string[];
-  /** Whether the event concerns a subscription, a one-time order, or cannot tell. */
   kind: 'subscription' | 'one_time' | 'unknown';
 }
 
@@ -53,7 +46,6 @@ interface IStatusChange {
 
 const WINDOW_S = 300;
 
-/** Events that name a licence-key id and so join Polar's ids to it (`lk:` and the reverse indexes). */
 const LINK_EVENTS = new Set(['benefit_grant.created', 'benefit_grant.updated', 'benefit_grant.revoked']);
 
 function str(value: unknown): string | undefined {
@@ -92,7 +84,6 @@ function eventIds(type: string, data: IPolarData): IEventIds {
   return found;
 }
 
-/** docs/09 §2.7: what each event does to the licence status, or null for none. */
 function statusChange(type: string, data: IPolarData): IStatusChange | null {
   switch (type) {
     case 'subscription.canceled':
@@ -137,11 +128,9 @@ async function updateStatus(kv: KVNamespace, keyHash: string, change: IStatusCha
 
 interface ITargets {
   keyHashes: string[];
-  /** Licence keys Polar named that nobody has activated yet: the change waits on `lk:{id}.pending`. */
   pending: string[];
 }
 
-/** Resolves licence-key ids through `lk:` into activated key hashes and not-yet-activated ids. */
 async function throughLinks(kv: KVNamespace, licenseKeyIds: string[]): Promise<ITargets> {
   const targets: ITargets = { keyHashes: [], pending: [] };
   for (const lkId of new Set(licenseKeyIds)) {
@@ -156,11 +145,6 @@ async function throughLinks(kv: KVNamespace, licenseKeyIds: string[]): Promise<I
   return targets;
 }
 
-/**
- * Customer fallback: every `cus:{customerId}` licence that fits the event. A licence that holds the same kind
- * of id as the event must hold the same value; if any licence matches exactly, only exact matches count.
- * Otherwise (records written before D-06) the plan must fit the event kind and the benefit the event's benefits.
- */
 async function byCustomer(kv: KVNamespace, found: IEventIds, legacyOnly = false): Promise<string[]> {
   if (!found.customerId) return [];
   let hashes: string[];
@@ -195,13 +179,6 @@ async function byCustomer(kv: KVNamespace, found: IEventIds, legacyOnly = false)
   return exact.length > 0 ? exact : loose;
 }
 
-/**
- * D-06: the licences an event is about, trying in order the raw key, the licence-key id, the benefit-grant id,
- * the subscription id, the order id and the customer id. The first step that finds anything wins. A raw key
- * that matches no licence never falls back to the customer (it names one specific licence). When the ids name
- * only licence keys nobody has activated through D-06 code, the customer's pre-D-06 records (no
- * `polarLicenseKeyId`) are tried too, since the key may have been activated before `lk:` existed.
- */
 async function resolveTargets(kv: KVNamespace, found: IEventIds, keyHash: string): Promise<ITargets> {
   if (keyHash && (await kv.get(`lic:${keyHash}`))) return { keyHashes: [keyHash], pending: [] };
   const steps: Array<() => Promise<string[]>> = [

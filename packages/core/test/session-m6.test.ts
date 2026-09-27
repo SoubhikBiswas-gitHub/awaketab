@@ -6,7 +6,6 @@ import { createStorage, memoryAdapter } from '../src/storage.js';
 import type { TTabMessage } from '../src/tabs.js';
 import { DEFAULT_SETTINGS, type ISettings } from '../src/types.js';
 
-/** In-process stand-in for BroadcastChannel('awaketab'): delivers to every other endpoint on the bus. */
 function bus() {
   const endpoints = new Set<FakeChannel>();
   class FakeChannel extends EventTarget {

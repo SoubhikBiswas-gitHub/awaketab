@@ -1,7 +1,3 @@
-/**
- * Calls `fn` now and then on every wall-clock second boundary. Display-only: session time still comes from
- * the engine's Date.now() arithmetic, so a throttled background timer never drifts the numbers.
- */
 export function everySecond(fn: (now: number) => void): () => void {
   let id = 0;
   let live = true;

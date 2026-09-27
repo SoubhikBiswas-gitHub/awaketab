@@ -23,7 +23,6 @@ const KEY = 'AWAKETAB-PRO-TEST-0004-HOOK';
 const T0 = Date.parse('2026-09-01T10:00:00.000Z');
 const DEVICE = '5a6b7c8d-9e0f-4a1b-8c2d-e3f4a5b6c7d8';
 
-/** Payload shape the handler consumes: Polar event with the licence key embedded under data.license_key. */
 function event(type: string, data: Record<string, unknown> = {}) {
   return {
     type,
@@ -279,7 +278,6 @@ describe('POST /api/webhooks/polar — key-less Polar payloads (D-06)', () => {
     return h.kv.json<ILicenseRecord>(`lic:${await sha256Hex(key)}`);
   }
 
-  /** A yearly key that is activated and whose benefit grant has been delivered. */
   async function linkedYearly(h: IHarness, customerId = 'cus_d06'): Promise<IPolarKey> {
     const row = h.polar.addKey(YEARLY, { customerId });
     await send(h, polarEvents.order('order.created', row));

@@ -1,19 +1,3 @@
-/*
- * AwakeTab Embed widget (/embed/cook): docs/11 §2, DESIGN.md §11, canvas boards EmbedWidget, EmbedCook and
- * EmbedEdge (design/canvas/project/). Reads the --at-* tokens (tokens.css) and logical properties only.
- *
- * Sizes: compact 320 × 104 (O-58; pill XS, radius 16, padding 16, Start/Stop 20 from the bottom edge), 116 when
- * the pill needs its own row (a long state, or a frame under 300 px: app.ts sets data-long); full 100 % × 240
- * (pill S, radius 28, padding 16 24), 420 for a cook widget under 600 px that stacks its kitchen timers. The
- * loader reserves the same boxes (protocol.ts EMBED_BOX, EMBED_NARROW); the widget asks for more height
- * (awaketab:resize) only when a notice needs it. The iframe's viewport is the widget, so width rules are media
- * queries.
- *
- * Widget-scoped values without an --at-* token yet (docs/11 §11.3): the two pill heights of DESIGN.md §11.4,
- * the reserved heights above, and the 60 px primary height (tokens.css drops --at-h-primary to 52 on screens
- * ≤ 568 tall, which every embed frame is).
- */
-
 :root {
   --at-embed-pill-xs: 26px;
   --at-embed-pill-s: 32px;
@@ -23,8 +7,6 @@
   --at-embed-full: 240px;
   --at-embed-full-stacked: 420px;
   --at-embed-ease: cubic-bezier(0.22, 1, 0.36, 1);
-
-  /* The lamp aura behind the widget: 10 % in light, 16 % in dark and OLED (board EmbedWidget). */
   --at-embed-aura: 10%;
 }
 
@@ -39,8 +21,6 @@ body.at-embed-body {
   color: var(--at-ink);
   font-family: var(--at-font);
 }
-
-/* ── The card ─────────────────────────────────────────────────────────────────────────────────── */
 
 .at-embed {
   --tone: var(--at-accent);
@@ -61,7 +41,6 @@ body.at-embed-body {
   font: var(--at-type-small);
 }
 
-/* State tone (DESIGN.md §2.3): muted when idle, warn when lost, bad when denied, the lamp otherwise. */
 .at-embed[data-lock="idle"] {
   --tone: var(--at-muted);
 }
@@ -74,7 +53,6 @@ body.at-embed-body {
   --tone: var(--at-bad);
 }
 
-/* The one status halo: a faint radial light from the top-start corner, lamp while awake. */
 .at-embed::before {
   position: absolute;
   z-index: -1;
@@ -104,8 +82,6 @@ body.at-embed-body {
   margin: 0;
 }
 
-/* ── Compact layout (the default): pill over the digits, Start/Stop on the end side ─────────────── */
-
 .at-embed-grid {
   display: grid;
   flex-grow: 1;
@@ -125,8 +101,6 @@ body.at-embed-body {
   display: contents;
 }
 
-/* ── Start / Stop / Retry (compact: small 44, r12, 96 wide, 20 px from the bottom edge) ─────────── */
-
 .at-embed-toggle {
   box-sizing: border-box;
   display: inline-flex;
@@ -140,8 +114,6 @@ body.at-embed-body {
   margin-block-end: var(--at-s-1);
   padding: 0;
   border: 0;
-
-  /* --at-embed-brand / --at-embed-on-brand are set only for licensed sites (config.ts applyBranding). */
   border-radius: var(--at-r-md);
   background: var(--at-embed-brand, var(--at-accent));
   color: var(--at-embed-on-brand, var(--at-on-accent));
@@ -167,7 +139,6 @@ body.at-embed-body {
   fill: currentcolor;
 }
 
-/* Stop and Retry are the strong neutral (DESIGN.md §6, D-R20): raised fill, line-strong border, ink text. */
 .at-embed-toggle:is([data-kind="stop"], [data-kind="retry"]) {
   border: var(--at-border) solid var(--at-line-strong);
   background: var(--at-raised);
@@ -177,8 +148,6 @@ body.at-embed-body {
 .at-embed-toggle:is([data-kind="stop"], [data-kind="retry"]) .at-embed-toggle-icon {
   display: none;
 }
-
-/* ── Status pill (DESIGN.md §11.4: XS 26 in compact, S 32 in full; tone 12 % fill + 38 % border) ── */
 
 .at-embed-pill {
   box-sizing: border-box;
@@ -226,8 +195,6 @@ body.at-embed-body {
   filter: drop-shadow(0 0 4px color-mix(in srgb, var(--tone) 80%, transparent));
 }
 
-/* ── Digits (display-s: 28 / 300 in compact; 28 · 48 · 64 in full, 200 from 48) ────────────────── */
-
 .at-embed-clock {
   grid-area: dig;
   justify-self: start;
@@ -253,7 +220,6 @@ body.at-embed-body {
   display: none;
 }
 
-/* Minimal mode: a short note stands in for the digits. */
 .at-embed-note {
   display: flex;
   grid-area: dig;
@@ -269,7 +235,6 @@ body.at-embed-body {
   display: none;
 }
 
-/* Full-size parts, hidden in compact. */
 .at-embed-brand {
   display: none;
   align-items: center;
@@ -322,8 +287,6 @@ body.at-embed-body {
   white-space: nowrap;
 }
 
-/* ── Notice (iframe_no_allow, denied advice, fallback): full-bleed along the bottom edge ─────────── */
-
 .at-embed-notice {
   display: flex;
   flex-direction: column;
@@ -365,8 +328,6 @@ body.at-embed-body {
 .at-embed-notice a:hover {
   text-decoration-thickness: 2px;
 }
-
-/* ── Kitchen timers (cook, full): 46 px rows, dashed quick-add chips, a 1 px divider ────────────── */
 
 .at-embed-timers {
   position: relative;
@@ -490,8 +451,6 @@ body.at-embed-body {
   font: var(--at-type-caption);
 }
 
-/* ── Full size: header (logo, title, pill S), digits + Start/Stop, kitchen timers, footer line ───── */
-
 .at-embed[data-size="full"] {
   min-block-size: var(--at-embed-full);
   padding-inline: var(--at-s-6);
@@ -603,7 +562,6 @@ body.at-embed-body {
   display: flex;
 }
 
-/* Cook: 64 px targets (DESIGN.md §11.4); under 600 px the timers stack and the frame reserves 420. */
 .at-embed[data-size="full"][data-mode="cook"] {
   min-block-size: var(--at-embed-full-stacked);
 }
@@ -616,7 +574,6 @@ body.at-embed-body {
   block-size: var(--at-h-cook);
 }
 
-/* Title and digit steps follow the board's fit rule: 8 digits × 0.58 em must fit beside the button. */
 @media (width < 400px) {
   .at-embed[data-size="full"][data-mode="cook"] .at-embed-title {
     display: none;
@@ -669,7 +626,6 @@ body.at-embed-body {
     block-size: auto;
   }
 
-  /* Beside 264 px of timers the digits have less room: 28 until 697, 48 until 771. */
   .at-embed[data-size="full"][data-mode="cook"] .at-embed-clock {
     --at-embed-digit: 1.75rem;
 
@@ -697,8 +653,6 @@ body.at-embed-body {
   }
 }
 
-/* ── Compact, long state: the pill takes its own row and the frame grows 12 px (board EmbedEdge) ── */
-
 .at-embed[data-size="compact"][data-long] {
   min-block-size: var(--at-embed-compact-long);
 }
@@ -719,8 +673,6 @@ body.at-embed-body {
   align-self: end;
   margin-block: 0 var(--at-s-1);
 }
-
-/* ── Motion: slow and calm, ease-out, only with no reduced-motion preference (DESIGN.md §8) ─────── */
 
 @media (prefers-reduced-motion: no-preference) {
   .at-embed,

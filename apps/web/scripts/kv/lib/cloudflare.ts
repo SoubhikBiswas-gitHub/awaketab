@@ -40,7 +40,6 @@ function chunk<TItem>(items: TItem[], size: number): TItem[][] {
   return out;
 }
 
-/** Cloudflare error codes in a JSON error body (empty when the body is not the API envelope). */
 async function errorCodes(response: Response): Promise<number[]> {
   try {
     const body = (await response.clone().json()) as ICfEnvelope<unknown>;
@@ -50,7 +49,6 @@ async function errorCodes(response: Response): Promise<number[]> {
   }
 }
 
-/** 10xxx are Workers KV errors (10009 key not found, 10013 namespace not found …); 7003 is "no such route". */
 const isKvError = (code: number): boolean => code >= 10_000 && code < 11_000;
 const KEY_NOT_FOUND = 10_009;
 

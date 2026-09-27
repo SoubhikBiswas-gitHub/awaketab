@@ -2,14 +2,6 @@
 import { createT } from '../../i18n/load';
 import type { TLocale } from '../../i18n/locales';
 
-/*
- * Theme switch (DESIGN.md §6, §9, §11.4; PRIMITIVES.md P-THEME): a neutral segmented bar, Light · Dark · Auto,
- * 44 px items and one sliding indicator. The items are native radios (arrow keys move and select, one Tab stop,
- * decision O-85's roving focus for free). src/boot/boot.js persists the choice to at.v1.settings.theme, applies
- * it, keeps the radios in sync with <html data-theme-pref> and follows the system live while on Auto; the
- * indicator position is pure CSS from that attribute. `compact` adds the one-button variant the tool header
- * swaps in below 360 px (the canvas "small" layout).
- */
 interface Props {
   locale: TLocale;
   compact?: boolean;

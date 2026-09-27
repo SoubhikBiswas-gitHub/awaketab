@@ -1,15 +1,6 @@
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 import { installFakeWakeLock } from './fake-wakelock';
 
-/*
- * Privacy and install checks from docs/17 §2 and docs/19 §E that need a browser:
- * - no cookie is ever set on a tool route (docs/08 §1: "No cookies"), including after a full session with
- *   settings, theme and ambient changes — asserted on the context jar and document.cookie;
- * - the PWA is installable (Lighthouse 12 dropped its PWA category, so Chromium's own installability check
- *   is asserted instead).
- * Run against a deployed preview with PLAYWRIGHT_BASE_URL to cover what the edge adds (e.g. bot cookies).
- */
-
 const TOOL_ROUTES = [
   '/',
   '/15m',
@@ -72,12 +63,6 @@ test.describe('no cookies on tool routes', () => {
   });
 });
 
-/*
- * Zero third-party requests on tool routes (docs/00 §11, docs/02 NFR). The tool-route CSP allows `img-src https:`
- * only so a licensed kiosk's `logo=` image can load (docs/00 §13.10, LAUNCH-AUDIT D-01): the policy is wider
- * than the behaviour, so the behaviour is asserted here — every request a default tool route makes, through a
- * started session, stays on the page's own origin, and an unlicensed `logo=` URL fetches nothing.
- */
 test.describe('no third-party requests on tool routes (D-01)', () => {
   const external = (page: Page, baseURL: string | undefined, sink: string[]) => {
     const own = new URL(baseURL ?? 'http://127.0.0.1:4321').origin;

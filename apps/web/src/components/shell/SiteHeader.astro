@@ -3,16 +3,8 @@ import { createT } from '../../i18n/load';
 import { LOCALES, localePath, type TLocale } from '../../i18n/locales';
 import ThemeSwitch from './ThemeSwitch.astro';
 
-/*
- * Site header (DESIGN.md §6, §11.6; PRIMITIVES.md P-HEADER): 60 px on phones, 68 px from 600, side padding = the
- * page gutter. Logo lockup (ring + lamp bead that takes the page's lock-state tone) · site nav from 1024 · theme
- * switch · the page's own actions (the tool passes Stats and Settings through the default slot). One header on
- * every product surface; BaseLayout renders it, except on tool pages, where ToolIsland renders it inside the
- * island root so main.ts can bind the actions with root.querySelector().
- */
 interface Props {
   locale: TLocale;
-  /** Tool pages: enables the compact theme button below 360 px (the header also holds Stats and Settings). */
   tool?: boolean;
 }
 

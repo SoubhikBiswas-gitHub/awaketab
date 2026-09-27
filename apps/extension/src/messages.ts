@@ -3,7 +3,6 @@ import type { TPowerLevel } from './api';
 import { isHHMM, isExtPreset, isLevel, type TExtPreset } from './settings';
 import type { TOrigin } from './status';
 
-/** Popup/options → background (`chrome.runtime.sendMessage`). The worker owns the lock and the session. */
 export type TExtRequest =
   | { type: 'state' }
   | { type: 'start'; presetId: TExtPreset }
@@ -20,16 +19,13 @@ export interface IExtState {
   level: TPowerLevel;
   session: ISession | null;
   origin: TOrigin | null;
-  /** The popup offers +15 / +30 / +1 h after a user session completed within `EXTEND_WINDOW_MS`. */
   extend: boolean;
   features: TFeatureGate[];
   now: number;
 }
 
-/** Extend options offered after a completed session (docs/10 §3; web ExtendPrompt +15/+30/+60). */
 export const EXTEND_MS = [15 * 60_000, 30 * 60_000, 60 * 60_000] as const;
 
-/** Only messages of these exact shapes are acted on; anything else is ignored (no eval, no dynamic dispatch). */
 export function parseRequest(raw: unknown): TExtRequest | null {
   if (typeof raw !== 'object' || raw === null) return null;
   const msg = raw as Record<string, unknown>;

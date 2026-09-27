@@ -13,10 +13,6 @@ const DIST = process.env.AT_DIST ? path.resolve(process.env.AT_DIST) : path.join
 const PRESET_ROUTES = ['15m', '30m', '45m', '1h', '2h', '4h', '8h'];
 const MARKER = 'self.__WB_MANIFEST';
 
-/**
- * Shell pages: the tool routes and locale homes, keyed by the URL a navigation requests — the URL Cloudflare
- * Pages serves without a redirect (scripts/served.mjs), so the precache key matches the request exactly.
- */
 export const SHELL_PAGES = [
   '/',
   '/pip',

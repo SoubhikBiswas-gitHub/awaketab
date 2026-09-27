@@ -2,12 +2,6 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { installFakeWakeLock } from './fake-wakelock';
 
-/*
- * axe-core: zero violations on every page template in light and dark, and on every open-state surface of
- * the tool in light, dark and oled (docs/13 §6, docs/17 §2, docs/19 §E). Pages are rendered with the theme
- * stored in at.v1.settings (what theme-boot.js and the island read) and the matching prefers-color-scheme.
- */
-
 type TTheme = 'light' | 'dark' | 'oled';
 
 async function useTheme(page: Page, theme: TTheme, extra: Record<string, unknown> = {}): Promise<void> {

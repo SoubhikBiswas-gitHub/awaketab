@@ -1,8 +1,3 @@
-/**
- * The strings the embed widget can show. /embed/cook is one static page serving all eight locales (`lang=` is
- * a query param, docs/11 §1), so it inlines this subset of every catalog instead of the full tool catalog.
- * test/tool/embed-catalog.test.ts keeps it in step with the t() calls under src/tool/embed/.
- */
 const PREFIXES = ['embed.', 'tool.pill.', 'tool.advice.'] as const;
 const EXACT = new Set([
   'tool.ring.stop',

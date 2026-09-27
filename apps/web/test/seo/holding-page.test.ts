@@ -9,7 +9,6 @@ const dist = process.env.AT_DIST
   ? new URL(`file://${path.resolve(process.env.AT_DIST)}/`)
   : new URL('../../dist/', import.meta.url);
 const site = 'https://awaketab.com';
-/** The built file Cloudflare Pages serves at `pathname` (`/30m` → 30m.html, `/es/` → es/index.html). */
 const built = (pathname: string): URL => new URL(servedFile(pathname), dist);
 
 async function htmlFiles(directory: URL): Promise<URL[]> {

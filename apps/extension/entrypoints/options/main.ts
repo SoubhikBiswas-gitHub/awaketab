@@ -25,11 +25,6 @@ import {
 } from '../../src/settings';
 import { createTelemetry } from '../../src/telemetry';
 
-/**
- * Options page (docs/10 §6, ExtOptions canvas board): every section, Pro sections gated with an honest link
- * to /pro. Changes save as they are made (chrome.storage.local; the worker mirrors settings to sync).
- */
-
 const WEEK = [1, 2, 3, 4, 5, 6, 0] as const;
 const HOURS = [0, 6, 12, 18, 24] as const;
 

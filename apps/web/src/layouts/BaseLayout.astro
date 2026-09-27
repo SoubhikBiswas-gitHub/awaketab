@@ -21,12 +21,8 @@ interface Props {
   ogImageAlt?: string | undefined;
   schema?: TSchemaNode | undefined;
   alternates?: Array<{ locale: TLocale; href: string }> | undefined;
-  /** Locale-switcher targets for this page; locales without an entry link to their home. */
   localeLinks?: Partial<Record<TLocale, string>> | undefined;
-  /** `false` on tool pages: ToolIsland renders the same SiteHeader inside the island root (it holds the tool's
-   *  Stats and Settings buttons, which main.ts binds with root.querySelector()). */
   header?: boolean;
-  /** Chrome-less page (the 280 × 120 /pip popup): no header, shell padding or footer. */
   bare?: boolean;
 }
 
@@ -85,8 +81,6 @@ const t = createT(locale);
         <>
           {header && <a class="at-skip" href="#content">{t('tool.skip')}</a>}
           {header && <SiteHeader locale={locale} />}
-          {/* Tool pages bring their own header and .at-shell (ToolIsland: the header must span the page, outside the
-              shell's gutter) and put #content on their h1; elsewhere the skip link lands on the page body. */}
           {
             header ? (
               <div class="at-shell" id="content" tabindex="-1">

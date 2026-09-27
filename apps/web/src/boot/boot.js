@@ -32,7 +32,7 @@
     const accent = saved && typeof saved.accent === 'string' ? accents[saved.accent.toUpperCase()] : undefined;
     if (accent) root.dataset.accent = accent;
   } catch {
-    /* private mode */
+    // private mode
   }
   apply(theme);
 
@@ -47,7 +47,7 @@
       saved.theme = theme;
       localStorage.setItem(KEY, JSON.stringify(saved));
     } catch {
-      /* private mode: the choice lasts for this page */
+      // private mode: the choice lasts for this page
     }
     apply(theme);
     document.dispatchEvent(new CustomEvent('at-theme', { detail: theme }));

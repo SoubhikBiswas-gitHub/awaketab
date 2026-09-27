@@ -52,7 +52,6 @@ export async function openOptions(context: BrowserContext, extensionId: string):
   return page;
 }
 
-/** The chrome.power recorder's log (test build only), read from any extension page. */
 export async function powerLog(page: Page): Promise<IPowerCall[]> {
   return page.evaluate(async () => {
     const raw = (await chrome.storage.session.get('at.test.power'))['at.test.power'];
@@ -72,7 +71,6 @@ export async function syncStore(page: Page): Promise<Record<string, unknown>> {
   return page.evaluate(() => chrome.storage.sync.get(null));
 }
 
-/** Signs a licence token with the dev key pair that matches LICENSE_PUBLIC_KEYS[1] (.dev.vars.example). */
 export async function devToken(claims: { plan: string; features: string[]; deviceId: string; exp: number }): Promise<string> {
   const vars = await readFile(path.resolve(HERE, '../../web/.dev.vars.example'), 'utf8');
   const line = vars.split('\n').find((l) => l.startsWith('LICENSE_SIGNING_KEY='));
@@ -87,7 +85,6 @@ export async function devToken(claims: { plan: string; features: string[]; devic
   return `${header}.${payload}.${sig.toString('base64url')}`;
 }
 
-/** Mocks the awaketab.com licence API as the Pages middleware answers an extension origin (with CORS). */
 export async function mockLicenseApi(context: BrowserContext, extensionId: string, features: string[]): Promise<string[]> {
   const origin = `chrome-extension://${extensionId}`;
   const cors = {

@@ -7,7 +7,6 @@ import { describe, expect, it } from 'vitest';
 import { checkReproducible } from '../../scripts/reproducible.mjs';
 import { zipDirectory } from '../../scripts/zip.mjs';
 
-/** Reads names and contents back out of a zip (local headers) to prove the archive is valid. */
 function unzip(buf: Buffer): Map<string, Buffer> {
   const out = new Map<string, Buffer>();
   let i = 0;

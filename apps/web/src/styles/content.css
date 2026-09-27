@@ -1,22 +1,7 @@
-/*
- * Content pages, Clear Night (redesign B5): articles (/for, /on, /vs, /guides, /learn and their translations) and
- * the five hubs. Canvas: ContentArticle, GuideOn, GuideVs, GuideGuides, GuideLearn, HubFor (hub prop). Imported by
- * ContentLayout.astro and HubPage.astro only. DESIGN.md §11–§12: every spacing, radius, type and control size is a
- * token by name (stylelint enforces it for this file, as for shell.css). The Markdown body inside `.at-md` carries
- * no classes of its own, so it gets element defaults here.
- *
- * tool.css also styles `.at-prose` (home, preset, trust pages) and shadcn utilities style the Markdown defaults.
- * These rules live in their own `content` layer, declared after `utilities`, so they win on content pages whatever
- * order the bundler emits the sheets in (Astro puts this file ahead of tool.css), and they are scoped under `.at-cp`
- * so they never reach other pages. Layer priority is fixed by first appearance, so the full order is restated here.
- */
-
-/* The rules are grouped by component, not by specificity. */
 /* stylelint-disable no-descending-specificity */
 @layer properties, theme, base, components, utilities, content;
 
 @layer base {
-  /* Long-page ground: the same night lift as the tool, anchored above the top edge instead of behind a face. */
   body:has(.at-cp) {
     background-image: radial-gradient(1400px 900px at 50% -160px, var(--at-lift) 0%, transparent 72%);
   }
@@ -24,7 +9,6 @@
 
 @layer content {
   .at-cp {
-    /* Board geometry (ContentArticle, Guide*, HubFor desktop): 200 | 680 | 160 with 40 gaps; hub 360 | 664. */
     --at-col-toc: 200px;
     --at-col-main: 680px;
     --at-col-rail: 160px;
@@ -34,15 +18,11 @@
     --at-ad-h: 250px;
     --at-rail-w: 320px;
     --at-rail-h: 50px;
-
-    /* Type roles the boards use beside the §11.5 scale (row labels, FAQ questions, author name; small counters). */
     --at-type-row: 500 1rem/1.5rem var(--at-font);
     --at-type-count: 300 1.5rem/2rem var(--at-font);
     --at-type-count-l: 300 1.75rem/2.25rem var(--at-font);
     --at-type-code: 400 0.875rem/1.375rem var(--at-font-mono);
     --at-gap-article: var(--at-s-12);
-
-    /* Shiki css-variables theme → Clear Night tokens (code blocks, below). */
     --astro-code-foreground: var(--at-ink);
     --astro-code-background: var(--at-sunken);
     --astro-code-token-keyword: var(--at-accent-text);
@@ -61,7 +41,6 @@
     color: var(--at-ink);
   }
 
-  /* Shared type helpers. */
   .at-cp .at-kicker {
     margin: 0;
     color: var(--at-muted);
@@ -92,7 +71,6 @@
     border-radius: var(--at-r-xs);
   }
 
-  /* ── Breadcrumb: muted 14/20, links ink-2, 44 px rows; the current page drops on phones (board) ── */
   .at-crumbs ol {
     display: flex;
     flex-wrap: wrap;
@@ -144,7 +122,6 @@
     transform: scaleX(-1);
   }
 
-  /* ── Article grid (ContentLayout): phone/tablet one column; desktop toc | main | rail ── */
   .at-art {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -187,7 +164,6 @@
     grid-area: toc;
   }
 
-  /* ── Meta line: "Last verified" with a lamp check, byline; the guide boards draw them as chips ── */
   .at-meta {
     display: flex;
     flex-wrap: wrap;
@@ -258,8 +234,6 @@
     font-weight: 500;
   }
 
-  /* ── Embedded tool card (hero panel, r28): the tool panel from ToolIsland sits inside; the frame lights with
-     the lamp while the lock is held (the pill's data-lock, written by the island). ── */
   .at-tool-card {
     position: relative;
     grid-area: tool;
@@ -343,7 +317,6 @@
     }
   }
 
-  /* ── Prose wrapper: tool.css gives `.at-prose` a centred 45rem column; here it is the article column ── */
   .at-cp .at-prose {
     display: flex;
     flex-direction: column;
@@ -355,7 +328,6 @@
     font: var(--at-type-body);
   }
 
-  /* ── Markdown body (.at-md): h2 per question, body 16/26 ink-2, sections 48/64 apart ── */
   .at-cp .at-md {
     min-inline-size: 0;
     color: var(--at-ink-2);
@@ -391,7 +363,6 @@
     text-wrap: pretty;
   }
 
-  /* The answer paragraph under the first heading reads as the lead (docs/06 §2: the answer in the first 100 words). */
   .at-cp .at-md > h2:first-child + p,
   .at-cp .at-md > p:first-child {
     color: var(--at-ink);
@@ -438,7 +409,6 @@
     text-decoration-thickness: 2px;
   }
 
-  /* Inline code: 14 px fixed, r4, padding 0 4, sunken (DESIGN.md §11.5). API names break instead of overflowing. */
   .at-cp .at-md code {
     padding-block: 0;
     padding-inline: var(--at-s-1);
@@ -449,9 +419,6 @@
     overflow-wrap: anywhere;
   }
 
-  /* Code blocks (canvas GuideLearn): a sunken well, r8, 14/22 mono. Shiki's css-variables theme (astro.config.mjs)
-     colours tokens through these names, so both themes keep AA contrast: keywords lamp, strings and punctuation
-     ink-2, comments muted, the rest ink (the --astro-code-* names are set on .at-cp above). */
   .at-cp .at-md pre {
     max-inline-size: 100%;
     overflow-x: auto;
@@ -488,7 +455,6 @@
     border-block-start: var(--at-border) solid var(--at-line);
   }
 
-  /* Tables: the board's matrix card (r16, surface, kicker header, 16 px cells, line dividers). */
   .at-cp .at-md table {
     display: block;
     inline-size: 100%;
@@ -528,7 +494,6 @@
     border-block-end: 0;
   }
 
-  /* ── Honest limit: a quiet card with an info glyph and a kicker (no side stripe, DESIGN.md §11.2) ── */
   .at-limit-note {
     scroll-margin-block-start: var(--at-s-6);
   }
@@ -567,7 +532,6 @@
     text-wrap: pretty;
   }
 
-  /* ── Related: rows with a sliding arrow (article), or a lamp start pill and inline links (guide) ── */
   .at-cp .at-related-sec,
   .at-cp .at-faq-sec {
     display: flex;
@@ -685,7 +649,6 @@
     color: var(--at-accent);
   }
 
-  /* ── FAQ: <details> rows (docs/06 §8) drawn as the board's accordion: 56 px question, plus in a 32 px ring ── */
   .at-faq {
     display: flex;
     flex-direction: column;
@@ -768,7 +731,6 @@
     animation: at-rise var(--at-d-rise) var(--at-ease) both;
   }
 
-  /* ── Author card ── */
   .at-author {
     display: flex;
     align-items: center;
@@ -820,7 +782,6 @@
     margin-inline-start: var(--at-s-1);
   }
 
-  /* ── Ad slots (docs/00 §8.3): labelled, fixed boxes; the rail is 320 × 50 below desktop ── */
   .at-ad {
     display: flex;
     flex-direction: column;
@@ -866,7 +827,6 @@
     block-size: var(--at-rail-h);
   }
 
-  /* ── Hub (HubFor board): intro | grouped list ── */
   .at-hub {
     display: flex;
     flex-direction: column;
@@ -957,7 +917,6 @@
     text-decoration: none;
   }
 
-  /* Jump bar: a segmented bar whose lamp indicator slides to the group in view (lib/content-nav.ts sets --at-i). */
   .at-jump {
     position: relative;
     display: grid;
@@ -1107,7 +1066,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* ── Device matrix (/learn/how-we-tested) ── */
   .at-dm {
     display: flex;
     flex-direction: column;
@@ -1187,7 +1145,6 @@
     font-weight: 400;
   }
 
-  /* ── Tablet (600) ── */
   @media (width >= 600px) {
     .at-cp {
       --at-ad-w: 336px;
@@ -1223,7 +1180,6 @@
     }
   }
 
-  /* ── Phone: the current page leaves the breadcrumb (board), the article card pads 20 ── */
   @media (width < 600px) {
     .at-crumbs li:has(+ li[data-crumb="2"]) .at-crumb-sep,
     .at-crumbs li[data-crumb="2"] {
@@ -1231,7 +1187,6 @@
     }
   }
 
-  /* ── Desktop (1024): sticky toc | main | rail; hub intro | list ── */
   @media (width >= 1024px) {
     .at-cp {
       --at-rail-w: 160px;

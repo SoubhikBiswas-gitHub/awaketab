@@ -8,10 +8,6 @@ import { keyCaps } from '../../src/format';
 import { applyTheme, loadPage, q, translateTree } from '../../src/page';
 import { readSettings } from '../../src/settings';
 
-/**
- * Welcome page (O-25, Welcome canvas board), opened once by the worker on first install. The pin demo is an
- * illustration: the real pin lives in Chrome's own menu, which an extension cannot open or press.
- */
 async function boot(): Promise<void> {
   const api = browser as unknown as IExtApi;
   const root = q(document, '[data-root]');

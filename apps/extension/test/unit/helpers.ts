@@ -8,7 +8,6 @@ const enc = (obj: unknown) => b64url(new TextEncoder().encode(JSON.stringify(obj
 
 let pair: CryptoKeyPair | null = null;
 
-/** A signing pair installed as `LICENSE_PUBLIC_KEYS[1]` for the test file (core's own tests do the same). */
 export async function testKeys(): Promise<CryptoKeyPair> {
   if (!pair) {
     pair = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify']);
@@ -43,7 +42,6 @@ export async function proRecord(
   };
 }
 
-/** A controller wired to the fake exactly like entrypoints/background.ts wires it to Chrome. */
 export function wired(fake: IFakeChrome, opts: { now?: () => number; fetchFn?: (input: string, init?: RequestInit) => Promise<Response> } = {}): IController {
   const ctl = createController({
     api: fake.api,

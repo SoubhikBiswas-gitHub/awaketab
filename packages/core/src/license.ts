@@ -1,30 +1,14 @@
 import type { TFeatureGate } from './types.js';
 
-/**
- * Build-time switch, set by every bundler config through `define` (astro.config.mjs, wxt.config.ts,
- * scripts/embed-loader.mjs, the Vitest configs): `true` in dev, test and `PUBLIC_POLAR_SERVER=sandbox` builds,
- * `false` in production builds. A bundle built without the define never trusts the dev key.
- */
 declare const __AT_LICENSE_DEV_KEY__: boolean | undefined;
 
-/**
- * Production verification keys by token `ver` (docs/09 §2.4, LAUNCH-AUDIT N-03). `pnpm keys:prod` prints the next
- * entry. Never add the dev key here: `pnpm build` with `PUBLIC_POLAR_SERVER=production` runs
- * `apps/web/scripts/check-keys.mts`, which fails when this is empty or contains it.
- */
 export const PRODUCTION_LICENSE_PUBLIC_KEYS: Readonly<Record<number, JsonWebKey>> = {
   // ver 2 — first production key (generated 2026-09-26; private half is the LICENSE_SIGNING_KEY Pages secret).
   2: { kty: 'EC', crv: 'P-256', x: 'zE_N4lGBH2RLZnOZ0dZTDz9YCcy2Nw3-a_OFRS4gCXA', y: 'u2GJ3Adhv4xb61aELAzSDFc74e1pyGNj6WpINLK8qc8' },
 };
 
-/** `ver` of the dev pair. Its private half is public (`apps/web/.dev.vars.example`), so production never trusts it. */
 export const DEV_LICENSE_KEY_VER = 1;
 
-/**
- * The dev key sits inside the conditional on the define itself (no intermediate const), so every minifier folds
- * `false ? { … } : { … }` and the production bundle never contains its coordinates. esbuild (the embed app) does
- * not propagate a `const` flag into a later ternary; Rollup does. scripts/check-keys.test.ts bundles both ways.
- */
 export const LICENSE_PUBLIC_KEYS: Record<number, JsonWebKey> =
   typeof __AT_LICENSE_DEV_KEY__ !== 'undefined' && __AT_LICENSE_DEV_KEY__
     ? {
@@ -38,7 +22,6 @@ export const LICENSE_PUBLIC_KEYS: Record<number, JsonWebKey> =
       }
     : { ...PRODUCTION_LICENSE_PUBLIC_KEYS };
 
-/** Whether this bundle trusts the dev key (read once at load; tests may still overwrite entries afterwards). */
 export const TRUSTS_DEV_LICENSE_KEY: boolean = DEV_LICENSE_KEY_VER in LICENSE_PUBLIC_KEYS;
 
 export interface ILicenseState {

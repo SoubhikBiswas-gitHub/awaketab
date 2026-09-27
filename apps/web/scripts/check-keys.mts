@@ -30,11 +30,9 @@ export interface IPublicPoint {
 
 export interface IProblem {
   message: string;
-  /** Downgraded to a warning by AT_ALLOW_MISSING_PRODUCTION_KEY=1. */
   waivable: boolean;
 }
 
-/** The public half (x, y) of the dev private JWK in `.dev.vars.example` (`LICENSE_SIGNING_KEY`). */
 export async function devPublicKey(file = DEV_VARS): Promise<IPublicPoint> {
   const line = (await readFile(file, 'utf8')).split('\n').find((row) => row.startsWith('LICENSE_SIGNING_KEY='));
   if (!line) throw new Error(`${file} has no LICENSE_SIGNING_KEY`);
@@ -86,7 +84,6 @@ async function textFiles(dir: string): Promise<string[]> {
   return out;
 }
 
-/** Scans a built output: the dev key must be absent, and each production key present somewhere. */
 export async function distProblems(dir: string, dev: IPublicPoint, keys: Readonly<Record<number, JsonWebKey>>): Promise<IProblem[]> {
   const problems: IProblem[] = [];
   const unseen = new Map(Object.entries(keys).map(([ver, jwk]) => [ver, jwk.x ?? '']));

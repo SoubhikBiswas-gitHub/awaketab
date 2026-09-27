@@ -19,6 +19,6 @@ Hard rules
 
 Working style
 - Before coding an epic, produce a short plan: files to create/modify, risks, questions. Wait for approval.
-- Prefer small, reviewable diffs. Explain non-obvious decisions in code comments referencing the doc section (e.g. // see docs/04-engine-spec.md §4 T05).
+- Prefer small, reviewable diffs. Comments: only a short `//` line where the reason is not obvious. No block comments, JSDoc, HTML or CSS comments (tool directives excepted); explanations go in docs and commit messages. `pnpm lint` enforces it; `node scripts/comments.mjs --fix` strips them.
 - When docs conflict, docs/00-conventions.md wins; flag the conflict.
 - Finish every task with: summary of changes, tests added and their results, any PROPOSED identifiers, anything left undone.

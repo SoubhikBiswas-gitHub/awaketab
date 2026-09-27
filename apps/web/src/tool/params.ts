@@ -56,7 +56,6 @@ export function stripLocale(pathname: string): string {
   return parts === '' ? '/' : parts;
 }
 
-/** The pathname spelled the way it is served and canonical: `/30m`, `/es/for/cocinar`, `/`, and `/es/` for a locale home. */
 export function canonicalPathname(pathname: string): string {
   const trimmed = pathname.replace(/(.)\/+$/u, '$1');
   return LOCALES.has(trimmed.slice(1)) ? `${trimmed}/` : trimmed;

@@ -1,19 +1,6 @@
-/*
- * Clear Night shared shell and primitives (milestone B2): DESIGN.md §6, §8, §11, §12; design/canvas/PRIMITIVES.md;
- * docs/05-frontend-spec.md §3.25–§3.36. Markup comes from src/components/shell/*.astro at build time (zero
- * hydration, docs/03 ADR-013). Behaviour: the theme switch and the language switcher are driven by the inline
- * boot script (src/boot/boot.js); the status pill and the logo bead follow `data-lock`, which the tool island
- * already writes (src/tool/ui/pill.ts). Every size here is a §12 token by name; stylelint rejects raw spacing,
- * radius and type values in this file.
- *
- * Layer order is restated for the same reason as content.css: `components` must never become the lowest layer.
- * Colour never animates (tool.css keeps an unlayered transition-property list without colours); transforms and
- * opacity ease with --at-ease, and tool.css's reduced-motion block cuts every duration to 1 ms.
- */
 @layer properties, theme, base, components, utilities;
 
 @layer base {
-  /* The night lift (DESIGN.md §2.1): a radial light behind the upper third, fading into the ground. */
   body {
     min-block-size: 100dvh;
     background-color: var(--at-ground);
@@ -22,7 +9,6 @@
 }
 
 @layer components {
-  /* ── Header (P-HEADER): 60 phone / 68 from 600; gutter = page gutter; logo · nav (1024+) · theme · actions ── */
   .at-site-header {
     container: at-header / inline-size;
     position: relative;
@@ -35,7 +21,6 @@
     padding-inline: var(--at-gutter);
   }
 
-  /* The wordmark never forces the page wider: in a narrow header with a long (pseudo) locale it wraps instead. */
   .at-logo {
     --at-bead: var(--at-muted);
 
@@ -74,7 +59,6 @@
     fill: var(--at-bead);
   }
 
-  /* The bead is a status light (DESIGN.md §2.3): it takes the tone of the page's lock state, if it has one. */
   body:has([data-pill]:is([data-lock="requesting"], [data-lock="held"], [data-lock="unsupported"], [data-lock="fallback"])) .at-logo {
     --at-bead: var(--at-accent);
   }
@@ -112,7 +96,6 @@
     color: var(--at-ink);
   }
 
-  /* Current section: ink 600 plus a 6 px lamp dot, never a side stripe (DESIGN.md §11.2). */
   .at-nav-link[aria-current="page"] {
     color: var(--at-ink);
     font-weight: 600;
@@ -133,7 +116,6 @@
     gap: var(--at-gap-tight);
   }
 
-  /* ── Icon button: 44 × 44, r12, ink-2 (header Stats / Settings, sheet Close) ── */
   .at-icon-button {
     display: inline-grid;
     flex-shrink: 0;
@@ -159,12 +141,10 @@
     flex-shrink: 0;
   }
 
-  /* Width-band visibility helpers (DESIGN.md §12.2, mobile first). */
   .at-phone-hide {
     display: none;
   }
 
-  /* ── Segmented bar (P-THEME, §11.4): 1 px line + 4 px padding + 44 px items = 54; one sliding indicator ── */
   .at-seg {
     --at-seg-n: 3;
     --at-seg-i: 0;
@@ -178,7 +158,6 @@
     background: var(--at-surface);
   }
 
-  /* Direction for sliding motion: indicators and side sheets move the other way under dir="rtl". */
   :root {
     --at-seg-dir: 1;
   }
@@ -226,7 +205,6 @@
     font-weight: 600;
   }
 
-  /* Native radios inside the items are visually hidden; the item shows their focus. */
   :is(.at-seg-item, .at-theme-item):has(:focus-visible) {
     outline: 2px solid var(--at-focus);
     outline-offset: 0;
@@ -239,7 +217,6 @@
     flex-shrink: 0;
   }
 
-  /* The indicator follows the selected item with CSS alone: aria state on buttons, :checked on radios. */
   .at-seg:has(> .at-seg-item:nth-of-type(2):is([aria-pressed="true"], [aria-checked="true"], [aria-selected="true"], :has(:checked))) {
     --at-seg-i: 1;
   }
@@ -264,8 +241,6 @@
     --at-seg-i: 6;
   }
 
-  /* Theme switch: a neutral segmented bar of three 44 px icon items (Light · Dark · Auto). Its position comes
-     from <html data-theme-pref>, which the boot script sets before first paint, so a reload never slides it. */
   .at-theme {
     --at-seg-i: 2;
 
@@ -295,7 +270,6 @@
     color: var(--at-ink);
   }
 
-  /* Small phones (< 360 wide, the canvas "small" layout): the tool header swaps the bar for one cycling button. */
   .at-theme-cycle,
   .at-theme-cycle [data-v] {
     display: none;
@@ -317,7 +291,6 @@
     }
   }
 
-  /* ── Footer (P-FOOTER, §11.7): 1 px line on top, honest line, links, language switcher at the end ── */
   .at-site-footer {
     display: flex;
     flex-wrap: wrap;
@@ -361,7 +334,6 @@
     text-underline-offset: 3px;
   }
 
-  /* ── Language switcher (P-LANG): trigger · bottom sheet on phones · anchored panel from 600 ── */
   .at-lang {
     position: relative;
     display: flex;
@@ -486,7 +458,6 @@
     background: var(--at-sunken);
   }
 
-  /* Selected-item rule (§11.2): 1 px lamp 45 % + lamp 14 % fill; the radio mark and "Current" say it too. */
   .at-lang-row[aria-current="true"] {
     border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
     background: color-mix(in srgb, var(--at-accent) 14%, transparent);
@@ -533,7 +504,6 @@
     color: var(--at-ink-2);
   }
 
-  /* ── Status pill (P-PILL, §11.4, §2.3): the seven exact strings; tone 12 % fill + 38 % border; shape glyph ── */
   .at-pill {
     --at-tone: var(--at-muted);
 
@@ -566,7 +536,6 @@
     --at-tone: var(--at-bad);
   }
 
-  /* S: popup, PiP, full embed · XS: compact embed · L: kiosk and xl (one line each; M may wrap, O-62). */
   .at-pill-s {
     min-block-size: var(--at-h-pill-s);
     padding-block: 0;
@@ -625,7 +594,6 @@
     display: inline;
   }
 
-  /* Ready and Starting… show a hollow circle; held glows; unsupported is a plain filled dot. */
   .at-pill:is(:not([data-lock]), [data-lock="idle"], [data-lock="requesting"]) .at-g-dot {
     fill: transparent;
   }
@@ -634,7 +602,6 @@
     filter: drop-shadow(0 0 4px color-mix(in srgb, var(--at-tone) 80%, transparent));
   }
 
-  /* The tool's pill is a button while it offers the fix (denied, unsupported): 38 px drawn, 44 px to touch. */
   button.at-pill {
     cursor: default;
   }
@@ -649,7 +616,6 @@
     inset: calc((var(--at-h-pill-m) - var(--at-h-control)) / 2);
   }
 
-  /* ── Buttons (P-CTA, D-R20): primary lamp · Stop raised · secondary · quiet; sm 44 r12 · md 52 r20 · lg 60 r20 ── */
   .at-button {
     display: inline-flex;
     align-items: center;
@@ -718,7 +684,6 @@
     color: var(--at-ink);
   }
 
-  /* The lamp CTA carries the logo glyph: ring in the label colour, bead in a lighter tint of it. */
   .at-button-glyph {
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
@@ -726,7 +691,6 @@
     overflow: visible;
   }
 
-  /* ── Keyboard hint (P-KBD): one theme keycap everywhere; on buttons only with a fine pointer ── */
   .at-kbd {
     display: inline-flex;
     align-items: center;
@@ -756,7 +720,6 @@
     }
   }
 
-  /* ── Tag (P-TAG): non-interactive, 24 high ── */
   .at-tag {
     --at-tone: var(--at-accent);
 
@@ -778,7 +741,6 @@
     color: var(--at-ink);
   }
 
-  /* ── Chip: 44, r999; selected = lamp 45 % line + lamp 14 % fill; dashed only for "choose / add" ── */
   .at-chip {
     display: inline-flex;
     align-items: center;
@@ -818,7 +780,6 @@
     cursor: progress;
   }
 
-  /* ── Surfaces: card (no nesting), inline panel (replaces a modal in place), list row ── */
   .at-card,
   .at-panel {
     padding: var(--at-card-pad);
@@ -846,7 +807,6 @@
     border-block-end: var(--at-border) solid var(--at-line);
   }
 
-  /* ── Input and select: 48, r8, input-border (≥ 3:1, O-56), sunken fill ── */
   .at-input {
     inline-size: 100%;
     min-inline-size: 0;
@@ -865,8 +825,6 @@
     color: var(--at-muted);
   }
 
-  /* Focus shows on :focus-within: Chromium drops :focus-visible inside <input type=time>, and WebKit never sets
-     it on a field focused by showModal() (tool.css history); text entry always shows focus anyway. */
   .at-input:focus-within {
     outline: 2px solid var(--at-focus);
     outline-offset: 2px;
@@ -878,7 +836,6 @@
     padding-block: var(--at-s-3);
   }
 
-  /* ── Sheet: bottom sheet on phones, side sheet from 600; native <dialog> gives the scrim, trap and Esc ── */
   dialog.at-sheet {
     position: fixed;
     inset-block: auto 0;
@@ -930,7 +887,6 @@
     }
   }
 
-  /* Sheets slide (transform only, no fade), so their text is at full contrast from the first frame. */
   @keyframes at-sheet-up {
     from {
       transform: translateY(100%);
@@ -949,7 +905,6 @@
     flex-shrink: 0;
   }
 
-  /* ── Tablet and up (600) ── */
   @media (width >= 600px) {
     .at-phone-hide {
       display: inline-grid;
@@ -1020,7 +975,6 @@
     }
   }
 
-  /* ── Desktop (1024): the site nav joins the header ── */
   @media (width >= 1024px) {
     .at-nav {
       display: flex;

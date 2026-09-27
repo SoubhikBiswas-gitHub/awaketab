@@ -9,13 +9,6 @@ import { articleSchema } from '../lib/seo';
 import { EXTRA, HUBS, MODE_LABEL, PRESET_LABEL, type IHubItem } from '../lib/hubs';
 import { CONTENT_KINDS, type TContentKind } from '../lib/content-i18n';
 
-/*
- * Hub page (redesign B5; canvas HubFor.dc.html with hub = for | on | vs | guides | learn). Desktop: a sticky
- * intro column (breadcrumb, h1, lead, "Try it now" card, jump bar) beside the grouped list; phone and tablet
- * stack them. The card's lamp action opens the tool with no end time (the hub page loads no tool island), and
- * its pill reads "Ready" because nothing has been requested yet. Lists come from the collections (lib/hubs.ts
- * groups them as drawn); draft pages (noindex, OD-2) are listed too, as on the board.
- */
 interface Props {
   kind: TContentKind;
 }

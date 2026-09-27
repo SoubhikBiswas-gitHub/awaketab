@@ -8,7 +8,6 @@ interface IFakeWin {
   send(data: unknown, origin: string, source?: unknown): void;
 }
 
-/** A widget window whose parent is a separate object, as inside an iframe. */
 function framedWindow(opts: { ancestor?: string | null; referrer?: string } = {}): IFakeWin {
   const target = new EventTarget();
   const parent = { postMessage: vi.fn() };

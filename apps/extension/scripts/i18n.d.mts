@@ -1,4 +1,3 @@
-/** The subset of a Vite plugin this module returns (vite is WXT's dependency, not ours). */
 export interface IAwaketabVitePlugin {
   name: string;
   resolveId(id: string): string | null;

@@ -19,7 +19,6 @@ export function license(features: ILicenseRecord['features']): ILicenseRecord {
   };
 }
 
-/** A booted-island context over the real engine, a fake wake API and in-memory storage. */
 export function makeCtx(opts: { html?: string; settings?: Partial<ISettings>; search?: string; license?: ILicenseRecord | null } = {}) {
   document.body.innerHTML = `<div id="awaketab-tool">${opts.html ?? ''}</div>`;
   const root = document.querySelector<HTMLElement>('#awaketab-tool') as HTMLElement;

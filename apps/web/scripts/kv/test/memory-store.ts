@@ -15,7 +15,6 @@ export class MemoryKvStore implements IKvStore {
   readonly rows = new Map<string, IRow>();
   readonly puts: IKvRecord[] = [];
   readonly calls = { list: 0, getMany: 0, putMany: 0 };
-  /** Runs before each `putMany` (after the call is counted); may mutate rows or throw to simulate faults. */
   beforePut: ((records: IKvRecord[], call: number) => void) | null = null;
 
   constructor(

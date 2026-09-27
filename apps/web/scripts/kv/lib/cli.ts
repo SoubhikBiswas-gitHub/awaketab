@@ -25,16 +25,13 @@ export interface ICliDeps {
   openStore: (namespaceId: string) => ITargetStore;
   readFile: (file: string) => Promise<Uint8Array>;
   writeFile: (file: string, bytes: Uint8Array) => Promise<void>;
-  /** Results (stdout). */
   out: (line: string) => void;
-  /** Progress and warnings (stderr). */
   err: (line: string) => void;
   now?: () => Date;
 }
 
 export class UsageError extends Error {}
 
-/** Namespaces the weekly job exports: LICENSES always, LICENSES_PREVIEW when its id is configured. */
 export function backupTargets(env: Record<string, string | undefined>): Array<{ namespace: string; namespaceId: string }> {
   const production = env.KV_LICENSES_ID?.trim();
   if (!production) throw new UsageError('KV_LICENSES_ID is not set (the id of the production LICENSES namespace)');
@@ -44,10 +41,6 @@ export function backupTargets(env: Record<string, string | undefined>): Array<{ 
   return targets;
 }
 
-/**
- * Fail-safe production test: a namespace is production unless its title says "preview" — and the id in
- * KV_LICENSES_ID is production whatever it is called.
- */
 export function isProductionTarget(title: string, namespaceId: string, env: Record<string, string | undefined>): boolean {
   if (env.KV_LICENSES_ID && namespaceId === env.KV_LICENSES_ID.trim()) return true;
   return !/preview/iu.test(title);
@@ -72,7 +65,6 @@ async function guarded(deps: ICliDeps, run: () => Promise<number>): Promise<numb
   }
 }
 
-/** Runs `parseArgs` so that an unknown flag or a missing value exits 2 (usage), not 1. */
 function usage<TResult>(parse: () => TResult): TResult {
   try {
     return parse();

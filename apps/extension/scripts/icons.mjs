@@ -28,7 +28,6 @@ function chunk(type, data) {
   return Buffer.concat([len, td, crc]);
 }
 
-/** Encodes straight-alpha RGBA rows as a PNG (colour type 6, no filter, zlib level 9). */
 export function encodePng(width, height, rgba) {
   const raw = Buffer.alloc((width * 4 + 1) * height);
   for (let y = 0; y < height; y += 1) {
@@ -48,7 +47,6 @@ export function encodePng(width, height, rgba) {
   ]);
 }
 
-/** Colour of the topmost shape at (x, y) in a unit square, or null. */
 function sample(x, y) {
   const cx = 0.5;
   const cy = 0.5;

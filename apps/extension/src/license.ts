@@ -7,12 +7,6 @@ import {
   type TPlanId,
 } from '@awaketab/core';
 
-/**
- * Pro licence reuse (docs/10 §7, docs/09 §2.12). The options page activates the key as this browser
- * profile's own device (one of the five activations) and stores the record in `chrome.storage.local`
- * only — never `chrome.storage.sync`. The token is verified offline with `@awaketab/core`.
- */
-
 export const API_ORIGIN = 'https://awaketab.com';
 export const ACTIVATE_URL = `${API_ORIGIN}/pro/activate?ext=1`;
 export const MANAGE_URL = `${API_ORIGIN}/pro/manage`;
@@ -20,7 +14,6 @@ export const PRO_URL = `${API_ORIGIN}/pro`;
 
 export const NO_LICENSE: ILicenseState = { valid: false, plan: null, features: [], exp: null, grace: false };
 
-/** API error code → the web's copy key (same mapping as apps/web/src/lib/activate-page.ts). */
 export const LICENSE_ERROR_KEYS: Record<string, string> = {
   invalid_key: 'license.error.invalid',
   activation_limit: 'license.error.limit',
@@ -43,7 +36,6 @@ export function osLabel(ua: string): string {
   return 'desktop';
 }
 
-/** docs/09 §2.12: "AwakeTab for Chrome · {OS}" (≤ 40 characters, the API's limit). */
 export function deviceLabel(ua: string): string {
   return `AwakeTab for Chrome · ${osLabel(ua)}`.slice(0, 40);
 }
@@ -93,10 +85,6 @@ export async function activate(
   };
 }
 
-/**
- * Re-validation on the web's cadence (docs/08 §2.4, docs/09 §2.6): skipped while fresh; `revoked` drops the
- * record; any network or server failure keeps the offline-verified token until its `exp`.
- */
 export async function revalidate(
   record: ILicenseRecord,
   fetchFn: TFetch = fetch,

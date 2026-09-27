@@ -2,18 +2,8 @@
 import { createT } from '../../i18n/load';
 import { LOCALE_META, LOCALES, localePath, type TLocale } from '../../i18n/locales';
 
-/*
- * Language switcher, footer placement (PRIMITIVES.md P-LANG; docs/07 §2): a trigger with the current language's
- * native name, and a list of the eight locales in their native names. Rows are real links to this page in that
- * locale (`links`, from the page's translations) or, without a translation, to that locale's home; each carries
- * `lang` and `hreflang`. It never redirects and stores nothing: the URL is the state.
- * Phones: a bottom sheet (role=dialog, aria-modal, scrim, focus trapped). From 600: a non-modal panel anchored
- * above the trigger (role=group). Behaviour lives in src/boot/boot.js: open/close, focus to the current row,
- * ↑/↓ (wrapping), Home/End, Esc (focus back to the trigger), outside click and focus leaving close it.
- */
 interface Props {
   locale: TLocale;
-  /** The page's translations by locale; a locale without one links to its home (docs/07 §8). */
   links?: Partial<Record<TLocale, string>> | undefined;
 }
 

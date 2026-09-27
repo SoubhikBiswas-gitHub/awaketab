@@ -11,14 +11,6 @@ import { allWindows, minutesOf } from '../../src/schedules';
 import { EXT_KEYS, isExtPreset, presetOf, readExt, type IExtSettings, type ISchedule, type TExtPreset } from '../../src/settings';
 import { isLive, pillTextKey, remainingMs, totalMs } from '../../src/status';
 
-/**
- * Toolbar popup (docs/10 §5, ExtPopup + ExtEdge canvas boards). It renders only what the worker reports: the
- * pill is a projection of the worker's lock state, never of the button (docs/19 B1), and the countdown runs
- * only while the lock is `held`. Every state has its own shape: Ready, Starting, held (Screen or System),
- * long, overnight and multi-day sessions, no limit, time's up, Blocked, plus the first-open tips, the
- * "New in" chip, the private-window note and the Pro entry row (O-25).
- */
-
 const C = 2 * Math.PI * 56;
 const PRESET_KEYS = ['p15', 'p30', 'p45', 'p60', 'p120', 'p240'] as const;
 const PRESET_MS: Record<TExtPreset, number> = {
@@ -32,7 +24,6 @@ const PRESET_MS: Record<TExtPreset, number> = {
 };
 const QUARTER = 15 * 60_000;
 const DAY = 86_400_000;
-/** The receipt ("Held 42 min, 9:12 to 9:54 PM.") stays in Ready this long after a session ends. */
 const RECEIPT_MS = 5 * 60_000;
 const TIPS_ID = 'ext-first-open';
 const GLYPH = {
@@ -149,7 +140,6 @@ async function boot(): Promise<void> {
     render(state);
   };
 
-  /** The default length Start uses (settings.defaultPreset, also the Alt+Shift+A length). */
   const defaultPreset = (): TExtPreset => presetOf(ctx.settings);
 
   function modeOf(view: IExtState): TMode {
@@ -351,7 +341,6 @@ async function boot(): Promise<void> {
     tick(view);
   }
 
-  /** Timer and ring from `endsAt` and `Date.now()`, never an accumulated counter (docs/00 §5.2). */
   function tick(view: IExtState = state ?? fallbackState()): void {
     const mode = modeOf(view);
     const session = view.session;

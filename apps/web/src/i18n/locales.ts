@@ -20,12 +20,6 @@ export const LOCALE_META: Record<TLocale, ILocaleMeta> = {
   hi: { htmlLang: 'hi', hreflang: 'hi', label: 'हिन्दी', reviewed: false },
 };
 
-/**
- * Right-to-left scripts, by BCP 47 primary language subtag. None of the eight launch locales is RTL;
- * phase-2 `ar` (docs/07 §6) gets `dir="rtl"` from here without touching the layouts, which already use
- * logical properties only (stylelint `liberty/use-logical-spec`, test/i18n/rtl.test.ts).
- * `RTL_LANGUAGES` / `textDirection()`: docs/00 §13.17.
- */
 export const RTL_LANGUAGES: ReadonlySet<string> = new Set(['ar', 'fa', 'he', 'ur']);
 
 export type TTextDirection = 'ltr' | 'rtl';

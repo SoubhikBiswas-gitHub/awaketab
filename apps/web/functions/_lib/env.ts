@@ -11,7 +11,6 @@ export interface IEnv {
   POLAR_ORGANIZATION_ID?: string;
   POLAR_BENEFIT_MAP?: string;
   PUBLIC_SITE_URL?: string;
-  /** `sandbox` (default) | `production` — picks the Polar API (`_lib/polar.ts`) and, at build time, the checkout links. */
   PUBLIC_POLAR_SERVER?: string;
 }
 

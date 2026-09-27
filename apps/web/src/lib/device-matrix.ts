@@ -1,9 +1,3 @@
-/**
- * docs/metrics/device-matrix.json — the manual device run (docs/13 §11, E12-T05) that /learn/how-we-tested
- * renders (E12-T06) and scripts/support-matrix.mts folds into src/data/support-matrix.json. The owner fills it
- * in after each run; until then `status` is `pending` and every row's verdict is `pending`, and the page says
- * so. Validated at build: a malformed file fails the build rather than publishing a wrong claim.
- */
 export const DEVICE_VERDICTS = ['pending', 'pass', 'partial', 'fail'] as const;
 export type TDeviceVerdict = (typeof DEVICE_VERDICTS)[number];
 export const DEVICE_POWER = ['plugged', 'battery', 'battery-saver'] as const;
@@ -13,7 +7,6 @@ export interface IDeviceRow {
   id: string;
   device: string;
   os: string;
-  /** Id from src/data/support-matrix.json `browsers[]` or `contexts[]`. */
   browser: string;
   version: string | null;
   power: TDevicePower;
@@ -108,7 +101,6 @@ export function parseDeviceMatrix(data: unknown): IDeviceMatrix {
   return { version: 1, status: d.status, updatedAt, method, rows };
 }
 
-/** Latest test date per support-matrix id among rows that passed (fully or partly). */
 export function verifiedDates(matrix: IDeviceMatrix): Record<string, string> {
   const out: Record<string, string> = {};
   for (const row of matrix.rows) {

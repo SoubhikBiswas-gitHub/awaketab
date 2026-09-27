@@ -8,11 +8,6 @@ export type TManageState = 'loading' | 'list' | 'empty' | 'grace' | 'lapsed' | '
 const DAY_S = 86_400;
 const LICENSE_KEY = 'at.v1.license';
 
-/**
- * Yearly licences only (docs/08 §2.4): the token `exp` is the period end + 7 days of grace. Inside those 7 days
- * the renewal did not go through (grace); after `exp` Pro has ended on these devices (lapsed). Lifetime and kiosk
- * tokens roll forward on every check, so they never show either state.
- */
 export function lapseState(plan: string | undefined, expSec: number | undefined, now = Date.now()): 'grace' | 'lapsed' | null {
   if (plan !== 'pro_yearly' || typeof expSec !== 'number' || !Number.isFinite(expSec)) return null;
   if (now >= expSec * 1000) return 'lapsed';
@@ -20,7 +15,6 @@ export function lapseState(plan: string | undefined, expSec: number | undefined,
   return null;
 }
 
-/** Which icon a device row gets, from its label ("AwakeTab for Chrome · macOS", "Safari · iPadOS", …). */
 export function deviceIcon(label: string): 'ext' | 'tablet' | 'phone' | 'laptop' {
   if (/AwakeTab for Chrome/iu.test(label)) return 'ext';
   if (/iPad|tablet/iu.test(label)) return 'tablet';
@@ -56,11 +50,6 @@ function rowPrototype(root: HTMLElement): HTMLElement {
   return row;
 }
 
-/**
- * `/pro/manage` (docs/09 §2.6; boards ProManage and Sys prolapsed). Lists the licence's activations with a
- * 5-slot meter, marks this browser's row, confirms a removal inline, and shows the renewal-grace or lapsed
- * panel for a yearly licence past its period end. Removing this browser clears its stored licence.
- */
 export function bootManagePage(root: HTMLElement, now = Date.now()): void {
   const list = root.querySelector('[data-devices]');
   const wrap = root.querySelector<HTMLElement>('[data-devices-wrap]');

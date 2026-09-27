@@ -21,7 +21,6 @@ class FakeCloudflare {
   readonly namespaces = new Map<string, { title: string; rows: Map<string, IRow> }>();
   readonly calls: string[] = [];
   bulkGetSupported = true;
-  /** Status codes to answer (in order) before serving normally. */
   queued: Array<{ status: number; headers?: Record<string, string> } | 'network'> = [];
   listLimit = 2;
   rejectKeys = new Set<string>();

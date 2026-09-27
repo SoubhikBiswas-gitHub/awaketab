@@ -25,9 +25,7 @@ const DIST = process.env.AT_DIST ? path.resolve(process.env.AT_DIST) : path.join
 const LOCALES = ['en', 'es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
 export const LOADER_OUT = path.join(ROOT, 'public/embed.js');
 export const APP_OUT = path.join(ROOT, 'public/embed/app.js');
-/** The URL src/pages/embed/cook.astro references (and `astro dev` serves). */
 export const APP_URL = '/embed/app.js';
-/** Production home of the fingerprinted app; `_headers` serves this directory `immutable`. */
 export const APP_ASSET_DIR = '/embed/assets/';
 export const HASHED_APP_RE = /^\/embed\/assets\/app\.[0-9a-f]{10}\.js$/u;
 const BANNER = '/*! AwakeTab Embed loader · https://awaketab.com/embed */';
@@ -36,7 +34,6 @@ const ALIAS = {
   '@awaketab/core': path.join(REPO, 'packages/core/src/index.ts'),
 };
 
-/** One catalog key in all eight locales, e.g. `embed.frame.title` → `{ en: 'Keep screen awake', … }`. */
 export async function catalogStrings(key) {
   const out = {};
   for (const locale of LOCALES) {
@@ -49,7 +46,6 @@ export async function catalogStrings(key) {
 }
 
 export const frameTitles = () => catalogStrings('embed.frame.title');
-/** O-47: the host-page credit link text the loader inserts after the iframe. */
 export const creditTexts = () => catalogStrings('embed.attribution');
 
 export async function buildLoader() {
@@ -87,7 +83,6 @@ export async function buildApp() {
   return result.outputFiles[0]?.text ?? '';
 }
 
-/** `/embed/assets/app.<first 10 hex of sha256>.js` for the given bundle bytes. */
 export function hashedAppUrl(code) {
   return `${APP_ASSET_DIR}app.${createHash('sha256').update(code).digest('hex').slice(0, 10)}.js`;
 }
@@ -102,10 +97,6 @@ async function htmlFiles(dir) {
   return out;
 }
 
-/**
- * Post-build: move `dist/embed/app.js` to its content-hashed URL and point every built page that loaded
- * `"/embed/app.js"` at it. Fails when no page referenced the app (the rewrite would silently ship nothing).
- */
 export async function fingerprintApp(dist = DIST) {
   const source = path.join(dist, APP_URL.slice(1));
   const code = await readFile(source);

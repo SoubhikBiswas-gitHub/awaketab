@@ -86,7 +86,6 @@ describe('applyAccent', () => {
 
 const CSS = readFileSync(path.join(import.meta.dirname, '../../src/styles/tokens.css'), 'utf8');
 
-/** Custom properties declared in the first rule whose selector list matches `selector` exactly. */
 function block(selector: string): Record<string, string> {
   for (const m of CSS.matchAll(/([^{}]+)\{([^{}]*)\}/gu)) {
     const sel = (m[1] ?? '').replace(/\/\*[\s\S]*?\*\//gu, '').replace(/\s+/gu, ' ').trim();
@@ -105,7 +104,6 @@ function hex(value: string | undefined): [number, number, number] {
   return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)) as [number, number, number];
 }
 
-/** WCAG 2.x relative luminance. */
 function luminance(value: string | undefined): number {
   const [r, g, b] = hex(value).map((c) => {
     const s = c / 255;

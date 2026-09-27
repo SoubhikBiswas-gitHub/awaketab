@@ -33,7 +33,6 @@ async function walk(dir, base = dir) {
   return files;
 }
 
-/** Builds the zip bytes for every file under `dir`. */
 export async function zipDirectory(dir) {
   const names = (await walk(dir)).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   const locals = [];

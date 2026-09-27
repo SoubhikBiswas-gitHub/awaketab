@@ -11,7 +11,6 @@ const dist = process.env.AT_DIST ? path.resolve(process.env.AT_DIST) : path.reso
 const devVars = path.resolve(import.meta.dirname, '../../.dev.vars.example');
 const SITE = 'https://awaketab.com';
 
-/** The built HTML Pages serves at `pathname` (scripts/served.mjs: `/about` → `about.html`, `/es/` → `es/index.html`). */
 const page = (pathname: string) => readFile(path.join(dist, servedFile(pathname)), 'utf8');
 const text = (html: string) =>
   html

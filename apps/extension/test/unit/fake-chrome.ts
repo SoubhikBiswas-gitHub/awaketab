@@ -11,7 +11,6 @@ import type {
   TPowerLevel,
 } from '../../src/api';
 
-/** Minimal event emitter with Chrome's addListener/removeListener shape. */
 export function fakeEvent<TFn extends (...args: never[]) => unknown>(): IExtEvent<TFn> & { fire: (...args: Parameters<TFn>) => void } {
   const listeners = new Set<TFn>();
   return {
@@ -85,7 +84,6 @@ export interface IFakeChrome {
   notifications: Array<{ id: string; options: INotificationOptions }>;
   granted: { permissions: Set<string>; origins: Set<string> };
   tabs: ITab[];
-  /** URLs passed to `tabs.create` (the welcome page, chrome://extensions/shortcuts). */
   opened: string[];
   commands: Array<{ name?: string; shortcut?: string }>;
   events: {
@@ -95,10 +93,6 @@ export interface IFakeChrome {
   };
 }
 
-/**
- * An in-memory `chrome.*` for the controller tests: storage areas that fire `onChanged` asynchronously like
- * Chrome, recorded `chrome.power` calls, an alarm table, badge state and permission sets.
- */
 export function createFakeChrome(opts: { power?: boolean; notifications?: boolean; uiLanguage?: string } = {}): IFakeChrome {
   const storageEvent = fakeEvent<(changes: Record<string, IStorageChange>, area: string) => void>();
   const alarmEvent = fakeEvent<(alarm: IAlarm) => void>();
@@ -249,12 +243,10 @@ export function createFakeChrome(opts: { power?: boolean; notifications?: boolea
   };
 }
 
-/** Lets queued microtasks and resolved promises settle. */
 export async function flush(times = 10): Promise<void> {
   for (let i = 0; i < times; i += 1) await Promise.resolve();
 }
 
-/** The string body of a mocked fetch call. */
 export function bodyOf(init: RequestInit | undefined): string {
   return typeof init?.body === 'string' ? init.body : '';
 }

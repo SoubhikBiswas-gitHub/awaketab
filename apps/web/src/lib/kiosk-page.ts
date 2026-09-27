@@ -1,8 +1,3 @@
-/**
- * /kiosk builder (B6, canvas board PageKiosk): reads the form, writes the kiosk URL (snippet.ts kioskUrl, so what a
- * site owner copies is what the tool parses), splits it into coloured parts, and drives the preview screen with
- * data attributes and a few text nodes. Pure helpers are exported for tests; `bindKiosk` wires the page.
- */
 import { KIOSK_MODES, kioskMsg, kioskUrl, type IKioskUrlOptions } from '../tool/embed/snippet';
 
 const THEMES = ['auto', 'light', 'dark', 'oled'] as const;
@@ -28,11 +23,9 @@ export function readKioskForm(data: FormData): IKioskUrlOptions {
 
 export interface IUrlPart {
   text: string;
-  /** muted: origin and separators · key: `name=` · value · hash: `#lic=…` */
   kind: 'muted' | 'key' | 'value' | 'hash';
 }
 
-/** The kiosk URL as coloured parts, in order; their text joins back to the exact URL. */
 export function urlParts(url: string): IUrlPart[] {
   const hashAt = url.indexOf('#');
   const main = hashAt < 0 ? url : url.slice(0, hashAt);
@@ -74,7 +67,6 @@ export interface IKioskHints {
   note: string;
 }
 
-/** Field hints and the preview's licensed state (the canvas copy). */
 export function kioskHints(o: IKioskUrlOptions): IKioskHints {
   const token = o.token.trim();
   const tokenValid = TOKEN_RE.test(token);
@@ -107,7 +99,6 @@ export function kioskHints(o: IKioskUrlOptions): IKioskHints {
 
 const pad2 = (n: number) => String(n).padStart(2, '0');
 
-/** Timer digits as on the tool (DESIGN.md §4): `MM:SS` under an hour, `H:MM:SS` from an hour. */
 export function clockParts(sec: number): [string, string] {
   const h = Math.floor(sec / 3600);
   const m = Math.floor((sec % 3600) / 60);
@@ -122,11 +113,9 @@ export interface IKioskTimer {
   kicker: string;
   metaA: string;
   metaB: string;
-  /** Remaining fraction for the ring (1 = full). */
   progress: number;
 }
 
-/** What the preview's Minimal and Standard screens show for a length, autostart and the time since the last change. */
 export function kioskTimer(preset: IKioskUrlOptions['preset'], autostart: boolean, startedAt: number, now: number): IKioskTimer {
   const total = SECONDS[preset];
   const elapsed = autostart ? Math.max(0, Math.floor((now - startedAt) / 1000)) : 0;

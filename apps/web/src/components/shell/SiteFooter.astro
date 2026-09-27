@@ -3,12 +3,6 @@ import { createT } from '../../i18n/load';
 import type { TLocale } from '../../i18n/locales';
 import LangSwitch from './LangSwitch.astro';
 
-/*
- * Site footer (DESIGN.md §11.7; PRIMITIVES.md P-FOOTER): one footer on every page, Pro, Activate and Manage
- * included. 1 px line on top; the honest line (caption, muted) at the start; links in the fixed order
- * Privacy · Terms · Changelog · About · Buy me a coffee; the language switcher (P-LANG) last, at the end edge
- * from 600 and on its own line at the start on phones.
- */
 interface Props {
   locale: TLocale;
   links?: Partial<Record<TLocale, string>> | undefined;

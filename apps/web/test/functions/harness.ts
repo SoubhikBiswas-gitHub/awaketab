@@ -1,16 +1,3 @@
-/**
- * Integration harness for the Pages Functions under apps/web/functions.
- *
- * Why not Miniflare: `@cloudflare/vitest-pool-workers` (0.22.0, the latest) peers `vitest ^4.1`
- * and this repo pins vitest 5.0.0, so the handlers run in Node against faithful in-memory
- * bindings instead. The fakes enforce the platform limits the handlers could trip over
- * (KV `expirationTtl >= 60`, key length, string values; Analytics Engine index/blob/double
- * limits) and record every write so tests can scan persisted data for IPs and raw keys.
- * Polar is a stateful sandbox fake served through a stubbed global `fetch`.
- *
- * Secrets come from `apps/web/.dev.vars.example` (the dev signing pair matches
- * `LICENSE_PUBLIC_KEYS[1]` in @awaketab/core); nothing here is a production secret.
- */
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -68,13 +55,11 @@ function assertKvKey(key: string): void {
   if (encoder.encode(key).byteLength > 512) throw new TypeError('KV key exceeds 512 bytes');
 }
 
-/** In-memory `KVNamespace` with Cloudflare's validation rules and TTL expiry on the (fakeable) clock. */
 export class MemoryKv {
   readonly writes: IKvWrite[] = [];
   private readonly store = new Map<string, { value: string; expiresAt: number | null }>();
   private readonly failures: Array<(key: string) => boolean> = [];
 
-  /** The next `put` whose key matches throws like a transient KV 5xx. */
   failNextPut(match: (key: string) => boolean): void {
     this.failures.push(match);
   }
@@ -166,7 +151,6 @@ export interface IAeWrite {
   doubles: number[];
 }
 
-/** In-memory `AnalyticsEngineDataset` enforcing Workers Analytics Engine per-point limits. */
 export class MemoryAnalytics {
   readonly points: IAeWrite[] = [];
 
@@ -191,33 +175,21 @@ export class MemoryAnalytics {
 // ---------------------------------------------------------------------------
 
 export interface IPolarKey {
-  /** Polar licence-key id (`LicenseKeyRead.id`, `properties.license_key_id` on benefit grants). */
   id: string;
   key: string;
   status: 'granted' | 'revoked' | 'disabled';
   benefitId: string;
   customerId: string;
-  /** The purchase that granted the key: a one-time order, or a subscription (then `orderId` is its first order). */
   orderId: string;
   subscriptionId: string | null;
-  /** The benefit grant that carries the key. */
   grantId: string;
   limit: number;
   expiresAt: string | null;
   activations: Map<string, { label: string; deviceId: string }>;
-  /**
-   * The benefit grant as `GET /v1/benefit-grants/` lists it. Polar creates it asynchronously after the order:
-   * `missing` = not created yet, `keyless` = created before `properties.license_key_id` was filled in.
-   */
   grant: 'ready' | 'missing' | 'keyless';
-  /** `BenefitGrant.created_at` / `granted_at`. */
   grantedAt: string;
 }
 
-/**
- * Polar `Checkout` as `GET /v1/checkouts/{id}` returns it (OpenAPI 2026-10 `Checkout`, the fields that matter):
- * no licence key and no order id, only the customer and, for a subscription, `subscription_id` (F-08).
- */
 export interface IPolarCheckout {
   status: 'open' | 'expired' | 'confirmed' | 'succeeded' | 'failed';
   customer_id: string | null;
@@ -225,7 +197,6 @@ export interface IPolarCheckout {
   product_id: string | null;
 }
 
-/** Polar `Order` (`GET /v1/orders/`), the fields that matter. */
 export interface IPolarOrder {
   id: string;
   checkout_id: string | null;
@@ -238,7 +209,6 @@ export interface IPolarOrder {
 export interface IPolarCall {
   method: string;
   path: string;
-  /** `URLSearchParams` of the request (list filters such as `checkout_id`, `customer_id`). */
   query: Record<string, string>;
   body: Record<string, unknown> | null;
   auth: string | null;
@@ -251,9 +221,7 @@ export class FakePolar {
   readonly keys = new Map<string, IPolarKey>();
   readonly checkouts = new Map<string, IPolarCheckout>();
   readonly orders = new Map<string, IPolarOrder>();
-  /** 'http' → every call answers 500; 'network' → fetch rejects. */
   outage: 'none' | 'http' | 'network' = 'none';
-  /** Calls to exactly this path answer 500 (an outage part-way through a chain of reads). */
   failPath: string | null = null;
 
   constructor(
@@ -284,10 +252,6 @@ export class FakePolar {
     return row;
   }
 
-  /**
-   * The checkout that bought `row`, as Polar stores it: `customer_id`, `subscription_id` (yearly) and, unless
-   * `order: false` (Polar has not created it yet), the order whose `checkout_id` points back at it.
-   */
   addCheckout(
     row: IPolarKey,
     opts: { id?: string; status?: IPolarCheckout['status']; order?: boolean } = {},
@@ -327,7 +291,6 @@ export class FakePolar {
     };
   }
 
-  /** `BenefitGrant` for a License Keys benefit: one-time grants carry `order_id`, subscription grants `subscription_id`. */
   private grantJson(row: IPolarKey): Record<string, unknown> {
     const granted = row.status === 'granted';
     return {
@@ -351,12 +314,10 @@ export class FakePolar {
     };
   }
 
-  /** `ListResource`: `{ items, pagination: { total_count, max_page } }`, one page. */
   private static list(items: unknown[]): Response {
     return Response.json({ items, pagination: { total_count: items.length, max_page: 1 } });
   }
 
-  /** `GET` list endpoints scope to the token's organisation; a foreign `organization_id` lists nothing. */
   private orgMatches(url: URL): boolean {
     const org = url.searchParams.get('organization_id');
     return org === null || org === this.organizationId;
@@ -447,7 +408,6 @@ export interface IHarness {
   polar: FakePolar;
 }
 
-/** Builds bindings + secrets from `.dev.vars.example` and routes global `fetch` to the Polar fake. */
 export function harness(overrides: Partial<Record<keyof IEnv, unknown>> = {}): IHarness {
   const vars = devVars();
   const kv = new MemoryKv();
@@ -481,7 +441,6 @@ export function harness(overrides: Partial<Record<keyof IEnv, unknown>> = {}): I
 
 type THandler = (context: never) => Response | Promise<Response>;
 
-/** Calls a Pages Function with a realistic `EventContext` and drains `waitUntil`. */
 export async function invoke(handler: THandler, env: IEnv, request: Request): Promise<Response> {
   const pending: Array<Promise<unknown>> = [];
   const context = {
@@ -542,7 +501,6 @@ export function decodeJwt(token: string): { header: Record<string, unknown>; cla
   };
 }
 
-/** Re-encodes the payload with `patch` applied and keeps the original signature. */
 export function tamperJwt(token: string, patch: Record<string, unknown>): string {
   const [h = '', , s = ''] = token.split('.');
   const { claims } = decodeJwt(token);
@@ -555,7 +513,6 @@ export async function signWebhook(raw: string, id: string, ts: string, secret: s
   return `v1,${btoa(String.fromCharCode(...new Uint8Array(mac)))}`;
 }
 
-/** A Standard Webhooks request as Polar sends it. */
 export async function webhookRequest(
   payload: unknown,
   opts: { id?: string; ts?: number; secret?: string; signature?: string; omit?: string[]; raw?: string } = {},
@@ -581,11 +538,6 @@ export async function webhookRequest(
 // Polar webhook payloads (D-06)
 // ---------------------------------------------------------------------------
 
-/**
- * Key-less webhook bodies shaped like Polar's OpenAPI 2026-04 / 2026-10 schemas (`Order`, `Subscription`,
- * `Refund`, `BenefitGrantLicenseKeysWebhook`; docs/09 §2.7.1). Only the fields the handler could read plus
- * enough context to be realistic; none of them carries the licence key, as in production.
- */
 export const polarEvents = {
   order(type: 'order.created' | 'order.paid' | 'order.updated' | 'order.refunded', row: IPolarKey, over: Record<string, unknown> = {}) {
     const refunded = type === 'order.refunded';
@@ -702,11 +654,6 @@ export const polarEvents = {
 // Privacy scan
 // ---------------------------------------------------------------------------
 
-/**
- * Every place an IP could leak: KV keys and values (including overwritten ones) and every
- * Analytics Engine index/blob. Also flags an unsalted SHA-256 of the IP, which is as joinable
- * as the IP itself. Returns the offending fragments (empty = clean).
- */
 export async function ipTraces(ip: string, kv: MemoryKv, ae: MemoryAnalytics): Promise<string[]> {
   const needles = [ip, await sha256Hex(ip)];
   const haystacks = [

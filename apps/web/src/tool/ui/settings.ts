@@ -26,7 +26,6 @@ function setValue(form: HTMLFormElement, name: string, value: string | boolean):
   else f.value = String(value);
 }
 
-/** Writes the stored settings into the form so opening Settings never shows (or saves) stale defaults. */
 export function fillSettings(form: HTMLFormElement, s: ISettings): void {
   setValue(form, 'theme', s.theme);
   // A legacy palette hex (amber, indigo, teal, rose) selects the lamp that replaced it (docs/08 §2.1).
@@ -46,7 +45,6 @@ export function fillSettings(form: HTMLFormElement, s: ISettings): void {
   setValue(form, 'keyboardHints', s.keyboardHints);
 }
 
-/** Reads the form into a full ISettings; gated values the licence does not cover keep their stored value. */
 export function readSettings(form: HTMLFormElement, cur: ISettings, gates: { packs: boolean; message: boolean }): ISettings {
   const data = new FormData(form);
   const str = (k: string) => {

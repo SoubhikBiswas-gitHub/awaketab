@@ -1,19 +1,3 @@
-/**
- * Lighthouse CI — one config for local runs and CI (docs/13 §7, docs/14 §6, docs/19 §E).
- *
- *   Local:  pnpm build && pnpm lighthouse
- *           → LHCI starts `pnpm --filter web preview` and audits http://127.0.0.1:4321.
- *   CI:     LHCI_BASE_URL=https://<hash>.awaketab.pages.dev pnpm lighthouse
- *           → no local server; the same five paths are audited on the deployed preview (real _headers).
- *
- * Env: LHCI_BASE_URL (origin to audit; unset = local preview), LHCI_RUNS (default 3),
- * LHCI_UPLOAD_TARGET (default `temporary-public-storage` in CI, `filesystem` locally → .lighthouseci/).
- * Chrome: LHCI uses CHROME_PATH or the system Chrome.
- *
- * Mobile emulation with Lighthouse's default simulated throttling (Moto G Power class, slow 4G).
- * Lighthouse 12 removed the PWA category, so installability is asserted in Playwright instead
- * (apps/web/test/e2e/security.spec.ts → CDP Page.getInstallabilityErrors).
- */
 const LOCAL = 'http://127.0.0.1:4321';
 const base = (process.env.LHCI_BASE_URL || LOCAL).replace(/\/+$/u, '');
 const remote = base !== LOCAL;

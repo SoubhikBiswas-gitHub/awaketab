@@ -11,17 +11,11 @@
 export const BACKUP_FORMAT = 'awaketab-kv-backup';
 export const BACKUP_VERSION = 1;
 
-/**
- * Durable key families (docs/08 §4). `wh:*` (30-day idempotency) and `rl:*` (120 s counters) are ephemeral.
- * `lk:`, `grant:` and `sub:` are the D-06 Polar id indexes: without them a restored namespace could not
- * resolve key-less webhooks until each licence's benefit grant or next activation re-linked it.
- */
 export const BACKUP_PREFIXES = ['lic:', 'cus:', 'embed:', 'ord:', 'lk:', 'grant:', 'sub:', 'rating:'] as const;
 
 export interface IKvRecord {
   key: string;
   value: string;
-  /** Absolute expiry, Unix seconds (as KV reports it). */
   expiration?: number;
   metadata?: unknown;
 }
@@ -78,7 +72,6 @@ function parseRecord(line: string, lineNo: number): IKvRecord {
   return out;
 }
 
-/** Parses and validates a decrypted backup; throws on any malformed line, a count mismatch or duplicate keys. */
 export function parseBackup(text: string): IBackup {
   const lines = text.split('\n').filter((line) => line.trim() !== '');
   const first = lines[0];
@@ -124,7 +117,6 @@ export function parseBackup(text: string): IBackup {
   };
 }
 
-/** Record counts per key family (`lic:`, `cus:` …); keys without a colon count under `(other)`. */
 export function countByPrefix(records: IKvRecord[]): Record<string, number> {
   const counts: Record<string, number> = {};
   for (const { key } of records) {
@@ -135,7 +127,6 @@ export function countByPrefix(records: IKvRecord[]): Record<string, number> {
   return counts;
 }
 
-/** `LICENSES-2026-09-28.jsonl.enc` — UTC date, one file per namespace. */
 export function backupFileName(namespace: string, date: Date): string {
   return `${namespace}-${date.toISOString().slice(0, 10)}.jsonl.enc`;
 }

@@ -9,7 +9,6 @@ export const PIP_ADD_MS = 15 * 60_000; // = PIP_ADD_MS in tool/pip.ts
 let catalog: Record<string, string> = {};
 const t = (key: string, time = ''): string => (catalog[key] ?? key).replace('{time}', time);
 
-/** Display digits with a dimmed tail (DESIGN §4): `24:17` → ["24", ":17"], `1:24:17`, `1d 02:15:00`. */
 function split(ms: number): [string, string] {
   const total = Math.max(0, Math.floor(ms / 1000));
   const p = (n: number) => String(n).padStart(2, '0');
@@ -21,11 +20,9 @@ function split(ms: number): [string, string] {
 
 type TState = Extract<TTabMessage, { type: 'state' }>;
 
-/** Without a state message for this long the popup says so instead of showing a stale timer. */
 export const MIRROR_STALE_MS = 4000;
 const LIVE = new Set(['active', 'paused']);
 
-/** Picks the tab to mirror: the newest live session, else the newest snapshot of any tab. */
 export function pickOwner(states: Iterable<TState>): TState | null {
   let best: TState | null = null;
   for (const s of states) {
@@ -38,10 +35,6 @@ export function pickOwner(states: Iterable<TState>): TState | null {
   return best;
 }
 
-/**
- * Timer text for a snapshot, computed locally so a throttled owner tab never freezes the popup. Same maths
- * as format.ts remainingOf(): duration plans add paused time back, until plans count to the wall target.
- */
 export function mirrorMs(s: TState, now: number): { ms: number; left: boolean } | null {
   if (!LIVE.has(s.status) || s.startedAt === null) return null;
   const pausedMs = s.pausedMs ?? 0;
@@ -58,7 +51,6 @@ export function mirrorTime(s: TState, now: number): string {
   return v ? split(v.ms).join('') : t('tool.timer.indefiniteIdle');
 }
 
-/** "until 5:28 PM" (rounded to the minute, "tomorrow" past midnight), in the page language. */
 function untilText(end: number, now: number): string {
   const r = Math.round(end / 60_000) * 60_000;
   const time = new Intl.DateTimeFormat(document.documentElement.lang || 'en', { hour: 'numeric', minute: '2-digit' }).format(r);
@@ -66,11 +58,6 @@ function untilText(end: number, now: number): string {
   return t('ambient.until', day ? time : t('ambient.tomorrow', time));
 }
 
-/**
- * The /pip popup (docs/05 §9 fallback for browsers without Document Picture-in-Picture). It owns no wake
- * lock and no session: it mirrors the owning tab's snapshots and posts `intent` messages back. The pill
- * shows the owner's real lock state, so a popup can never claim the screen is awake when it isn't.
- */
 export function mountMirror(root: HTMLElement, channel: BroadcastChannel | null = null): () => void {
   const raw = root.querySelector('[data-i18n-catalog]')?.textContent;
   if (raw) catalog = JSON.parse(raw) as Record<string, string>;

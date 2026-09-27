@@ -1,20 +1,9 @@
-/**
- * Kiosk licence unlocks on the tool (docs/09 §7.2, docs/00 §13.2) — the Business-tier sibling of the embed,
- * loaded lazily by main.ts only when the URL carries `#lic=` or `logo=`:
- *
- * 1. `#lic=<token>` — verified offline (`verifyLicenseToken`, no device binding: one kiosk URL is copied to many
- *    screens), stored to `at.v1.license` when it is a valid kiosk-plan token, then stripped from the address bar
- *    with `history.replaceState`. The hash never reaches the server or the `page_view` path.
- * 2. `logo=<https URL>` — shown only with `ambient.logo`; `kiosk.branding` also hides the AwakeTab wordmark and
- *    the rating prompt (`[data-kiosk]` on <html>).
- */
 import { verifyLicenseToken, type ILicenseRecord, type TPlanId } from '@awaketab/core';
 import { hasFeature, type IToolCtx } from '../ctx.js';
 import { t } from '../i18n.js';
 import { toast } from '../ui/toast.js';
 
 export const KIOSK_PLANS: readonly TPlanId[] = ['biz_kiosk_site', 'biz_kiosk_5'];
-/** Longest accepted `logo=` URL (docs/00 §13.10). */
 export const KIOSK_LOGO_MAX = 512;
 
 const TOKEN_RE = /^#lic=([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/u;
@@ -23,7 +12,6 @@ export function readLicHash(hash: string): string | null {
   return TOKEN_RE.exec(hash)?.[1] ?? null;
 }
 
-/** `logo=` must be an absolute https URL without credentials; anything else is ignored. */
 export function parseLogo(search: string): string | null {
   const raw = new URLSearchParams(search).get('logo');
   if (!raw || raw.length > KIOSK_LOGO_MAX) return null;

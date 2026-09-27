@@ -1,19 +1,6 @@
-/**
- * Hub pages (`/for`, `/on`, `/vs`, `/guides`, `/learn`): intro copy and the groups each hub lists its pages in,
- * as drawn on the canvas (design/canvas/project/HubFor.dc.html, `hub` prop; redesign B5). English only: hubs
- * have no locale versions (docs/06 §19).
- *
- * The page list itself comes from the content collections. A group names the slugs it holds in board order; a
- * slug that no longer exists is skipped, and a published page that no group names joins the group `EXTRA` puts it
- * in (or the last group), so a content change (B11: OD-3 merges and noindex) never hides or breaks a page.
- * `line` and `meta` are the board's one-line summary and meta pair for an item; without them the item shows the
- * page's honest limit and, on `/for`, its preset and mode. Draft pages (noindex until rewritten, OD-2) are listed
- * too: the hub is the index of the family, as drawn (14 · 11 · 7 · 7 · 5 after OD-3).
- */
 import type { TContentKind } from './content-i18n';
 
 export interface IHubItem {
-  /** Slug in this hub, or a root-relative path into another hub (`/vs/nosleep-js`). */
   slug: string;
   line?: string;
   meta?: readonly [string, string];
@@ -21,7 +8,6 @@ export interface IHubItem {
 
 export interface IHubGroup {
   id: string;
-  /** Label in the jump bar. */
   short: string;
   title: string;
   line: string;
@@ -296,5 +282,4 @@ export const HUBS: Record<TContentKind, IHub> = {
   },
 };
 
-/** A page added later that no group names: the group it joins (otherwise the hub's last group). */
 export const EXTRA: Partial<Record<TContentKind, Record<string, string>>> = {};

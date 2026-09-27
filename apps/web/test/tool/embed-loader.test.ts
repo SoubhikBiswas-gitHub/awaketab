@@ -20,7 +20,6 @@ function tag(attrs: Record<string, string> = {}, src = 'https://awaketab.com/emb
   return script;
 }
 
-/** Dispatches a message on `window` as if `source` posted it from `origin`. */
 function deliver(source: Window | null, origin: string, data: unknown): void {
   window.dispatchEvent(new MessageEvent('message', { data, origin, source }));
 }

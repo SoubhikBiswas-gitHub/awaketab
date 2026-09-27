@@ -1,14 +1,6 @@
-/*
- * 404 body (milestone B6, canvas board Page404). The 404 page is a tool page (docs/00 §11: tool pages CSS ≤ 20 KB
- * gz), so it gets this small file instead of pages.css. The tool inside is ToolIsland as on every tool page (its
- * look is milestone B3's); this only places the page heading, the full-tool link and the popular guides around it:
- * one column on phones and tablets, the tool (540) and the guides side by side from 1024. Tokens only (stylelint's
- * strict override covers this file).
- */
 @layer properties, theme, base, components, utilities;
 
 @layer components {
-  /* The site pages' ground (canvas pageRoles): a 1400 × 900 lift above the top edge fading into the ground. */
   body:has(.at-404) {
     background-image: radial-gradient(1400px 900px at 50% -160px, var(--at-lift) 0%, color-mix(in srgb, var(--at-ground) 0%, transparent) 72%);
   }

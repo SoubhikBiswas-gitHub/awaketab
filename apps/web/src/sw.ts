@@ -1,15 +1,4 @@
 /// <reference lib="webworker" />
-/*
- * AwakeTab service worker (docs/05 §8.2). Built by scripts/sw.mjs after `astro build` and the chunk prune:
- * esbuild bundles this file and injects the precache manifest in place of `self.__WB_MANIFEST`.
- *
- * - App shell (tool routes, locale homes, /pip, hashed JS, icons, manifests): precached, served cache-first,
- *   so the tool — and an honest pill — works offline.
- * - Content pages: stale-while-revalidate. Images: cache-first. /api/*: network only. /embed/*: network first,
- *   except the content-hashed /embed/assets/* (cache-first).
- * - Update flow is `prompt`: a new worker waits until the page posts SKIP_WAITING, which the island does only
- *   when no session is active (FR-PWA-01). It never skips waiting on its own.
- */
 import { cleanupOutdatedCaches, matchPrecache, precacheAndRoute } from 'workbox-precaching';
 import { registerRoute, setCatchHandler } from 'workbox-routing';
 import { CacheFirst, NetworkFirst, NetworkOnly, StaleWhileRevalidate } from 'workbox-strategies';
@@ -58,7 +47,6 @@ registerRoute(
   new StaleWhileRevalidate({ cacheName: 'at-content', plugins: [expire(80)] }),
 );
 
-/** Offline navigation to anything uncached: the tool itself (locale home), per docs/05 §8.2. */
 setCatchHandler(async ({ request, url }) => {
   if (request.mode !== 'navigate' || NO_FALLBACK.some((re) => re.test(url.pathname))) return Response.error();
   const lang = url.pathname.split('/')[1] ?? '';

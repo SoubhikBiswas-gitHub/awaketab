@@ -12,7 +12,6 @@ interface Props {
   mode?: string | undefined;
   locale?: TLocale;
   embed?: boolean;
-  /** Eyebrow above the heading (the 404 page's "Error 404", B6). */
   kicker?: string | undefined;
 }
 
@@ -31,8 +30,6 @@ const ICON = {
 ---
 
 {!embed && <a class="at-skip" href="#content">{t('tool.skip')}</a>}
-{/* `#awaketab-tool` is the island root main.ts boots from (docs/05 §2). It wraps the header too, because the
-    header controls are bound with root.querySelector(); the data-* attributes are the URL-param defaults. */}
 <div
   id="awaketab-tool"
   class:list={['at-island', embed && 'at-tool-embed']}
@@ -73,10 +70,6 @@ const ICON = {
           {kicker && <p class="at-tool-kicker">{kicker}</p>}
           <h1 class="at-h1" id="content">{heading}</h1>
           <ToolPanel locale={locale} />
-          {/* Tool actions that left the header in B2 (header = logo · nav · theme · Stats · Settings, DESIGN.md §6).
-              Interim home until the tool dock (B3) and the floating window (B4) place them. A fixed five-column
-              grid, so the Install button appearing after load moves nothing (CLS 0); Stats is here on phones only,
-              where the header has no room for it (the canvas puts it in Settings there). */}
           <div class="at-tool-more">
             <button class="at-icon-button" type="button" data-open-share aria-label={t('tool.header.share')} title={t('tool.header.share')}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={ICON.share} /></svg>

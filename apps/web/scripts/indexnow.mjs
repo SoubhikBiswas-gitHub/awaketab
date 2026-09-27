@@ -19,12 +19,9 @@ import { contentPath, isIndexable, readContentIndex, SITE } from './translations
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const REPO = path.resolve(ROOT, '../..');
 export const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow';
-/** IndexNow accepts at most 10,000 URLs per request. */
 export const MAX_URLS = 10_000;
-/** The protocol's key format: 8–128 characters of a–z, A–Z, 0–9 and `-`. */
 const KEY_RE = /^[A-Za-z0-9-]{8,128}$/u;
 const LOCALES = ['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
-/** Never submitted even if a sitemap listed them (defence in depth; robots.txt and `_headers` agree). */
 const EXCLUDED = [
   /^\/api(?:\/|$)/u,
   new RegExp(`^(?:/(?:${LOCALES.join('|')}))?/pip/?$`, 'u'),
@@ -33,15 +30,10 @@ const EXCLUDED = [
   /\.(?:xml|txt|json|js|css|png|svg|webmanifest)$/u,
 ];
 
-/** @param {string | undefined} key */
 export function validKey(key) {
   return typeof key === 'string' && KEY_RE.test(key);
 }
 
-/**
- * @param {Record<string, string | undefined>} env
- * @returns {{ key: string } | { key: null; reason: string }}
- */
 export function readKey(env = process.env) {
   const key = env.INDEXNOW_KEY?.trim();
   if (!key) return { key: null, reason: 'INDEXNOW_KEY is not set' };
@@ -49,18 +41,12 @@ export function readKey(env = process.env) {
   return { key };
 }
 
-/** `<loc>` values of a sitemap or sitemap index. @param {string} xml */
 export function sitemapLocs(xml) {
   return [...xml.matchAll(/<loc>([^<]+)<\/loc>/gu)].map((m) =>
     (m[1] ?? '').replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&quot;', '"').trim(),
   );
 }
 
-/**
- * Indexable page URLs on the site's own host, deduplicated and sorted.
- * @param {readonly string[]} urls
- * @param {string} [site]
- */
 export function selectUrls(urls, site = SITE) {
   const host = new URL(site).host;
   const out = new Set();
@@ -79,15 +65,6 @@ export function selectUrls(urls, site = SITE) {
   return [...out].sort();
 }
 
-/**
- * Which page URLs a set of changed repo files affects: `'all'` when a shared template, style, script, string
- * catalog or engine package changed; otherwise the content pages (indexable versions only) and `/changelog`.
- * @param {readonly string[]} files repo-relative paths (`git diff --name-only`)
- * @param {ReadonlyArray<{ kind: string; enSlug: string; locale: string; reviewed: boolean; noindex: boolean; file: string }>} pages
- * @param {Record<string, Record<string, Record<string, string>>>} slugs
- * @param {string} [site]
- * @returns {'all' | Set<string>}
- */
 export function changedUrls(files, pages, slugs, site = SITE) {
   const byFile = new Map(pages.map((page) => [path.relative(REPO, page.file).split(path.sep).join('/'), page]));
   const urls = new Set();
@@ -107,11 +84,6 @@ export function changedUrls(files, pages, slugs, site = SITE) {
   return urls;
 }
 
-/**
- * @param {string} key
- * @param {readonly string[]} urls
- * @param {string} [site]
- */
 export function payloads(key, urls, site = SITE) {
   const { host, origin } = new URL(site);
   const out = [];
@@ -121,12 +93,8 @@ export function payloads(key, urls, site = SITE) {
   return out;
 }
 
-/**
- * Reads the sitemap index and every child sitemap, from the deployed site or a local dist.
- * @param {{ from: 'live' | 'dist'; dist: string; site: string; fetchFn: typeof fetch }} opts
- */
 export async function readSitemapUrls({ from, dist, site, fetchFn }) {
-  const load = async (/** @type {string} */ url) => {
+  const load = async (url) => {
     if (from === 'dist') return readFile(path.join(dist, new URL(url).pathname), 'utf8');
     const res = await fetchFn(url);
     if (!res.ok) throw new Error(`${url} → HTTP ${String(res.status)}`);
@@ -137,9 +105,6 @@ export async function readSitemapUrls({ from, dist, site, fetchFn }) {
   return pages.flat();
 }
 
-/**
- * @param {{ key: string; urls: readonly string[]; site?: string; fetchFn?: typeof fetch; dryRun?: boolean; log?: (line: string) => void }} opts
- */
 export async function ping({ key, urls, site = SITE, fetchFn = fetch, dryRun = false, log = () => undefined }) {
   if (urls.length === 0) {
     log('indexnow: no changed indexable URLs; nothing to send');
@@ -167,7 +132,6 @@ export async function ping({ key, urls, site = SITE, fetchFn = fetch, dryRun = f
   return { sent };
 }
 
-/** @param {string[]} args @param {string} name */
 function option(args, name) {
   const i = args.indexOf(name);
   return i >= 0 ? args[i + 1] : undefined;
@@ -175,10 +139,9 @@ function option(args, name) {
 
 const exec = promisify(execFile);
 
-/** @param {string[]} args */
 async function main(args) {
-  const log = (/** @type {string} */ line) => process.stdout.write(`${line}\n`);
-  const warn = (/** @type {string} */ line) => process.stderr.write(`${line}\n`);
+  const log = (line) => process.stdout.write(`${line}\n`);
+  const warn = (line) => process.stderr.write(`${line}\n`);
   const dist = path.resolve(option(args, '--dist') ?? process.env.AT_DIST ?? path.join(ROOT, 'dist'));
   const found = readKey();
   if (args[0] === 'write-key') {

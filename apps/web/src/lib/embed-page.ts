@@ -1,9 +1,3 @@
-/**
- * /embed snippet builder (B6, canvas board EmbedShowcase): reads the builder, writes the one-line tag (snippet.ts
- * loaderSnippet, so the copied tag is exactly what the loader parses), and remounts the live widget on the
- * placeholder recipe page with the same attributes. The loader (/embed.js) is a classic script that reads
- * `document.currentScript`, so a fresh tag mounts a fresh widget and its credit line.
- */
 import { DEFAULT_SNIPPET, loaderSnippet, type ISnippetOptions } from '../tool/embed/snippet';
 import { EMBED_LOCALES, EMBED_MODES, EMBED_PRESETS, EMBED_SIZES, EMBED_THEMES, pick, reservedHeight } from '../tool/embed/protocol';
 
@@ -13,7 +7,6 @@ export interface ISnippetPart {
   value?: string;
 }
 
-/** `<script async src="…"` · ` data-x="y"` … · `></script>`: the attribute parts carry their name and quoted value. */
 export function snippetParts(tag: string): ISnippetPart[] {
   const m = /^(<script async src="[^"]*")((?: [\w-]+="[^"]*")*)(><\/script>)$/u.exec(tag);
   if (!m) return [{ text: tag }];
@@ -35,7 +28,6 @@ export function readSnippetForm(data: FormData): ISnippetOptions {
   };
 }
 
-/** The box label above the demo: "320 × 104", "100% × 240", or "100% × 420" for a stacked full Cook widget. */
 export function boxLabel(opts: Pick<ISnippetOptions, 'size' | 'mode'>, width: number): string {
   const height = reservedHeight(opts, width);
   return opts.size === 'compact' ? `320 × ${String(height)}` : `100% × ${String(height)}`;

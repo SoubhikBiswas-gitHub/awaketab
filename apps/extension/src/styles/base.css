@@ -1,16 +1,3 @@
-/*
- * Shared extension page styles (popup, options, welcome): Clear Night, DESIGN.md §2, §3, §11, §12.
- * Colours, spacing, radii, type roles and control sizes come only from the `--at-*` tokens, which the build
- * reads from apps/web/src/styles/tokens.css (`virtual:at-tokens.css`, scripts/i18n.mjs → tokensCss()), so the
- * extension and the web app share one source (DESIGN.md §12.1). Logical properties only (RTL-ready).
- */
-
-/*
- * Fonts (DESIGN.md §3, D-R26): Geist and Geist Mono are bundled in the package (public/fonts, SIL OFL 1.1,
- * licence file alongside). MV3 pages may not load remote fonts, and none is requested. The @font-face rules
- * and the metric-matched fallbacks are copied from apps/web/src/styles/tokens.css (the part the token import
- * leaves behind), so a swap keeps the layout still.
- */
 @font-face {
   font-family: Geist;
   font-style: normal;
@@ -49,11 +36,6 @@
   line-gap-override: 0%;
 }
 
-/*
- * Extension-local values that tokens.css has no name for (DESIGN.md §2.1 ground lift, §11.6 elevation, the
- * status halo strength). They follow the same theme selectors as the tokens: light by default, dark and
- * oled by `data-theme`, and `auto` (no attribute) by prefers-color-scheme.
- */
 :root,
 [data-theme="light"] {
   --ext-lift: #fff;
@@ -166,7 +148,6 @@ select:disabled {
   cursor: not-allowed;
 }
 
-/* DESIGN.md §11.2: the focus ring is the only 2 px line, offset 3 px, in the lamp colour. */
 :focus-visible {
   outline: 2px solid var(--at-focus);
   outline-offset: 3px;
@@ -192,7 +173,6 @@ svg {
   border: 0;
 }
 
-/* One numeral voice (PRIMITIVES.md "Digits"): Geist, tabular, plain zero. */
 .at-num {
   font-family: var(--at-font);
   font-variant-numeric: tabular-nums;
@@ -208,7 +188,6 @@ svg {
   color: var(--at-muted);
 }
 
-/* ── Logo lockup (P-HEADER): ring + lamp bead; the bead takes the current tone. ────────────────────── */
 .at-logo {
   display: flex;
   align-items: center;
@@ -237,7 +216,6 @@ svg {
   color: var(--at-muted);
 }
 
-/* ── Status pill S (DESIGN.md §11.4, P-PILL-S): 32 tall, 14/20 600, tone 12 % fill + 38 % border. ─────── */
 .at-pill {
   --tone: var(--at-muted);
 
@@ -249,7 +227,6 @@ svg {
   padding-block: var(--at-s-1);
   padding-inline: var(--at-s-2) var(--at-s-3);
   border: 1px solid color-mix(in srgb, var(--tone) 38%, transparent);
-  /* 16 = half the height: fully round on one line, a rounded box if a long locale wraps (O-62). */
   border-radius: var(--at-r-lg);
   background: color-mix(in srgb, var(--tone) 12%, transparent);
   font: var(--at-type-small);
@@ -305,7 +282,6 @@ svg {
   stroke-width: 0;
 }
 
-/* ── Buttons (P-CTA, DESIGN.md §6, D-R20) ─────────────────────────────────────────────────────────── */
 .at-btn {
   display: inline-flex;
   align-items: center;
@@ -327,7 +303,6 @@ svg {
   opacity: 0.5;
 }
 
-/* The one primary action: lamp fill, on-accent text, logo glyph, soft lamp shadow. */
 .at-btn-lamp {
   min-block-size: var(--at-h-primary);
   padding-inline: var(--at-s-6);
@@ -339,7 +314,6 @@ svg {
   box-shadow: 0 10px 30px -8px var(--ext-lamp-glow);
 }
 
-/* Stop and every strong neutral action (D-R20): raised fill, 1 px line-strong, ink; follows the theme. */
 .at-btn-stop {
   border: 1px solid var(--at-line-strong);
   background: var(--at-raised);
@@ -359,7 +333,6 @@ svg {
   border-radius: var(--at-r-xl);
 }
 
-/* Secondary: surface + strong line. */
 .at-btn-sec {
   background: var(--at-surface);
 }
@@ -393,7 +366,6 @@ svg {
   color: var(--at-accent-text);
 }
 
-/* ── Segmented bar (P-THEME): 1 px line + 4 px padding + 44 px items; one sliding indicator. ────────────── */
 .at-seg {
   --n: 2;
   --i: 0;
@@ -432,7 +404,6 @@ svg {
   background: var(--ext-lamp-soft);
 }
 
-/* The indicator follows the checked radio: no script needed. */
 .at-seg:has(> :nth-child(3) > input:checked) {
   --i: 1;
 }
@@ -495,7 +466,6 @@ svg {
   block-size: var(--at-icon-sm);
 }
 
-/* ── Switch (DESIGN.md §11.4): 52 × 32 track, 24 knob, in a 60 × 44 target. A real checkbox. ─────────── */
 .at-switch {
   position: relative;
   flex-shrink: 0;
@@ -555,7 +525,6 @@ svg {
   opacity: 0.5;
 }
 
-/* ── Tag (non-interactive: Pro) and keycap (P-KBD) ─────────────────────────────────────────────────── */
 .at-tag {
   display: inline-flex;
   align-items: center;
@@ -589,7 +558,6 @@ svg {
   white-space: nowrap;
 }
 
-/* ── Inputs (DESIGN.md §11.4: 48 tall, r8, input-border ≥ 3:1) ──────────────────────────────────────── */
 .at-input {
   min-block-size: var(--at-h-input);
   padding-inline: var(--at-s-4);
@@ -618,7 +586,6 @@ svg {
   color: var(--at-bad);
 }
 
-/* ── Page footer (P-FOOTER, DESIGN.md §11.7) ─────────────────────────────────────────────────────── */
 .at-foot {
   position: relative;
   display: flex;
@@ -659,7 +626,6 @@ svg {
   }
 }
 
-/* ── Motion (DESIGN.md §8): slow, calm, ease-out, no bounce; all of it stops under reduced motion. ───── */
 .at-in {
   animation: at-in 0.7s var(--ext-ease) both;
 }

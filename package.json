@@ -17,7 +17,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ext": "playwright test -c apps/extension/playwright.config.ts",
     "test:seo": "vitest run --config vitest.seo.config.ts",
-    "lint": "pnpm -F @awaketab/wake build > /dev/null && pnpm -F web exec astro sync > /dev/null && eslint . && stylelint \"apps/web/src/**/*.css\"",
+    "lint": "node scripts/comments.mjs && pnpm -F @awaketab/wake build > /dev/null && pnpm -F web exec astro sync > /dev/null && eslint . && stylelint \"apps/web/src/**/*.css\"",
     "typecheck": "pnpm -r typecheck",
     "size": "pnpm -r --if-present size",
     "keys:dev": "node apps/web/scripts/keys-dev.mjs",

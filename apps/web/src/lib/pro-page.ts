@@ -1,10 +1,5 @@
 import { applyLaunch, fill, trackPro } from './pro-common';
 
-/**
- * /pro (board Pro.dc.html). The lamp preview and the history toggle are CSS on native radios; this script runs what
- * CSS cannot: the plan helper's suggestion, the message and schedule previews, the preview clock, the launch-price
- * switch (O-52) and opt-out-aware analytics (O-43).
- */
 export function bootProPage(root: HTMLElement, now = Date.now()): void {
   applyLaunch(root, now);
   bootHelper(root);
@@ -19,7 +14,6 @@ export function bootProPage(root: HTMLElement, now = Date.now()): void {
   }
 }
 
-/** The plan helper: three questions, one honest suggestion (Pro board; GrowthPlanHelper). */
 export function suggestPlan(use: string, wants: readonly string[], credit: string, logo: string, pay: string): string {
   if (use === 'site') return credit === 'remove' ? 'embed' : 'embedfree';
   if (use === 'screens') return logo === 'yes' ? 'kiosk' : 'kioskfree';
@@ -74,7 +68,6 @@ function bootHelper(root: HTMLElement): void {
   update();
 }
 
-/** Message mode preview: the typed line in big type, sized by length, with a live character count. */
 export function messageSize(length: number): 's' | 'm' | 'l' {
   return length <= 20 ? 's' : length <= 44 ? 'm' : 'l';
 }
@@ -106,7 +99,6 @@ function bootMessage(root: HTMLElement): void {
   }
 }
 
-/** "Awake Monday to Friday, …": contiguous runs of three or more read as a range. */
 export function scheduleLine(on: readonly boolean[], names: readonly string[], tpl: Record<'none' | 'every' | 'line' | 'on' | 'range' | 'and', string>): string {
   const days = on.map((d, i) => (d ? i : -1)).filter((i) => i >= 0);
   if (days.length === 0) return tpl.none;

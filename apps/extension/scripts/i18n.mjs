@@ -14,10 +14,8 @@ export const EXT_I18N = path.resolve(HERE, '../locales');
 
 export const LOCALES = ['en', 'es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
 
-/** Chrome `_locales` folder names (underscore region codes). */
 export const CHROME_LOCALES = { en: 'en', es: 'es', 'pt-br': 'pt_BR', de: 'de', fr: 'fr', ja: 'ja', zh: 'zh_CN', hi: 'hi' };
 
-/** Groups the popup and options page read from, plus single keys outside those groups. */
 export const PAGE_PREFIXES = ['ext.', 'tool.pill.', 'tool.preset.', 'tool.timer.', 'tool.until.', 'tool.extend.', 'settings.', 'license.', 'pro.'];
 export const PAGE_KEYS = [
   'app.name',
@@ -35,7 +33,6 @@ export const PAGE_KEYS = [
   'footer.donate',
 ];
 
-/** What the service worker needs: notification text, badge tooltip and session labels. */
 export const BG_KEYS = [
   'app.name',
   'end.notify.title',
@@ -62,7 +59,6 @@ export const BG_KEYS = [
   'tool.preset.pinf.sr',
 ];
 
-/** `__MSG_<name>__` in the manifest → catalog key. */
 export const MANIFEST_MESSAGES = {
   ext_name: 'ext.name',
   ext_description: 'ext.description',
@@ -73,7 +69,6 @@ export function readCatalog(locale) {
   return JSON.parse(readFileSync(path.join(WEB_I18N, `${locale}.json`), 'utf8'));
 }
 
-/** The extension's own strings for a locale (apps/extension/locales/<locale>.json). */
 export function readExtCatalog(locale) {
   return JSON.parse(readFileSync(path.join(EXT_I18N, `${locale}.json`), 'utf8'));
 }
@@ -92,7 +87,6 @@ export function bgCatalogs() {
   return Object.fromEntries(LOCALES.map((locale) => [locale, pick(readCatalog(locale), (key) => BG_KEYS.includes(key))]));
 }
 
-/** `_locales/<lang>/messages.json` contents, sorted and stable so the zip is reproducible. */
 export function localeMessages() {
   return LOCALES.map((locale) => {
     const catalog = readCatalog(locale);
@@ -112,11 +106,6 @@ export function localeMessages() {
   });
 }
 
-/**
- * The plain-CSS part of the web tokens: every `--at-*` block and its shadcn aliases, from the first
- * `:root, [data-theme="light"]` rule to the end — the Tailwind `@import`, `@theme` and `@layer` preamble
- * stays behind. Tokens are therefore defined once (docs/05 §1.1) and cannot drift.
- */
 export function tokensCss() {
   const css = readFileSync(WEB_TOKENS, 'utf8');
   const start = css.indexOf(':root,\n[data-theme="light"]');
@@ -128,7 +117,6 @@ export function tokensCss() {
   return out;
 }
 
-/** Vite plugin: `virtual:at-catalog/<locale>`, `virtual:at-catalogs-bg` and `virtual:at-tokens.css`. */
 export function awaketabExtension() {
   const CATALOG = 'virtual:at-catalog/';
   const BG = 'virtual:at-catalogs-bg';

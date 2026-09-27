@@ -1,8 +1,3 @@
-/**
- * The seven lock states and their 12 px shape glyphs (DESIGN.md §2.3; the same paths as the status pill in
- * components/shell/StatusPill.astro), for the site pages that list the states (/about, /library). Shape carries
- * the state, never colour alone.
- */
 export const LOCK_STATES = ['idle', 'requesting', 'held', 'lost', 'denied', 'unsupported', 'fallback'] as const;
 export type TPageLockState = (typeof LOCK_STATES)[number];
 

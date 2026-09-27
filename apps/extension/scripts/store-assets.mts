@@ -37,7 +37,6 @@ export interface IShot {
   badge: string;
 }
 
-/** Copy is placeholder text for layout only; the published listing text lives in store/listing.md. */
 export const SHOTS: IShot[] = [
   { file: 'screenshot-1-held.png', headline: 'Keep your screen awake from the toolbar', caption: 'The pill says Screen awake only while Chrome holds the keep-awake.', pill: 'Screen awake', timer: '24:59', badge: '25m' },
   { file: 'screenshot-2-presets.png', headline: '15 minutes to 4 hours, until a time, or until you stop', caption: 'Presets, until-time and Alt+Shift+A from any tab.', pill: 'Ready', timer: '--:--:--', badge: '' },

@@ -1,14 +1,8 @@
 import { DEFAULT_SETTINGS, STORAGE_KEYS, type ISettings, type TPresetId } from '@awaketab/core';
 import type { TPowerLevel } from './api';
 
-/**
- * Extension-only storage keys (docs/08 §3, docs/00 §13.9). `at.v1.ext` holds the extension settings that
- * `ISettings` has no field for and is mirrored to `chrome.storage.sync`; `at.v1.device` holds the random
- * per-profile device id and is never synced (a synced id would make two profiles one licence activation).
- */
 export const EXT_KEYS = { ext: 'at.v1.ext', device: 'at.v1.device' } as const;
 
-/** Keys mirrored to `chrome.storage.sync` (docs/10 §6). The licence (`at.v1.license`) is never among them. */
 export const SYNC_KEYS: readonly string[] = [STORAGE_KEYS.settings, EXT_KEYS.ext];
 
 export const SCHEDULES_MAX = 20;
@@ -16,7 +10,6 @@ export const AUTOSTART_SITES_MAX = 50;
 
 export interface ISchedule {
   id: string;
-  /** Local weekdays, `Date#getDay()` numbering: 0 = Sunday … 6 = Saturday (docs/10 §4 `[1..5]` = Mon–Fri). */
   days: number[];
   start: string;
   end: string;
@@ -24,9 +17,7 @@ export interface ISchedule {
 }
 
 export interface IAutostartSite {
-  /** `docs.example.com`, or `*.example.com` for every subdomain. */
   host: string;
-  /** `null` keeps the device awake while a matching tab is open. */
   durationMin: number | null;
 }
 
@@ -44,10 +35,6 @@ export const DEFAULT_EXT: IExtSettings = {
   autostart: { browserStart: false, sites: [] },
 };
 
-/**
- * `ISettings` defaults for the extension: telemetry is **off** until the user opts in (docs/10 §8,
- * docs/18 — store review friendliness), notifications off until the optional permission is granted.
- */
 export const EXT_DEFAULT_SETTINGS: ISettings = { ...DEFAULT_SETTINGS, telemetry: false, notifications: false };
 
 export const EXT_PRESETS = ['p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf'] as const;
@@ -67,7 +54,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-/** Stored settings merged over the extension defaults; a missing `telemetry` field stays `false`. */
 export function readSettings(raw: unknown): ISettings {
   if (!isRecord(raw)) return structuredClone(EXT_DEFAULT_SETTINGS);
   const merged = { ...structuredClone(EXT_DEFAULT_SETTINGS), ...(raw as Partial<ISettings>) };
@@ -111,11 +97,6 @@ export function readExt(raw: unknown): IExtSettings {
 
 const HOST = /^(\*\.)?(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z][a-z0-9-]{0,61}[a-z0-9]$/u;
 
-/**
- * Accepts what people paste — `https://Docs.Example.com/path`, `docs.example.com`, `*.example.com` — and
- * returns a bare lower-case host, or `null`. HTTPS sites only; IP literals and single labels are refused
- * because the permission prompt must name a real site.
- */
 export function normalizeHost(input: string): string | null {
   let value = input.trim().toLowerCase();
   if (!value) return null;
@@ -137,12 +118,10 @@ export function normalizeHost(input: string): string | null {
   return host;
 }
 
-/** Match pattern for `chrome.permissions` — the prompt names exactly this site. */
 export function originPattern(host: string): string {
   return `https://${host}/*`;
 }
 
-/** The auto-start rule `url` falls under, or `null`. Plain `http:` pages never match. */
 export function matchSite(url: string | undefined, sites: readonly IAutostartSite[]): IAutostartSite | null {
   if (!url) return null;
   let hostname: string;
