@@ -12,11 +12,11 @@ jobs:
   browser-matrix:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.9
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -27,7 +27,7 @@ jobs:
       # Visual regression of the ambient awake screens (visual.spec.ts skips itself unless VISUAL=1).
       - run: VISUAL=1 pnpm exec playwright test apps/web/test/e2e/visual.spec.ts --project=chromium --update-snapshots=missing
       - if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: visual-snapshots
           path: |
