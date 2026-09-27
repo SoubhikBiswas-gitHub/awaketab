@@ -25,7 +25,10 @@ export function readEmbedSettings(store: TStore | null): IEmbedSettings {
 
 export function writeEmbedSettings(store: TStore | null, settings: IEmbedSettings): boolean {
   try {
-    store?.setItem(EMBED_SETTINGS_KEY, JSON.stringify({ v: 1, cookTimers: settings.cookTimers.slice(0, COOK_MAX_TIMERS) }));
+    store?.setItem(
+      EMBED_SETTINGS_KEY,
+      JSON.stringify({ v: 1, cookTimers: settings.cookTimers.slice(0, COOK_MAX_TIMERS) }),
+    );
     return store !== null;
   } catch {
     return false;

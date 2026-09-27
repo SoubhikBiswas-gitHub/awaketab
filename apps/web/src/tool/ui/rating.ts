@@ -19,7 +19,9 @@ function busy(ctx: IToolCtx): boolean {
   const s = ctx.store.get();
   const live = s.session?.status === 'active' || s.session?.status === 'paused';
   // A licensed kiosk (`kiosk.branding`) never shows rating or upsell prompts (docs/09 §7.2).
-  return live || s.lock === 'held' || s.ui.dialog !== null || s.ui.mode !== 'standard' || hasFeature(ctx, 'kiosk.branding');
+  return (
+    live || s.lock === 'held' || s.ui.dialog !== null || s.ui.mode !== 'standard' || hasFeature(ctx, 'kiosk.branding')
+  );
 }
 
 function record(ctx: IToolCtx, action: 'rated' | 'later' | 'never', stars?: number): void {

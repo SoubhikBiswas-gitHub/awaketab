@@ -48,7 +48,10 @@ describe('extension CORS on /api', () => {
   });
 
   it('marks every /api response noindex (F-03: _headers never reach Functions), keeping status, body and headers', async () => {
-    const upstream = Response.json({ ok: true }, { status: 201, headers: { 'cache-control': 'no-store', 'retry-after': '7' } });
+    const upstream = Response.json(
+      { ok: true },
+      { status: 201, headers: { 'cache-control': 'no-store', 'retry-after': '7' } },
+    );
     const res = await run(req('/api/health', 'GET'), upstream);
     expect(res.headers.get('x-robots-tag')).toBe('noindex');
     expect(res.status).toBe(201);

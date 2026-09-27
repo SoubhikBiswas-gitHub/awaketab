@@ -1,6 +1,11 @@
 const EXTENSION_ORIGIN = /^chrome-extension:\/\/[a-p]{32}$/u;
 
-export const EXTENSION_CORS_ROUTES = ['/api/e', '/api/license/activate', '/api/license/validate', '/api/license/deactivate'] as const;
+export const EXTENSION_CORS_ROUTES = [
+  '/api/e',
+  '/api/license/activate',
+  '/api/license/validate',
+  '/api/license/deactivate',
+] as const;
 
 export function isExtensionOrigin(origin: string | null): origin is string {
   return origin !== null && EXTENSION_ORIGIN.test(origin);
@@ -16,7 +21,8 @@ export function extensionCorsHeaders(request: Request): Record<string, string> {
 
 export function preflight(request: Request): Response {
   const headers = extensionCorsHeaders(request);
-  if (!headers['access-control-allow-origin']) return new Response(null, { status: 403, headers: { 'cache-control': 'no-store' } });
+  if (!headers['access-control-allow-origin'])
+    return new Response(null, { status: 403, headers: { 'cache-control': 'no-store' } });
   return new Response(null, {
     status: 204,
     headers: {

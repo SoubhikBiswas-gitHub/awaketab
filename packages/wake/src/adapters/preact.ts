@@ -10,13 +10,20 @@ export function useWakeLock(options?: IWakeLockOptions) {
   useEffect(() => {
     setSupported(lock.supported);
     setState(lock.state);
-    return lock.on('change', (e: { to: TLockState }) => { setState(e.to); });
+    return lock.on('change', (e: { to: TLockState }) => {
+      setState(e.to);
+    });
   }, [lock]);
 
   const request = useCallback(() => lock.request(), [lock]);
   const release = useCallback(() => lock.release(), [lock]);
 
-  useEffect(() => () => { lock.destroy(); }, [lock]);
+  useEffect(
+    () => () => {
+      lock.destroy();
+    },
+    [lock],
+  );
 
   return { state, supported, request, release };
 }

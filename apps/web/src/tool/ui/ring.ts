@@ -13,12 +13,18 @@ export function mountRing(root: HTMLElement, store: IStore): () => void {
   return store.subscribe((s) => {
     const now = Date.now();
     const lock = s.lock;
-    const prog = s.session && (lock === 'held' || lock === 'fallback' || lock === 'lost') ? progressOf(s.session, now) : 0;
+    const prog =
+      s.session && (lock === 'held' || lock === 'fallback' || lock === 'lost') ? progressOf(s.session, now) : 0;
     root.dataset.lock = lock;
     progressEl.style.strokeDashoffset = String(
-      lock === 'idle' || lock === 'denied' || lock === 'unsupported' ? RING_C : dashOffset(lock === 'requesting' ? 0 : prog),
+      lock === 'idle' || lock === 'denied' || lock === 'unsupported'
+        ? RING_C
+        : dashOffset(lock === 'requesting' ? 0 : prog),
     );
-    progressEl.toggleAttribute('hidden', lock === 'requesting' || lock === 'denied' || lock === 'unsupported' || lock === 'idle');
+    progressEl.toggleAttribute(
+      'hidden',
+      lock === 'requesting' || lock === 'denied' || lock === 'unsupported' || lock === 'idle',
+    );
     trackEl.classList.toggle('is-denied', lock === 'denied');
     progressEl.classList.toggle('is-fallback', lock === 'fallback');
     progressEl.classList.toggle('is-lost', lock === 'lost');

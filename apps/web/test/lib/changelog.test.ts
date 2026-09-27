@@ -1,12 +1,26 @@
 import { describe, expect, it } from 'vitest';
 
-import { changelogDate, changelogLongDate, groupByDate, inlineMarkdown, releaseParts, sortChangelog } from '../../src/lib/changelog';
+import {
+  changelogDate,
+  changelogLongDate,
+  groupByDate,
+  inlineMarkdown,
+  releaseParts,
+  sortChangelog,
+} from '../../src/lib/changelog';
 
-const entry = (id: string, date: string, release?: string) => ({ id, data: { date: new Date(date), ...(release ? { release } : {}) } });
+const entry = (id: string, date: string, release?: string) => ({
+  id,
+  data: { date: new Date(date), ...(release ? { release } : {}) },
+});
 
 describe('changelog order (F-07)', () => {
   it('sorts by date, newest first, not by file name', () => {
-    const sorted = sortChangelog([entry('2026-09-zz-old', '2026-09-09'), entry('2026-09-aa-new', '2026-09-26'), entry('2026-09-mid', '2026-09-12')]);
+    const sorted = sortChangelog([
+      entry('2026-09-zz-old', '2026-09-09'),
+      entry('2026-09-aa-new', '2026-09-26'),
+      entry('2026-09-mid', '2026-09-12'),
+    ]);
     expect(sorted.map((e) => e.id)).toEqual(['2026-09-aa-new', '2026-09-mid', '2026-09-zz-old']);
   });
 
@@ -34,7 +48,8 @@ describe('/changelog layout helpers (B6)', () => {
   });
 
   it('splits a release body into its lede and its labelled paragraphs', () => {
-    const body = 'AwakeTab 1.0 keeps your screen on.\n\nOn the awake screen: press M for Clock.\n\nBeyond the tab: the extension.\nIt wraps.\n\nA closing line without a label.';
+    const body =
+      'AwakeTab 1.0 keeps your screen on.\n\nOn the awake screen: press M for Clock.\n\nBeyond the tab: the extension.\nIt wraps.\n\nA closing line without a label.';
     expect(releaseParts(body)).toEqual({
       lede: 'AwakeTab 1.0 keeps your screen on.',
       parts: [
@@ -46,7 +61,9 @@ describe('/changelog layout helpers (B6)', () => {
   });
 
   it('renders inline code and links in release paragraphs, and escapes everything else', () => {
-    expect(inlineMarkdown('Press `M` or see [/embed](/embed) & <b>')).toBe('Press <code>M</code> or see <a href="/embed">/embed</a> &amp; &lt;b&gt;');
+    expect(inlineMarkdown('Press `M` or see [/embed](/embed) & <b>')).toBe(
+      'Press <code>M</code> or see <a href="/embed">/embed</a> &amp; &lt;b&gt;',
+    );
   });
 
   it('groups consecutive entries by date, keeping their order', () => {

@@ -24,10 +24,19 @@ describe('/pro plan helper (B7)', () => {
   it('sizes the message preview by length and phrases the schedule', () => {
     expect([messageSize(16), messageSize(40), messageSize(80)]).toEqual(['s', 'm', 'l']);
     const names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    const tpl = { none: 'none', every: 'every', line: 'Awake {span}.', on: 'on {day}', range: '{from} to {to}', and: '{list} and {last}' };
+    const tpl = {
+      none: 'none',
+      every: 'every',
+      line: 'Awake {span}.',
+      on: 'on {day}',
+      range: '{from} to {to}',
+      and: '{list} and {last}',
+    };
     expect(scheduleLine([true, true, true, true, true, false, false], names, tpl)).toBe('Awake Monday to Friday.');
     expect(scheduleLine([false, false, true, false, false, false, false], names, tpl)).toBe('Awake on Wednesday.');
-    expect(scheduleLine([true, false, true, false, false, false, true], names, tpl)).toBe('Awake Monday, Wednesday and Sunday.');
+    expect(scheduleLine([true, false, true, false, false, false, true], names, tpl)).toBe(
+      'Awake Monday, Wednesday and Sunday.',
+    );
     expect(scheduleLine([true, true, false, false, false, false, false], names, tpl)).toBe('Awake Monday and Tuesday.');
     expect(scheduleLine(Array(7).fill(false) as boolean[], names, tpl)).toBe('none');
     expect(scheduleLine(Array(7).fill(true) as boolean[], names, tpl)).toBe('every');
@@ -58,12 +67,32 @@ describe('launch price switch (O-52, D-R13)', () => {
 
 describe('readable device labels (C5)', () => {
   it.each([
-    ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', 0, 'Chrome · macOS'],
-    ['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0', 0, 'Edge · Windows'],
-    ['Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1', 5, 'Safari · iOS'],
-    ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15', 5, 'Safari · iPadOS'],
+    [
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
+      0,
+      'Chrome · macOS',
+    ],
+    [
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0',
+      0,
+      'Edge · Windows',
+    ],
+    [
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1',
+      5,
+      'Safari · iOS',
+    ],
+    [
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15',
+      5,
+      'Safari · iPadOS',
+    ],
     ['Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0', 0, 'Firefox · Linux'],
-    ['Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/25.0 Chrome/121.0 Mobile Safari/537.36', 5, 'Samsung Internet · Android'],
+    [
+      'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/25.0 Chrome/121.0 Mobile Safari/537.36',
+      5,
+      'Samsung Internet · Android',
+    ],
   ])('%s', (ua, touch, want) => {
     expect(deviceLabel(ua, touch)).toBe(want);
   });
@@ -95,7 +124,11 @@ describe('/pro analytics honour the telemetry opt-out (O-43)', () => {
     localStorage.clear();
     root.querySelector('a')?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
     await flush();
-    expect(track).toHaveBeenCalledWith('pro_checkout_click', { plan: 'pro_yearly' }, expect.objectContaining({ telemetry: true, path: '/pro' }));
+    expect(track).toHaveBeenCalledWith(
+      'pro_checkout_click',
+      { plan: 'pro_yearly' },
+      expect.objectContaining({ telemetry: true, path: '/pro' }),
+    );
   });
 });
 
@@ -112,7 +145,8 @@ describe('/pro plan helper in the page', () => {
     const root = document.querySelector<HTMLElement>('[data-pro-root]');
     if (!root) throw new Error('root missing');
     bootProPage(root, END - 1);
-    const shown = () => [...root.querySelectorAll<HTMLElement>('[data-res]')].filter((el) => !el.hidden).map((el) => el.dataset.res);
+    const shown = () =>
+      [...root.querySelectorAll<HTMLElement>('[data-res]')].filter((el) => !el.hidden).map((el) => el.dataset.res);
     expect(shown()).toEqual(['lifetime']);
 
     const none = root.querySelector<HTMLInputElement>('input[value="none"]');

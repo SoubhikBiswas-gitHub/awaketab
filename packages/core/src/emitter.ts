@@ -17,7 +17,9 @@ export function createEmitter<E extends Record<string, unknown>>(): IEmitter<E> 
       return () => set.delete(fn);
     },
     emit(type, ev) {
-      map.get(type)?.forEach((fn) => { fn(ev as never); });
+      map.get(type)?.forEach((fn) => {
+        fn(ev as never);
+      });
     },
     clear() {
       map.clear();

@@ -3,10 +3,7 @@ import { LOCALE_META, localeFromPath, localePath } from '../../i18n/locales.js';
 import { t } from '../i18n.js';
 import type { createStorage } from '@awaketab/core';
 
-export function mountLangSuggest(
-  root: HTMLElement,
-  storage: ReturnType<typeof createStorage>,
-): void {
+export function mountLangSuggest(root: HTMLElement, storage: ReturnType<typeof createStorage>): void {
   const banner = root.querySelector<HTMLElement>('[data-lang-suggest]');
   if (!banner) return;
   const onboard = storage.onboarding();

@@ -1,7 +1,12 @@
 {
   "for": {
     "cooking": { "es": "cocinar", "pt-br": "cozinhar", "de": "kochen", "fr": "cuisine" },
-    "presentations": { "es": "presentaciones", "pt-br": "apresentacoes", "de": "praesentationen", "fr": "presentations" },
+    "presentations": {
+      "es": "presentaciones",
+      "pt-br": "apresentacoes",
+      "de": "praesentationen",
+      "fr": "presentations"
+    },
     "downloads": { "es": "descargas", "pt-br": "downloads", "de": "downloads", "fr": "telechargements" },
     "ai-agents": { "es": "agentes-ia", "pt-br": "agentes-ia", "de": "ki-agenten", "fr": "agents-ia" },
     "dashboards": { "es": "paneles", "pt-br": "paineis", "de": "dashboards", "fr": "tableaux-de-bord" },
@@ -12,15 +17,35 @@
     "video-calls": { "es": "videollamadas", "pt-br": "videochamadas", "de": "videoanrufe", "fr": "appels-video" },
     "teleprompter": { "es": "teleprompter", "pt-br": "teleprompter", "de": "teleprompter", "fr": "teleprompteur" },
     "workouts": { "es": "entrenos", "pt-br": "treinos", "de": "workouts", "fr": "seances" },
-    "work-laptop": { "es": "portatil-trabajo", "pt-br": "notebook-trabalho", "de": "arbeitslaptop", "fr": "portable-travail" },
+    "work-laptop": {
+      "es": "portatil-trabajo",
+      "pt-br": "notebook-trabalho",
+      "de": "arbeitslaptop",
+      "fr": "portable-travail"
+    },
     "classroom": { "es": "aula", "pt-br": "sala-de-aula", "de": "klassenzimmer", "fr": "salle-de-classe" }
   },
   "on": {
     "iphone-safari": { "es": "iphone-safari", "pt-br": "iphone-safari", "de": "iphone-safari", "fr": "iphone-safari" },
-    "ios-home-screen": { "es": "ios-pantalla-inicio", "pt-br": "ios-tela-inicial", "de": "ios-startbildschirm", "fr": "ios-ecran-accueil" },
+    "ios-home-screen": {
+      "es": "ios-pantalla-inicio",
+      "pt-br": "ios-tela-inicial",
+      "de": "ios-startbildschirm",
+      "fr": "ios-ecran-accueil"
+    },
     "ipad": { "es": "ipad", "pt-br": "ipad", "de": "ipad", "fr": "ipad" },
-    "android-chrome": { "es": "android-chrome", "pt-br": "android-chrome", "de": "android-chrome", "fr": "android-chrome" },
-    "samsung-internet": { "es": "samsung-internet", "pt-br": "samsung-internet", "de": "samsung-internet", "fr": "samsung-internet" },
+    "android-chrome": {
+      "es": "android-chrome",
+      "pt-br": "android-chrome",
+      "de": "android-chrome",
+      "fr": "android-chrome"
+    },
+    "samsung-internet": {
+      "es": "samsung-internet",
+      "pt-br": "samsung-internet",
+      "de": "samsung-internet",
+      "fr": "samsung-internet"
+    },
     "chromebook": { "es": "chromebook", "pt-br": "chromebook", "de": "chromebook", "fr": "chromebook" },
     "windows-11": { "es": "windows-11", "pt-br": "windows-11", "de": "windows-11", "fr": "windows-11" },
     "macos": { "es": "macos", "pt-br": "macos", "de": "macos", "fr": "macos" },
@@ -31,26 +56,101 @@
   "vs": {
     "caffeine": { "es": "caffeine", "pt-br": "caffeine", "de": "caffeine", "fr": "caffeine" },
     "amphetamine": { "es": "amphetamine", "pt-br": "amphetamine", "de": "amphetamine", "fr": "amphetamine" },
-    "powertoys-awake": { "es": "powertoys-awake", "pt-br": "powertoys-awake", "de": "powertoys-awake", "fr": "powertoys-awake" },
-    "caffeinate-command": { "es": "comando-caffeinate", "pt-br": "comando-caffeinate", "de": "caffeinate-befehl", "fr": "commande-caffeinate" },
+    "powertoys-awake": {
+      "es": "powertoys-awake",
+      "pt-br": "powertoys-awake",
+      "de": "powertoys-awake",
+      "fr": "powertoys-awake"
+    },
+    "caffeinate-command": {
+      "es": "comando-caffeinate",
+      "pt-br": "comando-caffeinate",
+      "de": "caffeinate-befehl",
+      "fr": "commande-caffeinate"
+    },
     "nosleep-page": { "es": "nosleep-page", "pt-br": "nosleep-page", "de": "nosleep-page", "fr": "nosleep-page" },
     "nosleep-js": { "es": "nosleep-js", "pt-br": "nosleep-js", "de": "nosleep-js", "fr": "nosleep-js" },
-    "mouse-jigglers": { "es": "agitadores-raton", "pt-br": "mouse-jigglers", "de": "mauswackler", "fr": "bougeurs-souris" }
+    "mouse-jigglers": {
+      "es": "agitadores-raton",
+      "pt-br": "mouse-jigglers",
+      "de": "mauswackler",
+      "fr": "bougeurs-souris"
+    }
   },
   "guides": {
-    "windows-11-screen-turns-off-after-1-minute": { "es": "windows-11-pantalla-se-apaga-al-minuto", "pt-br": "windows-11-tela-desliga-apos-1-minuto", "de": "windows-11-bildschirm-nach-einer-minute-aus", "fr": "windows-11-ecran-s-eteint-apres-1-minute" },
-    "mac-prevent-sleep-lid-closed": { "es": "mac-evitar-suspension-tapa-cerrada", "pt-br": "mac-evitar-sono-tampa-fechada", "de": "mac-schlaf-bei-geschlossenem-deckel", "fr": "mac-empecher-veille-capot-ferme" },
-    "iphone-auto-lock-never-greyed-out": { "es": "iphone-bloqueo-automatico-nunca-gris", "pt-br": "iphone-bloqueio-automatico-nunca-cinza", "de": "iphone-automatische-sperre-nie-ausgegraut", "fr": "iphone-verrouillage-auto-jamais-gris" },
-    "chrome-energy-saver": { "es": "chrome-ahorro-energia", "pt-br": "chrome-economia-energia", "de": "chrome-energiessparmodus", "fr": "chrome-economiseur-energie" },
-    "android-screen-timeout-one-app": { "es": "android-tiempo-pantalla-una-app", "pt-br": "android-tempo-tela-um-app", "de": "android-bildschirm-timeout-eine-app", "fr": "android-delai-ecran-une-app" },
-    "second-monitor-turns-off": { "es": "segundo-monitor-se-apaga", "pt-br": "segundo-monitor-desliga", "de": "zweitmonitor-schaltet-ab", "fr": "second-ecran-s-eteint" },
-    "lock-screen-vs-sleep": { "es": "pantalla-bloqueo-vs-suspension", "pt-br": "tela-bloqueio-vs-sono", "de": "sperrbildschirm-vs-schlaf", "fr": "ecran-verrouillage-vs-veille" }
+    "windows-11-screen-turns-off-after-1-minute": {
+      "es": "windows-11-pantalla-se-apaga-al-minuto",
+      "pt-br": "windows-11-tela-desliga-apos-1-minuto",
+      "de": "windows-11-bildschirm-nach-einer-minute-aus",
+      "fr": "windows-11-ecran-s-eteint-apres-1-minute"
+    },
+    "mac-prevent-sleep-lid-closed": {
+      "es": "mac-evitar-suspension-tapa-cerrada",
+      "pt-br": "mac-evitar-sono-tampa-fechada",
+      "de": "mac-schlaf-bei-geschlossenem-deckel",
+      "fr": "mac-empecher-veille-capot-ferme"
+    },
+    "iphone-auto-lock-never-greyed-out": {
+      "es": "iphone-bloqueo-automatico-nunca-gris",
+      "pt-br": "iphone-bloqueio-automatico-nunca-cinza",
+      "de": "iphone-automatische-sperre-nie-ausgegraut",
+      "fr": "iphone-verrouillage-auto-jamais-gris"
+    },
+    "chrome-energy-saver": {
+      "es": "chrome-ahorro-energia",
+      "pt-br": "chrome-economia-energia",
+      "de": "chrome-energiessparmodus",
+      "fr": "chrome-economiseur-energie"
+    },
+    "android-screen-timeout-one-app": {
+      "es": "android-tiempo-pantalla-una-app",
+      "pt-br": "android-tempo-tela-um-app",
+      "de": "android-bildschirm-timeout-eine-app",
+      "fr": "android-delai-ecran-une-app"
+    },
+    "second-monitor-turns-off": {
+      "es": "segundo-monitor-se-apaga",
+      "pt-br": "segundo-monitor-desliga",
+      "de": "zweitmonitor-schaltet-ab",
+      "fr": "second-ecran-s-eteint"
+    },
+    "lock-screen-vs-sleep": {
+      "es": "pantalla-bloqueo-vs-suspension",
+      "pt-br": "tela-bloqueio-vs-sono",
+      "de": "sperrbildschirm-vs-schlaf",
+      "fr": "ecran-verrouillage-vs-veille"
+    }
   },
   "learn": {
-    "screen-wake-lock-api-guide": { "es": "guia-api-wake-lock", "pt-br": "guia-api-wake-lock", "de": "wake-lock-api-anleitung", "fr": "guide-api-wake-lock" },
-    "does-a-wake-lock-keep-teams-green": { "es": "wake-lock-mantiene-teams-verde", "pt-br": "wake-lock-mantem-teams-verde", "de": "haelt-wake-lock-teams-gruen", "fr": "wake-lock-garde-teams-vert" },
-    "low-power-mode-and-wake-locks": { "es": "modo-bajo-consumo-y-wake-locks", "pt-br": "modo-economia-e-wake-locks", "de": "stromsparmodus-und-wake-locks", "fr": "mode-economie-et-wake-locks" },
-    "browser-support-matrix": { "es": "matriz-compatibilidad-navegadores", "pt-br": "matriz-suporte-navegadores", "de": "browser-support-matrix", "fr": "matrice-prise-en-charge" },
-    "how-we-tested": { "es": "como-lo-probamos", "pt-br": "como-testamos", "de": "wie-wir-testen", "fr": "comment-nous-testons" }
+    "screen-wake-lock-api-guide": {
+      "es": "guia-api-wake-lock",
+      "pt-br": "guia-api-wake-lock",
+      "de": "wake-lock-api-anleitung",
+      "fr": "guide-api-wake-lock"
+    },
+    "does-a-wake-lock-keep-teams-green": {
+      "es": "wake-lock-mantiene-teams-verde",
+      "pt-br": "wake-lock-mantem-teams-verde",
+      "de": "haelt-wake-lock-teams-gruen",
+      "fr": "wake-lock-garde-teams-vert"
+    },
+    "low-power-mode-and-wake-locks": {
+      "es": "modo-bajo-consumo-y-wake-locks",
+      "pt-br": "modo-economia-e-wake-locks",
+      "de": "stromsparmodus-und-wake-locks",
+      "fr": "mode-economie-et-wake-locks"
+    },
+    "browser-support-matrix": {
+      "es": "matriz-compatibilidad-navegadores",
+      "pt-br": "matriz-suporte-navegadores",
+      "de": "browser-support-matrix",
+      "fr": "matrice-prise-en-charge"
+    },
+    "how-we-tested": {
+      "es": "como-lo-probamos",
+      "pt-br": "como-testamos",
+      "de": "wie-wir-testen",
+      "fr": "comment-nous-testons"
+    }
   }
 }

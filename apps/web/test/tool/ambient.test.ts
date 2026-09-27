@@ -85,7 +85,9 @@ describe('cook timers (docs/05 §3.16)', () => {
   it('reads persisted timers defensively and cleans names', () => {
     expect(readCookTimers(undefined)).toEqual([]);
     expect(readCookTimers({ cookTimers: 'nope' })).toEqual([]);
-    expect(readCookTimers({ cookTimers: [{ id: 1 }, { id: 'a', name: 'n', durationMs: 1, endsAt: 2, doneAt: null }] })).toHaveLength(1);
+    expect(
+      readCookTimers({ cookTimers: [{ id: 1 }, { id: 'a', name: 'n', durationMs: 1, endsAt: 2, doneAt: null }] }),
+    ).toHaveLength(1);
     expect(cookName('  <b>Pasta‮</b>   water that boils ', 'Timer 1')).toBe('<b>Pasta</b> water t');
     expect(cookName('\u0000 ', 'Timer 2')).toBe('Timer 2');
   });
@@ -93,13 +95,25 @@ describe('cook timers (docs/05 §3.16)', () => {
 
 describe('message mode (docs/05 §3.15)', () => {
   it('Pro shows the param or the saved text', () => {
-    expect(resolveMessage({ param: 'Hi', saved: 'Saved', pro: true, sample: 'S' })).toEqual({ text: 'Hi', sample: false, preview: false });
+    expect(resolveMessage({ param: 'Hi', saved: 'Saved', pro: true, sample: 'S' })).toEqual({
+      text: 'Hi',
+      sample: false,
+      preview: false,
+    });
     expect(resolveMessage({ param: '', saved: 'Saved', pro: true, sample: 'S' }).text).toBe('Saved');
   });
 
   it('free users preview a shared link, else see the sample behind the Pro card', () => {
-    expect(resolveMessage({ param: 'Hi', saved: '', pro: false, sample: 'S' })).toEqual({ text: 'Hi', sample: false, preview: true });
-    expect(resolveMessage({ param: '', saved: 'Saved', pro: false, sample: 'S' })).toEqual({ text: 'S', sample: true, preview: false });
+    expect(resolveMessage({ param: 'Hi', saved: '', pro: false, sample: 'S' })).toEqual({
+      text: 'Hi',
+      sample: false,
+      preview: true,
+    });
+    expect(resolveMessage({ param: '', saved: 'Saved', pro: false, sample: 'S' })).toEqual({
+      text: 'S',
+      sample: true,
+      preview: false,
+    });
   });
 });
 
@@ -157,7 +171,14 @@ describe('AmbientShell DOM', () => {
     expect(root.querySelector('[data-toasts]')?.parentElement).toBe(dialog);
     // The mode bar: one pressed button per mode, the current one pressed.
     const bar = dialog?.querySelectorAll<HTMLButtonElement>('[data-ambient-controls] [data-am-mode]');
-    expect([...(bar ?? [])].map((b) => b.dataset.amMode)).toEqual(['clock', 'focus', 'minimal', 'night', 'message', 'cook']);
+    expect([...(bar ?? [])].map((b) => b.dataset.amMode)).toEqual([
+      'clock',
+      'focus',
+      'minimal',
+      'night',
+      'message',
+      'cook',
+    ]);
     expect(dialog?.querySelector('[data-am-mode="minimal"]')?.getAttribute('aria-pressed')).toBe('true');
     expect(dialog?.querySelector('[data-am-mode="clock"]')?.getAttribute('aria-pressed')).toBe('false');
     dialog?.querySelector<HTMLButtonElement>('[data-am-mode="cook"]')?.click();

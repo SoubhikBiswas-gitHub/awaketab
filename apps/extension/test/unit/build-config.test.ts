@@ -3,7 +3,16 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ICON_SIZES, ringPng } from '../../scripts/icons.mjs';
-import { BG_KEYS, bgCatalogs, LOCALES, localeMessages, pageCatalog, readCatalog, readExtCatalog, tokensCss } from '../../scripts/i18n.mjs';
+import {
+  BG_KEYS,
+  bgCatalogs,
+  LOCALES,
+  localeMessages,
+  pageCatalog,
+  readCatalog,
+  readExtCatalog,
+  tokensCss,
+} from '../../scripts/i18n.mjs';
 import config from '../../wxt.config';
 
 const EXT = path.resolve('apps/extension');
@@ -33,21 +42,28 @@ describe('manifest (docs/10 §2, FR-EXT-03)', () => {
   });
 
   it('binds Alt+Shift+A to toggle and localises name, description and command', () => {
-    expect(manifest.commands).toEqual({ toggle: { suggested_key: { default: 'Alt+Shift+A' }, description: '__MSG_ext_command_toggle__' } });
+    expect(manifest.commands).toEqual({
+      toggle: { suggested_key: { default: 'Alt+Shift+A' }, description: '__MSG_ext_command_toggle__' },
+    });
     expect(manifest.name).toBe('__MSG_ext_name__');
     expect(manifest.default_locale).toBe('en');
   });
 
   it('takes the minimum Chrome version from support-matrix.json', async () => {
-    const matrix = JSON.parse(await readFile(path.resolve('apps/web/src/data/support-matrix.json'), 'utf8')) as { extension: { minimumChromeVersion: string } };
+    const matrix = JSON.parse(await readFile(path.resolve('apps/web/src/data/support-matrix.json'), 'utf8')) as {
+      extension: { minimumChromeVersion: string };
+    };
     expect(manifest.minimum_chrome_version).toBe(matrix.extension.minimumChromeVersion);
   });
 });
 
 describe('i18n reuse (no duplicated English strings)', () => {
-  it('every key the extension uses exists in the catalogs (web + the extension\'s own locales/) of all eight locales', async () => {
+  it("every key the extension uses exists in the catalogs (web + the extension's own locales/) of all eight locales", async () => {
     const used = new Set<string>();
-    for (const file of await sources(path.join(EXT, 'entrypoints')).then(async (a) => [...a, ...(await sources(path.join(EXT, 'src')))])) {
+    for (const file of await sources(path.join(EXT, 'entrypoints')).then(async (a) => [
+      ...a,
+      ...(await sources(path.join(EXT, 'src'))),
+    ])) {
       const text = await readFile(file, 'utf8');
       for (const m of text.matchAll(/data-i18n(?:-aria)?="([a-z][\w.-]+)"/gu)) used.add(m[1] ?? '');
       for (const m of text.matchAll(/\bt\(\s*'([a-z][\w.-]+)'/gu)) used.add(m[1] ?? '');
@@ -59,7 +75,8 @@ describe('i18n reuse (no duplicated English strings)', () => {
       const missing = [...used].filter((key) => !(key in page) && !(key in bg));
       expect(missing, locale).toEqual([]);
     }
-    for (const locale of LOCALES) for (const key of BG_KEYS) expect(readCatalog(locale), `${locale}:${key}`).toHaveProperty(key);
+    for (const locale of LOCALES)
+      for (const key of BG_KEYS) expect(readCatalog(locale), `${locale}:${key}`).toHaveProperty(key);
   });
 
   it('the extension catalog only adds ext.* keys, never shadows a web key, and every locale has the same keys and placeholders', () => {
@@ -82,9 +99,17 @@ describe('i18n reuse (no duplicated English strings)', () => {
   });
 
   it('ships no English copy in its sources: no user-facing string literal of either catalog', async () => {
-    const english = [...Object.values(readCatalog('en')), ...Object.values(readExtCatalog('en'))].filter((v) => v.length > 12);
+    const english = [...Object.values(readCatalog('en')), ...Object.values(readExtCatalog('en'))].filter(
+      (v) => v.length > 12,
+    );
     for (const file of await sources(EXT)) {
-      if (file.includes('/test/') || file.includes('/e2e/') || file.includes('node_modules') || file.includes('.output')) continue;
+      if (
+        file.includes('/test/') ||
+        file.includes('/e2e/') ||
+        file.includes('node_modules') ||
+        file.includes('.output')
+      )
+        continue;
       const text = await readFile(file, 'utf8');
       for (const copy of english) {
         const literal = [`'${copy}'`, `"${copy}"`, `\`${copy}\``, `>${copy}<`].some((form) => text.includes(form));
@@ -129,7 +154,11 @@ describe('i18n reuse (no duplicated English strings)', () => {
 describe('fonts (DESIGN.md §3, D-R26)', () => {
   it('bundles Geist and Geist Mono with the OFL licence and requests no remote font', async () => {
     const files = await readdir(path.join(EXT, 'public/fonts'));
-    expect(files.sort()).toEqual(['OFL-Geist.txt', 'geist-latin-wght-normal.woff2', 'geist-mono-latin-wght-normal.woff2']);
+    expect(files.sort()).toEqual([
+      'OFL-Geist.txt',
+      'geist-latin-wght-normal.woff2',
+      'geist-mono-latin-wght-normal.woff2',
+    ]);
     const base = await readFile(path.join(EXT, 'src/styles/base.css'), 'utf8');
     expect(base).toContain('url("/fonts/geist-latin-wght-normal.woff2")');
     expect(base).toContain('font-family: "Geist Fallback"');

@@ -25,7 +25,10 @@ const fontFor = async (locale: string): Promise<IOgFont[]> => {
     return [await font('@fontsource/noto-sans-jp/files/noto-sans-jp-japanese-700-normal.woff', 'Noto Sans JP'), latin];
   }
   if (locale === 'zh') {
-    return [await font('@fontsource/noto-sans-sc/files/noto-sans-sc-chinese-simplified-700-normal.woff', 'Noto Sans SC'), latin];
+    return [
+      await font('@fontsource/noto-sans-sc/files/noto-sans-sc-chinese-simplified-700-normal.woff', 'Noto Sans SC'),
+      latin,
+    ];
   }
   if (locale === 'hi') {
     return [
@@ -52,7 +55,10 @@ const LOCALE_LABEL: Record<string, string> = {
 
 await mkdir(OUTPUT, { recursive: true });
 for (const locale of LOCALES) {
-  const catalog = JSON.parse(await readFile(path.join(ROOT, `src/i18n/${locale}.json`), 'utf8')) as Record<string, string>;
+  const catalog = JSON.parse(await readFile(path.join(ROOT, `src/i18n/${locale}.json`), 'utf8')) as Record<
+    string,
+    string
+  >;
   const png = await renderOgPng({
     title: catalog['page.home.h1'] ?? 'Keep your screen awake',
     eyebrow: 'AwakeTab',
@@ -87,7 +93,29 @@ for (const page of await readContentIndex(path.join(ROOT, 'src/content'))) {
 }
 
 const english = JSON.parse(await readFile(path.join(ROOT, 'src/i18n/en.json'), 'utf8')) as Record<string, string>;
-const pages = ['15m', '30m', '45m', '1h', '2h', '4h', '8h', 'for', 'on', 'vs', 'guides', 'learn', 'about', 'privacy', 'terms', 'changelog', 'pro', 'embed', 'kiosk', 'library', 'extension'];
+const pages = [
+  '15m',
+  '30m',
+  '45m',
+  '1h',
+  '2h',
+  '4h',
+  '8h',
+  'for',
+  'on',
+  'vs',
+  'guides',
+  'learn',
+  'about',
+  'privacy',
+  'terms',
+  'changelog',
+  'pro',
+  'embed',
+  'kiosk',
+  'library',
+  'extension',
+];
 for (const page of pages) {
   const png = await renderOgPng({
     title: english[`page.${page}.h1`] ?? english['page.home.h1'] ?? 'AwakeTab',

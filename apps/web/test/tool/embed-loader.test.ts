@@ -85,7 +85,9 @@ describe('embed.js loader (docs/11 §1)', () => {
     expect(mountFrame(tag({ 'data-size': 'compact' }), createRegistry(window), TITLES)?.style.height).toBe('116px');
     // A full cook widget in a phone column stacks its kitchen timers (420); other modes keep 240.
     expect(mountFrame(tag({ 'data-size': 'full' }), createRegistry(window), TITLES)?.style.height).toBe('420px');
-    expect(mountFrame(tag({ 'data-size': 'full', 'data-mode': 'clock' }), createRegistry(window), TITLES)?.style.height).toBe('240px');
+    expect(
+      mountFrame(tag({ 'data-size': 'full', 'data-mode': 'clock' }), createRegistry(window), TITLES)?.style.height,
+    ).toBe('240px');
   });
 
   it('puts the credit link in the host page right after the iframe (O-47)', () => {
@@ -117,7 +119,9 @@ describe('embed.js loader (docs/11 §1)', () => {
 
   it('keeps the sandbox tokens in step with the documented iframe snippet', () => {
     expect(EMBED_SANDBOX).toBe(SNIPPET_SANDBOX);
-    expect(EMBED_SANDBOX.split(' ')).toEqual(expect.arrayContaining(['allow-scripts', 'allow-same-origin', 'allow-popups']));
+    expect(EMBED_SANDBOX.split(' ')).toEqual(
+      expect.arrayContaining(['allow-scripts', 'allow-same-origin', 'allow-popups']),
+    );
   });
 
   it('points the iframe at the origin the loader was served from (preview deployments work)', () => {
@@ -184,7 +188,10 @@ describe('credit lookup (O-47, docs/11 §11.4)', () => {
   it('asks once per widget origin, however many widgets the page holds', async () => {
     const fetch = answer({ licensed: false, attribution: true });
     const cache = {};
-    await Promise.all([keepsCredit(window, 'https://awaketab.com', cache), keepsCredit(window, 'https://awaketab.com', cache)]);
+    await Promise.all([
+      keepsCredit(window, 'https://awaketab.com', cache),
+      keepsCredit(window, 'https://awaketab.com', cache),
+    ]);
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 });

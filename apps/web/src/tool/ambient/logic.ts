@@ -1,6 +1,14 @@
 import type { ISession, ISettings, TAmbientMode, TFeatureGate } from '@awaketab/core';
 
-export const AMBIENT_ORDER: readonly TAmbientMode[] = ['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook'];
+export const AMBIENT_ORDER: readonly TAmbientMode[] = [
+  'standard',
+  'clock',
+  'focus',
+  'minimal',
+  'night',
+  'message',
+  'cook',
+];
 
 export const MODE_GATES: Partial<Record<TAmbientMode, TFeatureGate>> = { message: 'ambient.message' };
 
@@ -36,7 +44,10 @@ export function nextMode(
   return { mode: 'standard', skipped };
 }
 
-export function activeElapsed(session: Pick<ISession, 'startedAt' | 'pausedMs' | 'pausedAt' | 'status'>, now: number): number {
+export function activeElapsed(
+  session: Pick<ISession, 'startedAt' | 'pausedMs' | 'pausedAt' | 'status'>,
+  now: number,
+): number {
   const pausing = session.status === 'paused' && session.pausedAt !== null ? now - session.pausedAt : 0;
   return Math.max(0, now - session.startedAt - session.pausedMs - pausing);
 }
@@ -108,7 +119,13 @@ export function readCookTimers(modeState: Record<string, unknown> | undefined): 
 }
 
 export function cookName(raw: string, fallback: string): string {
-  const clean = Array.from(raw.normalize('NFC').replace(/[\p{Cc}\p{Cf}]/gu, '').replace(/\s+/g, ' ').trim())
+  const clean = Array.from(
+    raw
+      .normalize('NFC')
+      .replace(/[\p{Cc}\p{Cf}]/gu, '')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  )
     .slice(0, COOK_NAME_MAX)
     .join('');
   return clean || fallback;
@@ -120,10 +137,16 @@ export function addCookTimer(
 ): ICookTimer[] | null {
   if (list.length >= COOK_MAX_TIMERS) return null;
   if (!Number.isFinite(input.ms) || input.ms < COOK_MIN_MS || input.ms > COOK_MAX_MS) return null;
-  return [...list, { id: input.id, name: input.name, durationMs: input.ms, endsAt: input.now + input.ms, doneAt: null }];
+  return [
+    ...list,
+    { id: input.id, name: input.name, durationMs: input.ms, endsAt: input.now + input.ms, doneAt: null },
+  ];
 }
 
-export function settleCookTimers(list: readonly ICookTimer[], now: number): { list: ICookTimer[]; finished: ICookTimer[] } {
+export function settleCookTimers(
+  list: readonly ICookTimer[],
+  now: number,
+): { list: ICookTimer[]; finished: ICookTimer[] } {
   const finished: ICookTimer[] = [];
   const next = list.map((timer) => {
     if (timer.doneAt === null && timer.endsAt <= now) {

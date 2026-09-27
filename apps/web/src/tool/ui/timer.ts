@@ -49,7 +49,8 @@ export function mountTimer(root: HTMLElement, store: IStore): () => void {
     digits.textContent = formatHms(frozen && s.remainingMs !== null ? s.remainingMs : show);
     digits.classList.toggle('is-muted', frozen);
     if (caption) {
-      caption.textContent = session.status === 'paused' ? t('tool.timer.paused') : t('tool.timer.remaining', { time: formatHms(show) });
+      caption.textContent =
+        session.status === 'paused' ? t('tool.timer.paused') : t('tool.timer.remaining', { time: formatHms(show) });
     }
     const minsLeft = Math.floor(show / 60_000);
     if (live && running) {

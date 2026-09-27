@@ -47,7 +47,9 @@ describe('POST /api/rating', () => {
     const h = harness();
     const a = (await (await rate(h, { stars: 3 })).json()) as { id: string };
     expect(h.kv.json(`rating:${a.id}`)).toEqual({ stars: 3, locale: 'en', ver: '0f5d2d4c0ffe', at: T0 });
-    const b = (await (await rate(h, { stars: 4, text: 'x'.repeat(900), locale: 'x'.repeat(40) })).json()) as { id: string };
+    const b = (await (await rate(h, { stars: 4, text: 'x'.repeat(900), locale: 'x'.repeat(40) })).json()) as {
+      id: string;
+    };
     const stored = h.kv.json<{ text: string; locale: string }>(`rating:${b.id}`);
     expect(stored?.text).toHaveLength(500);
     expect(stored?.locale).toHaveLength(16);

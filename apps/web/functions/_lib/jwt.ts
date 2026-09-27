@@ -42,7 +42,9 @@ export async function verifyES256(
   try {
     const [h, p, s] = token.split('.');
     if (!h || !p || !s) return null;
-    const key = await crypto.subtle.importKey('jwk', publicJwk, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
+    const key = await crypto.subtle.importKey('jwk', publicJwk, { name: 'ECDSA', namedCurve: 'P-256' }, false, [
+      'verify',
+    ]);
     const ok = await crypto.subtle.verify(
       { name: 'ECDSA', hash: 'SHA-256' },
       key,

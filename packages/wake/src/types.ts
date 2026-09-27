@@ -1,11 +1,4 @@
-export type TLockState =
-  | 'idle'
-  | 'requesting'
-  | 'held'
-  | 'lost'
-  | 'denied'
-  | 'unsupported'
-  | 'fallback';
+export type TLockState = 'idle' | 'requesting' | 'held' | 'lost' | 'denied' | 'unsupported' | 'fallback';
 
 export type TLockReason =
   | 'request'

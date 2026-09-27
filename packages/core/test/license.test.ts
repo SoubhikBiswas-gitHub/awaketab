@@ -2,14 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { hasFeature, LICENSE_PUBLIC_KEYS, verifyLicenseToken } from '../src/license.js';
 
 async function token(payload: Record<string, unknown>, key: CryptoKey, ver = 1) {
-  const enc = (obj: unknown) =>
-    btoa(JSON.stringify(obj)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const enc = (obj: unknown) => btoa(JSON.stringify(obj)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const h = enc({ alg: 'ES256', typ: 'JWT', ver });
   const p = enc(payload);
   const sig = new Uint8Array(
     await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, new TextEncoder().encode(`${h}.${p}`)),
   );
-  const s = btoa(String.fromCharCode(...sig)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const s = btoa(String.fromCharCode(...sig))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
   return `${h}.${p}.${s}`;
 }
 
@@ -34,7 +36,10 @@ describe('license', () => {
     expect(unknown.valid).toBe(false);
 
     const expired = await verifyLicenseToken(
-      await token({ plan: 'pro_lifetime', features: [], exp: Math.floor(Date.now() / 1000) - 10, ver: 1 }, pair.privateKey),
+      await token(
+        { plan: 'pro_lifetime', features: [], exp: Math.floor(Date.now() / 1000) - 10, ver: 1 },
+        pair.privateKey,
+      ),
       { deviceId: '' },
     );
     expect(expired.valid).toBe(false);

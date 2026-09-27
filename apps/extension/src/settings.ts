@@ -66,7 +66,11 @@ export function readSettings(raw: unknown): ISettings {
 export function sanitizeSchedule(raw: unknown): ISchedule | null {
   if (!isRecord(raw)) return null;
   const days = Array.isArray(raw.days)
-    ? [...new Set(raw.days.filter((d): d is number => Number.isInteger(d) && (d as number) >= 0 && (d as number) <= 6))].sort()
+    ? [
+        ...new Set(
+          raw.days.filter((d): d is number => Number.isInteger(d) && (d as number) >= 0 && (d as number) <= 6),
+        ),
+      ].sort()
     : [];
   if (typeof raw.id !== 'string' || !/^[a-z0-9-]{1,40}$/u.test(raw.id)) return null;
   if (!days.length || !isHHMM(raw.start) || !isHHMM(raw.end) || raw.start === raw.end) return null;
@@ -78,15 +82,20 @@ export function sanitizeSite(raw: unknown): IAutostartSite | null {
   const host = normalizeHost(raw.host);
   if (!host) return null;
   const minutes = raw.durationMin;
-  const durationMin = typeof minutes === 'number' && Number.isInteger(minutes) && minutes > 0 && minutes <= 24 * 60 ? minutes : null;
+  const durationMin =
+    typeof minutes === 'number' && Number.isInteger(minutes) && minutes > 0 && minutes <= 24 * 60 ? minutes : null;
   return { host, durationMin };
 }
 
 export function readExt(raw: unknown): IExtSettings {
   if (!isRecord(raw)) return structuredClone(DEFAULT_EXT);
   const autostart = isRecord(raw.autostart) ? raw.autostart : {};
-  const schedules = Array.isArray(raw.schedules) ? raw.schedules.map(sanitizeSchedule).filter((s): s is ISchedule => s !== null) : [];
-  const sites = Array.isArray(autostart.sites) ? autostart.sites.map(sanitizeSite).filter((s): s is IAutostartSite => s !== null) : [];
+  const schedules = Array.isArray(raw.schedules)
+    ? raw.schedules.map(sanitizeSchedule).filter((s): s is ISchedule => s !== null)
+    : [];
+  const sites = Array.isArray(autostart.sites)
+    ? autostart.sites.map(sanitizeSite).filter((s): s is IAutostartSite => s !== null)
+    : [];
   return {
     v: 1,
     level: isLevel(raw.level) ? raw.level : 'display',

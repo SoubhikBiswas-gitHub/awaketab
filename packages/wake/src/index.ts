@@ -109,7 +109,11 @@ export function createWakeLock(options: IWakeLockOptions = {}): IWakeLockHandle 
   const onRelease = () => {
     if (flags.releasing || flags.destroyed) return;
     const hidden = doc?.visibilityState === 'hidden';
-    transition(hidden ? 'lost' : 'lost', hidden ? 'released_hidden' : 'released_platform', hidden ? 'hidden_document' : advice);
+    transition(
+      hidden ? 'lost' : 'lost',
+      hidden ? 'released_hidden' : 'released_platform',
+      hidden ? 'hidden_document' : advice,
+    );
     sentinel = null;
     if (!hidden) {
       const now = Date.now();

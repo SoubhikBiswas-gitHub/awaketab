@@ -20,7 +20,7 @@ export function classifyDenial(
 
   if (!ctx.secure || name === 'SecurityError') return 'insecure_context';
   if (!ctx.visible) return 'hidden_document';
-  if (ctx.inIframe || /permissions policy|notallowed/i.test(message) && /iframe|policy/i.test(message)) {
+  if (ctx.inIframe || (/permissions policy|notallowed/i.test(message) && /iframe|policy/i.test(message))) {
     if (ctx.inIframe) return 'iframe_no_allow';
     if (/permissions policy/i.test(message)) return 'permissions_policy';
   }

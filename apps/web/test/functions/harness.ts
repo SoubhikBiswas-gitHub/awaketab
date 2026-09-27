@@ -91,11 +91,14 @@ export class MemoryKv {
     if (options?.expirationTtl !== undefined) {
       const ttl = options.expirationTtl;
       if (!Number.isFinite(ttl) || ttl < 60) {
-        throw new Error(`KV PUT failed: 400 Invalid expiration_ttl of ${String(ttl)}. Expiration TTL must be at least 60.`);
+        throw new Error(
+          `KV PUT failed: 400 Invalid expiration_ttl of ${String(ttl)}. Expiration TTL must be at least 60.`,
+        );
       }
       expiresAt = Date.now() + ttl * 1000;
     } else if (options?.expiration !== undefined) {
-      if (options.expiration * 1000 < Date.now() + 60_000) throw new Error('KV PUT failed: 400 expiration must be >= 60 s ahead');
+      if (options.expiration * 1000 < Date.now() + 60_000)
+        throw new Error('KV PUT failed: 400 expiration must be >= 60 s ahead');
       expiresAt = options.expiration * 1000;
     }
     const failure = this.failures.findIndex((match) => match(key));
@@ -103,7 +106,12 @@ export class MemoryKv {
       this.failures.splice(failure, 1);
       throw new Error('KV PUT failed: 500 Internal Server Error (injected)');
     }
-    this.writes.push({ op: 'put', key, value, ...(options?.expirationTtl !== undefined ? { expirationTtl: options.expirationTtl } : {}) });
+    this.writes.push({
+      op: 'put',
+      key,
+      value,
+      ...(options?.expirationTtl !== undefined ? { expirationTtl: options.expirationTtl } : {}),
+    });
     this.store.set(key, { value, expiresAt });
   }
 
@@ -159,13 +167,15 @@ export class MemoryAnalytics {
     const blobs = (point?.blobs ?? []).map((blob) => blob ?? '');
     const doubles = point?.doubles ?? [];
     if (indexes.length > 1) throw new Error('Analytics Engine: at most 1 index');
-    if (indexes[0] !== undefined && encoder.encode(indexes[0]).byteLength > 96) throw new Error('Analytics Engine: index > 96 bytes');
+    if (indexes[0] !== undefined && encoder.encode(indexes[0]).byteLength > 96)
+      throw new Error('Analytics Engine: index > 96 bytes');
     if (blobs.length > 20) throw new Error('Analytics Engine: at most 20 blobs');
     if (doubles.length > 20) throw new Error('Analytics Engine: at most 20 doubles');
     if (blobs.reduce((sum, blob) => sum + encoder.encode(blob).byteLength, 0) > 16_384) {
       throw new Error('Analytics Engine: blobs exceed 16 KB');
     }
-    if (doubles.some((value) => typeof value !== 'number' || Number.isNaN(value))) throw new Error('Analytics Engine: doubles must be numbers');
+    if (doubles.some((value) => typeof value !== 'number' || Number.isNaN(value)))
+      throw new Error('Analytics Engine: doubles must be numbers');
     this.points.push({ indexes: [...indexes], blobs, doubles: [...doubles] });
   }
 }
@@ -252,13 +262,15 @@ export class FakePolar {
     return row;
   }
 
-  addCheckout(
-    row: IPolarKey,
-    opts: { id?: string; status?: IPolarCheckout['status']; order?: boolean } = {},
-  ): string {
+  addCheckout(row: IPolarKey, opts: { id?: string; status?: IPolarCheckout['status']; order?: boolean } = {}): string {
     polarSeq += 1;
     const id = opts.id ?? `chk_${String(polarSeq)}`;
-    this.checkouts.set(id, { status: opts.status ?? 'succeeded', customer_id: row.customerId, subscription_id: row.subscriptionId, product_id: 'prod_1' });
+    this.checkouts.set(id, {
+      status: opts.status ?? 'succeeded',
+      customer_id: row.customerId,
+      subscription_id: row.subscriptionId,
+      product_id: 'prod_1',
+    });
     if (opts.order !== false) {
       this.orders.set(row.orderId, {
         id: row.orderId,
@@ -328,7 +340,9 @@ export class FakePolar {
     if (checkout) {
       const id = decodeURIComponent(checkout[1] ?? '');
       const row = this.checkouts.get(id);
-      return row ? Response.json({ id, organization_id: this.organizationId, ...row }) : Response.json({ error: 'ResourceNotFound' }, { status: 404 });
+      return row
+        ? Response.json({ id, organization_id: this.organizationId, ...row })
+        : Response.json({ error: 'ResourceNotFound' }, { status: 404 });
     }
     if (url.pathname === '/v1/orders/') {
       if (!this.orgMatches(url)) return FakePolar.list([]);
@@ -336,7 +350,9 @@ export class FakePolar {
       const customerId = url.searchParams.get('customer_id');
       return FakePolar.list(
         [...this.orders.values()].filter(
-          (order) => (checkoutId === null || order.checkout_id === checkoutId) && (customerId === null || order.customer_id === customerId),
+          (order) =>
+            (checkoutId === null || order.checkout_id === checkoutId) &&
+            (customerId === null || order.customer_id === customerId),
         ),
       );
     }
@@ -347,14 +363,23 @@ export class FakePolar {
       const rows = [...this.keys.values()]
         .filter((row) => row.grant !== 'missing' && (customerId === null || row.customerId === customerId))
         .filter((row) => isGranted === null || (row.status === 'granted') === (isGranted === 'true'))
-        .sort((a, b) => (url.searchParams.get('sorting') === '-created_at' ? b.grantedAt.localeCompare(a.grantedAt) : a.grantedAt.localeCompare(b.grantedAt)));
+        .sort((a, b) =>
+          url.searchParams.get('sorting') === '-created_at'
+            ? b.grantedAt.localeCompare(a.grantedAt)
+            : a.grantedAt.localeCompare(b.grantedAt),
+        );
       return FakePolar.list(rows.map((row) => this.grantJson(row)));
     }
     const licenseKey = /^\/v1\/license-keys\/([^/]+)$/u.exec(url.pathname);
     if (licenseKey) {
       const row = [...this.keys.values()].find((candidate) => candidate.id === decodeURIComponent(licenseKey[1] ?? ''));
       if (!row) return Response.json({ error: 'ResourceNotFound' }, { status: 404 });
-      const activations = [...row.activations].map(([id, activation]) => ({ id, license_key_id: row.id, label: activation.label, meta: { deviceId: activation.deviceId } }));
+      const activations = [...row.activations].map(([id, activation]) => ({
+        id,
+        license_key_id: row.id,
+        label: activation.label,
+        meta: { deviceId: activation.deviceId },
+      }));
       return Response.json({ ...this.licenseJson(row), activations });
     }
     return new Response('not found', { status: 404 });
@@ -365,14 +390,23 @@ export class FakePolar {
     const method = (init?.method ?? 'GET').toUpperCase();
     const headers = new Headers(init?.headers);
     const body = typeof init?.body === 'string' ? (JSON.parse(init.body) as Record<string, unknown>) : null;
-    this.calls.push({ method, path: url.pathname, query: Object.fromEntries(url.searchParams), body, auth: headers.get('authorization') });
+    this.calls.push({
+      method,
+      path: url.pathname,
+      query: Object.fromEntries(url.searchParams),
+      body,
+      auth: headers.get('authorization'),
+    });
     if (this.outage === 'network') throw new TypeError('fetch failed');
-    if (this.outage === 'http' || this.failPath === url.pathname) return new Response('upstream error', { status: 500 });
-    if (headers.get('authorization') !== `Bearer ${this.token}`) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    if (this.outage === 'http' || this.failPath === url.pathname)
+      return new Response('upstream error', { status: 500 });
+    if (headers.get('authorization') !== `Bearer ${this.token}`)
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     if (method === 'GET') return this.get(url);
     if (method !== 'POST' || !body) return new Response('not found', { status: 404 });
-    if (body.organization_id !== this.organizationId) return Response.json({ error: 'ResourceNotFound' }, { status: 404 });
+    if (body.organization_id !== this.organizationId)
+      return Response.json({ error: 'ResourceNotFound' }, { status: 404 });
     const row = this.keys.get(String(body.key));
     if (!row) return Response.json({ error: 'ResourceNotFound' }, { status: 404 });
 
@@ -381,7 +415,11 @@ export class FakePolar {
     }
     if (url.pathname === '/v1/customer-portal/license-keys/activate') {
       if (row.status !== 'granted') return Response.json({ error: 'NotPermitted' }, { status: 403 });
-      if (row.activations.size >= row.limit) return Response.json({ error: 'NotPermitted', detail: 'License key activation limit already reached' }, { status: 403 });
+      if (row.activations.size >= row.limit)
+        return Response.json(
+          { error: 'NotPermitted', detail: 'License key activation limit already reached' },
+          { status: 403 },
+        );
       polarSeq += 1;
       const id = `act_${String(polarSeq)}`;
       const meta = (body.meta ?? {}) as { deviceId?: string };
@@ -508,7 +546,9 @@ export function tamperJwt(token: string, patch: Record<string, unknown>): string
 }
 
 export async function signWebhook(raw: string, id: string, ts: string, secret: string): Promise<string> {
-  const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, [
+    'sign',
+  ]);
   const mac = await crypto.subtle.sign('HMAC', key, encoder.encode(`${id}.${ts}.${raw}`));
   return `v1,${btoa(String.fromCharCode(...new Uint8Array(mac)))}`;
 }
@@ -520,7 +560,8 @@ export async function webhookRequest(
   const id = opts.id ?? `evt_${crypto.randomUUID()}`;
   const ts = String(opts.ts ?? Math.floor(Date.now() / 1000));
   const raw = opts.raw ?? JSON.stringify(payload);
-  const signature = opts.signature ?? (await signWebhook(raw, id, ts, opts.secret ?? devVars().POLAR_WEBHOOK_SECRET ?? ''));
+  const signature =
+    opts.signature ?? (await signWebhook(raw, id, ts, opts.secret ?? devVars().POLAR_WEBHOOK_SECRET ?? ''));
   const omit = new Set(opts.omit ?? []);
   const headers = new Headers(
     Object.entries({
@@ -539,7 +580,11 @@ export async function webhookRequest(
 // ---------------------------------------------------------------------------
 
 export const polarEvents = {
-  order(type: 'order.created' | 'order.paid' | 'order.updated' | 'order.refunded', row: IPolarKey, over: Record<string, unknown> = {}) {
+  order(
+    type: 'order.created' | 'order.paid' | 'order.updated' | 'order.refunded',
+    row: IPolarKey,
+    over: Record<string, unknown> = {},
+  ) {
     const refunded = type === 'order.refunded';
     return {
       type,
@@ -561,7 +606,12 @@ export const polarEvents = {
         checkout_id: 'chk_1',
         metadata: {},
         customer: { id: row.customerId, email: 'buyer@example.com' },
-        product: { id: 'prod_1', name: 'AwakeTab Pro', metadata: { plan: 'pro_yearly' }, is_recurring: Boolean(row.subscriptionId) },
+        product: {
+          id: 'prod_1',
+          name: 'AwakeTab Pro',
+          metadata: { plan: 'pro_yearly' },
+          is_recurring: Boolean(row.subscriptionId),
+        },
         subscription: null,
         items: [],
         ...over,
@@ -569,7 +619,13 @@ export const polarEvents = {
     };
   },
   subscription(
-    type: 'subscription.created' | 'subscription.active' | 'subscription.updated' | 'subscription.canceled' | 'subscription.uncanceled' | 'subscription.revoked',
+    type:
+      | 'subscription.created'
+      | 'subscription.active'
+      | 'subscription.updated'
+      | 'subscription.canceled'
+      | 'subscription.uncanceled'
+      | 'subscription.revoked',
     row: IPolarKey,
     over: Record<string, unknown> = {},
   ) {
@@ -595,7 +651,12 @@ export const polarEvents = {
         checkout_id: 'chk_1',
         metadata: {},
         customer: { id: row.customerId, email: 'buyer@example.com' },
-        product: { id: 'prod_1', name: 'AwakeTab Pro', metadata: { plan: 'pro_yearly' }, benefits: [{ id: row.benefitId, type: 'license_keys' }] },
+        product: {
+          id: 'prod_1',
+          name: 'AwakeTab Pro',
+          metadata: { plan: 'pro_yearly' },
+          benefits: [{ id: row.benefitId, type: 'license_keys' }],
+        },
         prices: [],
         meters: [],
         ...over,
@@ -625,7 +686,11 @@ export const polarEvents = {
       },
     };
   },
-  benefitGrant(type: 'benefit_grant.created' | 'benefit_grant.updated' | 'benefit_grant.revoked', row: IPolarKey, over: Record<string, unknown> = {}) {
+  benefitGrant(
+    type: 'benefit_grant.created' | 'benefit_grant.updated' | 'benefit_grant.revoked',
+    row: IPolarKey,
+    over: Record<string, unknown> = {},
+  ) {
     const revoked = type === 'benefit_grant.revoked';
     return {
       type,

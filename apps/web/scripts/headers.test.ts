@@ -21,7 +21,7 @@ describe('Cloudflare generated rules', () => {
     );
     expect(embedRule?.headers).toContain('X-Robots-Tag');
     expect(headers).toContain('/pt-br/learn/*');
-    expect(headers).toContain("frame-ancestors *");
+    expect(headers).toContain('frame-ancestors *');
   });
 
   it('makes only /embed/* frameable, and keeps it noindex (docs/14 §3, docs/11 §7)', () => {
@@ -65,13 +65,27 @@ describe('Cloudflare generated rules', () => {
 
   it('marks every *.pages.dev host noindex and leaves the production host indexable (F-03, docs/14 §1)', () => {
     const text = headerTools.generateHeaders();
-    const PAGES = ['/', '/es/', '/30m', '/for/cooking', '/es/learn/x', '/embed', '/pip', '/sitemap-index.xml', '/_astro/x.js'];
+    const PAGES = [
+      '/',
+      '/es/',
+      '/30m',
+      '/for/cooking',
+      '/es/learn/x',
+      '/embed',
+      '/pip',
+      '/sitemap-index.xml',
+      '/_astro/x.js',
+    ];
     for (const host of ['awaketab.pages.dev', '3f2a9c1b.awaketab.pages.dev', 'm6-engagement.awaketab.pages.dev']) {
       for (const pathname of PAGES) {
-        expect(headerTools.resolveHeaders(text, pathname, host).get('x-robots-tag'), `${host}${pathname}`).toMatch(/^noindex(, noindex)?$/u);
+        expect(headerTools.resolveHeaders(text, pathname, host).get('x-robots-tag'), `${host}${pathname}`).toMatch(
+          /^noindex(, noindex)?$/u,
+        );
       }
       // Path rules still apply on preview hosts.
-      expect(headerTools.resolveHeaders(text, '/embed/cook', host).get('content-security-policy')).toMatch(/frame-ancestors \*$/u);
+      expect(headerTools.resolveHeaders(text, '/embed/cook', host).get('content-security-policy')).toMatch(
+        /frame-ancestors \*$/u,
+      );
     }
     for (const host of ['awaketab.com', 'www.awaketab.com', 'awaketab.pages.dev.evil.example', 'pages.dev']) {
       for (const pathname of ['/', '/30m', '/for/cooking', '/embed']) {
@@ -104,12 +118,8 @@ describe('Cloudflare generated rules', () => {
   it('generates canonical redirects', () => {
     const redirects = headerTools.generateRedirects();
 
-    expect(redirects).toContain(
-      'https://www.awaketab.com/* https://awaketab.com/:splat 301',
-    );
-    expect(redirects).toContain(
-      '/support-matrix /learn/browser-support-matrix 301',
-    );
+    expect(redirects).toContain('https://www.awaketab.com/* https://awaketab.com/:splat 301');
+    expect(redirects).toContain('/support-matrix /learn/browser-support-matrix 301');
   });
 
   it('301s the OD-3 merged content URLs to the page that now answers them, and nothing for the cut /for pages', () => {

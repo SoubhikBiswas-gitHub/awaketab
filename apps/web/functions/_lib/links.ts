@@ -36,14 +36,20 @@ export interface IOrderRecord {
 
 const TERMINAL: ReadonlySet<TLicenseStatus> = new Set<TLicenseStatus>(['revoked', 'refunded']);
 
-export function transition(current: TLicenseStatus, next: TLicenseStatus, onlyFrom?: TLicenseStatus): TLicenseStatus | null {
+export function transition(
+  current: TLicenseStatus,
+  next: TLicenseStatus,
+  onlyFrom?: TLicenseStatus,
+): TLicenseStatus | null {
   if (onlyFrom && current !== onlyFrom) return null;
   if (TERMINAL.has(current) && (next === 'active' || next === 'canceled')) return null;
   return current === next ? null : next;
 }
 
 function ids(value: unknown): string[] {
-  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string' && item.length > 0) : [];
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === 'string' && item.length > 0)
+    : [];
 }
 
 async function addToList(kv: KVNamespace, key: string, item: string): Promise<void> {
@@ -124,7 +130,10 @@ export async function linkLicenseKey(
 
 export function applyIds(record: ILicenseRecord, found: IPolarIds): boolean {
   let changed = false;
-  const set = <K extends 'polarLicenseKeyId' | 'polarGrantId' | 'polarOrderId' | 'polarSubscriptionId' | 'customerId' | 'benefitId'>(
+  const set = <
+    K extends
+      'polarLicenseKeyId' | 'polarGrantId' | 'polarOrderId' | 'polarSubscriptionId' | 'customerId' | 'benefitId',
+  >(
     field: K,
     value: string | undefined,
   ): void => {

@@ -96,7 +96,9 @@ export function parseBackup(text: string): IBackup {
   }
   const records = lines.slice(1).map((line, index) => parseRecord(line, index + 2));
   if (records.length !== header.count) {
-    throw new Error(`Backup is truncated: header says ${String(header.count)} records, found ${String(records.length)}`);
+    throw new Error(
+      `Backup is truncated: header says ${String(header.count)} records, found ${String(records.length)}`,
+    );
   }
   const seen = new Set<string>();
   for (const row of records) {

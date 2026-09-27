@@ -19,9 +19,11 @@ async function files(dir: string): Promise<string[]> {
 describe('island catalog (tool pages embed only runtime keys)', () => {
   it('covers every catalog key the island and its libs reference', async () => {
     const keys = new Set(Object.keys(en));
-    const sources = [...(await files(path.join(SRC, 'tool'))), path.join(SRC, 'lib/license.ts'), path.join(SRC, 'lib/license-lookup.ts')].filter(
-      (f) => !f.includes(`${path.sep}embed${path.sep}`) || f.endsWith('kiosk.ts'),
-    );
+    const sources = [
+      ...(await files(path.join(SRC, 'tool'))),
+      path.join(SRC, 'lib/license.ts'),
+      path.join(SRC, 'lib/license-lookup.ts'),
+    ].filter((f) => !f.includes(`${path.sep}embed${path.sep}`) || f.endsWith('kiosk.ts'));
     const missing: string[] = [];
     for (const file of sources) {
       const code = await readFile(file, 'utf8').catch(() => '');
@@ -29,7 +31,8 @@ describe('island catalog (tool pages embed only runtime keys)', () => {
       for (const m of code.matchAll(/['`]([a-z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9_]+)+\.?)(?:\$\{|['`])/gu)) {
         const key = m[1] ?? '';
         const known = keys.has(key) || [...keys].some((k) => key.endsWith('.') && k.startsWith(key));
-        if (known && !ISLAND_PREFIXES.some((p) => key.startsWith(p))) missing.push(`${path.relative(SRC, file)}: ${key}`);
+        if (known && !ISLAND_PREFIXES.some((p) => key.startsWith(p)))
+          missing.push(`${path.relative(SRC, file)}: ${key}`);
       }
     }
     expect(missing).toEqual([]);

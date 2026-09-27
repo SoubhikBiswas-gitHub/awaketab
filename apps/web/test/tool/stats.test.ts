@@ -44,7 +44,14 @@ describe('buildHeatmap (docs/05 §3.17)', () => {
   it('flags the rest of the current week as future and never counts it', () => {
     const { rows } = buildHeatmap(DAYS, { now: NOW, history: true, timeZone: TZ });
     const future = all(rows).filter((c) => c.future);
-    expect(future.map((c) => c.key)).toEqual(['2026-08-04', '2026-08-05', '2026-08-06', '2026-08-07', '2026-08-08', '2026-08-09']);
+    expect(future.map((c) => c.key)).toEqual([
+      '2026-08-04',
+      '2026-08-05',
+      '2026-08-06',
+      '2026-08-07',
+      '2026-08-08',
+      '2026-08-09',
+    ]);
     expect(cellFor(rows, '2026-08-04')).toMatchObject({ minutes: 0, level: 0 });
   });
 
@@ -111,7 +118,7 @@ describe('summarise', () => {
     expect(sum.empty).toBe(false);
   });
 
-  it('counts today\'s sessions by the local day, not the UTC day', () => {
+  it("counts today's sessions by the local day, not the UTC day", () => {
     // NOW is 00:15 on 3 Aug in Kolkata and still 2 Aug in UTC.
     const sum = summarise(stats(DAYS, { daySessions: { '2026-08-03': 1, '2026-08-02': 4 } }), NOW, TZ);
     expect(sum.todaySessions).toBe(1);

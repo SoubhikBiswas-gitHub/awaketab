@@ -2,7 +2,11 @@
 
 @layer components {
   body:has(.at-404) {
-    background-image: radial-gradient(1400px 900px at 50% -160px, var(--at-lift) 0%, color-mix(in srgb, var(--at-ground) 0%, transparent) 72%);
+    background-image: radial-gradient(
+      1400px 900px at 50% -160px,
+      var(--at-lift) 0%,
+      color-mix(in srgb, var(--at-ground) 0%, transparent) 72%
+    );
   }
 
   .at-404 main.at-shell {

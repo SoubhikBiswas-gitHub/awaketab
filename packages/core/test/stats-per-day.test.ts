@@ -17,7 +17,14 @@ function setup() {
   const fake = createFakeApi();
   const lock = createWakeLock({ wakeLock: fake.api, documentLike: document, fallback: 'none' });
   const storage = createStorage(memoryAdapter());
-  const engine = createSession({ lock, storage, channel: null, settings: () => DEFAULT_SETTINGS, now: () => Date.now(), timeZone: TZ });
+  const engine = createSession({
+    lock,
+    storage,
+    channel: null,
+    settings: () => DEFAULT_SETTINGS,
+    now: () => Date.now(),
+    timeZone: TZ,
+  });
   return { engine, storage };
 }
 
@@ -111,7 +118,9 @@ describe('per-day counters (IStats.daySessions / dayFocus)', () => {
     expect(stats.daySessions).toEqual({ '2026-09-08': 2 });
     expect(stats.dayFocus).toBeUndefined();
     // The same number-only rule now guards `days` too.
-    expect(pruneDays({ '2026-09-08': '5', '2026-09-07': 1 } as unknown as Record<string, number>, Date.now(), 'UTC')).toEqual({
+    expect(
+      pruneDays({ '2026-09-08': '5', '2026-09-07': 1 } as unknown as Record<string, number>, Date.now(), 'UTC'),
+    ).toEqual({
       '2026-09-07': 1,
     });
     mem.set(STORAGE_KEYS.stats, JSON.stringify({ ...DEFAULT_STATS, dayFocus: null, daySessions: [] }));

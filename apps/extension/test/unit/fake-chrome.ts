@@ -11,7 +11,9 @@ import type {
   TPowerLevel,
 } from '../../src/api';
 
-export function fakeEvent<TFn extends (...args: never[]) => unknown>(): IExtEvent<TFn> & { fire: (...args: Parameters<TFn>) => void } {
+export function fakeEvent<TFn extends (...args: never[]) => unknown>(): IExtEvent<TFn> & {
+  fire: (...args: Parameters<TFn>) => void;
+} {
   const listeners = new Set<TFn>();
   return {
     addListener: (cb) => {
@@ -31,7 +33,10 @@ export interface IFakeStorageArea extends IStorageAreaApi {
   sets: Array<Record<string, unknown>>;
 }
 
-function fakeArea(name: string, onChanged: (changes: Record<string, IStorageChange>, area: string) => void): IFakeStorageArea {
+function fakeArea(
+  name: string,
+  onChanged: (changes: Record<string, IStorageChange>, area: string) => void,
+): IFakeStorageArea {
   const data = new Map<string, unknown>();
   const sets: Array<Record<string, unknown>> = [];
   const clone = <T>(v: T): T => (v === undefined ? v : structuredClone(v));
@@ -93,7 +98,9 @@ export interface IFakeChrome {
   };
 }
 
-export function createFakeChrome(opts: { power?: boolean; notifications?: boolean; uiLanguage?: string } = {}): IFakeChrome {
+export function createFakeChrome(
+  opts: { power?: boolean; notifications?: boolean; uiLanguage?: string } = {},
+): IFakeChrome {
   const storageEvent = fakeEvent<(changes: Record<string, IStorageChange>, area: string) => void>();
   const alarmEvent = fakeEvent<(alarm: IAlarm) => void>();
   const buttonEvent = fakeEvent<(id: string, index: number) => void>();
@@ -112,7 +119,8 @@ export function createFakeChrome(opts: { power?: boolean; notifications?: boolea
   const opened: string[] = [];
   const commands = [{ name: 'toggle', shortcut: 'Alt+Shift+A' }];
   const matches = (p: IPermissions) =>
-    (p.permissions ?? []).every((x) => granted.permissions.has(x)) && (p.origins ?? []).every((x) => granted.origins.has(x));
+    (p.permissions ?? []).every((x) => granted.permissions.has(x)) &&
+    (p.origins ?? []).every((x) => granted.origins.has(x));
 
   const api: IExtApi = {
     ...(opts.power === false

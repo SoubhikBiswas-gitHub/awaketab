@@ -54,7 +54,10 @@ describe('chrome.power lock adapter', () => {
 
   it('never re-issues when nothing is held', () => {
     const request = vi.fn();
-    const lock = createPowerLock({ power: { requestKeepAwake: request, releaseKeepAwake: vi.fn() }, level: () => 'display' });
+    const lock = createPowerLock({
+      power: { requestKeepAwake: request, releaseKeepAwake: vi.fn() },
+      level: () => 'display',
+    });
     lock.reassert();
     expect(request).not.toHaveBeenCalled();
   });

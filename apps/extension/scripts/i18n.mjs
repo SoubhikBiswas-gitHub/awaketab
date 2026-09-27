@@ -14,9 +14,28 @@ export const EXT_I18N = path.resolve(HERE, '../locales');
 
 export const LOCALES = ['en', 'es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
 
-export const CHROME_LOCALES = { en: 'en', es: 'es', 'pt-br': 'pt_BR', de: 'de', fr: 'fr', ja: 'ja', zh: 'zh_CN', hi: 'hi' };
+export const CHROME_LOCALES = {
+  en: 'en',
+  es: 'es',
+  'pt-br': 'pt_BR',
+  de: 'de',
+  fr: 'fr',
+  ja: 'ja',
+  zh: 'zh_CN',
+  hi: 'hi',
+};
 
-export const PAGE_PREFIXES = ['ext.', 'tool.pill.', 'tool.preset.', 'tool.timer.', 'tool.until.', 'tool.extend.', 'settings.', 'license.', 'pro.'];
+export const PAGE_PREFIXES = [
+  'ext.',
+  'tool.pill.',
+  'tool.preset.',
+  'tool.timer.',
+  'tool.until.',
+  'tool.extend.',
+  'settings.',
+  'license.',
+  'pro.',
+];
 export const PAGE_KEYS = [
   'app.name',
   'tool.presets',
@@ -78,13 +97,18 @@ function pick(catalog, keep) {
 }
 
 export function pageCatalog(locale) {
-  const web = pick(readCatalog(locale), (key) => PAGE_KEYS.includes(key) || PAGE_PREFIXES.some((prefix) => key.startsWith(prefix)));
+  const web = pick(
+    readCatalog(locale),
+    (key) => PAGE_KEYS.includes(key) || PAGE_PREFIXES.some((prefix) => key.startsWith(prefix)),
+  );
   // Web keys win: the extension catalog may only add keys (a unit test keeps the two disjoint).
   return { ...readExtCatalog(locale), ...web };
 }
 
 export function bgCatalogs() {
-  return Object.fromEntries(LOCALES.map((locale) => [locale, pick(readCatalog(locale), (key) => BG_KEYS.includes(key))]));
+  return Object.fromEntries(
+    LOCALES.map((locale) => [locale, pick(readCatalog(locale), (key) => BG_KEYS.includes(key))]),
+  );
 }
 
 export function localeMessages() {

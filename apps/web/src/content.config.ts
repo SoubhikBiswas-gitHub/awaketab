@@ -58,6 +58,9 @@ export const collections = {
   for: defineCollection({ loader: glob({ pattern: '**/*.md', base: './src/content/for' }), schema: page }),
   on: defineCollection({ loader: glob({ pattern: '**/*.md', base: './src/content/on' }), schema: withVerified }),
   vs: defineCollection({ loader: glob({ pattern: '**/*.md', base: './src/content/vs' }), schema: withVerified }),
-  guides: defineCollection({ loader: glob({ pattern: '**/*.md', base: './src/content/guides' }), schema: withVerified }),
+  guides: defineCollection({
+    loader: glob({ pattern: '**/*.md', base: './src/content/guides' }),
+    schema: withVerified,
+  }),
   learn: defineCollection({ loader: glob({ pattern: '**/*.md', base: './src/content/learn' }), schema: page }),
 };

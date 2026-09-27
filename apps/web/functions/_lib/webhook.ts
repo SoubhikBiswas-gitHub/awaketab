@@ -23,7 +23,9 @@ export async function verifyStandardWebhook(
   if (!id || !ts || !sig || !secret) return false;
   const tsNum = Number(ts);
   if (!Number.isFinite(tsNum) || Math.abs(now / 1000 - tsNum) > 300) return false;
-  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, [
+    'sign',
+  ]);
   const mac = await crypto.subtle.sign('HMAC', key, enc.encode(`${id}.${ts}.${raw}`));
   const expected = `v1,${b64(mac)}`;
   return sig.split(' ').some((part) => timingEqual(part.trim(), expected));

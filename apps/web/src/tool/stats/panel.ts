@@ -15,7 +15,11 @@ function cellLabel(cell: IHeatCell, fmt: Intl.DateTimeFormat): string {
   return t('stats.heatmap.label', { date: fmt.format(cell.date), minutes: cell.minutes });
 }
 
-export function renderHeatmap(table: HTMLTableElement, days: Record<string, number>, opts: { history: boolean; now?: number }): void {
+export function renderHeatmap(
+  table: HTMLTableElement,
+  days: Record<string, number>,
+  opts: { history: boolean; now?: number },
+): void {
   const locale = document.documentElement.lang || 'en';
   const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short' });
   const weekday = new Intl.DateTimeFormat(locale, { weekday: 'short' });
@@ -70,12 +74,16 @@ export function openStats(ctx: IToolCtx): void {
   const stats = ctx.storage.stats();
   const sum = summarise(stats);
   const history = hasFeature(ctx, 'stats.history');
-  const canExport = hasFeature(ctx, 'stats.export') && !ctx.params.isPip && !ctx.root.classList.contains('at-tool-embed');
+  const canExport =
+    hasFeature(ctx, 'stats.export') && !ctx.params.isPip && !ctx.root.classList.contains('at-tool-embed');
   const set = (sel: string, text: string) => {
     const el = dialog.querySelector(sel);
     if (el) el.textContent = text;
   };
-  set('[data-stats-today]', t('stats.totalValue', { time: formatMinutes(sum.todayMinutes), sessions: sum.todaySessions }));
+  set(
+    '[data-stats-today]',
+    t('stats.totalValue', { time: formatMinutes(sum.todayMinutes), sessions: sum.todaySessions }),
+  );
   set('[data-stats-week]', formatMinutes(sum.weekMinutes));
   set('[data-stats-streak]', t('stats.streak', { days: sum.streakDays }));
   set('[data-stats-total]', t('stats.totalValue', { time: formatMinutes(sum.totalMinutes), sessions: sum.sessions }));

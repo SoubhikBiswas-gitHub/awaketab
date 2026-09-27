@@ -127,7 +127,11 @@ export function mountCredit(frame: HTMLIFrameElement, text: string): HTMLElement
   return box;
 }
 
-export function keepsCredit(win: Window, origin: string, cache: Record<string, Promise<boolean>> = {}): Promise<boolean> {
+export function keepsCredit(
+  win: Window,
+  origin: string,
+  cache: Record<string, Promise<boolean>> = {},
+): Promise<boolean> {
   const host = win.location.hostname;
   if (!isHostname(host)) return Promise.resolve(true);
   cache[origin] ??= win
@@ -138,7 +142,11 @@ export function keepsCredit(win: Window, origin: string, cache: Record<string, P
   return cache[origin];
 }
 
-export function mountFrame(script: HTMLScriptElement, registry: IEmbedRegistry, strings: ILoaderStrings): HTMLIFrameElement | null {
+export function mountFrame(
+  script: HTMLScriptElement,
+  registry: IEmbedRegistry,
+  strings: ILoaderStrings,
+): HTMLIFrameElement | null {
   const doc = script.ownerDocument;
   let origin: string;
   try {
@@ -177,9 +185,7 @@ export function install(win: Window, current: HTMLScriptElement | null, strings:
   const w = win as TWindow;
   w.AwakeTabEmbed ??= createRegistry(win);
   const registry = w.AwakeTabEmbed;
-  const tags = current
-    ? [current]
-    : [...win.document.querySelectorAll<HTMLScriptElement>('script[src*="/embed.js"]')];
+  const tags = current ? [current] : [...win.document.querySelectorAll<HTMLScriptElement>('script[src*="/embed.js"]')];
   const lookups: Record<string, Promise<boolean>> = {};
   const run = () => {
     for (const tag of tags) {

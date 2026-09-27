@@ -53,10 +53,15 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   const nameBox = el('div');
   const name = el('input', { id: 'cook-name', name: 'name', maxlength: String(COOK_NAME_MAX), autocomplete: 'off' });
   nameBox.append(el('label', { for: 'cook-name' }, t('ambient.cook.timer.name')), name);
-  const custom = el('button', { type: 'button', class: 'at-cook-custom', 'aria-expanded': 'false' }, t('tool.preset.custom'));
+  const custom = el(
+    'button',
+    { type: 'button', class: 'at-cook-custom', 'aria-expanded': 'false' },
+    t('tool.preset.custom'),
+  );
   nameRow.append(nameBox, custom);
   const quick = el('div', { class: 'at-cook-quick', role: 'group', 'aria-label': t('ambient.cook.timer.add') });
-  for (const m of QUICK_MIN) quick.append(el('button', { type: 'button', 'data-cook-quick': String(m) }, t('stats.minutes', { minutes: m })));
+  for (const m of QUICK_MIN)
+    quick.append(el('button', { type: 'button', 'data-cook-quick': String(m) }, t('stats.minutes', { minutes: m })));
   const step = el('div', { class: 'at-cook-step', hidden: '' });
   const less = el('button', { type: 'button', 'aria-label': t('ambient.cook.less') }, '−');
   const more = el('button', { type: 'button', 'aria-label': t('ambient.cook.more') }, '+');
@@ -71,7 +76,12 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   });
   const box = el('span');
   box.append(minutes, el('span', { 'aria-hidden': 'true' }, t('ambient.cook.min')));
-  step.append(less, box, more, el('button', { type: 'submit', 'aria-label': t('ambient.cook.timer.add') }, t('ambient.cook.addShort')));
+  step.append(
+    less,
+    box,
+    more,
+    el('button', { type: 'submit', 'aria-label': t('ambient.cook.timer.add') }, t('ambient.cook.addShort')),
+  );
   form.append(nameRow, quick, step);
   side.append(head, list, empty, form, full);
   stage.append(tap, side);
@@ -104,7 +114,12 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
       let view = cards.get(timer.id);
       if (!view) {
         const headingId = `cook-${timer.id}`;
-        const card = el('div', { class: 'at-cook-timer', role: 'group', 'aria-labelledby': headingId, 'data-cook-timer': timer.id });
+        const card = el('div', {
+          class: 'at-cook-timer',
+          role: 'group',
+          'aria-labelledby': headingId,
+          'data-cook-timer': timer.id,
+        });
         const info = el('div');
         const sub = el('span', { class: 'at-cook-sub' });
         info.append(el('h3', { id: headingId }, timer.name), sub);

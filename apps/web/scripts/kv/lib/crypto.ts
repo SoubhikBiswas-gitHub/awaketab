@@ -69,7 +69,11 @@ export async function tryDecryptKeyEnc(packedB64: string, keyB64: string): Promi
   if (packed.byteLength < IV_BYTES + TAG_BYTES) return null;
   const key = await importKey(parseAesKey(keyB64, 'LICENSE_KEY_ENC_KEY'), 'decrypt');
   try {
-    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: packed.slice(0, IV_BYTES) }, key, packed.slice(IV_BYTES));
+    const pt = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv: packed.slice(0, IV_BYTES) },
+      key,
+      packed.slice(IV_BYTES),
+    );
     return new TextDecoder().decode(pt);
   } catch {
     return null;

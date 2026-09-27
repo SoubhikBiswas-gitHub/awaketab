@@ -69,7 +69,9 @@ function eventIds(type: string, data: IPolarData): IEventIds {
     found.kind = kindOf(data.subscription_id);
   } else if (type.startsWith('subscription.')) {
     found.subscriptionId = str(data.id);
-    found.benefitIds = (data.product?.benefits ?? []).map((row) => str(row.id)).filter((id): id is string => Boolean(id));
+    found.benefitIds = (data.product?.benefits ?? [])
+      .map((row) => str(row.id))
+      .filter((id): id is string => Boolean(id));
     found.kind = 'subscription';
   } else if (type.startsWith('order.')) {
     found.orderId = str(data.id);

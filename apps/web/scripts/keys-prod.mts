@@ -27,7 +27,9 @@ export function generateProdKeyPair(ver = nextVer()): IProdKeyPair {
   return {
     ver,
     publicJwk: { kty: 'EC', crv: 'P-256', x: pub.x, y: pub.y },
-    privateJwk: Object.fromEntries(Object.entries(priv).filter((entry): entry is [string, string] => typeof entry[1] === 'string')),
+    privateJwk: Object.fromEntries(
+      Object.entries(priv).filter((entry): entry is [string, string] => typeof entry[1] === 'string'),
+    ),
   };
 }
 

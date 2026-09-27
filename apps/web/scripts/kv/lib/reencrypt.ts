@@ -89,7 +89,10 @@ export async function reencryptNamespace(store: IKvStore, options: IReencryptOpt
         summary.expiring += 1;
         continue;
       }
-      const next: IKvRecord = { ...row, value: JSON.stringify({ ...record, keyEnc: await encryptKeyEnc(plain, options.newKey) }) };
+      const next: IKvRecord = {
+        ...row,
+        value: JSON.stringify({ ...record, keyEnc: await encryptKeyEnc(plain, options.newKey) }),
+      };
       pending.push({ original: row.value, next });
     }
 

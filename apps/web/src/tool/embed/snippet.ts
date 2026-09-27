@@ -18,7 +18,14 @@ export interface ISnippetOptions extends Omit<IEmbedOptions, 'lang'> {
   lang: TEmbedLocale | null;
 }
 
-export const DEFAULT_SNIPPET: ISnippetOptions = { mode: 'cook', theme: 'auto', lang: null, size: 'compact', preset: 'pinf', until: null };
+export const DEFAULT_SNIPPET: ISnippetOptions = {
+  mode: 'cook',
+  theme: 'auto',
+  lang: null,
+  size: 'compact',
+  preset: 'pinf',
+  until: null,
+};
 
 export function loaderSnippet(opts: ISnippetOptions, origin = SITE_ORIGIN): string {
   const attrs = [`data-mode="${opts.mode}"`, `data-theme="${opts.theme}"`, `data-size="${opts.size}"`];
@@ -65,7 +72,11 @@ export interface IKioskUrlOptions {
 const TOKEN_RE = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/u;
 
 export function kioskMsg(raw: string): string {
-  const clean = raw.normalize('NFC').replace(/[\p{Cc}\p{Cf}]/gu, '').replace(/\s+/gu, ' ').trim();
+  const clean = raw
+    .normalize('NFC')
+    .replace(/[\p{Cc}\p{Cf}]/gu, '')
+    .replace(/\s+/gu, ' ')
+    .trim();
   return Array.from(clean).slice(0, 80).join('');
 }
 

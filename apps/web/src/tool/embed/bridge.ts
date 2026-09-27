@@ -21,7 +21,11 @@ export interface IBridge {
   dispose(): void;
 }
 
-export function createBridge(win: Window, declaredHost: string | null, onCommand: (msg: TPageMessage) => void): IBridge {
+export function createBridge(
+  win: Window,
+  declaredHost: string | null,
+  onCommand: (msg: TPageMessage) => void,
+): IBridge {
   const origin = parentOrigin(win);
   const originHost = origin ? new URL(origin).hostname : null;
   const trusted = origin !== null && isHostname(originHost) && (declaredHost === null || declaredHost === originHost);

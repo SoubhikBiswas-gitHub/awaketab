@@ -28,7 +28,14 @@
     // Mirror of src/tool/accent.ts ACCENTS + LEGACY_ACCENTS (aqua, the default, has no attribute); the island
     // re-checks pack lamps against the licence.
     /** @type {Record<string, string>} */
-    const accents = { '#5A47CF': 'violet', '#167A50': 'mint', '#255FBD': 'sky', '#4F46E5': 'violet', '#0F766E': 'mint', '#BE123C': 'sky' };
+    const accents = {
+      '#5A47CF': 'violet',
+      '#167A50': 'mint',
+      '#255FBD': 'sky',
+      '#4F46E5': 'violet',
+      '#0F766E': 'mint',
+      '#BE123C': 'sky',
+    };
     const accent = saved && typeof saved.accent === 'string' ? accents[saved.accent.toUpperCase()] : undefined;
     if (accent) root.dataset.accent = accent;
   } catch {
@@ -131,7 +138,11 @@
       const stops = [...wrap.querySelectorAll('[data-lang-panel] a[href], [data-lang-panel] button')];
       const first = stops[0];
       const last = stops[stops.length - 1];
-      if (first instanceof HTMLElement && last instanceof HTMLElement && (active === (e.shiftKey ? first : last) || !wrap.contains(active))) {
+      if (
+        first instanceof HTMLElement &&
+        last instanceof HTMLElement &&
+        (active === (e.shiftKey ? first : last) || !wrap.contains(active))
+      ) {
         e.preventDefault();
         (e.shiftKey ? last : first).focus();
       }

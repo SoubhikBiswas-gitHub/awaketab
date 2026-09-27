@@ -12,7 +12,11 @@
   inset-inline-start: -10%;
   inline-size: 120%;
   block-size: 900px;
-  background: radial-gradient(40% 40% at 50% 50%, color-mix(in srgb, var(--at-accent) 10%, transparent) 0%, transparent 70%);
+  background: radial-gradient(
+    40% 40% at 50% 50%,
+    color-mix(in srgb, var(--at-accent) 10%, transparent) 0%,
+    transparent 70%
+  );
   pointer-events: none;
   animation: at-aura 26s ease-in-out infinite alternate;
 }
@@ -63,7 +67,8 @@
   block-size: 16px;
   background: var(--at-accent);
   content: "";
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")
+    center / contain no-repeat;
 }
 
 .op-saved:empty {
@@ -592,7 +597,15 @@
   block-size: 32px;
   overflow: hidden;
   border-radius: var(--at-r-sm);
-  background: repeating-linear-gradient(90deg, transparent 0, transparent calc(25% - 1px), var(--at-tick) calc(25% - 1px), var(--at-tick) 25%), var(--at-track);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent calc(25% - 1px),
+      var(--at-tick) calc(25% - 1px),
+      var(--at-tick) 25%
+    ),
+    var(--at-track);
 }
 
 .op-blk {
@@ -612,7 +625,11 @@
 .op-blk[data-level="system"],
 .op-sw-system {
   border: 1px solid var(--at-accent);
-  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--at-accent) 42%, transparent) 0 4px, color-mix(in srgb, var(--at-accent) 12%, transparent) 4px 8px);
+  background: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--at-accent) 42%, transparent) 0 4px,
+    color-mix(in srgb, var(--at-accent) 12%, transparent) 4px 8px
+  );
   color: var(--at-ink);
 }
 

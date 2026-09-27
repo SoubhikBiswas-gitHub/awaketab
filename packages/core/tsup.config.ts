@@ -6,5 +6,5 @@ export default defineConfig({
   dts: true,
   minify: true,
   clean: true,
-    external: ['@awaketab/wake'],
+  external: ['@awaketab/wake'],
 });

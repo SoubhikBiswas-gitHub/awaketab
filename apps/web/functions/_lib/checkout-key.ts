@@ -3,7 +3,14 @@ import { KEY_RE } from './http';
 import { planFromBenefit, type createPolar, type IPolarBenefitGrant } from './polar';
 
 export type TCheckoutKey =
-  | { kind: 'key'; key: string; subscriptionId: string | null; orderId: string | null; grantId: string; licenseKeyId: string }
+  | {
+      kind: 'key';
+      key: string;
+      subscriptionId: string | null;
+      orderId: string | null;
+      grantId: string;
+      licenseKeyId: string;
+    }
   | { kind: 'syncing' }
   | { kind: 'invalid' };
 
@@ -24,7 +31,9 @@ export async function resolveCheckoutKey(env: IEnv, polar: TPolarClient, checkou
   let orderIds = new Set<string>();
   if (!subscriptionId) {
     const orders = await polar.ordersForCheckout(checkout.id);
-    orderIds = new Set(orders.filter((row) => row.checkout_id === checkout.id && row.customer_id === customerId).map((row) => row.id));
+    orderIds = new Set(
+      orders.filter((row) => row.checkout_id === checkout.id && row.customer_id === customerId).map((row) => row.id),
+    );
     if (orderIds.size === 0) return SYNCING;
   }
 
@@ -33,7 +42,9 @@ export async function resolveCheckoutKey(env: IEnv, polar: TPolarClient, checkou
     (grant) =>
       grant.customer_id === customerId &&
       !!grant.properties?.license_key_id &&
-      (subscriptionId ? grant.subscription_id === subscriptionId : grant.order_id !== null && orderIds.has(grant.order_id)),
+      (subscriptionId
+        ? grant.subscription_id === subscriptionId
+        : grant.order_id !== null && orderIds.has(grant.order_id)),
   );
   if (ours.length === 0) return SYNCING;
   // A licence key for a benefit POLAR_BENEFIT_MAP does not know unlocks no plan (same answer as the key path).
@@ -44,7 +55,11 @@ export async function resolveCheckoutKey(env: IEnv, polar: TPolarClient, checkou
   const licenseKey = await polar.licenseKey(licenseKeyId);
   if (!licenseKey) return SYNCING;
   // The key must be the grant's: same customer, same benefit. Anything else is not this checkout's key.
-  if (licenseKey.id !== licenseKeyId || licenseKey.customer_id !== customerId || licenseKey.benefit_id !== grant.benefit_id) {
+  if (
+    licenseKey.id !== licenseKeyId ||
+    licenseKey.customer_id !== customerId ||
+    licenseKey.benefit_id !== grant.benefit_id
+  ) {
     return INVALID;
   }
   const key = licenseKey.key.trim().toUpperCase();

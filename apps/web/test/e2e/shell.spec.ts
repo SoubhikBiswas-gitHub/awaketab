@@ -6,14 +6,19 @@ const SURFACES = ['/', '/for/cooking', '/about', '/pro', '/pro/activate', '/es/'
 
 async function axe(page: Page): Promise<void> {
   const results = await new AxeBuilder({ page }).analyze();
-  const summary = results.violations.map((v) => ({ id: v.id, nodes: v.nodes.slice(0, 5).map((n) => n.target.join(' ')) }));
+  const summary = results.violations.map((v) => ({
+    id: v.id,
+    nodes: v.nodes.slice(0, 5).map((n) => n.target.join(' ')),
+  }));
   expect(summary).toEqual([]);
 }
 
 const focused = (page: Page) =>
   page.evaluate(() => {
     const el = document.activeElement;
-    return el ? `${el.tagName.toLowerCase()}${el.getAttribute('hreflang') ? `[${el.getAttribute('hreflang') ?? ''}]` : ''}#${el.id}` : '';
+    return el
+      ? `${el.tagName.toLowerCase()}${el.getAttribute('hreflang') ? `[${el.getAttribute('hreflang') ?? ''}]` : ''}#${el.id}`
+      : '';
   });
 
 async function openLang(page: Page): Promise<void> {
@@ -70,7 +75,10 @@ test.describe('header and footer on every surface', () => {
     await expect(page.locator('header nav a[aria-current="page"]')).toHaveCount(0);
   });
 
-  test('tool header: Stats from 600, Settings always; the compact theme button below 360 px', async ({ page, browserName }) => {
+  test('tool header: Stats from 600, Settings always; the compact theme button below 360 px', async ({
+    page,
+    browserName,
+  }) => {
     test.skip(browserName !== 'chromium', 'layout check, engine-independent');
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/?autostart=0');
@@ -105,10 +113,18 @@ test.describe('theme switch', () => {
     await page.locator('.at-theme-item[data-v="dark"]').click();
     await expect(html).toHaveAttribute('data-theme', 'dark');
     await expect(html).toHaveAttribute('data-theme-pref', 'dark');
-    expect(await page.evaluate(() => (JSON.parse(localStorage.getItem('at.v1.settings') ?? '{}') as { theme?: string }).theme)).toBe('dark');
+    expect(
+      await page.evaluate(
+        () => (JSON.parse(localStorage.getItem('at.v1.settings') ?? '{}') as { theme?: string }).theme,
+      ),
+    ).toBe('dark');
     // The indicator sits under item 2 (one item width to the right), driven by CSS alone.
     await expect
-      .poll(() => page.locator('.at-theme .at-seg-ind').evaluate((el) => Math.round(new DOMMatrix(getComputedStyle(el).transform).m41)))
+      .poll(() =>
+        page
+          .locator('.at-theme .at-seg-ind')
+          .evaluate((el) => Math.round(new DOMMatrix(getComputedStyle(el).transform).m41)),
+      )
       .toBe(44);
 
     await page.reload();
@@ -116,7 +132,11 @@ test.describe('theme switch', () => {
     await expect(bar.getByRole('radio', { name: 'Dark' })).toBeChecked();
     // No slide on load: the position is right from the first frame (data-theme-pref is set before first paint).
     expect(await page.locator('.at-theme .at-seg-ind').evaluate((el) => el.getAnimations().length)).toBe(0);
-    expect(await page.locator('.at-theme .at-seg-ind').evaluate((el) => Math.round(new DOMMatrix(getComputedStyle(el).transform).m41))).toBe(44);
+    expect(
+      await page
+        .locator('.at-theme .at-seg-ind')
+        .evaluate((el) => Math.round(new DOMMatrix(getComputedStyle(el).transform).m41)),
+    ).toBe(44);
 
     // Auto follows the system live (DESIGN.md §9).
     await page.locator('.at-theme-item[data-v="auto"]').click();
@@ -127,8 +147,14 @@ test.describe('theme switch', () => {
     await expect(html).toHaveAttribute('data-theme', 'light');
   });
 
-  test('keyboard: one Tab stop, arrows move and select (native radios), focus is visible', async ({ page, browserName }) => {
-    test.skip(browserName === 'webkit', 'WebKit arrow keys on radios follow the macOS setting; covered in Chromium and Firefox');
+  test('keyboard: one Tab stop, arrows move and select (native radios), focus is visible', async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(
+      browserName === 'webkit',
+      'WebKit arrow keys on radios follow the macOS setting; covered in Chromium and Firefox',
+    );
     await page.emulateMedia({ colorScheme: 'light' });
     await page.goto('/about');
     await page.getByRole('radio', { name: 'Auto, follows your system' }).focus();
@@ -154,13 +180,17 @@ test.describe('theme switch', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme-pref', 'oled');
     await expect(page.getByRole('radio', { name: 'Dark' })).toBeChecked();
     await expect
-      .poll(() => page.evaluate(() => (JSON.parse(localStorage.getItem('at.v1.settings') ?? '{}') as { theme?: string }).theme))
+      .poll(() =>
+        page.evaluate(() => (JSON.parse(localStorage.getItem('at.v1.settings') ?? '{}') as { theme?: string }).theme),
+      )
       .toBe('oled');
   });
 });
 
 test.describe('language switcher (P-LANG)', () => {
-  test('desktop panel: non-modal group, focus on the current row, arrows wrap, Home/End, Esc returns focus', async ({ page }) => {
+  test('desktop panel: non-modal group, focus on the current row, arrows wrap, Home/End, Esc returns focus', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/for/cooking');
     const btn = page.locator('#at-lang-btn');
@@ -217,7 +247,10 @@ test.describe('language switcher (P-LANG)', () => {
     await expect(panel).toBeHidden();
   });
 
-  test('phone sheet: modal dialog with a scrim, Tab stays inside, Close and Esc return focus', async ({ page, browserName }) => {
+  test('phone sheet: modal dialog with a scrim, Tab stays inside, Close and Esc return focus', async ({
+    page,
+    browserName,
+  }) => {
     // WebKit follows Safari: plain Tab skips links; Option+Tab reaches every control (keyboard.spec.ts).
     const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
     await page.setViewportSize({ width: 390, height: 844 });
@@ -261,7 +294,9 @@ test.describe('language switcher (P-LANG)', () => {
   test('a localized page names its language natively and links the English original', async ({ page }) => {
     await page.goto('/es/');
     await expect(page.locator('#at-lang-btn')).toHaveAccessibleName('Idioma: Español');
-    await expect(page.locator('footer .at-footer-line')).toHaveText('Sin anuncios en la pantalla activa, ni ahora ni después.');
+    await expect(page.locator('footer .at-footer-line')).toHaveText(
+      'Sin anuncios en la pantalla activa, ni ahora ni después.',
+    );
     await expect(page.locator('footer a[hreflang="en"]')).toHaveAttribute('href', '/');
     await expect(page.locator('footer a[aria-current="true"]')).toHaveAttribute('hreflang', 'es');
   });
@@ -292,13 +327,22 @@ test.describe('status pill and logo bead', () => {
     const pill = page.locator('#awaketab-tool [data-pill]');
     await expect(pill).toHaveAttribute('data-lock', 'idle');
     await expect(pill.locator('[data-pill-text]')).toHaveText('Ready');
-    const glyph = () => pill.locator('.at-pill-glyph path').evaluateAll((els) => els.filter((e) => getComputedStyle(e).display !== 'none').map((e) => e.getAttribute('class')));
+    const glyph = () =>
+      pill
+        .locator('.at-pill-glyph path')
+        .evaluateAll((els) =>
+          els.filter((e) => getComputedStyle(e).display !== 'none').map((e) => e.getAttribute('class')),
+        );
     expect(await glyph()).toEqual(['at-g-dot']);
     // M pill: 38 px drawn (O-62 allows a second line in long locales).
     expect((await pill.boundingBox())?.height).toBe(38);
     const bead = () => page.locator('.at-logo-bead').evaluate((el) => getComputedStyle(el).fill);
-    const muted = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--at-muted').trim());
-    const accent = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--at-accent').trim());
+    const muted = await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue('--at-muted').trim(),
+    );
+    const accent = await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue('--at-accent').trim(),
+    );
     const rgb = (hex: string) => {
       const n = Number.parseInt(hex.replace('#', ''), 16);
       return `rgb(${String((n >> 16) & 255)}, ${String((n >> 8) & 255)}, ${String(n & 255)})`;
@@ -312,7 +356,9 @@ test.describe('status pill and logo bead', () => {
   });
 
   for (const theme of ['light', 'dark'] as const) {
-    test(`Stop is the raised neutral (D-R20): raised fill, line-strong border, ink text, 60 px, ${theme}`, async ({ page }) => {
+    test(`Stop is the raised neutral (D-R20): raised fill, line-strong border, ink text, 60 px, ${theme}`, async ({
+      page,
+    }) => {
       await page.emulateMedia({ colorScheme: theme });
       await page.goto('/');
       const stop = page.locator('#awaketab-tool [data-stop]');

@@ -45,7 +45,8 @@ const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
 export const PILL_GLYPH: Record<string, string> = {
   lost: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
   denied: 'M6 1L11.2 10.5H.8z',
-  fallback: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  fallback:
+    'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
 };
 
 // One widget per embedding page: cross-tab lock election (BroadcastChannel('awaketab')) belongs to the app, not
@@ -61,14 +62,20 @@ function isLive(s: ISession | null): s is ISession {
   return !!s && (s.status === 'active' || s.status === 'paused');
 }
 
-export function planFor(params: Pick<IEmbedParams, 'preset' | 'until'>, cmd?: Extract<TPageMessage, { type: 'awaketab:start' }>): {
+export function planFor(
+  params: Pick<IEmbedParams, 'preset' | 'until'>,
+  cmd?: Extract<TPageMessage, { type: 'awaketab:start' }>,
+): {
   plan: TPlan;
   presetId: TPresetId;
 } {
   if (cmd?.ms !== undefined) return { plan: { type: 'duration', ms: cmd.ms }, presetId: 'custom' };
   if (cmd?.until) return { plan: planUntil(cmd.until), presetId: 'until' };
   const preset = cmd?.preset ?? params.preset;
-  if (preset === 'until') return params.until ? { plan: planUntil(params.until), presetId: 'until' } : { plan: { type: 'indefinite' }, presetId: 'pinf' };
+  if (preset === 'until')
+    return params.until
+      ? { plan: planUntil(params.until), presetId: 'until' }
+      : { plan: { type: 'indefinite' }, presetId: 'pinf' };
   return { plan: planFromPreset(preset), presetId: preset };
 }
 
@@ -103,7 +110,10 @@ export interface IEmbedApp {
 export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
   const doc = root.ownerDocument;
   const params = parseEmbedQuery(win.location.search);
-  const catalogs = JSON.parse(root.querySelector('[data-embed-catalogs]')?.textContent ?? '{}') as Record<string, Record<string, string>>;
+  const catalogs = JSON.parse(root.querySelector('[data-embed-catalogs]')?.textContent ?? '{}') as Record<
+    string,
+    Record<string, string>
+  >;
   setCatalog(catalogs.en ?? {});
   setCatalog(catalogs[params.lang] ?? {});
   const locale = HTML_LANG[params.lang] ?? params.lang;
@@ -235,7 +245,8 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
     if (toggle && toggleText) {
       const kind = busy ? 'stop' : lockState === 'denied' ? 'retry' : 'start';
       toggle.dataset.kind = kind;
-      toggleText.textContent = kind === 'stop' ? t('tool.ring.stop') : kind === 'retry' ? t('tool.advice.retry') : t('embed.start');
+      toggleText.textContent =
+        kind === 'stop' ? t('tool.ring.stop') : kind === 'retry' ? t('tool.advice.retry') : t('embed.start');
     }
     const view = digitsFor({ mode: params.mode, lock: lockState, session: s, params, now, locale });
     if (digits) {
@@ -246,12 +257,20 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
     if (clock) {
       clock.setAttribute('aria-pressed', String(paused));
       const key =
-        params.mode === 'clock' ? 'embed.digits.clock' : cook && running ? (paused ? 'embed.digits.resume' : 'embed.digits.pause') : 'embed.digits.start';
+        params.mode === 'clock'
+          ? 'embed.digits.clock'
+          : cook && running
+            ? paused
+              ? 'embed.digits.resume'
+              : 'embed.digits.pause'
+            : 'embed.digits.start';
       clock.setAttribute('aria-label', t(key, { time: view.text }));
     }
     if (note) {
       note.hidden = params.mode !== 'minimal';
-      note.textContent = t(busy ? (params.size === 'compact' ? 'embed.minimal.liveShort' : 'embed.minimal.live') : 'embed.minimal.idle');
+      note.textContent = t(
+        busy ? (params.size === 'compact' ? 'embed.minimal.liveShort' : 'embed.minimal.live') : 'embed.minimal.idle',
+      );
     }
     if (hint) {
       // Full size: the line under the digits. Compact keeps it for screen readers only (the digits' label says it).
@@ -262,10 +281,10 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
           : lockState === 'denied' && !busy
             ? ''
             : !busy
-            ? t(params.mode === 'clock' ? 'embed.meta.clock' : 'embed.advice.tapToStart')
-            : cook
-              ? t(paused ? 'embed.cook.resume' : 'embed.cook.pause')
-              : t('embed.meta.since', { time: wallTime(locale, s?.startedAt ?? now) });
+              ? t(params.mode === 'clock' ? 'embed.meta.clock' : 'embed.advice.tapToStart')
+              : cook
+                ? t(paused ? 'embed.cook.resume' : 'embed.cook.pause')
+                : t('embed.meta.since', { time: wallTime(locale, s?.startedAt ?? now) });
     }
     if (foot) {
       foot.textContent =

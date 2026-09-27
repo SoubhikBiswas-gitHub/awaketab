@@ -1,7 +1,15 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { accentHex, ACCENTS, accentId, applyAccent, DEFAULT_ACCENT, LEGACY_ACCENTS, PACK_ACCENTS } from '../../src/tool/accent.js';
+import {
+  accentHex,
+  ACCENTS,
+  accentId,
+  applyAccent,
+  DEFAULT_ACCENT,
+  LEGACY_ACCENTS,
+  PACK_ACCENTS,
+} from '../../src/tool/accent.js';
 
 describe('accentId (DESIGN.md §2.2, docs/05 §1.1a)', () => {
   it('maps the stored light-theme hex to a lamp id, case-insensitively', () => {
@@ -50,7 +58,8 @@ describe('legacy palette migration (docs/08 §2.1)', () => {
     const map = Object.fromEntries([...literal.matchAll(/'(#[0-9A-F]{6})':\s*'(\w+)'/gu)].map((m) => [m[1], m[2]]));
     const expected: Record<string, string> = {};
     for (const [hex, id] of Object.entries(ACCENTS)) if (id !== 'aqua') expected[hex] = id;
-    for (const [hex, lamp] of Object.entries(LEGACY_ACCENTS)) if (ACCENTS[lamp] !== 'aqua') expected[hex] = ACCENTS[lamp];
+    for (const [hex, lamp] of Object.entries(LEGACY_ACCENTS))
+      if (ACCENTS[lamp] !== 'aqua') expected[hex] = ACCENTS[lamp];
     expect(map).toEqual(expected);
   });
 });
@@ -88,10 +97,14 @@ const CSS = readFileSync(path.join(import.meta.dirname, '../../src/styles/tokens
 
 function block(selector: string): Record<string, string> {
   for (const m of CSS.matchAll(/([^{}]+)\{([^{}]*)\}/gu)) {
-    const sel = (m[1] ?? '').replace(/\/\*[\s\S]*?\*\//gu, '').replace(/\s+/gu, ' ').trim();
+    const sel = (m[1] ?? '')
+      .replace(/\/\*[\s\S]*?\*\//gu, '')
+      .replace(/\s+/gu, ' ')
+      .trim();
     if (sel !== selector) continue;
     const vars: Record<string, string> = {};
-    for (const d of (m[2] ?? '').matchAll(/(--at-[\w-]+)\s*:\s*([^;]+);/gu)) vars[d[1] as string] = (d[2] as string).trim();
+    for (const d of (m[2] ?? '').matchAll(/(--at-[\w-]+)\s*:\s*([^;]+);/gu))
+      vars[d[1] as string] = (d[2] as string).trim();
     return vars;
   }
   throw new Error(`tokens.css: no rule for ${selector}`);
@@ -136,7 +149,10 @@ const PALETTES = Object.values(ACCENTS).flatMap((id) =>
     const base = THEMES[theme];
     let over: Record<string, string> = {};
     if (id !== 'aqua') {
-      over = theme === 'light' ? block(`[data-accent="${id}"]`) : block(`[data-accent="${id}"]:is([data-theme="dark"], [data-theme="oled"])`);
+      over =
+        theme === 'light'
+          ? block(`[data-accent="${id}"]`)
+          : block(`[data-accent="${id}"]:is([data-theme="dark"], [data-theme="oled"])`);
     }
     return { name: `${id} / ${theme}`, vars: { ...base, ...over } };
   }),
@@ -176,7 +192,8 @@ describe('lamp colours meet WCAG AA (tokens.css, DESIGN.md §2.2)', () => {
   });
 
   it('the auto/dark media block matches the explicit dark theme', () => {
-    const media = /@media \(prefers-color-scheme: dark\)\s*\{\s*:root:not\(\[data-theme\]\)\s*\{([^}]*)\}/u.exec(CSS)?.[1] ?? '';
+    const media =
+      /@media \(prefers-color-scheme: dark\)\s*\{\s*:root:not\(\[data-theme\]\)\s*\{([^}]*)\}/u.exec(CSS)?.[1] ?? '';
     expect(Object.keys(THEMES.dark).length).toBeGreaterThan(15);
     for (const k of Object.keys(THEMES.dark)) {
       const value = new RegExp(`${k}\\s*:\\s*([^;]+);`, 'u').exec(media)?.[1]?.trim();

@@ -71,7 +71,12 @@ export async function syncStore(page: Page): Promise<Record<string, unknown>> {
   return page.evaluate(() => chrome.storage.sync.get(null));
 }
 
-export async function devToken(claims: { plan: string; features: string[]; deviceId: string; exp: number }): Promise<string> {
+export async function devToken(claims: {
+  plan: string;
+  features: string[];
+  deviceId: string;
+  exp: number;
+}): Promise<string> {
   const vars = await readFile(path.resolve(HERE, '../../web/.dev.vars.example'), 'utf8');
   const line = vars.split('\n').find((l) => l.startsWith('LICENSE_SIGNING_KEY='));
   if (!line) throw new Error('dev signing key missing');
@@ -80,12 +85,26 @@ export async function devToken(claims: { plan: string; features: string[]; devic
   const enc = (obj: unknown) => Buffer.from(JSON.stringify(obj)).toString('base64url');
   const header = enc({ alg: 'ES256', typ: 'JWT', ver: 1 });
   const dev = createHash('sha256').update(claims.deviceId).digest('hex');
-  const payload = enc({ sub: 'e2e', plan: claims.plan, features: claims.features, dev, iat: Math.floor(Date.now() / 1000), exp: claims.exp, ver: 1 });
-  const sig = Buffer.from(await webcrypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, Buffer.from(`${header}.${payload}`)));
+  const payload = enc({
+    sub: 'e2e',
+    plan: claims.plan,
+    features: claims.features,
+    dev,
+    iat: Math.floor(Date.now() / 1000),
+    exp: claims.exp,
+    ver: 1,
+  });
+  const sig = Buffer.from(
+    await webcrypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, Buffer.from(`${header}.${payload}`)),
+  );
   return `${header}.${payload}.${sig.toString('base64url')}`;
 }
 
-export async function mockLicenseApi(context: BrowserContext, extensionId: string, features: string[]): Promise<string[]> {
+export async function mockLicenseApi(
+  context: BrowserContext,
+  extensionId: string,
+  features: string[],
+): Promise<string[]> {
   const origin = `chrome-extension://${extensionId}`;
   const cors = {
     'access-control-allow-origin': origin,

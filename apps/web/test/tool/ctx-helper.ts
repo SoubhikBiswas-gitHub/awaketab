@@ -1,4 +1,11 @@
-import { createSession, createStorage, DEFAULT_SETTINGS, memoryAdapter, type ILicenseRecord, type ISettings } from '@awaketab/core';
+import {
+  createSession,
+  createStorage,
+  DEFAULT_SETTINGS,
+  memoryAdapter,
+  type ILicenseRecord,
+  type ISettings,
+} from '@awaketab/core';
 import { createWakeLock } from '@awaketab/wake';
 import { vi } from 'vitest';
 import { createFakeApi } from '../../../../packages/wake/test/fake.js';
@@ -19,7 +26,9 @@ export function license(features: ILicenseRecord['features']): ILicenseRecord {
   };
 }
 
-export function makeCtx(opts: { html?: string; settings?: Partial<ISettings>; search?: string; license?: ILicenseRecord | null } = {}) {
+export function makeCtx(
+  opts: { html?: string; settings?: Partial<ISettings>; search?: string; license?: ILicenseRecord | null } = {},
+) {
   document.body.innerHTML = `<div id="awaketab-tool">${opts.html ?? ''}</div>`;
   const root = document.querySelector<HTMLElement>('#awaketab-tool') as HTMLElement;
   const fake = createFakeApi();

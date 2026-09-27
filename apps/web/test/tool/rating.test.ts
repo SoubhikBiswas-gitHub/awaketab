@@ -1,6 +1,11 @@
 import { DEFAULT_META, type IMeta } from '@awaketab/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { maybeShowRating, RATING_MIN_SESSIONS, RATING_REARM_SESSIONS, ratingEligible } from '../../src/tool/ui/rating.js';
+import {
+  maybeShowRating,
+  RATING_MIN_SESSIONS,
+  RATING_REARM_SESSIONS,
+  ratingEligible,
+} from '../../src/tool/ui/rating.js';
 import { makeCtx } from './ctx-helper.js';
 
 // Mirrors the rating dialog in src/components/ToolPanel.astro.
@@ -128,7 +133,10 @@ describe('maybeShowRating', () => {
     const { ctx, dialog, storage } = setup();
     maybeShowRating(ctx);
     dialog.close();
-    expect(storage.meta().ratingPrompt).toMatchObject({ action: 'later', rearmAt: RATING_MIN_SESSIONS + RATING_REARM_SESSIONS });
+    expect(storage.meta().ratingPrompt).toMatchObject({
+      action: 'later',
+      rearmAt: RATING_MIN_SESSIONS + RATING_REARM_SESSIONS,
+    });
     expect(maybeShowRating(ctx)).toBe(false);
   });
 

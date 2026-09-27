@@ -40,7 +40,11 @@ export function mountTimers(section: HTMLElement, deps: ITimerDeps): () => void 
   const rows = new Map<string, { row: HTMLElement; left: HTMLElement }>();
 
   for (const min of EMBED_QUICK_MIN) {
-    const btn = el('button', { type: 'button', class: 'at-embed-add', 'data-embed-add': String(min) }, t('stats.minutes', { minutes: min }));
+    const btn = el(
+      'button',
+      { type: 'button', class: 'at-embed-add', 'data-embed-add': String(min) },
+      t('stats.minutes', { minutes: min }),
+    );
     btn.setAttribute('aria-label', t('embed.timers.addLabel', { minutes: min }));
     quick.append(btn);
   }
@@ -71,7 +75,10 @@ export function mountTimers(section: HTMLElement, deps: ITimerDeps): () => void 
       view.row.toggleAttribute('data-flash', (flashes.get(timer.id) ?? 0) > at);
       view.row.toggleAttribute('data-done', timer.doneAt !== null);
       // Round a countdown up, so a timer never shows 00:00 while it still has a second to run.
-      view.left.textContent = timer.doneAt === null ? formatClock(Math.ceil((timer.endsAt - at) / 1000) * 1000) : t('ambient.cook.timer.done');
+      view.left.textContent =
+        timer.doneAt === null
+          ? formatClock(Math.ceil((timer.endsAt - at) / 1000) * 1000)
+          : t('ambient.cook.timer.done');
     }
   };
 

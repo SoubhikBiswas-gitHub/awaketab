@@ -11,7 +11,11 @@ function report(h: IHarness, body: string, contentType: string) {
     h.env,
     new Request(`${SITE}/api/csp`, {
       method: 'POST',
-      headers: { 'content-type': contentType, 'cf-connecting-ip': TEST_IP, 'user-agent': 'Mozilla/5.0 (Macintosh) Chrome/128' },
+      headers: {
+        'content-type': contentType,
+        'cf-connecting-ip': TEST_IP,
+        'user-agent': 'Mozilla/5.0 (Macintosh) Chrome/128',
+      },
       body,
     }),
   );
@@ -66,13 +70,16 @@ describe('POST /api/csp', () => {
     expect(h.ae.points[0]?.blobs[5]).toBe('csp');
   });
 
-  it.each(['', 'not json', '[]', '{"csp-report":{"document-uri":42}}'])('still records client_error for a malformed body %j', async (body) => {
-    const h = harness();
-    expect((await report(h, body, 'application/json')).status).toBe(200);
-    expect(h.ae.points).toHaveLength(1);
-    expect(h.ae.points[0]?.blobs[0]).toBe('');
-    expect(h.ae.points[0]?.blobs[5]).toBe('csp');
-  });
+  it.each(['', 'not json', '[]', '{"csp-report":{"document-uri":42}}'])(
+    'still records client_error for a malformed body %j',
+    async (body) => {
+      const h = harness();
+      expect((await report(h, body, 'application/json')).status).toBe(200);
+      expect(h.ae.points).toHaveLength(1);
+      expect(h.ae.points[0]?.blobs[0]).toBe('');
+      expect(h.ae.points[0]?.blobs[5]).toBe('csp');
+    },
+  );
 
   it('persists no IP, user agent, blocked URL or query string; KV holds only the salted rate-limit counter', async () => {
     const h = harness();
@@ -95,7 +102,9 @@ describe('POST /api/csp', () => {
     const salted = await ipHash(h.env, TEST_IP);
     expect(salted).not.toBe(await sha256Hex(TEST_IP));
     const bucket = Math.floor(Date.now() / 1000 / 120);
-    expect(h.kv.writes).toEqual([{ op: 'put', key: `rl:csp:${salted}:${String(bucket)}`, value: '1', expirationTtl: 240 }]);
+    expect(h.kv.writes).toEqual([
+      { op: 'put', key: `rl:csp:${salted}:${String(bucket)}`, value: '1', expirationTtl: 240 },
+    ]);
   });
 
   it('answers 429 with Retry-After once RATE_MAX is reached, and records nothing more', async () => {
@@ -124,7 +133,9 @@ describe('POST /api/csp', () => {
 
   it('rejects a body over 8 KB with 413 and writes no point', async () => {
     const h = harness();
-    const big = JSON.stringify({ 'csp-report': { 'document-uri': `https://awaketab.com/${'x'.repeat(MAX_BODY_BYTES)}` } });
+    const big = JSON.stringify({
+      'csp-report': { 'document-uri': `https://awaketab.com/${'x'.repeat(MAX_BODY_BYTES)}` },
+    });
     const res = await report(h, big, 'application/csp-report');
     expect(res.status).toBe(413);
     expect(await res.json()).toEqual({ error: 'too_large' });

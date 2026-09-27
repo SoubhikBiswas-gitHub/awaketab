@@ -65,8 +65,14 @@ export function scheduleAlarms(schedules: readonly ISchedule[], now: number): Ar
   const alarms: Array<{ name: string; when: number }> = [];
   for (const schedule of schedules) {
     const windows = windowsOf(schedule, now);
-    const nextStart = windows.map((w) => w.start).filter((t) => t > now).sort((a, b) => a - b)[0];
-    const nextEnd = windows.map((w) => w.end).filter((t) => t > now).sort((a, b) => a - b)[0];
+    const nextStart = windows
+      .map((w) => w.start)
+      .filter((t) => t > now)
+      .sort((a, b) => a - b)[0];
+    const nextEnd = windows
+      .map((w) => w.end)
+      .filter((t) => t > now)
+      .sort((a, b) => a - b)[0];
     if (nextStart !== undefined) alarms.push({ name: `${SCHEDULE_ALARM_PREFIX}${schedule.id}.start`, when: nextStart });
     if (nextEnd !== undefined) alarms.push({ name: `${SCHEDULE_ALARM_PREFIX}${schedule.id}.end`, when: nextEnd });
   }

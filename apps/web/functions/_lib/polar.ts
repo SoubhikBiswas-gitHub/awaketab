@@ -125,7 +125,12 @@ export function createPolar(env: IEnv, fetchFn: typeof fetch = fetch) {
     new URLSearchParams(org ? { organization_id: org, ...params } : params).toString();
   return {
     async validate(key: string): Promise<IPolarLicense> {
-      const res = await polarPost(env, '/v1/customer-portal/license-keys/validate', { key, organization_id: org }, fetchFn);
+      const res = await polarPost(
+        env,
+        '/v1/customer-portal/license-keys/validate',
+        { key, organization_id: org },
+        fetchFn,
+      );
       if (res.status === 404) throw new PolarError('invalid_key', 'not found');
       if (!res.ok) throw new PolarError('polar_unavailable', `status ${res.status}`);
       return (await res.json()) as IPolarLicense;
@@ -150,7 +155,8 @@ export function createPolar(env: IEnv, fetchFn: typeof fetch = fetch) {
         fetchFn,
       );
       // 404: Polar no longer has this activation (removed in the customer portal); nothing left to undo.
-      if (!res.ok && res.status !== 204 && res.status !== 404) throw new PolarError('polar_unavailable', `status ${res.status}`);
+      if (!res.ok && res.status !== 204 && res.status !== 404)
+        throw new PolarError('polar_unavailable', `status ${res.status}`);
     },
     async checkout(checkoutId: string): Promise<IPolarCheckout> {
       const res = await polarGet(env, `/v1/checkouts/${encodeURIComponent(checkoutId)}`, fetchFn);

@@ -2,7 +2,15 @@ import { KIOSK_MODES, kioskMsg, kioskUrl, type IKioskUrlOptions } from '../tool/
 
 const THEMES = ['auto', 'light', 'dark', 'oled'] as const;
 const PRESETS = ['pinf', 'p15', 'p30', 'p45', 'p60', 'p120', 'p240'] as const;
-const SECONDS: Record<IKioskUrlOptions['preset'], number> = { pinf: 0, p15: 900, p30: 1800, p45: 2700, p60: 3600, p120: 7200, p240: 14400 };
+const SECONDS: Record<IKioskUrlOptions['preset'], number> = {
+  pinf: 0,
+  p15: 900,
+  p30: 1800,
+  p45: 2700,
+  p60: 3600,
+  p120: 7200,
+  p240: 14400,
+};
 const TOKEN_RE = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/u;
 
 const text = (value: FormDataEntryValue | null): string => (typeof value === 'string' ? value : '');
@@ -93,7 +101,11 @@ export function kioskHints(o: IKioskUrlOptions): IKioskHints {
     tokenWarn: token !== '' && !tokenValid,
     licensed: tokenValid,
     showLogo: tokenValid && logoOk,
-    note: tokenValid ? (logoOk ? 'Licensed: your logo, no AwakeTab wordmark.' : 'Licensed: no AwakeTab wordmark.') : 'Free: shows the AwakeTab wordmark.',
+    note: tokenValid
+      ? logoOk
+        ? 'Licensed: your logo, no AwakeTab wordmark.'
+        : 'Licensed: no AwakeTab wordmark.'
+      : 'Free: shows the AwakeTab wordmark.',
   };
 }
 
@@ -116,7 +128,12 @@ export interface IKioskTimer {
   progress: number;
 }
 
-export function kioskTimer(preset: IKioskUrlOptions['preset'], autostart: boolean, startedAt: number, now: number): IKioskTimer {
+export function kioskTimer(
+  preset: IKioskUrlOptions['preset'],
+  autostart: boolean,
+  startedAt: number,
+  now: number,
+): IKioskTimer {
   const total = SECONDS[preset];
   const elapsed = autostart ? Math.max(0, Math.floor((now - startedAt) / 1000)) : 0;
   if (total === 0) {
@@ -161,8 +178,12 @@ export function bindKiosk(root: HTMLElement, win: Window = window): void {
 
   // Prefill from a Kiosk licence activated in this browser (at.v1.license, docs/08). Read-only.
   try {
-    const lic = JSON.parse(win.localStorage.getItem('at.v1.license') ?? 'null') as { plan?: string; token?: string } | null;
-    if (tokenInput && lic?.token && (lic.plan === 'biz_kiosk_site' || lic.plan === 'biz_kiosk_5')) tokenInput.value = lic.token;
+    const lic = JSON.parse(win.localStorage.getItem('at.v1.license') ?? 'null') as {
+      plan?: string;
+      token?: string;
+    } | null;
+    if (tokenInput && lic?.token && (lic.plan === 'biz_kiosk_site' || lic.plan === 'biz_kiosk_5'))
+      tokenInput.value = lic.token;
   } catch {
     // storage unavailable: leave the field empty
   }
@@ -176,7 +197,10 @@ export function bindKiosk(root: HTMLElement, win: Window = window): void {
     setText('[data-k-time]', time);
     setText('[data-k-clock]', time.slice(0, -3));
     setText('[data-k-ampm]', time.slice(-2));
-    setText('[data-k-date]', `${new Date(now).toLocaleDateString('en-GB', { weekday: 'long' })}, ${new Date(now).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`);
+    setText(
+      '[data-k-date]',
+      `${new Date(now).toLocaleDateString('en-GB', { weekday: 'long' })}, ${new Date(now).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`,
+    );
     const tm = kioskTimer(o.preset, o.autostart, startedAt, now);
     setText('[data-k-big]', tm.big[0]);
     setText('[data-k-sec]', tm.big[1]);

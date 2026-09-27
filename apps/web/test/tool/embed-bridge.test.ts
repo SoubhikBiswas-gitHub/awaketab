@@ -37,13 +37,15 @@ afterEach(() => {
 
 describe('parentOrigin (docs/09 §7.1)', () => {
   it('prefers location.ancestorOrigins[0]', () => {
-    expect(parentOrigin(framedWindow({ ancestor: 'https://recipes.example', referrer: 'https://other.example/' }).win)).toBe(
-      'https://recipes.example',
-    );
+    expect(
+      parentOrigin(framedWindow({ ancestor: 'https://recipes.example', referrer: 'https://other.example/' }).win),
+    ).toBe('https://recipes.example');
   });
 
   it('falls back to the referrer origin (Firefox)', () => {
-    expect(parentOrigin(framedWindow({ referrer: 'https://recipes.example/pasta?x=1' }).win)).toBe('https://recipes.example');
+    expect(parentOrigin(framedWindow({ referrer: 'https://recipes.example/pasta?x=1' }).win)).toBe(
+      'https://recipes.example',
+    );
   });
 
   it('is null when not framed, unknown, or opaque', () => {
@@ -83,7 +85,10 @@ describe('createBridge — widget side of the postMessage API (docs/11 §3)', ()
     const f = framedWindow({ referrer: 'https://recipes.example/' });
     const bridge = createBridge(f.win, null, vi.fn());
     bridge.post({ type: 'awaketab:resize', height: 120 });
-    expect(f.parent.postMessage).toHaveBeenCalledWith({ type: 'awaketab:resize', height: 120 }, 'https://recipes.example');
+    expect(f.parent.postMessage).toHaveBeenCalledWith(
+      { type: 'awaketab:resize', height: 120 },
+      'https://recipes.example',
+    );
   });
 
   it('stops listening after dispose', () => {
@@ -123,7 +128,9 @@ describe('Permissions-Policy detection and advice', () => {
 
   it('turns the library’s iframe_no_allow into power advice when the policy allows the lock', () => {
     expect(embedAdvice('iframe_no_allow', true, 'Mozilla/5.0 (Windows NT 10.0) Chrome/130')).toBe('battery_saver');
-    expect(embedAdvice('iframe_no_allow', true, 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0) Version/18.0 Safari')).toBe('low_power_ios');
+    expect(embedAdvice('iframe_no_allow', true, 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0) Version/18.0 Safari')).toBe(
+      'low_power_ios',
+    );
     expect(embedAdvice('iframe_no_allow', false, 'x')).toBe('iframe_no_allow');
     expect(embedAdvice('iframe_no_allow', null, 'x')).toBe('iframe_no_allow');
     expect(embedAdvice('battery_saver', true, 'x')).toBe('battery_saver');

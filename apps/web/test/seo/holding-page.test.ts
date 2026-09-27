@@ -38,7 +38,10 @@ function extractProse(html: string): string {
       depth -= 1;
       if (depth === 0) {
         const prose = html.slice(open.index + open[0].length, nextClose);
-        return prose.replace(/<script[\s\S]*?<\/script>/gu, ' ').replace(/<style[\s\S]*?<\/style>/gu, ' ').replace(/<[^>]+>/gu, ' ');
+        return prose
+          .replace(/<script[\s\S]*?<\/script>/gu, ' ')
+          .replace(/<style[\s\S]*?<\/style>/gu, ' ')
+          .replace(/<[^>]+>/gu, ' ');
       }
       i = nextClose + 6;
     }
@@ -269,7 +272,10 @@ describe('built site SEO', () => {
       const keys = Object.keys(JSON.parse(catalog) as Record<string, string>);
       // B4 (PipWindow canvas): the popup also writes its "until 5:28 PM" line, so those two strings ship too.
       const runtime = new Set(['tool.timer.indefiniteIdle', 'ambient.until', 'ambient.tomorrow']);
-      expect(keys.every((k) => k.startsWith('tool.pill.') || runtime.has(k)), route).toBe(true);
+      expect(
+        keys.every((k) => k.startsWith('tool.pill.') || runtime.has(k)),
+        route,
+      ).toBe(true);
       expect(keys.filter((k) => runtime.has(k)).sort(), route).toEqual([...runtime].sort());
       expect(keys.length, route).toBeGreaterThan(5);
       if (ready) expect(html, route).toContain(`<span data-pill-text>${ready}</span>`);

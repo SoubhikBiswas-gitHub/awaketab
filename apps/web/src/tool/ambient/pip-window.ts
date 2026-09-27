@@ -31,8 +31,18 @@ export function mirrorAmbient(ctx: IToolCtx, body: HTMLElement): () => void {
     const digits = label ? content?.querySelector('[data-focus-digits]') : clock;
     const on = ctx.store.get().ui.mode !== 'standard' && !!digits;
     const kick = el('p', { class: 'at-pip-kick' });
-    if (label) kick.textContent = [...label.children].slice(0, 2).map((n) => n.textContent).join(' · ');
-    else if (clock) kick.textContent = [clock.querySelector('.at-am-ap')?.textContent, content?.querySelector('.at-am-date')?.textContent].filter(Boolean).join(' · ');
+    if (label)
+      kick.textContent = [...label.children]
+        .slice(0, 2)
+        .map((n) => n.textContent)
+        .join(' · ');
+    else if (clock)
+      kick.textContent = [
+        clock.querySelector('.at-am-ap')?.textContent,
+        content?.querySelector('.at-am-date')?.textContent,
+      ]
+        .filter(Boolean)
+        .join(' · ');
     kick.toggleAttribute('data-now', !label);
     box.replaceChildren(...(on ? [kick, digits.cloneNode(true)] : []));
     body.toggleAttribute('data-ambient', on);
@@ -79,7 +89,11 @@ export async function togglePip(ctx: IToolCtx): Promise<'document' | 'popup' | '
       top.append(pill, until);
       const digits = el('div', { class: 'at-pip-digits', role: 'timer' });
       const actions = el('div', { class: 'at-pip-actions' });
-      const add = el('button', { type: 'button', class: 'at-pip-btn', 'data-pip-add': '', 'aria-label': t('pip.add15.label') }, t('pip.add15'));
+      const add = el(
+        'button',
+        { type: 'button', class: 'at-pip-btn', 'data-pip-add': '', 'aria-label': t('pip.add15.label') },
+        t('pip.add15'),
+      );
       const stop = el('button', { type: 'button', class: 'at-pip-btn', 'data-pip-stop': '' }, t('tool.ring.stop'));
       actions.append(add, stop);
       const empty = el('p', { class: 'at-pip-empty' }, `${t('pip.empty')} AwakeTab`);
@@ -98,7 +112,8 @@ export async function togglePip(ctx: IToolCtx): Promise<'document' | 'popup' | '
         const text = writeDigits(digits, rem ?? now - session.startedAt - session.pausedMs);
         digits.toggleAttribute('data-long', text.length > 5);
         until.hidden = s.lock !== 'held' || rem === null;
-        until.textContent = rem === null ? '' : t('ambient.until', { time: at(now + rem, now, s.settings.ambient.clock24h) });
+        until.textContent =
+          rem === null ? '' : t('ambient.until', { time: at(now + rem, now, s.settings.ambient.clock24h) });
       };
       const offTick = everySecond(paint);
       const unsub = ctx.store.subscribe(() => {
@@ -133,7 +148,11 @@ export async function togglePip(ctx: IToolCtx): Promise<'document' | 'popup' | '
       // Denied (e.g. no user activation): fall through to the popup.
     }
   }
-  const pop = window.open(pipPath(document.documentElement.lang), 'awaketab-pip', `popup,width=${String(PIP_SIZE.width)},height=${String(PIP_SIZE.height)}`);
+  const pop = window.open(
+    pipPath(document.documentElement.lang),
+    'awaketab-pip',
+    `popup,width=${String(PIP_SIZE.width)},height=${String(PIP_SIZE.height)}`,
+  );
   if (!pop) return 'blocked';
   current = pop;
   ctx.store.set({ ui: { pip: 'popup' } });

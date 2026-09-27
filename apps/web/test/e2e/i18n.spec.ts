@@ -74,7 +74,9 @@ test.describe('per-locale smoke', () => {
       await expect(page.locator('h1')).toHaveCount(1);
       await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/u);
       // Unreviewed translation: labelled as such, linked to the English original.
-      await expect(page.locator('[data-translation-pending]')).toContainText(strings['content.translation.pending'] ?? '');
+      await expect(page.locator('[data-translation-pending]')).toContainText(
+        strings['content.translation.pending'] ?? '',
+      );
       // The locale switcher offers this page's English version, not the English home.
       await expect(page.locator('footer a[hreflang="en"]')).toHaveAttribute('href', '/on/iphone-safari');
       const pill = page.locator('[data-pill-text]');
@@ -120,10 +122,27 @@ async function usePseudoLocale(page: Page): Promise<void> {
         return `${open}${JSON.stringify(pseudo).replaceAll('<', '\\u003c')}${close}`;
       },
     );
-    await route.fulfill({ response, body: expanded, headers: { ...response.headers(), 'content-type': 'text/html; charset=utf-8' } });
+    await route.fulfill({
+      response,
+      body: expanded,
+      headers: { ...response.headers(), 'content-type': 'text/html; charset=utf-8' },
+    });
   });
   await page.addInitScript(() => {
-    const ACCENT: Record<string, string> = { a: 'á', e: 'ë', i: 'ï', o: 'ö', u: 'ü', c: 'ç', n: 'ñ', y: 'ÿ', A: 'Å', E: 'É', O: 'Ö', U: 'Ü' };
+    const ACCENT: Record<string, string> = {
+      a: 'á',
+      e: 'ë',
+      i: 'ï',
+      o: 'ö',
+      u: 'ü',
+      c: 'ç',
+      n: 'ñ',
+      y: 'ÿ',
+      A: 'Å',
+      E: 'É',
+      O: 'Ö',
+      U: 'Ü',
+    };
     const expand = (text: string): string => {
       if (!/\p{L}/u.test(text)) return text;
       const accented = [...text].map((char) => ACCENT[char] ?? char).join('');
@@ -133,7 +152,9 @@ async function usePseudoLocale(page: Page): Promise<void> {
     const walk = (): void => {
       const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
         acceptNode: (node) =>
-          node.parentElement?.closest('script, style, noscript, [data-pseudo]') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+          node.parentElement?.closest('script, style, noscript, [data-pseudo]')
+            ? NodeFilter.FILTER_REJECT
+            : NodeFilter.FILTER_ACCEPT,
       });
       const nodes: Text[] = [];
       while (walker.nextNode()) nodes.push(walker.currentNode as Text);
@@ -149,7 +170,20 @@ function pseudoString(value: string): string {
   // translatable (depth ≥ 2) and gets accented too. Padding is appended outside every brace.
   let depth = 0;
   let out = '';
-  const ACCENT: Record<string, string> = { a: 'á', e: 'ë', i: 'ï', o: 'ö', u: 'ü', c: 'ç', n: 'ñ', y: 'ÿ', A: 'Å', E: 'É', O: 'Ö', U: 'Ü' };
+  const ACCENT: Record<string, string> = {
+    a: 'á',
+    e: 'ë',
+    i: 'ï',
+    o: 'ö',
+    u: 'ü',
+    c: 'ç',
+    n: 'ñ',
+    y: 'ÿ',
+    A: 'Å',
+    E: 'É',
+    O: 'Ö',
+    U: 'Ü',
+  };
   for (const char of value) {
     if (char === '{') depth += 1;
     if (char === '}') depth -= 1;
@@ -171,7 +205,10 @@ async function findClipping(page: Page): Promise<{ scrollWidth: number; clips: I
     const viewport = document.documentElement.clientWidth;
     const clips: Array<{ selector: string; text: string; reason: string }> = [];
     const describe = (el: Element): string =>
-      `${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ''}${[...el.classList].slice(0, 3).map((c) => `.${c}`).join('')}`;
+      `${el.tagName.toLowerCase()}${el.id ? `#${el.id}` : ''}${[...el.classList]
+        .slice(0, 3)
+        .map((c) => `.${c}`)
+        .join('')}`;
     const scrollsX = (el: Element | null): boolean => {
       for (let node = el; node && node !== document.body; node = node.parentElement) {
         const overflowX = getComputedStyle(node).overflowX;
@@ -193,11 +230,19 @@ async function findClipping(page: Page): Promise<{ scrollWidth: number; clips: I
         .trim();
       if (!ownText) continue;
       if (!scrollsX(el) && (rect.right > viewport + 1 || rect.left < -1)) {
-        clips.push({ selector: describe(el), text: ownText.slice(0, 40), reason: `outside viewport ${String(Math.round(rect.left))}–${String(Math.round(rect.right))}` });
+        clips.push({
+          selector: describe(el),
+          text: ownText.slice(0, 40),
+          reason: `outside viewport ${String(Math.round(rect.left))}–${String(Math.round(rect.right))}`,
+        });
       }
       const hidesOverflow = ['hidden', 'clip'].includes(style.overflowX) || style.textOverflow === 'ellipsis';
       if (hidesOverflow && el.scrollWidth > el.clientWidth + 1) {
-        clips.push({ selector: describe(el), text: ownText.slice(0, 40), reason: `clipped ${String(el.scrollWidth)} > ${String(el.clientWidth)}` });
+        clips.push({
+          selector: describe(el),
+          text: ownText.slice(0, 40),
+          reason: `clipped ${String(el.scrollWidth)} > ${String(el.clientWidth)}`,
+        });
       }
     }
     return { scrollWidth: document.documentElement.scrollWidth, clips };

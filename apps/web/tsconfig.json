@@ -4,31 +4,14 @@
     "exactOptionalPropertyTypes": true,
     "noUncheckedIndexedAccess": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@awaketab/wake": [
-        "../../packages/wake/src/index.ts"
-      ],
-      "@awaketab/core": [
-        "../../packages/core/src/index.ts"
-      ]
+      "@/*": ["./src/*"],
+      "@awaketab/wake": ["../../packages/wake/src/index.ts"],
+      "@awaketab/core": ["../../packages/core/src/index.ts"]
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "baseUrl": "."
   },
-  "include": [
-    ".astro/types.d.ts",
-    "**/*"
-  ],
-  "exclude": [
-    "dist",
-    "dist-*",
-    "test",
-    "functions",
-    "public/embed.js",
-    "public/embed",
-    "public/library"
-  ]
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist", "dist-*", "test", "functions", "public/embed.js", "public/embed", "public/library"]
 }

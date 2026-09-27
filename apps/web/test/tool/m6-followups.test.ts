@@ -114,7 +114,9 @@ describe('SponsorCard slots (docs/05 §3.23)', () => {
     store.set({ lock: 'idle', session: null, ui: { dialog: null } });
     expect(idle?.dataset.state).toBe('shown');
     expect(tracked.filter(([e]) => e === 'sponsor_view')).toHaveLength(1);
-    root.querySelector<HTMLAnchorElement>('[data-sponsor="extend"] [data-sponsor-link]')?.dispatchEvent(new MouseEvent('click'));
+    root
+      .querySelector<HTMLAnchorElement>('[data-sponsor="extend"] [data-sponsor-link]')
+      ?.dispatchEvent(new MouseEvent('click'));
     expect(tracked.filter(([e]) => e === 'sponsor_click')).toEqual([['sponsor_click', { sponsorId: 'acme' }]]);
     off();
   });

@@ -32,7 +32,9 @@ export interface ICliDeps {
 
 export class UsageError extends Error {}
 
-export function backupTargets(env: Record<string, string | undefined>): Array<{ namespace: string; namespaceId: string }> {
+export function backupTargets(
+  env: Record<string, string | undefined>,
+): Array<{ namespace: string; namespaceId: string }> {
   const production = env.KV_LICENSES_ID?.trim();
   if (!production) throw new UsageError('KV_LICENSES_ID is not set (the id of the production LICENSES namespace)');
   const targets = [{ namespace: 'LICENSES', namespaceId: production }];
@@ -41,7 +43,11 @@ export function backupTargets(env: Record<string, string | undefined>): Array<{ 
   return targets;
 }
 
-export function isProductionTarget(title: string, namespaceId: string, env: Record<string, string | undefined>): boolean {
+export function isProductionTarget(
+  title: string,
+  namespaceId: string,
+  env: Record<string, string | undefined>,
+): boolean {
   if (env.KV_LICENSES_ID && namespaceId === env.KV_LICENSES_ID.trim()) return true;
   return !/preview/iu.test(title);
 }
@@ -119,12 +125,18 @@ export function runRestore(argv: string[], deps: ICliDeps): Promise<number> {
       }),
     );
     const file = positionals[0];
-    if (!file || positionals.length > 1) throw new UsageError('Usage: pnpm kv:restore <backup file> [--namespace-id <id>] [--apply]');
+    if (!file || positionals.length > 1)
+      throw new UsageError('Usage: pnpm kv:restore <backup file> [--namespace-id <id>] [--apply]');
     const backup = await readBackupFile(await deps.readFile(file), deps.env.BACKUP_ENCRYPTION_KEY);
     const { header } = backup;
     deps.out(
       JSON.stringify({
-        backup: { namespace: header.namespace, namespaceId: header.namespaceId, createdAt: header.createdAt, count: header.count },
+        backup: {
+          namespace: header.namespace,
+          namespaceId: header.namespaceId,
+          createdAt: header.createdAt,
+          count: header.count,
+        },
         byPrefix: countByPrefix(backup.records),
       }),
     );
@@ -142,10 +154,14 @@ export function runRestore(argv: string[], deps: ICliDeps): Promise<number> {
     const title = await store.title();
     const production = isProductionTarget(title, namespaceId, deps.env);
     if (apply && production && !values['yes-production']) {
-      throw new UsageError(`Target "${title}" (${namespaceId}) is production. Re-run with --yes-production to write to it.`);
+      throw new UsageError(
+        `Target "${title}" (${namespaceId}) is production. Re-run with --yes-production to write to it.`,
+      );
     }
     if (header.namespaceId !== namespaceId) {
-      deps.err(`note: the backup is of ${header.namespace} (${header.namespaceId}); restoring into "${title}" (${namespaceId}).`);
+      deps.err(
+        `note: the backup is of ${header.namespace} (${header.namespaceId}); restoring into "${title}" (${namespaceId}).`,
+      );
     }
 
     const plan = await planRestore(backup.records, store, { prefixes: values.prefix ?? [] });
@@ -161,9 +177,13 @@ export function runRestore(argv: string[], deps: ICliDeps): Promise<number> {
       return 0;
     }
     const written = await applyRestore(plan, store, overwrite);
-    deps.out(JSON.stringify({ dryRun: false, target: { title, namespaceId, production }, ...summary, written, conflicts }));
+    deps.out(
+      JSON.stringify({ dryRun: false, target: { title, namespaceId, production }, ...summary, written, conflicts }),
+    );
     if (plan.conflict.length > 0 && !overwrite) {
-      deps.err(`${String(plan.conflict.length)} keys differ from the backup and were kept. Use --overwrite to replace them.`);
+      deps.err(
+        `${String(plan.conflict.length)} keys differ from the backup and were kept. Use --overwrite to replace them.`,
+      );
     }
     return 0;
   });
@@ -186,14 +206,22 @@ export function runReencrypt(argv: string[], deps: ICliDeps): Promise<number> {
       }),
     );
     const namespaceId = values['namespace-id'];
-    if (!namespaceId || positionals.length > 0) throw new UsageError('Usage: pnpm kv:reencrypt --namespace-id <id> [--apply]');
-    requireEnv(deps.env, ['CLOUDFLARE_API_TOKEN', 'CLOUDFLARE_ACCOUNT_ID', 'OLD_LICENSE_KEY_ENC_KEY', 'NEW_LICENSE_KEY_ENC_KEY']);
+    if (!namespaceId || positionals.length > 0)
+      throw new UsageError('Usage: pnpm kv:reencrypt --namespace-id <id> [--apply]');
+    requireEnv(deps.env, [
+      'CLOUDFLARE_API_TOKEN',
+      'CLOUDFLARE_ACCOUNT_ID',
+      'OLD_LICENSE_KEY_ENC_KEY',
+      'NEW_LICENSE_KEY_ENC_KEY',
+    ]);
     const apply = values.apply;
     const store = deps.openStore(namespaceId);
     const title = await store.title();
     const production = isProductionTarget(title, namespaceId, deps.env);
     if (apply && production && !values['yes-production']) {
-      throw new UsageError(`Target "${title}" (${namespaceId}) is production. Re-run with --yes-production to write to it.`);
+      throw new UsageError(
+        `Target "${title}" (${namespaceId}) is production. Re-run with --yes-production to write to it.`,
+      );
     }
     deps.err(`kv:reencrypt ${apply ? 'APPLY' : 'dry run'} on "${title}" (${namespaceId})`);
     const summary = await reencryptNamespace(store, {
@@ -207,8 +235,10 @@ export function runReencrypt(argv: string[], deps: ICliDeps): Promise<number> {
       },
     });
     deps.out(JSON.stringify({ target: { title, namespaceId, production }, ...summary }));
-    if (summary.failed.length > 0) deps.err(`${String(summary.failed.length)} records open with neither key; they were not written.`);
-    if (summary.changed.length > 0) deps.err(`${String(summary.changed.length)} records changed during the run; run the command again.`);
+    if (summary.failed.length > 0)
+      deps.err(`${String(summary.failed.length)} records open with neither key; they were not written.`);
+    if (summary.changed.length > 0)
+      deps.err(`${String(summary.changed.length)} records changed during the run; run the command again.`);
     if (!apply && summary.rotated > 0) {
       deps.err(`Dry run: nothing written. Re-run with --apply${production ? ' --yes-production' : ''}.`);
     }

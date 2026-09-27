@@ -251,7 +251,9 @@ test('/ja/pip renders in Japanese, noindex, with no cards or ads', async ({ page
   await expect(page.locator('[data-sponsor], ins.adsbygoogle, [data-ad-slot]')).toHaveCount(0);
 });
 
-test('SponsorCard slots are not rendered, nor the config fetched, with PUBLIC_SPONSOR_ENABLED off', async ({ page }) => {
+test('SponsorCard slots are not rendered, nor the config fetched, with PUBLIC_SPONSOR_ENABLED off', async ({
+  page,
+}) => {
   const configRequests: string[] = [];
   page.on('request', (req) => {
     if (req.url().includes('/config/sponsor.json')) configRequests.push(req.url());

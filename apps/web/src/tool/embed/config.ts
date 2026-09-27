@@ -18,9 +18,12 @@ export function parseEmbedConfig(data: unknown): IEmbedConfig {
   const d = data as Record<string, unknown>;
   const licensed = d.licensed === true;
   const theme = d.theme && typeof d.theme === 'object' ? (d.theme as Record<string, unknown>) : null;
-  const accent = licensed && typeof theme?.accent === 'string' && HEX.test(theme.accent) ? theme.accent.toLowerCase() : null;
+  const accent =
+    licensed && typeof theme?.accent === 'string' && HEX.test(theme.accent) ? theme.accent.toLowerCase() : null;
   const scheme =
-    licensed && (theme?.scheme === 'auto' || theme?.scheme === 'light' || theme?.scheme === 'dark') ? theme.scheme : null;
+    licensed && (theme?.scheme === 'auto' || theme?.scheme === 'light' || theme?.scheme === 'dark')
+      ? theme.scheme
+      : null;
   return { licensed, attribution: !(licensed && d.attribution === false), accent, scheme };
 }
 

@@ -120,7 +120,8 @@ export function bindDemo(root: HTMLElement, win: Window & { AwakeTabWake?: IWake
     }
     pill?.setAttribute('data-lock', state);
     // The last transition's arrow lights up in the tone of the state it entered.
-    for (const edge of edges) edge.toggleAttribute('data-on', from !== undefined && edge.getAttribute('data-edge') === `${from}-${state}`);
+    for (const edge of edges)
+      edge.toggleAttribute('data-on', from !== undefined && edge.getAttribute('data-edge') === `${from}-${state}`);
     if (advice) {
       const code = lock?.advice ?? null;
       const [before = '', after = ''] = (advice.dataset.label ?? '{code}').split('{code}');
@@ -145,7 +146,11 @@ export function bindDemo(root: HTMLElement, win: Window & { AwakeTabWake?: IWake
         // "3:22:01 PM  requesting → held (acquired)": the time, the change, and its reason and advice.
         const item = doc.createElement('li');
         const time = doc.createElement('time');
-        time.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+        time.textContent = new Date().toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          second: '2-digit',
+        });
         const line = doc.createElement('span');
         const to = doc.createElement('span');
         to.dataset.lock = e.to;

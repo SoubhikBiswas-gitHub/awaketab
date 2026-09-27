@@ -14,12 +14,16 @@ const ERR_ROW: Record<string, string> = {
   bad_request: 'invalid_key',
 };
 
-export type TActivateState = 'idle' | 'checking' | 'error' | 'success' | 'ext-success' | 'checkout-success' | 'cancelled' | 'failed' | 'help';
+export type TActivateState =
+  'idle' | 'checking' | 'error' | 'success' | 'ext-success' | 'checkout-success' | 'cancelled' | 'failed' | 'help';
 const CHECKOUT_STATES: readonly TActivateState[] = ['checkout-success', 'cancelled', 'failed', 'help'];
 
 export const CHECKOUT_RETRY_MS: readonly number[] = [3000, 6000, 12000];
 
-async function whileSyncing<T extends { ok: boolean; error?: string }>(attempt: () => Promise<T>, onWait: (code: string) => void): Promise<T> {
+async function whileSyncing<T extends { ok: boolean; error?: string }>(
+  attempt: () => Promise<T>,
+  onWait: (code: string) => void,
+): Promise<T> {
   let result = await attempt();
   for (const ms of CHECKOUT_RETRY_MS) {
     if (result.ok || result.error !== 'polar_unavailable') break;
@@ -45,7 +49,8 @@ export function bootActivatePage(root: HTMLElement): void {
   const setState = (state: TActivateState) => {
     root.dataset.state = state;
     const checkout = CHECKOUT_STATES.includes(state);
-    for (const view of root.querySelectorAll<HTMLElement>('[data-view]')) view.hidden = (view.dataset.view === 'checkout') !== checkout;
+    for (const view of root.querySelectorAll<HTMLElement>('[data-view]'))
+      view.hidden = (view.dataset.view === 'checkout') !== checkout;
     form.setAttribute('aria-busy', state === 'checking' ? 'true' : 'false');
     if (input) input.readOnly = state === 'checking';
   };
@@ -112,10 +117,13 @@ export function bootActivatePage(root: HTMLElement): void {
     if (key) payload.key = key;
     if (checkoutId) payload.checkoutId = checkoutId;
     const result = fromCheckout
-      ? await whileSyncing(() => activateLicense(payload), (code) => {
-          fail(code);
-          setState('checking');
-        })
+      ? await whileSyncing(
+          () => activateLicense(payload),
+          (code) => {
+            fail(code);
+            setState('checking');
+          },
+        )
       : await activateLicense(payload);
     if (!result.ok) {
       if (fromCheckout && result.error === 'polar_unavailable') setState('help');
@@ -148,10 +156,13 @@ export function bootActivatePage(root: HTMLElement): void {
     setState(direct);
   } else if (ext && checkoutId) {
     setState('checking');
-    void whileSyncing(() => lookupCheckoutKey(checkoutId), (code) => {
-      fail(code);
-      setState('checking');
-    }).then((result) => {
+    void whileSyncing(
+      () => lookupCheckoutKey(checkoutId),
+      (code) => {
+        fail(code);
+        setState('checking');
+      },
+    ).then((result) => {
       if (result.ok) showKey(result.key);
       else fail(result.error);
     });
@@ -213,7 +224,11 @@ function copyText(text: string, button: HTMLElement): Promise<void> {
   );
 }
 
-async function checkoutSuccess(root: HTMLElement, checkoutId: string, result: { token: string; plan: string; exp: number }): Promise<void> {
+async function checkoutSuccess(
+  root: HTMLElement,
+  checkoutId: string,
+  result: { token: string; plan: string; exp: number },
+): Promise<void> {
   const plan = root.querySelector<HTMLElement>('[data-co-plan]');
   const price = root.querySelector<HTMLElement>('[data-co-price]');
   const renews = root.querySelector<HTMLElement>('[data-co-renews]');
@@ -221,11 +236,19 @@ async function checkoutSuccess(root: HTMLElement, checkoutId: string, result: { 
   if (plan) plan.textContent = plan.getAttribute(`data-${result.plan}`) ?? plan.textContent;
   if (price) {
     const launchOff = root.dataset.launch === 'off';
-    price.textContent = (lifetime && launchOff ? price.dataset.lifetimeAfter : price.getAttribute(`data-${result.plan}`)) ?? price.textContent;
+    price.textContent =
+      (lifetime && launchOff ? price.dataset.lifetimeAfter : price.getAttribute(`data-${result.plan}`)) ??
+      price.textContent;
   }
   if (renews) {
     // Yearly tokens carry a 7-day grace past the period end (docs/08 §2.4), so the renewal date is exp − 7 days.
-    renews.textContent = lifetime ? (renews.dataset.never ?? '') : new Date((result.exp - 7 * 86_400) * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    renews.textContent = lifetime
+      ? (renews.dataset.never ?? '')
+      : new Date((result.exp - 7 * 86_400) * 1000).toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        });
   }
 
   const showBtn = root.querySelector<HTMLButtonElement>('[data-co-show]');

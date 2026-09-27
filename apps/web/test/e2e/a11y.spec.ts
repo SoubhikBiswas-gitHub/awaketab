@@ -26,7 +26,10 @@ async function expectNoViolations(page: Page, theme: TTheme): Promise<void> {
   await page.waitForFunction(() =>
     document
       .getAnimations()
-      .every((a) => !(a instanceof CSSAnimation) || a.effect?.getTiming().iterations === Infinity || a.playState === 'finished'),
+      .every(
+        (a) =>
+          !(a instanceof CSSAnimation) || a.effect?.getTiming().iterations === Infinity || a.playState === 'finished',
+      ),
   );
   const results = await new AxeBuilder({ page }).analyze();
   const summary = results.violations.map((v) => ({
@@ -232,7 +235,12 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
       await page.waitForFunction(() =>
         document
           .getAnimations()
-          .every((a) => !(a instanceof CSSAnimation) || a.effect?.getTiming().iterations === Infinity || a.playState === 'finished'),
+          .every(
+            (a) =>
+              !(a instanceof CSSAnimation) ||
+              a.effect?.getTiming().iterations === Infinity ||
+              a.playState === 'finished',
+          ),
       );
     },
   })),

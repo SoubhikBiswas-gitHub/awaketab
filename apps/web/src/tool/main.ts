@@ -122,7 +122,11 @@ export function boot(root: HTMLElement): () => void {
   const offWarn = engine.on('warning', (w) => {
     if (w.code === 'second_tab') store.set({ ui: { secondTab: true } });
     if (w.code === 'battery_low') {
-      pushToast(store, { kind: 'warn', text: t('tool.toast.batteryLow', { percent: Math.round((w.level ?? 0) * 100) }), id: 'battery' });
+      pushToast(store, {
+        kind: 'warn',
+        text: t('tool.toast.batteryLow', { percent: Math.round((w.level ?? 0) * 100) }),
+        id: 'battery',
+      });
     }
   });
   const offEnd = engine.on('ended', ({ reason, session }) => {
@@ -222,7 +226,8 @@ export function boot(root: HTMLElement): () => void {
   };
 
   // Kiosk licence unlocks (docs/09 §7.2): lazy, only when the URL asks for them.
-  if (location.hash.startsWith('#lic=') || bootSearch.includes('logo=')) void import('./embed/kiosk.js').then((m) => m.mountKiosk(ctx, bootSearch));
+  if (location.hash.startsWith('#lic=') || bootSearch.includes('logo='))
+    void import('./embed/kiosk.js').then((m) => m.mountKiosk(ctx, bootSearch));
 
   const unsubs: Array<() => void> = [];
   let ambient = false;
@@ -233,10 +238,13 @@ export function boot(root: HTMLElement): () => void {
       void import('./ambient/shell.js').then((m) => unsubs.push(m.mountAmbient(ctx)));
     }),
   );
-  if (root.querySelector('[data-sponsor]')) void later.then(() => import('./sponsor.js')).then((m) => m.mountSponsor(ctx).then((u) => unsubs.push(u)));
-  void later.then(() => import('./extras.js')).then((mod) => {
-    unsubs.push(mod.mountExtras(store, storage));
-  });
+  if (root.querySelector('[data-sponsor]'))
+    void later.then(() => import('./sponsor.js')).then((m) => m.mountSponsor(ctx).then((u) => unsubs.push(u)));
+  void later
+    .then(() => import('./extras.js'))
+    .then((mod) => {
+      unsubs.push(mod.mountExtras(store, storage));
+    });
   const ring = root.querySelector<HTMLElement>('[data-ring]');
   const pill = root.querySelector<HTMLElement>('[data-pill]');
   const timer = root.querySelector<HTMLElement>('[data-timer]');
@@ -286,7 +294,12 @@ export function boot(root: HTMLElement): () => void {
       }),
     );
   }
-  if (notice) unsubs.push(store.subscribe(() => { openNotice(); }));
+  if (notice)
+    unsubs.push(
+      store.subscribe(() => {
+        openNotice();
+      }),
+    );
   if (timer) unsubs.push(mountTimer(timer, store));
   if (chips) {
     unsubs.push(
@@ -424,11 +437,18 @@ export function boot(root: HTMLElement): () => void {
     });
   });
 
-  void later.then(() => import('./pwa.js')).then(({ mountPwa }) => {
-    mountPwa(root, store, () => engine.session?.status, () => {
-      track(store, 'pwa_install');
+  void later
+    .then(() => import('./pwa.js'))
+    .then(({ mountPwa }) => {
+      mountPwa(
+        root,
+        store,
+        () => engine.session?.status,
+        () => {
+          track(store, 'pwa_install');
+        },
+      );
     });
-  });
 
   const resumable = engine.getResumable();
   if (resumable && !params.autostart) {
@@ -436,9 +456,11 @@ export function boot(root: HTMLElement): () => void {
     track(store, 'resume_shown');
   }
 
-  void later.then(() => import('./ui/lang-suggest.js')).then(({ mountLangSuggest }) => {
-    mountLangSuggest(root, storage);
-  });
+  void later
+    .then(() => import('./ui/lang-suggest.js'))
+    .then(({ mountLangSuggest }) => {
+      mountLangSuggest(root, storage);
+    });
 
   const startNow = () => {
     if (resumable && params.autostart) {
@@ -449,7 +471,8 @@ export function boot(root: HTMLElement): () => void {
     void startPlan(cur.plan, cur.presetId);
   };
 
-  const wantStart = (params.autostart || params.isToolAutostartRoute) && !params.isPip && !(resumable && !params.autostart);
+  const wantStart =
+    (params.autostart || params.isToolAutostartRoute) && !params.isPip && !(resumable && !params.autostart);
   if (wantStart) {
     if (document.visibilityState === 'hidden') {
       store.set({ deferredAutostart: true });

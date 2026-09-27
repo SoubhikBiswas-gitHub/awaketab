@@ -89,7 +89,13 @@ export function optionsFromDataset(data: Record<string, string | undefined>, pag
 }
 
 export function embedQuery(opts: IEmbedOptions, host: string): string {
-  const q = new URLSearchParams({ mode: opts.mode, theme: opts.theme, lang: opts.lang, size: opts.size, preset: opts.preset });
+  const q = new URLSearchParams({
+    mode: opts.mode,
+    theme: opts.theme,
+    lang: opts.lang,
+    size: opts.size,
+    preset: opts.preset,
+  });
   if (opts.until) q.set('until', opts.until.replace(':', '-'));
   if (isHostname(host)) q.set('host', host);
   return q.toString();
@@ -167,10 +173,14 @@ export function parsePageMessage(data: unknown): TPageMessage | null {
 export function parseWidgetMessage(data: unknown): TWidgetMessage | null {
   const m = record(data);
   if (!m) return null;
-  if (m.type === 'awaketab:ready') return { type: 'awaketab:ready', version: typeof m.version === 'string' ? m.version.slice(0, 16) : '' };
+  if (m.type === 'awaketab:ready')
+    return { type: 'awaketab:ready', version: typeof m.version === 'string' ? m.version.slice(0, 16) : '' };
   if (m.type === 'awaketab:resize') {
     if (typeof m.height !== 'number' || !Number.isFinite(m.height)) return null;
-    return { type: 'awaketab:resize', height: Math.round(Math.min(EMBED_MAX_HEIGHT, Math.max(EMBED_MIN_HEIGHT, m.height))) };
+    return {
+      type: 'awaketab:resize',
+      height: Math.round(Math.min(EMBED_MAX_HEIGHT, Math.max(EMBED_MIN_HEIGHT, m.height))),
+    };
   }
   if (m.type === 'awaketab:state') {
     if (typeof m.lock !== 'string' || typeof m.status !== 'string') return null;

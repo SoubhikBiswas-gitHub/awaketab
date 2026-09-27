@@ -42,7 +42,10 @@ test.describe('no cookies on tool routes', () => {
     });
   }
 
-  test('a full session with settings, theme and ambient changes stores nothing in cookies', async ({ context, page }) => {
+  test('a full session with settings, theme and ambient changes stores nothing in cookies', async ({
+    context,
+    page,
+  }) => {
     await page.goto('/');
     await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake', { timeout: 4000 });
     await page.keyboard.press('2');

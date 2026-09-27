@@ -24,6 +24,7 @@ export function inIframe(win: Window): boolean {
 }
 
 export function embedAdvice(advice: TAdviceCode | null, policy: boolean | null, ua: string): TAdviceCode | null {
-  if (advice === 'iframe_no_allow' && policy === true) return /iPhone|iPad|iPod/u.test(ua) ? 'low_power_ios' : 'battery_saver';
+  if (advice === 'iframe_no_allow' && policy === true)
+    return /iPhone|iPad|iPod/u.test(ua) ? 'low_power_ios' : 'battery_saver';
   return advice;
 }

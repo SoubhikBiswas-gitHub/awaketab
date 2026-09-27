@@ -15,7 +15,9 @@ function engine(now: { t: number }, fake = createFakeApi()) {
     settings: () => DEFAULT_SETTINGS,
     now: () => now.t,
     setTimeout: vi.fn((fn: () => void, ms?: number) => setTimeout(fn, ms) as unknown as number),
-    clearTimeout: vi.fn((id) => { clearTimeout(id as unknown as number); }),
+    clearTimeout: vi.fn((id) => {
+      clearTimeout(id as unknown as number);
+    }),
     lostTimeoutMs: LOST_TIMEOUT_MS,
   });
 }

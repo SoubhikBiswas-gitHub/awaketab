@@ -41,7 +41,9 @@ describe('RTL readiness', () => {
       const source = await readFile(page, 'utf8');
       // Standalone documents (the /embed/cook iframe app) may own <html> but must still take dir from textDirection().
       if (source.includes('<html')) {
-        expect(source, `${path.relative(SRC, page)} must plumb dir via textDirection()`).toMatch(/<html [^>]*dir=\{textDirection\(/u);
+        expect(source, `${path.relative(SRC, page)} must plumb dir via textDirection()`).toMatch(
+          /<html [^>]*dir=\{textDirection\(/u,
+        );
       }
     }
   });

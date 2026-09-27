@@ -109,7 +109,11 @@ function bindFlush(): void {
   });
 }
 
-export function track(event: string, params: Record<string, string | number | boolean> = {}, opts: ITrackOptions): void {
+export function track(
+  event: string,
+  params: Record<string, string | number | boolean> = {},
+  opts: ITrackOptions,
+): void {
   if (!opts.telemetry) return;
   if (!ALLOWED.has(event)) return;
   if (event === 'client_error' && !sampleClientError(tabSid())) return;
@@ -160,9 +164,12 @@ export async function flush(useBeacon: boolean): Promise<void> {
   }
   // Offline or blocked: drop the batch quietly. An unhandled rejection here would be reported as a
   // client_error, queue another flush and fail again.
-  await fetch('/api/e', { method: 'POST', headers: { 'content-type': 'application/json' }, body, keepalive: true }).catch(
-    () => undefined,
-  );
+  await fetch('/api/e', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body,
+    keepalive: true,
+  }).catch(() => undefined);
 }
 
 export const analyticsLimits = { MAX_BATCH, MAX_BYTES };

@@ -19,7 +19,8 @@ export function bindCodeTabs(root: HTMLElement, win: Window = window): void {
     tab.addEventListener('keydown', (e) => {
       const n = tabs.length;
       const step: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
-      const rtl = win.getComputedStyle(tab).direction === 'rtl' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft') ? -1 : 1;
+      const rtl =
+        win.getComputedStyle(tab).direction === 'rtl' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft') ? -1 : 1;
       let next: number | null = null;
       if (e.key in step) next = (i + (step[e.key] ?? 0) * rtl + n) % n;
       else if (e.key === 'Home') next = 0;

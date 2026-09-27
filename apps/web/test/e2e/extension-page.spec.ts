@@ -1,7 +1,10 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-test('/extension: store links record extension_click, no ad code, axe clean in both themes', async ({ page, browserName }) => {
+test('/extension: store links record extension_click, no ad code, axe clean in both themes', async ({
+  page,
+  browserName,
+}) => {
   const events: string[] = [];
   await page.route('**/api/e', async (route) => {
     const body = JSON.parse(route.request().postData() ?? '{}') as { events?: Array<{ event: string }> };
@@ -9,7 +12,9 @@ test('/extension: store links record extension_click, no ad code, axe clean in b
     await route.fulfill({ status: 204, body: '' });
   });
   // Store pages are third-party: never navigate there in the test.
-  await page.route(/chromewebstore\.google\.com|microsoftedge\.microsoft\.com/u, (route) => route.fulfill({ status: 204, body: '' }));
+  await page.route(/chromewebstore\.google\.com|microsoftedge\.microsoft\.com/u, (route) =>
+    route.fulfill({ status: 204, body: '' }),
+  );
   await page.goto('/extension');
   await expect(page.locator('h1')).toHaveText('AwakeTab for Chrome');
   const html = await page.content();

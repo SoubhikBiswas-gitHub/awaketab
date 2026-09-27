@@ -43,7 +43,13 @@ function mirror(card: HTMLElement): void {
   };
   copy();
   const mo = new MutationObserver(copy);
-  mo.observe(pill, { attributes: true, attributeFilter: ['data-lock'], childList: true, subtree: true, characterData: true });
+  mo.observe(pill, {
+    attributes: true,
+    attributeFilter: ['data-lock'],
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
   if (digits) mo.observe(digits, { childList: true, subtree: true, characterData: true });
 }
 

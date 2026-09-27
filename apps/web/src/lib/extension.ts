@@ -11,7 +11,10 @@ export function unsupportedBrowser(ua: string): 'firefox' | 'safari' | null {
   return null;
 }
 
-export function bootExtensionPage(root: HTMLElement, track: (event: string, params: Record<string, string>) => void): void {
+export function bootExtensionPage(
+  root: HTMLElement,
+  track: (event: string, params: Record<string, string>) => void,
+): void {
   const unsupported = unsupportedBrowser(navigator.userAgent);
   if (unsupported) {
     root.dataset.browser = unsupported;

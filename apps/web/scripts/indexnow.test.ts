@@ -3,14 +3,29 @@ import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { changedUrls, INDEXNOW_ENDPOINT, MAX_URLS, payloads, ping, readKey, selectUrls, sitemapLocs, validKey } from './indexnow.mjs';
+import {
+  changedUrls,
+  INDEXNOW_ENDPOINT,
+  MAX_URLS,
+  payloads,
+  ping,
+  readKey,
+  selectUrls,
+  sitemapLocs,
+  validKey,
+} from './indexnow.mjs';
 
 const SITE = 'https://awaketab.com';
 const REPO = path.resolve(import.meta.dirname, '../../..');
 const KEY = '0123456789abcdef0123456789abcdef';
 
 const slugs = { for: { cooking: { es: 'cocinar' } } };
-const entry = (kind: string, locale: string, enSlug: string, extra: { reviewed?: boolean; noindex?: boolean } = {}) => ({
+const entry = (
+  kind: string,
+  locale: string,
+  enSlug: string,
+  extra: { reviewed?: boolean; noindex?: boolean } = {},
+) => ({
   kind,
   locale,
   enSlug,
@@ -87,7 +102,13 @@ describe('IndexNow URL selection (F-05)', () => {
   });
 
   it('a shared template, style, string catalog or engine change means every URL', () => {
-    for (const file of ['apps/web/src/layouts/BaseLayout.astro', 'apps/web/src/i18n/en.json', 'apps/web/public/_redirects', 'packages/wake/src/machine.ts', 'apps/web/astro.config.mjs']) {
+    for (const file of [
+      'apps/web/src/layouts/BaseLayout.astro',
+      'apps/web/src/i18n/en.json',
+      'apps/web/public/_redirects',
+      'packages/wake/src/machine.ts',
+      'apps/web/astro.config.mjs',
+    ]) {
       expect(changedUrls([file], PAGES, slugs), file).toBe('all');
     }
     expect(changedUrls(['README.md', 'apps/web/test/seo/x.test.ts'], PAGES, slugs)).toEqual(new Set());
@@ -115,7 +136,12 @@ describe('IndexNow ping (F-05)', () => {
     expect(calls.map((c) => c.url)).toEqual([`${SITE}/${KEY}.txt`, INDEXNOW_ENDPOINT]);
     expect(calls[1]?.init?.method).toBe('POST');
     expect(new Headers(calls[1]?.init?.headers).get('content-type')).toMatch(/^application\/json/u);
-    expect(JSON.parse(calls[1]?.init?.body as string)).toEqual({ host: 'awaketab.com', key: KEY, keyLocation: `${SITE}/${KEY}.txt`, urlList: [`${SITE}/for/cooking`] });
+    expect(JSON.parse(calls[1]?.init?.body as string)).toEqual({
+      host: 'awaketab.com',
+      key: KEY,
+      keyLocation: `${SITE}/${KEY}.txt`,
+      urlList: [`${SITE}/for/cooking`],
+    });
   });
 
   it('refuses to ping when the key file is not deployed, and sends nothing for no URLs or a dry run', async () => {
@@ -136,7 +162,9 @@ describe('IndexNow ping (F-05)', () => {
 
   it('treats any status but 200 / 202 as a failure', async () => {
     const fetchFn = ((url: string) =>
-      Promise.resolve(url.endsWith('.txt') ? new Response(KEY) : new Response('bad', { status: 422 }))) as unknown as typeof fetch;
+      Promise.resolve(
+        url.endsWith('.txt') ? new Response(KEY) : new Response('bad', { status: 422 }),
+      )) as unknown as typeof fetch;
     await expect(ping({ key: KEY, urls: [`${SITE}/`], fetchFn })).rejects.toThrow(/HTTP 422/u);
   });
 });

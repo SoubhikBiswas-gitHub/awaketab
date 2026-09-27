@@ -34,7 +34,8 @@ export function mountChips(
   }
 
   return store.subscribe((s) => {
-    const pressed = s.session?.status === 'active' || s.session?.status === 'paused' ? s.session.presetId : s.selectedPreset;
+    const pressed =
+      s.session?.status === 'active' || s.session?.status === 'paused' ? s.session.presetId : s.selectedPreset;
     const busy = s.lock === 'requesting';
     for (const btn of buttons) {
       const id = btn.dataset.preset as TPresetId | undefined;

@@ -91,7 +91,9 @@ export interface IExtApi {
     getURL(path: string): string;
     onStartup: IExtEvent<() => void>;
     onInstalled: IExtEvent<(details: { reason: string; previousVersion?: string }) => void>;
-    onMessage: IExtEvent<(message: unknown, sender: unknown, sendResponse: (response: unknown) => void) => boolean | undefined>;
+    onMessage: IExtEvent<
+      (message: unknown, sender: unknown, sendResponse: (response: unknown) => void) => boolean | undefined
+    >;
     sendMessage(message: unknown): Promise<unknown>;
     openOptionsPage(): Promise<void>;
   };

@@ -137,7 +137,11 @@ describe('activate page', () => {
     bootActivatePage(root);
     submit(root, 'ATAB-TEST-KEY-1234567890');
     await flush();
-    expect(activate).toHaveBeenCalledWith({ deviceId: 'dev-0000', deviceLabel: expect.any(String) as string, key: 'ATAB-TEST-KEY-1234567890' });
+    expect(activate).toHaveBeenCalledWith({
+      deviceId: 'dev-0000',
+      deviceLabel: expect.any(String) as string,
+      key: 'ATAB-TEST-KEY-1234567890',
+    });
     expect(panel(root)?.hidden).toBe(true);
     expect(root.querySelector<HTMLElement>('[data-activate-mode="web"]')?.hidden).toBe(false);
   });
@@ -148,7 +152,11 @@ describe('activate page', () => {
     const root = mount();
     bootActivatePage(root);
     await flush();
-    expect(activate).toHaveBeenCalledWith({ deviceId: 'dev-0000', deviceLabel: expect.any(String) as string, checkoutId: 'chk_1' });
+    expect(activate).toHaveBeenCalledWith({
+      deviceId: 'dev-0000',
+      deviceLabel: expect.any(String) as string,
+      checkoutId: 'chk_1',
+    });
     expect(lookup).not.toHaveBeenCalled();
   });
 
@@ -269,7 +277,13 @@ describe('activate page', () => {
 
   // B7 / O-26: activation ends on the page ("Pro is active"), never with a redirect to /.
   describe('Pro is active and the checkout return', () => {
-    const ok = { ok: true as const, token: 't', plan: 'pro_yearly' as const, features: [], exp: Math.floor(Date.UTC(2027, 8, 27) / 1000) + 7 * 86_400 };
+    const ok = {
+      ok: true as const,
+      token: 't',
+      plan: 'pro_yearly' as const,
+      features: [],
+      exp: Math.floor(Date.UTC(2027, 8, 27) / 1000) + 7 * 86_400,
+    };
 
     it('shows the success card with the key ending instead of leaving the page', async () => {
       activate.mockResolvedValue(ok);
@@ -297,7 +311,13 @@ describe('activate page', () => {
       history.replaceState(null, '', '/pro/activate?checkout_id=chk_1');
       activate.mockResolvedValue(ok);
       lookup.mockResolvedValue({ ok: true, key: 'AWAKE-3C9D-81F0-7F2Q-ABCD' });
-      vi.mocked(fetchActivations).mockResolvedValue({ revoked: false, activations: [{ label: 'a', at: 1, devHash: 'h' }, { label: 'b', at: 2, devHash: 'i' }] });
+      vi.mocked(fetchActivations).mockResolvedValue({
+        revoked: false,
+        activations: [
+          { label: 'a', at: 1, devHash: 'h' },
+          { label: 'b', at: 2, devHash: 'i' },
+        ],
+      });
       const root = mount();
       bootActivatePage(root);
       await flush();
@@ -355,7 +375,11 @@ describe('activate page', () => {
       submit(root, 'ATAB-TEST-KEY-1234567890');
       await flush();
       await flush();
-      expect(track).toHaveBeenCalledWith('pro_activated', { plan: 'pro_yearly' }, expect.objectContaining({ telemetry: true, path: '/pro/activate' }));
+      expect(track).toHaveBeenCalledWith(
+        'pro_activated',
+        { plan: 'pro_yearly' },
+        expect.objectContaining({ telemetry: true, path: '/pro/activate' }),
+      );
     });
   });
 });

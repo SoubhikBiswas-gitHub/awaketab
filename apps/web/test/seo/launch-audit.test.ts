@@ -57,7 +57,8 @@ describe('F-04 · /about contact and /privacy retention rows', () => {
     expect(body).toMatch(/Advertising \(not yet active\)/u);
     expect(body).toMatch(/never show ads on the awake screen/u);
     // Every event the API accepts is disclosed (functions/_lib/env.ts EVENT_NAMES).
-    for (const event of ['session_extend', 'affiliate_click', 'rating_submitted', 'client_error']) expect(body).toContain(event);
+    for (const event of ['session_extend', 'affiliate_click', 'rating_submitted', 'client_error'])
+      expect(body).toContain(event);
     // Still a first-party page: no ad or consent script ships with the policy itself.
     expect(html).not.toMatch(/googlesyndication|adsbygoogle|fundingchoicesmessages/u);
   });
@@ -82,8 +83,12 @@ describe('F-07 · /changelog renders Markdown and orders by date', () => {
     const html = (await page('/changelog')).split('<footer')[0] ?? '';
     // B6 (board PageChangelog): the release is a card with an h2; the other entries are h3 under an h2 per date.
     // Every entry carries its own date (data-date) and its title (data-changelog-title), in page order.
-    const titles = [...html.matchAll(/<h[23][^>]*data-changelog-title[^>]*>\s*([^<]+?)\s*<\/h[23]>/gu)].map((m) => m[1]);
-    const dates = [...html.matchAll(/data-changelog-entry="[^"]+" data-date="(\d{4}-\d{2}-\d{2})"/gu)].map((m) => m[1] ?? '');
+    const titles = [...html.matchAll(/<h[23][^>]*data-changelog-title[^>]*>\s*([^<]+?)\s*<\/h[23]>/gu)].map(
+      (m) => m[1],
+    );
+    const dates = [...html.matchAll(/data-changelog-entry="[^"]+" data-date="(\d{4}-\d{2}-\d{2})"/gu)].map(
+      (m) => m[1] ?? '',
+    );
     // Each date heading names a date the entries under it carry.
     const headings = [...html.matchAll(/<h2[^>]*><time datetime="(\d{4}-\d{2}-\d{2})">/gu)].map((m) => m[1] ?? '');
     expect(headings.length).toBeGreaterThanOrEqual(4);
@@ -126,7 +131,9 @@ describe('F-05 · IndexNow URL selection', () => {
 
   it('ships a key file only when INDEXNOW_KEY was set for the build', async () => {
     const key = process.env.INDEXNOW_KEY?.trim();
-    const txt = (await readdir(dist)).filter((name) => /^[A-Za-z0-9-]{8,128}\.txt$/u.test(name) && name !== 'robots.txt');
+    const txt = (await readdir(dist)).filter(
+      (name) => /^[A-Za-z0-9-]{8,128}\.txt$/u.test(name) && name !== 'robots.txt',
+    );
     if (key) {
       expect(txt).toEqual([`${key}.txt`]);
       expect((await readFile(path.join(dist, `${key}.txt`), 'utf8')).trim()).toBe(key);
@@ -138,7 +145,8 @@ describe('F-05 · IndexNow URL selection', () => {
 
 describe('F-06 / N-03 · Polar server and licence keys in the bundle', () => {
   async function devPoint(): Promise<{ x: string; y: string }> {
-    const line = (await readFile(devVars, 'utf8')).split('\n').find((row) => row.startsWith('LICENSE_SIGNING_KEY=')) ?? '';
+    const line =
+      (await readFile(devVars, 'utf8')).split('\n').find((row) => row.startsWith('LICENSE_SIGNING_KEY=')) ?? '';
     return JSON.parse(line.slice('LICENSE_SIGNING_KEY='.length)) as { x: string; y: string };
   }
 
@@ -159,7 +167,9 @@ describe('F-06 / N-03 · Polar server and licence keys in the bundle', () => {
     // shows "Licences open soon" and carries no checkout link at all.
     expect(await page('/embed')).not.toMatch(/href="https:\/\/[^"]*polar\.sh/u);
     for (const route of ['pro', 'kiosk']) {
-      const links = [...(await page(`/${route}`)).matchAll(/href="(https:\/\/[^"]*polar\.sh[^"]*)"/gu)].map((m) => m[1] ?? '');
+      const links = [...(await page(`/${route}`)).matchAll(/href="(https:\/\/[^"]*polar\.sh[^"]*)"/gu)].map(
+        (m) => m[1] ?? '',
+      );
       expect(links.length, route).toBeGreaterThan(0);
       for (const href of links) expect(href.includes('sandbox'), `${route}: ${href}`).toBe(want === 'sandbox');
     }
@@ -183,23 +193,104 @@ describe('D-03 · ja, zh and hi content pages use the English slug (docs/06 §5)
   // is `reviewed: false` → noindex), so nothing redirects them; nothing may link to them either.
   const RETIRED: Record<string, Record<string, readonly string[]>> = {
     ja: {
-      for: ['ryouri', 'purezenteeshon', 'daunroodo', 'ai-ejento', 'dasshuboodo', 'kiosuku', 'gakufu', 'dokusho', 'yoru-tokei', 'akachan-monitor', 'nabi', 'bideo-tsuuwa', 'raibu', 'terepuronputa', 'toreseningu', 'sabu-monitor', 'shigoto-pc', 'shiken'],
+      for: [
+        'ryouri',
+        'purezenteeshon',
+        'daunroodo',
+        'ai-ejento',
+        'dasshuboodo',
+        'kiosuku',
+        'gakufu',
+        'dokusho',
+        'yoru-tokei',
+        'akachan-monitor',
+        'nabi',
+        'bideo-tsuuwa',
+        'raibu',
+        'terepuronputa',
+        'toreseningu',
+        'sabu-monitor',
+        'shigoto-pc',
+        'shiken',
+      ],
       on: ['ios-home-gamen'],
       vs: ['caffeinate-meirei', 'mouse-jiggler'],
-      guides: ['windows-11-1-fun-de-gamen-off', 'mac-futa-tojite-suimin-boshi', 'iphone-jido-rokku-never-grey', 'android-gamen-timeout-ichi-app', 'sabu-monitor-kieru', 'lock-gamen-vs-suimin'],
+      guides: [
+        'windows-11-1-fun-de-gamen-off',
+        'mac-futa-tojite-suimin-boshi',
+        'iphone-jido-rokku-never-grey',
+        'android-gamen-timeout-ichi-app',
+        'sabu-monitor-kieru',
+        'lock-gamen-vs-suimin',
+      ],
       learn: ['wake-lock-api-gaido', 'wake-lock-teams-midori', 'low-power-mode-to-wake-lock', 'dou-tesuto-shita-ka'],
     },
     zh: {
-      for: ['pengren', 'yanjiang', 'xiazai', 'ai-daili', 'yibiaoban', 'zizhu', 'yuepu', 'yuedu', 'yejian-shizhong', 'yinger-jianshi', 'daohang', 'shipin-tonghua', 'zhibo', 'ti-ci-qi', 'duanlian', 'di-er-ping', 'bangong-bijiben', 'kaoshi'],
+      for: [
+        'pengren',
+        'yanjiang',
+        'xiazai',
+        'ai-daili',
+        'yibiaoban',
+        'zizhu',
+        'yuepu',
+        'yuedu',
+        'yejian-shizhong',
+        'yinger-jianshi',
+        'daohang',
+        'shipin-tonghua',
+        'zhibo',
+        'ti-ci-qi',
+        'duanlian',
+        'di-er-ping',
+        'bangong-bijiben',
+        'kaoshi',
+      ],
       on: ['ios-zhuoye'],
       vs: ['caffeinate-mingling', 'shubiao-hudong'],
-      guides: ['windows-11-yi-fenzhong-hei-ping', 'mac-hegai-fangzhi-xiumian', 'iphone-zidong-suoding-yongbu-hui', 'chrome-jieneng', 'android-pingmu-chaoshi-yi-yingyong', 'di-er-ping-xizhen', 'suoping-vs-xiumian'],
-      learn: ['wake-lock-api-zhinan', 'wake-lock-nengfou-baochi-teams-zaixian', 'dihao-moshi-yu-wake-lock', 'liulanqi-zhichi-juzhen', 'women-ruhe-ceshi'],
+      guides: [
+        'windows-11-yi-fenzhong-hei-ping',
+        'mac-hegai-fangzhi-xiumian',
+        'iphone-zidong-suoding-yongbu-hui',
+        'chrome-jieneng',
+        'android-pingmu-chaoshi-yi-yingyong',
+        'di-er-ping-xizhen',
+        'suoping-vs-xiumian',
+      ],
+      learn: [
+        'wake-lock-api-zhinan',
+        'wake-lock-nengfou-baochi-teams-zaixian',
+        'dihao-moshi-yu-wake-lock',
+        'liulanqi-zhichi-juzhen',
+        'women-ruhe-ceshi',
+      ],
     },
     hi: {
-      for: ['khana-banana', 'prastuti', 'download', 'ai-agent', 'dashboard', 'sangeet-lipi', 'padhna', 'raat-ghadi', 'shishu-monitor', 'video-call', 'live-stream', 'vyayam', 'doosri-screen', 'kaam-laptop', 'pariksha'],
+      for: [
+        'khana-banana',
+        'prastuti',
+        'download',
+        'ai-agent',
+        'dashboard',
+        'sangeet-lipi',
+        'padhna',
+        'raat-ghadi',
+        'shishu-monitor',
+        'video-call',
+        'live-stream',
+        'vyayam',
+        'doosri-screen',
+        'kaam-laptop',
+        'pariksha',
+      ],
       vs: ['mouse-jiggler'],
-      guides: ['windows-11-ek-minute-baad-screen-band', 'mac-dhakkan-band-sone-se-rokna', 'iphone-auto-lock-never-grey', 'android-screen-timeout-ek-app', 'doosri-screen-band'],
+      guides: [
+        'windows-11-ek-minute-baad-screen-band',
+        'mac-dhakkan-band-sone-se-rokna',
+        'iphone-auto-lock-never-grey',
+        'android-screen-timeout-ek-app',
+        'doosri-screen-band',
+      ],
       learn: ['wake-lock-api-guide', 'wake-lock-teams-green', 'low-power-mode-aur-wake-lock', 'kaise-test-kiya'],
     },
   };
@@ -248,7 +339,8 @@ describe('D-03 · ja, zh and hi content pages use the English slug (docs/06 §5)
     for (const file of await everyFile(dist)) {
       const relative = path.relative(dist, file).replace(/\\/gu, '/');
       if (retired.test(`/${relative.replace(/\.(?:html|png)$/u, '')}`)) hits.push(relative);
-      if (!/\.(?:html|js|mjs|json|txt|xml|webmanifest|css)$|^_(?:redirects|headers)$/u.test(path.basename(file))) continue;
+      if (!/\.(?:html|js|mjs|json|txt|xml|webmanifest|css)$|^_(?:redirects|headers)$/u.test(path.basename(file)))
+        continue;
       const match = retired.exec(await readFile(file, 'utf8'));
       if (match) hits.push(`${relative}: ${match[0]}`);
     }

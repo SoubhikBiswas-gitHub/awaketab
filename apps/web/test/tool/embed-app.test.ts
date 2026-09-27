@@ -29,7 +29,10 @@ function mount(search: string): { app: IEmbedApp; root: HTMLElement; fake: Retur
   document.body.innerHTML = markup
     .replace(/\{t\('[^']+'\)\}/gu, '')
     .replace(/set:html=\{catalogs\}/u, '')
-    .replace(/<script is:inline type="application\/json" data-embed-catalogs\s*\/>/u, '<script type="application/json" data-embed-catalogs></script>');
+    .replace(
+      /<script is:inline type="application\/json" data-embed-catalogs\s*\/>/u,
+      '<script type="application/json" data-embed-catalogs></script>',
+    );
   const catalogs = document.querySelector('[data-embed-catalogs]');
   if (catalogs) catalogs.textContent = JSON.stringify({ en: embedCatalog(en), de: embedCatalog(de) });
   const root = document.querySelector<HTMLElement>('#awaketab-embed') as HTMLElement;
@@ -56,7 +59,10 @@ afterEach(() => {
 describe('planFor', () => {
   it('maps presets, explicit ms and until', () => {
     expect(planFor({ preset: 'pinf', until: null })).toEqual({ plan: { type: 'indefinite' }, presetId: 'pinf' });
-    expect(planFor({ preset: 'p30', until: null })).toEqual({ plan: { type: 'duration', ms: 1_800_000 }, presetId: 'p30' });
+    expect(planFor({ preset: 'p30', until: null })).toEqual({
+      plan: { type: 'duration', ms: 1_800_000 },
+      presetId: 'p30',
+    });
     expect(planFor({ preset: 'pinf', until: null }, { type: 'awaketab:start', ms: 120_000 })).toEqual({
       plan: { type: 'duration', ms: 120_000 },
       presetId: 'custom',
@@ -83,17 +89,21 @@ describe('digitsFor — only held/fallback run the clock', () => {
   const base = { mode: 'cook' as const, params: { preset: 'pinf' as const, until: null }, locale: 'en' };
 
   it('shows the preset length, muted, before a session', () => {
-    expect(digitsFor({ ...base, lock: 'idle', session: null, now: 0, params: { preset: 'p15', until: null } })).toEqual({
-      text: '15:00',
-      muted: true,
-    });
+    expect(digitsFor({ ...base, lock: 'idle', session: null, now: 0, params: { preset: 'p15', until: null } })).toEqual(
+      {
+        text: '15:00',
+        muted: true,
+      },
+    );
   });
 
   it('runs elapsed time while held and freezes it when the lock is lost or the clock paused', () => {
     const s = session({});
     expect(digitsFor({ ...base, lock: 'held', session: s, now: 1_065_000 })).toEqual({ text: '01:05', muted: false });
     expect(digitsFor({ ...base, lock: 'lost', session: s, now: 1_065_000 }).muted).toBe(true);
-    expect(digitsFor({ ...base, lock: 'held', session: session({ status: 'paused', pausedAt: 1_030_000 }), now: 1_065_000 })).toEqual({
+    expect(
+      digitsFor({ ...base, lock: 'held', session: session({ status: 'paused', pausedAt: 1_030_000 }), now: 1_065_000 }),
+    ).toEqual({
       text: '00:30',
       muted: true,
     });

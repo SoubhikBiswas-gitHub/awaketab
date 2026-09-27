@@ -44,14 +44,11 @@ const CONTENT_CSP = [
   'report-to csp',
 ].join('; ');
 
-const EMBED_CSP =
-  `default-src 'self'; script-src 'self' ${BOOT_HASH}; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; frame-ancestors *`;
+const EMBED_CSP = `default-src 'self'; script-src 'self' ${BOOT_HASH}; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; connect-src 'self'; frame-ancestors *`;
 
 const contentRoutes = [
   ...CONTENT_FAMILIES.map((family) => `/${family}/*`),
-  ...LOCALES.flatMap((locale) =>
-    CONTENT_FAMILIES.map((family) => `/${locale}/${family}/*`),
-  ),
+  ...LOCALES.flatMap((locale) => CONTENT_FAMILIES.map((family) => `/${locale}/${family}/*`)),
 ];
 
 export const PREVIEW_HOST_RULES = ['https://:project.pages.dev/*', 'https://:version.:project.pages.dev/*'];
@@ -105,8 +102,10 @@ ${content}
   Cache-Control: public, max-age=31536000, immutable
 
 ${['/pip', ...LOCALES.map((locale) => `/${locale}/pip`)]
-  .map((route) => `${route}
-  X-Robots-Tag: noindex`)
+  .map(
+    (route) => `${route}
+  X-Robots-Tag: noindex`,
+  )
   .join('\n\n')}
 
 /config/*
@@ -131,8 +130,10 @@ ${['/pip', ...LOCALES.map((locale) => `/${locale}/pip`)]
   Cache-Control: no-store
   X-Robots-Tag: noindex
 
-${PREVIEW_HOST_RULES.map((route) => `${route}
-  X-Robots-Tag: noindex`).join('\n\n')}
+${PREVIEW_HOST_RULES.map(
+  (route) => `${route}
+  X-Robots-Tag: noindex`,
+).join('\n\n')}
 `;
 }
 
@@ -216,10 +217,7 @@ export function parseRules(text) {
 }
 
 async function writeGeneratedFiles() {
-  const publicDirectory = path.resolve(
-    path.dirname(fileURLToPath(import.meta.url)),
-    '../public',
-  );
+  const publicDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../public');
   await mkdir(publicDirectory, { recursive: true });
   await Promise.all([
     writeFile(path.join(publicDirectory, '_headers'), generateHeaders()),

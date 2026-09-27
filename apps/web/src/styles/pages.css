@@ -96,7 +96,11 @@
   }
 
   body:has(.at-page:not(.at-embed)) {
-    background-image: radial-gradient(1400px 900px at 50% -160px, var(--at-lift) 0%, color-mix(in srgb, var(--at-ground) 0%, transparent) 72%);
+    background-image: radial-gradient(
+      1400px 900px at 50% -160px,
+      var(--at-lift) 0%,
+      color-mix(in srgb, var(--at-ground) 0%, transparent) 72%
+    );
   }
 
   .at-legal-dl dt code {
@@ -226,7 +230,9 @@
 
   .at-pg-digits {
     font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum" 1, "zero" 0;
+    font-feature-settings:
+      "tnum" 1,
+      "zero" 0;
   }
 
   .at-pg-stack-4,
@@ -771,7 +777,9 @@
     block-size: var(--at-pg-bead);
     border-radius: 50%;
     background: var(--at-accent);
-    box-shadow: 0 0 0 3px var(--at-surface), 0 0 12px color-mix(in srgb, var(--at-accent) 60%, transparent);
+    box-shadow:
+      0 0 0 3px var(--at-surface),
+      0 0 12px color-mix(in srgb, var(--at-accent) 60%, transparent);
   }
 
   .at-about-name {
@@ -938,7 +946,11 @@
     block-size: 120%;
     background: radial-gradient(
       40% 45% at 75% 30%,
-      light-dark(color-mix(in srgb, var(--at-accent) 12%, transparent), color-mix(in srgb, var(--at-accent) 16%, transparent)) 0%,
+      light-dark(
+          color-mix(in srgb, var(--at-accent) 12%, transparent),
+          color-mix(in srgb, var(--at-accent) 16%, transparent)
+        )
+        0%,
       transparent 70%
     );
   }
@@ -1224,9 +1236,16 @@
     column-gap: var(--at-s-3);
     padding-block: var(--at-s-4);
     padding-inline: var(--at-s-5);
-    border: var(--at-border) solid light-dark(color-mix(in srgb, var(--at-accent) 26%, transparent), color-mix(in srgb, var(--at-accent) 22%, transparent));
+    border: var(--at-border) solid
+      light-dark(
+        color-mix(in srgb, var(--at-accent) 26%, transparent),
+        color-mix(in srgb, var(--at-accent) 22%, transparent)
+      );
     border-radius: var(--at-r-lg);
-    background: light-dark(color-mix(in srgb, var(--at-accent) 6%, transparent), color-mix(in srgb, var(--at-accent) 7%, transparent));
+    background: light-dark(
+      color-mix(in srgb, var(--at-accent) 6%, transparent),
+      color-mix(in srgb, var(--at-accent) 7%, transparent)
+    );
   }
 
   .at-legal-short > svg {
@@ -1350,7 +1369,15 @@
     inset-inline-start: -30%;
     inline-size: 160%;
     block-size: 120%;
-    background: radial-gradient(40% 40% at 50% 45%, light-dark(color-mix(in srgb, var(--at-accent) 14%, transparent), color-mix(in srgb, var(--at-accent) 18%, transparent)) 0%, transparent 70%);
+    background: radial-gradient(
+      40% 40% at 50% 45%,
+      light-dark(
+          color-mix(in srgb, var(--at-accent) 14%, transparent),
+          color-mix(in srgb, var(--at-accent) 18%, transparent)
+        )
+        0%,
+      transparent 70%
+    );
   }
 
   .at-xp {
@@ -1365,7 +1392,12 @@
     padding-inline: var(--at-s-4);
     border: var(--at-border) solid var(--at-line);
     border-radius: var(--at-r-md);
-    background: radial-gradient(120% 70% at 50% 26%, var(--at-lift) 0%, var(--at-ground) 60%, var(--at-ground-end) 100%);
+    background: radial-gradient(
+      120% 70% at 50% 26%,
+      var(--at-lift) 0%,
+      var(--at-ground) 60%,
+      var(--at-ground-end) 100%
+    );
     box-shadow: var(--at-pg-shadow-popup);
     color: var(--at-ink);
     overflow: hidden;
@@ -1378,7 +1410,15 @@
     inset-inline-start: -30%;
     inline-size: 160%;
     block-size: 60%;
-    background: radial-gradient(45% 45% at 50% 50%, light-dark(color-mix(in srgb, var(--at-accent) 12%, transparent), color-mix(in srgb, var(--at-accent) 18%, transparent)) 0%, transparent 70%);
+    background: radial-gradient(
+      45% 45% at 50% 50%,
+      light-dark(
+          color-mix(in srgb, var(--at-accent) 12%, transparent),
+          color-mix(in srgb, var(--at-accent) 18%, transparent)
+        )
+        0%,
+      transparent 70%
+    );
     pointer-events: none;
   }
 
@@ -1467,7 +1507,15 @@
 
   .at-xp-sweep {
     inset: var(--at-s-3);
-    background: conic-gradient(from 0deg, transparent 0deg 240deg, light-dark(color-mix(in srgb, var(--at-accent) 12%, transparent), color-mix(in srgb, var(--at-accent) 16%, transparent)) 360deg);
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg 240deg,
+      light-dark(
+          color-mix(in srgb, var(--at-accent) 12%, transparent),
+          color-mix(in srgb, var(--at-accent) 16%, transparent)
+        )
+        360deg
+    );
     animation: at-pg-spin 16s linear infinite;
   }
 
@@ -2214,7 +2262,9 @@
     padding: var(--at-s-3);
     border-radius: var(--at-r-lg);
     background: #05070b;
-    box-shadow: 0 34px 70px -34px rgb(3 6 12 / 70%), inset 0 0 0 1px rgb(255 255 255 / 7%);
+    box-shadow:
+      0 34px 70px -34px rgb(3 6 12 / 70%),
+      inset 0 0 0 1px rgb(255 255 255 / 7%);
     container-type: inline-size;
   }
 
@@ -2276,7 +2326,11 @@
     inset-inline-start: -20%;
     inline-size: 140%;
     block-size: 120%;
-    background: radial-gradient(40% 45% at 50% 50%, color-mix(in srgb, var(--kp-lamp) 12%, transparent) 0%, transparent 70%);
+    background: radial-gradient(
+      40% 45% at 50% 50%,
+      color-mix(in srgb, var(--kp-lamp) 12%, transparent) 0%,
+      transparent 70%
+    );
     opacity: 0;
     pointer-events: none;
     animation: at-pg-aura 26s ease-in-out infinite alternate;
@@ -2724,7 +2778,12 @@
     overflow: hidden;
   }
 
-  .at-lib-demo:is([data-demo-state="requesting"], [data-demo-state="held"], [data-demo-state="unsupported"], [data-demo-state="fallback"]) {
+  .at-lib-demo:is(
+    [data-demo-state="requesting"],
+    [data-demo-state="held"],
+    [data-demo-state="unsupported"],
+    [data-demo-state="fallback"]
+  ) {
     --at-tone: var(--at-accent);
   }
 
@@ -2745,11 +2804,23 @@
     inset-inline-start: -10%;
     inline-size: 120%;
     block-size: 90%;
-    background: radial-gradient(40% 45% at 60% 40%, color-mix(in srgb, var(--at-tone) 4%, transparent) 0%, transparent 70%);
+    background: radial-gradient(
+      40% 45% at 60% 40%,
+      color-mix(in srgb, var(--at-tone) 4%, transparent) 0%,
+      transparent 70%
+    );
   }
 
   .at-lib-demo:is([data-demo-state="held"], [data-demo-state="fallback"]) .at-lib-aura {
-    background: radial-gradient(40% 45% at 60% 40%, light-dark(color-mix(in srgb, var(--at-tone) 8%, transparent), color-mix(in srgb, var(--at-tone) 12%, transparent)) 0%, transparent 70%);
+    background: radial-gradient(
+      40% 45% at 60% 40%,
+      light-dark(
+          color-mix(in srgb, var(--at-tone) 8%, transparent),
+          color-mix(in srgb, var(--at-tone) 12%, transparent)
+        )
+        0%,
+      transparent 70%
+    );
   }
 
   .at-lib-head {
@@ -2964,7 +3035,9 @@
     border-radius: var(--at-r-pill);
     background: var(--at-surface);
     text-align: center;
-    transition: border-color var(--at-d-slide) var(--at-ease), box-shadow var(--at-d-slide) var(--at-ease);
+    transition:
+      border-color var(--at-d-slide) var(--at-ease),
+      box-shadow var(--at-d-slide) var(--at-ease);
   }
 
   .at-lib-nodes > li[data-lock="idle"] {
@@ -3020,8 +3093,15 @@
 
   .at-lib-nodes > li[aria-current] {
     border-color: color-mix(in srgb, var(--at-tone) 45%, transparent);
-    background: linear-gradient(color-mix(in srgb, var(--at-tone) 14%, transparent), color-mix(in srgb, var(--at-tone) 14%, transparent)), var(--at-surface);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--at-tone) 10%, transparent), 0 0 30px color-mix(in srgb, var(--at-tone) 28%, transparent);
+    background:
+      linear-gradient(
+        color-mix(in srgb, var(--at-tone) 14%, transparent),
+        color-mix(in srgb, var(--at-tone) 14%, transparent)
+      ),
+      var(--at-surface);
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--at-tone) 10%, transparent),
+      0 0 30px color-mix(in srgb, var(--at-tone) 28%, transparent);
   }
 
   .at-lib-nodes > li[aria-current] > span {
@@ -3228,7 +3308,15 @@
     inset-inline-start: -10%;
     inline-size: 120%;
     block-size: var(--at-pg-embed-aura-h);
-    background: radial-gradient(40% 40% at 50% 50%, light-dark(color-mix(in srgb, var(--at-accent) 8%, transparent), color-mix(in srgb, var(--at-accent) 10%, transparent)) 0%, transparent 70%);
+    background: radial-gradient(
+      40% 40% at 50% 50%,
+      light-dark(
+          color-mix(in srgb, var(--at-accent) 8%, transparent),
+          color-mix(in srgb, var(--at-accent) 10%, transparent)
+        )
+        0%,
+      transparent 70%
+    );
   }
 
   .at-embed-intro {

@@ -72,7 +72,17 @@ describe('shadcn theme bridge (docs/05 §1.5)', () => {
 
   it('keeps the canonical --at-* palette byte-identical to docs/05 §1.1', async () => {
     const css = await readFile(path.join(SRC, 'styles/tokens.css'), 'utf8');
-    for (const hex of ['#f2f6fa', '#0a0e16', '#087b87', '#5be0e8', '#04232a', '#0e1726', '#eaf0f7', '#c63f3f', '#ff7a7a']) {
+    for (const hex of [
+      '#f2f6fa',
+      '#0a0e16',
+      '#087b87',
+      '#5be0e8',
+      '#04232a',
+      '#0e1726',
+      '#eaf0f7',
+      '#c63f3f',
+      '#ff7a7a',
+    ]) {
       expect(css).toContain(hex);
     }
   });

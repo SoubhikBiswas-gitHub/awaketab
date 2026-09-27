@@ -44,8 +44,10 @@ async function overflowingWidths(page: Page, widths: readonly number[]): Promise
                 const r = el.getBoundingClientRect();
                 if (r.width <= 1 || r.height <= 1) continue; // hidden (the closed language panel, band-only buttons)
                 const name = (el.getAttribute('aria-label') ?? el.textContent ?? '').trim().slice(0, 24);
-                if (r.width < 44 || r.height < 44) shell.push(`${name} ${String(Math.round(r.width))}×${String(Math.round(r.height))}`);
-                if (r.left < 16 || window.innerWidth - r.right < 16) shell.push(`${name} at ${String(Math.round(r.left))}–${String(Math.round(r.right))}`);
+                if (r.width < 44 || r.height < 44)
+                  shell.push(`${name} ${String(Math.round(r.width))}×${String(Math.round(r.height))}`);
+                if (r.left < 16 || window.innerWidth - r.right < 16)
+                  shell.push(`${name} at ${String(Math.round(r.left))}–${String(Math.round(r.right))}`);
               }
               resolve({ scroll: document.documentElement.scrollWidth, inner: window.innerWidth, shell });
             }),
@@ -73,10 +75,16 @@ async function sweep(page: Page, route: string, widths: readonly number[]): Prom
 for (const route of ROUTES) {
   const debt = DEBT[route] ?? [];
   test(`no horizontal scroll 320–2560: ${route}`, async ({ page }) => {
-    await sweep(page, route, WIDTHS.filter((w) => !debt.includes(w)));
+    await sweep(
+      page,
+      route,
+      WIDTHS.filter((w) => !debt.includes(w)),
+    );
   });
   if (debt.length > 0) {
-    test.fixme(`no horizontal scroll (known debt, B1-token-debt.md): ${route} at ${debt.join(', ')} px`, async ({ page }) => {
+    test.fixme(`no horizontal scroll (known debt, B1-token-debt.md): ${route} at ${debt.join(', ')} px`, async ({
+      page,
+    }) => {
       await sweep(page, route, debt);
     });
   }

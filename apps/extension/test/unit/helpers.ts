@@ -3,7 +3,11 @@ import { createController, type IController } from '../../src/controller';
 import { flush, type IFakeChrome } from './fake-chrome';
 import en from '../../../web/src/i18n/en.json';
 
-const b64url = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes)).replace(/\+/gu, '-').replace(/\//gu, '_').replace(/=+$/u, '');
+const b64url = (bytes: Uint8Array) =>
+  btoa(String.fromCharCode(...bytes))
+    .replace(/\+/gu, '-')
+    .replace(/\//gu, '_')
+    .replace(/=+$/u, '');
 const enc = (obj: unknown) => b64url(new TextEncoder().encode(JSON.stringify(obj)));
 
 let pair: CryptoKeyPair | null = null;
@@ -16,11 +20,30 @@ export async function testKeys(): Promise<CryptoKeyPair> {
   return pair;
 }
 
-export async function signToken(claims: { plan: string; features: TFeatureGate[]; exp: number; deviceId: string }): Promise<string> {
+export async function signToken(claims: {
+  plan: string;
+  features: TFeatureGate[];
+  exp: number;
+  deviceId: string;
+}): Promise<string> {
   const keys = await testKeys();
   const h = enc({ alg: 'ES256', typ: 'JWT', ver: 1 });
-  const p = enc({ sub: 'k', plan: claims.plan, features: claims.features, dev: await sha256Hex(claims.deviceId), iat: 1, exp: claims.exp, ver: 1 });
-  const sig = new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, keys.privateKey, new TextEncoder().encode(`${h}.${p}`)));
+  const p = enc({
+    sub: 'k',
+    plan: claims.plan,
+    features: claims.features,
+    dev: await sha256Hex(claims.deviceId),
+    iat: 1,
+    exp: claims.exp,
+    ver: 1,
+  });
+  const sig = new Uint8Array(
+    await crypto.subtle.sign(
+      { name: 'ECDSA', hash: 'SHA-256' },
+      keys.privateKey,
+      new TextEncoder().encode(`${h}.${p}`),
+    ),
+  );
   return `${h}.${p}.${b64url(sig)}`;
 }
 
@@ -42,7 +65,10 @@ export async function proRecord(
   };
 }
 
-export function wired(fake: IFakeChrome, opts: { now?: () => number; fetchFn?: (input: string, init?: RequestInit) => Promise<Response> } = {}): IController {
+export function wired(
+  fake: IFakeChrome,
+  opts: { now?: () => number; fetchFn?: (input: string, init?: RequestInit) => Promise<Response> } = {},
+): IController {
   const ctl = createController({
     api: fake.api,
     catalogs: { en },

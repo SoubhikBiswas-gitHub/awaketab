@@ -21,7 +21,11 @@ export interface IRestoreOptions {
   prefixes?: readonly string[];
 }
 
-export async function planRestore(records: IKvRecord[], target: IKvStore, options: IRestoreOptions = {}): Promise<IRestorePlan> {
+export async function planRestore(
+  records: IKvRecord[],
+  target: IKvStore,
+  options: IRestoreOptions = {},
+): Promise<IRestorePlan> {
   const nowMs = options.nowMs ?? Date.now();
   const prefixes = options.prefixes && options.prefixes.length > 0 ? options.prefixes : null;
   const plan: IRestorePlan = { create: [], conflict: [], same: [], expired: [], filtered: 0 };
@@ -31,7 +35,8 @@ export async function planRestore(records: IKvRecord[], target: IKvStore, option
     else if (isExpiredForWrite(row, nowMs)) plan.expired.push(row);
     else wanted.push(row);
   }
-  const current = wanted.length > 0 ? await target.getMany(wanted.map((row) => row.key)) : new Map<string, string | null>();
+  const current =
+    wanted.length > 0 ? await target.getMany(wanted.map((row) => row.key)) : new Map<string, string | null>();
   for (const row of wanted) {
     const live = current.get(row.key) ?? null;
     if (live === null) plan.create.push(row);

@@ -25,11 +25,7 @@ export interface IMachineResult {
   silent?: boolean;
 }
 
-export function next(
-  state: TLockState,
-  event: TMachineEvent,
-  guards: IMachineGuards,
-): IMachineResult {
+export function next(state: TLockState, event: TMachineEvent, guards: IMachineGuards): IMachineResult {
   if (event.type === 'destroyed') {
     return { state: 'idle', reason: 'destroyed' };
   }

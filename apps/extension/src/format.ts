@@ -25,13 +25,18 @@ export function createTimeFormat(f: ITimeFormat) {
   const hourOpts: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: '2-digit' };
   if (f.clock24h !== null) hourOpts.hour12 = !f.clock24h;
   const clock = new Intl.DateTimeFormat(f.lang, hourOpts);
-  const hourOnly = new Intl.DateTimeFormat(f.lang, { hour: 'numeric', ...(f.clock24h !== null ? { hour12: !f.clock24h } : {}) });
+  const hourOnly = new Intl.DateTimeFormat(f.lang, {
+    hour: 'numeric',
+    ...(f.clock24h !== null ? { hour12: !f.clock24h } : {}),
+  });
   // Dates read day before month in English too ("Sunday, 27 September", DESIGN.md §4); times stay 12-hour.
   const english = f.lang === 'en';
   const weekday = new Intl.DateTimeFormat(f.lang, { weekday: 'long' });
   const dayMonthEn = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long' });
   const dayMonthIntl = new Intl.DateTimeFormat(f.lang, { weekday: 'long', day: 'numeric', month: 'long' });
-  const dayMonth = { format: (ms: number) => (english ? `${weekday.format(ms)}, ${dayMonthEn.format(ms)}` : dayMonthIntl.format(ms)) };
+  const dayMonth = {
+    format: (ms: number) => (english ? `${weekday.format(ms)}, ${dayMonthEn.format(ms)}` : dayMonthIntl.format(ms)),
+  };
   const { t } = f;
 
   const hm = (ms: number): string => clock.format(ms);

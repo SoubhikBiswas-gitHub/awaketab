@@ -8,7 +8,9 @@ function recorder() {
   const urls: string[] = [];
   const fetchFn = ((input: RequestInfo | URL) => {
     urls.push(input instanceof Request ? input.url : String(input));
-    return Promise.resolve(Response.json({ status: 'granted', benefit_id: 'b', limit_activations: 5, expires_at: null, customer_id: 'c' }));
+    return Promise.resolve(
+      Response.json({ status: 'granted', benefit_id: 'b', limit_activations: 5, expires_at: null, customer_id: 'c' }),
+    );
   }) as typeof fetch;
   return { urls, fetchFn };
 }

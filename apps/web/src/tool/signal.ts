@@ -46,14 +46,14 @@ export function notificationsState(): 'granted' | 'denied' | 'default' | 'unavai
   return typeof Notification === 'undefined' ? 'unavailable' : Notification.permission;
 }
 
-export async function notify(
-  ctx: Pick<IToolCtx, 'store'>,
-  title: string,
-  body: string,
-  tag: string,
-): Promise<boolean> {
+export async function notify(ctx: Pick<IToolCtx, 'store'>, title: string, body: string, tag: string): Promise<boolean> {
   if (!ctx.store.get().settings.notifications || notificationsState() !== 'granted') return false;
-  const options: NotificationOptions & { renotify?: boolean } = { body, tag, renotify: true, icon: '/icons/icon-192.png' };
+  const options: NotificationOptions & { renotify?: boolean } = {
+    body,
+    tag,
+    renotify: true,
+    icon: '/icons/icon-192.png',
+  };
   try {
     const reg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : undefined;
     if (reg) {

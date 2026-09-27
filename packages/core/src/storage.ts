@@ -35,8 +35,12 @@ export const memoryAdapter = (): IStorageAdapter => {
 export function localStorageAdapter(): IStorageAdapter {
   return {
     get: (k) => localStorage.getItem(k),
-    set: (k, v) => { localStorage.setItem(k, v); },
-    remove: (k) => { localStorage.removeItem(k); },
+    set: (k, v) => {
+      localStorage.setItem(k, v);
+    },
+    remove: (k) => {
+      localStorage.removeItem(k);
+    },
   };
 }
 
@@ -101,7 +105,9 @@ export function createStorage(adapter?: IStorageAdapter): {
       return persistent;
     },
     settings: () => read(STORAGE_KEYS.settings, DEFAULT_SETTINGS),
-    writeSettings: (s) => { write(STORAGE_KEYS.settings, s); },
+    writeSettings: (s) => {
+      write(STORAGE_KEYS.settings, s);
+    },
     session: () => {
       try {
         const raw = a.get(STORAGE_KEYS.session);
@@ -112,7 +118,9 @@ export function createStorage(adapter?: IStorageAdapter): {
         return null;
       }
     },
-    writeSession: (s) => { write(STORAGE_KEYS.session, s); },
+    writeSession: (s) => {
+      write(STORAGE_KEYS.session, s);
+    },
     stats: () => {
       const { daySessions, dayFocus, ...rest }: IStats = read(STORAGE_KEYS.stats, DEFAULT_STATS);
       const s: IStats = rest;
@@ -125,7 +133,9 @@ export function createStorage(adapter?: IStorageAdapter): {
       s.longestStreakDays = Math.max(s.longestStreakDays, streaks.longestStreakDays);
       return s;
     },
-    writeStats: (s) => { write(STORAGE_KEYS.stats, s); },
+    writeStats: (s) => {
+      write(STORAGE_KEYS.stats, s);
+    },
     license: () => {
       try {
         const raw = a.get(STORAGE_KEYS.license);
@@ -135,15 +145,21 @@ export function createStorage(adapter?: IStorageAdapter): {
         return null;
       }
     },
-    writeLicense: (s) => { write(STORAGE_KEYS.license, s); },
+    writeLicense: (s) => {
+      write(STORAGE_KEYS.license, s);
+    },
     meta: () => {
       const m = read(STORAGE_KEYS.meta, DEFAULT_META);
       if (!m.installedAt) m.installedAt = Date.now();
       return m;
     },
-    writeMeta: (s) => { write(STORAGE_KEYS.meta, s); },
+    writeMeta: (s) => {
+      write(STORAGE_KEYS.meta, s);
+    },
     onboarding: () => read(STORAGE_KEYS.onboarding, DEFAULT_ONBOARDING),
-    writeOnboarding: (s) => { write(STORAGE_KEYS.onboarding, s); },
+    writeOnboarding: (s) => {
+      write(STORAGE_KEYS.onboarding, s);
+    },
     migrate() {
       this.settings();
       this.stats();
@@ -160,7 +176,11 @@ export function createStorage(adapter?: IStorageAdapter): {
   };
 }
 
-export const migrate = (store = createStorage()) => { store.migrate(); };
+export const migrate = (store = createStorage()) => {
+  store.migrate();
+};
 export const readStats = (store = createStorage()) => store.stats();
 export const exportStatsCsvFromStore = (store = createStorage()) => store.exportCsv();
-export const clearAllData = (store = createStorage()) => { store.clearAll(); };
+export const clearAllData = (store = createStorage()) => {
+  store.clearAll();
+};

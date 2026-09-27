@@ -45,7 +45,11 @@ export function fillSettings(form: HTMLFormElement, s: ISettings): void {
   setValue(form, 'keyboardHints', s.keyboardHints);
 }
 
-export function readSettings(form: HTMLFormElement, cur: ISettings, gates: { packs: boolean; message: boolean }): ISettings {
+export function readSettings(
+  form: HTMLFormElement,
+  cur: ISettings,
+  gates: { packs: boolean; message: boolean },
+): ISettings {
   const data = new FormData(form);
   const str = (k: string) => {
     const v = data.get(k);
@@ -113,7 +117,8 @@ export function openSettings(ctx: IToolCtx): void {
     if (notif instanceof HTMLInputElement) notif.disabled = state === 'unavailable';
     if (notes) {
       notes.hidden = state !== 'unavailable' && state !== 'denied';
-      notes.textContent = state === 'unavailable' ? t('settings.notifications.unavailable') : t('settings.notifications.blocked');
+      notes.textContent =
+        state === 'unavailable' ? t('settings.notifications.unavailable') : t('settings.notifications.blocked');
     }
     const hasBattery = 'getBattery' in navigator;
     const batt = q('[data-battery-fields]');
@@ -121,7 +126,8 @@ export function openSettings(ctx: IToolCtx): void {
     const battNote = q('[data-battery-unavailable]');
     if (battNote) battNote.hidden = hasBattery;
     const label = q('[data-battery-label]');
-    if (label) label.textContent = t('settings.battery.threshold', { percent: ctx.store.get().settings.battery.threshold });
+    if (label)
+      label.textContent = t('settings.battery.threshold', { percent: ctx.store.get().settings.battery.threshold });
   };
 
   if (!bound) {
@@ -133,7 +139,12 @@ export function openSettings(ctx: IToolCtx): void {
       const next = readSettings(form, ctx.store.get().settings, gates());
       const target = e.target;
       // Permission is asked only when the user turns notifications on (docs/04 §10 step 4).
-      if (target instanceof HTMLInputElement && target.name === 'notifications' && target.checked && notificationsState() === 'default') {
+      if (
+        target instanceof HTMLInputElement &&
+        target.name === 'notifications' &&
+        target.checked &&
+        notificationsState() === 'default'
+      ) {
         void Notification.requestPermission().then((p) => {
           const granted = p === 'granted';
           target.checked = granted;
@@ -141,7 +152,12 @@ export function openSettings(ctx: IToolCtx): void {
           refreshGates();
         });
       }
-      if (target instanceof HTMLInputElement && target.name === 'notifications' && target.checked && notificationsState() === 'denied') {
+      if (
+        target instanceof HTMLInputElement &&
+        target.name === 'notifications' &&
+        target.checked &&
+        notificationsState() === 'denied'
+      ) {
         target.checked = false;
         next.notifications = false;
       }

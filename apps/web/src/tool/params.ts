@@ -16,15 +16,7 @@ export const CUSTOM_MIN_MS = 60_000;
 
 const LOCALES = new Set(['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi']);
 const THEMES = new Set<TTheme>(['auto', 'light', 'dark', 'oled']);
-const MODES = new Set<TAmbientMode>([
-  'standard',
-  'clock',
-  'focus',
-  'minimal',
-  'night',
-  'message',
-  'cook',
-]);
+const MODES = new Set<TAmbientMode>(['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook']);
 const PRESETS = new Set<TPresetId>(['p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf']);
 const UNTIL_RE = /^([01]\d|2[0-3])-([0-5]\d)$/;
 const REF_RE = /^[a-z0-9_-]{1,32}$/;
@@ -77,10 +69,7 @@ export function sanitizeMsg(raw: string): string {
   return Array.from(stripped).slice(0, 80).join('');
 }
 
-export function parseToolParams(
-  loc: Pick<Location, 'pathname' | 'search'>,
-  dataset: DOMStringMap,
-): IUrlParams {
+export function parseToolParams(loc: Pick<Location, 'pathname' | 'search'>, dataset: DOMStringMap): IUrlParams {
   const path = stripLocale(loc.pathname);
   const q = new URLSearchParams(loc.search);
   const themeRaw = q.get('theme');
@@ -93,8 +82,14 @@ export function parseToolParams(
   const routePreset = PRESET_ROUTES[path] ?? null;
   const invalid: string[] = [];
 
-  const theme = themeRaw && THEMES.has(themeRaw as TTheme) ? (themeRaw as TTheme) : themeRaw ? (invalid.push('theme'), null) : null;
-  const mode = modeRaw && MODES.has(modeRaw as TAmbientMode) ? (modeRaw as TAmbientMode) : modeRaw ? (invalid.push('mode'), null) : null;
+  const theme =
+    themeRaw && THEMES.has(themeRaw as TTheme) ? (themeRaw as TTheme) : themeRaw ? (invalid.push('theme'), null) : null;
+  const mode =
+    modeRaw && MODES.has(modeRaw as TAmbientMode)
+      ? (modeRaw as TAmbientMode)
+      : modeRaw
+        ? (invalid.push('mode'), null)
+        : null;
   let preset: TPresetId | null = null;
   if (presetRaw) {
     if (PRESETS.has(presetRaw as TPresetId)) preset = presetRaw as TPresetId;

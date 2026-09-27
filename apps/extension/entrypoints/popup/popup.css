@@ -51,7 +51,11 @@ body {
   inset-inline-start: -30%;
   inline-size: 160%;
   block-size: 60%;
-  background: radial-gradient(45% 45% at 50% 50%, color-mix(in srgb, var(--ring-tone) var(--aura), transparent) 0%, transparent 70%);
+  background: radial-gradient(
+    45% 45% at 50% 50%,
+    color-mix(in srgb, var(--ring-tone) var(--aura), transparent) 0%,
+    transparent 70%
+  );
   pointer-events: none;
   animation: at-aura 26s ease-in-out infinite alternate;
   transition: background 0.9s var(--ext-ease);
@@ -155,7 +159,11 @@ body {
   position: absolute;
   inset: var(--at-s-3);
   border-radius: 50%;
-  background: conic-gradient(from 0deg, transparent 0deg 240deg, color-mix(in srgb, var(--ring-tone) 16%, transparent) 360deg);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 240deg,
+    color-mix(in srgb, var(--ring-tone) 16%, transparent) 360deg
+  );
   opacity: 0;
   transition: opacity 0.9s var(--ext-ease);
 }

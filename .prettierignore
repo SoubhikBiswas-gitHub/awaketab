@@ -1,0 +1,19 @@
+design/
+apps/web/public/
+**/dist/
+**/.astro/
+**/.wxt/
+**/.output/
+**/.output-test/
+**/node_modules/
+pnpm-lock.yaml
+*.md
+*.yml
+*.yaml
+*.html
+changelog/
+docs/
+.claude/
+.cursor/
+# Astro templates: formatting whitespace changes the rendered page text.
+*.astro

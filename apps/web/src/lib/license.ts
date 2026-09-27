@@ -74,14 +74,22 @@ export async function activateLicense(input: {
   checkoutId?: string;
   deviceId: string;
   deviceLabel: string;
-}): Promise<{ ok: true; token: string; plan: TPlanId; features: TFeatureGate[]; exp: number } | { ok: false; error: string }> {
+}): Promise<
+  { ok: true; token: string; plan: TPlanId; features: TFeatureGate[]; exp: number } | { ok: false; error: string }
+> {
   try {
     const res = await fetch('/api/license/activate', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(input),
     });
-    const data = (await res.json()) as { error?: string; token?: string; plan?: TPlanId; features?: TFeatureGate[]; exp?: number };
+    const data = (await res.json()) as {
+      error?: string;
+      token?: string;
+      plan?: TPlanId;
+      features?: TFeatureGate[];
+      exp?: number;
+    };
     if (!res.ok || !data.token || !data.plan || !data.features || !data.exp) {
       return { ok: false, error: data.error ?? 'invalid_key' };
     }
@@ -137,13 +145,23 @@ export async function deactivateDevice(
 export async function revalidateStoredLicense(): Promise<'ok' | 'revoked' | 'reactivate' | 'skip'> {
   const raw = localStorage.getItem(LICENSE_KEY);
   if (!raw) return 'skip';
-  let record: { token: string; plan: string; lastValidatedAt: number; deviceId: string; features: TFeatureGate[]; exp: number };
+  let record: {
+    token: string;
+    plan: string;
+    lastValidatedAt: number;
+    deviceId: string;
+    features: TFeatureGate[];
+    exp: number;
+  };
   try {
     record = JSON.parse(raw) as typeof record;
   } catch {
     return 'skip';
   }
-  const state = await verifyLicenseToken(record.token, { deviceId: record.deviceId, lastValidatedAt: record.lastValidatedAt });
+  const state = await verifyLicenseToken(record.token, {
+    deviceId: record.deviceId,
+    lastValidatedAt: record.lastValidatedAt,
+  });
   if (!needsRevalidation(record.plan, record.lastValidatedAt) && state.valid) return 'ok';
   let res: Response;
   let data: { revoked?: boolean; reason?: string; token?: string };

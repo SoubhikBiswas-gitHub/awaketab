@@ -2,9 +2,31 @@
 import { describe, expect, it } from 'vitest';
 
 import { exportNamespace, readBackupFile } from '../lib/backup.ts';
-import { backupTargets, isProductionTarget, runBackup, runReencrypt, runRestore, type ICliDeps, type ITargetStore } from '../lib/cli.ts';
-import { decryptBackup, encryptBackup, encryptKeyEnc, isEncryptedBackup, parseAesKey, tryDecryptKeyEnc } from '../lib/crypto.ts';
-import { BACKUP_PREFIXES, backupFileName, countByPrefix, parseBackup, serializeBackup, type IBackup } from '../lib/format.ts';
+import {
+  backupTargets,
+  isProductionTarget,
+  runBackup,
+  runReencrypt,
+  runRestore,
+  type ICliDeps,
+  type ITargetStore,
+} from '../lib/cli.ts';
+import {
+  decryptBackup,
+  encryptBackup,
+  encryptKeyEnc,
+  isEncryptedBackup,
+  parseAesKey,
+  tryDecryptKeyEnc,
+} from '../lib/crypto.ts';
+import {
+  BACKUP_PREFIXES,
+  backupFileName,
+  countByPrefix,
+  parseBackup,
+  serializeBackup,
+  type IBackup,
+} from '../lib/format.ts';
 import { reencryptNamespace } from '../lib/reencrypt.ts';
 import { applyRestore, planRestore } from '../lib/restore.ts';
 import { MemoryKvStore } from './memory-store.ts';
@@ -82,7 +104,9 @@ describe('backup format', () => {
     expect(() => parseBackup([lines[0], lines[1], lines[1]].join('\n'))).toThrow(/twice/u);
     expect(() => parseBackup(lines.join('\n').replace('"version":1', '"version":9'))).toThrow(/version 9/u);
     expect(() => parseBackup([lines[0], lines[1], '{"key":"x"}'].join('\n'))).toThrow(/line 3/u);
-    expect(() => parseBackup([lines[0], lines[1], '{"key":"x","value":"v","expiration":-1}'].join('\n'))).toThrow(/expiration/u);
+    expect(() => parseBackup([lines[0], lines[1], '{"key":"x","value":"v","expiration":-1}'].join('\n'))).toThrow(
+      /expiration/u,
+    );
     expect(() => parseBackup('')).toThrow(/empty/u);
     expect(() => parseBackup('{"format":"other"}')).toThrow(/Not an/u);
   });
@@ -151,7 +175,10 @@ describe('exportNamespace', () => {
       'ord:ord_1',
       'rating:r1',
     ]);
-    expect(backup.records.find((row) => row.key === 'lic:aaa')).toMatchObject({ expiration: FUTURE, metadata: { v: 1 } });
+    expect(backup.records.find((row) => row.key === 'lic:aaa')).toMatchObject({
+      expiration: FUTURE,
+      metadata: { v: 1 },
+    });
     expect(backup.records.find((row) => row.key === 'lic:ccc')).not.toHaveProperty('expiration');
     expect(store.calls.list).toBeGreaterThan(5); // lic: needed two pages of 2
     expect(reads.at(-1)).toBe(7);
@@ -164,7 +191,11 @@ describe('exportNamespace', () => {
   });
 
   it('exports an empty namespace as a valid zero-record backup', async () => {
-    const { backup, bytes } = await exportNamespace(new MemoryKvStore(), { namespace: 'LICENSES', namespaceId: 'n', encryptionKey: BACKUP_KEY });
+    const { backup, bytes } = await exportNamespace(new MemoryKvStore(), {
+      namespace: 'LICENSES',
+      namespaceId: 'n',
+      encryptionKey: BACKUP_KEY,
+    });
     expect(backup.header.count).toBe(0);
     expect((await readBackupFile(bytes, BACKUP_KEY)).records).toEqual([]);
   });
@@ -172,8 +203,14 @@ describe('exportNamespace', () => {
 
 describe('restore', () => {
   async function backupOf(store: MemoryKvStore) {
-    return (await exportNamespace(store, { namespace: 'LICENSES', namespaceId: 'ns-prod', encryptionKey: BACKUP_KEY, now: new Date(NOW) }))
-      .backup;
+    return (
+      await exportNamespace(store, {
+        namespace: 'LICENSES',
+        namespaceId: 'ns-prod',
+        encryptionKey: BACKUP_KEY,
+        now: new Date(NOW),
+      })
+    ).backup;
   }
 
   it('plans create / same / conflict / expired and writes only missing keys by default', async () => {
@@ -253,7 +290,9 @@ describe('reencryptNamespace', () => {
     store.beforePut = (_records, call) => {
       if (call === 2) throw new Error('network dropped');
     };
-    await expect(reencryptNamespace(store, { oldKey: OLD_ENC, newKey: NEW_ENC, apply: true, nowMs: NOW })).rejects.toThrow(/network/u);
+    await expect(
+      reencryptNamespace(store, { oldKey: OLD_ENC, newKey: NEW_ENC, apply: true, nowMs: NOW }),
+    ).rejects.toThrow(/network/u);
     store.beforePut = null;
     const resumed = await reencryptNamespace(store, { oldKey: OLD_ENC, newKey: NEW_ENC, apply: true, nowMs: NOW });
     expect(resumed).toMatchObject({ scanned: 3, rotated: 1, alreadyNew: 2, failed: [] });
@@ -289,8 +328,12 @@ describe('reencryptNamespace', () => {
 
   it('refuses identical or malformed keys', async () => {
     const store = await seededStore();
-    await expect(reencryptNamespace(store, { oldKey: OLD_ENC, newKey: OLD_ENC, apply: false })).rejects.toThrow(/same key/u);
-    await expect(reencryptNamespace(store, { oldKey: 'short', newKey: NEW_ENC, apply: false })).rejects.toThrow(/OLD_LICENSE_KEY_ENC_KEY/u);
+    await expect(reencryptNamespace(store, { oldKey: OLD_ENC, newKey: OLD_ENC, apply: false })).rejects.toThrow(
+      /same key/u,
+    );
+    await expect(reencryptNamespace(store, { oldKey: 'short', newKey: NEW_ENC, apply: false })).rejects.toThrow(
+      /OLD_LICENSE_KEY_ENC_KEY/u,
+    );
   });
 });
 
@@ -355,7 +398,10 @@ describe('pnpm kv:backup', () => {
       { p: await seededStore(), q: new MemoryKvStore() },
     );
     expect(await runBackup(['--out', 'out'], d)).toBe(0);
-    expect([...d.files.keys()]).toEqual(['out/LICENSES-2026-09-28.jsonl.enc', 'out/LICENSES_PREVIEW-2026-09-28.jsonl.enc']);
+    expect([...d.files.keys()]).toEqual([
+      'out/LICENSES-2026-09-28.jsonl.enc',
+      'out/LICENSES_PREVIEW-2026-09-28.jsonl.enc',
+    ]);
     const lines = d.stdout.map((line) => JSON.parse(line) as Record<string, unknown>);
     expect(Object.keys(lines[0] ?? {})).toEqual(['namespace', 'file', 'bytes', 'sha256']);
     const prod = await readBackupFile(d.files.get('out/LICENSES-2026-09-28.jsonl.enc') ?? new Uint8Array(), BACKUP_KEY);
@@ -379,7 +425,12 @@ describe('pnpm kv:backup', () => {
 describe('pnpm kv:restore', () => {
   async function withBackup(target: MemoryKvStore, env: Record<string, string> = {}) {
     const d = deps({ BACKUP_ENCRYPTION_KEY: BACKUP_KEY, ...env }, { target });
-    const { bytes } = await exportNamespace(await seededStore(), { namespace: 'LICENSES', namespaceId: 'p', encryptionKey: BACKUP_KEY, now: new Date(NOW) });
+    const { bytes } = await exportNamespace(await seededStore(), {
+      namespace: 'LICENSES',
+      namespaceId: 'p',
+      encryptionKey: BACKUP_KEY,
+      now: new Date(NOW),
+    });
     d.files.set('b.enc', bytes);
     return d;
   }

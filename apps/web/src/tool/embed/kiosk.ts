@@ -58,7 +58,11 @@ export async function applyKioskHash(
   return 'stored';
 }
 
-export function applyKioskBranding(ctx: Pick<IToolCtx, 'store' | 'root'>, logo: string | null, doc: Document = document): void {
+export function applyKioskBranding(
+  ctx: Pick<IToolCtx, 'store' | 'root'>,
+  logo: string | null,
+  doc: Document = document,
+): void {
   doc.documentElement.toggleAttribute('data-kiosk', hasFeature(ctx, 'kiosk.branding'));
   if (!logo || !hasFeature(ctx, 'ambient.logo')) return;
   const make = () => {

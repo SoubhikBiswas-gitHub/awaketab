@@ -10,7 +10,9 @@ import { expect, test, type Frame, type Page } from '@playwright/test';
 // from reaching the loopback server, so they are disabled for this file only.
 test.use({
   launchOptions: {
-    args: ['--disable-features=LocalNetworkAccessChecks,PrivateNetworkAccessSendPreflights,BlockInsecurePrivateNetworkRequests'],
+    args: [
+      '--disable-features=LocalNetworkAccessChecks,PrivateNetworkAccessSendPreflights,BlockInsecurePrivateNetworkRequests',
+    ],
   },
 });
 
@@ -48,20 +50,26 @@ async function installPolicyAwareWakeLock(page: Page): Promise<void> {
 
 async function hostPage(page: Page, body: string): Promise<void> {
   await page.route(`${HOST}/__host/**`, (route) =>
-    route.fulfill({ contentType: 'text/html', body: `<!doctype html><html lang="en"><head><title>Recipe</title></head><body><h1>Recipe</h1>${body}</body></html>` }),
+    route.fulfill({
+      contentType: 'text/html',
+      body: `<!doctype html><html lang="en"><head><title>Recipe</title></head><body><h1>Recipe</h1>${body}</body></html>`,
+    }),
   );
   await page.goto(`${HOST}/__host/recipe.html`);
 }
 
 async function widgetFrame(page: Page, match: (url: string) => boolean = () => true): Promise<Frame> {
-  await expect.poll(() => page.frames().some((f) => f.url().startsWith(`${WIDGET}/embed/cook`) && match(f.url()))).toBe(true);
+  await expect
+    .poll(() => page.frames().some((f) => f.url().startsWith(`${WIDGET}/embed/cook`) && match(f.url())))
+    .toBe(true);
   const frame = page.frames().find((f) => f.url().startsWith(`${WIDGET}/embed/cook`) && match(f.url()));
   if (!frame) throw new Error('widget frame missing');
   await frame.waitForLoadState('load');
   return frame;
 }
 
-const loaderTag = (attrs = 'data-size="compact" data-lang="en"') => `<script async src="${WIDGET}/embed.js" ${attrs}></script>`;
+const loaderTag = (attrs = 'data-size="compact" data-lang="en"') =>
+  `<script async src="${WIDGET}/embed.js" ${attrs}></script>`;
 
 test.beforeEach(async ({ page }) => {
   page.on('dialog', () => {
@@ -131,7 +139,10 @@ test('journey 10 iframe without allow shows the "Ask the site owner" state', asy
   // Only Chromium enforces (and exposes) the screen-wake-lock Permissions Policy in iframes. Firefox and WebKit
   // grant the lock without allow=, and the widget honestly reports it held, so there is no blocked state to show.
   test.skip(browserName !== 'chromium', 'engine does not enforce the screen-wake-lock iframe policy');
-  await hostPage(page, `<iframe src="${WIDGET}/embed/cook?mode=cook&size=compact&lang=en" title="Keep screen awake" style="width:320px;height:120px;border:0"></iframe>`);
+  await hostPage(
+    page,
+    `<iframe src="${WIDGET}/embed/cook?mode=cook&size=compact&lang=en" title="Keep screen awake" style="width:320px;height:120px;border:0"></iframe>`,
+  );
   const frame = await widgetFrame(page);
   await expect(frame.locator('[data-embed-notice]')).toContainText('Ask the site owner');
   await expect(frame.locator('[data-embed-notice-link]')).toHaveAttribute('href', 'https://awaketab.com/embed#allow');
@@ -159,7 +170,9 @@ test('AwakeTabEmbed API starts, reports state and stops the widget', async ({ pa
   });
   await expect(frame.locator('[data-pill-text]')).toHaveText('Screen awake');
   await expect(frame.locator('[data-embed-digits]')).toHaveText(/^(29:\d{2}|30:00)$/u);
-  await expect.poll(() => page.evaluate(() => (window as unknown as { __states: string[] }).__states)).toContain('held/active');
+  await expect
+    .poll(() => page.evaluate(() => (window as unknown as { __states: string[] }).__states))
+    .toContain('held/active');
   await page.evaluate(() => {
     (window as unknown as { AwakeTabEmbed: { stop(): void } }).AwakeTabEmbed.stop();
   });
@@ -194,7 +207,8 @@ test('widget ignores commands from a window that is not its parent', async ({ pa
   // Same origin as the parent (srcdoc inherits it) but a different window: the message's source is the sibling
   // (the script runs in the sibling's realm), so the widget must drop it.
   await page.evaluate(() => {
-    const sibling = document.querySelector<HTMLIFrameElement>('#sibling')?.contentWindow as (Window & typeof globalThis) | null;
+    const sibling = document.querySelector<HTMLIFrameElement>('#sibling')?.contentWindow as
+      (Window & typeof globalThis) | null;
     sibling?.eval("parent.document.querySelector('#w').contentWindow.postMessage({ type: 'awaketab:start' }, '*')");
   });
   await page.waitForTimeout(500);
@@ -216,7 +230,9 @@ test('loader ignores forged widget messages from other windows', async ({ page }
   );
   const frame = await widgetFrame(page);
   await expect(frame.locator('[data-pill-text]')).toHaveText('Ready');
-  const before = await page.locator('iframe[src*="/embed/cook"]').evaluate((el) => (el as HTMLIFrameElement).style.height);
+  const before = await page
+    .locator('iframe[src*="/embed/cook"]')
+    .evaluate((el) => (el as HTMLIFrameElement).style.height);
   await page.evaluate(() => {
     // Same-window forgeries: the source is not a widget frame the loader created.
     window.postMessage({ type: 'awaketab:resize', height: 600 }, '*');
@@ -233,7 +249,12 @@ test('licensed domain gets no credit line and the brand colour on Start', async 
     route.fulfill({
       // The loader asks cross-origin (host page → widget origin); the real function sends this header too.
       headers: { 'access-control-allow-origin': '*' },
-      json: { licensed: true, attribution: false, theme: { accent: '#0f766e', scheme: 'auto' }, expiresAt: Date.now() + 86_400_000 },
+      json: {
+        licensed: true,
+        attribution: false,
+        theme: { accent: '#0f766e', scheme: 'auto' },
+        expiresAt: Date.now() + 86_400_000,
+      },
     }),
   );
   await hostPage(page, loaderTag());
@@ -289,7 +310,9 @@ test('/kiosk builds a kiosk URL with the licence token in the hash', async ({ pa
   await page.locator('input[name="logo"]').fill('https://cdn.example.com/logo.png');
   await page.locator('input[name="token"]').fill('aaa.bbb.ccc');
   const url = await page.locator('[data-kiosk-url]').textContent();
-  expect(url).toMatch(/\/\?autostart=1&mode=message&msg=Front\+desk&theme=dark&logo=https%3A%2F%2Fcdn\.example\.com%2Flogo\.png#lic=aaa\.bbb\.ccc$/u);
+  expect(url).toMatch(
+    /\/\?autostart=1&mode=message&msg=Front\+desk&theme=dark&logo=https%3A%2F%2Fcdn\.example\.com%2Flogo\.png#lic=aaa\.bbb\.ccc$/u,
+  );
 });
 
 test('an invalid #lic= token is stripped from the address bar and reported', async ({ page }) => {
@@ -317,7 +340,9 @@ test('/library demo drives the published IIFE through all seven states', async (
   const current = page.locator('[data-demo-current]');
   await expect(page.locator('[data-state]')).toHaveCount(7);
   await expect(page.getByRole('button', { name: 'Request' })).toBeEnabled();
-  expect(await page.evaluate(() => typeof (window as unknown as { AwakeTabWake?: unknown }).AwakeTabWake)).toBe('object');
+  expect(await page.evaluate(() => typeof (window as unknown as { AwakeTabWake?: unknown }).AwakeTabWake)).toBe(
+    'object',
+  );
 
   // real (the test's fake navigator.wakeLock): idle → requesting → held → idle
   await expect(current).toHaveText('idle');

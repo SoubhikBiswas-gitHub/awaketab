@@ -1,6 +1,16 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { badge, expect, localStore, mockLicenseApi, openOptions, openPopup, powerLog, syncStore, test } from './fixtures';
+import {
+  badge,
+  expect,
+  localStore,
+  mockLicenseApi,
+  openOptions,
+  openPopup,
+  powerLog,
+  syncStore,
+  test,
+} from './fixtures';
 
 test.beforeEach(({ context }) => {
   // docs/19 B1: never alert/confirm/prompt.
@@ -11,9 +21,15 @@ test.beforeEach(({ context }) => {
 
 const pill = (page: Page) => page.locator('[data-pill-text]');
 
-test('the built manifest asks for power, storage and alarms only — no host permissions', async ({ context, extensionId }) => {
+test('the built manifest asks for power, storage and alarms only — no host permissions', async ({
+  context,
+  extensionId,
+}) => {
   const page = await context.newPage();
-  const manifest = (await (await page.goto(`chrome-extension://${extensionId}/manifest.json`))?.json()) as Record<string, unknown>;
+  const manifest = (await (await page.goto(`chrome-extension://${extensionId}/manifest.json`))?.json()) as Record<
+    string,
+    unknown
+  >;
   expect(manifest.permissions).toEqual(['power', 'storage', 'alarms']);
   expect(manifest.optional_permissions).toEqual(['notifications']);
   expect(manifest.host_permissions ?? []).toEqual([]);
@@ -49,7 +65,9 @@ test('start ∞ holds the display keep-awake, shows ON, and stop releases it', a
   await expect(page.locator('[data-toggle]')).toHaveText('Stop');
   await expect(page.locator('[data-toggle]')).toHaveAttribute('data-live', '1');
   await expect.poll(() => badge(page)).toBe('ON');
-  await expect.poll(async () => (await powerLog(page)).filter((c) => c.call === 'request').at(-1)?.level).toBe('display');
+  await expect
+    .poll(async () => (await powerLog(page)).filter((c) => c.call === 'request').at(-1)?.level)
+    .toBe('display');
   await page.locator('[data-toggle]').click();
   await expect(pill(page)).toHaveText('Ready');
   await expect.poll(() => badge(page)).toBe('');
@@ -67,17 +85,24 @@ test('a finite preset shows minutes left on the badge; keyboard shortcuts work',
   await expect(pill(page)).toHaveText('Ready');
 });
 
-test('System level: requestKeepAwake("system"), SYS badge, and the pill never says "Screen awake" (D-02)', async ({ context, extensionId }) => {
+test('System level: requestKeepAwake("system"), SYS badge, and the pill never says "Screen awake" (D-02)', async ({
+  context,
+  extensionId,
+}) => {
   const page = await openPopup(context, extensionId);
   await page.locator('input[name="level"][value="system"]').check({ force: true });
-  await expect(page.locator('[data-level-help]')).toHaveText('Keeps the computer awake. The screen may still dim or turn off.');
+  await expect(page.locator('[data-level-help]')).toHaveText(
+    'Keeps the computer awake. The screen may still dim or turn off.',
+  );
   await page.locator('[data-preset="pinf"]').click();
   await expect(page.locator('[data-pill]')).toHaveAttribute('data-lock', 'held');
   await expect(pill(page)).toHaveText('System awake');
   await expect(page.locator('[data-pill-extra]')).toHaveText('Screen may dim or lock');
   await expect(page.locator('[data-pill]')).not.toContainText('Screen awake');
   await expect.poll(() => badge(page)).toBe('SYS');
-  await expect.poll(async () => (await powerLog(page)).filter((c) => c.call === 'request').at(-1)?.level).toBe('system');
+  await expect
+    .poll(async () => (await powerLog(page)).filter((c) => c.call === 'request').at(-1)?.level)
+    .toBe('system');
   // Switching back to display level mid-session restores the shared held pill and drops the secondary line.
   await page.locator('input[name="level"][value="display"]').check({ force: true });
   await expect(pill(page)).toHaveText('Screen awake');
@@ -115,14 +140,19 @@ test('+15 min on a running session adds to it; the badge follows', async ({ cont
   await expect.poll(() => badge(page)).toMatch(/^(30|29)m$/u);
 });
 
-test('Blocked: a refused request says so, shows the fix, and Retry works once allowed', async ({ context, extensionId }) => {
+test('Blocked: a refused request says so, shows the fix, and Retry works once allowed', async ({
+  context,
+  extensionId,
+}) => {
   const page = await openPopup(context, extensionId);
   await page.evaluate(() => chrome.storage.session.set({ 'at.test.deny': true }));
   await page.locator('[data-preset="p30"]').click();
   await expect(page.locator('[data-pill]')).toHaveAttribute('data-lock', 'denied');
   await expect(pill(page)).toHaveText("Blocked — here's the fix");
   await expect(page.locator('[data-error]')).toBeVisible();
-  await expect(page.locator('[data-error] h2')).toHaveText('Your browser or organisation blocked keeping this device awake.');
+  await expect(page.locator('[data-error] h2')).toHaveText(
+    'Your browser or organisation blocked keeping this device awake.',
+  );
   await expect(page.locator('[data-meta2]')).toHaveText('Nothing is keeping this device awake.');
   await expect(page.locator('[data-chips]')).toBeHidden();
   await expect(page.locator('[data-toggle]')).toBeHidden();
@@ -135,14 +165,20 @@ test('Blocked: a refused request says so, shows the fix, and Retry works once al
   await expect(page.locator('[data-error]')).toBeHidden();
 });
 
-test('first open: the tips card shows once; then free users get the inline Pro row', async ({ context, extensionId }) => {
+test('first open: the tips card shows once; then free users get the inline Pro row', async ({
+  context,
+  extensionId,
+}) => {
   const page = await openPopup(context, extensionId);
   await expect(page.locator('[data-tips]')).toBeVisible();
   await expect(page.locator('[data-tips]')).toContainText('starts or stops from any tab.');
   await page.locator('[data-tips-ok]').click();
   await expect(page.locator('[data-tips]')).toBeHidden();
   await expect
-    .poll(async () => ((await localStore(page))['at.v1.onboarding'] as { dismissedTips?: string[] } | undefined)?.dismissedTips)
+    .poll(
+      async () =>
+        ((await localStore(page))['at.v1.onboarding'] as { dismissedTips?: string[] } | undefined)?.dismissedTips,
+    )
     .toContain('ext-first-open');
   const again = await openPopup(context, extensionId);
   await expect(again.locator('[data-tips]')).toBeHidden();
@@ -165,7 +201,10 @@ test('install opens the welcome page once, and it has no axe violations', async 
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
-test('the session survives a forced service-worker restart and the keep-awake is re-issued', async ({ context, extensionId }) => {
+test('the session survives a forced service-worker restart and the keep-awake is re-issued', async ({
+  context,
+  extensionId,
+}) => {
   const page = await openPopup(context, extensionId);
   await page.locator('[data-preset="p60"]').click();
   await expect(pill(page)).toHaveText('Screen awake');
@@ -179,7 +218,9 @@ test('the session survives a forced service-worker restart and the keep-awake is
   const reopened = await openPopup(context, extensionId);
   await next;
   await expect(pill(reopened)).toHaveText('Screen awake');
-  await expect.poll(async () => (await powerLog(reopened)).filter((c) => c.call === 'request').length).toBeGreaterThan(requestsBefore);
+  await expect
+    .poll(async () => (await powerLog(reopened)).filter((c) => c.call === 'request').length)
+    .toBeGreaterThan(requestsBefore);
   const after = (await localStore(reopened))['at.v1.session'] as { id: string; status: string };
   expect(after.id).toBe(before.id);
   expect(after.status).toBe('active');
@@ -201,12 +242,19 @@ test('options: telemetry is off by default and free users see honest Pro gates',
   await page.locator('label:has(input[name="defaultPreset"][value="p45"])').click();
   await expect(page.locator('input[name="defaultPreset"][value="p45"]')).toBeChecked();
   await expect(page.locator('[data-saved]')).toHaveText('Saved');
-  await expect.poll(async () => ((await localStore(page))['at.v1.settings'] as { defaultPreset?: string } | undefined)?.defaultPreset).toBe('p45');
+  await expect
+    .poll(
+      async () => ((await localStore(page))['at.v1.settings'] as { defaultPreset?: string } | undefined)?.defaultPreset,
+    )
+    .toBe('p45');
   const popup = await openPopup(context, extensionId);
   await expect(popup.locator('[data-toggle]')).toHaveText('Start · 45 min');
 });
 
-test('options: the language row stores settings.locale and switches the page in place', async ({ context, extensionId }) => {
+test('options: the language row stores settings.locale and switches the page in place', async ({
+  context,
+  extensionId,
+}) => {
   const page = await openOptions(context, extensionId);
   await expect(page.locator('[data-lang-now]')).toHaveText('Browser language (English)');
   await page.locator('[data-lang-toggle]').click();
@@ -215,19 +263,26 @@ test('options: the language row stores settings.locale and switches the page in 
   await page.locator('label:has(input[name="locale"][value="de"])').click();
   await expect(page.locator('h1')).toHaveText('AwakeTab-Einstellungen');
   await expect(page.locator('html')).toHaveAttribute('lang', 'de');
-  await expect.poll(async () => ((await localStore(page))['at.v1.settings'] as { locale?: string } | undefined)?.locale).toBe('de');
+  await expect
+    .poll(async () => ((await localStore(page))['at.v1.settings'] as { locale?: string } | undefined)?.locale)
+    .toBe('de');
   await page.keyboard.press('Escape');
   await expect(page.locator('[data-lang-list]')).toBeHidden();
   const popup = await openPopup(context, extensionId);
   await expect(pill(popup)).toHaveText('Bereit');
 });
 
-test('licence activation against a mocked API: local only, never synced, unlocks schedules', async ({ context, extensionId }) => {
+test('licence activation against a mocked API: local only, never synced, unlocks schedules', async ({
+  context,
+  extensionId,
+}) => {
   const calls = await mockLicenseApi(context, extensionId, ['ext.schedules', 'ext.autostart']);
   const page = await openOptions(context, extensionId);
   await page.locator('input[name="key"]').fill('ATAB-WRONG-KEY-0000000000');
   await page.locator('[data-license-submit]').click();
-  await expect(page.locator('[data-license-error]')).toHaveText("That key doesn't match a purchase. Check the receipt email.");
+  await expect(page.locator('[data-license-error]')).toHaveText(
+    "That key doesn't match a purchase. Check the receipt email.",
+  );
   await page.locator('input[name="key"]').fill('ATAB-E2E-KEY-1234567890');
   await page.locator('[data-license-submit]').click();
   await expect(page.locator('[data-license-active]')).toBeVisible();

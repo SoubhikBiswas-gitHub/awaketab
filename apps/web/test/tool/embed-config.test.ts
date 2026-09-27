@@ -1,6 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { applyBranding, fetchEmbedConfig, FREE_CONFIG, luminance, onAccent, parseEmbedConfig } from '../../src/tool/embed/config.js';
-import { DEFAULT_EMBED_SETTINGS, EMBED_SETTINGS_KEY, readEmbedSettings, writeEmbedSettings } from '../../src/tool/embed/settings.js';
+import {
+  applyBranding,
+  fetchEmbedConfig,
+  FREE_CONFIG,
+  luminance,
+  onAccent,
+  parseEmbedConfig,
+} from '../../src/tool/embed/config.js';
+import {
+  DEFAULT_EMBED_SETTINGS,
+  EMBED_SETTINGS_KEY,
+  readEmbedSettings,
+  writeEmbedSettings,
+} from '../../src/tool/embed/settings.js';
 
 afterEach(() => {
   vi.useRealTimers();
@@ -9,7 +21,9 @@ afterEach(() => {
 
 describe('embed config client (docs/11 §2)', () => {
   it('removes the attribution only for licensed + attribution:false', () => {
-    expect(parseEmbedConfig({ licensed: true, attribution: false, theme: { accent: '#0F766E', scheme: 'dark' } })).toEqual({
+    expect(
+      parseEmbedConfig({ licensed: true, attribution: false, theme: { accent: '#0F766E', scheme: 'dark' } }),
+    ).toEqual({
       licensed: true,
       attribution: false,
       accent: '#0f766e',
@@ -21,7 +35,11 @@ describe('embed config client (docs/11 §2)', () => {
   });
 
   it('ignores brand values that are not a #RRGGBB accent or a known scheme', () => {
-    const cfg = parseEmbedConfig({ licensed: true, attribution: false, theme: { accent: 'red; background:url(x)', scheme: 'neon' } });
+    const cfg = parseEmbedConfig({
+      licensed: true,
+      attribution: false,
+      theme: { accent: 'red; background:url(x)', scheme: 'neon' },
+    });
     expect(cfg.accent).toBeNull();
     expect(cfg.scheme).toBeNull();
     expect(parseEmbedConfig({ licensed: false, theme: { accent: '#123456' } }).accent).toBeNull();

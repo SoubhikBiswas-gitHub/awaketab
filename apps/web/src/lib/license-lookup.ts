@@ -8,7 +8,9 @@ export function normaliseLicenseKey(raw: string): string | null {
   return LICENSE_KEY_RE.test(key) ? key : null;
 }
 
-export async function lookupCheckoutKey(checkoutId: string): Promise<{ ok: true; key: string } | { ok: false; error: string }> {
+export async function lookupCheckoutKey(
+  checkoutId: string,
+): Promise<{ ok: true; key: string } | { ok: false; error: string }> {
   try {
     const res = await fetch('/api/license/activate', {
       method: 'POST',

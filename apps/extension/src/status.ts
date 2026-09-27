@@ -10,7 +10,10 @@ export function pillKey(lock: TLockState): `tool.pill.${TLockState}` {
   return `tool.pill.${lock}`;
 }
 
-export function pillTextKey(lock: TLockState, level: TPowerLevel | null): `tool.pill.${TLockState}` | 'ext.pill.systemHeld' {
+export function pillTextKey(
+  lock: TLockState,
+  level: TPowerLevel | null,
+): `tool.pill.${TLockState}` | 'ext.pill.systemHeld' {
   if (lock === 'unsupported') return pillKey('denied');
   return lock === 'held' && level === 'system' ? 'ext.pill.systemHeld' : pillKey(lock);
 }
@@ -61,7 +64,11 @@ export function formatClock(ms: number): string {
 
 export function originOf(session: ISession | null | undefined): TOrigin | null {
   const origin = session?.modeState.origin;
-  return origin === 'user' || origin === 'command' || origin === 'schedule' || origin === 'autostart' || origin === 'startup'
+  return origin === 'user' ||
+    origin === 'command' ||
+    origin === 'schedule' ||
+    origin === 'autostart' ||
+    origin === 'startup'
     ? origin
     : null;
 }

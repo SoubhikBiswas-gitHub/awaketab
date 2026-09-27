@@ -37,41 +37,65 @@ class FakeCloudflare {
     this.calls.push(`${method} ${url.pathname}${url.search}`);
     const next = this.queued.shift();
     if (next === 'network') return Promise.reject(new TypeError('fetch failed'));
-    if (next) return Promise.resolve(new Response('{"success":false,"errors":[]}', { status: next.status, headers: next.headers ?? {} }));
+    if (next)
+      return Promise.resolve(
+        new Response('{"success":false,"errors":[]}', { status: next.status, headers: next.headers ?? {} }),
+      );
     if (new Headers(init?.headers).get('authorization') !== `Bearer ${TOKEN}`) {
-      return Promise.resolve(Response.json({ success: false, errors: [{ code: 10000, message: 'Authentication error' }] }, { status: 403 }));
+      return Promise.resolve(
+        Response.json({ success: false, errors: [{ code: 10000, message: 'Authentication error' }] }, { status: 403 }),
+      );
     }
     const prefix = `/client/v4/accounts/${ACCOUNT}/storage/kv/namespaces/`;
     if (!url.pathname.startsWith(prefix)) return Promise.resolve(new Response('no', { status: 404 }));
     const [id = '', ...rest] = url.pathname.slice(prefix.length).split('/');
     const ns = this.namespaces.get(decodeURIComponent(id));
-    if (!ns) return Promise.resolve(Response.json({ success: false, errors: [{ code: 10013, message: 'namespace not found' }] }, { status: 404 }));
+    if (!ns)
+      return Promise.resolve(
+        Response.json({ success: false, errors: [{ code: 10013, message: 'namespace not found' }] }, { status: 404 }),
+      );
     const route = rest.join('/');
     const body = typeof init?.body === 'string' ? (JSON.parse(init.body) as unknown) : null;
 
-    if (route === '' && method === 'GET') return Promise.resolve(Response.json({ success: true, result: { id, title: ns.title } }));
+    if (route === '' && method === 'GET')
+      return Promise.resolve(Response.json({ success: true, result: { id, title: ns.title } }));
     if (route === 'keys' && method === 'GET') {
       const names = [...ns.rows.keys()].filter((key) => key.startsWith(url.searchParams.get('prefix') ?? '')).sort();
       const start = Number(url.searchParams.get('cursor') || '0');
       const page = names.slice(start, start + this.listLimit).map((name) => {
         const row = ns.rows.get(name) as IRow;
-        return { name, ...(row.expiration ? { expiration: row.expiration } : {}), ...(row.metadata ? { metadata: row.metadata } : {}) };
+        return {
+          name,
+          ...(row.expiration ? { expiration: row.expiration } : {}),
+          ...(row.metadata ? { metadata: row.metadata } : {}),
+        };
       });
       const more = start + this.listLimit < names.length;
       return Promise.resolve(
-        Response.json({ success: true, result: page, result_info: { count: page.length, cursor: more ? String(start + this.listLimit) : '' } }),
+        Response.json({
+          success: true,
+          result: page,
+          result_info: { count: page.length, cursor: more ? String(start + this.listLimit) : '' },
+        }),
       );
     }
     if (route === 'bulk/get' && method === 'POST') {
       if (!this.bulkGetSupported) return Promise.resolve(new Response('Not Found', { status: 404 }));
       const { keys } = body as { keys: string[] };
-      if (keys.length > 100) return Promise.resolve(Response.json({ success: false, errors: [{ code: 10001, message: 'too many keys' }] }, { status: 400 }));
+      if (keys.length > 100)
+        return Promise.resolve(
+          Response.json({ success: false, errors: [{ code: 10001, message: 'too many keys' }] }, { status: 400 }),
+        );
       const values = Object.fromEntries(keys.map((key) => [key, ns.rows.get(key)?.value ?? null]));
       return Promise.resolve(Response.json({ success: true, result: { values } }));
     }
     if (route.startsWith('values/') && method === 'GET') {
       const row = ns.rows.get(decodeURIComponent(route.slice('values/'.length)));
-      return Promise.resolve(row ? new Response(row.value) : Response.json({ success: false, errors: [{ code: 10009, message: 'key not found' }] }, { status: 404 }));
+      return Promise.resolve(
+        row
+          ? new Response(row.value)
+          : Response.json({ success: false, errors: [{ code: 10009, message: 'key not found' }] }, { status: 404 }),
+      );
     }
     if (route === 'bulk' && method === 'PUT') {
       const unsuccessful: string[] = [];
@@ -86,7 +110,9 @@ class FakeCloudflare {
           ...(row.metadata ? { metadata: row.metadata } : {}),
         });
       }
-      return Promise.resolve(Response.json({ success: true, result: { successful_key_count: 0, unsuccessful_keys: unsuccessful } }));
+      return Promise.resolve(
+        Response.json({ success: true, result: { successful_key_count: 0, unsuccessful_keys: unsuccessful } }),
+      );
     }
     return Promise.resolve(new Response('no route', { status: 404 }));
   };
@@ -120,7 +146,10 @@ describe('CloudflareKv', () => {
     const kv = client(api, 'prod');
     expect(await kv.title()).toBe('LICENSES');
     const first = await kv.list('lic:');
-    expect(first).toEqual({ keys: [{ name: 'lic:a', expiration: FUTURE, metadata: { v: 1 } }, { name: 'lic:b' }], cursor: '2' });
+    expect(first).toEqual({
+      keys: [{ name: 'lic:a', expiration: FUTURE, metadata: { v: 1 } }, { name: 'lic:b' }],
+      cursor: '2',
+    });
     expect((await kv.list('lic:', first.cursor)).keys.map((row) => row.name)).toEqual(['lic:c/d?e']);
     const values = await kv.getMany(['lic:a', 'lic:missing']);
     expect(values.get('lic:a')).toBe('{"keyEnc":"x"}');
@@ -169,9 +198,13 @@ describe('CloudflareKv', () => {
   it('reports the API error for auth failures and rejected writes', async () => {
     const api = new FakeCloudflare();
     api.addNamespace('prod', 'LICENSES');
-    await expect(client(api, 'prod', [], 'wrong').list('lic:')).rejects.toThrow(/HTTP 403 — 10000 Authentication error/u);
+    await expect(client(api, 'prod', [], 'wrong').list('lic:')).rejects.toThrow(
+      /HTTP 403 — 10000 Authentication error/u,
+    );
     api.rejectKeys.add('lic:x');
-    await expect(client(api, 'prod').putMany([{ key: 'lic:x', value: '1' }])).rejects.toThrow(/rejected 1 keys: lic:x/u);
+    await expect(client(api, 'prod').putMany([{ key: 'lic:x', value: '1' }])).rejects.toThrow(
+      /rejected 1 keys: lic:x/u,
+    );
     expect(() => new CloudflareKv({ accountId: '', namespaceId: 'n', apiToken: 't' })).toThrow(/accountId/u);
   });
 
@@ -179,7 +212,11 @@ describe('CloudflareKv', () => {
     const api = new FakeCloudflare();
     seed(api.addNamespace('prod', 'LICENSES'));
     const drill = api.addNamespace('drill', 'LICENSES_PREVIEW');
-    const { backup } = await exportNamespace(client(api, 'prod'), { namespace: 'LICENSES', namespaceId: 'prod', encryptionKey: BACKUP_KEY });
+    const { backup } = await exportNamespace(client(api, 'prod'), {
+      namespace: 'LICENSES',
+      namespaceId: 'prod',
+      encryptionKey: BACKUP_KEY,
+    });
     expect(backup.records.map((row) => row.key)).toEqual(['cus:1', 'lic:a', 'lic:b', 'lic:c/d?e']);
 
     const target = client(api, 'drill');

@@ -47,7 +47,12 @@ async function store(opts: { lastValidatedAt: number; exp: number; tok?: string 
   );
 }
 
-const stored = () => JSON.parse(localStorage.getItem('at.v1.license') ?? 'null') as { token: string; features: string[]; exp: number } | null;
+const stored = () =>
+  JSON.parse(localStorage.getItem('at.v1.license') ?? 'null') as {
+    token: string;
+    features: string[];
+    exp: number;
+  } | null;
 const reply = (status: number, body: unknown) => vi.fn(async () => new Response(JSON.stringify(body), { status }));
 
 describe('revalidateStoredLicense', () => {
@@ -106,7 +111,10 @@ describe('revalidateStoredLicense', () => {
     vi.stubGlobal('fetch', reply(502, { error: 'polar_unavailable' }));
     expect(await revalidateStoredLicense()).toBe('skip');
     expect(stored()).not.toBeNull();
-    vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(new TypeError('offline'))));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Promise.reject(new TypeError('offline'))),
+    );
     expect(await revalidateStoredLicense()).toBe('skip');
     expect(stored()).not.toBeNull();
   });
@@ -120,7 +128,8 @@ describe('normaliseLicenseKey / lookupCheckoutKey', () => {
 
   it('normalises a key like the server (trim + upper case) and rejects other shapes', () => {
     expect(normaliseLicenseKey('  awaketab-pro-test-0001-abcd ')).toBe('AWAKETAB-PRO-TEST-0001-ABCD');
-    for (const bad of ['', 'short-key', 'AWAKETAB PRO TEST 0001 ABCD', 'X'.repeat(81)]) expect(normaliseLicenseKey(bad)).toBeNull();
+    for (const bad of ['', 'short-key', 'AWAKETAB PRO TEST 0001 ABCD', 'X'.repeat(81)])
+      expect(normaliseLicenseKey(bad)).toBeNull();
   });
 
   it('posts { checkoutId, lookup: true } with no device fields and stores nothing', async () => {
@@ -137,7 +146,10 @@ describe('normaliseLicenseKey / lookupCheckoutKey', () => {
   it('maps API errors and network failures', async () => {
     vi.stubGlobal('fetch', reply(404, { error: 'invalid_key' }));
     expect(await lookupCheckoutKey('chk_1')).toEqual({ ok: false, error: 'invalid_key' });
-    vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(new TypeError('offline'))));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Promise.reject(new TypeError('offline'))),
+    );
     expect(await lookupCheckoutKey('chk_1')).toEqual({ ok: false, error: 'offline' });
   });
 });

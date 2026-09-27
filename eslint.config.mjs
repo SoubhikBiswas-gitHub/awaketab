@@ -35,10 +35,7 @@ export default tseslint.config(
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-deprecated': 'off',
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-      ],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@typescript-eslint/naming-convention': [
         'error',
         { selector: 'interface', format: ['PascalCase'], prefix: ['I'] },
@@ -50,7 +47,10 @@ export default tseslint.config(
       'no-restricted-globals': ['error', 'alert', 'confirm', 'prompt'],
       'no-restricted-syntax': [
         'error',
-        { selector: 'TSEnumDeclaration', message: 'Use string-literal unions or `as const` maps; enums emit runtime code.' },
+        {
+          selector: 'TSEnumDeclaration',
+          message: 'Use string-literal unions or `as const` maps; enums emit runtime code.',
+        },
       ],
     },
   },

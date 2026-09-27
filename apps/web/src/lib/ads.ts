@@ -17,8 +17,10 @@ export function shouldRenderAdSlots(): boolean {
 }
 
 export function inCmpRegion(locale = typeof navigator === 'undefined' ? 'en' : navigator.language): boolean {
-  return /-(AT|BE|BG|HR|CY|CZ|DK|EE|FI|FR|DE|GR|HU|IE|IT|LV|LT|LU|MT|NL|PL|PT|RO|SK|SI|ES|SE|GB|UK|CH)\b/iu.test(locale) ||
-    /^(de|fr|it|es|nl|pl|sv|da|fi|pt|el|cs|hu|ro|bg|hr|sk|sl|lt|lv|et|ga|mt)$/iu.test(locale.split('-')[0] ?? '');
+  return (
+    /-(AT|BE|BG|HR|CY|CZ|DK|EE|FI|FR|DE|GR|HU|IE|IT|LV|LT|LU|MT|NL|PL|PT|RO|SK|SI|ES|SE|GB|UK|CH)\b/iu.test(locale) ||
+    /^(de|fr|it|es|nl|pl|sv|da|fi|pt|el|cs|hu|ro|bg|hr|sk|sl|lt|lv|et|ga|mt)$/iu.test(locale.split('-')[0] ?? '')
+  );
 }
 
 export function hasCmpConsent(): boolean {
@@ -42,7 +44,13 @@ async function remoteConfig(): Promise<IAdsConfig> {
 function afterLcp(load: () => void): void {
   const run = () => {
     const ric = globalThis.requestIdleCallback;
-    if (typeof ric === 'function') ric(() => { load(); }, { timeout: 4000 });
+    if (typeof ric === 'function')
+      ric(
+        () => {
+          load();
+        },
+        { timeout: 4000 },
+      );
     else setTimeout(load, 2500);
   };
   try {

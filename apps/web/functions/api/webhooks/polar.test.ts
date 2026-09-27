@@ -40,7 +40,11 @@ async function record(h: IHarness): Promise<ILicenseRecord | null> {
 }
 
 async function activateDevice(h: IHarness) {
-  return invoke(onActivate, h.env, jsonRequest('/api/license/activate', { key: KEY, deviceId: DEVICE, deviceLabel: 'Laptop' }));
+  return invoke(
+    onActivate,
+    h.env,
+    jsonRequest('/api/license/activate', { key: KEY, deviceId: DEVICE, deviceLabel: 'Laptop' }),
+  );
 }
 
 beforeEach(() => {
@@ -68,7 +72,11 @@ describe('POST /api/webhooks/polar — Standard Webhooks verification', () => {
     const raw = JSON.stringify(event('order.created'));
     const ts = String(T0 / 1000);
     const good = await signWebhook(raw, 'evt_multi', ts, devVars().POLAR_WEBHOOK_SECRET ?? '');
-    const { res } = await send(h, null, { raw, id: 'evt_multi', signature: `v1,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= ${good}` });
+    const { res } = await send(h, null, {
+      raw,
+      id: 'evt_multi',
+      signature: `v1,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= ${good}`,
+    });
     expect(res.status).toBe(200);
   });
 
@@ -115,12 +123,15 @@ describe('POST /api/webhooks/polar — Standard Webhooks verification', () => {
     expect(res.status).toBe(200);
   });
 
-  it.each(['webhook-id', 'webhook-timestamp', 'webhook-signature'])('returns 400 when %s is missing', async (header) => {
-    const h = harness();
-    const { res } = await send(h, event('order.created'), { omit: [header] });
-    expect(res.status).toBe(400);
-    expect(h.kv.writes).toEqual([]);
-  });
+  it.each(['webhook-id', 'webhook-timestamp', 'webhook-signature'])(
+    'returns 400 when %s is missing',
+    async (header) => {
+      const h = harness();
+      const { res } = await send(h, event('order.created'), { omit: [header] });
+      expect(res.status).toBe(400);
+      expect(h.kv.writes).toEqual([]);
+    },
+  );
 });
 
 describe('POST /api/webhooks/polar — idempotency', () => {
@@ -165,10 +176,23 @@ describe('POST /api/webhooks/polar — event handling (docs/09 §2.7)', () => {
   it('order.created writes ord:, lic: (keyEnc AES-GCM) and the cus: index', async () => {
     const h = harness();
     await send(h, event('order.created', { metadata: { plan: 'pro_lifetime' } }));
-    expect(h.kv.json('ord:ord_1')).toEqual({ plan: 'pro_lifetime', amountCents: 0, currency: 'USD', customerId: 'cus_hook', at: T0 });
+    expect(h.kv.json('ord:ord_1')).toEqual({
+      plan: 'pro_lifetime',
+      amountCents: 0,
+      currency: 'USD',
+      customerId: 'cus_hook',
+      at: T0,
+    });
     expect(h.kv.writesTo('ord:ord_1')[0]?.expirationTtl).toBe(2 * 365 * 86_400);
     const rec = await record(h);
-    expect(rec).toMatchObject({ plan: 'pro_lifetime', status: 'active', polarOrderId: 'ord_1', customerId: 'cus_hook', activations: [], limit: 5 });
+    expect(rec).toMatchObject({
+      plan: 'pro_lifetime',
+      status: 'active',
+      polarOrderId: 'ord_1',
+      customerId: 'cus_hook',
+      activations: [],
+      limit: 5,
+    });
     expect(await decryptUtf8(rec?.keyEnc ?? '', devVars().LICENSE_KEY_ENC_KEY ?? '')).toBe(KEY);
     expect(h.kv.json('cus:cus_hook')).toEqual([await sha256Hex(KEY)]);
     expect(JSON.stringify(h.kv.writes)).not.toContain(KEY);
@@ -188,7 +212,10 @@ describe('POST /api/webhooks/polar — event handling (docs/09 §2.7)', () => {
 
   it('writes embed:{domain} for an embed licence with a normalised domain', async () => {
     const h = harness();
-    await send(h, event('order.created', { metadata: { plan: 'biz_embed_site_yearly', domain: 'WWW.Recipes.Example' } }));
+    await send(
+      h,
+      event('order.created', { metadata: { plan: 'biz_embed_site_yearly', domain: 'WWW.Recipes.Example' } }),
+    );
     expect(h.kv.json('embed:recipes.example')).toMatchObject({ keyHash: await sha256Hex(KEY), attribution: false });
   });
 
@@ -227,16 +254,19 @@ describe('POST /api/webhooks/polar — event handling (docs/09 §2.7)', () => {
     expect((await record(h))?.status).toBe('revoked');
   });
 
-  it.each(['order.refunded', 'refund.created'])('%s marks the licence refunded and activate answers 403 refunded (LIC-11)', async (type) => {
-    const h = harness();
-    h.polar.addKey(KEY, { customerId: 'cus_hook' });
-    await send(h, event('order.created'));
-    await send(h, event(type));
-    expect((await record(h))?.status).toBe('refunded');
-    const res = await activateDevice(h);
-    expect(res.status).toBe(403);
-    expect(await res.json()).toEqual({ error: 'refunded' });
-  });
+  it.each(['order.refunded', 'refund.created'])(
+    '%s marks the licence refunded and activate answers 403 refunded (LIC-11)',
+    async (type) => {
+      const h = harness();
+      h.polar.addKey(KEY, { customerId: 'cus_hook' });
+      await send(h, event('order.created'));
+      await send(h, event(type));
+      expect((await record(h))?.status).toBe('refunded');
+      const res = await activateDevice(h);
+      expect(res.status).toBe(403);
+      expect(await res.json()).toEqual({ error: 'refunded' });
+    },
+  );
 
   it('never re-opens a revoked or refunded licence on an out-of-order cancel/uncancel', async () => {
     const h = harness();
@@ -260,7 +290,6 @@ describe('POST /api/webhooks/polar — event handling (docs/09 §2.7)', () => {
     expect((await send(h, null, { raw: 'not json' })).res.status).toBe(200);
     expect(h.kv.keys().every((key) => key.startsWith('wh:'))).toBe(true);
   });
-
 });
 
 // D-06: Polar's order, subscription and refund webhooks never carry the licence key, and benefit grants carry only
@@ -288,7 +317,10 @@ describe('POST /api/webhooks/polar — key-less Polar payloads (D-06)', () => {
 
   async function linkedLifetime(h: IHarness, customerId = 'cus_d06'): Promise<IPolarKey> {
     const row = h.polar.addKey(LIFETIME, { customerId, benefitId: BENEFITS.lifetime, expiresAt: null });
-    await send(h, polarEvents.order('order.created', row, { product: { id: 'prod_2', metadata: { plan: 'pro_lifetime' } } }));
+    await send(
+      h,
+      polarEvents.order('order.created', row, { product: { id: 'prod_2', metadata: { plan: 'pro_lifetime' } } }),
+    );
     await send(h, polarEvents.benefitGrant('benefit_grant.created', row));
     expect((await activateKey(h, LIFETIME, DEVICE_2)).status).toBe(200);
     return row;
@@ -336,7 +368,11 @@ describe('POST /api/webhooks/polar — key-less Polar payloads (D-06)', () => {
     expect((await activateKey(h, LIFETIME)).status).toBe(200);
     expect((await lic(h, LIFETIME))?.polarGrantId).toBeUndefined();
     await send(h, polarEvents.benefitGrant('benefit_grant.created', row));
-    expect(await lic(h, LIFETIME)).toMatchObject({ polarGrantId: row.grantId, polarOrderId: row.orderId, polarLicenseKeyId: row.id });
+    expect(await lic(h, LIFETIME)).toMatchObject({
+      polarGrantId: row.grantId,
+      polarOrderId: row.orderId,
+      polarLicenseKeyId: row.id,
+    });
     expect(h.kv.json<{ lks: string[] }>(`ord:${row.orderId}`)?.lks).toEqual([row.id]);
   });
 
@@ -344,7 +380,10 @@ describe('POST /api/webhooks/polar — key-less Polar payloads (D-06)', () => {
     const h = harness();
     const row = h.polar.addKey(LIFETIME, { customerId: 'cus_d06', benefitId: BENEFITS.lifetime });
     await send(h, polarEvents.benefitGrant('benefit_grant.created', row));
-    await send(h, polarEvents.order('order.created', row, { product: { id: 'prod_2', metadata: { plan: 'pro_lifetime' } } }));
+    await send(
+      h,
+      polarEvents.order('order.created', row, { product: { id: 'prod_2', metadata: { plan: 'pro_lifetime' } } }),
+    );
     expect(h.kv.json(`ord:${row.orderId}`)).toEqual({
       lks: [row.id],
       plan: 'pro_lifetime',
@@ -411,7 +450,10 @@ describe('POST /api/webhooks/polar — key-less Polar payloads (D-06)', () => {
   it('a refund of a renewal order (new order id) resolves through the subscription', async () => {
     const h = harness();
     const row = await linkedYearly(h);
-    await send(h, polarEvents.order('order.refunded', row, { id: 'ord_renewal_2027', billing_reason: 'subscription_cycle' }));
+    await send(
+      h,
+      polarEvents.order('order.refunded', row, { id: 'ord_renewal_2027', billing_reason: 'subscription_cycle' }),
+    );
     expect((await lic(h, YEARLY))?.status).toBe('refunded');
   });
 
@@ -502,7 +544,12 @@ describe('POST /api/webhooks/polar — key-less Polar payloads (D-06)', () => {
   });
 
   describe('customer fallback (records written before D-06)', () => {
-    async function seedLegacy(h: IHarness, key: string, plan: ILicenseRecord['plan'], customerId = 'cus_old'): Promise<string> {
+    async function seedLegacy(
+      h: IHarness,
+      key: string,
+      plan: ILicenseRecord['plan'],
+      customerId = 'cus_old',
+    ): Promise<string> {
       const keyHash = await sha256Hex(key);
       h.kv.seed(`lic:${keyHash}`, {
         plan,
@@ -538,7 +585,7 @@ describe('POST /api/webhooks/polar — key-less Polar payloads (D-06)', () => {
       ...over,
     });
 
-    it('subscription.revoked reaches the customer\'s yearly licence and not the lifetime one', async () => {
+    it("subscription.revoked reaches the customer's yearly licence and not the lifetime one", async () => {
       const h = harness();
       await seedLegacy(h, YEARLY, 'pro_yearly');
       await seedLegacy(h, LIFETIME, 'pro_lifetime');
@@ -633,7 +680,9 @@ describe('POST /api/webhooks/polar — key-less Polar payloads (D-06)', () => {
     const row = await linkedYearly(h);
     const licKey = `lic:${await sha256Hex(YEARLY)}`;
     h.kv.failNextPut((key) => key === licKey);
-    const { request } = await webhookRequest(polarEvents.subscription('subscription.revoked', row), { id: 'evt_d06_retry' });
+    const { request } = await webhookRequest(polarEvents.subscription('subscription.revoked', row), {
+      id: 'evt_d06_retry',
+    });
     await expect(invoke(onWebhook, h.env, request)).rejects.toThrow(/KV PUT failed/u);
     expect(h.kv.peek('wh:evt_d06_retry')).toBeNull();
     await send(h, polarEvents.subscription('subscription.revoked', row), { id: 'evt_d06_retry' });

@@ -35,7 +35,9 @@ async function files(dir: string): Promise<string[]> {
 
 async function clientFiles(): Promise<Array<{ file: string; text: string }>> {
   const list = await files(dist);
-  return Promise.all(list.map(async (file) => ({ file: path.relative(dist, file), text: await readFile(file, 'utf8') })));
+  return Promise.all(
+    list.map(async (file) => ({ file: path.relative(dist, file), text: await readFile(file, 'utf8') })),
+  );
 }
 
 function devVarValues(raw: string): Map<string, string> {
@@ -102,7 +104,8 @@ describe('no secrets in client files', () => {
     // trusts no key at all, so there is nothing to find.
     const pro = await readFile(path.join(dist, servedFile('/pro')), 'utf8');
     const productionMode = !/https:\/\/sandbox(?:-api)?\.polar\.sh\//u.test(pro);
-    if (!productionMode || Object.keys(PRODUCTION_LICENSE_PUBLIC_KEYS).length > 0) expect(publicJwks).toBeGreaterThan(0);
+    if (!productionMode || Object.keys(PRODUCTION_LICENSE_PUBLIC_KEYS).length > 0)
+      expect(publicJwks).toBeGreaterThan(0);
   });
 });
 
@@ -150,10 +153,13 @@ function effective(rules: IRule[], pathname: string): Map<string, string> {
   return out;
 }
 
-const directives = (csp: string) => new Map(csp.split(';').map((d) => {
-  const [name = '', ...rest] = d.trim().split(/\s+/u);
-  return [name, rest.join(' ')] as const;
-}));
+const directives = (csp: string) =>
+  new Map(
+    csp.split(';').map((d) => {
+      const [name = '', ...rest] = d.trim().split(/\s+/u);
+      return [name, rest.join(' ')] as const;
+    }),
+  );
 
 describe('security headers per route class (docs/14 §3)', async () => {
   const rules = parseHeaders(await readFile(path.join(dist, '_headers'), 'utf8'));
@@ -193,7 +199,16 @@ describe('security headers per route class (docs/14 §3)', async () => {
     expect(h.get('x-frame-options')).toBe('DENY');
   });
 
-  const CONTENT = ['/for/cooking', '/on/iphone-safari', '/vs/nosleep-page', '/guides/lock-screen-vs-sleep', '/learn/how-we-tested', '/es/for/cocinar', '/pt-br/learn/x', '/hi/guides/x'];
+  const CONTENT = [
+    '/for/cooking',
+    '/on/iphone-safari',
+    '/vs/nosleep-page',
+    '/guides/lock-screen-vs-sleep',
+    '/learn/how-we-tested',
+    '/es/for/cocinar',
+    '/pt-br/learn/x',
+    '/hi/guides/x',
+  ];
   it.each(CONTENT)('content route %s: its own network CSP (not joined), still no framing', (p) => {
     const h = effective(rules, p);
     expectCommon(h, p);
@@ -234,7 +249,10 @@ describe('security headers per route class (docs/14 §3)', async () => {
 
   it('the shipped _headers ends with the *.pages.dev noindex rules (F-03: previews are never indexed)', () => {
     const hostRules = rules.filter((rule) => !rule.pattern.startsWith('/'));
-    expect(hostRules.map((rule) => rule.pattern)).toEqual(['https://:project.pages.dev/*', 'https://:version.:project.pages.dev/*']);
+    expect(hostRules.map((rule) => rule.pattern)).toEqual([
+      'https://:project.pages.dev/*',
+      'https://:version.:project.pages.dev/*',
+    ]);
     expect(rules.slice(-2)).toEqual(hostRules);
     for (const rule of hostRules) expect(rule.set).toEqual([['x-robots-tag', 'noindex']]);
     // Path rules never match a host-qualified pattern, so the production (awaketab.com) view above is unchanged.
@@ -258,7 +276,11 @@ describe('inline boot script (docs/05 §11)', () => {
     for (const page of pages) {
       const html = await readFile(path.join(dist, servedFile(page)), 'utf8');
       // Executable inline scripts only: JSON data blocks are not scripts and need no hash.
-      const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)(?![^>]*type="application\/(?:ld\+)?json")[^>]*>([\s\S]*?)<\/script>/gu)];
+      const inline = [
+        ...html.matchAll(
+          /<script(?![^>]*\bsrc=)(?![^>]*type="application\/(?:ld\+)?json")[^>]*>([\s\S]*?)<\/script>/gu,
+        ),
+      ];
       expect(inline.length, page).toBe(1);
       for (const [, body = ''] of inline) {
         const hash = `'sha256-${createHash('sha256').update(body).digest('base64')}'`;

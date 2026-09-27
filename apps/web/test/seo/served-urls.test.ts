@@ -22,7 +22,9 @@ async function walk(dir: string): Promise<string[]> {
 const all = (await walk(dist)).map((file) => path.relative(dist, file).split(path.sep).join('/'));
 const pages = all.filter((file) => file.endsWith('.html'));
 const built = new Set(all);
-const html = new Map(await Promise.all(pages.map(async (file) => [file, await readFile(path.join(dist, file), 'utf8')] as const)));
+const html = new Map(
+  await Promise.all(pages.map(async (file) => [file, await readFile(path.join(dist, file), 'utf8')] as const)),
+);
 // The /embed/cook iframe app is noindex and deliberately names no canonical (docs/11 §7).
 const NO_CANONICAL = new Set(['embed/cook.html']);
 const sitemaps = all.filter((file) => /^sitemap-[a-z-]+\.xml$/u.test(file) && file !== 'sitemap-index.xml');
@@ -84,11 +86,13 @@ describe('the build is laid out the way Cloudflare Pages serves it (docs/14 §2.
     for (const file of sitemaps) {
       const xml = await readFile(path.join(dist, file), 'utf8');
       for (const m of xml.matchAll(/<loc>([^<]+)<\/loc>/gu)) urls.push([`${file} <loc>`, pathnameOf(m[1] ?? '')]);
-      for (const m of xml.matchAll(/<xhtml:link [^>]*href="([^"]+)"/gu)) urls.push([`${file} alternate`, pathnameOf(m[1] ?? '')]);
+      for (const m of xml.matchAll(/<xhtml:link [^>]*href="([^"]+)"/gu))
+        urls.push([`${file} alternate`, pathnameOf(m[1] ?? '')]);
     }
     expect(expectServed(urls)).toBeGreaterThan(60);
     const index = await readFile(path.join(dist, 'sitemap-index.xml'), 'utf8');
-    for (const m of index.matchAll(/<loc>([^<]+)<\/loc>/gu)) expect(built.has(pathnameOf(m[1] ?? '').slice(1)), m[1]).toBe(true);
+    for (const m of index.matchAll(/<loc>([^<]+)<\/loc>/gu))
+      expect(built.has(pathnameOf(m[1] ?? '').slice(1)), m[1]).toBe(true);
   });
 
   it('points every canonical, hreflang and og:url at a served URL', () => {

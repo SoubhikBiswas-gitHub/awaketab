@@ -1,8 +1,6 @@
 export type TPlanType = 'indefinite' | 'duration' | 'until';
 export type TPlan =
-  | { type: 'indefinite' }
-  | { type: 'duration'; ms: number }
-  | { type: 'until'; endsAt: number; wall: string };
+  { type: 'indefinite' } | { type: 'duration'; ms: number } | { type: 'until'; endsAt: number; wall: string };
 
 export type TSessionStatus = 'inactive' | 'active' | 'paused' | 'completed' | 'aborted';
 export type TEndReason = 'completed' | 'user' | 'lost_timeout' | 'denied' | 'battery' | 'error';
@@ -103,7 +101,12 @@ export interface IMeta {
   installedAt: number;
   sessionCount: number;
   // rearmAt: sessionCount at which a 'later' answer asks again (docs/05 §3.22: after 10 more sessions).
-  ratingPrompt: { shownAt: number | null; action: 'rated' | 'later' | 'never' | null; stars?: number; rearmAt?: number };
+  ratingPrompt: {
+    shownAt: number | null;
+    action: 'rated' | 'later' | 'never' | null;
+    stars?: number;
+    rearmAt?: number;
+  };
   lastSeenVersion: string;
   pwa: { installed: boolean; promptShownAt: number | null };
   secondTabWarnedAt: number | null;

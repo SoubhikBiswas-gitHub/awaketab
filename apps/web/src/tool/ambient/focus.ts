@@ -7,7 +7,12 @@ import { activeElapsed, FOCUS_LONG_BREAK_MIN, focusPhase, focusPlanMs, type IFoc
 import { at, digits as writeDigits } from './fmt.js';
 import { el, everySecond } from './tick.js';
 
-const PHASE = { work: 'ambient.focus.work', break: 'ambient.focus.break', long: 'ambient.focus.long', done: 'tool.timer.complete' };
+const PHASE = {
+  work: 'ambient.focus.work',
+  break: 'ambient.focus.break',
+  long: 'ambient.focus.long',
+  done: 'tool.timer.complete',
+};
 
 function dotState(cycle: number, p: IFocusPhase): 'done' | 'now' | 'todo' {
   if (cycle < p.cycle || (cycle === p.cycle && p.kind !== 'work')) return 'done';
@@ -82,15 +87,30 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
     bar.style.setProperty('--p', String(phase.remainingMs / phase.phaseMs));
     const time = at(now + phase.remainingMs, now, ctx.store.get().settings.ambient.clock24h);
     next.textContent = t(
-      work ? (last ? 'ambient.focus.nextLong' : 'ambient.focus.nextBreak') : phase.kind === 'break' ? 'ambient.focus.nextFocus' : 'ambient.focus.nextEnd',
+      work
+        ? last
+          ? 'ambient.focus.nextLong'
+          : 'ambient.focus.nextBreak'
+        : phase.kind === 'break'
+          ? 'ambient.focus.nextFocus'
+          : 'ambient.focus.nextEnd',
       { time },
     );
     skip.textContent = t(
-      work ? (last ? 'ambient.focus.skipLong' : 'ambient.focus.skipBreak') : phase.kind === 'break' ? 'ambient.focus.skipFocus' : 'ambient.focus.finish',
+      work
+        ? last
+          ? 'ambient.focus.skipLong'
+          : 'ambient.focus.skipBreak'
+        : phase.kind === 'break'
+          ? 'ambient.focus.skipFocus'
+          : 'ambient.focus.finish',
     );
     const states = Array.from({ length: c.cycles }, (_, i) => dotState(i + 1, phase));
     dots.replaceChildren(...states.map((s) => el('span', { 'data-state': s })));
-    dots.setAttribute('aria-label', t('ambient.focus.dots', { n: states.filter((s) => s === 'done').length, total: c.cycles }));
+    dots.setAttribute(
+      'aria-label',
+      t('ambient.focus.dots', { n: states.filter((s) => s === 'done').length, total: c.cycles }),
+    );
     if (lastIndex !== -1 && phase.index !== lastIndex) {
       const text = work
         ? t('ambient.focus.toast.work', { minutes: c.workMin })

@@ -59,7 +59,10 @@ const flush = async () => {
   for (let i = 0; i < 5; i++) await new Promise((resolve) => setTimeout(resolve, 0));
 };
 const store = (record: Record<string, unknown> = {}) => {
-  localStorage.setItem('at.v1.license', JSON.stringify({ token: 'tok', plan: 'pro_lifetime', deviceId: HERE_ID, ...record }));
+  localStorage.setItem(
+    'at.v1.license',
+    JSON.stringify({ token: 'tok', plan: 'pro_lifetime', deviceId: HERE_ID, ...record }),
+  );
 };
 const rowsOf = (root: HTMLElement) => [...root.querySelectorAll<HTMLElement>('[data-devices] > [role="row"]')];
 
@@ -242,7 +245,9 @@ describe('manage page', () => {
   it('a yearly licence inside its 7-day grace shows the renewal panel with its dates', async () => {
     const exp = Math.floor(NOW / 1000) + 6 * DAY_S;
     store({ plan: 'pro_yearly', exp });
-    fetchRows.mockResolvedValue({ revoked: false, activations: ROWS, plan: 'pro_yearly', exp } as Awaited<ReturnType<typeof fetchActivations>>);
+    fetchRows.mockResolvedValue({ revoked: false, activations: ROWS, plan: 'pro_yearly', exp } as Awaited<
+      ReturnType<typeof fetchActivations>
+    >);
     const root = mount();
     bootManagePage(root, NOW);
     await flush();

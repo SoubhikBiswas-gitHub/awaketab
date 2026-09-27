@@ -53,7 +53,10 @@ export function mirrorTime(s: TState, now: number): string {
 
 function untilText(end: number, now: number): string {
   const r = Math.round(end / 60_000) * 60_000;
-  const time = new Intl.DateTimeFormat(document.documentElement.lang || 'en', { hour: 'numeric', minute: '2-digit' }).format(r);
+  const time = new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(r);
   const day = new Date(r).toDateString() === new Date(now).toDateString();
   return t('ambient.until', day ? time : t('ambient.tomorrow', time));
 }
@@ -106,7 +109,14 @@ export function mountMirror(root: HTMLElement, channel: BroadcastChannel | null 
   const intent = (action: 'stop' | 'add') => {
     const owner = pickOwner(states.values());
     if (!owner) return;
-    post({ type: 'intent', tabId, ts: Date.now(), target: owner.tabId, action, ...(action === 'add' ? { ms: PIP_ADD_MS } : {}) });
+    post({
+      type: 'intent',
+      tabId,
+      ts: Date.now(),
+      target: owner.tabId,
+      action,
+      ...(action === 'add' ? { ms: PIP_ADD_MS } : {}),
+    });
   };
 
   const onMessage = (ev: MessageEvent<unknown>) => {

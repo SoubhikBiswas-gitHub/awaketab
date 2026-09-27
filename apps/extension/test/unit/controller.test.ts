@@ -6,7 +6,8 @@ import { BADGE_COLORS } from '../../src/status';
 import { bodyOf, createFakeChrome, flush } from './fake-chrome';
 import { proRecord, wired } from './helpers';
 
-const session = (fake: ReturnType<typeof createFakeChrome>) => fake.local.data.get(STORAGE_KEYS.session) as ISession | undefined;
+const session = (fake: ReturnType<typeof createFakeChrome>) =>
+  fake.local.data.get(STORAGE_KEYS.session) as ISession | undefined;
 const controllers: Array<{ dispose(): void }> = [];
 const track = <T extends { dispose(): void }>(ctl: T): T => {
   controllers.push(ctl);
@@ -39,7 +40,9 @@ describe('background controller — keep-awake and badge', () => {
     const ctl = track(wired(fake));
     const state = await ctl.onMessage({ type: 'start', presetId: 'p15' });
     expect(fake.badge.text).toBe('15m');
-    expect(Math.abs((fake.alarms.get(ALARMS.end)?.scheduledTime ?? 0) - (state?.session?.endsAt ?? 0))).toBeLessThan(50);
+    expect(Math.abs((fake.alarms.get(ALARMS.end)?.scheduledTime ?? 0) - (state?.session?.endsAt ?? 0))).toBeLessThan(
+      50,
+    );
   });
 
   it('maps the system level to requestKeepAwake("system"), an indigo SYS badge and the secondary line', async () => {
@@ -233,11 +236,18 @@ describe('background controller — storage, sync and privacy', () => {
 
   it('seeds a fresh profile from chrome.storage.sync and adopts remote changes', async () => {
     const fake = createFakeChrome();
-    fake.sync.data.set(EXT_KEYS.ext, { v: 1, level: 'system', schedules: [], autostart: { browserStart: false, sites: [] } });
+    fake.sync.data.set(EXT_KEYS.ext, {
+      v: 1,
+      level: 'system',
+      schedules: [],
+      autostart: { browserStart: false, sites: [] },
+    });
     const ctl = track(wired(fake));
     await ctl.ready();
     expect(ctl.state().level).toBe('system');
-    await fake.sync.set({ [EXT_KEYS.ext]: { v: 1, level: 'display', schedules: [], autostart: { browserStart: false, sites: [] } } });
+    await fake.sync.set({
+      [EXT_KEYS.ext]: { v: 1, level: 'display', schedules: [], autostart: { browserStart: false, sites: [] } },
+    });
     await flush(20);
     expect(ctl.state().level).toBe('display');
   });
@@ -258,7 +268,9 @@ describe('background controller — storage, sync and privacy', () => {
     const ctl = track(wired(fake, { fetchFn }));
     await ctl.onMessage({ type: 'start', presetId: 'p15' });
     await ctl.onMessage({ type: 'stop' });
-    const bodies = fetchFn.mock.calls.map((call) => JSON.parse(bodyOf(call[1])) as { events: Array<Record<string, unknown>> });
+    const bodies = fetchFn.mock.calls.map(
+      (call) => JSON.parse(bodyOf(call[1])) as { events: Array<Record<string, unknown>> },
+    );
     const events = bodies.flatMap((b) => b.events);
     expect(fetchFn.mock.calls.every((call) => call[0] === 'https://awaketab.com/api/e')).toBe(true);
     expect(events.map((e) => e.event)).toEqual(['session_start', 'session_end']);
@@ -273,7 +285,12 @@ describe('background controller — Pro schedules and auto-start', () => {
   it('free users get no schedule alarms and no schedule session', async () => {
     const at = new Date(2026, 8, 2, 10, 0).getTime();
     const fake = createFakeChrome();
-    fake.local.data.set(EXT_KEYS.ext, { v: 1, level: 'display', schedules: [weekdays], autostart: { browserStart: true, sites: [] } });
+    fake.local.data.set(EXT_KEYS.ext, {
+      v: 1,
+      level: 'display',
+      schedules: [weekdays],
+      autostart: { browserStart: true, sites: [] },
+    });
     const ctl = track(wired(fake, { now: () => at }));
     await ctl.onStartup();
     expect([...fake.alarms.keys()].filter((n) => n.startsWith('at.sched.'))).toEqual([]);
@@ -284,13 +301,22 @@ describe('background controller — Pro schedules and auto-start', () => {
     const at = new Date(2026, 8, 2, 10, 0).getTime();
     const fake = createFakeChrome();
     fake.local.data.set(STORAGE_KEYS.license, await proRecord(['ext.schedules'], at));
-    fake.local.data.set(EXT_KEYS.ext, { v: 1, level: 'display', schedules: [weekdays], autostart: { browserStart: false, sites: [] } });
+    fake.local.data.set(EXT_KEYS.ext, {
+      v: 1,
+      level: 'display',
+      schedules: [weekdays],
+      autostart: { browserStart: false, sites: [] },
+    });
     const ctl = track(wired(fake, { now: () => at }));
     await ctl.ready();
     expect(fake.alarms.get('at.sched.work.end')?.scheduledTime).toBe(new Date(2026, 8, 2, 18, 0).getTime());
     expect(fake.alarms.get('at.sched.work.start')?.scheduledTime).toBe(new Date(2026, 8, 3, 9, 0).getTime());
     expect(ctl.state().origin).toBe('schedule');
-    expect(ctl.state().session?.plan).toEqual({ type: 'until', endsAt: new Date(2026, 8, 2, 18, 0).getTime(), wall: '18:00' });
+    expect(ctl.state().session?.plan).toEqual({
+      type: 'until',
+      endsAt: new Date(2026, 8, 2, 18, 0).getTime(),
+      wall: '18:00',
+    });
     // Stopped by hand inside the window: the schedule does not restart it on the next alarm.
     await ctl.onMessage({ type: 'stop' });
     await ctl.onAlarm('at.sched.work.start');
@@ -302,7 +328,12 @@ describe('background controller — Pro schedules and auto-start', () => {
     let now = at;
     const fake = createFakeChrome();
     fake.local.data.set(STORAGE_KEYS.license, await proRecord(['ext.schedules'], at));
-    fake.local.data.set(EXT_KEYS.ext, { v: 1, level: 'display', schedules: [weekdays], autostart: { browserStart: false, sites: [] } });
+    fake.local.data.set(EXT_KEYS.ext, {
+      v: 1,
+      level: 'display',
+      schedules: [weekdays],
+      autostart: { browserStart: false, sites: [] },
+    });
     const ctl = track(wired(fake, { now: () => now }));
     await ctl.onMessage({ type: 'start', presetId: 'pinf' });
     now = new Date(2026, 8, 2, 9, 0).getTime();
@@ -313,7 +344,12 @@ describe('background controller — Pro schedules and auto-start', () => {
   it('ext.autostart keeps the display awake when Chrome starts (FR-EXT-04)', async () => {
     const fake = createFakeChrome();
     fake.local.data.set(STORAGE_KEYS.license, await proRecord(['ext.autostart']));
-    fake.local.data.set(EXT_KEYS.ext, { v: 1, level: 'display', schedules: [], autostart: { browserStart: true, sites: [] } });
+    fake.local.data.set(EXT_KEYS.ext, {
+      v: 1,
+      level: 'display',
+      schedules: [],
+      autostart: { browserStart: true, sites: [] },
+    });
     const ctl = track(wired(fake));
     await ctl.onStartup();
     expect(ctl.state().lock).toBe('held');
@@ -351,7 +387,12 @@ describe('background controller — Pro schedules and auto-start', () => {
     const record = await proRecord(['ext.schedules'], at - 2 * 86_400_000);
     const fake = createFakeChrome();
     fake.local.data.set(STORAGE_KEYS.license, record);
-    fake.local.data.set(EXT_KEYS.ext, { v: 1, level: 'display', schedules: [weekdays], autostart: { browserStart: false, sites: [] } });
+    fake.local.data.set(EXT_KEYS.ext, {
+      v: 1,
+      level: 'display',
+      schedules: [weekdays],
+      autostart: { browserStart: false, sites: [] },
+    });
     const fetchFn = vi.fn(() => Promise.resolve(Response.json({ revoked: true })));
     const ctl = track(wired(fake, { now: () => at, fetchFn }));
     await ctl.onAlarm(ALARMS.license);

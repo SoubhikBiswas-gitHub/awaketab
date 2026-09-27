@@ -99,7 +99,11 @@ function bootMessage(root: HTMLElement): void {
   }
 }
 
-export function scheduleLine(on: readonly boolean[], names: readonly string[], tpl: Record<'none' | 'every' | 'line' | 'on' | 'range' | 'and', string>): string {
+export function scheduleLine(
+  on: readonly boolean[],
+  names: readonly string[],
+  tpl: Record<'none' | 'every' | 'line' | 'on' | 'range' | 'and', string>,
+): string {
   const days = on.map((d, i) => (d ? i : -1)).filter((i) => i >= 0);
   if (days.length === 0) return tpl.none;
   if (days.length === 7) return tpl.every;
@@ -119,7 +123,14 @@ function bootSchedule(root: HTMLElement): void {
   const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-day]')];
   if (!line || buttons.length !== 7) return;
   const d = line.dataset;
-  const tpl = { none: d.none ?? '', every: d.every ?? '', line: d.line ?? '', on: d.on ?? '', range: d.range ?? '', and: d.and ?? '' };
+  const tpl = {
+    none: d.none ?? '',
+    every: d.every ?? '',
+    line: d.line ?? '',
+    on: d.on ?? '',
+    range: d.range ?? '',
+    and: d.and ?? '',
+  };
   const names = buttons.map((b) => b.dataset.full ?? '');
   const render = () => {
     line.textContent = scheduleLine(

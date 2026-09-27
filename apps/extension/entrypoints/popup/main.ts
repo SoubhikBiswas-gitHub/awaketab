@@ -8,7 +8,15 @@ import { clockParts, keyCaps, roundToMinute, words } from '../../src/format';
 import type { IExtState, TExtRequest } from '../../src/messages';
 import { loadPage, q, send, show, translateTree } from '../../src/page';
 import { allWindows, minutesOf } from '../../src/schedules';
-import { EXT_KEYS, isExtPreset, presetOf, readExt, type IExtSettings, type ISchedule, type TExtPreset } from '../../src/settings';
+import {
+  EXT_KEYS,
+  isExtPreset,
+  presetOf,
+  readExt,
+  type IExtSettings,
+  type ISchedule,
+  type TExtPreset,
+} from '../../src/settings';
 import { isLive, pillTextKey, remainingMs, totalMs } from '../../src/status';
 
 const C = 2 * Math.PI * 56;
@@ -30,7 +38,8 @@ const GLYPH = {
   dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
   pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
   tri: 'M6 1L11.2 10.5H.8z',
-  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  ringDot:
+    'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
   half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z',
 } as const;
 const ICON = {
@@ -55,7 +64,10 @@ async function boot(): Promise<void> {
   let state: IExtState | null = first;
   let ext: IExtSettings = readExt(stored[EXT_KEYS.ext]);
   let meta: IMeta = { ...DEFAULT_META, ...(stored[STORAGE_KEYS.meta] as Partial<IMeta> | undefined) };
-  let onboarding: IOnboarding = { ...DEFAULT_ONBOARDING, ...(stored[STORAGE_KEYS.onboarding] as Partial<IOnboarding> | undefined) };
+  let onboarding: IOnboarding = {
+    ...DEFAULT_ONBOARDING,
+    ...(stored[STORAGE_KEYS.onboarding] as Partial<IOnboarding> | undefined),
+  };
   const incognito = api.extension?.inIncognitoContext === true;
   const ui = { panel: 'none' as 'none' | 'until' | 'pro', draft: 0, retrying: false, levelSaved: false };
 
@@ -128,7 +140,16 @@ async function boot(): Promise<void> {
   });
 
   function fallbackState(): IExtState {
-    return { lock: 'idle', advice: null, level: ext.level, session: null, origin: null, extend: false, features: [], now: Date.now() };
+    return {
+      lock: 'idle',
+      advice: null,
+      level: ext.level,
+      session: null,
+      origin: null,
+      extend: false,
+      features: [],
+      now: Date.now(),
+    };
   }
 
   const act = async (request: TExtRequest) => {
@@ -153,11 +174,7 @@ async function boot(): Promise<void> {
 
   function scheduleNow(now: number): ISchedule | null {
     // The schedule whose window covers now (for its card); merged windows name the first that matches.
-    return (
-      ext.schedules.find((s) =>
-        allWindows([s], now).some((w) => w.start <= now && now < w.end),
-      ) ?? null
-    );
+    return ext.schedules.find((s) => allWindows([s], now).some((w) => w.start <= now && now < w.end)) ?? null;
   }
 
   function nextWindowStart(after: number, now: number): number | null {
@@ -198,13 +215,24 @@ async function boot(): Promise<void> {
     el.pillText.textContent = t(pillTextKey(view.lock, view.level));
     el.pillGlyph.setAttribute(
       'd',
-      blocked ? GLYPH.tri : view.lock === 'lost' ? GLYPH.pause : view.lock === 'fallback' ? GLYPH.ringDot : held && system ? GLYPH.half : GLYPH.dot,
+      blocked
+        ? GLYPH.tri
+        : view.lock === 'lost'
+          ? GLYPH.pause
+          : view.lock === 'fallback'
+            ? GLYPH.ringDot
+            : held && system
+              ? GLYPH.half
+              : GLYPH.dot,
     );
     show(el.extra, held && system);
     const originKey = held && origin && origin !== 'user' && origin !== 'command' ? `ext.origin.${origin}` : null;
     if (show(el.origin, originKey !== null)) {
       el.originText.textContent = t(originKey ?? '');
-      el.originIcon.setAttribute('d', origin === 'startup' ? ICON.power : origin === 'autostart' ? ICON.site : ICON.calendar);
+      el.originIcon.setAttribute(
+        'd',
+        origin === 'startup' ? ICON.power : origin === 'autostart' ? ICON.site : ICON.calendar,
+      );
     }
 
     // Meta lines under the pill.
@@ -222,11 +250,15 @@ async function boot(): Promise<void> {
     if (mode === 'ended' && session) {
       metaText = t('tool.extend.title');
       strong = true;
-      if (session.endedAt !== null) meta2 = t('ext.popup.heldSpan', { span: time.span(session.startedAt, session.endedAt) });
+      if (session.endedAt !== null)
+        meta2 = t('ext.popup.heldSpan', { span: time.span(session.startedAt, session.endedAt) });
     }
     if (mode === 'ready' && session && !live && session.endedAt !== null && now - session.endedAt < RECEIPT_MS) {
       const heldMs = Math.max(60_000, roundToMinute(session.endedAt - session.startedAt));
-      metaText = t('ext.popup.receipt', { duration: words(heldMs, t), span: time.span(session.startedAt, session.endedAt) });
+      metaText = t('ext.popup.receipt', {
+        duration: words(heldMs, t),
+        span: time.span(session.startedAt, session.endedAt),
+      });
     }
     if (blocked) {
       strong = true;
@@ -271,7 +303,9 @@ async function boot(): Promise<void> {
       el.toggleLabel.textContent = t(isSched ? 'ext.schedule.stopToday' : 'tool.ring.stop');
       el.toggle.removeAttribute('aria-label');
     } else {
-      el.toggleLabel.textContent = t('ext.popup.startWith', { length: preset === 'pinf' ? t('tool.preset.pinf') : words(PRESET_MS[preset], t) });
+      el.toggleLabel.textContent = t('ext.popup.startWith', {
+        length: preset === 'pinf' ? t('tool.preset.pinf') : words(PRESET_MS[preset], t),
+      });
       if (preset === 'pinf') el.toggle.setAttribute('aria-label', t('ext.popup.startInf'));
       else el.toggle.removeAttribute('aria-label');
     }
@@ -296,7 +330,8 @@ async function boot(): Promise<void> {
 
     // Level switch (hidden where it cannot act: Blocked, the Pro panel).
     show(el.levels, !blocked && !proPanel);
-    for (const input of root.querySelectorAll<HTMLInputElement>('input[name="level"]')) input.checked = input.value === view.level;
+    for (const input of root.querySelectorAll<HTMLInputElement>('input[name="level"]'))
+      input.checked = input.value === view.level;
     let help = t(system ? 'ext.level.system.help' : 'ext.level.display.help');
     if (isSched) help = ui.levelSaved ? t('ext.schedule.levelSaved') : t('ext.schedule.levelHelp');
     el.levelHelp.textContent = help;
@@ -315,7 +350,9 @@ async function boot(): Promise<void> {
     el.untilChip.textContent = untilLive && session.endsAt ? time.hm(session.endsAt) : t('tool.preset.until');
     el.untilChip.setAttribute(
       'aria-label',
-      untilLive && session.endsAt ? t('ext.until.change', { when: time.when(session.endsAt, now) }) : t('ext.until.open'),
+      untilLive && session.endsAt
+        ? t('ext.until.change', { when: time.when(session.endsAt, now) })
+        : t('ext.until.open'),
     );
     show(el.until, untilPanel);
     if (untilPanel) renderUntil();
@@ -326,7 +363,10 @@ async function boot(): Promise<void> {
       el.schedDays.textContent = dayList(sched.days);
       const start = minutesOf(sched.start);
       const end = minutesOf(sched.end);
-      const range = t('ext.time.span', { from: time.wall(start), to: end <= start ? t('ext.time.nextDay', { time: time.wall(end) }) : time.wall(end) });
+      const range = t('ext.time.span', {
+        from: time.wall(start),
+        to: end <= start ? t('ext.time.nextDay', { time: time.wall(end) }) : time.wall(end),
+      });
       el.schedRange.textContent = `${range} · ${t(sched.level === 'system' ? 'ext.level.system' : 'ext.level.display')}`;
     }
     show(el.proRow, proRow);
@@ -362,7 +402,10 @@ async function boot(): Promise<void> {
         shown = rem;
         const total = totalMs(session) ?? rem;
         p = Math.min(1, rem / Math.max(1, total));
-        caption = rem >= DAY ? t('ext.popup.timeLeft') : t('tool.timer.until', { wall: time.when(roundToMinute(now + rem), now) });
+        caption =
+          rem >= DAY
+            ? t('ext.popup.timeLeft')
+            : t('tool.timer.until', { wall: time.when(roundToMinute(now + rem), now) });
         timerAria = t('tool.timer.remaining', { time: words(rem, t) });
       }
     } else if (mode === 'ended') {
@@ -374,7 +417,12 @@ async function boot(): Promise<void> {
       const ms = PRESET_MS[preset];
       shown = ms || null;
       p = 1;
-      caption = mode === 'starting' ? t('ext.popup.starting') : ms ? t('ext.popup.ends', { time: time.when(roundToMinute(now + ms), now) }) : t('ext.popup.untilStop');
+      caption =
+        mode === 'starting'
+          ? t('ext.popup.starting')
+          : ms
+            ? t('ext.popup.ends', { time: time.when(roundToMinute(now + ms), now) })
+            : t('ext.popup.untilStop');
       if (mode === 'blocked') caption = t('ext.popup.notRunning');
     }
     if (shown === null) {
@@ -391,7 +439,9 @@ async function boot(): Promise<void> {
       show(el.days, parts.days !== '');
       if (shown >= 3_600_000) el.digits.dataset.long = '';
       else delete el.digits.dataset.long;
-      timerAria ||= t('tool.timer.remaining', { time: `${parts.days ? `${parts.days} ` : ''}${parts.main}${parts.seconds}` });
+      timerAria ||= t('tool.timer.remaining', {
+        time: `${parts.days ? `${parts.days} ` : ''}${parts.main}${parts.seconds}`,
+      });
     }
     el.timerBox.setAttribute('aria-label', mode === 'blocked' ? t('ext.popup.notRunning') : timerAria);
     el.caption.textContent = caption;
@@ -423,7 +473,9 @@ async function boot(): Promise<void> {
     const minutes = Math.max(1, Math.round((ui.draft - now) / 60_000));
     const remain = words(minutes * 60_000, t);
     el.untilSummary.textContent = t('tool.until.summary', {
-      day: t(new Date(ui.draft).toDateString() !== new Date(now).toDateString() ? 'tool.until.tomorrow' : 'tool.until.today'),
+      day: t(
+        new Date(ui.draft).toDateString() !== new Date(now).toDateString() ? 'tool.until.tomorrow' : 'tool.until.today',
+      ),
       time: time.hm(ui.draft),
       remain,
     });
@@ -555,7 +607,12 @@ async function boot(): Promise<void> {
       return;
     }
     if (typing || !ctx.settings.keyboardShortcuts) return;
-    if (event.key === ' ' && !(target instanceof HTMLButtonElement) && !(target instanceof HTMLAnchorElement) && !(target instanceof HTMLInputElement)) {
+    if (
+      event.key === ' ' &&
+      !(target instanceof HTMLButtonElement) &&
+      !(target instanceof HTMLAnchorElement) &&
+      !(target instanceof HTMLInputElement)
+    ) {
       event.preventDefault();
       toggle();
       return;
@@ -575,7 +632,12 @@ async function boot(): Promise<void> {
   api.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
     if (EXT_KEYS.ext in changes) ext = readExt(changes[EXT_KEYS.ext]?.newValue);
-    if (!Object.keys(changes).some((key) => key === STORAGE_KEYS.session || key === EXT_KEYS.ext || key === STORAGE_KEYS.license)) return;
+    if (
+      !Object.keys(changes).some(
+        (key) => key === STORAGE_KEYS.session || key === EXT_KEYS.ext || key === STORAGE_KEYS.license,
+      )
+    )
+      return;
     // A schedule, the command or a notification changed the session: ask the worker for the truth.
     if (refresh) clearTimeout(refresh);
     refresh = setTimeout(() => {

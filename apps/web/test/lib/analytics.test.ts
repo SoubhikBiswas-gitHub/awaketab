@@ -47,7 +47,7 @@ describe('analytics client', () => {
     const beacon = stubBeacon();
     for (let i = 0; i < 20; i += 1) track('page_view', { i }, opts);
     expect(beacon).toHaveBeenCalledTimes(1);
-    const body = (beacon.mock.calls[0]?.[1] as Blob | undefined);
+    const body = beacon.mock.calls[0]?.[1] as Blob | undefined;
     expect(queuedEvents()).toHaveLength(0);
     expect(analyticsLimits.MAX_BATCH).toBe(20);
     expect(body).toBeInstanceOf(Blob);

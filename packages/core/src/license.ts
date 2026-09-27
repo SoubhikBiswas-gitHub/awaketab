@@ -4,7 +4,12 @@ declare const __AT_LICENSE_DEV_KEY__: boolean | undefined;
 
 export const PRODUCTION_LICENSE_PUBLIC_KEYS: Readonly<Record<number, JsonWebKey>> = {
   // ver 2 — first production key (generated 2026-09-26; private half is the LICENSE_SIGNING_KEY Pages secret).
-  2: { kty: 'EC', crv: 'P-256', x: 'zE_N4lGBH2RLZnOZ0dZTDz9YCcy2Nw3-a_OFRS4gCXA', y: 'u2GJ3Adhv4xb61aELAzSDFc74e1pyGNj6WpINLK8qc8' },
+  2: {
+    kty: 'EC',
+    crv: 'P-256',
+    x: 'zE_N4lGBH2RLZnOZ0dZTDz9YCcy2Nw3-a_OFRS4gCXA',
+    y: 'u2GJ3Adhv4xb61aELAzSDFc74e1pyGNj6WpINLK8qc8',
+  },
 };
 
 export const DEV_LICENSE_KEY_VER = 1;
@@ -101,11 +106,7 @@ export function hasFeature(state: ILicenseState, gate: TFeatureGate): boolean {
   return state.valid && state.features.includes(gate);
 }
 
-export function needsRevalidation(
-  plan: string,
-  lastValidatedAt: number,
-  now = Date.now(),
-): boolean {
+export function needsRevalidation(plan: string, lastValidatedAt: number, now = Date.now()): boolean {
   if (plan === 'pro_yearly') return now - lastValidatedAt > 86_400_000;
   if (plan === 'pro_lifetime') return now - lastValidatedAt > 90 * 86_400_000;
   if (plan.startsWith('biz_kiosk')) return now - lastValidatedAt > 30 * 86_400_000;

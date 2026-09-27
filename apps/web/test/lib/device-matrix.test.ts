@@ -38,7 +38,14 @@ describe('parseDeviceMatrix', () => {
     date: null,
     verdict: 'pending',
   };
-  const doc = (over: Record<string, unknown> = {}, rows: unknown[] = [row]) => ({ version: 1, status: 'pending', updatedAt: null, method: ['m'], rows, ...over });
+  const doc = (over: Record<string, unknown> = {}, rows: unknown[] = [row]) => ({
+    version: 1,
+    status: 'pending',
+    updatedAt: null,
+    method: ['m'],
+    rows,
+    ...over,
+  });
 
   it.each([
     ['a wrong version', doc({ version: 2 })],
@@ -49,9 +56,17 @@ describe('parseDeviceMatrix', () => {
     ['a bad verdict', doc({}, [{ ...row, verdict: 'ok' }])],
     ['a bad date', doc({}, [{ ...row, date: '26/09/2026' }])],
     ['a pending row with an outcome', doc({}, [{ ...row, observed: 'held 10 min' }])],
-    ['a result without evidence', doc({}, [{ ...row, verdict: 'pass', date: '2026-10-01', version: '130', observed: 'held' }])],
+    [
+      'a result without evidence',
+      doc({}, [{ ...row, verdict: 'pass', date: '2026-10-01', version: '130', observed: 'held' }]),
+    ],
     ['a complete matrix with pending rows', doc({ status: 'complete', updatedAt: '2026-10-01' })],
-    ['a complete matrix without updatedAt', doc({ status: 'complete' }, [{ ...row, verdict: 'pass', date: '2026-10-01', version: '130', observed: 'held', evidence: 'a.png' }])],
+    [
+      'a complete matrix without updatedAt',
+      doc({ status: 'complete' }, [
+        { ...row, verdict: 'pass', date: '2026-10-01', version: '130', observed: 'held', evidence: 'a.png' },
+      ]),
+    ],
   ])('rejects %s', (_label, data) => {
     expect(() => parseDeviceMatrix(data)).toThrow(/device-matrix\.json/u);
   });

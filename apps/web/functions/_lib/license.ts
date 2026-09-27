@@ -104,7 +104,12 @@ export async function readLicense(kv: KVNamespace, keyHash: string): Promise<ILi
   return JSON.parse(raw) as ILicenseRecord;
 }
 
-export async function writeLicense(kv: KVNamespace, keyHash: string, record: ILicenseRecord, ttlSec?: number): Promise<void> {
+export async function writeLicense(
+  kv: KVNamespace,
+  keyHash: string,
+  record: ILicenseRecord,
+  ttlSec?: number,
+): Promise<void> {
   await kv.put(`lic:${keyHash}`, JSON.stringify(record), ttlSec ? { expirationTtl: ttlSec } : undefined);
 }
 

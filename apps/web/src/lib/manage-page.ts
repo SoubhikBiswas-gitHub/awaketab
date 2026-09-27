@@ -8,7 +8,11 @@ export type TManageState = 'loading' | 'list' | 'empty' | 'grace' | 'lapsed' | '
 const DAY_S = 86_400;
 const LICENSE_KEY = 'at.v1.license';
 
-export function lapseState(plan: string | undefined, expSec: number | undefined, now = Date.now()): 'grace' | 'lapsed' | null {
+export function lapseState(
+  plan: string | undefined,
+  expSec: number | undefined,
+  now = Date.now(),
+): 'grace' | 'lapsed' | null {
   if (plan !== 'pro_yearly' || typeof expSec !== 'number' || !Number.isFinite(expSec)) return null;
   if (now >= expSec * 1000) return 'lapsed';
   if (now >= (expSec - 7 * DAY_S) * 1000) return 'grace';
@@ -28,7 +32,9 @@ async function sha256Hex(text: string): Promise<string> {
 }
 
 function rowPrototype(root: HTMLElement): HTMLElement {
-  const proto = root.querySelector<HTMLTemplateElement>('template[data-device-row]')?.content.querySelector<HTMLElement>('[role="row"]');
+  const proto = root
+    .querySelector<HTMLTemplateElement>('template[data-device-row]')
+    ?.content.querySelector<HTMLElement>('[role="row"]');
   if (proto) return proto.cloneNode(true) as HTMLElement;
   // Fallback when the page ships no template: a bare row carrying the same hooks.
   const row = document.createElement('div');
@@ -94,7 +100,12 @@ export function bootManagePage(root: HTMLElement, now = Date.now()): void {
     if (label) label.textContent = fill(label.dataset.tpl ?? '{n}', { n: count });
     if (left) {
       const free = Math.max(0, 5 - count);
-      left.textContent = free === 0 ? (left.dataset.none ?? '') : free === 1 ? (left.dataset.one ?? '') : fill(left.dataset.tpl ?? '{n}', { n: free });
+      left.textContent =
+        free === 0
+          ? (left.dataset.none ?? '')
+          : free === 1
+            ? (left.dataset.one ?? '')
+            : fill(left.dataset.tpl ?? '{n}', { n: free });
     }
     if (bar) {
       bar.setAttribute('aria-valuenow', String(Math.min(5, count)));
@@ -105,7 +116,8 @@ export function bootManagePage(root: HTMLElement, now = Date.now()): void {
   const paintLapse = (state: 'grace' | 'lapsed', expSec: number) => {
     const end = (expSec - 7 * DAY_S) * 1000;
     const vars = { date: longDate(expSec * 1000), due: longDate(end), ended: longDate(end) };
-    for (const node of root.querySelectorAll<HTMLElement>('[data-lapse-fill]')) node.textContent = fill(node.dataset.tpl ?? '', vars);
+    for (const node of root.querySelectorAll<HTMLElement>('[data-lapse-fill]'))
+      node.textContent = fill(node.dataset.tpl ?? '', vars);
     root.dataset.lapse = state;
   };
 
@@ -154,24 +166,27 @@ export function bootManagePage(root: HTMLElement, now = Date.now()): void {
       const remove = () => {
         btn.disabled = true;
         for (const b of tr.querySelectorAll<HTMLButtonElement>('button')) b.disabled = true;
-        void deactivateDevice(token, row.devHash).then((res) => {
-          if (res.activations) {
-            if (isHere) {
-              // This browser is no longer an activation: its stored licence is dead (manage-page, board note).
-              localStorage.removeItem(LICENSE_KEY);
-              list.replaceChildren();
-              if (wrap) wrap.hidden = true;
-              setState('empty');
-              return;
+        void deactivateDevice(token, row.devHash).then(
+          (res) => {
+            if (res.activations) {
+              if (isHere) {
+                // This browser is no longer an activation: its stored licence is dead (manage-page, board note).
+                localStorage.removeItem(LICENSE_KEY);
+                list.replaceChildren();
+                if (wrap) wrap.hidden = true;
+                setState('empty');
+                return;
+              }
+              void paint(res.activations);
+            } else {
+              for (const b of tr.querySelectorAll<HTMLButtonElement>('button')) b.disabled = false;
             }
-            void paint(res.activations);
-          } else {
+          },
+          () => {
+            // Network failure: nothing was removed, so the row stays usable.
             for (const b of tr.querySelectorAll<HTMLButtonElement>('button')) b.disabled = false;
-          }
-        }, () => {
-          // Network failure: nothing was removed, so the row stays usable.
-          for (const b of tr.querySelectorAll<HTMLButtonElement>('button')) b.disabled = false;
-        });
+          },
+        );
       };
       if (!confirm) {
         btn.addEventListener('click', remove);

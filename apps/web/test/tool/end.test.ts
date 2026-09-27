@@ -1,7 +1,14 @@
 import type { ISession } from '@awaketab/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setVisibility } from '../../../../packages/wake/test/fake.js';
-import { COUNTED_SESSION_S, flashTitle, onEnded, RATING_DELAY_MS, TITLE_FLASH_MIN_MS, TITLE_FLASH_MS } from '../../src/tool/end.js';
+import {
+  COUNTED_SESSION_S,
+  flashTitle,
+  onEnded,
+  RATING_DELAY_MS,
+  TITLE_FLASH_MIN_MS,
+  TITLE_FLASH_MS,
+} from '../../src/tool/end.js';
 import { EXTEND_AUTO_STOP_MS } from '../../src/tool/params.js';
 import { makeCtx } from './ctx-helper.js';
 
@@ -27,8 +34,17 @@ function session(over: Partial<ISession> = {}): ISession {
 }
 
 function fakeAudio() {
-  const osc = () => ({ type: '', frequency: { value: 0 }, connect: vi.fn((n: unknown) => n), start: vi.fn(), stop: vi.fn() });
-  const gain = () => ({ gain: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() }, connect: vi.fn((n: unknown) => n) });
+  const osc = () => ({
+    type: '',
+    frequency: { value: 0 },
+    connect: vi.fn((n: unknown) => n),
+    start: vi.fn(),
+    stop: vi.fn(),
+  });
+  const gain = () => ({
+    gain: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
+    connect: vi.fn((n: unknown) => n),
+  });
   return { currentTime: 1, destination: {}, createOscillator: vi.fn(osc), createGain: vi.fn(gain) };
 }
 
@@ -157,7 +173,10 @@ describe('onEnded: completed', () => {
     onEnded(ctx, 'completed', session());
     expect(audio.createOscillator).toHaveBeenCalledTimes(2);
     expect(audio.createGain).toHaveBeenCalledTimes(2);
-    const osc = audio.createOscillator.mock.results[0]?.value as { start: ReturnType<typeof vi.fn>; stop: ReturnType<typeof vi.fn> };
+    const osc = audio.createOscillator.mock.results[0]?.value as {
+      start: ReturnType<typeof vi.fn>;
+      stop: ReturnType<typeof vi.fn>;
+    };
     expect(osc.start).toHaveBeenCalledWith(1);
     expect(osc.stop).toHaveBeenCalled();
   });

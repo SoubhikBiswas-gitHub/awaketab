@@ -13,9 +13,10 @@ const dist = process.env.AT_DIST
   : new URL('../../dist/', import.meta.url);
 const distPath = new URL(dist).pathname;
 const site = 'https://awaketab.com';
-const slugs = JSON.parse(
-  await readFile(new URL('../../src/i18n/slugs.json', import.meta.url), 'utf8'),
-) as Record<string, Record<string, Record<string, string>>>;
+const slugs = JSON.parse(await readFile(new URL('../../src/i18n/slugs.json', import.meta.url), 'utf8')) as Record<
+  string,
+  Record<string, Record<string, string>>
+>;
 
 const LOCALES = { es: 'es', 'pt-br': 'pt-BR', de: 'de', fr: 'fr', ja: 'ja', zh: 'zh-Hans', hi: 'hi' } as const;
 type TCode = keyof typeof LOCALES;
@@ -62,7 +63,8 @@ const metaProperty = (html: string, property: string): string | null => {
   const raw = new RegExp(`<meta[^>]+property="${property}"[^>]+content="([^"]*)"`, 'u').exec(html)?.[1];
   return raw === undefined ? null : unescapeHtml(raw);
 };
-const htmlAttr = (html: string, attr: string): string | undefined => new RegExp(`<html[^>]*\\s${attr}="([^"]*)"`, 'u').exec(html)?.[1];
+const htmlAttr = (html: string, attr: string): string | undefined =>
+  new RegExp(`<html[^>]*\\s${attr}="([^"]*)"`, 'u').exec(html)?.[1];
 const hreflangs = (html: string): Array<[string, string]> =>
   [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/gu)].map((m) => [m[1] ?? '', m[2] ?? '']);
 const width = (value: string): number =>
@@ -74,7 +76,8 @@ function jsonLd(html: string): Array<Record<string, unknown>> {
   return parsed['@graph'] ?? [];
 }
 
-const pagePath = (code: string, kind: string, enSlug: string): string => `/${code}/${kind}/${slugs[kind]?.[enSlug]?.[code] ?? enSlug}`;
+const pagePath = (code: string, kind: string, enSlug: string): string =>
+  `/${code}/${kind}/${slugs[kind]?.[enSlug]?.[code] ?? enSlug}`;
 const fileFor = (pathname: string): string => path.join(distPath, servedFile(pathname));
 
 const sitemaps = await Promise.all(
@@ -111,7 +114,10 @@ describe('translated top-10 content pages (E6-T06)', () => {
         // Unreviewed → noindex, no hreflang, absent from every sitemap (docs/07 §2).
         expect(metaName(html, 'robots'), label).toContain('noindex');
         expect(hreflangs(html), `${label} hreflang`).toEqual([]);
-        expect(sitemapText.includes(`${site}${pathname}"`) || sitemapText.includes(`${site}${pathname}<`), `${label} sitemap`).toBe(false);
+        expect(
+          sitemapText.includes(`${site}${pathname}"`) || sitemapText.includes(`${site}${pathname}<`),
+          `${label} sitemap`,
+        ).toBe(false);
         expect(html, `${label} canonical`).toContain(`<link rel="canonical" href="${site}${pathname}">`);
 
         const title = unescapeHtml(/<title>(.*?)<\/title>/u.exec(html)?.[1] ?? '');
@@ -193,7 +199,10 @@ describe('localized chrome (E6-T05)', () => {
   });
 
   it('ships a localized web app manifest per locale', async () => {
-    const english = JSON.parse(await readFile(new URL('manifest.webmanifest', dist), 'utf8')) as Record<string, unknown>;
+    const english = JSON.parse(await readFile(new URL('manifest.webmanifest', dist), 'utf8')) as Record<
+      string,
+      unknown
+    >;
     for (const [code, lang] of Object.entries(LOCALES)) {
       const manifest = JSON.parse(await readFile(new URL(`${code}/manifest.webmanifest`, dist), 'utf8')) as {
         name: string;
@@ -225,7 +234,9 @@ describe('localized chrome (E6-T05)', () => {
       }
     };
     await walk(distPath);
-    const fonts = all.filter((file) => /\.(?:woff2?|ttf|otf)$/u.test(file)).map((file) => path.relative(distPath, file).split(path.sep).join('/'));
+    const fonts = all
+      .filter((file) => /\.(?:woff2?|ttf|otf)$/u.test(file))
+      .map((file) => path.relative(distPath, file).split(path.sep).join('/'));
     // D-R26: Geist, Geist Mono and the Space Grotesk digits subset, Latin woff2 only, all under /fonts.
     expect(fonts.sort()).toEqual([
       'fonts/geist-latin-wght-normal.woff2',
@@ -251,7 +262,10 @@ describe('hreflang graph', () => {
         .join('|');
       graph.set(canonical, set);
       // Self reference present.
-      expect(hreflangs(html).some(([, href]) => href === canonical), canonical).toBe(true);
+      expect(
+        hreflangs(html).some(([, href]) => href === canonical),
+        canonical,
+      ).toBe(true);
     }
     for (const [canonical, set] of graph) {
       for (const entry of set.split('|')) {

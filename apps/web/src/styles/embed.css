@@ -60,7 +60,11 @@ body.at-embed-body {
   inset-inline-start: -20%;
   inline-size: 90%;
   block-size: 180%;
-  background: radial-gradient(45% 45% at 50% 50%, color-mix(in srgb, var(--at-muted) 4%, transparent) 0%, transparent 70%);
+  background: radial-gradient(
+    45% 45% at 50% 50%,
+    color-mix(in srgb, var(--at-muted) 4%, transparent) 0%,
+    transparent 70%
+  );
   content: "";
   pointer-events: none;
 }
@@ -205,7 +209,9 @@ body.at-embed-body {
   background: transparent;
   color: var(--at-ink);
   font: 300 1.75rem/1 var(--at-font);
-  font-feature-settings: "tnum" 1, "zero" 0;
+  font-feature-settings:
+    "tnum" 1,
+    "zero" 0;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
   white-space: nowrap;
@@ -393,7 +399,9 @@ body.at-embed-body {
 .at-embed-timer-left {
   color: var(--at-ink);
   font: 400 1.125rem/1.5rem var(--at-font);
-  font-feature-settings: "tnum" 1, "zero" 0;
+  font-feature-settings:
+    "tnum" 1,
+    "zero" 0;
   font-variant-numeric: tabular-nums;
 }
 
@@ -693,7 +701,9 @@ body.at-embed-body {
   .at-embed-glyph path,
   .at-embed-logo-bead,
   .at-embed-logo-halo {
-    transition: fill 0.6s var(--at-embed-ease), stroke 0.6s var(--at-embed-ease);
+    transition:
+      fill 0.6s var(--at-embed-ease),
+      stroke 0.6s var(--at-embed-ease);
   }
 
   .at-embed button {

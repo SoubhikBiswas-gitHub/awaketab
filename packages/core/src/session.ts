@@ -28,7 +28,10 @@ export interface ISessionEvents extends Record<string, unknown> {
   status: { from: TSessionStatus; to: TSessionStatus; reason: TEndReason | null };
   lock: IChangeEvent;
   ended: { session: ISession; reason: TEndReason };
-  warning: { code: 'battery_low' | 'second_tab' | 'clock_adjusted' | 'ios_low_power' | 'storage_memory'; level?: number };
+  warning: {
+    code: 'battery_low' | 'second_tab' | 'clock_adjusted' | 'ios_low_power' | 'storage_memory';
+    level?: number;
+  };
   peers: { count: number };
 }
 
@@ -93,8 +96,12 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
   const tabId = crypto.randomUUID();
   const tabs = createTabProtocol({
     tabId,
-    onPeerLock: () => { emitter.emit('warning', { code: 'second_tab' }); },
-    onPeers: (count) => { emitter.emit('peers', { count }); },
+    onPeerLock: () => {
+      emitter.emit('warning', { code: 'second_tab' });
+    },
+    onPeers: (count) => {
+      emitter.emit('peers', { count });
+    },
     onIntent: (msg) => {
       if (msg.action === 'stop') engine.stop();
       else if (typeof msg.ms === 'number') engine.addTime(msg.ms);
@@ -202,12 +209,12 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
     const wall = session.plan.wall;
     const formatted = formatHHMM(new Date(session.plan.endsAt));
     if (Math.abs(now - lastTickAt) > 90_000 || formatted !== wall) {
-    const next = planUntil(wall, now);
-    if (next.type === 'until') {
-      session.plan = next;
-      session.endsAt = next.endsAt;
-      emitter.emit('warning', { code: 'clock_adjusted' });
-    }
+      const next = planUntil(wall, now);
+      if (next.type === 'until') {
+        session.plan = next;
+        session.endsAt = next.endsAt;
+        emitter.emit('warning', { code: 'clock_adjusted' });
+      }
     }
   }
 
@@ -314,7 +321,10 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
         endReason: null,
         awakeSeconds: 0,
         modeState: {},
-        source: meta.source === 'pwa' || meta.source === 'pip' || meta.source === 'ext' || meta.source === 'embed' ? meta.source : 'web',
+        source:
+          meta.source === 'pwa' || meta.source === 'pip' || meta.source === 'ext' || meta.source === 'embed'
+            ? meta.source
+            : 'web',
       };
       ticks = 0;
       batteryWarned = false;
@@ -366,7 +376,10 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
     },
     async extend(ms) {
       if (ms === 'indefinite') {
-        return engine.start({ type: 'indefinite' }, { presetId: 'pinf', mode: session?.mode ?? 'standard', source: 'extend' });
+        return engine.start(
+          { type: 'indefinite' },
+          { presetId: 'pinf', mode: session?.mode ?? 'standard', source: 'extend' },
+        );
       }
       return engine.start(
         { type: 'duration', ms },
@@ -402,7 +415,10 @@ export function createSession(opts: ISessionOptions): ISessionEngine {
       if (!stored) return null;
       const now = nowFn();
       if (stored.status !== 'active' && stored.status !== 'paused') return null;
-      const okEnds = stored.endsAt === null ? stored.plan.type === 'indefinite' && now - stored.startedAt < resumeIndefiniteMs : stored.endsAt > now;
+      const okEnds =
+        stored.endsAt === null
+          ? stored.plan.type === 'indefinite' && now - stored.startedAt < resumeIndefiniteMs
+          : stored.endsAt > now;
       if (okEnds) return stored;
       return null;
     },

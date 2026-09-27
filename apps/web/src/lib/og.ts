@@ -56,13 +56,22 @@ export async function renderOgPng(input: IOgInput): Promise<Uint8Array> {
               {
                 type: 'div',
                 props: {
-                  style: { fontSize: `${String(titleFontSize(input.title))}px`, fontWeight: 700, lineHeight: 1.08, letterSpacing: '-0.03em', textWrap: 'balance' },
+                  style: {
+                    fontSize: `${String(titleFontSize(input.title))}px`,
+                    fontWeight: 700,
+                    lineHeight: 1.08,
+                    letterSpacing: '-0.03em',
+                    textWrap: 'balance',
+                  },
                   children: input.title,
                 },
               },
               {
                 type: 'div',
-                props: { style: { color: '#5B6475', fontSize: '28px' }, children: input.footer ?? `awaketab.com · ${input.locale}` },
+                props: {
+                  style: { color: '#5B6475', fontSize: '28px' },
+                  children: input.footer ?? `awaketab.com · ${input.locale}`,
+                },
               },
             ],
           },

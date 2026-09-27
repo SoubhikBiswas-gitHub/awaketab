@@ -50,7 +50,8 @@ describe('precacheManifest (docs/05 §8.2)', () => {
   it('lists the shell pages by navigation URL with content revisions', async () => {
     const entries = await precacheManifest(dist);
     const urls = entries.map((e) => e.url);
-    for (const u of ['/', '/pip', '/es/pip', '/zh/pip', '/15m', '/8h', '/es/', '/pt-br/', '/hi/']) expect(urls).toContain(u);
+    for (const u of ['/', '/pip', '/es/pip', '/zh/pip', '/15m', '/8h', '/es/', '/pt-br/', '/hi/'])
+      expect(urls).toContain(u);
     expect(urls).not.toContain('/index.html');
     expect(urls).not.toContain('/learn');
     expect(urls.some((u) => u.startsWith('/learn'))).toBe(false);

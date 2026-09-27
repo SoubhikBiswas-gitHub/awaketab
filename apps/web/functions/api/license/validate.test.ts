@@ -39,7 +39,11 @@ interface IValidateBody {
 }
 
 async function activate(h: IHarness, deviceId = DEV_A): Promise<string> {
-  const res = await invoke(onActivate, h.env, jsonRequest('/api/license/activate', { key: KEY, deviceId, deviceLabel: `dev ${deviceId.slice(0, 4)}` }));
+  const res = await invoke(
+    onActivate,
+    h.env,
+    jsonRequest('/api/license/activate', { key: KEY, deviceId, deviceLabel: `dev ${deviceId.slice(0, 4)}` }),
+  );
   expect(res.status).toBe(200);
   return ((await res.json()) as { token: string }).token;
 }
@@ -79,8 +83,18 @@ describe('POST /api/license/validate', () => {
     expect(body.token).not.toBe(token);
     const fresh = decodeJwt(body.token ?? '').claims;
     const old = decodeJwt(token).claims;
-    expect(fresh).toMatchObject({ sub: old.sub, dev: old.dev, plan: old.plan, iat: later / 1000, exp: old.exp, ver: 1 });
-    expect(await verifyLicenseToken(body.token ?? '', { deviceId: DEV_A, now: later })).toMatchObject({ valid: true, plan: 'pro_yearly' });
+    expect(fresh).toMatchObject({
+      sub: old.sub,
+      dev: old.dev,
+      plan: old.plan,
+      iat: later / 1000,
+      exp: old.exp,
+      ver: 1,
+    });
+    expect(await verifyLicenseToken(body.token ?? '', { deviceId: DEV_A, now: later })).toMatchObject({
+      valid: true,
+      plan: 'pro_yearly',
+    });
     expect(body.exp).toBe(fresh.exp);
     expect(body.activations).toEqual([{ label: 'dev 0b9e', at: later, devHash: await sha256Hex(DEV_A) }]);
   });
@@ -113,18 +127,24 @@ describe('POST /api/license/validate', () => {
     const body = (await (await validate(h, { token })).json()) as IValidateBody;
     expect(body.revoked).toBe(false);
     expect(body.exp).toBe(later / 1000 + 90 * 86_400);
-    expect(await verifyLicenseToken(body.token ?? '', { deviceId: DEV_A, now: later })).toMatchObject({ valid: true, plan: 'pro_lifetime' });
+    expect(await verifyLicenseToken(body.token ?? '', { deviceId: DEV_A, now: later })).toMatchObject({
+      valid: true,
+      plan: 'pro_lifetime',
+    });
   });
 
-  it.each(['revoked', 'refunded'] as const)('answers { revoked: true } when KV status is %s (LIC-08)', async (status) => {
-    const h = harness();
-    h.polar.addKey(KEY);
-    const token = await activate(h);
-    await setStatus(h, status);
-    const res = await validate(h, { token });
-    expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ revoked: true, reason: status });
-  });
+  it.each(['revoked', 'refunded'] as const)(
+    'answers { revoked: true } when KV status is %s (LIC-08)',
+    async (status) => {
+      const h = harness();
+      h.polar.addKey(KEY);
+      const token = await activate(h);
+      await setStatus(h, status);
+      const res = await validate(h, { token });
+      expect(res.status).toBe(200);
+      expect(await res.json()).toEqual({ revoked: true, reason: status });
+    },
+  );
 
   it('answers { revoked: true } when the licence record is gone', async () => {
     const h = harness();
@@ -149,7 +169,11 @@ describe('POST /api/license/validate', () => {
     h.polar.addKey(KEY);
     const tokenA = await activate(h, DEV_A);
     const tokenB = await activate(h, DEV_B);
-    const removed = await invoke(onDeactivate, h.env, jsonRequest('/api/license/deactivate', { token: tokenB, deviceId: DEV_A }));
+    const removed = await invoke(
+      onDeactivate,
+      h.env,
+      jsonRequest('/api/license/deactivate', { token: tokenB, deviceId: DEV_A }),
+    );
     expect(removed.status).toBe(200);
     expect(await (await validate(h, { token: tokenA })).json()).toEqual({ revoked: true, reason: 'deactivated' });
     expect(((await (await validate(h, { token: tokenB })).json()) as IValidateBody).revoked).toBe(false);
@@ -159,7 +183,11 @@ describe('POST /api/license/validate', () => {
     const h = harness();
     h.polar.addKey(KEY);
     const token = await activate(h);
-    for (const patch of [{ plan: 'pro_lifetime' }, { exp: 4_102_444_800 }, { sub: await sha256Hex('AWAKETAB-SOMEONE-ELSES-KEY') }]) {
+    for (const patch of [
+      { plan: 'pro_lifetime' },
+      { exp: 4_102_444_800 },
+      { sub: await sha256Hex('AWAKETAB-SOMEONE-ELSES-KEY') },
+    ]) {
       const res = await validate(h, { token: tamperJwt(token, patch) });
       expect(res.status).toBe(401);
       expect(await res.json()).toEqual({ error: 'bad_token' });

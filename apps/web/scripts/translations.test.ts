@@ -19,7 +19,13 @@ const slugs = {
   on: { macos: { es: 'macos' } },
 };
 
-const entry = (locale: string, reviewed: boolean, kind = 'for', enSlug = 'cooking', noindex = false): IContentIndexEntry => ({
+const entry = (
+  locale: string,
+  reviewed: boolean,
+  kind = 'for',
+  enSlug = 'cooking',
+  noindex = false,
+): IContentIndexEntry => ({
   kind,
   enSlug,
   locale,
@@ -32,7 +38,12 @@ describe('translated content routing', () => {
     const data = frontmatterScalars(
       '---\ntitle: "Cocinar — AwakeTab"\nh1: "Mantén la pantalla: \\"encendida\\""\nreviewed: false\nlocale: es\nfaq:\n  - q: "nested: ignored"\n---\n\nBody title: not frontmatter\n',
     );
-    expect(data).toEqual({ title: 'Cocinar — AwakeTab', h1: 'Mantén la pantalla: "encendida"', reviewed: false, locale: 'es' });
+    expect(data).toEqual({
+      title: 'Cocinar — AwakeTab',
+      h1: 'Mantén la pantalla: "encendida"',
+      reviewed: false,
+      locale: 'es',
+    });
   });
 
   it('maps English slugs to translated public slugs, falling back to the English slug', () => {
@@ -63,7 +74,13 @@ describe('translated content routing', () => {
   });
 
   it('emits reciprocal hreflang sets over indexable versions only', () => {
-    const index = [entry('en', true), entry('es', true), entry('de', false), entry('ja', true), entry('en', true, 'on', 'macos')];
+    const index = [
+      entry('en', true),
+      entry('es', true),
+      entry('de', false),
+      entry('ja', true),
+      entry('en', true, 'on', 'macos'),
+    ];
     const english = alternatesFor(index, slugs, 'for', 'cooking', 'en', 'https://x.test');
     const spanish = alternatesFor(index, slugs, 'for', 'cooking', 'es', 'https://x.test');
     const japanese = alternatesFor(index, slugs, 'for', 'cooking', 'ja', 'https://x.test');
@@ -86,7 +103,11 @@ describe('translated content routing', () => {
 
   it('uses BCP 47 hreflang codes for pt-br and zh', () => {
     const index = [entry('en', true), entry('pt-br', true), entry('zh', true)];
-    expect(alternatesFor(index, {}, 'for', 'cooking', 'en').map((item) => item.hreflang)).toEqual(['en', 'pt-BR', 'zh-Hans']);
+    expect(alternatesFor(index, {}, 'for', 'cooking', 'en').map((item) => item.hreflang)).toEqual([
+      'en',
+      'pt-BR',
+      'zh-Hans',
+    ]);
   });
 
   describe('readContentIndex', () => {
@@ -99,13 +120,18 @@ describe('translated content routing', () => {
       dir = await mkdtemp(path.join(tmpdir(), 'at-content-'));
       await mkdir(path.join(dir, 'for', 'en'), { recursive: true });
       await mkdir(path.join(dir, 'for', 'es'), { recursive: true });
-      await writeFile(path.join(dir, 'for', 'en', 'cooking.md'), '---\nh1: "Keep your screen on while cooking"\nreviewed: true\n---\n');
+      await writeFile(
+        path.join(dir, 'for', 'en', 'cooking.md'),
+        '---\nh1: "Keep your screen on while cooking"\nreviewed: true\n---\n',
+      );
       await writeFile(
         path.join(dir, 'for', 'es', 'cooking.md'),
         '---\nh1: "Mantén la pantalla encendida mientras cocinas"\nogTitle: "Pantalla encendida al cocinar"\nreviewed: false\n---\n',
       );
       const index = await readContentIndex(dir);
-      expect(index.map(({ kind, locale, enSlug, reviewed, ogTitle }) => ({ kind, locale, enSlug, reviewed, ogTitle }))).toEqual([
+      expect(
+        index.map(({ kind, locale, enSlug, reviewed, ogTitle }) => ({ kind, locale, enSlug, reviewed, ogTitle })),
+      ).toEqual([
         { kind: 'for', locale: 'en', enSlug: 'cooking', reviewed: true, ogTitle: undefined },
         { kind: 'for', locale: 'es', enSlug: 'cooking', reviewed: false, ogTitle: 'Pantalla encendida al cocinar' },
       ]);

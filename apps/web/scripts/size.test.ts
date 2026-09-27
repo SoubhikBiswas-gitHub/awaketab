@@ -29,7 +29,10 @@ beforeAll(async () => {
     '<script src="/theme-boot.js"></script><script type="application/json" data-x>{}</script><script type="module" src="/_astro/entry.js"></script>',
   );
   await writeFile(path.join(dist, 'embed/assets/app.0123456789.js'), 'export const app=1;');
-  await writeFile(path.join(dist, 'embed/cook.html'), '<script type="module" src="/embed/assets/app.0123456789.js"></script>');
+  await writeFile(
+    path.join(dist, 'embed/cook.html'),
+    '<script type="module" src="/embed/assets/app.0123456789.js"></script>',
+  );
 });
 
 afterAll(async () => {
@@ -68,7 +71,9 @@ describe('size gate closures', () => {
   it('fails the embed page when its app is not fingerprinted or missing', () => {
     expect(embedEntryHashed('<script type="module" src="/embed/app.js"></script>', HASHED_APP_RE)).toBe(false);
     expect(embedEntryHashed('<script src="/theme-boot.js"></script>', HASHED_APP_RE)).toBe(false);
-    expect(embedEntryHashed('<script type="module" src="/embed/assets/app.abc.js"></script>', HASHED_APP_RE)).toBe(false);
+    expect(embedEntryHashed('<script type="module" src="/embed/assets/app.abc.js"></script>', HASHED_APP_RE)).toBe(
+      false,
+    );
   });
 
   it('visits each file once even with cycles', async () => {

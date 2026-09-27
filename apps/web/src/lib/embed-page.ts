@@ -1,5 +1,13 @@
 import { DEFAULT_SNIPPET, loaderSnippet, type ISnippetOptions } from '../tool/embed/snippet';
-import { EMBED_LOCALES, EMBED_MODES, EMBED_PRESETS, EMBED_SIZES, EMBED_THEMES, pick, reservedHeight } from '../tool/embed/protocol';
+import {
+  EMBED_LOCALES,
+  EMBED_MODES,
+  EMBED_PRESETS,
+  EMBED_SIZES,
+  EMBED_THEMES,
+  pick,
+  reservedHeight,
+} from '../tool/embed/protocol';
 
 export interface ISnippetPart {
   text: string;
@@ -10,7 +18,11 @@ export interface ISnippetPart {
 export function snippetParts(tag: string): ISnippetPart[] {
   const m = /^(<script async src="[^"]*")((?: [\w-]+="[^"]*")*)(><\/script>)$/u.exec(tag);
   if (!m) return [{ text: tag }];
-  const attrs = [...(m[2] ?? '').matchAll(/ ([\w-]+)=("[^"]*")/gu)].map((a) => ({ text: ' ', name: a[1] ?? '', value: a[2] ?? '' }));
+  const attrs = [...(m[2] ?? '').matchAll(/ ([\w-]+)=("[^"]*")/gu)].map((a) => ({
+    text: ' ',
+    name: a[1] ?? '',
+    value: a[2] ?? '',
+  }));
   return [{ text: m[1] ?? '' }, ...attrs, { text: m[3] ?? '' }];
 }
 
@@ -101,7 +113,8 @@ export function bindEmbedPage(root: HTMLElement, win: Window = window): void {
     );
     if (status) status.textContent = '';
     copy?.removeAttribute('data-copied');
-    for (const note of root.querySelectorAll<HTMLElement>('[data-mode-note]')) note.hidden = note.dataset.modeNote !== opts.mode;
+    for (const note of root.querySelectorAll<HTMLElement>('[data-mode-note]'))
+      note.hidden = note.dataset.modeNote !== opts.mode;
     if (box) box.textContent = boxLabel(opts, demo?.clientWidth ?? 0);
     // Remount the live widget when what it shows changes (the page's own origin serves /embed.js).
     const key = `${opts.mode}|${opts.theme}|${opts.size}|${opts.lang ?? 'en'}|${opts.preset}`;

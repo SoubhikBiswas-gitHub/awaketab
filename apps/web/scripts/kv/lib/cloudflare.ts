@@ -100,7 +100,9 @@ export class CloudflareKv implements IKvStore {
       // fall through: reported below with the HTTP status
     }
     if (!response.ok || body.success === false) {
-      const detail = body.errors?.map((error) => `${String(error.code ?? '')} ${error.message ?? ''}`.trim()).join('; ');
+      const detail = body.errors
+        ?.map((error) => `${String(error.code ?? '')} ${error.message ?? ''}`.trim())
+        .join('; ');
       throw new Error(`Cloudflare API ${what} failed: HTTP ${String(response.status)}${detail ? ` — ${detail}` : ''}`);
     }
     return body;
@@ -182,7 +184,10 @@ export class CloudflareKv implements IKvStore {
         await this.request('/bulk', { method: 'PUT', body: JSON.stringify(payload) }),
       );
       const failed = body.result?.unsuccessful_keys ?? [];
-      if (failed.length > 0) throw new Error(`Cloudflare API bulk write rejected ${String(failed.length)} keys: ${failed.slice(0, 5).join(', ')}`);
+      if (failed.length > 0)
+        throw new Error(
+          `Cloudflare API bulk write rejected ${String(failed.length)} keys: ${failed.slice(0, 5).join(', ')}`,
+        );
     }
   }
 }

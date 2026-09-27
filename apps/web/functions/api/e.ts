@@ -9,7 +9,9 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   const parsed = await parseBatch(context.request);
   if (!parsed.ok) return jsonError(parsed.status === 413 ? 'too_large' : 'bad_request', parsed.status);
   const now = Date.now();
-  const points = parsed.events.map((row) => mapEvent(row, now)).filter((point): point is NonNullable<typeof point> => point !== null);
+  const points = parsed.events
+    .map((row) => mapEvent(row, now))
+    .filter((point): point is NonNullable<typeof point> => point !== null);
   writePoints(context.env, points);
   return jsonOk({ ok: true, n: points.length });
 };

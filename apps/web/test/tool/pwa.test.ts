@@ -52,7 +52,11 @@ describe('watchUpdates (FR-PWA-01)', () => {
     const env = setup(undefined);
     cleanup = env.off;
     expect(env.swToasts()).toHaveLength(1);
-    expect(env.swToasts()[0]).toMatchObject({ kind: 'info', sticky: true, text: 'Update ready — reload when you finish' });
+    expect(env.swToasts()[0]).toMatchObject({
+      kind: 'info',
+      sticky: true,
+      text: 'Update ready — reload when you finish',
+    });
     expect(env.swToasts()[0]?.action?.label).toBe('Reload');
   });
 
@@ -94,7 +98,13 @@ describe('watchUpdates (FR-PWA-01)', () => {
     const reg = new FakeRegistration();
     reg.waiting = null;
     const store = createStore();
-    const off = watchUpdates(reg as unknown as ServiceWorkerRegistration, store, () => 'inactive', new EventTarget() as unknown as ServiceWorkerContainer, vi.fn());
+    const off = watchUpdates(
+      reg as unknown as ServiceWorkerRegistration,
+      store,
+      () => 'inactive',
+      new EventTarget() as unknown as ServiceWorkerContainer,
+      vi.fn(),
+    );
     expect(store.get().ui.toasts).toHaveLength(0);
     const installing = new EventTarget();
     reg.installing = installing;

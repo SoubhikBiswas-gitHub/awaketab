@@ -1,6 +1,14 @@
 import { resolveCheckoutKey } from '../../_lib/checkout-key';
 import type { IEnv } from '../../_lib/env';
-import { isLookupBody, jsonError, jsonOk, parseActivateBody, parseLookupBody, rateLimited, syncing } from '../../_lib/http';
+import {
+  isLookupBody,
+  jsonError,
+  jsonOk,
+  parseActivateBody,
+  parseLookupBody,
+  rateLimited,
+  syncing,
+} from '../../_lib/http';
 import {
   encryptUtf8,
   PLAN_FEATURES,
@@ -189,7 +197,13 @@ async function saveLicense(kv: KVNamespace, keyHash: string, record: ILicenseRec
   }
 }
 
-async function mint(env: IEnv, record: ILicenseRecord, keyHash: string, devHash: string, nowSec: number): Promise<Response> {
+async function mint(
+  env: IEnv,
+  record: ILicenseRecord,
+  keyHash: string,
+  devHash: string,
+  nowSec: number,
+): Promise<Response> {
   const { token, exp } = await mintToken(env, record, keyHash, devHash, nowSec);
   return jsonOk({
     token,
@@ -236,7 +250,8 @@ async function lookupCheckout(env: IEnv, checkoutId: string): Promise<Response> 
   if (resolved instanceof Response) return resolved;
   const { key } = resolved;
   const existing = await readLicense(kv, await sha256Hex(key));
-  if (existing && (existing.status === 'revoked' || existing.status === 'refunded')) return jsonError(existing.status, 403);
+  if (existing && (existing.status === 'revoked' || existing.status === 'refunded'))
+    return jsonError(existing.status, 403);
   let license;
   try {
     license = await polar.validate(key);

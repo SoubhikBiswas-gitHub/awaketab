@@ -1,5 +1,11 @@
 import type { IEnv } from '../../_lib/env';
-import { candidateDomains, cleanTheme, FREE_EMBED_CONFIG as FREE, normalizeDomain, type IEmbedRecord } from '../../_lib/embed';
+import {
+  candidateDomains,
+  cleanTheme,
+  FREE_EMBED_CONFIG as FREE,
+  normalizeDomain,
+  type IEmbedRecord,
+} from '../../_lib/embed';
 import { jsonOk } from '../../_lib/http';
 
 // docs/09 §7.1, docs/11 §2 + §4: `GET /api/embed/config?domain=` → `{ licensed, attribution, theme, expiresAt }`,

@@ -179,7 +179,10 @@ describe('session engine — M6 additions', () => {
   it('battery auto-stop: 14% with a 15% threshold ends the session once, warning first', async () => {
     const battery = Object.assign(new EventTarget(), { level: 0.16, charging: false });
     vi.stubGlobal('navigator', { ...navigator, getBattery: () => Promise.resolve(battery) });
-    const settings: ISettings = { ...DEFAULT_SETTINGS, battery: { ...DEFAULT_SETTINGS.battery, autoStop: true, threshold: 15 } };
+    const settings: ISettings = {
+      ...DEFAULT_SETTINGS,
+      battery: { ...DEFAULT_SETTINGS.battery, autoStop: true, threshold: 15 },
+    };
     const { engine } = setup({ now: { t: 0 }, settings });
     const warnings: string[] = [];
     engine.on('warning', (w) => warnings.push(w.code));

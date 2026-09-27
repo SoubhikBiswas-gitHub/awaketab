@@ -37,13 +37,15 @@ function fail(message: string): never {
 function text(row: Record<string, unknown>, key: string, where: string, nullable = false): string | null {
   const value = row[key];
   if (value === null && nullable) return null;
-  if (typeof value !== 'string' || !value.trim()) fail(`${where}.${key} must be a non-empty string${nullable ? ' or null' : ''}`);
+  if (typeof value !== 'string' || !value.trim())
+    fail(`${where}.${key} must be a non-empty string${nullable ? ' or null' : ''}`);
   return value.trim();
 }
 
 function date(value: unknown, where: string): string | null {
   if (value === null) return null;
-  if (typeof value !== 'string' || !DATE_RE.test(value) || Number.isNaN(Date.parse(value))) fail(`${where} must be YYYY-MM-DD or null`);
+  if (typeof value !== 'string' || !DATE_RE.test(value) || Number.isNaN(Date.parse(value)))
+    fail(`${where} must be YYYY-MM-DD or null`);
   return value;
 }
 
@@ -67,9 +69,11 @@ export function parseDeviceMatrix(data: unknown): IDeviceMatrix {
     if (!ID_RE.test(id) || ids.has(id)) fail(`${where}.id must be unique kebab-case`);
     ids.add(id);
     const verdict = r.verdict;
-    if (typeof verdict !== 'string' || !(DEVICE_VERDICTS as readonly string[]).includes(verdict)) fail(`${where}.verdict is invalid`);
+    if (typeof verdict !== 'string' || !(DEVICE_VERDICTS as readonly string[]).includes(verdict))
+      fail(`${where}.verdict is invalid`);
     const power = r.power;
-    if (typeof power !== 'string' || !(DEVICE_POWER as readonly string[]).includes(power)) fail(`${where}.power is invalid`);
+    if (typeof power !== 'string' || !(DEVICE_POWER as readonly string[]).includes(power))
+      fail(`${where}.power is invalid`);
     const row: IDeviceRow = {
       id,
       device: text(r, 'device', where) ?? '',

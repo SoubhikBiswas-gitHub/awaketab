@@ -40,7 +40,9 @@ export function parseRequest(raw: unknown): TExtRequest | null {
     case 'until':
       return isHHMM(msg.wall) ? { type: 'until', wall: msg.wall } : null;
     case 'extend':
-      return typeof msg.ms === 'number' && (EXTEND_MS as readonly number[]).includes(msg.ms) ? { type: 'extend', ms: msg.ms } : null;
+      return typeof msg.ms === 'number' && (EXTEND_MS as readonly number[]).includes(msg.ms)
+        ? { type: 'extend', ms: msg.ms }
+        : null;
     case 'level':
       return isLevel(msg.level) ? { type: 'level', level: msg.level } : null;
     default:

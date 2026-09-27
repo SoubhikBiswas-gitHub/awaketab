@@ -277,7 +277,9 @@ describe('T16 SSR', () => {
   it('is inert when window is undefined', async () => {
     const lock = createWakeLock({ document: undefined, documentLike: undefined });
     // In happy-dom window exists; dedicated node test covers true SSR.
-    expect(lock.supported || lock.state === 'idle' || lock.state === 'unsupported' || lock.state === 'held').toBeTruthy();
+    expect(
+      lock.supported || lock.state === 'idle' || lock.state === 'unsupported' || lock.state === 'held',
+    ).toBeTruthy();
     const { createWakeLock: create } = await import('../src/index.js');
     expect(typeof create).toBe('function');
   });

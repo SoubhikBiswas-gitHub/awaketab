@@ -35,8 +35,7 @@ export function bindCustomDialog(
   };
   fill(opts.lastCustomMs);
 
-  const read = () =>
-    customMs(Number(days.value) || 0, Number(hours.value) || 0, Number(minutes.value) || 0);
+  const read = () => customMs(Number(days.value) || 0, Number(hours.value) || 0, Number(minutes.value) || 0);
 
   const update = () => {
     const ms = read();
@@ -73,8 +72,7 @@ export function bindUntilDialog(
   if (!time) return () => undefined;
   const now = new Date();
   time.value =
-    opts.lastWall ??
-    `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    opts.lastWall ?? `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
   const update = () => {
     const [h, m] = time.value.split(':').map(Number);

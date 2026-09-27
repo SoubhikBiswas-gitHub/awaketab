@@ -1,6 +1,13 @@
 // Export one KV namespace to an encrypted backup and prove the result decrypts back to the same records.
 import { decryptBackup, encryptBackup, isEncryptedBackup } from './crypto.ts';
-import { BACKUP_FORMAT, BACKUP_PREFIXES, BACKUP_VERSION, parseBackup, serializeBackup, type IBackup } from './format.ts';
+import {
+  BACKUP_FORMAT,
+  BACKUP_PREFIXES,
+  BACKUP_VERSION,
+  parseBackup,
+  serializeBackup,
+  type IBackup,
+} from './format.ts';
 import { readAll, type IKvStore } from './store.ts';
 
 export interface IExportOptions {

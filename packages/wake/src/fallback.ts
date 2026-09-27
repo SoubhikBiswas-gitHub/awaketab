@@ -11,10 +11,7 @@ export interface IFallbackHandle {
   stopNudge(): void;
 }
 
-export function createFallbackVideo(
-  doc: Document,
-  sources: { webm?: string; mp4?: string } = {},
-): IFallbackHandle {
+export function createFallbackVideo(doc: Document, sources: { webm?: string; mp4?: string } = {}): IFallbackHandle {
   const v = doc.createElement('video');
   v.muted = true;
   v.loop = true;

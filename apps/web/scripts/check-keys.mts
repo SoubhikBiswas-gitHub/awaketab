@@ -37,7 +37,8 @@ export async function devPublicKey(file = DEV_VARS): Promise<IPublicPoint> {
   const line = (await readFile(file, 'utf8')).split('\n').find((row) => row.startsWith('LICENSE_SIGNING_KEY='));
   if (!line) throw new Error(`${file} has no LICENSE_SIGNING_KEY`);
   const jwk = JSON.parse(line.slice('LICENSE_SIGNING_KEY='.length)) as Partial<IPublicPoint>;
-  if (typeof jwk.x !== 'string' || typeof jwk.y !== 'string') throw new Error(`${file}: LICENSE_SIGNING_KEY is not an EC JWK`);
+  if (typeof jwk.x !== 'string' || typeof jwk.y !== 'string')
+    throw new Error(`${file}: LICENSE_SIGNING_KEY is not an EC JWK`);
   return { x: jwk.x, y: jwk.y };
 }
 
@@ -46,18 +47,23 @@ export function keyProblems(keys: Readonly<Record<number, JsonWebKey>>, dev: IPu
   const entries = Object.entries(keys);
   if (entries.length === 0) {
     problems.push({
-      message: 'PRODUCTION_LICENSE_PUBLIC_KEYS is empty: run `pnpm keys:prod` and add the public JWK (LAUNCH-AUDIT N-03)',
+      message:
+        'PRODUCTION_LICENSE_PUBLIC_KEYS is empty: run `pnpm keys:prod` and add the public JWK (LAUNCH-AUDIT N-03)',
       waivable: true,
     });
   }
   for (const [ver, jwk] of entries) {
     if (jwk.x === dev.x || jwk.y === dev.y) {
-      problems.push({ message: `LICENSE_PUBLIC_KEYS[${ver}] is the dev key from .dev.vars.example; its private half is public`, waivable: false });
+      problems.push({
+        message: `LICENSE_PUBLIC_KEYS[${ver}] is the dev key from .dev.vars.example; its private half is public`,
+        waivable: false,
+      });
     }
     if (jwk.kty !== 'EC' || jwk.crv !== 'P-256' || !jwk.x || !jwk.y) {
       problems.push({ message: `LICENSE_PUBLIC_KEYS[${ver}] is not a P-256 public JWK`, waivable: false });
     }
-    if ('d' in jwk) problems.push({ message: `LICENSE_PUBLIC_KEYS[${ver}] contains a private key (d)`, waivable: false });
+    if ('d' in jwk)
+      problems.push({ message: `LICENSE_PUBLIC_KEYS[${ver}] contains a private key (d)`, waivable: false });
   }
   return problems;
 }
@@ -65,7 +71,12 @@ export function keyProblems(keys: Readonly<Record<number, JsonWebKey>>, dev: IPu
 export function checkoutProblems(links: Readonly<Record<string, string>>): IProblem[] {
   return Object.entries(links).flatMap(([plan, url]): IProblem[] => {
     if (url.includes(CHECKOUT_PLACEHOLDER)) {
-      return [{ message: `CHECKOUT_LINKS_PRODUCTION.${plan} is still a placeholder (LAUNCH-AUDIT N-04 step 4)`, waivable: true }];
+      return [
+        {
+          message: `CHECKOUT_LINKS_PRODUCTION.${plan} is still a placeholder (LAUNCH-AUDIT N-04 step 4)`,
+          waivable: true,
+        },
+      ];
     }
     if (!url.startsWith('https://') || url.includes('sandbox')) {
       return [{ message: `CHECKOUT_LINKS_PRODUCTION.${plan} is not a production https link: ${url}`, waivable: false }];
@@ -84,26 +95,42 @@ async function textFiles(dir: string): Promise<string[]> {
   return out;
 }
 
-export async function distProblems(dir: string, dev: IPublicPoint, keys: Readonly<Record<number, JsonWebKey>>): Promise<IProblem[]> {
+export async function distProblems(
+  dir: string,
+  dev: IPublicPoint,
+  keys: Readonly<Record<number, JsonWebKey>>,
+): Promise<IProblem[]> {
   const problems: IProblem[] = [];
   const unseen = new Map(Object.entries(keys).map(([ver, jwk]) => [ver, jwk.x ?? '']));
   for (const file of await textFiles(dir)) {
     const text = await readFile(file, 'utf8');
     if (text.includes(dev.x) || text.includes(dev.y)) {
-      problems.push({ message: `${path.relative(process.cwd(), file)} contains the dev licence public key`, waivable: false });
+      problems.push({
+        message: `${path.relative(process.cwd(), file)} contains the dev licence public key`,
+        waivable: false,
+      });
     }
     for (const [ver, x] of unseen) if (x && text.includes(x)) unseen.delete(ver);
   }
   for (const ver of unseen.keys()) {
-    problems.push({ message: `${dir}: LICENSE_PUBLIC_KEYS[${ver}] is in no built file (licence verifier not bundled?)`, waivable: false });
+    problems.push({
+      message: `${dir}: LICENSE_PUBLIC_KEYS[${ver}] is in no built file (licence verifier not bundled?)`,
+      waivable: false,
+    });
   }
   return problems;
 }
 
-export async function runCheck(args: string[], env: Record<string, string | undefined> = process.env): Promise<{ ok: boolean; lines: string[] }> {
+export async function runCheck(
+  args: string[],
+  env: Record<string, string | undefined> = process.env,
+): Promise<{ ok: boolean; lines: string[] }> {
   const force = args.includes('--force');
   if (polarServer(env) !== 'production' && !force) {
-    return { ok: true, lines: ['check-keys: PUBLIC_POLAR_SERVER is not production; the dev licence key stays trusted (skipped)'] };
+    return {
+      ok: true,
+      lines: ['check-keys: PUBLIC_POLAR_SERVER is not production; the dev licence key stays trusted (skipped)'],
+    };
   }
   const dev = await devPublicKey();
   const dists = args.flatMap((arg, i) => (arg === '--dist' && args[i + 1] ? [path.resolve(args[i + 1] ?? '')] : []));

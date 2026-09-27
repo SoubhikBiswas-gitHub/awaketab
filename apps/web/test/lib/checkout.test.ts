@@ -20,7 +20,10 @@ describe('CHECKOUT_LINKS follow PUBLIC_POLAR_SERVER (F-06)', () => {
     const links = checkoutLinks('sandbox');
     expect(Object.keys(links).sort()).toEqual([...PLANS].sort());
     // Real sandbox checkout links: https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_…/redirect
-    for (const plan of PLANS) expect(links[plan]).toMatch(/^https:\/\/sandbox-api\.polar\.sh\/v1\/checkout-links\/polar_cl_[A-Za-z0-9]+\/redirect$/u);
+    for (const plan of PLANS)
+      expect(links[plan]).toMatch(
+        /^https:\/\/sandbox-api\.polar\.sh\/v1\/checkout-links\/polar_cl_[A-Za-z0-9]+\/redirect$/u,
+      );
     expect(new Set(Object.values(links)).size).toBe(PLANS.length);
     expect(links).toBe(CHECKOUT_LINKS_SANDBOX);
   });

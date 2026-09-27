@@ -133,7 +133,11 @@
     inset-inline-start: -25%;
     inline-size: 150%;
     block-size: 100%;
-    background: radial-gradient(45% 45% at 62% 40%, color-mix(in srgb, var(--at-accent) var(--at-pro-aura-a), transparent) 0%, transparent 70%);
+    background: radial-gradient(
+      45% 45% at 62% 40%,
+      color-mix(in srgb, var(--at-accent) var(--at-pro-aura-a), transparent) 0%,
+      transparent 70%
+    );
     animation: at-pro-aura 26s ease-in-out infinite alternate;
   }
 
@@ -384,7 +388,11 @@
     position: absolute;
     inset: 28px;
     border-radius: 50%;
-    background: conic-gradient(from 0deg, transparent 0deg 240deg, color-mix(in srgb, var(--at-accent) var(--at-pro-sweep), transparent) 360deg);
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg 240deg,
+      color-mix(in srgb, var(--at-accent) var(--at-pro-sweep), transparent) 360deg
+    );
     animation: at-pro-spin 16s linear infinite;
   }
 
@@ -719,7 +727,11 @@
     content: "";
     position: absolute;
     inset: 10%;
-    background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--at-accent) 8%, transparent) 0%, transparent 70%);
+    background: radial-gradient(
+      50% 50% at 50% 50%,
+      color-mix(in srgb, var(--at-accent) 8%, transparent) 0%,
+      transparent 70%
+    );
   }
 
   .at-pro-screen > * {
@@ -1344,7 +1356,8 @@
     --at-pro-aura-a: 12%;
   }
 
-  :root:is([data-theme="dark"], [data-theme="oled"]) .at-pro-act:is([data-state="success"], [data-state="ext-success"]) {
+  :root:is([data-theme="dark"], [data-theme="oled"])
+    .at-pro-act:is([data-state="success"], [data-state="ext-success"]) {
     --at-pro-aura-a: 16%;
   }
 
@@ -1358,15 +1371,30 @@
 
   .at-pro-aura-act::before {
     inset-block-start: 0;
-    background: radial-gradient(45% 45% at 50% 30%, color-mix(in srgb, var(--at-pro-aura-c) var(--at-pro-aura-a), transparent) 0%, transparent 70%);
+    background: radial-gradient(
+      45% 45% at 50% 30%,
+      color-mix(in srgb, var(--at-pro-aura-c) var(--at-pro-aura-a), transparent) 0%,
+      transparent 70%
+    );
   }
 
-  .at-pro-act:is([data-state="checkout-success"], [data-state="cancelled"], [data-state="failed"], [data-state="help"]) {
+  .at-pro-act:is(
+    [data-state="checkout-success"],
+    [data-state="cancelled"],
+    [data-state="failed"],
+    [data-state="help"]
+  ) {
     --at-pro-aura-a: 8%;
     --at-pro-aura-h: 600px;
   }
 
-  :root:is([data-theme="dark"], [data-theme="oled"]) .at-pro-act:is([data-state="checkout-success"], [data-state="cancelled"], [data-state="failed"], [data-state="help"]) {
+  :root:is([data-theme="dark"], [data-theme="oled"])
+    .at-pro-act:is(
+      [data-state="checkout-success"],
+      [data-state="cancelled"],
+      [data-state="failed"],
+      [data-state="help"]
+    ) {
     --at-pro-aura-a: 10%;
   }
 
@@ -1374,12 +1402,17 @@
     --at-pro-aura-c: var(--at-bad);
   }
 
-  .at-pro-act:is([data-state="checkout-success"], [data-state="cancelled"], [data-state="failed"], [data-state="help"]) .at-pro-aura-act::before {
+  .at-pro-act:is([data-state="checkout-success"], [data-state="cancelled"], [data-state="failed"], [data-state="help"])
+    .at-pro-aura-act::before {
     inset-block-start: -200px;
     inset-inline-start: -20%;
     inline-size: 140%;
     block-size: var(--at-pro-co-aura);
-    background: radial-gradient(40% 40% at 40% 40%, color-mix(in srgb, var(--at-pro-aura-c) var(--at-pro-aura-a), transparent) 0%, transparent 70%);
+    background: radial-gradient(
+      40% 40% at 40% 40%,
+      color-mix(in srgb, var(--at-pro-aura-c) var(--at-pro-aura-a), transparent) 0%,
+      transparent 70%
+    );
   }
 
   .at-pro-act-main {

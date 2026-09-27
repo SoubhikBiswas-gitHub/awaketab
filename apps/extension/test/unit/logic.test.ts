@@ -152,7 +152,11 @@ describe('schedules → alarms (docs/13 §10)', () => {
 
   it('builds weekday windows and two alarms (next start, next end)', () => {
     const tue10 = new Date(2026, 8, 1, 10, 0).getTime(); // Tue 1 Sep 2026
-    expect(activeWindow([weekdays], tue10)).toEqual({ start: new Date(2026, 8, 1, 9, 0).getTime(), end: new Date(2026, 8, 1, 18, 0).getTime(), level: 'display' });
+    expect(activeWindow([weekdays], tue10)).toEqual({
+      start: new Date(2026, 8, 1, 9, 0).getTime(),
+      end: new Date(2026, 8, 1, 18, 0).getTime(),
+      level: 'display',
+    });
     expect(scheduleAlarms([weekdays], tue10)).toEqual([
       { name: 'at.sched.w.start', when: new Date(2026, 8, 2, 9, 0).getTime() },
       { name: 'at.sched.w.end', when: new Date(2026, 8, 1, 18, 0).getTime() },
@@ -182,8 +186,17 @@ describe('schedules → alarms (docs/13 §10)', () => {
     const a = { id: 'a', days: [2], start: '09:00', end: '12:00', level: 'system' as const };
     const b = { id: 'b', days: [2], start: '11:00', end: '14:00', level: 'display' as const };
     const tue = new Date(2026, 8, 1, 9, 30).getTime();
-    expect(activeWindow([a, b], tue)).toEqual({ start: new Date(2026, 8, 1, 9, 0).getTime(), end: new Date(2026, 8, 1, 14, 0).getTime(), level: 'display' });
-    expect(mergeWindows([{ start: 0, end: 10, level: 'system' }, { start: 10, end: 20, level: 'system' }])).toEqual([{ start: 0, end: 20, level: 'system' }]);
+    expect(activeWindow([a, b], tue)).toEqual({
+      start: new Date(2026, 8, 1, 9, 0).getTime(),
+      end: new Date(2026, 8, 1, 14, 0).getTime(),
+      level: 'display',
+    });
+    expect(
+      mergeWindows([
+        { start: 0, end: 10, level: 'system' },
+        { start: 10, end: 20, level: 'system' },
+      ]),
+    ).toEqual([{ start: 0, end: 20, level: 'system' }]);
     expect(windowsOf(a, tue).every((w) => new Date(w.start).getDay() === 2)).toBe(true);
   });
 });

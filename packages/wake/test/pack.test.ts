@@ -58,12 +58,18 @@ describe('npm pack --dry-run @awaketab/wake', () => {
       'dist/index.d.ts',
       'dist/index.d.cts',
       'dist/awaketab-wake.iife.js',
-      ...['react', 'preact', 'vue'].flatMap((a) => ['js', 'cjs', 'd.ts', 'd.cts'].map((ext) => `dist/adapters/${a}.${ext}`)),
+      ...['react', 'preact', 'vue'].flatMap((a) =>
+        ['js', 'cjs', 'd.ts', 'd.cts'].map((ext) => `dist/adapters/${a}.${ext}`),
+      ),
     ]) {
       expect(files, f).toContain(f);
     }
-    expect(files.every((f) => ['package.json', 'README.md', 'CHANGELOG.md', 'LICENSE'].includes(f) || f.startsWith('dist/'))).toBe(true);
-    expect(files.some((f) => /(^|\/)(src|test)\//u.test(f) || f.includes('tsconfig') || f.includes('tsup.config'))).toBe(false);
+    expect(
+      files.every((f) => ['package.json', 'README.md', 'CHANGELOG.md', 'LICENSE'].includes(f) || f.startsWith('dist/')),
+    ).toBe(true);
+    expect(
+      files.some((f) => /(^|\/)(src|test)\//u.test(f) || f.includes('tsconfig') || f.includes('tsup.config')),
+    ).toBe(false);
   });
 
   it('resolves every "exports" target, "unpkg" and the IIFE to a packed file', () => {

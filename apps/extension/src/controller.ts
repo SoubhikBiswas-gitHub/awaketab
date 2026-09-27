@@ -107,7 +107,8 @@ export function createController(opts: IControllerOptions): IController {
   const settings = () => readSettings(store.raw(STORAGE_KEYS.settings));
   const ext = (): IExtSettings => readExt(store.raw(EXT_KEYS.ext));
   const locale = () => resolveLocale(settings().locale, api.i18n?.getUILanguage());
-  const t = (key: string, vars?: TVars) => format(opts.catalogs[locale()]?.[key] ?? opts.catalogs.en?.[key] ?? key, vars);
+  const t = (key: string, vars?: TVars) =>
+    format(opts.catalogs[locale()]?.[key] ?? opts.catalogs.en?.[key] ?? key, vars);
   const telemetry = createTelemetry({
     enabled: () => settings().telemetry,
     locale,
@@ -370,7 +371,8 @@ export function createController(opts: IControllerOptions): IController {
     }
     // After a worker restart the engine holds no ended session; mark the stored one.
     const stored = storage.session();
-    if (stored && !isLive(stored)) storage.writeSession({ ...stored, modeState: { ...stored.modeState, dismissed: true } });
+    if (stored && !isLive(stored))
+      storage.writeSession({ ...stored, modeState: { ...stored.modeState, dismissed: true } });
   }
 
   async function setLevel(lvl: TPowerLevel): Promise<void> {
@@ -406,7 +408,14 @@ export function createController(opts: IControllerOptions): IController {
     if (!win) return;
     const last = session ?? storage.session();
     // Stopped by hand inside this window: stay stopped until the window's next occurrence.
-    if (last && originOf(last) === 'schedule' && last.endReason === 'user' && last.endsAt !== null && now() < last.endsAt) return;
+    if (
+      last &&
+      originOf(last) === 'schedule' &&
+      last.endReason === 'user' &&
+      last.endsAt !== null &&
+      now() < last.endsAt
+    )
+      return;
     await startPlan(planFor(win), 'until', win.level, 'schedule');
   }
 
@@ -480,7 +489,9 @@ export function createController(opts: IControllerOptions): IController {
     const text = badgeText(lock.state, lvl, session, at);
     const held = lock.state === 'held' && isLive(session);
     const status =
-      held && lvl === 'system' ? `${t('ext.pill.systemHeld')} · ${t('ext.pill.system')}` : t(pillTextKey(lock.state, lvl));
+      held && lvl === 'system'
+        ? `${t('ext.pill.systemHeld')} · ${t('ext.pill.system')}`
+        : t(pillTextKey(lock.state, lvl));
     const rem = held ? remainingMs(session, at) : null;
     const left =
       rem === null
@@ -532,7 +543,8 @@ export function createController(opts: IControllerOptions): IController {
         return;
       }
       // FR-EXT-04: Pro `ext.autostart` keeps the display awake whenever Chrome starts.
-      if (hasFeature(license, 'ext.autostart') && ext().autostart.browserStart) await startPreset(presetOf(settings()), 'startup');
+      if (hasFeature(license, 'ext.autostart') && ext().autostart.browserStart)
+        await startPreset(presetOf(settings()), 'startup');
     },
     async onInstalled(reason, previousVersion) {
       await ready();
@@ -632,7 +644,9 @@ export function createController(opts: IControllerOptions): IController {
         return;
       }
       if (isLive(engine.session)) return;
-      const plan: TPlan = site.durationMin ? { type: 'duration', ms: site.durationMin * 60_000 } : { type: 'indefinite' };
+      const plan: TPlan = site.durationMin
+        ? { type: 'duration', ms: site.durationMin * 60_000 }
+        : { type: 'indefinite' };
       await startPlan(plan, site.durationMin ? 'custom' : 'pinf', ext().level, 'autostart');
     },
     async onTabRemoved() {

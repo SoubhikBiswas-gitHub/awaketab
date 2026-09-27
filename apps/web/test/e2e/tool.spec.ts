@@ -46,9 +46,13 @@ test('journey 3 until picker shows Tomorrow when past', async ({ page }) => {
 test('journey 4 hide then show reacquires', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake');
-  await page.evaluate(() => (window as Window & { __at: { setVisibility: (s: string) => void } }).__at.setVisibility('hidden'));
+  await page.evaluate(() =>
+    (window as Window & { __at: { setVisibility: (s: string) => void } }).__at.setVisibility('hidden'),
+  );
   await expect(page.locator('[data-pill-text]')).toHaveText('Paused — tab hidden');
-  await page.evaluate(() => (window as Window & { __at: { setVisibility: (s: string) => void } }).__at.setVisibility('visible'));
+  await page.evaluate(() =>
+    (window as Window & { __at: { setVisibility: (s: string) => void } }).__at.setVisibility('visible'),
+  );
   await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake');
   await expect(page.locator('[data-toasts]')).toContainText('Screen awake again');
 });

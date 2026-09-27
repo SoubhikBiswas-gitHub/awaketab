@@ -44,11 +44,15 @@ export async function precacheManifest(dist = DIST) {
     entries.push({ url: `/${file}`, revision: revision(await readFile(path.join(dist, file))) });
   }
   for (const file of await files(path.join(dist, 'icons'))) {
-    entries.push({ url: `/${path.relative(dist, file).split(path.sep).join('/')}`, revision: revision(await readFile(file)) });
+    entries.push({
+      url: `/${path.relative(dist, file).split(path.sep).join('/')}`,
+      revision: revision(await readFile(file)),
+    });
   }
   // Vite-hashed assets: the URL is the revision.
   for (const file of await files(path.join(dist, '_astro'))) {
-    if (/\.(?:js|css)$/u.test(file)) entries.push({ url: `/${path.relative(dist, file).split(path.sep).join('/')}`, revision: null });
+    if (/\.(?:js|css)$/u.test(file))
+      entries.push({ url: `/${path.relative(dist, file).split(path.sep).join('/')}`, revision: null });
   }
   return entries.sort((a, b) => a.url.localeCompare(b.url));
 }

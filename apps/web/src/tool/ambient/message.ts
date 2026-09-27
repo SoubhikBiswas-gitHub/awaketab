@@ -17,7 +17,12 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
     pro,
     sample: t('ambient.message.placeholder'),
   });
-  const text = el('p', { class: 'at-ambient-message', dir: 'auto', lang: document.documentElement.lang || 'en', 'data-message': '' });
+  const text = el('p', {
+    class: 'at-ambient-message',
+    dir: 'auto',
+    lang: document.documentElement.lang || 'en',
+    'data-message': '',
+  });
   text.textContent = view.text || t('ambient.message.empty');
   const meta = el('p', { class: 'at-am-meta' });
   const time = el('time');
@@ -31,9 +36,18 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
     const card = el('section', { class: 'at-pro-card', 'data-message-pro': '', 'aria-labelledby': 'am-pro' });
     const actions = el('div');
     const see = el('a', { class: 'at-am-cta', href: '/pro', 'data-pro-link': '' }, t('pro.see'));
-    const back = el('button', { type: 'button', class: 'at-am-skip' }, t('ambient.message.back', { mode: t('ambient.mode.clock') }));
+    const back = el(
+      'button',
+      { type: 'button', class: 'at-am-skip' },
+      t('ambient.message.back', { mode: t('ambient.mode.clock') }),
+    );
     actions.append(see, back);
-    card.append(el('span', { class: 'at-am-tag' }, t('pro.badge')), el('h2', { id: 'am-pro' }, t('tool.toast.proMessage')), el('p', {}, t('ambient.message.pro')), actions);
+    card.append(
+      el('span', { class: 'at-am-tag' }, t('pro.badge')),
+      el('h2', { id: 'am-pro' }, t('tool.toast.proMessage')),
+      el('p', {}, t('ambient.message.pro')),
+      actions,
+    );
     see.addEventListener('click', () => {
       ctx.track('pro_view', { from: 'message' });
     });

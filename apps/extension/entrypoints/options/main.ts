@@ -1,7 +1,14 @@
 import 'virtual:at-tokens.css';
 import '../../src/styles/base.css';
 import './options.css';
-import { hasFeature, STORAGE_KEYS, type ILicenseRecord, type ILicenseState, type ISettings, type TFeatureGate } from '@awaketab/core';
+import {
+  hasFeature,
+  STORAGE_KEYS,
+  type ILicenseRecord,
+  type ILicenseState,
+  type ISettings,
+  type TFeatureGate,
+} from '@awaketab/core';
 import { browser } from 'wxt/browser';
 import { LOCALE_META } from '../../../web/src/i18n/locales';
 import type { IExtApi } from '../../src/api';
@@ -110,7 +117,11 @@ async function boot(): Promise<void> {
   const langToggle = q(root, '[data-lang-toggle]', HTMLButtonElement);
   const langRows = [
     { value: '', lang: '', name: '' },
-    ...LOCALES.map((locale) => ({ value: locale, lang: LOCALE_META[locale].htmlLang, name: LOCALE_META[locale].label })),
+    ...LOCALES.map((locale) => ({
+      value: locale,
+      lang: LOCALE_META[locale].htmlLang,
+      name: LOCALE_META[locale].label,
+    })),
   ];
   for (const row of langRows) {
     const label = document.createElement('label');
@@ -187,7 +198,9 @@ async function boot(): Promise<void> {
             : t('ext.options.locale.review');
     }
     q(root, '[data-lang-now]').textContent =
-      current === '' ? t('ext.options.locale.autoNow', { name: browserName }) : LOCALE_META[current as keyof typeof LOCALE_META].label;
+      current === ''
+        ? t('ext.options.locale.autoNow', { name: browserName })
+        : LOCALE_META[current as keyof typeof LOCALE_META].label;
   }
 
   // ── Defaults, end behaviour, look, keyboard, privacy ──────────────────────────────────────────
@@ -276,7 +289,9 @@ async function boot(): Promise<void> {
       const note = section.querySelector<HTMLElement>('[data-locked]');
       if (note) note.hidden = allowed;
       section.dataset.locked = allowed ? '0' : '1';
-      for (const control of section.querySelectorAll<HTMLInputElement | HTMLButtonElement | HTMLSelectElement>('input, button, select')) {
+      for (const control of section.querySelectorAll<HTMLInputElement | HTMLButtonElement | HTMLSelectElement>(
+        'input, button, select',
+      )) {
         control.disabled = !allowed;
       }
     }
@@ -292,7 +307,8 @@ async function boot(): Promise<void> {
   const axis = q(root, '[data-axis]');
 
   const dayFmt = (style: 'short' | 'long' | 'narrow') => new Intl.DateTimeFormat(ctx.lang, { weekday: style });
-  const dayName = (day: number, style: 'short' | 'long' | 'narrow' = 'short') => dayFmt(style).format(new Date(2023, 0, 1 + day)); // 2023-01-01 was a Sunday
+  const dayName = (day: number, style: 'short' | 'long' | 'narrow' = 'short') =>
+    dayFmt(style).format(new Date(2023, 0, 1 + day)); // 2023-01-01 was a Sunday
 
   for (const day of WEEK) {
     const button = document.createElement('button');
@@ -327,7 +343,10 @@ async function boot(): Promise<void> {
 
   function rangeOf(start: number, end: number): string {
     const { t, time } = ctx;
-    return t('ext.time.span', { from: time.wall(start), to: end <= start ? t('ext.time.nextDay', { time: time.wall(end) }) : time.wall(end) });
+    return t('ext.time.span', {
+      from: time.wall(start),
+      to: end <= start ? t('ext.time.nextDay', { time: time.wall(end) }) : time.wall(end),
+    });
   }
 
   const levelName = (level: string) => ctx.t(level === 'system' ? 'ext.level.system' : 'ext.level.display');
@@ -374,7 +393,11 @@ async function boot(): Promise<void> {
     renderWeek();
   }
 
-  function blocksOf(start: number, end: number, days: number[]): Array<{ day: number; a: number; b: number; first: boolean }> {
+  function blocksOf(
+    start: number,
+    end: number,
+    days: number[],
+  ): Array<{ day: number; a: number; b: number; first: boolean }> {
     const out: Array<{ day: number; a: number; b: number; first: boolean }> = [];
     for (const d of days) {
       if (end > start) out.push({ day: d, a: start, b: end, first: true });
@@ -392,10 +415,19 @@ async function boot(): Promise<void> {
     const nowMin = now.getHours() * 60 + now.getMinutes();
     const pct = (m: number) => `${((m / 1440) * 100).toFixed(3)}%`;
     const locked = !hasFeature(license, 'ext.schedules');
-    const all: Array<{ day: number; a: number; b: number; first: boolean; level: string; kind: 'block' | 'draft'; label: string }> = [];
+    const all: Array<{
+      day: number;
+      a: number;
+      b: number;
+      first: boolean;
+      level: string;
+      kind: 'block' | 'draft';
+      label: string;
+    }> = [];
     for (const s of ext.schedules) {
       const label = rangeOf(minutesOf(s.start), minutesOf(s.end));
-      for (const blk of blocksOf(minutesOf(s.start), minutesOf(s.end), s.days)) all.push({ ...blk, level: s.level, kind: 'block', label });
+      for (const blk of blocksOf(minutesOf(s.start), minutesOf(s.end), s.days))
+        all.push({ ...blk, level: s.level, kind: 'block', label });
     }
     if (!locked && draft.days.length && draft.start !== draft.end) {
       const level = radios('scheduleLevel').find((r) => r.checked)?.value ?? 'display';
@@ -465,7 +497,10 @@ async function boot(): Promise<void> {
     }
     for (const button of root.querySelectorAll<HTMLButtonElement>('[data-step]')) {
       const label = t(button.dataset.step === 'end' ? 'ext.schedules.to' : 'ext.schedules.from');
-      button.setAttribute('aria-label', t(Number(button.dataset.delta) < 0 ? 'ext.schedules.earlier' : 'ext.schedules.later', { label }));
+      button.setAttribute(
+        'aria-label',
+        t(Number(button.dataset.delta) < 0 ? 'ext.schedules.earlier' : 'ext.schedules.later', { label }),
+      );
     }
     scheduleError.textContent = draft.error ? t(draft.error) : '';
     scheduleError.hidden = !draft.error;
@@ -515,7 +550,9 @@ async function boot(): Promise<void> {
       ...ext.autostart.sites.map((site) => {
         const li = document.createElement('li');
         li.className = 'at-in';
-        const label = site.durationMin ? t(`tool.preset.p${String(site.durationMin)}`) : t('ext.autostart.duration.open');
+        const label = site.durationMin
+          ? t(`tool.preset.p${String(site.durationMin)}`)
+          : t('ext.autostart.duration.open');
         li.append(
           span('op-li-host', site.host),
           span('op-li-sub-small', label),
@@ -560,7 +597,10 @@ async function boot(): Promise<void> {
           failSite('ext.autostart.error.denied');
           return;
         }
-        const sites = [...ext.autostart.sites.filter((s) => s.host !== host), { host, durationMin: minutes > 0 ? minutes : null }];
+        const sites = [
+          ...ext.autostart.sites.filter((s) => s.host !== host),
+          { host, durationMin: minutes > 0 ? minutes : null },
+        ];
         siteForm.reset();
         void patchExt({ autostart: { ...ext.autostart, sites } }).then(render);
       },
@@ -637,14 +677,21 @@ async function boot(): Promise<void> {
   // ── Side nav: sliding indicator follows the section in view (and the clicked link) ────────────────
   const navLinks = [...root.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')];
   const setActive = (id: string) => {
-    const index = Math.max(0, navLinks.findIndex((a) => a.dataset.navLink === id));
+    const index = Math.max(
+      0,
+      navLinks.findIndex((a) => a.dataset.navLink === id),
+    );
     q(root, '[data-nav-ind]').style.setProperty('--i', String(index));
     for (const [i, a] of navLinks.entries()) a.setAttribute('aria-current', String(i === index));
   };
-  const sections = navLinks.map((a) => document.getElementById(a.dataset.navLink ?? '')).filter((s): s is HTMLElement => s !== null);
+  const sections = navLinks
+    .map((a) => document.getElementById(a.dataset.navLink ?? ''))
+    .filter((s): s is HTMLElement => s !== null);
   const spy = new IntersectionObserver(
     (entries) => {
-      const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+      const visible = entries
+        .filter((e) => e.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
       if (visible) setActive(visible.target.id);
     },
     { rootMargin: '0px 0px -65% 0px' },
@@ -665,7 +712,9 @@ async function boot(): Promise<void> {
     checkRadio('defaultPreset', isExtPreset(settings.defaultPreset) ? settings.defaultPreset : 'pinf');
     checkRadio('endBehaviour', settings.endBehaviour);
     checkRadio('theme', settings.theme);
-    q(root, '[data-end-help]').textContent = t(settings.endBehaviour === 'stop' ? 'ext.options.end.stopHelp' : 'ext.options.end.askHelp');
+    q(root, '[data-end-help]').textContent = t(
+      settings.endBehaviour === 'stop' ? 'ext.options.end.stopHelp' : 'ext.options.end.askHelp',
+    );
     q(root, '[data-theme-help]').textContent = t(`ext.options.theme.${settings.theme}`);
     inputEl('notifications').checked = settings.notifications;
     const soundHelp = q(root, '[data-sound-help]');

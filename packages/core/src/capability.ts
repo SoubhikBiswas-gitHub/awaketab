@@ -33,7 +33,9 @@ const NATIVE_MIN: Partial<Record<TBrowserFamily, [number, number]>> = {
   opera: [70, 0],
 };
 
-export function probeCapabilities(win: Window & typeof globalThis = globalThis as Window & typeof globalThis): ICapabilities {
+export function probeCapabilities(
+  win: Window & typeof globalThis = globalThis as Window & typeof globalThis,
+): ICapabilities {
   const nav = win.navigator;
   const ua = nav.userAgent;
   const browser = parseBrowser(nav, ua);
@@ -55,15 +57,16 @@ export function probeCapabilities(win: Window & typeof globalThis = globalThis a
   const wakeLock: ICapabilities['wakeLock'] = hasNative ? 'native' : hasVideo ? 'fallback' : 'none';
   const min = NATIVE_MIN[browser.family];
   const nativeExpected = Boolean(
-    min && browser.major !== null && (browser.major > min[0] || (browser.major === min[0] && (browser.minor ?? 0) >= min[1])),
+    min &&
+    browser.major !== null &&
+    (browser.major > min[0] || (browser.major === min[0] && (browser.minor ?? 0) >= min[1])),
   );
   let advice: TAdviceCode | null = null;
   if (!isSecureContext) advice = 'insecure_context';
   else if (!hasNative) advice = 'unsupported_browser';
 
   const notif = 'Notification' in win ? Notification.permission : 'unavailable';
-  const notifications =
-    isIOS && !isStandalone ? 'unavailable' : (notif);
+  const notifications = isIOS && !isStandalone ? 'unavailable' : notif;
 
   return {
     browser,

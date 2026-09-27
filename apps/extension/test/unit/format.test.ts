@@ -12,7 +12,11 @@ describe('clock digits (DESIGN.md §4 long sessions)', () => {
     expect(clockParts(24 * 60_000 + 18_000)).toEqual({ days: '', main: '24', seconds: ':18' });
     expect(clockParts(2 * 3_600_000 + 15 * 60_000)).toEqual({ days: '', main: '2:15', seconds: ':00' });
     expect(clockParts(12 * 3_600_000 + 59 * 60_000 + 59_000)).toEqual({ days: '', main: '12:59', seconds: ':59' });
-    expect(clockParts(86_400_000 + 2 * 3_600_000 + 14 * 60_000 + 58_000)).toEqual({ days: '1d', main: '02:14', seconds: ':58' });
+    expect(clockParts(86_400_000 + 2 * 3_600_000 + 14 * 60_000 + 58_000)).toEqual({
+      days: '1d',
+      main: '02:14',
+      seconds: ':58',
+    });
     expect(clockParts(-5)).toEqual({ days: '', main: '00', seconds: ':00' });
   });
 });

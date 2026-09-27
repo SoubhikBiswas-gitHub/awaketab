@@ -30,13 +30,18 @@ export const KEY_RE = /^[A-Z0-9-]{20,80}$/u;
 // Polar checkout IDs are UUIDs; the looser shape still refuses anything that could reshape the upstream path.
 const CHECKOUT_RE = /^[A-Za-z0-9_-]{1,80}$/u;
 
-export function parseActivateBody(body: unknown): { key: string; deviceId: string; deviceLabel: string; checkoutId?: string } | null {
+export function parseActivateBody(
+  body: unknown,
+): { key: string; deviceId: string; deviceLabel: string; checkoutId?: string } | null {
   if (!body || typeof body !== 'object') return null;
   const row = body as Record<string, unknown>;
   const deviceId = typeof row.deviceId === 'string' ? row.deviceId : '';
   const deviceLabel =
     typeof row.deviceLabel === 'string'
-      ? [...row.deviceLabel].filter((ch) => (ch.codePointAt(0) ?? 0) >= 32).join('').slice(0, 40)
+      ? [...row.deviceLabel]
+          .filter((ch) => (ch.codePointAt(0) ?? 0) >= 32)
+          .join('')
+          .slice(0, 40)
       : '';
   const checkoutId = typeof row.checkoutId === 'string' ? row.checkoutId : undefined;
   const key = typeof row.key === 'string' ? row.key.trim().toUpperCase() : '';

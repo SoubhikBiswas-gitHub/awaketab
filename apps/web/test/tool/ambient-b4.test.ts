@@ -193,7 +193,10 @@ describe('message mode (Ambient canvas)', () => {
   });
 
   it('Pro edits the message in place and saves it to settings', () => {
-    const { ctx, store, storage } = makeCtx({ license: license(['ambient.message']), settings: { ambient: { ...makeCtx().store.get().settings.ambient, message: 'Hi' } } });
+    const { ctx, store, storage } = makeCtx({
+      license: license(['ambient.message']),
+      settings: { ambient: { ...makeCtx().store.get().settings.ambient, message: 'Hi' } },
+    });
     const stage = document.createElement('div');
     const off = mountMessage(stage, ctx);
     const text = stage.querySelector<HTMLElement>('[data-message]');

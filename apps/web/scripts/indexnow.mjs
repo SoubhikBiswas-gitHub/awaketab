@@ -43,7 +43,12 @@ export function readKey(env = process.env) {
 
 export function sitemapLocs(xml) {
   return [...xml.matchAll(/<loc>([^<]+)<\/loc>/gu)].map((m) =>
-    (m[1] ?? '').replaceAll('&amp;', '&').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&quot;', '"').trim(),
+    (m[1] ?? '')
+      .replaceAll('&amp;', '&')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&quot;', '"')
+      .trim(),
   );
 }
 
@@ -79,7 +84,8 @@ export function changedUrls(files, pages, slugs, site = SITE) {
       urls.add(`${site}/changelog`);
       continue;
     }
-    if (/^(?:apps\/web\/(?:src|public)\/|apps\/web\/astro\.config\.mjs$|packages\/[^/]+\/src\/)/u.test(file)) return 'all';
+    if (/^(?:apps\/web\/(?:src|public)\/|apps\/web\/astro\.config\.mjs$|packages\/[^/]+\/src\/)/u.test(file))
+      return 'all';
   }
   return urls;
 }
@@ -112,7 +118,10 @@ export async function ping({ key, urls, site = SITE, fetchFn = fetch, dryRun = f
   }
   const probe = await fetchFn(`${site}/${key}.txt`);
   const served = probe.ok ? (await probe.text()).trim() : '';
-  if (served !== key) throw new Error(`indexnow: ${site}/${key}.txt does not serve the key (HTTP ${String(probe.status)}); deploy with INDEXNOW_KEY set first`);
+  if (served !== key)
+    throw new Error(
+      `indexnow: ${site}/${key}.txt does not serve the key (HTTP ${String(probe.status)}); deploy with INDEXNOW_KEY set first`,
+    );
   let sent = 0;
   for (const body of payloads(key, urls, site)) {
     if (dryRun) {
@@ -125,7 +134,8 @@ export async function ping({ key, urls, site = SITE, fetchFn = fetch, dryRun = f
       body: JSON.stringify(body),
     });
     // 200 OK and 202 Accepted are both success (202: key validation pending).
-    if (res.status !== 200 && res.status !== 202) throw new Error(`indexnow: ${INDEXNOW_ENDPOINT} → HTTP ${String(res.status)}`);
+    if (res.status !== 200 && res.status !== 202)
+      throw new Error(`indexnow: ${INDEXNOW_ENDPOINT} → HTTP ${String(res.status)}`);
     sent += body.urlList.length;
     log(`indexnow: submitted ${String(body.urlList.length)} URLs (HTTP ${String(res.status)})`);
   }
@@ -147,7 +157,9 @@ async function main(args) {
   if (args[0] === 'write-key') {
     if (found.key === null) {
       if (process.env.INDEXNOW_KEY?.trim()) throw new Error(`indexnow: ${found.reason}`);
-      warn(`indexnow: WARNING ${found.reason}; no key file written and \`pnpm -F web indexnow\` will not ping (F-05, LAUNCH-AUDIT N-07).`);
+      warn(
+        `indexnow: WARNING ${found.reason}; no key file written and \`pnpm -F web indexnow\` will not ping (F-05, LAUNCH-AUDIT N-07).`,
+      );
       return;
     }
     await writeFile(path.join(dist, `${found.key}.txt`), found.key);
@@ -169,7 +181,9 @@ async function main(args) {
     const pages = await readContentIndex(path.join(ROOT, 'src/content'));
     const changed = changedUrls(stdout.split('\n').filter(Boolean), pages, slugs, site);
     urls = changed === 'all' ? all : all.filter((url) => changed.has(url));
-    log(`indexnow: ${changed === 'all' ? 'shared sources changed, sending every' : `${String(urls.length)} changed`} indexable URL(s) since ${base}`);
+    log(
+      `indexnow: ${changed === 'all' ? 'shared sources changed, sending every' : `${String(urls.length)} changed`} indexable URL(s) since ${base}`,
+    );
   }
   await ping({ key: found.key, urls, site, dryRun: args.includes('--dry-run'), log });
 }

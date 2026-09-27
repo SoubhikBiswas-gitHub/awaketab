@@ -43,7 +43,12 @@ describe('GET /api/embed/config (docs/09 §7.1, docs/11 §2)', () => {
   it('removes the attribution and returns a validated theme for a licensed domain', async () => {
     const kv = memoryKv({ 'embed:example.com': licensed, 'lic:k1': { status: 'active' } });
     const { json } = await config('example.com', kv);
-    expect(json).toEqual({ licensed: true, attribution: false, theme: { accent: '#0f766e', scheme: 'dark' }, expiresAt: FUTURE });
+    expect(json).toEqual({
+      licensed: true,
+      attribution: false,
+      theme: { accent: '#0f766e', scheme: 'dark' },
+      expiresAt: FUTURE,
+    });
   });
 
   it('covers www., staging. and other subdomains of the licensed registrable domain', async () => {
@@ -81,12 +86,27 @@ describe('GET /api/embed/config (docs/09 §7.1, docs/11 §2)', () => {
     expect(normalizeDomain('https://WWW.Example.com/recipes?x=1')).toBe('example.com');
     expect(normalizeDomain('example.com.')).toBe('example.com');
     expect(normalizeDomain('http://[::1]/')).toBeNull();
-    expect(candidateDomains('a.b.example.co.uk')).toEqual(['a.b.example.co.uk', 'b.example.co.uk', 'example.co.uk', 'co.uk']);
+    expect(candidateDomains('a.b.example.co.uk')).toEqual([
+      'a.b.example.co.uk',
+      'b.example.co.uk',
+      'example.co.uk',
+      'co.uk',
+    ]);
   });
 });
 
 describe('embed analytics columns (docs/11 §8)', () => {
-  const row = { event: 'page_view', path: '/embed/cook', locale: 'en', ua: 'chrome-130/win', source: 'embed', sid: 's', viewport: 'sm', ver: 'v', ts: 1 };
+  const row = {
+    event: 'page_view',
+    path: '/embed/cook',
+    locale: 'en',
+    ua: 'chrome-130/win',
+    source: 'embed',
+    sid: 's',
+    viewport: 'sm',
+    ver: 'v',
+    ts: 1,
+  };
 
   it('stores the embedding hostname in blob6 for the widget page_view', () => {
     expect(mapEvent({ ...row, host: 'recipes.example.com' }, 1)?.blobs[5]).toBe('recipes.example.com');

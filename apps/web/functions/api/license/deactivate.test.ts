@@ -2,7 +2,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { onRequestPost as onActivate } from './activate';
 import { onRequestPost as onDeactivate } from './deactivate';
-import { DAY_MS, harness, invoke, ipTraces, jsonRequest, sha256Hex, tamperJwt, TEST_IP, type IHarness } from '../../../test/functions/harness';
+import {
+  DAY_MS,
+  harness,
+  invoke,
+  ipTraces,
+  jsonRequest,
+  sha256Hex,
+  tamperJwt,
+  TEST_IP,
+  type IHarness,
+} from '../../../test/functions/harness';
 import type { ILicenseRecord } from '../../_lib/license';
 
 const KEY = 'AWAKETAB-PRO-TEST-0003-DEAC';
@@ -11,7 +21,11 @@ const DEV_A = '3e4f5a6b-7c8d-4e9f-a0b1-c2d3e4f5a6b7';
 const DEV_B = '4f5a6b7c-8d9e-4f0a-b1c2-d3e4f5a6b7c8';
 
 async function activate(h: IHarness, deviceId: string, label: string): Promise<string> {
-  const res = await invoke(onActivate, h.env, jsonRequest('/api/license/activate', { key: KEY, deviceId, deviceLabel: label }));
+  const res = await invoke(
+    onActivate,
+    h.env,
+    jsonRequest('/api/license/activate', { key: KEY, deviceId, deviceLabel: label }),
+  );
   expect(res.status).toBe(200);
   return ((await res.json()) as { token: string }).token;
 }
@@ -64,7 +78,11 @@ describe('POST /api/license/deactivate', () => {
     const h = harness();
     h.polar.addKey(KEY, { limit: 1 });
     const token = await activate(h, DEV_A, 'Laptop');
-    const blocked = await invoke(onActivate, h.env, jsonRequest('/api/license/activate', { key: KEY, deviceId: DEV_B, deviceLabel: 'Phone' }));
+    const blocked = await invoke(
+      onActivate,
+      h.env,
+      jsonRequest('/api/license/activate', { key: KEY, deviceId: DEV_B, deviceLabel: 'Phone' }),
+    );
     expect(blocked.status).toBe(409);
     await deactivate(h, { token, deviceId: DEV_A });
     await activate(h, DEV_B, 'Phone');
@@ -111,7 +129,9 @@ describe('POST /api/license/deactivate', () => {
     const h = harness();
     h.polar.addKey(KEY);
     const token = await activate(h, DEV_A, 'Laptop');
-    expect((await deactivate(h, { token: tamperJwt(token, { plan: 'pro_lifetime' }), deviceId: DEV_A })).status).toBe(401);
+    expect((await deactivate(h, { token: tamperJwt(token, { plan: 'pro_lifetime' }), deviceId: DEV_A })).status).toBe(
+      401,
+    );
     expect((await deactivate(h, { deviceId: DEV_A })).status).toBe(401);
     await h.kv.delete(`lic:${await sha256Hex(KEY)}`);
     const gone = await deactivate(h, { token, deviceId: DEV_A });

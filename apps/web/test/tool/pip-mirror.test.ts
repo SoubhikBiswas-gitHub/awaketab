@@ -1,7 +1,13 @@
 import type { TTabMessage } from '@awaketab/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import en from '../../src/i18n/en.json';
-import { MIRROR_STALE_MS, mirrorTime, mountMirror, pickOwner, PIP_ADD_MS as MIRROR_ADD_MS } from '../../src/tool/pip-mirror.js';
+import {
+  MIRROR_STALE_MS,
+  mirrorTime,
+  mountMirror,
+  pickOwner,
+  PIP_ADD_MS as MIRROR_ADD_MS,
+} from '../../src/tool/pip-mirror.js';
 import { PIP_ADD_MS } from '../../src/tool/ambient/pip-window.js';
 
 type TState = Extract<TTabMessage, { type: 'state' }>;
@@ -143,7 +149,15 @@ describe('mountMirror', () => {
   });
 
   it('+15 posts an add intent of 15 minutes', () => {
-    ch.send(state({ tabId: 'tab-2', ts: Date.now(), planType: 'duration', startedAt: Date.now(), endsAt: Date.now() + 60_000 }));
+    ch.send(
+      state({
+        tabId: 'tab-2',
+        ts: Date.now(),
+        planType: 'duration',
+        startedAt: Date.now(),
+        endsAt: Date.now() + 60_000,
+      }),
+    );
     q<HTMLButtonElement>('[data-pip-add]').click();
     expect(lastPost()).toMatchObject({ type: 'intent', action: 'add', target: 'tab-2', ms: 900_000 });
   });

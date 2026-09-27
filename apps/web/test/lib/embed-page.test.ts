@@ -13,7 +13,12 @@ describe('/embed snippet builder (B6)', () => {
     const parts = snippetParts(tag);
     expect(parts.map((p) => p.text + (p.name ? `${p.name}=${p.value ?? ''}` : '')).join('')).toBe(tag);
     expect(parts[0]?.text).toBe('<script async src="https://awaketab.com/embed.js"');
-    expect(parts.filter((p) => p.name).map((p) => p.name)).toEqual(['data-mode', 'data-theme', 'data-size', 'data-lang']);
+    expect(parts.filter((p) => p.name).map((p) => p.name)).toEqual([
+      'data-mode',
+      'data-theme',
+      'data-size',
+      'data-lang',
+    ]);
     expect(parts.at(-1)?.text).toBe('></script>');
   });
 
@@ -33,7 +38,9 @@ describe('/embed snippet builder (B6)', () => {
 
   it('rewrites the snippet and remounts the live widget when the builder changes', () => {
     // The remounted loader tag is not fetched here: happy-dom treats the disabled script load as a success.
-    (window as unknown as { happyDOM: { settings: { handleDisabledFileLoadingAsSuccess: boolean } } }).happyDOM.settings.handleDisabledFileLoadingAsSuccess = true;
+    (
+      window as unknown as { happyDOM: { settings: { handleDisabledFileLoadingAsSuccess: boolean } } }
+    ).happyDOM.settings.handleDisabledFileLoadingAsSuccess = true;
     document.body.innerHTML = `<main data-embed-root>
       <div data-embed-demo><iframe data-original></iframe></div><span data-embed-box></span>
       <code data-snippet></code>

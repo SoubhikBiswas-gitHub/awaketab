@@ -8,7 +8,8 @@ declare const self: ServiceWorkerGlobalScope & { __WB_MANIFEST: Array<{ url: str
 
 const DAY_S = 86_400;
 const LOCALES = ['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
-const CONTENT = /^\/(?:(?:es|pt-br|de|fr|ja|zh|hi)\/)?(?:for|on|vs|guides|learn|about|privacy|terms|changelog|pro)(?:\/|$)/u;
+const CONTENT =
+  /^\/(?:(?:es|pt-br|de|fr|ja|zh|hi)\/)?(?:for|on|vs|guides|learn|about|privacy|terms|changelog|pro)(?:\/|$)/u;
 const NO_FALLBACK = [/^\/api\//u, /^\/embed\//u, /^\/pip$/u];
 
 cleanupOutdatedCaches();
@@ -37,7 +38,8 @@ registerRoute(
 );
 
 registerRoute(
-  ({ url, request }) => sameOrigin(url) && request.destination === 'image' && /^\/(?:og|screens|img)\//u.test(url.pathname),
+  ({ url, request }) =>
+    sameOrigin(url) && request.destination === 'image' && /^\/(?:og|screens|img)\//u.test(url.pathname),
   new CacheFirst({ cacheName: 'at-img', plugins: [expire(60)] }),
 );
 

@@ -38,14 +38,16 @@ async function focusInfo(page: Page): Promise<IFocus | null> {
     const visibleShadow = (shadow: string): boolean =>
       shadow !== 'none' &&
       shadow.split(/,(?![^(]*\))/u).some((layer) => {
-        const color = /(?:rgba?|oklab|oklch|lab|lch|color|hsla?)\([^)]*\)|#[\da-f]+|transparent/iu.exec(layer)?.[0] ?? 'black';
+        const color =
+          /(?:rgba?|oklab|oklch|lab|lch|color|hsla?)\([^)]*\)|#[\da-f]+|transparent/iu.exec(layer)?.[0] ?? 'black';
         const lengths = [...layer.replace(color, '').matchAll(/(-?[\d.]+)px/gu)].map((m) => Number(m[1]));
         // A ring is a spread (x y blur spread); a resting drop shadow (shadow-xs) has none and does not count.
         return alpha(color) > 0 && (lengths[3] ?? 0) > 0;
       });
     const shows = (node: Element): boolean => {
       const cs = getComputedStyle(node);
-      const outline = cs.outlineStyle !== 'none' && Number.parseFloat(cs.outlineWidth) > 0 && alpha(cs.outlineColor) > 0;
+      const outline =
+        cs.outlineStyle !== 'none' && Number.parseFloat(cs.outlineWidth) > 0 && alpha(cs.outlineColor) > 0;
       return outline || visibleShadow(cs.boxShadow);
     };
     const rect = el.getBoundingClientRect();
@@ -60,7 +62,8 @@ async function focusInfo(page: Page): Promise<IFocus | null> {
       // segment) inside <input type=time>, and WebKit never sets :focus-visible on a field focused by showModal().
       focusVisible:
         el.matches(':focus-visible') ||
-        (el.matches('input:not([type=checkbox], [type=radio], [type=range]), textarea, select') && el.matches(':focus-within')),
+        (el.matches('input:not([type=checkbox], [type=radio], [type=range]), textarea, select') &&
+          el.matches(':focus-within')),
       indicator,
     };
   });
@@ -123,8 +126,15 @@ test('journey 1 (keyboard): autostart, skip link, and the whole page tabs throug
   // The last focusable element of the page (the footer's language switcher), which Tab must reach.
   const lastFocusable = await page.evaluate(() => {
     const els = [
-      ...document.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, select, textarea, summary, [tabindex]'),
-    ].filter((el) => el.tabIndex >= 0 && el.closest('[hidden], dialog:not([open]), [inert]') === null && el.getClientRects().length > 0);
+      ...document.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input, select, textarea, summary, [tabindex]',
+      ),
+    ].filter(
+      (el) =>
+        el.tabIndex >= 0 &&
+        el.closest('[hidden], dialog:not([open]), [inert]') === null &&
+        el.getClientRects().length > 0,
+    );
     return [...document.querySelectorAll('*')].indexOf(els[els.length - 1] as Element);
   });
 
@@ -135,7 +145,9 @@ test('journey 1 (keyboard): autostart, skip link, and the whole page tabs throug
     const info = await focusInfo(page);
     if (info === null) break; // focus left the document: no trap
     await expectVisibleFocus(page);
-    const id = await page.evaluate(() => [...document.querySelectorAll('*')].indexOf(document.activeElement as Element));
+    const id = await page.evaluate(() =>
+      [...document.querySelectorAll('*')].indexOf(document.activeElement as Element),
+    );
     const last = seen[seen.length - 1];
     if (last !== undefined && id < last) break; // wrapped back to the top: no trap
     expect(id, `focus stuck on ${info.desc}`).not.toBe(last);
@@ -191,21 +203,31 @@ test('journey 3 (keyboard): U opens the until picker with focus inside; Enter on
   expect((await session(page))?.plan.type).toBe('until');
 });
 
-test('journey 4 (keyboard): hide → Paused, show → Screen awake again, focus stays put', async ({ page, browserName }) => {
+test('journey 4 (keyboard): hide → Paused, show → Screen awake again, focus stays put', async ({
+  page,
+  browserName,
+}) => {
   const keys = keysFor(browserName);
   await open(page, '/');
   await expect(pill(page)).toHaveText('Screen awake');
   await tabTo(page, keys, '#awaketab-tool [data-chips] [data-preset="p30"]');
-  await page.evaluate(() => (window as Window & { __at: { setVisibility: (s: string) => void } }).__at.setVisibility('hidden'));
+  await page.evaluate(() =>
+    (window as Window & { __at: { setVisibility: (s: string) => void } }).__at.setVisibility('hidden'),
+  );
   await expect(pill(page)).toHaveText('Paused — tab hidden');
-  await page.evaluate(() => (window as Window & { __at: { setVisibility: (s: string) => void } }).__at.setVisibility('visible'));
+  await page.evaluate(() =>
+    (window as Window & { __at: { setVisibility: (s: string) => void } }).__at.setVisibility('visible'),
+  );
   await expect(pill(page)).toHaveText('Screen awake');
   await expect(page.locator('[data-toasts]')).toContainText('Screen awake again');
   expect(await focusedMatches(page, '[data-preset="p30"]')).toBe(true);
   await expectVisibleFocus(page);
 });
 
-test('journey 5 (keyboard): denied → notice; Tab to Retry, Enter re-requests the lock', async ({ page, browserName }) => {
+test('journey 5 (keyboard): denied → notice; Tab to Retry, Enter re-requests the lock', async ({
+  page,
+  browserName,
+}) => {
   const keys = keysFor(browserName);
   await open(page, '/?autostart=0');
   await page.evaluate(() => {
@@ -280,7 +302,10 @@ test.describe('journey 6 (keyboard): custom timer end → extend prompt', () => 
   });
 });
 
-test('journey 7 (keyboard): reload mid-session → Tab to Resume, Enter re-requests the lock', async ({ page, browserName }) => {
+test('journey 7 (keyboard): reload mid-session → Tab to Resume, Enter re-requests the lock', async ({
+  page,
+  browserName,
+}) => {
   const keys = keysFor(browserName);
   await open(page, '/?autostart=0');
   await page.keyboard.press('0');
@@ -332,7 +357,10 @@ test('shortcuts: 1–6 and 0 pick presets, D cycles the theme, F asks for fullsc
   ];
   for (const [key, id] of presets) {
     await page.keyboard.press(key);
-    await expect(page.locator(`#awaketab-tool [data-chips] [data-preset="${id}"]`)).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator(`#awaketab-tool [data-chips] [data-preset="${id}"]`)).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     await expect(pill(page)).toHaveText('Screen awake');
   }
 
@@ -422,7 +450,10 @@ test('settings dialog: every control shows focus, Esc closes and focus returns t
   await expectVisibleFocus(page);
 });
 
-test('stats dialog: opens from the keyboard, Tab reaches Close, Esc closes and restores focus', async ({ page, browserName }) => {
+test('stats dialog: opens from the keyboard, Tab reaches Close, Esc closes and restores focus', async ({
+  page,
+  browserName,
+}) => {
   const keys = keysFor(browserName);
   await open(page, '/?autostart=0');
   await tabTo(page, keys, '#awaketab-tool header [data-open-stats]');

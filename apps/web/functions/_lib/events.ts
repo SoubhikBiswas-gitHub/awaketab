@@ -129,7 +129,9 @@ export async function readCappedText(request: Request, max: number): Promise<str
   return new TextDecoder().decode(bytes);
 }
 
-export async function parseBatch(request: Request): Promise<{ ok: true; events: IIncomingEvent[] } | { ok: false; status: number }> {
+export async function parseBatch(
+  request: Request,
+): Promise<{ ok: true; events: IIncomingEvent[] } | { ok: false; status: number }> {
   const raw = await request.text();
   if (raw.length > MAX_BODY_BYTES) return { ok: false, status: 413 };
   try {

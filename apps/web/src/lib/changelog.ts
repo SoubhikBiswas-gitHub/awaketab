@@ -23,7 +23,12 @@ export function changelogDate(date: Date): string {
 export type TChangelogType = 'new' | 'fixed' | 'changed';
 
 export function changelogLongDate(iso: string): string {
-  return new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  return new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
 }
 
 export interface IReleaseParts {
@@ -50,7 +55,8 @@ export function releaseParts(body: string): IReleaseParts {
   return { lede, parts, rest };
 }
 
-const escapeHtml = (text: string) => text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
+const escapeHtml = (text: string) =>
+  text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 
 export function inlineMarkdown(text: string): string {
   return escapeHtml(text)

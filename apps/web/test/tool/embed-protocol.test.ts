@@ -29,7 +29,14 @@ describe('reserved boxes (docs/11 §2, O-58)', () => {
 
 describe('embed protocol: loader attributes and iframe params (docs/11 §1)', () => {
   it('applies the documented defaults', () => {
-    expect(optionsFromDataset({}, 'en')).toEqual({ mode: 'cook', theme: 'auto', lang: 'en', size: 'compact', preset: 'pinf', until: null });
+    expect(optionsFromDataset({}, 'en')).toEqual({
+      mode: 'cook',
+      theme: 'auto',
+      lang: 'en',
+      size: 'compact',
+      preset: 'pinf',
+      until: null,
+    });
   });
 
   it('drops values outside the allow-lists instead of passing them on', () => {
@@ -57,21 +64,32 @@ describe('embed protocol: loader attributes and iframe params (docs/11 §1)', ()
   });
 
   it('keeps `until` only with a valid wall time', () => {
-    expect(optionsFromDataset({ preset: 'until', until: '18:30' }, 'en')).toMatchObject({ preset: 'until', until: '18:30' });
-    expect(optionsFromDataset({ preset: 'until', until: '25:00' }, 'en')).toMatchObject({ preset: 'pinf', until: null });
+    expect(optionsFromDataset({ preset: 'until', until: '18:30' }, 'en')).toMatchObject({
+      preset: 'until',
+      until: '18:30',
+    });
+    expect(optionsFromDataset({ preset: 'until', until: '25:00' }, 'en')).toMatchObject({
+      preset: 'pinf',
+      until: null,
+    });
     expect(optionsFromDataset({ preset: 'p30', until: '18:30' }, 'en').until).toBeNull();
   });
 
   it('builds the iframe query in the documented order and validates the host', () => {
     const opts = optionsFromDataset({}, 'en');
-    expect(embedQuery(opts, 'example.com')).toBe('mode=cook&theme=auto&lang=en&size=compact&preset=pinf&host=example.com');
+    expect(embedQuery(opts, 'example.com')).toBe(
+      'mode=cook&theme=auto&lang=en&size=compact&preset=pinf&host=example.com',
+    );
     expect(embedQuery(opts, 'bad host')).not.toContain('host=');
     expect(embedQuery({ ...opts, preset: 'until', until: '07:05' }, '')).toContain('until=07-05');
   });
 
   it('round-trips through the widget parser', () => {
     const opts = optionsFromDataset({ mode: 'clock', theme: 'oled', size: 'full', preset: 'p60', lang: 'hi' }, 'en');
-    expect(parseEmbedQuery(`?${embedQuery(opts, 'recipes.example.org')}`)).toEqual({ ...opts, host: 'recipes.example.org' });
+    expect(parseEmbedQuery(`?${embedQuery(opts, 'recipes.example.org')}`)).toEqual({
+      ...opts,
+      host: 'recipes.example.org',
+    });
   });
 
   it('never trusts a malformed host param', () => {
@@ -81,7 +99,8 @@ describe('embed protocol: loader attributes and iframe params (docs/11 §1)', ()
   });
 
   it('recognises hostnames only', () => {
-    for (const ok of ['example.com', 'localhost', 'a-b.c.example.co.uk', '192.168.1.10']) expect(isHostname(ok)).toBe(true);
+    for (const ok of ['example.com', 'localhost', 'a-b.c.example.co.uk', '192.168.1.10'])
+      expect(isHostname(ok)).toBe(true);
     for (const bad of ['', 'Example.com', 'ex ample.com', '-a.com', 'a..com', 'a.com:8080', 'http://a.com', null]) {
       expect(isHostname(bad)).toBe(false);
     }
@@ -98,7 +117,10 @@ describe('embed protocol: loader attributes and iframe params (docs/11 §1)', ()
 describe('embed protocol: postMessage payloads (docs/11 §3)', () => {
   it('accepts the three page commands', () => {
     expect(parsePageMessage({ type: 'awaketab:stop' })).toEqual({ type: 'awaketab:stop' });
-    expect(parsePageMessage({ type: 'awaketab:theme', theme: 'dark' })).toEqual({ type: 'awaketab:theme', theme: 'dark' });
+    expect(parsePageMessage({ type: 'awaketab:theme', theme: 'dark' })).toEqual({
+      type: 'awaketab:theme',
+      theme: 'dark',
+    });
     expect(parsePageMessage({ type: 'awaketab:start' })).toEqual({ type: 'awaketab:start' });
     expect(parsePageMessage({ type: 'awaketab:start', preset: 'p45', ms: 600_000, until: '06-30' })).toEqual({
       type: 'awaketab:start',
@@ -125,11 +147,22 @@ describe('embed protocol: postMessage payloads (docs/11 §3)', () => {
   });
 
   it('parses widget events and clamps resize heights', () => {
-    expect(parseWidgetMessage({ type: 'awaketab:ready', version: '1' })).toEqual({ type: 'awaketab:ready', version: '1' });
-    expect(parseWidgetMessage({ type: 'awaketab:resize', height: 5 })).toEqual({ type: 'awaketab:resize', height: EMBED_MIN_HEIGHT });
-    expect(parseWidgetMessage({ type: 'awaketab:resize', height: 99_999 })).toEqual({ type: 'awaketab:resize', height: EMBED_MAX_HEIGHT });
+    expect(parseWidgetMessage({ type: 'awaketab:ready', version: '1' })).toEqual({
+      type: 'awaketab:ready',
+      version: '1',
+    });
+    expect(parseWidgetMessage({ type: 'awaketab:resize', height: 5 })).toEqual({
+      type: 'awaketab:resize',
+      height: EMBED_MIN_HEIGHT,
+    });
+    expect(parseWidgetMessage({ type: 'awaketab:resize', height: 99_999 })).toEqual({
+      type: 'awaketab:resize',
+      height: EMBED_MAX_HEIGHT,
+    });
     expect(parseWidgetMessage({ type: 'awaketab:resize', height: Number.NaN })).toBeNull();
-    expect(parseWidgetMessage({ type: 'awaketab:state', lock: 'held', status: 'active', endsAt: 5, mode: 'cook' })).toEqual({
+    expect(
+      parseWidgetMessage({ type: 'awaketab:state', lock: 'held', status: 'active', endsAt: 5, mode: 'cook' }),
+    ).toEqual({
       type: 'awaketab:state',
       lock: 'held',
       status: 'active',

@@ -254,7 +254,11 @@
     inset-inline-start: -20%;
     inline-size: 140%;
     block-size: 160%;
-    background: radial-gradient(40% 45% at 30% 50%, color-mix(in srgb, var(--at-accent) var(--at-aura, 5%), transparent) 0%, transparent 70%);
+    background: radial-gradient(
+      40% 45% at 30% 50%,
+      color-mix(in srgb, var(--at-accent) var(--at-aura, 5%), transparent) 0%,
+      transparent 70%
+    );
     pointer-events: none;
     animation: at-aura 26s ease-in-out infinite alternate;
   }
@@ -807,7 +811,11 @@
     border: var(--at-border) solid var(--at-line);
     border-radius: var(--at-r-md);
     background:
-      repeating-linear-gradient(135deg, transparent 0 11px, color-mix(in srgb, var(--at-ink) 4%, transparent) 11px 12px),
+      repeating-linear-gradient(
+        135deg,
+        transparent 0 11px,
+        color-mix(in srgb, var(--at-ink) 4%, transparent) 11px 12px
+      ),
       color-mix(in srgb, var(--at-surface) 58%, transparent);
   }
 
@@ -867,7 +875,11 @@
     inset-inline-start: -30%;
     inline-size: 160%;
     block-size: 180%;
-    background: radial-gradient(40% 40% at 70% 40%, color-mix(in srgb, var(--at-accent) 5%, transparent) 0%, transparent 70%);
+    background: radial-gradient(
+      40% 40% at 70% 40%,
+      color-mix(in srgb, var(--at-accent) 5%, transparent) 0%,
+      transparent 70%
+    );
     pointer-events: none;
     animation: at-aura 26s ease-in-out infinite alternate;
   }

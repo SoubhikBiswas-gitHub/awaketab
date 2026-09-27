@@ -22,7 +22,9 @@ export function applyLaunch(root: HTMLElement, now = Date.now()): void {
   root.dataset.launch = launchEnded(now, Number.isFinite(end) ? end : PRO_LAUNCH_END) ? 'off' : 'on';
 }
 
-export function telemetryOn(storage: Pick<Storage, 'getItem'> | null = typeof localStorage === 'undefined' ? null : localStorage): boolean {
+export function telemetryOn(
+  storage: Pick<Storage, 'getItem'> | null = typeof localStorage === 'undefined' ? null : localStorage,
+): boolean {
   try {
     const raw = storage ? storage.getItem('at.v1.settings') : null;
     return raw ? (JSON.parse(raw) as { telemetry?: unknown }).telemetry !== false : true;
@@ -38,7 +40,10 @@ export function trackPro(event: string, params: Record<string, string | number |
   });
 }
 
-export function deviceLabel(ua = typeof navigator === 'undefined' ? '' : navigator.userAgent, touchPoints = typeof navigator === 'undefined' ? 0 : navigator.maxTouchPoints): string {
+export function deviceLabel(
+  ua = typeof navigator === 'undefined' ? '' : navigator.userAgent,
+  touchPoints = typeof navigator === 'undefined' ? 0 : navigator.maxTouchPoints,
+): string {
   const browser = /Edg(?:e|A|iOS)?\//u.test(ua)
     ? 'Edge'
     : /OPR\/|Opera/u.test(ua)
@@ -53,21 +58,22 @@ export function deviceLabel(ua = typeof navigator === 'undefined' ? '' : navigat
               ? 'Safari'
               : 'Browser';
   // iPadOS 13+ reports a Mac user agent; a Mac with a touch screen is an iPad.
-  const os = /iPad/u.test(ua) || (/Macintosh/u.test(ua) && touchPoints > 1)
-    ? 'iPadOS'
-    : /iPhone|iPod/u.test(ua)
-      ? 'iOS'
-      : /Android/u.test(ua)
-        ? 'Android'
-        : /CrOS/u.test(ua)
-          ? 'ChromeOS'
-          : /Windows/u.test(ua)
-            ? 'Windows'
-            : /Mac OS X|Macintosh/u.test(ua)
-              ? 'macOS'
-              : /Linux/u.test(ua)
-                ? 'Linux'
-                : '';
+  const os =
+    /iPad/u.test(ua) || (/Macintosh/u.test(ua) && touchPoints > 1)
+      ? 'iPadOS'
+      : /iPhone|iPod/u.test(ua)
+        ? 'iOS'
+        : /Android/u.test(ua)
+          ? 'Android'
+          : /CrOS/u.test(ua)
+            ? 'ChromeOS'
+            : /Windows/u.test(ua)
+              ? 'Windows'
+              : /Mac OS X|Macintosh/u.test(ua)
+                ? 'macOS'
+                : /Linux/u.test(ua)
+                  ? 'Linux'
+                  : '';
   return os ? `${browser} · ${os}` : browser;
 }
 

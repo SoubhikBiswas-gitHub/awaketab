@@ -64,7 +64,11 @@ describe('POST /api/e', () => {
   });
 
   it('returns 413 when the batch is larger than 20 events', async () => {
-    const res = await post(onE, { events: Array.from({ length: 21 }, () => ({ event: 'page_view' })) }, { EVENTS: ae() });
+    const res = await post(
+      onE,
+      { events: Array.from({ length: 21 }, () => ({ event: 'page_view' })) },
+      { EVENTS: ae() },
+    );
     expect(res.status).toBe(413);
   });
 
@@ -74,7 +78,11 @@ describe('POST /api/e', () => {
     const hash = await ipHash({ RATE_LIMIT_SALT: salt, LICENSES: kv as never }, '203.0.113.9');
     const bucket = Math.floor(Date.now() / 1000 / 120);
     kv.map.set(`rl:e:${hash}:${bucket}`, String(RATE_MAX));
-    const res = await post(onE, { events: [{ event: 'page_view' }] }, { LICENSES: kv, EVENTS: ae(), RATE_LIMIT_SALT: salt });
+    const res = await post(
+      onE,
+      { events: [{ event: 'page_view' }] },
+      { LICENSES: kv, EVENTS: ae(), RATE_LIMIT_SALT: salt },
+    );
     expect(res.status).toBe(429);
   });
 });
@@ -88,7 +96,16 @@ describe('POST /api/e — privacy and platform limits (harness)', () => {
   // One of every allow-listed event with every attribute the client may send.
   const FULL_BATCH = {
     events: [
-      { event: 'page_view', path: '/30m?ref=x', locale: 'en', ua: 'chrome-128/mac', source: 'web', sid: 's1', viewport: 'lg', ver: 'abc' },
+      {
+        event: 'page_view',
+        path: '/30m?ref=x',
+        locale: 'en',
+        ua: 'chrome-128/mac',
+        source: 'web',
+        sid: 's1',
+        viewport: 'lg',
+        ver: 'abc',
+      },
       { event: 'session_start', planType: 'timer', presetId: '30m', ts: 1 },
       { event: 'session_end', reason: 'user', durationMin: 42 },
       { event: 'lock_state', from: 'idle', to: 'held' },
@@ -127,7 +144,9 @@ describe('POST /api/e — privacy and platform limits (harness)', () => {
     const salted = await ipHash(h.env, '203.0.113.9');
     expect(salted).not.toBe(await sha256Hex('203.0.113.9'));
     const bucket = Math.floor(Date.now() / 1000 / 120);
-    expect(h.kv.writes).toEqual([{ op: 'put', key: `rl:e:${salted}:${String(bucket)}`, value: '1', expirationTtl: 240 }]);
+    expect(h.kv.writes).toEqual([
+      { op: 'put', key: `rl:e:${salted}:${String(bucket)}`, value: '1', expirationTtl: 240 },
+    ]);
   });
 
   it('answers 429 with Retry-After once RATE_MAX is reached', async () => {
@@ -153,7 +172,11 @@ describe('POST /api/e — privacy and platform limits (harness)', () => {
 
   it('rejects a body over 8 KB with 413 and a non-array batch with 400', async () => {
     const h = harness();
-    const big = await invoke(onE, h.env, jsonRequest('/api/e', { events: [{ event: 'page_view', path: 'x'.repeat(9000) }] }));
+    const big = await invoke(
+      onE,
+      h.env,
+      jsonRequest('/api/e', { events: [{ event: 'page_view', path: 'x'.repeat(9000) }] }),
+    );
     expect(big.status).toBe(413);
     const bad = await invoke(onE, h.env, jsonRequest('/api/e', { events: 'page_view' }));
     expect(bad.status).toBe(400);

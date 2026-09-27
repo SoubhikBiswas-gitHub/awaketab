@@ -61,7 +61,8 @@ const { state, request, release } = useWakeLock();
 
 export type TTok = '' | 'c' | 's' | 'k' | 't';
 
-const TOKEN = /(\/\/.*$|<!--.*?-->)|('[^']*'|"[^"]*"|`[^`]*`)|\b(import|from|export|function|const|return|let|await|async|new)\b|(<\/?[A-Za-z][\w-]*|\/?(?<!=)>)/gu;
+const TOKEN =
+  /(\/\/.*$|<!--.*?-->)|('[^']*'|"[^"]*"|`[^`]*`)|\b(import|from|export|function|const|return|let|await|async|new)\b|(<\/?[A-Za-z][\w-]*|\/?(?<!=)>)/gu;
 
 export function highlight(code: string): Array<Array<[string, TTok]>> {
   return code.split('\n').map((line) => {

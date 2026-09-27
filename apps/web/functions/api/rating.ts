@@ -20,7 +20,13 @@ export const onRequestPost: PagesFunction<IEnv> = async (context) => {
   const id = crypto.randomUUID();
   await env.LICENSES?.put(
     `rating:${id}`,
-    JSON.stringify({ stars, text: text || undefined, locale, ver: env.CF_PAGES_COMMIT_SHA?.slice(0, 12) ?? 'dev', at: Date.now() }),
+    JSON.stringify({
+      stars,
+      text: text || undefined,
+      locale,
+      ver: env.CF_PAGES_COMMIT_SHA?.slice(0, 12) ?? 'dev',
+      at: Date.now(),
+    }),
     { expirationTtl: 2 * 365 * 86_400 },
   );
   return jsonOk({ ok: true, id });
