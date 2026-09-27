@@ -5,26 +5,34 @@ interface Props {
     label: string;
     alt: string;
     caption: string;
+    src?: string | undefined;
+    width?: number | undefined;
+    height?: number | undefined;
   }>;
-  t: (key: string, vars?: Record<string, string | number>) => string;
+  t?: (key: string, vars?: Record<string, string | number>) => string;
 }
-const { figures, t } = Astro.props;
+const { figures } = Astro.props;
+// Only real screenshots render; a figure without an image is left out rather than shown as an empty frame.
+const shown = figures.filter((fig) => fig.src);
 ---
 
-<div class="at-figs">
-  {
-    figures.map((fig) => (
-      <figure>
-        <div
-          class={`at-fig at-fig-${fig.frame}`}
-          data-placeholder={`${fig.frame} screenshot`}
-          role="img"
-          aria-label={t('content.placeholderAlt', { what: fig.alt })}
-        >
-          {fig.label}
-        </div>
-        <figcaption>{fig.caption}</figcaption>
-      </figure>
-    ))
-  }
-</div>
+{
+  shown.length > 0 && (
+    <div class="at-figs">
+      {shown.map((fig) => (
+        <figure>
+          <img
+            class={`at-fig at-fig-${fig.frame}`}
+            src={fig.src}
+            width={fig.width}
+            height={fig.height}
+            alt={fig.alt}
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>{fig.caption}</figcaption>
+        </figure>
+      ))}
+    </div>
+  )
+}

@@ -25,14 +25,8 @@ const PILL_COPY = new Set([
 ]);
 // What each family's board draws, as the class or attribute the block renders.
 const FAMILY_BLOCKS: Record<TFamily, readonly string[]> = {
-  for: [
-    'class="at-steps"',
-    'class="at-figs"',
-    'data-placeholder="phone screenshot"',
-    'class="at-states"',
-    'data-check',
-  ],
-  on: ['at-steps-shots', 'data-placeholder="screenshot"', 'class="at-grid at-mx"', 'class="at-rl"', 'class="at-facts"'],
+  for: ['class="at-steps"', 'class="at-states"', 'data-check'],
+  on: ['at-steps-shots', 'class="at-grid at-mx"', 'class="at-rl"', 'class="at-facts"'],
   vs: ['class="at-grid at-cmp"', 'class="at-picks"'],
   guides: ['at-steps-track', 'data-progress', 'id="s-tool"'],
   learn: ['class="at-rl"', 'id="h-limit-in"', 'id="s-tool"'],
@@ -82,6 +76,7 @@ describe('structured article blocks (docs/06 §22)', () => {
     for (const file of files) {
       const html = await readFile(file, 'utf8');
       expect(html.match(/<p>::[a-z]/gu) ?? [], file.pathname).toEqual([]);
+      expect(html, `${file.pathname} ships an empty screenshot frame`).not.toContain('data-placeholder');
     }
   });
 
@@ -110,7 +105,8 @@ describe('structured article blocks (docs/06 §22)', () => {
     expect(lead).toBeGreaterThan(html.indexOf('<h1'));
     expect(lead).toBeLessThan(html.indexOf('id="tool"'));
     expect(body.match(/<li><span class="at-step-n"/gu)).toHaveLength(3);
-    expect(body.match(/data-placeholder="(?:phone|desktop) screenshot"/gu)).toHaveLength(2);
+    // Screenshots render only once real images exist; a live page never shows an empty frame.
+    expect(body).not.toContain('data-placeholder');
     expect(pillLabels(body.slice(body.indexOf('class="at-states"')))).toEqual(
       expect.arrayContaining(['Starting…', 'Screen awake', 'Paused — tab hidden', "Blocked — here's the fix"]),
     );

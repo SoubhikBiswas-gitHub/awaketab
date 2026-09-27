@@ -22,6 +22,9 @@ const step = z
     text,
     path: z.string().max(90).optional(),
     shot: z.string().max(120).optional(),
+    shotSrc: z.string().startsWith('/').optional(),
+    shotWidth: z.number().int().positive().optional(),
+    shotHeight: z.number().int().positive().optional(),
     short: z.string().max(40).optional(),
   })
   .strict();
@@ -54,6 +57,9 @@ const blocks = {
           label: z.string().max(40),
           alt: z.string().max(160),
           caption: z.string().max(160),
+          src: z.string().startsWith('/').optional(),
+          width: z.number().int().positive().optional(),
+          height: z.number().int().positive().optional(),
         })
         .strict(),
     )
