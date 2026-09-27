@@ -115,6 +115,8 @@ Elevation is a 1 px `--at-line` border plus, in `light` only, `--at-elev` (`0 1p
 
 Shared UI chrome — buttons, badges, cards, tables, alerts, breadcrumbs, form fields, `<kbd>` — comes from shadcn/ui (new-york style, neutral base, CSS variables) in `apps/web/src/components/ui/*.tsx`, rendered by Astro **at build time only** (`03-architecture.md` ADR-013; §13 below). The `--at-*` tokens in §1.1–§1.4 stay the canonical palette, byte for byte; shadcn's semantic variables are *aliases* of them, declared once in `tokens.css` and re-resolved per theme because the `--at-*` values switch on `data-theme`. Nobody hand-picks a colour for a shadcn component — if a variant needs a colour that does not exist here, the token is added to §1.1 first.
 
+Only `button` and `badge` exist in `components/ui/` today (the rest were removed as unused on 28 September 2026). The component rows below describe how a component maps to the tokens when it is added again with the shadcn CLI.
+
 | shadcn variable | Resolves to | Notes |
 |---|---|---|
 | `--background` | `--at-ground` | `@layer base` applies `bg-background text-foreground font-sans` to `body` |
