@@ -146,8 +146,9 @@ registerRoute(
   new CacheFirst({ cacheName: 'at-img', plugins: [expire(60)] }),
 );
 
-// Other pages' hashed scripts and styles (content, Pro, kiosk): cached on first use; the URL changes with the file.
-registerRoute(({ url }) => sameOrigin(url) && url.pathname.startsWith('/_astro/'), pageAssets);
+// Other pages' hashed scripts and styles (content, Pro, kiosk), the colour-theme sheet and the pattern images
+// (/assets/, versioned by query): cached on first use, so a chosen look paints offline too.
+registerRoute(({ url }) => sameOrigin(url) && /^\/(?:_astro|assets)\//u.test(url.pathname), pageAssets);
 
 // Content pages (all locales). Third-party ad scripts are cross-origin and never reach a route here.
 registerRoute(

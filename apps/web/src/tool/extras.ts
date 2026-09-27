@@ -7,7 +7,7 @@ import { act } from './ui/actions.js';
 import { openDialog } from './ui/dialog.js';
 import { mountLangSuggest } from './ui/lang-suggest.js';
 import { moreCss } from './ui/more-css.js';
-import { applyAccent } from './accent.js';
+import { gateLooks } from './accent.js';
 import { t } from './i18n.js';
 import type { IStore } from './store.js';
 import { toast as pushToast } from './ui/toast.js';
@@ -43,8 +43,7 @@ export function mountExtras(ctx: Pick<IToolCtx, 'store' | 'storage'>): () => voi
   const proBadge = document.querySelector<HTMLElement>('[data-pro-badge]');
   const syncPro = () => {
     if (proBadge) proBadge.hidden = !(hasFeature(ctx, 'ads.free') || hasFeature(ctx, 'ambient.packs'));
-    // Pack lamps need `ambient.packs`; a lapsed licence falls back to aqua (the boot script applied it pre-paint).
-    applyAccent(store.get().settings.accent, hasFeature(ctx, 'ambient.packs'));
+    gateLooks(hasFeature(ctx, 'ambient.packs'));
   };
   syncPro();
   void import('../lib/license.js').then(async (mod) => {

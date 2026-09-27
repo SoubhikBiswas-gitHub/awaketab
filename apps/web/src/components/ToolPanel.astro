@@ -32,12 +32,6 @@ const presets = ['p15', 'p30', 'p45', 'p60', 'p120', 'p240'] as const;
 const faces = ['ring', 'bold', 'horizon', 'tide'] as const;
 // SponsorCard slot (docs/05 §3.23): rendered only when the flag is on at build time, so CLS stays 0 when off.
 const sponsorEnabled = import.meta.env.PUBLIC_SPONSOR_ENABLED === '1';
-const lamps = [
-  ['#087B87', 'aqua', t('settings.accent.aqua'), false],
-  ['#5A47CF', 'violet', t('settings.accent.violet'), false],
-  ['#167A50', 'mint', t('settings.accent.mint'), true],
-  ['#255FBD', 'sky', t('settings.accent.sky'), true],
-] as const;
 const shortcuts = [
   ['Space', '', t('tool.shortcuts.space')],
   ['1', '6', t('tool.shortcuts.presets')],
@@ -1185,37 +1179,7 @@ const eight = ready.chip === 'custom';
         }
       </div>
     </div>
-    <div class="at-field">
-      <div class="at-field-top">
-        <span class="at-label" id="lb-lamp">{t('settings.lamp')}</span><span
-          class="at-caption"
-          data-lamp-note>{t('settings.accent.aqua')}</span>
-      </div>
-      <div class="at-lamps" role="radiogroup" aria-labelledby="lb-lamp">
-        {
-          lamps.map(([hex, id, name, pro]) => (
-            <label class="at-lamp" data-lamp={id}>
-              <input
-                class="sr-only"
-                type="radio"
-                name="accent"
-                value={hex}
-                checked={id === 'aqua'}
-                aria-label={pro ? `${name}, ${t('pro.badge')}` : name}
-              />
-              <span class="at-swatch" aria-hidden="true" />
-              <span class="at-lamp-name">{name}</span>
-              {pro && (
-                <span class="at-tag" aria-hidden="true">
-                  {t('pro.badge')}
-                </span>
-              )}
-            </label>
-          ))
-        }
-      </div>
-      <p class="at-caption" data-pack-gate>{t('settings.lamp.note')}</p>
-    </div>
+    <div data-appearance></div>
     <div class="at-field">
       <span class="at-label" id="lb-face">{t('settings.face')}</span>
       <div
