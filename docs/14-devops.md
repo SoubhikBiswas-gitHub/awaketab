@@ -64,7 +64,7 @@ Alternatives rejected: `'directory'` (Astro's default, used until M9) wrote ever
 # Tool routes (strict; zero third parties). Applies to everything by default.
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; media-src 'self' data:; connect-src 'self'; font-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://polar.sh https://*.polar.sh; upgrade-insecure-requests; report-to csp
-  Permissions-Policy: screen-wake-lock=(self), picture-in-picture=(self), camera=(), microphone=(), geolocation=(), payment=()
+  Permissions-Policy: screen-wake-lock=(self), picture-in-picture=(self), camera=(), microphone=(self), geolocation=(), payment=()
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

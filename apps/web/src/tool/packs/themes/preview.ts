@@ -18,6 +18,8 @@ export interface IPreviewOptions {
   // Puts the last free choice back (it may return a promise); `back` names it for the "Preview ended" toast.
   revert: () => unknown;
   back?: string;
+  // What screen readers hear at the start, when "Nothing is saved" would not be true (notes written in a preview stay).
+  said?: string;
 }
 
 interface IRunning extends IPreviewOptions {
@@ -102,7 +104,7 @@ function buildChip(p: IRunning): HTMLElement {
   box.append(min, text, keep, said);
   // Heard once, at the start; the one-minute warning and the end come as toasts.
   requestAnimationFrame(() => {
-    said.textContent = t('settings.preview.start', { name: p.label });
+    said.textContent = p.said ?? t('settings.preview.start', { name: p.label });
   });
   return box;
 }

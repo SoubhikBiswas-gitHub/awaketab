@@ -61,7 +61,25 @@ Additive fields (28 September 2026; still `v: 1`, missing fields read as their d
 
 ### 2.1a `at.v1.notes` (IndexedDB)
 
-Notes live in IndexedDB (`idb-keyval`, database `awaketab`, store `notes`, key `at.v1.notes`), never in localStorage and never sent anywhere: `{ v: 1, notes: Array<{ id, title, doc (editor JSON), updatedAt }> }`. Free: one note; more with Pro (`ambient.packs`).
+Notes live in IndexedDB (`idb-keyval`, database `awaketab`, store `notes`, key `at.v1.notes`), never in localStorage and never sent anywhere. Written by the notes pack (`src/tool/packs/notes/data.ts`) 600 ms after the last keystroke, and at once when the drawer closes, the tab hides or the page goes away.
+
+```ts
+interface INotesData {
+  v: 1;
+  notes: Array<{
+    id: string;           // crypto.randomUUID()
+    title: string;        // ≤ 120 chars, '' when untitled (titles are a Pro feature)
+    doc: JSONContent | null; // Tiptap/ProseMirror document JSON; null until something is written
+    createdAt: number;    // ms epoch
+    updatedAt: number;    // ms epoch, the list sorts on it
+    pinned?: true;        // Pro; pinned notes list first
+  }>;                     // creation order: notes[0] is the free note
+  current?: string;       // id of the note the drawer opens on
+  voiceOk?: true;         // the dictation notice was read and accepted once
+}
+```
+
+Reads are defensive (`parseNotes`): a damaged record, a duplicate id or a non-document `doc` is dropped, never thrown. Free: one editable note, the first in the array; with `ambient.packs`, or during a five-minute preview, every note is editable. Notes written during a preview stay (readable, copyable, exportable) and are read only after it ends; nothing is deleted except by the user (Clear with an inline confirm, or Delete note when there are several). Clearing the site's data in the browser deletes them; there is no server copy and no sync.
 
 ### 2.2 `at.v1.session`
 
@@ -295,6 +313,8 @@ Columns: `date,awake_minutes,sessions` (one row per local day, ISO dates; the ro
 | Data | Where | Why | Leaves the device? |
 |---|---|---|---|
 | Settings, session, stats, onboarding | localStorage / chrome.storage | The product works offline and without an account | No |
+| Notes (`at.v1.notes`) | IndexedDB | A notepad that works offline and without an account | No (export and copy are the user's own action) |
+| Dictation audio (notes mic) | The browser's speech service while the mic listens (Google in Chrome, Microsoft in Edge, Apple in Safari) | Voice typing; AwakeTab never receives the audio or the text | Yes, by the browser, after an inline notice; not by AwakeTab |
 | Licence token + random `deviceId` | localStorage / chrome.storage.local | Prove a Pro purchase; count activations (max 5) | Token only, to `/api/license/*` |
 | Anonymous usage events | Analytics Engine, 90 days | Reliability (does the lock hold?) and product decisions | Yes — no IP stored, no ids beyond a per-tab random `sid`; toggle in Settings |
 | Licence record | KV | Fulfil purchases, handle refunds, stop abuse | Held by us; purchase details are with Polar (merchant of record) |

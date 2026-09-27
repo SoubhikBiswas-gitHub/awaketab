@@ -30,6 +30,7 @@ const keys = [
   ['at.v1.license', 'An offline-verifiable Pro token, plan, features, validation time and random device identifier.'],
   ['at.v1.meta', 'Install date, completed-session count, rating-prompt choice and last seen version.'],
   ['at.v1.onboarding', 'Dismissed tips, including language suggestions.'],
+  ['at.v1.notes', 'Your notes (IndexedDB, not localStorage): text, titles, pins and edit times, plus whether you read the voice typing notice. Never uploaded.'],
 ] as const;
 const events = [
   'page_view', 'session_start', 'session_end', 'lock_state', 'lock_denied', 'fallback_used', 'resume_shown', 'resume_accepted',
@@ -50,7 +51,7 @@ const events = [
     locale: 'en',
     image: `${site}${ogImage}`,
     published: '2026-09-09',
-    updated: '2026-09-26',
+    updated: '2026-09-28',
     breadcrumbs: [
       { name: 'AwakeTab', url: site },
       { name: t('page.privacy.h1'), url: canonical },
@@ -59,7 +60,7 @@ const events = [
 >
   <LegalDoc
     title={t('page.privacy.h1')}
-    updated="2026-09-26"
+    updated="2026-09-28"
     effective="2026-09-09"
     lede="AwakeTab requires no account and sets no cookies."
     toc={toc}
@@ -67,7 +68,7 @@ const events = [
     email={CONTACT_EMAIL}
     mailto={CONTACT_MAILTO}
   >
-    <LegalSection id="browser" title={title('browser')} summary="your settings, sessions and stats live in this browser, under six keys. You can clear them from Settings or your browser.">
+    <LegalSection id="browser" title={title('browser')} summary="your settings, sessions, stats and notes live in this browser, under seven keys. You can clear them from Settings or your browser.">
       <dl class="at-legal-dl">
         {
           keys.map(([key, text]) => (
@@ -82,6 +83,12 @@ const events = [
         This data stays in browser storage unless a feature explicitly contacts the first-party API. You can clear it from
         Settings or your browser. <code>BroadcastChannel('awaketab')</code> coordinates open tabs without sending that state to a
         server.
+      </p>
+      <p class="at-pg-body">
+        Voice typing in the notepad uses your browser's own speech recognition. In Chrome and Edge the browser sends your voice
+        to its speech service (Google or Microsoft) to be transcribed, and Safari uses Apple's, under that company's terms.
+        AwakeTab receives neither the audio nor the text; only the words you keep are saved, in <code>at.v1.notes</code> on
+        this device. The microphone is used only while the mic button shows it is listening.
       </p>
     </LegalSection>
 
