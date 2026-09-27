@@ -850,12 +850,11 @@
 
   @media (width >= 1024px) {
     .at-art {
-      grid-template-columns:
-        minmax(0, var(--at-col-toc)) minmax(0, var(--at-col-main))
-        var(--at-col-rail);
+      grid-template-columns: minmax(0, var(--at-col-toc)) minmax(0, var(--at-col-main)) minmax(0, 1fr);
       grid-template-areas: "toc head ." "toc tool tool" "toc body rail";
-      justify-content: center;
       column-gap: var(--at-s-10);
+      max-inline-size: calc(var(--at-col-toc) + var(--at-col-main) + var(--at-col-rail) + 2 * var(--at-s-10));
+      margin-inline: auto;
     }
 
     .at-art[data-variant="guide"] {
