@@ -397,6 +397,9 @@
   "tool.pill.denied": "Blocked — here's the fix",
   "tool.pill.unsupported": "Tap to use the fallback",
   "tool.pill.fallback": "Awake via video fallback",
+  "tool.tab.awake": "● {timer}",
+  "tool.tab.paused": "Paused · {timer}",
+  "tool.tab.blocked": "Blocked · AwakeTab",
 
   "tool.ring.label": "Keep screen awake. {status}",
   "tool.ring.indefinite": "Progress ring: keeping the screen awake until you stop",
@@ -848,7 +851,6 @@
   "ext.options.shortcut.change": "Change shortcut",
   "ext.options.locale.auto": "Browser language",
   "ext.schedules.title": "Schedules",
-  "ext.schedules.help": "Keep awake during weekly windows, such as weekdays 09:00–18:00. Overlapping windows merge into one.",
   "ext.schedules.days": "Days",
   "ext.schedules.from": "From",
   "ext.schedules.to": "To",

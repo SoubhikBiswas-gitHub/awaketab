@@ -9,6 +9,7 @@ import { CONTACT_EMAIL, CONTACT_MAILTO } from '../lib/contact';
 import { articleSchema } from '../lib/seo';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const ogImage = '/og/terms-en.png';
 const canonical = `${site}/terms`;
 const toc = [
   ['guarantee', 'No guarantee of uninterrupted wakefulness'],
@@ -21,12 +22,13 @@ const toc = [
   title={t('page.terms.title')}
   description={t('page.terms.description')}
   canonical={canonical}
-  ogImage="/og/terms-en.png"
+  ogImage={ogImage}
   schema={articleSchema({
     canonical,
     title: t('page.terms.h1'),
     description: t('page.terms.description'),
     locale: 'en',
+    image: `${site}${ogImage}`,
     published: '2026-09-09',
     breadcrumbs: [
       { name: 'AwakeTab', url: site },

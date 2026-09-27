@@ -17,6 +17,7 @@ import '../../styles/pro.css';
 const a = (key: string, vars?: Record<string, string | number>) => t(`page.pro.activate.${key}`, vars);
 const c = (key: string, vars?: Record<string, string | number>) => t(`page.pro.checkout.${key}`, vars);
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const ogImage = '/og/pro-en.png';
 const canonical = `${site}/pro/activate`;
 const launch = Date.now() < PRO_LAUNCH_END;
 const yearly = usd(PLAN_PRICES.pro_yearly);
@@ -72,12 +73,13 @@ const CO: TCo[] = [
   description={t('page.pro.activate.description')}
   canonical={canonical}
   noindex
-  ogImage="/og/pro-en.png"
+  ogImage={ogImage}
   schema={articleSchema({
     canonical,
     title: t('page.pro.activate.h1'),
     description: t('page.pro.activate.description'),
     locale: 'en',
+    image: `${site}${ogImage}`,
     published: '2026-09-09',
     breadcrumbs: [
       { name: 'AwakeTab', url: site },

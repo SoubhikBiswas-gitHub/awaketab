@@ -53,6 +53,11 @@ export function mountView(ctx: IToolCtx): () => void {
   const all = (sel: string) => root.querySelectorAll<HTMLElement>(sel);
   const pill = root.querySelector<HTMLElement>('[data-pill]');
   const routeUntil = params.routeUntil ?? params.until;
+  const icon = document.querySelector<HTMLLinkElement>('link[rel=icon]');
+  const title0 = document.title;
+  const icon0 = icon?.href ?? '';
+  let tab = '';
+  let fav = '';
   let spoken = -1;
   let lazy = 0;
   let extra: typeof TMore | undefined;
@@ -220,6 +225,12 @@ export function mountView(ctx: IToolCtx): () => void {
       const text = pill.querySelector('[data-pill-text]');
       if (text) text.textContent = t(`tool.pill.${s.lock}`);
     }
+    // The tab mirrors the state in its title and favicon shape, so a background tab still tells the truth.
+    const k = held ? 'awake' : st === 'paused' || st === 'blocked' ? st : '';
+    const title = k ? t(`tool.tab.${k}`, aria) : title0;
+    const mark = st === 'ended' ? 'done' : k;
+    if (tab !== (tab = title)) document.title = title;
+    if (icon && fav !== (fav = mark)) icon.href = mark ? `/icons/tab-${mark}.svg` : icon0;
 
     const d = root.dataset;
     d.status = st;
