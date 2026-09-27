@@ -283,7 +283,7 @@ input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-
             <span style="font-size: 14px; line-height: 20px; color: {{t.muted}}; font-variant-numeric: tabular-nums">{{timerCount}}</span>
           </div>
           <sc-for list="{{timers}}" as="k" hint-placeholder-count="2">
-            <div class="at-in" role="group" aria-label="{{k.name}}" style="position: relative; flex-shrink: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto 64px; grid-template-rows: auto 8px; column-gap: 12px; row-gap: 8px; align-items: center; padding: 12px 16px; border-radius: 16px; background: {{k.bg}}; border: 1px solid {{k.bd}}; transition: background-color .6s var(--ease), border-color .6s var(--ease)">
+            <div class="at-in" role="group" aria-label="{{k.name}}" style="position: relative; flex-shrink: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto 64px; grid-template-rows: auto 8px; column-gap: 12px; row-gap: 8px; align-items: center; padding: 16px; border-radius: 16px; background: {{k.bg}}; border: 1px solid {{k.bd}}; transition: background-color .6s var(--ease), border-color .6s var(--ease)">
               <sc-if value="{{k.flash}}" hint-placeholder-val="{{false}}">
                 <span aria-hidden="true" class="am-flash" style="position: absolute; inset: -1px; border-radius: 16px; border: 1px solid {{t.good}}; box-shadow: 0 0 26px {{goodGlow}}; pointer-events: none"></span>
               </sc-if>
@@ -417,7 +417,7 @@ const SIZES = {
     W: '390px', H: '844px', pad: '20px', top: '64px', topPad: '8px 16px 0 16px', toastMax: '100%', clockGap: '24px', clockSize: '176px', suffix: '28px', suffixTop: '0px',
     date: '18px', dateLh: '28px', trackW: '260px', focusGap: '16px', focusSize: '108px', focusBarW: '300px', body: '16px', msgGap: '24px', msgSize: '48px', msgMax: '350px',
     meta: '15px', msgInputH: '48px', msgInput: '20px', cookSize: '96px', cookSizeH: '72px', cookHint: '16px', cookHintLh: '24px', cookInner: '8px', tName: '18px', cookTimer: '34px',
-    quickFont: '15px', cookCols: 'minmax(0, 1fr)', cookRows: '176px minmax(0, 1fr)', cookGap: '12px', cookPad: '8px 16px', barPad: '8px 16px 16px',
+    quickFont: '15px', cookCols: 'minmax(0, 1fr)', cookRows: '176px minmax(0, 1fr)', cookGap: '12px', cookPad: '8px 16px', barPad: '8px 16px 20px',
     barDir: 'column', iconDisp: 'none', segW: '100%', segFont: '13px', btnCols: 'repeat(3, minmax(0, 1fr))', btnW: '100%', minBottom: '20px'
   },
   tablet: Object.assign({}, WIDE, {

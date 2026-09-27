@@ -46,7 +46,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
 
     <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; font-size: 22px; line-height: 28px; color: {{t.muted}}">
-      <span style="{{mono}}; color: {{t.ink2}}">{{path}}</span>
+      <span style="--dc: 0; {{mono}}; color: {{t.ink2}}">{{path}}</span>
       <sc-if value="{{hasNote}}" hint-placeholder-val="{{false}}"><span>{{note}}</span></sc-if>
     </div>
   </div>
@@ -72,7 +72,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         </svg>
         <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px">
           <div style="font-size: 20px; line-height: 24px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{ringKicker}}</div>
-          <div style="{{digits}}; font-weight: 200; font-size: 104px; line-height: 1; letter-spacing: -0.04em; white-space: nowrap">{{ringA}}<span style="color: {{t.muted}}">{{ringB}}</span></div>
+          <div style="--dc: 0; {{digits}}; font-weight: 200; font-size: 104px; line-height: 1; letter-spacing: -0.04em; white-space: nowrap">{{ringA}}<span style="color: {{t.muted}}">{{ringB}}</span></div>
           <span style="{{pill.style}}"><svg width="{{pill.g}}" height="{{pill.g}}" viewBox="0 0 12 12" aria-hidden="true" style="{{pill.gStyle}}"><path d="{{pill.d}}" fill="{{pill.fill}}" stroke="{{pill.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pill.label}}</span>
         </div>
       </div>
@@ -84,11 +84,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
           <span style="font-size: 20px; line-height: 24px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Cook</span>
           <span style="{{pillHeld.style}}"><svg width="{{pillHeld.g}}" height="{{pillHeld.g}}" viewBox="0 0 12 12" aria-hidden="true" style="{{pillHeld.gStyle}}"><path d="{{pillHeld.d}}" fill="{{pillHeld.fill}}" stroke="{{pillHeld.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pillHeld.label}}</span>
         </div>
-        <div style="{{digits}}; font-weight: 200; font-size: 88px; line-height: 1; letter-spacing: -0.04em; white-space: nowrap">12<span style="color: {{t.muted}}">:34</span></div>
+        <div style="--dc: 0; {{digits}}; font-weight: 200; font-size: 88px; line-height: 1; letter-spacing: -0.04em; white-space: nowrap">12<span style="color: {{t.muted}}">:34</span></div>
         <div style="font-size: 22px; line-height: 28px; color: {{t.muted}}">Tap anywhere to pause</div>
         <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 8px">
           <div style="height: 64px; box-sizing: border-box; padding: 0 20px; border-radius: 16px; background: {{rowDone}}; border: 1px solid {{rowDoneLine}}; display: flex; align-items: center; justify-content: space-between; font-size: 20px; line-height: 28px"><span style="font-weight: 500; color: {{t.ink2}}">Timer 1</span><span style="font-weight: 600">Done</span></div>
-          <div style="height: 64px; box-sizing: border-box; padding: 0 20px; border-radius: 16px; background: {{t.sunken}}; border: 1px solid {{t.line}}; display: flex; align-items: center; justify-content: space-between; font-size: 20px; line-height: 28px"><span style="font-weight: 500; color: {{t.ink2}}">Timer 2</span><span style="{{digits}}; font-size: 28px; font-weight: 300">23:40</span></div>
+          <div style="height: 64px; box-sizing: border-box; padding: 0 20px; border-radius: 16px; background: {{t.sunken}}; border: 1px solid {{t.line}}; display: flex; align-items: center; justify-content: space-between; font-size: 20px; line-height: 28px"><span style="font-weight: 500; color: {{t.ink2}}">Timer 2</span><span style="--dc: 0; {{digits}}; font-size: 28px; font-weight: 300">23:40</span></div>
         </div>
       </div>
     </sc-if>
@@ -106,7 +106,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
               </g>
             </svg>
             <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center">
-              <span style="{{digits}}; font-weight: 200; font-size: 56px; line-height: 1; letter-spacing: -0.03em; white-space: nowrap">24<span style="color: {{t.muted}}">:18</span></span>
+              <span style="--dc: 0; {{digits}}; font-weight: 200; font-size: 56px; line-height: 1; letter-spacing: -0.03em; white-space: nowrap">24<span style="color: {{t.muted}}">:18</span></span>
             </div>
           </div>
           <span style="{{pillHeld.style}}"><svg width="{{pillHeld.g}}" height="{{pillHeld.g}}" viewBox="0 0 12 12" aria-hidden="true" style="{{pillHeld.gStyle}}"><path d="{{pillHeld.d}}" fill="{{pillHeld.fill}}" stroke="{{pillHeld.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pillHeld.label}}</span>

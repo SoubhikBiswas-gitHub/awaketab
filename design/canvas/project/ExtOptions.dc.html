@@ -28,6 +28,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 .at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
 .at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.2s}
 .at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease)}
+.at-chev{transition:transform .6s var(--ease)}
 .at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
 .at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
 .at-fade{transition:background-color .6s var(--ease),border-color .6s var(--ease),opacity .6s var(--ease),fill .6s var(--ease),stroke .6s var(--ease)}
@@ -170,22 +171,15 @@ ul,ol{margin:0;padding:0;list-style:none}
             </div>
           </div>
           <div style="height: 1px; background: {{t.line}}"></div>
-          <div style="padding: 20px 24px; display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 24px; align-items: center">
-            <div style="display: flex; flex-direction: column; gap: 4px">
-              <label for="sel-lang" style="font-size: 16px; font-weight: 600">Language</label>
-              <div style="font-size: 14px; color: {{t.muted}}">The popup, these settings and notifications.</div>
-            </div>
-            <select id="sel-lang" value="{{locale}}" onChange="{{pickLocale}}" style="height: 48px; padding: 0 16px; border-radius: 8px; border: 1px solid {{t.inputBorder}}; background: {{t.sunken}}; color: {{t.ink}}; font-size: 15px">
-              <option value="">Browser language</option>
-              <option value="en" lang="en">English</option>
-              <option value="es" lang="es">Español</option>
-              <option value="pt-br" lang="pt-BR">Português (Brasil)</option>
-              <option value="de" lang="de">Deutsch</option>
-              <option value="fr" lang="fr">Français</option>
-              <option value="ja" lang="ja">日本語</option>
-              <option value="zh" lang="zh-Hans">简体中文</option>
-              <option value="hi" lang="hi">हिन्दी</option>
-            </select>
+          <div onKeyDown="{{langKey}}" style="padding: 12px 24px; display: flex; flex-direction: column">
+            <button type="button" id="{{lang.btnId}}" aria-expanded="{{lang.expanded}}" aria-controls="{{lang.listId}}" onClick="{{lang.toggle}}" style="display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 64px; padding: 8px 0; box-sizing: border-box; border: 0; background: transparent; color: {{t.ink}}; text-align: start"><span style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 16px; line-height: 24px; font-weight: 600">{{lang.title}}</span><span style="font-size: 14px; line-height: 20px; font-weight: 400; color: {{t.muted}}">The popup, these settings and notifications.</span></span><span style="display: inline-flex; align-items: center; gap: 8px; color: {{t.ink2}}; font-size: 15px; line-height: 22px; font-weight: 500; white-space: nowrap">{{langNow}}<svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: {{lang.chev}}"><path d="M6 9l6 6 6-6"></path></svg></span></button>
+            <sc-if value="{{lang.open}}" hint-placeholder-val="{{false}}">
+              <div id="{{lang.listId}}" role="radiogroup" aria-label="{{lang.title}}" class="at-in" style="padding: 8px 0 12px; display: flex; flex-direction: column; gap: 4px; border-top: 1px solid {{t.line}}">
+                <sc-for list="{{langRows}}" as="r" hint-placeholder-count="9">
+                  <button type="button" role="radio" aria-checked="{{r.cur}}" lang="{{r.lang}}" tabindex="{{r.tab}}" onClick="{{r.pick}}" style="display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{t.ink}}; text-align: start"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="{{r.ring}}" stroke-width="1.8"></circle><circle cx="10" cy="10" r="4" fill="{{r.dot}}"></circle></svg><span style="font-size: 15px; line-height: 22px; font-weight: {{r.weight}}">{{r.name}}</span><span lang="en" style="font-size: 13px; line-height: 18px; color: {{r.noteInk}}; text-align: end">{{r.note}}</span></button>
+                </sc-for>
+              </div>
+            </sc-if>
           </div>
         </div>
       </section>
@@ -241,7 +235,7 @@ ul,ol{margin:0;padding:0;list-style:none}
                 <div style="position: relative; height: 32px; border-radius: 8px; background: {{t.track}}; overflow: hidden">
                   <div aria-hidden="true" style="position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0, transparent calc(25% - 1px), {{t.tick}} calc(25% - 1px), {{t.tick}} 25%)"></div>
                   <sc-for list="{{d.blocks}}" as="b" hint-placeholder-count="1">
-                    <div class="at-blk" style="position: absolute; top: 4px; bottom: 4px; left: {{b.left}}; width: {{b.width}}; box-sizing: border-box; border-radius: 8px; background: {{b.bg}}; border: {{b.border}}; display: flex; align-items: center; padding: 0 8px; overflow: hidden">
+                    <div class="at-blk" data-kind="{{b.kind}}" style="position: absolute; top: 4px; bottom: 4px; left: {{b.left}}; width: {{b.width}}; box-sizing: border-box; border-radius: 8px; background: {{b.bg}}; border: {{b.border}}; display: flex; align-items: center; padding: 0 8px; overflow: hidden">
                       <sc-if value="{{b.showLabel}}" hint-placeholder-val="{{true}}"><span style="font-size: 12px; font-weight: 600; color: {{b.ink}}; white-space: nowrap">{{b.label}}</span></sc-if>
                     </div>
                   </sc-for>
@@ -399,7 +393,7 @@ ul,ol{margin:0;padding:0;list-style:none}
                 <p role="alert" style="margin: 0; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: {{bad}}"><svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1L11.2 10.5H.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg>{{licError}}</p>
               </sc-if>
               <div style="display: flex; align-items: center; gap: 12px">
-                <button onClick="{{activate}}" disabled="{{checking}}" style="height: 52px; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; color: {{t.primaryInk}}; font-size: 15px; line-height: 22px; font-weight: 600">Activate</button>
+                <button onClick="{{activate}}" disabled="{{checking}}" style="box-sizing: border-box; height: 52px; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; color: {{t.primaryInk}}; font-size: 15px; line-height: 22px; font-weight: 600">Activate</button>
                 <a href="https://awaketab.com/pro/activate?ext=1" target="_blank" rel="noopener" style="min-height: 44px; padding: 0 12px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; font-weight: 600; color: {{lampText}}; text-decoration: none">Find your key on awaketab.com</a>
                 <span role="status" aria-live="polite" style="font-size: 14px; color: {{t.muted}}">{{licStatus}}</span>
               </div>
@@ -441,7 +435,7 @@ ul,ol{margin:0;padding:0;list-style:none}
   <footer style="position: relative; flex-shrink: 0; box-sizing: border-box; width: 100%; padding: {{footPad}}; border-top: 1px solid {{t.line}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px"><p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p><nav aria-label="Site" style="display: flex; flex-wrap: wrap; column-gap: 16px"><a href="PagePrivacyDesk.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Privacy</a><a href="PageTermsPhone.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Terms</a><a href="PageChangelog.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Changelog</a><a href="PageAbout.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">About</a><a href="#" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a></nav></footer>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"pro":{"editor":"boolean","default":true},"layout":{"editor":"enum","options":["desktop"],"default":"desktop"},"$preview":{"width":1280,"height":3892}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"pro":{"editor":"boolean","default":true},"layout":{"editor":"enum","options":["desktop"],"default":"desktop"},"language":{"editor":"enum","options":["closed","open"],"default":"closed"},"$preview":{"width":1280,"height":3892}}'>
 // AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
 const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C', shadow: 'none' };
 const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA', shadow: '0 1px 2px rgba(14,23,38,.06)' };
@@ -509,6 +503,65 @@ const HOST_RE = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{
 const NAV = [['defaults', 'Defaults'], ['end', 'When time is up'], ['look', 'Look and language'], ['keys', 'Keyboard'], ['schedules', 'Schedules', true], ['autostart', 'Auto-start', true], ['licence', 'Pro licence'], ['privacy', 'Privacy'], ['about', 'About']];
 let seq = 0;
 
+// AT-LANG v1 (language switcher; PRIMITIVES.md P-LANG). Keep identical across files.
+const AT_LOCALES = [
+  ['en', '', 'en', 'English', true], ['es', '/es', 'es', 'Español', false], ['pt-br', '/pt-br', 'pt-BR', 'Português (Brasil)', false],
+  ['de', '/de', 'de', 'Deutsch', false], ['fr', '/fr', 'fr', 'Français', false], ['ja', '/ja', 'ja', '日本語', false],
+  ['zh', '/zh', 'zh-Hans', '简体中文', false], ['hi', '/hi', 'hi', 'हिन्दी', false]
+];
+const AT_LANG_COPY = { title: 'Language', current: 'Current', review: 'Translation in review', close: 'Close' };
+// o = { layout, t, lamp, open, toggle, close, cur: 'en', path: '/', variant: 'footer' | 'settings' }
+function atLang(o) {
+  const t = o.t, cur = o.cur || 'en', path = o.path || '/', settings = o.variant === 'settings', open = !!o.open;
+  const id = settings ? 'at-lang-set' : 'at-lang', sheet = !settings && o.layout === 'phone';
+  const a = (hex, x) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + x + ')'; };
+  const here = AT_LOCALES.find((l) => l[0] === cur) || AT_LOCALES[0];
+  const panel = 'box-sizing: border-box; display: flex; flex-direction: column; background: ' + t.surface + '; border: 1px solid ' + t.line + '; box-shadow: 0 24px 64px -24px rgba(0,0,0,.45); ';
+  return {
+    open, sheet: sheet && open, pop: !sheet && !settings, btnId: id + '-btn', listId: id + '-list', headId: id + '-h',
+    label: here[3], aria: AT_LANG_COPY.title + ': ' + here[3], title: AT_LANG_COPY.title, closeLabel: AT_LANG_COPY.close, pageLang: here[2],
+    expanded: open ? 'true' : 'false', chev: open ? 'rotate(180deg)' : 'none', role: sheet ? 'dialog' : 'group', modal: sheet ? 'true' : 'false',
+    wrapStyle: sheet ? 'display: flex' : 'position: relative; display: flex; margin-inline-start: auto',
+    panelStyle: sheet
+      ? panel + 'position: fixed; inset-inline: 0; bottom: 0; z-index: 30; padding: 8px 16px 32px; border-radius: 28px 28px 0 0; border-bottom: 0'
+      : panel + 'position: absolute; inset-inline-end: 0; bottom: calc(100% + 8px); z-index: 30; width: 360px; padding: 4px; border-radius: 16px',
+    toggle: () => {
+      o.toggle();
+      if (!open) setTimeout(() => { try { document.querySelector('#' + id + '-list a[aria-current="true"]').focus(); } catch (e) {} }, 60);
+    },
+    close: () => o.close(),
+    key: (e) => {
+      const k = e && e.key, box = (e && e.currentTarget) || document;
+      if (k === 'Escape' && open) {
+        if (e.preventDefault) e.preventDefault();
+        o.close();
+        try { box.querySelector('button[aria-controls]').focus(); } catch (x) {}
+        return;
+      }
+      const step = { ArrowDown: 1, ArrowUp: -1, Home: 'home', End: 'end' }[k];
+      if (!step || !open) return;
+      let rows = [];
+      try { rows = Array.from(box.querySelectorAll('a[hreflang]')); } catch (x) {}
+      if (!rows.length) return;
+      if (e.preventDefault) e.preventDefault();
+      const i = rows.indexOf(document.activeElement), n = rows.length;
+      rows[step === 'home' ? 0 : step === 'end' ? n - 1 : i < 0 ? (step > 0 ? 0 : n - 1) : (i + step + n) % n].focus();
+    },
+    rows: AT_LOCALES.map(([lid, prefix, lang, name, reviewed]) => {
+      const on = lid === cur;
+      return {
+        href: prefix + path, lang, hreflang: lang, name, cur: on ? 'true' : 'false',
+        border: on ? a(o.lamp, 0.45) : 'transparent', bg: on ? a(o.lamp, 0.14) : 'transparent', weight: on ? 600 : 500,
+        ring: on ? o.lamp : t.inputBorder, dot: on ? o.lamp : 'transparent',
+        note: on ? AT_LANG_COPY.current : reviewed ? '' : AT_LANG_COPY.review, noteInk: on ? t.ink2 : t.muted
+      };
+    })
+  };
+}
+
+// Height the open language list adds to the page (9 rows of 48 + gaps + padding + divider), measured.
+const LANG_LIST_H = 485;
+
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -545,6 +598,35 @@ class Component extends DCLogic {
     const p = this.props;
     if (prev.theme !== p.theme && p.theme) this.setState({ theme: p.theme });
     if (prev.pro !== p.pro) this.setState({ pro: p.pro ?? true });
+  }
+  // P-LANG settings variant for the extension: radio rows (the choice is stored in settings.locale, not a URL).
+  langVals(s, t, lamp) {
+    const open = s.langOpen ?? this.props.language === 'open';
+    const cur = s.locale || '';
+    const lang = atLang({ layout: 'desktop', t, lamp, open, cur: cur || 'en', variant: 'settings',
+      toggle: () => this.setState({ langOpen: !open }), close: () => this.setState({ langOpen: false }) });
+    const a = (x) => atRgba(lamp, x);
+    const browser = { lid: '', lang: 'en', name: 'Browser language', on: cur === '', note: cur === '' ? 'Current · English' : 'English' };
+    const rows = [browser].concat(AT_LOCALES.map(([lid, , lng, name, reviewed]) => ({ lid, lang: lng, name, on: cur === lid, note: cur === lid ? 'Current' : reviewed ? '' : 'Translation in review' })));
+    const langRows = rows.map((r) => ({
+      lang: r.lang, name: r.name, cur: r.on ? 'true' : 'false', tab: r.on ? '0' : '-1', note: r.note, noteInk: r.on ? t.ink2 : t.muted,
+      border: r.on ? a(0.45) : 'transparent', bg: r.on ? a(0.14) : 'transparent', weight: r.on ? 600 : 500,
+      ring: r.on ? lamp : t.inputBorder, dot: r.on ? lamp : 'transparent', pick: () => this.save({ locale: r.lid })
+    }));
+    const langNow = cur === '' ? 'Browser language (English)' : (AT_LOCALES.find((l) => l[0] === cur) || AT_LOCALES[0])[3];
+    // Radio group keys: arrows move and select (wrapping), Home/End jump, Esc closes and returns to the row button.
+    const langKey = (e) => {
+      const k = e && e.key; if (!open) return;
+      if (k === 'Escape') { if (e.preventDefault) e.preventDefault(); this.setState({ langOpen: false }); try { document.getElementById(lang.btnId).focus(); } catch (x) {} return; }
+      const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1, Home: 'home', End: 'end' }[k];
+      if (!step) return;
+      if (e.preventDefault) e.preventDefault();
+      const i = rows.findIndex((r) => r.on), n = rows.length;
+      const j = step === 'home' ? 0 : step === 'end' ? n - 1 : (i + step + n) % n;
+      this.save({ locale: rows[j].lid });
+      setTimeout(() => { try { document.querySelectorAll('#' + lang.listId + ' [role="radio"]')[j].focus(); } catch (x) {} }, 30);
+    };
+    return { lang, langRows, langNow, langKey, langListH: open ? LANG_LIST_H : 0 };
   }
   save(patch) { this.setState(Object.assign({ savedAt: Date.now() }, patch)); }
   rgba(hex, a) {
@@ -605,7 +687,7 @@ class Component extends DCLogic {
         const sys = sch.level === 'system';
         const draft = kind === 'draft';
         out.push({
-          day, left: pct(a), width: pct(b - a),
+          day, left: pct(a), width: pct(b - a), kind: draft ? 'draft' : 'block',
           bg: draft ? this.rgba(lamp, 0.06) : sys ? hatch : lampFill,
           border: draft ? '1px dashed ' + t.line2 : sys ? '1px solid ' + lamp : '0',
           ink: draft ? t.ink : sys ? t.ink : (dark ? '#04232A' : '#FFFFFF'),
@@ -671,7 +753,7 @@ class Component extends DCLogic {
     const val = (e) => (e && e.target ? e.target.value : '');
 
     return Object.assign(b0, {
-      lampFill, H: (3892 + (s.schedules.length - 2) * 61 + (s.sites.length - 2) * 61 + (s.schedules.length ? 0 : 50) + (s.sites.length ? 0 : 50) + (s.pro ? 0 : 252) + (s.schedError ? 0 : 0) + (s.siteError ? 30 : 0) + (s.licError ? 30 : 0)) + 'px', t, lamp, lampText, bad, locked, hatch,
+      lampFill, H: (3892 + (s.schedules.length - 2) * 61 + (s.sites.length - 2) * 61 + (s.schedules.length ? 0 : 50) + (s.sites.length ? 0 : 50) + (s.pro ? 0 : 252) + (s.schedError ? 0 : 0) + (s.siteError ? 30 : 0) + (s.licError ? 30 : 0) + ((s.langOpen ?? this.props.language === 'open') ? LANG_LIST_H : 0)) + 'px', t, lamp, lampText, bad, locked, hatch,
       lampSoft: this.rgba(lamp, 0.14), lampLine: this.rgba(lamp, 0.45), lampGlow: this.rgba(lamp, 0.55),
       aura: this.rgba(lamp, dark ? 0.1 : 0.08),
       savedOp: s.now - s.savedAt < 2200 ? 1 : 0, savedText: 'Saved',
@@ -684,7 +766,7 @@ class Component extends DCLogic {
       soundHelpColor: s.notify ? t.muted : bad,
       themes, themeX: ti * 100 + '%',
       themeHelp: s.theme === 'auto' ? 'Follows your system and switches with it.' : s.theme === 'oled' ? 'Pure black for OLED screens.' : 'Always ' + s.theme + '.',
-      locale: s.locale, pickLocale: (e) => this.save({ locale: val(e) }),
+      locale: s.locale, pickLocale: (e) => this.save({ locale: val(e) }), ...this.langVals(s, t, lamp),
       keysOn: s.keys ? 'true' : 'false', keysSw: this.sw(s.keys, t, lamp), toggleKeys: () => this.save({ keys: !s.keys }),
       keyCaps: ['Alt', 'Shift', 'A'],
       lockOp: 1,

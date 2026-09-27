@@ -180,7 +180,7 @@ ul,ol{margin:0;padding:0;list-style:none}
             </sc-for>
           </div>
           <sc-if value="{{previewing}}" hint-placeholder-val="{{true}}">
-            <aside aria-labelledby="pm-prev" role="status" class="at-rise" style="display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 16px; border-radius: 16px; background: {{prevSoft}}; border: 1px solid {{prevLine}}">
+            <aside aria-labelledby="pm-prev" role="status" class="at-rise" style="display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 20px; border-radius: 16px; background: {{prevSoft}}; border: 1px solid {{prevLine}}">
               <h4 id="pm-prev" style="font-size: 20px; line-height: 28px; font-weight: 600">You are previewing {{prevName}}</h4>
               <p style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty">Mint and Sky come with Pro. The preview lasts while Settings is open. Close Settings and the lamp goes back to {{keepName}}.</p>
               <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">Pro is $12 a year, or $19 once. Launch price for the first 90 days after launch, then $29. 5 devices, 14-day refund.</p>
@@ -200,7 +200,7 @@ ul,ol{margin:0;padding:0;list-style:none}
         <div style="display: flex; flex-direction: column; gap: 20px; padding: 0 20px 24px">
           <dl style="margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
             <sc-for list="{{figs}}" as="f" hint-placeholder-count="4">
-              <div style="display: flex; flex-direction: column-reverse; gap: 4px; padding: 12px 16px; border-radius: 12px; background: {{t.field}}; border: 1px solid {{t.line}}">
+              <div style="display: flex; flex-direction: column-reverse; gap: 4px; padding: 16px; border-radius: 12px; background: {{t.field}}; border: 1px solid {{t.line}}">
                 <dt style="font-size: 13px; color: {{t.muted}}">{{f.label}}</dt>
                 <dd style="margin: 0; font-family: Geist, system-ui, sans-serif; font-size: 20px; font-weight: 400; font-variant-numeric: tabular-nums">{{f.value}}</dd>
               </div>

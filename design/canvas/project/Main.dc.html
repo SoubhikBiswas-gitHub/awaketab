@@ -73,6 +73,7 @@ ul,ol{padding:0;list-style:none}
 @keyframes at-spark{0%{opacity:0;transform:scale(.4)}40%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(2.4)}}
 @keyframes at-travel{0%{opacity:0;transform:translateY(0)}15%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translateY(var(--at-ty,-400px))}}
 @keyframes at-off{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(.94)}}
+.at-chev{transition:transform .6s var(--ease)}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </helmet>
@@ -177,7 +178,7 @@ ul,ol{padding:0;list-style:none}
       <sc-if value="{{isMini}}" hint-placeholder-val="{{false}}">
         <div class="at-in" style="display: flex; align-items: baseline; justify-content: center; gap: 12px; flex-wrap: wrap">
           <div role="timer" aria-label="{{timerAria}}" style="font-weight: 300; font-size: 28px; line-height: 32px; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{numColor}}">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
-          <div style="font-size: 13px; line-height: 18px; color: {{t.ink2}}">{{metaA}} <span style="color: {{t.ink}}; font-weight: 500">{{metaB}}</span></div>
+          <div style="font-size: 13px; line-height: 18px; color: {{t.ink2}}">{{metaA}} <span style="color: {{t.ink}}; font-weight: 500; white-space: nowrap">{{metaB}}</span></div>
         </div>
       </sc-if>
 
@@ -255,7 +256,7 @@ ul,ol{padding:0;list-style:none}
                 <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px">
                   <sc-if value="{{showKicker}}" hint-placeholder-val="{{true}}"><div style="font-size: {{fk}}; line-height: 1.3; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{kickerInk}}">{{kicker}}</div></sc-if>
                   <div role="timer" aria-label="{{timerAria}}" style="font-weight: 300; font-size: {{ringSize}}; white-space: nowrap; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; color: {{numColor}}; transition: color .6s">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
-                  <div style="max-width: 240px; font-size: {{fm}}; line-height: 1.35; text-align: center; color: {{t.ink2}}">{{metaA}} <span style="color: {{t.ink}}; font-weight: 500">{{metaB}}</span></div>
+                  <div style="max-width: 240px; font-size: {{fm}}; line-height: 1.35; text-align: center; color: {{t.ink2}}">{{metaA}} <span style="color: {{t.ink}}; font-weight: 500; white-space: nowrap">{{metaB}}</span></div>
                 </div>
               </div>
             </div>
@@ -270,7 +271,7 @@ ul,ol{padding:0;list-style:none}
                   <sc-if value="{{live}}" hint-placeholder-val="{{true}}"><div class="at-shim" style="position: absolute; top: 0; bottom: 0; width: 26%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)"></div></sc-if>
                 </div>
               </div>
-              <div style="display: flex; justify-content: space-between; gap: 12px; font-size: {{fb}}; line-height: 1.4; font-weight: 500; color: {{t.ink2}}"><span>{{metaA}} {{metaB}}</span><span>{{ofTotal}}</span></div>
+              <div style="display: flex; justify-content: space-between; gap: 12px; font-size: {{fb}}; line-height: 1.4; font-weight: 500; color: {{t.ink2}}"><span>{{metaA}} <span style="white-space: nowrap">{{metaB}}</span></span><span>{{ofTotal}}</span></div>
             </div>
           </sc-if>
 
@@ -296,7 +297,7 @@ ul,ol{padding:0;list-style:none}
                 <div role="timer" aria-label="{{timerAria}}" style="font-weight: {{thinW}}; font-size: {{hzSize}}; line-height: 0.9; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; white-space: nowrap">{{bigA}}<span style="color: {{hzSecs}}">{{bigB}}</span></div>
                 <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; padding-bottom: 4px; font-size: {{fh}}; line-height: 1.35; text-align: end">
                   <sc-if value="{{showHzName}}" hint-placeholder-val="{{true}}"><span>{{hz.name}} · {{nowTime}}</span></sc-if>
-                  <span style="font-weight: 500">{{metaA}} {{metaB}}</span>
+                  <span style="font-weight: 500">{{metaA}} <span style="white-space: nowrap">{{metaB}}</span></span>
                 </div>
               </div>
             </div>
@@ -319,12 +320,12 @@ ul,ol{padding:0;list-style:none}
               <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: {{t.tideInkTop}}">
                 <sc-if value="{{showKicker}}" hint-placeholder-val="{{true}}"><div style="font-size: {{fk}}; line-height: 1.3; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase">{{kicker}}</div></sc-if>
                 <div role="timer" aria-label="{{timerAria}}" style="font-weight: {{thinW}}; font-size: {{tideSize}}; white-space: nowrap; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums">{{bigA}}{{bigB}}</div>
-                <div style="font-size: {{fm}}; line-height: 1.35; font-weight: 500">{{metaA}} {{metaB}}</div>
+                <div style="font-size: {{fm}}; line-height: 1.35; font-weight: 500">{{metaA}} <span style="white-space: nowrap">{{metaB}}</span></div>
               </div>
               <div aria-hidden="true" class="at-lin" style="position: absolute; inset: 0; clip-path: inset({{tideClip}} 0 0 0); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: {{tideInkWater}}">
                 <sc-if value="{{showKicker}}" hint-placeholder-val="{{true}}"><div style="font-size: {{fk}}; line-height: 1.3; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase">{{kicker}}</div></sc-if>
                 <div style="font-weight: {{thinW}}; font-size: {{tideSize}}; white-space: nowrap; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums">{{bigA}}{{bigB}}</div>
-                <div style="font-size: {{fm}}; line-height: 1.35; font-weight: 500">{{metaA}} {{metaB}}</div>
+                <div style="font-size: {{fm}}; line-height: 1.35; font-weight: 500">{{metaA}} <span style="white-space: nowrap">{{metaB}}</span></div>
               </div>
             </div>
           </sc-if>
@@ -368,9 +369,9 @@ ul,ol{padding:0;list-style:none}
 
     <section aria-label="Notifications" style="grid-area: toast; align-self: {{toastAlign}}; min-width: 0; display: flex; flex-direction: column; gap: 8px">
       <sc-for list="{{toasts}}" as="c" hint-placeholder-count="0">
-        <div role="status" class="at-in" style="display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 4px 4px 4px 16px; box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{c.line}}; box-shadow: {{t.elev}}">
+        <div role="status" class="at-in" style="display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{c.line}}; box-shadow: {{t.elev}}">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{c.tone}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{c.icon}}"></path></svg>
-          <p style="flex: 1; min-width: 0; font-size: {{toastFont}}; line-height: 20px; color: {{t.ink}}; text-wrap: pretty">{{c.text}}</p>
+          <p style="flex: 1; min-width: 0; padding: 8px 0; font-size: {{toastFont}}; line-height: 20px; color: {{t.ink}}; text-wrap: pretty">{{c.text}}</p>
           <button onClick="{{c.dismiss}}" aria-label="Dismiss" style="width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
         </div>
       </sc-for>
@@ -400,8 +401,8 @@ ul,ol{padding:0;list-style:none}
             </div>
           </sc-if>
           <sc-if value="{{panelMore}}" hint-placeholder-val="{{false}}">
-            <div class="at-in" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
-              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-inline-start: 4px">
+            <div class="at-in" style="display: flex; flex-direction: column; gap: 8px; padding: 16px 16px 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
                 <span id="at-more-title" style="font-size: 14px; line-height: 20px; font-weight: 600">More lengths</span>
                 <button onClick="{{closePanel}}" aria-label="Close" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
               </div>
@@ -412,8 +413,8 @@ ul,ol{padding:0;list-style:none}
             </div>
           </sc-if>
           <sc-if value="{{panelUntil}}" hint-placeholder-val="{{false}}">
-            <div class="at-in" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
-              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-inline-start: 4px">
+            <div class="at-in" style="display: flex; flex-direction: column; gap: 8px; padding: 16px 16px {{untilEnd}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
                 <label for="at-until-time" style="font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap">Stay awake until</label>
                 <div style="display: flex; align-items: center; gap: 4px">
                   <sc-if value="{{untilInputInline}}" hint-placeholder-val="{{true}}">
@@ -427,11 +428,11 @@ ul,ol{padding:0;list-style:none}
               </sc-if>
               <span id="at-until-hint" class="at-sr">Type any time. A time that has already passed today means tomorrow.</span>
               <sc-if value="{{untilPast}}" hint-placeholder-val="{{false}}">
-                <div class="at-in" role="status" style="display: flex; flex-direction: column; gap: 8px; padding: 12px 8px 8px 12px; border-radius: 12px; background: {{lampSoft}}; text-align: start">
+                <div class="at-in" role="status" style="display: flex; flex-direction: column; gap: 4px; padding: 16px 16px 8px; border-radius: 12px; background: {{lampSoft}}; text-align: start">
                   <p style="font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; text-wrap: pretty">{{pastQ}}</p>
                   <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
                     <span style="font-size: 13px; line-height: 18px; color: {{t.ink2}}">{{pastIn}}</span>
-                    <button onClick="{{changeTime}}" style="height: 44px; flex-shrink: 0; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 14px; line-height: 20px; font-weight: 600; color: {{t.ink}}">Change time</button>
+                    <button onClick="{{changeTime}}" style="height: 44px; flex-shrink: 0; margin-inline-end: -12px; padding: 0 12px; border-radius: 12px; border: 0; background: transparent; font-size: 14px; line-height: 20px; font-weight: 600; color: {{lampText}}">Change time</button>
                   </div>
                 </div>
               </sc-if>
@@ -445,8 +446,8 @@ ul,ol{padding:0;list-style:none}
             </div>
           </sc-if>
           <sc-if value="{{panelCustom}}" hint-placeholder-val="{{false}}">
-            <div class="at-in" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
-              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding-inline-start: 4px">
+            <div class="at-in" style="display: flex; flex-direction: column; gap: 8px; padding: 16px 16px 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
                 <span style="font-size: 14px; line-height: 20px; font-weight: 600">How long?</span>
                 <button onClick="{{closePanel}}" aria-label="Close" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
               </div>
@@ -485,7 +486,7 @@ ul,ol{padding:0;list-style:none}
       </sc-if>
 
       <sc-if value="{{dockAsk}}" hint-placeholder-val="{{false}}">
-        <div class="at-rise" role="group" aria-labelledby="at-ask-title" style="display: flex; flex-direction: column; gap: 12px; padding: {{askPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{lampLine}}; box-shadow: 0 18px 40px -24px {{lampGlow}}">
+        <div class="at-rise" role="group" aria-labelledby="at-ask-title" style="display: flex; flex-direction: column; gap: {{askGap}}; padding: {{askPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{lampLine}}; box-shadow: 0 18px 40px -24px {{lampGlow}}">
           <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px; padding-inline: 4px">
             <p id="at-ask-title" role="status" style="font-size: 18px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; color: {{t.ink}}">Time's up. Keep going?</p>
             <span role="timer" aria-label="{{askAria}}" style="font-size: 14px; line-height: 20px; font-variant-numeric: tabular-nums; color: {{t.ink2}}; white-space: nowrap">Stops in {{askLeft}} s</span>
@@ -495,14 +496,14 @@ ul,ol{padding:0;list-style:none}
           </div>
           <div style="display: grid; grid-template-columns: {{askCols}}; gap: 8px">
             <sc-for list="{{askOpts}}" as="c" hint-placeholder-count="3">
-              <button onClick="{{c.pick}}" aria-label="{{c.aria}}" style="height: 52px; padding: 0; border-radius: 20px; border: 1px solid {{lampLine}}; background: {{lampSoft}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">{{c.label}}</button>
+              <button onClick="{{c.pick}}" aria-label="{{c.aria}}" style="height: {{askBtnH}}; padding: 0; border-radius: 20px; border: 1px solid {{lampLine}}; background: {{lampSoft}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">{{c.label}}</button>
             </sc-for>
             <sc-if value="{{askStopInline}}" hint-placeholder-val="{{false}}">
-              <button onClick="{{askStop}}" style="height: 52px; padding: 0; border-radius: 20px; border: 1px solid {{t.line2}}; background: transparent; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">Stop</button>
+              <button onClick="{{askStop}}" style="height: {{askBtnH}}; padding: 0; border-radius: 20px; border: 1px solid {{t.line2}}; background: transparent; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">Stop</button>
             </sc-if>
           </div>
           <sc-if value="{{askStopRow}}" hint-placeholder-val="{{true}}">
-            <button onClick="{{askStop}}" style="height: 52px; padding: 0; border-radius: 20px; border: 1px solid {{t.line2}}; background: transparent; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">Stop</button>
+            <button onClick="{{askStop}}" style="height: {{askBtnH}}; padding: 0; border-radius: 20px; border: 1px solid {{t.line2}}; background: transparent; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">Stop</button>
           </sc-if>
         </div>
       </sc-if>
@@ -542,7 +543,7 @@ ul,ol{padding:0;list-style:none}
         </sc-if>
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
           <h2 id="at-sheet-title" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em; color: {{t.ink}}">{{sheetTitle}}</h2>
-          <button onClick="{{closeSheet}}" aria-label="{{closeAria}}" style="width: 44px; height: 44px; margin-inline-end: -12px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+          <button onClick="{{closeSheet}}" aria-label="{{closeAria}}" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
         </div>
       </div>
 
@@ -591,7 +592,19 @@ ul,ol{padding:0;list-style:none}
           </section>
 
           <section aria-labelledby="st-time" style="display: flex; flex-direction: column; gap: 20px">
-            <h3 id="st-time" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Time</h3>
+            <h3 id="st-time" style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Language and time</h3>
+            <div onKeyDown="{{lang.key}}" style="display: flex; flex-direction: column">
+              <button type="button" id="{{lang.btnId}}" aria-expanded="{{lang.expanded}}" aria-controls="{{lang.listId}}" onClick="{{lang.toggle}}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 16px 0; box-sizing: border-box; border: 0; border-bottom: 1px solid {{t.line}}; background: transparent; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 500; text-align: start"><span>{{lang.title}}</span><span style="display: inline-flex; align-items: center; gap: 8px; color: {{t.ink2}}">{{lang.label}}<svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: {{lang.chev}}"><path d="M6 9l6 6 6-6"></path></svg></span></button>
+              <sc-if value="{{lang.open}}" hint-placeholder-val="{{false}}">
+                <ul id="{{lang.listId}}" role="list" aria-label="{{lang.title}}" style="margin: 0; padding: 8px 0; list-style: none; display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid {{t.line}}">
+                  <sc-for list="{{lang.rows}}" as="r" hint-placeholder-count="8">
+                      <li style="display: flex">
+                        <a href="{{r.href}}" lang="{{r.lang}}" hreflang="{{r.hreflang}}" aria-current="{{r.cur}}" style="flex: 1; min-width: 0; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{t.ink}}; text-decoration: none"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="{{r.ring}}" stroke-width="1.8"></circle><circle cx="10" cy="10" r="4" fill="{{r.dot}}"></circle></svg><span style="font-size: 15px; line-height: 22px; font-weight: {{r.weight}}">{{r.name}}</span><span lang="{{lang.pageLang}}" style="font-size: 13px; line-height: 18px; color: {{r.noteInk}}; text-align: end">{{r.note}}</span></a>
+                      </li>
+                    </sc-for>
+                </ul>
+              </sc-if>
+            </div>
             <div style="display: flex; flex-direction: column; gap: 8px">
               <span id="lb-fmt" style="font-size: 15px; line-height: 22px; font-weight: 500">Clock format</span>
               <div role="radiogroup" aria-labelledby="lb-fmt" style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.sunken}}; border: 1px solid {{t.line}}">
@@ -727,7 +740,7 @@ ul,ol{padding:0;list-style:none}
   </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"status":{"editor":"enum","options":["ready","starting","awake","paused","blocked","needtap","fallback","timesup","ended"],"default":"ready"},"face":{"editor":"enum","options":["ring","bold","horizon","tide"],"default":"ring"},"theme":{"editor":"enum","options":["auto","light","dark","oled"],"default":"auto"},"phase":{"editor":"enum","options":["auto","dawn","day","dusk","night"],"default":"auto"},"layout":{"editor":"enum","options":["phone","small","landscape","tablet","tabletLandscape","desktop","xl"],"default":"phone"},"panel":{"editor":"enum","options":["none","until","custom","more"],"default":"none"},"sheet":{"editor":"enum","options":["none","settings","stats"],"default":"none"},"edge":{"editor":"enum","options":["none","lastminute","multiday","untilpassed","longnolimit","deferred","offline","lowbattery","hiddenreturn","firstvisit"],"default":"none"},"accent":{"editor":"color","default":"#5BE0E8","options":["#5BE0E8","#A594FF","#7EF0B8","#7CB8FF"]},"$preview":{"width":390,"height":844}}'>
+<script type="text/x-dc" data-dc-script data-props='{"status":{"editor":"enum","options":["ready","starting","awake","paused","blocked","needtap","fallback","timesup","ended"],"default":"ready"},"face":{"editor":"enum","options":["ring","bold","horizon","tide"],"default":"ring"},"theme":{"editor":"enum","options":["auto","light","dark","oled"],"default":"auto"},"phase":{"editor":"enum","options":["auto","dawn","day","dusk","night"],"default":"auto"},"layout":{"editor":"enum","options":["phone","small","landscape","tabletSmall","tablet","tabletLandscape","desktopSmall","desktop","xl"],"default":"phone"},"panel":{"editor":"enum","options":["none","until","custom","more"],"default":"none"},"sheet":{"editor":"enum","options":["none","settings","stats"],"default":"none"},"edge":{"editor":"enum","options":["none","lastminute","multiday","untilpassed","longnolimit","deferred","offline","lowbattery","hiddenreturn","firstvisit"],"default":"none"},"accent":{"editor":"color","default":"#5BE0E8","options":["#5BE0E8","#A594FF","#7EF0B8","#7CB8FF"]},"language":{"editor":"enum","options":["closed","open"],"default":"closed"},"$preview":{"width":390,"height":844}}'>
 // AT-PRIMITIVES v1 (fix batch 1b): DESIGN.md §2.1 tokens and §11 geometry. Keep identical across files.
 const AT_TOK = {
   dark: { raised: '#26324B', sunken: '#0D131F', horizonInk: '#F6F2EA', line2: '#33405C', inputBorder: '#5A6781', groundEnd: '#070A11' },
@@ -792,11 +805,71 @@ const GEO = {
   phone: { W: 390, H: 844, kind: 'phone', box: [358, 340, 1], ctaH: 60, noteFont: 14, cardFont: 14, lineFont: 15, lineLH: 22, toastFont: 14 },
   small: { W: 320, H: 568, kind: 'phone', box: [205, 196, 0.576], ctaH: 52, noteFont: 13, cardFont: 13, lineFont: 13, lineLH: 18, toastFont: 13 },
   landscape: { W: 844, H: 390, kind: 'phone', box: [322, 306, 0.9], ctaH: 52, noteFont: 13, cardFont: 13, lineFont: 13, lineLH: 18, toastFont: 13 },
+  // Smallest tablet (600 x 960): the tablet column at x1.2, the largest face that fits 960 tall above the dock.
+  tabletSmall: { W: 600, H: 960, kind: 'tablet', box: [430, 408, 1.2], ctaH: 60, noteFont: 14, cardFont: 14, lineFont: 15, lineLH: 22, toastFont: 14 },
   tablet: { W: 820, H: 1180, kind: 'tablet', box: [483, 459, 1.35], ctaH: 60, noteFont: 14, cardFont: 14, lineFont: 15, lineLH: 22, toastFont: 14 },
   tabletLandscape: { W: 1180, H: 820, kind: 'desktop', box: [537, 510, 1.5], ctaH: 60, noteFont: 15, cardFont: 15, lineFont: 16, lineLH: 24, toastFont: 15 },
+  // Smallest desktop (1024 x 768): 864 inside the 80 gutters = face 412 + gap 48 + right column 404 (>= 400).
+  desktopSmall: { W: 1024, H: 768, kind: 'desktop', box: [412, 391, 1.15], ctaH: 60, noteFont: 14, cardFont: 14, lineFont: 15, lineLH: 22, toastFont: 14 },
   desktop: { W: 1280, H: 800, kind: 'desktop', box: [555, 527, 1.55], ctaH: 60, noteFont: 14, cardFont: 14, lineFont: 15, lineLH: 22, toastFont: 14 },
   xl: { W: 1920, H: 1080, kind: 'xl', box: [680, 646, 1.9], ctaH: 60, noteFont: 16, cardFont: 16, lineFont: 18, lineLH: 28, toastFont: 16 }
 };
+
+// AT-LANG v1 (language switcher; PRIMITIVES.md P-LANG). Keep identical across files.
+const AT_LOCALES = [
+  ['en', '', 'en', 'English', true], ['es', '/es', 'es', 'Español', false], ['pt-br', '/pt-br', 'pt-BR', 'Português (Brasil)', false],
+  ['de', '/de', 'de', 'Deutsch', false], ['fr', '/fr', 'fr', 'Français', false], ['ja', '/ja', 'ja', '日本語', false],
+  ['zh', '/zh', 'zh-Hans', '简体中文', false], ['hi', '/hi', 'hi', 'हिन्दी', false]
+];
+const AT_LANG_COPY = { title: 'Language', current: 'Current', review: 'Translation in review', close: 'Close' };
+// o = { layout, t, lamp, open, toggle, close, cur: 'en', path: '/', variant: 'footer' | 'settings' }
+function atLang(o) {
+  const t = o.t, cur = o.cur || 'en', path = o.path || '/', settings = o.variant === 'settings', open = !!o.open;
+  const id = settings ? 'at-lang-set' : 'at-lang', sheet = !settings && o.layout === 'phone';
+  const a = (hex, x) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + x + ')'; };
+  const here = AT_LOCALES.find((l) => l[0] === cur) || AT_LOCALES[0];
+  const panel = 'box-sizing: border-box; display: flex; flex-direction: column; background: ' + t.surface + '; border: 1px solid ' + t.line + '; box-shadow: 0 24px 64px -24px rgba(0,0,0,.45); ';
+  return {
+    open, sheet: sheet && open, pop: !sheet && !settings, btnId: id + '-btn', listId: id + '-list', headId: id + '-h',
+    label: here[3], aria: AT_LANG_COPY.title + ': ' + here[3], title: AT_LANG_COPY.title, closeLabel: AT_LANG_COPY.close, pageLang: here[2],
+    expanded: open ? 'true' : 'false', chev: open ? 'rotate(180deg)' : 'none', role: sheet ? 'dialog' : 'group', modal: sheet ? 'true' : 'false',
+    wrapStyle: sheet ? 'display: flex' : 'position: relative; display: flex; margin-inline-start: auto',
+    panelStyle: sheet
+      ? panel + 'position: fixed; inset-inline: 0; bottom: 0; z-index: 30; padding: 8px 16px 32px; border-radius: 28px 28px 0 0; border-bottom: 0'
+      : panel + 'position: absolute; inset-inline-end: 0; bottom: calc(100% + 8px); z-index: 30; width: 360px; padding: 4px; border-radius: 16px',
+    toggle: () => {
+      o.toggle();
+      if (!open) setTimeout(() => { try { document.querySelector('#' + id + '-list a[aria-current="true"]').focus(); } catch (e) {} }, 60);
+    },
+    close: () => o.close(),
+    key: (e) => {
+      const k = e && e.key, box = (e && e.currentTarget) || document;
+      if (k === 'Escape' && open) {
+        if (e.preventDefault) e.preventDefault();
+        o.close();
+        try { box.querySelector('button[aria-controls]').focus(); } catch (x) {}
+        return;
+      }
+      const step = { ArrowDown: 1, ArrowUp: -1, Home: 'home', End: 'end' }[k];
+      if (!step || !open) return;
+      let rows = [];
+      try { rows = Array.from(box.querySelectorAll('a[hreflang]')); } catch (x) {}
+      if (!rows.length) return;
+      if (e.preventDefault) e.preventDefault();
+      const i = rows.indexOf(document.activeElement), n = rows.length;
+      rows[step === 'home' ? 0 : step === 'end' ? n - 1 : i < 0 ? (step > 0 ? 0 : n - 1) : (i + step + n) % n].focus();
+    },
+    rows: AT_LOCALES.map(([lid, prefix, lang, name, reviewed]) => {
+      const on = lid === cur;
+      return {
+        href: prefix + path, lang, hreflang: lang, name, cur: on ? 'true' : 'false',
+        border: on ? a(o.lamp, 0.45) : 'transparent', bg: on ? a(o.lamp, 0.14) : 'transparent', weight: on ? 600 : 500,
+        ring: on ? o.lamp : t.inputBorder, dot: on ? o.lamp : 'transparent',
+        note: on ? AT_LANG_COPY.current : reviewed ? '' : AT_LANG_COPY.review, noteInk: on ? t.ink2 : t.muted
+      };
+    })
+  };
+}
 
 class Component extends DCLogic {
   constructor(props) {
@@ -806,7 +879,7 @@ class Component extends DCLogic {
     this.stars1 = this.starList(7, 26);
     this.stars2 = this.starList(91, 18);
     this.tt = {};
-    this.state = Object.assign({}, DEFAULTS, { lampId: null, face: props.face ?? 'ring', theme: props.theme ?? 'auto', panel: props.panel ?? 'none', sheet: props.sheet ?? 'none', sysDark: this.sys(), now: Date.now(), custom: 45, untilAt: 0, receiptSeen: false }, this.seed(props.status ?? 'ready', props.edge ?? 'none'));
+    this.state = Object.assign({}, DEFAULTS, { lampId: null, face: props.face ?? 'ring', theme: props.theme ?? 'auto', panel: props.panel ?? 'none', sheet: props.sheet ?? 'none', sysDark: this.sys(), now: Date.now(), custom: 45, untilAt: 0, receiptSeen: false, langOpen: props.language === 'open' }, this.seed(props.status ?? 'ready', props.edge ?? 'none'));
   }
   sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
   // Seed a lock state, then layer an edge case (props.edge) on top of it. Seeded states never play
@@ -1162,7 +1235,7 @@ class Component extends DCLogic {
     const s = this.state;
     const layout = GEO[this.props.layout] ? this.props.layout : 'phone';
     const g = GEO[layout];
-    const phone = layout === 'phone', small = layout === 'small', tab = layout === 'tablet', desk = layout === 'desktop';
+    const phone = layout === 'phone', small = layout === 'small', tab = layout === 'tablet' || layout === 'tabletSmall', desk = layout === 'desktop' || layout === 'desktopSmall';
     const land = layout === 'landscape', tabL = layout === 'tabletLandscape', xl = layout === 'xl';
     const handheld = phone || small; // bottom sheet, grabber, stats link inside settings
     const side = desk || tabL || xl; // two columns with the site nav
@@ -1355,7 +1428,11 @@ class Component extends DCLogic {
     const why = !!s.why && !isMini;
     const smallCompact = ask || mode === 'blocked' || mode === 'needtap' || mode === 'fallback' || lowBatt || deferred || hasToast;
     const phoneCompact = phone && (panel !== 'none' || deferred || hasToast || mode === 'blocked');
-    const box = small && smallCompact ? [179, 170, 0.5] : phoneCompact ? [308, 292, 0.86] : g.box;
+    // 600 x 960 has no room to spare: an open panel, the deferred line or the time's-up card take the face to x1, a toast
+    // or the "that is tomorrow" question to x0.9 (the landscape box), so the dock keeps its 40 px below the actions.
+    const tabSmTight = layout === 'tabletSmall' && (hasToast || untilPast);
+    const tabSmCompact = layout === 'tabletSmall' && (panel !== 'none' || deferred || ask);
+    const box = small && smallCompact ? [179, 170, 0.5] : phoneCompact ? [308, 292, 0.86] : tabSmTight ? [322, 306, 0.9] : tabSmCompact ? [358, 340, 1] : g.box;
     const sc = box[2];
     const noteHidden = (land && panel !== 'none') || (small && (panel === 'until' || hasToast)) || (phone && untilPast);
     const px = (n) => n + 'px';
@@ -1378,8 +1455,10 @@ class Component extends DCLogic {
       phone: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto ' + box[1] + 'px auto 1fr auto; grid-template-areas: "tabs" "pill" "face" "note" "toast" "dock"; row-gap: 12px; padding: 12px 16px 20px',
       small: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto ' + (isMini ? 'auto' : box[1] + 'px') + ' auto 1fr auto; grid-template-areas: "pill" "face" "note" "toast" "dock"; row-gap: 8px; padding: 8px 16px 20px',
       tablet: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 520px); justify-content: center; grid-template-rows: auto auto ' + box[1] + 'px auto 1fr auto; grid-template-areas: "tabs" "pill" "face" "note" "toast" "dock"; row-gap: 20px; padding: 24px 32px 48px',
+      tabletSmall: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 520px); justify-content: center; grid-template-rows: auto auto ' + box[1] + 'px auto 1fr auto; grid-template-areas: "tabs" "pill" "face" "note" "toast" "dock"; row-gap: 20px; padding: 24px 32px 40px',
       desktop: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: 620px minmax(0, 1fr); grid-template-rows: 1fr auto auto auto auto 1fr; grid-template-areas: "face ." "face pill" "face note" "face dock" "face tabs" "face toast"; column-gap: 64px; row-gap: 20px; padding: 8px 80px 40px',
       landscape: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: 322px auto minmax(0, 1fr); grid-template-rows: auto auto 1fr auto; grid-template-areas: "face pill tabs" "face note note" "face toast toast" "face dock dock"; column-gap: 20px; row-gap: 8px; padding: 0 16px 20px',
+      desktopSmall: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: 412px minmax(0, 1fr); grid-template-rows: 1fr auto auto auto auto 1fr; grid-template-areas: "face ." "face pill" "face note" "face dock" "face tabs" "face toast"; column-gap: 48px; row-gap: 20px; padding: 8px 80px 40px',
       tabletLandscape: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: 537px minmax(0, 1fr); grid-template-rows: 1fr auto auto auto auto 1fr; grid-template-areas: "face ." "face pill" "face note" "face dock" "face tabs" "face toast"; column-gap: 48px; row-gap: 24px; padding: 8px 80px 32px',
       xl: 'position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: 680px 456px; justify-content: center; grid-template-rows: 1fr auto auto auto auto 1fr; grid-template-areas: "face ." "face pill" "face note" "face dock" "face tabs" "face toast"; column-gap: 64px; row-gap: 24px; padding: 8px 120px 64px'
     };
@@ -1416,7 +1495,7 @@ class Component extends DCLogic {
       whyText: !small && !land, whyIcon: small, whyInNote: land, whyOpen: s.why ? 'true' : 'false',
       toggleWhy: () => this.setState({ why: !this.state.why }),
       boxW: px(box[0]), boxH: px(box[1]), scale: sc, isMini, showDial, showWhy: why, showReceipt,
-      whyPad: sc >= 1.3 ? '24px' : small ? '12px' : '20px', whyChecks: this.checks(mode, s, lamp, amber, red, t), rc,
+      whyPad: sc >= 1.3 || tab || desk ? '24px' : small ? '12px' : '20px', whyChecks: this.checks(mode, s, lamp, amber, red, t), rc,
       t, tone, faceColor, lamp, lampInk, lampText, warn: amber,
       lampSoft: this.rgba(lamp, 0.14), lampLine: this.rgba(lamp, 0.45), lampGlow: this.rgba(lamp, 0.55), lampFaint: this.rgba(lamp, 0.08),
       toneSoft: this.rgba(tone, 0.12), toneLine: this.rgba(tone, 0.38), toneGlow: live || ask ? this.rgba(tone, 0.8) : 'transparent', toneFaint: this.rgba(faceColor, dark ? 0.16 : 0.12),
@@ -1456,7 +1535,7 @@ class Component extends DCLogic {
       wave1: this.wave1, wave2: this.wave2, tideY: tideTop + 'px', tideClip: (tideTop + 4) + 'px', tideDeep: this.rgba(faceColor, tideDeepA), tideInkWater,
       bubbles: [{ x: '40px', y: '300px', s: '8px', d: '0s' }, { x: '112px', y: '320px', s: '5px', d: '-2.5s' }, { x: '196px', y: '310px', s: '10px', d: '-5s' }, { x: '262px', y: '325px', s: '6px', d: '-1.2s' }, { x: '318px', y: '305px', s: '7px', d: '-6.8s' }],
       isBlocked: mode === 'blocked', causes: blockedCauses, causeKnown: !!CAUSE[s.cause], causeUnknown: !CAUSE[s.cause], causeLine, isLowBatt: lowBatt,
-      showNote: mode !== 'blocked' && !lowBatt && !noteHidden, note, noteFont: px(g.noteFont), cardFont: px(g.cardFont), cardLH: g.cardFont <= 13 ? '18px' : '20px', cardPad: sc >= 1.3 || tab ? '24px' : '20px',
+      showNote: mode !== 'blocked' && !lowBatt && !noteHidden, note, noteFont: px(g.noteFont), cardFont: px(g.cardFont), cardLH: g.cardFont <= 13 ? '18px' : '20px', cardPad: sc >= 1.3 || tab || desk ? '24px' : '20px',
       textAlign: side || land ? 'start' : 'center', noteJustify: side || land ? 'flex-start' : 'center',
       dockSetup: setup && !lowBatt, dockBatt: lowBatt, dockRun: live || mode === 'paused', dockBlocked: mode === 'blocked', dockTap: mode === 'needtap', dockAsk: ask,
       ctaH: px(g.ctaH),
@@ -1478,7 +1557,7 @@ class Component extends DCLogic {
       pastQ: this.hm(s.untilAt) + ' is tomorrow. Keep awake until then?',
       pastIn: 'That is ' + this.mins(Math.max(1, Math.round((s.untilAt - s.now) / 60000))) + ' from now.',
       changeTime: () => this.setState({ untilPast: false, untilAt: this.untilSlots()[0] }),
-      openUntil, openCustom,
+      openUntil, openCustom, untilEnd: s.untilPast ? '16px' : '20px',
       closePanel: () => this.setState({ panel: 'none' }),
       less: () => apply({ custom: Math.max(5, s.custom - cStep(s.custom, false)), preset: 'custom' }),
       more: () => apply({ custom: Math.min(CUSTOM_MAX, s.custom + cStep(s.custom, true)), preset: 'custom' }),
@@ -1492,8 +1571,11 @@ class Component extends DCLogic {
       askLeft, askP: (askLeft / ASK_SECS).toFixed(4), askAria: 'Stops in ' + askLeft + ' seconds',
       askOpts: [[900, '+15 min', 'Add 15 minutes'], [1800, '+30 min', 'Add 30 minutes'], [3600, '+1 h', 'Add 1 hour']].map(([sec, label, aria]) => ({ label, aria, pick: extendTo(sec) })),
       askStop: () => this.finish(),
-      askStopInline: land, askStopRow: !land, askCols: land ? 'repeat(4, minmax(0, 1fr))' : 'repeat(3, minmax(0, 1fr))', askPad: land ? '12px' : '16px',
+      askStopInline: land, askStopRow: !land, askCols: land ? 'repeat(4, minmax(0, 1fr))' : 'repeat(3, minmax(0, 1fr))',
+      // 320 x 568: 44 px buttons and 8 px gaps keep the card 16 px above the board edge.
+      askBtnH: small ? '44px' : '52px', askGap: small ? '8px' : '12px', askPad: land ? '16px 16px 20px' : '16px 16px 20px',
       toasts, toastFont: px(g.toastFont), toastAlign: side ? 'start' : 'end',
+      lang: atLang({ layout, t, lamp, variant: 'settings', open: s.langOpen, toggle: () => this.setState({ langOpen: !this.state.langOpen }), close: () => this.setState({ langOpen: false }) }),
       sheetOpen: sheet !== 'none', sheetSettings: sheet === 'settings', sheetStats: sheet === 'stats',
       settingsOpen: sheet === 'settings', statsOpen: sheet === 'stats',
       settingsBtnBg: sheet === 'settings' ? t.raised : 'transparent', statsBtnBg: sheet === 'stats' ? t.raised : 'transparent',

@@ -36,6 +36,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .at-pulse{animation:at-tw 3.4s ease-in-out infinite}
 @keyframes at-tw{0%,100%{opacity:.25}50%{opacity:1}}
 @keyframes at-glint{0%,100%{transform:scaleX(.6);opacity:.35}50%{transform:scaleX(1);opacity:.7}}
+.at-chev{transition:transform .6s var(--ease)}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </helmet>
@@ -60,12 +61,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   <main style="position: relative; flex-grow: 1; display: flex; flex-direction: column; gap: {{secGap}}; padding: {{mainPad}}">
 
     <div class="at-in" style="display: flex; flex-direction: column; gap: 20px; max-width: 800px">
-      <span style="{{ty.kicker}}; color: {{t.muted}}">Open source · MIT · v1.0.0</span>
-      <h1 style="margin: 0; {{ty.h1}}; text-wrap: balance"><code style="{{mono}}; font-weight: 400; letter-spacing: -0.04em">@awaketab/wake</code>: a wake lock that says when it works</h1>
+      <span style="--dc: 0; {{ty.kicker}}; color: {{t.muted}};">Open source · MIT · v1.0.0</span>
+      <h1 style="margin: 0; {{ty.h1}}; text-wrap: balance"><code style="--dc: 0; {{mono}}; font-weight: 400; letter-spacing: -0.04em">@awaketab/wake</code>: a wake lock that says when it works</h1>
       <p style="margin: 0; {{ty.lead}}; color: {{t.ink2}}; text-wrap: pretty"><code style="{{code}}">@awaketab/wake</code> keeps a web page's screen from dimming and tells you the truth about it: seven states, a reason and an advice code on every change, and <code style="{{code}}">held</code> only while the browser really holds the lock. Zero dependencies, ≤ 3.4 KB gzipped with the fallback videos inlined, MIT. The maintained replacement for NoSleep.js.</p>
       <div style="display: flex; align-items: center; gap: 12px; max-width: 520px; padding: 4px 4px 4px 16px; border-radius: 16px; background: {{p.well}}; border: 1px solid {{t.line}}">
         <code style="flex-grow: 1; min-width: 0; padding-block: 12px; {{mono}}; font-size: 15px; line-height: 22px; color: {{t.ink2}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"><span style="color: {{t.muted}}">$ </span>npm install @awaketab/wake</code>
-        <span style="{{tagSoon}}; margin-inline-end: 12px">npm package coming soon</span>
+        <span style="--dc: 0; {{tagSoon}}; margin-inline-end: 12px">npm package coming soon</span>
       </div>
     </div>
 
@@ -78,7 +79,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
           <p style="margin: 0; font-size: 14px; line-height: 20px; color: {{t.muted}}">Running <code style="{{code}}">awaketab-wake.iife.js</code> v1.0.0, the build that will be published to npm.</p>
         </div>
         <div style="display: flex; flex-direction: column; gap: 8px; width: {{selW}}">
-          <label for="lib-scenario" style="{{ty.small}}; font-weight: 600; color: {{t.ink2}}">Scenario</label>
+          <label for="lib-scenario" style="--dc: 0; {{ty.small}}; font-weight: 600; color: {{t.ink2}};">Scenario</label>
           <div style="position: relative">
             <select id="lib-scenario" value="{{scen}}" onChange="{{pickScenario}}" style="width: 100%; height: 48px; box-sizing: border-box; padding: 0 48px 0 16px; border-radius: 8px; border: 1px solid {{t.inputLine}}; background: {{t.sunken}}; color: {{t.ink}}; font-size: 15px; appearance: none; -webkit-appearance: none">
               <option value="real">This browser (real API)</option>
@@ -94,9 +95,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <div style="grid-area: ctrl; position: relative; display: flex; flex-direction: column; gap: 20px">
         <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px">
           <output aria-live="polite" class="at-slide" style="{{pill.style}}"><svg width="{{pill.g}}" height="{{pill.g}}" viewBox="0 0 12 12" aria-hidden="true" style="{{pill.gStyle}}"><path d="{{pill.d}}" fill="{{pill.fill}}" stroke="{{pill.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pill.label}}</output>
-          <code style="{{mono}}; font-size: 15px; line-height: 22px; color: {{t.ink2}}">state: <span style="color: {{t.ink}}">{{cur.id}}</span></code>
+          <code style="--dc: 0; {{mono}}; font-size: 15px; line-height: 22px; color: {{t.ink2}};">state: <span style="color: {{t.ink}}">{{cur.id}}</span></code>
           <sc-if value="{{hasAdvice}}" hint-placeholder-val="{{false}}">
-            <span class="at-in" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; box-sizing: border-box; border-radius: 8px; background: {{p.codeBg}}; border: 1px solid {{t.line}}; {{ty.small}}; color: {{t.ink2}}">Advice:<code style="{{mono}}; color: {{t.ink}}">{{advice}}</code></span>
+            <span class="at-in" style="display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; box-sizing: border-box; border-radius: 8px; background: {{p.codeBg}}; border: 1px solid {{t.line}}; {{ty.small}}; color: {{t.ink2}}">Advice:<code style="--dc: 0; {{mono}}; color: {{t.ink}};">{{advice}}</code></span>
           </sc-if>
         </div>
         <div style="display: grid; grid-template-columns: {{btnCols}}; gap: 12px">
@@ -161,15 +162,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             <button role="tab" id="{{b.tid}}" aria-selected="{{b.sel}}" aria-controls="lib-code" onClick="{{b.pick}}" style="{{b.style}}">{{b.label}}</button>
           </sc-for>
         </div>
-        <div id="lib-code" role="tabpanel" aria-labelledby="{{tabId}}" style="border-radius: 16px; background: {{p.well}}; border: 1px solid {{t.line}}; overflow: hidden">
+        <div id="lib-code" role="tabpanel" aria-labelledby="{{tabId}}" style="min-height: {{codeMin}}; box-sizing: border-box; border-radius: 16px; background: {{p.well}}; border: 1px solid {{t.line}}; overflow: hidden">
           <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 8px 8px 20px; border-bottom: 1px solid {{t.line}}">
-            <code style="{{mono}}; font-size: 13px; line-height: 18px; color: {{t.muted}}">{{fileName}}</code>
+            <code style="--dc: 0; {{mono}}; font-size: 13px; line-height: 18px; color: {{t.muted}};">{{fileName}}</code>
             <div style="display: flex; align-items: center; gap: 8px">
               <span role="status" aria-live="polite" style="font-size: 13px; line-height: 18px; color: {{p.link}}">{{codeCopied}}</span>
               <button onClick="{{copyCode}}" aria-label="{{copyAria}}" style="{{btnQuiet}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"></rect><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"></path></svg>Copy</button>
             </div>
           </div>
-          <pre tabindex="0" style="margin: 0; padding: 20px 20px 20px 12px; overflow-x: auto; {{mono}}; font-size: {{codeFont}}; line-height: 24px; color: {{t.ink}}"><code class="at-in" style="display: block; min-width: max-content"><sc-for list="{{lines}}" as="ln" hint-placeholder-count="8"><span style="display: block; min-height: 24px"><span aria-hidden="true" style="display: inline-block; width: 32px; padding-inline-end: 12px; box-sizing: border-box; text-align: end; color: {{lineNo}}; user-select: none">{{ln.n}}</span><sc-for list="{{ln.segs}}" as="sg" hint-placeholder-count="3"><span style="color: {{sg.c}}">{{sg.x}}</span></sc-for></span></sc-for></code></pre>
+          <pre tabindex="0" style="margin: 0; padding: 20px 20px 20px 12px; overflow-x: auto; {{mono}}; font-size: {{codeFont}}; line-height: 24px; color: {{t.ink}}"><code class="at-in" style="display: block"><sc-for list="{{lines}}" as="ln" hint-placeholder-count="8"><span style="display: grid; grid-template-columns: 32px minmax(0, 1fr); min-height: 24px"><span aria-hidden="true" style="padding-inline-end: 12px; box-sizing: border-box; text-align: end; color: {{lineNo}}; user-select: none">{{ln.n}}</span><span style="min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere"><sc-for list="{{ln.segs}}" as="sg" hint-placeholder-count="3"><span style="color: {{sg.c}}">{{sg.x}}</span></sc-for></span></span></sc-for></code></pre>
         </div>
       </div>
     </section>
@@ -199,9 +200,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         <dl style="margin: 0; display: flex; flex-direction: column; border-radius: 16px; border: 1px solid {{t.line}}; background: {{t.surface}}; overflow: hidden">
           <sc-for list="{{cmp}}" as="r" hint-placeholder-count="8">
             <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px 20px; border-top: {{r.border}}">
-              <dt style="{{ty.kicker}}; color: {{t.muted}}">{{r.label}}</dt>
+              <dt style="--dc: 0; {{ty.kicker}}; color: {{t.muted}};">{{r.label}}</dt>
               <dd style="margin: 0; display: grid; grid-template-columns: 88px minmax(0, 1fr); column-gap: 12px; {{ty.ui}}; color: {{t.ink}}"><code style="display: flex; align-items: center; gap: 8px; {{mono}}; font-size: 13px; color: {{t.ink2}}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: {{p.lamp}}"></span>wake</code><span><sc-for list="{{r.a}}" as="s" hint-placeholder-count="1"><sc-if value="{{s.isText}}" hint-placeholder-val="{{true}}"><span data-kind="{{s.kind}}" style="{{s.style}}">{{s.text}}</span></sc-if></sc-for></span></dd>
-              <dd style="margin: 0; display: grid; grid-template-columns: 88px minmax(0, 1fr); column-gap: 12px; {{ty.ui}}; color: {{t.ink2}}"><code style="{{mono}}; font-size: 13px; color: {{t.muted}}">NoSleep.js</code><span><sc-for list="{{r.b}}" as="s" hint-placeholder-count="1"><sc-if value="{{s.isText}}" hint-placeholder-val="{{true}}"><span data-kind="{{s.kind}}" style="{{s.style}}">{{s.text}}</span></sc-if></sc-for></span></dd>
+              <dd style="margin: 0; display: grid; grid-template-columns: 88px minmax(0, 1fr); column-gap: 12px; {{ty.ui}}; color: {{t.ink2}}"><code style="--dc: 0; {{mono}}; font-size: 13px; color: {{t.muted}};">NoSleep.js</code><span><sc-for list="{{r.b}}" as="s" hint-placeholder-count="1"><sc-if value="{{s.isText}}" hint-placeholder-val="{{true}}"><span data-kind="{{s.kind}}" style="{{s.style}}">{{s.text}}</span></sc-if></sc-for></span></dd>
             </div>
           </sc-for>
         </dl>
@@ -211,7 +212,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     <div role="note" style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 12px; padding: {{notePad}}; box-sizing: border-box; border-radius: 16px; background: {{warnSoft}}; border: 1px solid {{warnLine}}; max-width: 820px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{p.warn}}" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="margin-top: 4px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
       <div style="display: flex; flex-direction: column; gap: 8px">
-        <span style="{{ty.kicker}}; color: {{t.muted}}">What a wake lock cannot do</span>
+        <span style="--dc: 0; {{ty.kicker}}; color: {{t.muted}};">What a wake lock cannot do</span>
         <p style="margin: 0; {{ty.body}}; color: {{t.ink}}; text-wrap: pretty">A wake lock keeps the display on while the page is visible. Nothing more. It does not keep a hidden tab awake, does not stop a laptop sleeping when the lid closes, and does not keep Teams or Slack "Available" (presence follows input, and this library never fakes input).</p>
       </div>
     </div>
@@ -228,10 +229,37 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     <nav aria-label="Footer" style="{{ftr.nav}}">
       <sc-for list="{{ftr.links}}" as="f" hint-placeholder-count="5"><a href="{{f.href}}" style="{{ftr.link}}">{{f.label}}</a></sc-for>
     </nav>
+    <div onKeyDown="{{lang.key}}" style="{{lang.wrapStyle}}">
+      <button type="button" id="{{lang.btnId}}" aria-expanded="{{lang.expanded}}" aria-controls="{{lang.listId}}" aria-label="{{lang.aria}}" onClick="{{lang.toggle}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"></path></svg>{{lang.label}}<svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: {{lang.chev}}"><path d="M6 9l6 6 6-6"></path></svg></button>
+      <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+        <div aria-hidden="true" onClick="{{lang.close}}" style="position: fixed; inset: 0; z-index: 29; background: rgba(4,7,12,.55)"></div>
+      </sc-if>
+      <sc-if value="{{lang.open}}" hint-placeholder-val="{{false}}">
+        <div id="{{lang.listId}}" role="{{lang.role}}" aria-modal="{{lang.modal}}" aria-labelledby="{{lang.headId}}" class="at-in" style="{{lang.panelStyle}}">
+          <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+            <div aria-hidden="true" style="width: 36px; height: 4px; margin: 0 auto 8px; border-radius: 999px; background: {{t.line2}}"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 8px 4px">
+              <h2 id="{{lang.headId}}" style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; color: {{t.ink}}">{{lang.title}}</h2>
+              <button type="button" aria-label="{{lang.closeLabel}}" onClick="{{lang.close}}" style="width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+            </div>
+          </sc-if>
+          <sc-if value="{{lang.pop}}" hint-placeholder-val="{{true}}">
+            <p id="{{lang.headId}}" style="margin: 0; padding: 8px 12px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{lang.title}}</p>
+          </sc-if>
+          <ul role="list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px">
+            <sc-for list="{{lang.rows}}" as="r" hint-placeholder-count="8">
+              <li style="display: flex">
+                <a href="{{r.href}}" lang="{{r.lang}}" hreflang="{{r.hreflang}}" aria-current="{{r.cur}}" style="flex: 1; min-width: 0; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{t.ink}}; text-decoration: none"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="{{r.ring}}" stroke-width="1.8"></circle><circle cx="10" cy="10" r="4" fill="{{r.dot}}"></circle></svg><span style="font-size: 15px; line-height: 22px; font-weight: {{r.weight}}">{{r.name}}</span><span lang="{{lang.pageLang}}" style="font-size: 13px; line-height: 18px; color: {{r.noteInk}}; text-align: end">{{r.note}}</span></a>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-if>
+    </div>
   </footer>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"desktop"},"$preview":{"width":1280,"height":3104}}'>
+<script type="text/x-dc" data-dc-script data-props='{"language":{"editor":"enum","options":["closed","open"],"default":"closed"},"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"desktop"},"$preview":{"width":1280,"height":3104}}'>
 /* ── AwakeTab primitives v2 · fix batch 2b · DESIGN.md §2, §3, §11. Byte-identical in every file of the batch; edit prims/prims.js and rebuild, never one copy. ── */
 const AT_TOK = {
   dark: { ground: '#0A0E16', lift: '#13203A', surface: '#111826', raised: '#26324B', sunken: '#0D131F', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', warn: '#F2B34C', bad: '#FF7A7A', lamp: '#5BE0E8', onLamp: '#04232A', stopBg: '#26324B', stopInk: '#EAF0F7', stopLine: '#33405C', horizonInk: '#F6F2EA', violet: '#A594FF', inputLine: '#5A6781', groundEnd: '#0A0E16', elev: 'none' },
@@ -380,6 +408,65 @@ function atFooter(t, layout) {
 }
 /* ── end primitives ── */
 
+// AT-LANG v1 (language switcher; PRIMITIVES.md P-LANG). Keep identical across files.
+const AT_LOCALES = [
+  ['en', '', 'en', 'English', true], ['es', '/es', 'es', 'Español', false], ['pt-br', '/pt-br', 'pt-BR', 'Português (Brasil)', false],
+  ['de', '/de', 'de', 'Deutsch', false], ['fr', '/fr', 'fr', 'Français', false], ['ja', '/ja', 'ja', '日本語', false],
+  ['zh', '/zh', 'zh-Hans', '简体中文', false], ['hi', '/hi', 'hi', 'हिन्दी', false]
+];
+const AT_LANG_COPY = { title: 'Language', current: 'Current', review: 'Translation in review', close: 'Close' };
+// o = { layout, t, lamp, open, toggle, close, cur: 'en', path: '/', variant: 'footer' | 'settings' }
+function atLang(o) {
+  const t = o.t, cur = o.cur || 'en', path = o.path || '/', settings = o.variant === 'settings', open = !!o.open;
+  const id = settings ? 'at-lang-set' : 'at-lang', sheet = !settings && o.layout === 'phone';
+  const a = (hex, x) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + x + ')'; };
+  const here = AT_LOCALES.find((l) => l[0] === cur) || AT_LOCALES[0];
+  const panel = 'box-sizing: border-box; display: flex; flex-direction: column; background: ' + t.surface + '; border: 1px solid ' + t.line + '; box-shadow: 0 24px 64px -24px rgba(0,0,0,.45); ';
+  return {
+    open, sheet: sheet && open, pop: !sheet && !settings, btnId: id + '-btn', listId: id + '-list', headId: id + '-h',
+    label: here[3], aria: AT_LANG_COPY.title + ': ' + here[3], title: AT_LANG_COPY.title, closeLabel: AT_LANG_COPY.close, pageLang: here[2],
+    expanded: open ? 'true' : 'false', chev: open ? 'rotate(180deg)' : 'none', role: sheet ? 'dialog' : 'group', modal: sheet ? 'true' : 'false',
+    wrapStyle: sheet ? 'display: flex' : 'position: relative; display: flex; margin-inline-start: auto',
+    panelStyle: sheet
+      ? panel + 'position: fixed; inset-inline: 0; bottom: 0; z-index: 30; padding: 8px 16px 32px; border-radius: 28px 28px 0 0; border-bottom: 0'
+      : panel + 'position: absolute; inset-inline-end: 0; bottom: calc(100% + 8px); z-index: 30; width: 360px; padding: 4px; border-radius: 16px',
+    toggle: () => {
+      o.toggle();
+      if (!open) setTimeout(() => { try { document.querySelector('#' + id + '-list a[aria-current="true"]').focus(); } catch (e) {} }, 60);
+    },
+    close: () => o.close(),
+    key: (e) => {
+      const k = e && e.key, box = (e && e.currentTarget) || document;
+      if (k === 'Escape' && open) {
+        if (e.preventDefault) e.preventDefault();
+        o.close();
+        try { box.querySelector('button[aria-controls]').focus(); } catch (x) {}
+        return;
+      }
+      const step = { ArrowDown: 1, ArrowUp: -1, Home: 'home', End: 'end' }[k];
+      if (!step || !open) return;
+      let rows = [];
+      try { rows = Array.from(box.querySelectorAll('a[hreflang]')); } catch (x) {}
+      if (!rows.length) return;
+      if (e.preventDefault) e.preventDefault();
+      const i = rows.indexOf(document.activeElement), n = rows.length;
+      rows[step === 'home' ? 0 : step === 'end' ? n - 1 : i < 0 ? (step > 0 ? 0 : n - 1) : (i + step + n) % n].focus();
+    },
+    rows: AT_LOCALES.map(([lid, prefix, lang, name, reviewed]) => {
+      const on = lid === cur;
+      return {
+        href: prefix + path, lang, hreflang: lang, name, cur: on ? 'true' : 'false',
+        border: on ? a(o.lamp, 0.45) : 'transparent', bg: on ? a(o.lamp, 0.14) : 'transparent', weight: on ? 600 : 500,
+        ring: on ? o.lamp : t.inputBorder, dot: on ? o.lamp : 'transparent',
+        note: on ? AT_LANG_COPY.current : reviewed ? '' : AT_LANG_COPY.review, noteInk: on ? t.ink2 : t.muted
+      };
+    })
+  };
+}
+// P-LANG: this page has no translations yet, so every other locale links to its home and drops hreflang (PRIMITIVES.md P-LANG, docs/07 §2).
+function atLangHome(v) { v.rows.forEach((r, i) => { if (i) { r.href = r.href.replace(/^(\/[a-z-]+)\/.+$/, '$1/'); r.hreflang = ''; } }); return v; }
+const LANG_PATH = '/library';
+
 // Page shell on top of the primitives: t (theme tokens), p (page roles), ty (type scale per layout), hdr, ftr.
 function pageRoles(t) {
   return {
@@ -446,6 +533,7 @@ function shell(c, sizes, current, def) {
     ty: Object.assign({}, AT_TYPE, { h1: phone ? AT_TYPE.h1Phone : AT_TYPE.h1, h2: phone ? AT_TYPE.h2Phone : AT_TYPE.h2, price: phone ? AT_TYPE.pricePhone : AT_TYPE.price }),
     gut: g + 'px', secGap: AT_SECTION[layout] + 'px', mono: AT_MONO, digitFont: AT_DIGITS,
     hdr: atHeader(c, t, layout, current, t.muted), ftr: atFooter(t, layout),
+    lang: atLangHome(atLang({ layout, t: Object.assign({}, t, { inputBorder: t.inputLine }), lamp: t.lamp, path: typeof LANG_PATH === 'function' ? LANG_PATH(c) : LANG_PATH, open: s.langOpen, toggle: () => c.setState({ langOpen: !c.state.langOpen }), close: () => c.setState({ langOpen: false }) })),
     card: atCard(t, phone), tag: atTag(t), code: atCode(t),
     setLight: () => c.setState({ theme: 'light' }), setDark: () => c.setState({ theme: 'dark' }), setAuto: () => c.setState({ theme: 'auto' }),
     btnPrimary: atBtn('primary', t), btnStop: atBtn('stop', t), btnMedium: atBtn('medium', t), btnSmall: atBtn('small', t), btnSmallLamp: atBtn('smallLamp', t), btnQuiet: atBtn('quiet', t)
@@ -459,7 +547,7 @@ function seg(options, current, onPick, t, opts) {
   return Object.assign(b, { n: options.length, x: i * 100 + '%' });
 }
 
-const SIZES = { phone: [390, 4228], tablet: [820, 3408], desktop: [1280, 3104] };
+const SIZES = { phone: [390, 4470], tablet: [820, 3483], desktop: [1280, 3128] };
 const STATES = ['idle', 'requesting', 'held', 'lost', 'denied', 'unsupported', 'fallback'];
 const PILL = { idle: 'Ready', requesting: 'Starting…', held: 'Screen awake', lost: 'Paused — tab hidden', denied: "Blocked — here's the fix", unsupported: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
 const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
@@ -538,7 +626,7 @@ class Component extends DCLogic {
   constructor(props) {
     super(props);
     this.timers = [];
-    this.state = Object.assign({ theme: props.theme ?? 'auto', sysDark: sysDark(), tab: 'esm', codeCopied: false, installCopied: false }, this.fresh('real'));
+    this.state = Object.assign({ theme: props.theme ?? 'auto', langOpen: props.language === 'open', sysDark: sysDark(), tab: 'esm', codeCopied: false, installCopied: false }, this.fresh('real'));
   }
   fresh(scen) { return { scen, lock: 'idle', advice: null, log: [], visited: { idle: true }, last: null }; }
   componentDidMount() {
@@ -559,6 +647,7 @@ class Component extends DCLogic {
   }
   componentDidUpdate(prev) {
     if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme });
+    if (prev.language !== this.props.language) this.setState({ langOpen: this.props.language === 'open' });
   }
   clear() {
     this.timers.forEach(clearTimeout);
@@ -730,6 +819,8 @@ class Component extends DCLogic {
       useCols: isDesk ? 'minmax(0, 300px) minmax(0, 1fr)' : 'minmax(0, 1fr)',
       tabs, tabX: tabSeg.x, tabId: 'lib-tab-' + s.tab, tabNote, fileName,
       lines: this.highlight(code, t, p, dark), lineNo: t.muted, codeFont: isPhone ? '13px' : '14px',
+      // Tallest tab per layout (ESM on phone and tablet, Vue on desktop), so switching tabs never moves or clips the page.
+      codeMin: isPhone ? '511px' : '343px',
       codeCopied: s.codeCopied ? 'Copied' : '', copyAria: 'Copy the ' + TABS[ti][1] + ' example',
       copyCode: () => {
         try { navigator.clipboard.writeText(code); } catch (e) {}

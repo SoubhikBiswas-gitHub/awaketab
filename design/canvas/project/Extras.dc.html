@@ -395,11 +395,11 @@ textarea::placeholder{color:inherit;opacity:.6}
 
   <section aria-label="Notifications" style="position: absolute; z-index: 30; {{toastPos}}; display: flex; flex-direction: column; gap: 8px; pointer-events: none">
     <sc-for list="{{toasts}}" as="ts" hint-placeholder-count="3">
-      <div role="{{ts.role}}" class="at-in" style="pointer-events: auto; animation-delay: {{ts.delay}}; display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 4px 4px 4px 16px; box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{ts.line}}; box-shadow: {{toastShadow}}">
+      <div role="{{ts.role}}" class="at-in" style="pointer-events: auto; animation-delay: {{ts.delay}}; display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 8px 8px 16px; box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{ts.line}}; box-shadow: {{toastShadow}}">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ts.tone}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{ts.icon}}"></path></svg>
-        <p style="margin: 0; flex: 1; min-width: 0; padding: 12px 0; font-size: 14px; line-height: 20px; color: {{t.ink}}; text-wrap: pretty">{{ts.text}}</p>
+        <p style="margin: 0; flex: 1; min-width: 0; padding: 8px 0; font-size: 14px; line-height: 20px; color: {{t.ink}}; text-wrap: pretty">{{ts.text}}</p>
         <sc-if value="{{ts.hasAction}}" hint-placeholder-val="{{false}}">
-          <button onClick="{{ts.act}}" style="height: 44px; padding: 0 16px; flex-shrink: 0; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 14px; line-height: 20px; font-weight: 600; color: {{t.ink}}">{{ts.action}}</button>
+          <button onClick="{{ts.act}}" style="height: 44px; padding: 0 12px; flex-shrink: 0; border-radius: 12px; border: 0; background: transparent; font-size: 14px; line-height: 20px; font-weight: 600; color: {{lampText}}">{{ts.action}}</button>
         </sc-if>
         <button onClick="{{ts.dismiss}}" aria-label="Dismiss" style="width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.muted}}; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
       </div>

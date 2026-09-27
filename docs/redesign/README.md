@@ -37,7 +37,7 @@ AwakeTab is getting a full UI/UX redesign called **"Clear Night" (version D)**. 
 (A file that doesn't exist yet is still being written by its agent.)
 
 ## 4. How the work runs
-- **Design:** the canvas project lives in the session scratchpad (`…/scratchpad/directions/project`). One base `.dc.html` per page takes props `theme`, `layout` and state; small wrapper boards mount it with fixed props. Each agent owns a filename prefix and never edits another's files.
+- **Design:** the canvas project lives in `design/canvas/project` (one file per board; `canvas.json` places them, generated from `sections.json` by `layout.py`) and is published to the canvas artifact. One base `.dc.html` per page takes props `theme`, `layout` and state; small wrapper boards mount it with fixed props. Each agent owns a filename prefix and never edits another's files. Gates before any publish: `tools/final/rtscan.sh` (0 flagged) and `tools/final/rtaudit.sh` (0 violations), both with the canvas's real runtime.
 - **Checks:** every agent runs a node smoke test (every prop combination, 0 unresolved bindings). Audit agents render every board in Playwright and check overflow, 44 px targets, AA contrast, tokens, copy and theme parity.
 - **Process rules:** research first; cite sources; no dark patterns; no invented numbers, reviews or quotes; no pushes until every gate is green (`pnpm test`, `pnpm test:e2e`, `pnpm build && pnpm test:seo`, size gate).
 - **Build phase (after approval):** implement in apps/web (Astro + CSS), apps/extension and the embed. Update docs/05 tokens and docs/00 identifiers in the same change. Fix the content per the research files. Add a changelog fragment.
@@ -54,4 +54,5 @@ AwakeTab is getting a full UI/UX redesign called **"Clear Night" (version D)**. 
 - 27 Sep 2026: Languages/accessibility boards and 46 Growth boards on canvas (264 boards). Fix batch 2 (2a Pro/extension/growth, 2b embed/pages/kiosk/system) started from fix-batch-brief.md.
 - 27 Sep 2026: Owner delegated every open question; all 87 decided (DECISIONS.md "Decided under owner delegation"). Owner: domain and accounts are the last step, after design and build.
 - 27 Sep 2026 (cloud agent): fix batches 1a, 2a, 2b and the 1b follow-up finished (docs/research/fix-batch-*.md); board heights synced; 18 duplicate boards removed (D-R18); primitives merged into design/canvas/PRIMITIVES.md (O-77); final audit done (docs/research/final-audit.md); canvas published (251 boards).
+- 27 Sep 2026 (local): gaps closed on every page, size and theme (300 boards, 62 of 62 status items done). Every board passes the real-runtime scan and the DESIGN.md §11 audit. Responsive contract (D-R22) and token system (D-R23, DESIGN.md §12) written. Canvas published (v49). Next: owner review, then the build.
 - Next: owner reviews the canvas (the one approval gate), then the build phase on redesign/clear-night.

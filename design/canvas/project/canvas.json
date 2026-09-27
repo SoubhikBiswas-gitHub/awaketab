@@ -85,7 +85,7 @@
     },
     "RingLight.dc.html": {
       "x": 0,
-      "y": 1104,
+      "y": 1224,
       "w": 390,
       "h": 844,
       "title": "Light · Ring · awake",
@@ -93,7 +93,7 @@
     },
     "BoldLight.dc.html": {
       "x": 470,
-      "y": 1104,
+      "y": 1224,
       "w": 390,
       "h": 844,
       "title": "Light · Bold · awake",
@@ -101,7 +101,7 @@
     },
     "HorizonLight.dc.html": {
       "x": 940,
-      "y": 1104,
+      "y": 1224,
       "w": 390,
       "h": 844,
       "title": "Light · Horizon · day sky",
@@ -109,7 +109,7 @@
     },
     "TideLight.dc.html": {
       "x": 1410,
-      "y": 1104,
+      "y": 1224,
       "w": 390,
       "h": 844,
       "title": "Light · Tide · awake",
@@ -117,7 +117,7 @@
     },
     "PausedLight.dc.html": {
       "x": 1880,
-      "y": 1104,
+      "y": 1224,
       "w": 390,
       "h": 844,
       "title": "Light · Paused — tab hidden",
@@ -125,7 +125,7 @@
     },
     "BlockedLight.dc.html": {
       "x": 2350,
-      "y": 1104,
+      "y": 1224,
       "w": 390,
       "h": 844,
       "title": "Light · Blocked — here's the fix",
@@ -133,7 +133,7 @@
     },
     "DoneLight.dc.html": {
       "x": 2820,
-      "y": 1104,
+      "y": 1224,
       "w": 390,
       "h": 844,
       "title": "Light · Session complete",
@@ -141,7 +141,7 @@
     },
     "UntilLight.dc.html": {
       "x": 3290,
-      "y": 1104,
+      "y": 1224,
       "w": 390,
       "h": 844,
       "title": "Light · Until a time · inline",
@@ -149,7 +149,7 @@
     },
     "ToolTabletDark.dc.html": {
       "x": 0,
-      "y": 2208,
+      "y": 2448,
       "w": 820,
       "h": 1180,
       "title": "Dark · Tablet · Ring",
@@ -157,7 +157,7 @@
     },
     "ToolTabletLight.dc.html": {
       "x": 900,
-      "y": 2208,
+      "y": 2448,
       "w": 820,
       "h": 1180,
       "title": "Light · Tablet · Ring",
@@ -165,7 +165,7 @@
     },
     "ToolSettingsDark.dc.html": {
       "x": 1800,
-      "y": 2208,
+      "y": 2448,
       "w": 390,
       "h": 844,
       "title": "Dark · Settings + lamp colour",
@@ -173,7 +173,7 @@
     },
     "ToolSettingsLight.dc.html": {
       "x": 2270,
-      "y": 2208,
+      "y": 2448,
       "w": 390,
       "h": 844,
       "title": "Light · Settings + lamp colour",
@@ -181,7 +181,7 @@
     },
     "ToolStats.dc.html": {
       "x": 2740,
-      "y": 2208,
+      "y": 2448,
       "w": 390,
       "h": 844,
       "title": "Dark · Stats (sample data)",
@@ -189,7 +189,7 @@
     },
     "ToolTimesUp.dc.html": {
       "x": 3210,
-      "y": 2208,
+      "y": 2448,
       "w": 390,
       "h": 844,
       "title": "Dark · Time's up",
@@ -197,15 +197,31 @@
     },
     "ToolTimesUpLight.dc.html": {
       "x": 3680,
-      "y": 2208,
+      "y": 2448,
       "w": 390,
       "h": 844,
       "title": "Light · Time's up",
       "is_interactive": true
     },
+    "ToolStatsTablet.dc.html": {
+      "x": 4150,
+      "y": 2448,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Stats · dark",
+      "is_interactive": true
+    },
+    "ToolSettingsTablet.dc.html": {
+      "x": 5050,
+      "y": 2448,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Settings · language list open · light",
+      "is_interactive": true
+    },
     "DeskRingDark.dc.html": {
       "x": 0,
-      "y": 3648,
+      "y": 4008,
       "w": 1280,
       "h": 800,
       "title": "Dark · Desktop · Ring",
@@ -213,7 +229,7 @@
     },
     "DeskHorizonDark.dc.html": {
       "x": 1360,
-      "y": 3648,
+      "y": 4008,
       "w": 1280,
       "h": 800,
       "title": "Dark · Desktop · Horizon",
@@ -221,7 +237,7 @@
     },
     "DeskTideDark.dc.html": {
       "x": 2720,
-      "y": 3648,
+      "y": 4008,
       "w": 1280,
       "h": 800,
       "title": "Dark · Desktop · Tide",
@@ -229,15 +245,23 @@
     },
     "ToolSettingsDesk.dc.html": {
       "x": 4080,
-      "y": 3648,
+      "y": 4008,
       "w": 1280,
       "h": 800,
       "title": "Light · Desktop · Settings side sheet",
       "is_interactive": true
     },
+    "ToolStatsDesk.dc.html": {
+      "x": 5440,
+      "y": 4008,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Stats · light",
+      "is_interactive": true
+    },
     "DeskRingLight.dc.html": {
       "x": 0,
-      "y": 4708,
+      "y": 5188,
       "w": 1280,
       "h": 800,
       "title": "Light · Desktop · Ring",
@@ -245,7 +269,7 @@
     },
     "DeskHorizonLight.dc.html": {
       "x": 1360,
-      "y": 4708,
+      "y": 5188,
       "w": 1280,
       "h": 800,
       "title": "Light · Desktop · Horizon",
@@ -253,7 +277,7 @@
     },
     "DeskTideLight.dc.html": {
       "x": 2720,
-      "y": 4708,
+      "y": 5188,
       "w": 1280,
       "h": 800,
       "title": "Light · Desktop · Tide",
@@ -261,7 +285,7 @@
     },
     "SizeSmallDark.dc.html": {
       "x": 0,
-      "y": 5768,
+      "y": 6368,
       "w": 320,
       "h": 568,
       "title": "Small 320 · dark · awake",
@@ -269,7 +293,7 @@
     },
     "SizeSmallLight.dc.html": {
       "x": 400,
-      "y": 5768,
+      "y": 6368,
       "w": 320,
       "h": 568,
       "title": "Small 320 · light · ready",
@@ -277,7 +301,7 @@
     },
     "SizeLandscape.dc.html": {
       "x": 800,
-      "y": 5768,
+      "y": 6368,
       "w": 844,
       "h": 390,
       "title": "Phone landscape · dark · Bold",
@@ -285,7 +309,7 @@
     },
     "SizeLandscapeLight.dc.html": {
       "x": 1724,
-      "y": 5768,
+      "y": 6368,
       "w": 844,
       "h": 390,
       "title": "Phone landscape · light · Tide",
@@ -293,15 +317,47 @@
     },
     "SizeTabletLandscape.dc.html": {
       "x": 2648,
-      "y": 5768,
+      "y": 6368,
       "w": 1180,
       "h": 820,
       "title": "Tablet landscape · light · Horizon",
       "is_interactive": true
     },
+    "SizeTabletSmallDark.dc.html": {
+      "x": 3908,
+      "y": 6368,
+      "w": 600,
+      "h": 960,
+      "title": "Small tablet 600 · dark · awake · Ring",
+      "is_interactive": true
+    },
+    "SizeTabletSmallLight.dc.html": {
+      "x": 4588,
+      "y": 6368,
+      "w": 600,
+      "h": 960,
+      "title": "Small tablet 600 · light · ready · Tide",
+      "is_interactive": true
+    },
+    "SizeDeskSmallDark.dc.html": {
+      "x": 5268,
+      "y": 6368,
+      "w": 1024,
+      "h": 768,
+      "title": "Small desktop 1024 · dark · awake · Bold",
+      "is_interactive": true
+    },
+    "SizeDeskSmallLight.dc.html": {
+      "x": 0,
+      "y": 7448,
+      "w": 1024,
+      "h": 768,
+      "title": "Small desktop 1024 · light · ready · Horizon",
+      "is_interactive": true
+    },
     "SizeXL.dc.html": {
       "x": 0,
-      "y": 6848,
+      "y": 8596,
       "w": 1920,
       "h": 1080,
       "title": "Large display · dark · Ring",
@@ -309,7 +365,7 @@
     },
     "SizeXLLight.dc.html": {
       "x": 2000,
-      "y": 6848,
+      "y": 8596,
       "w": 1920,
       "h": 1080,
       "title": "Large display · light · Tide",
@@ -317,7 +373,7 @@
     },
     "EdgeLastMinute.dc.html": {
       "x": 0,
-      "y": 8188,
+      "y": 10056,
       "w": 390,
       "h": 844,
       "title": "Final minute · dark",
@@ -325,7 +381,7 @@
     },
     "EdgeMultiDay.dc.html": {
       "x": 470,
-      "y": 8188,
+      "y": 10056,
       "w": 390,
       "h": 844,
       "title": "1 day 2 h session · light",
@@ -333,7 +389,7 @@
     },
     "EdgeUntilPassed.dc.html": {
       "x": 940,
-      "y": 8188,
+      "y": 10056,
       "w": 390,
       "h": 844,
       "title": "Time already passed · dark",
@@ -341,7 +397,7 @@
     },
     "EdgeDeferred.dc.html": {
       "x": 1410,
-      "y": 8188,
+      "y": 10056,
       "w": 390,
       "h": 844,
       "title": "Opened in background · dark",
@@ -349,7 +405,7 @@
     },
     "EdgeOffline.dc.html": {
       "x": 1880,
-      "y": 8188,
+      "y": 10056,
       "w": 390,
       "h": 844,
       "title": "Offline · light",
@@ -357,7 +413,7 @@
     },
     "EdgeLowBattery.dc.html": {
       "x": 2350,
-      "y": 8188,
+      "y": 10056,
       "w": 390,
       "h": 844,
       "title": "Stopped at 15% battery · dark",
@@ -365,7 +421,7 @@
     },
     "EdgeOled.dc.html": {
       "x": 2820,
-      "y": 8188,
+      "y": 10056,
       "w": 390,
       "h": 844,
       "title": "OLED black",
@@ -373,7 +429,7 @@
     },
     "EdgeLongNoLimit.dc.html": {
       "x": 0,
-      "y": 9292,
+      "y": 11280,
       "w": 1280,
       "h": 800,
       "title": "No limit, 27 h · desktop light",
@@ -381,7 +437,7 @@
     },
     "EdgeReturn.dc.html": {
       "x": 1360,
-      "y": 9292,
+      "y": 11280,
       "w": 1280,
       "h": 800,
       "title": "Back from hidden tab · desktop light",
@@ -389,7 +445,7 @@
     },
     "Intl.dc.html": {
       "x": 0,
-      "y": 10352,
+      "y": 12460,
       "w": 390,
       "h": 844,
       "title": "▶ Languages · QA view (missing keys outlined)",
@@ -397,7 +453,7 @@
     },
     "IntlDePhone.dc.html": {
       "x": 470,
-      "y": 10352,
+      "y": 12460,
       "w": 390,
       "h": 844,
       "title": "Deutsch · phone dark",
@@ -405,7 +461,7 @@
     },
     "IntlJaPhone.dc.html": {
       "x": 940,
-      "y": 10352,
+      "y": 12460,
       "w": 390,
       "h": 844,
       "title": "日本語 · phone light",
@@ -413,7 +469,7 @@
     },
     "IntlHiPhone.dc.html": {
       "x": 1410,
-      "y": 10352,
+      "y": 12460,
       "w": 390,
       "h": 844,
       "title": "हिन्दी · phone dark · blocked",
@@ -421,7 +477,7 @@
     },
     "IntlFrPhone.dc.html": {
       "x": 1880,
-      "y": 10352,
+      "y": 12460,
       "w": 390,
       "h": 844,
       "title": "Français · phone light · tap to start",
@@ -429,7 +485,7 @@
     },
     "IntlPtPhone.dc.html": {
       "x": 2350,
-      "y": 10352,
+      "y": 12460,
       "w": 390,
       "h": 844,
       "title": "Português · phone dark · fallback",
@@ -437,14 +493,22 @@
     },
     "IntlArticleDe.dc.html": {
       "x": 2820,
-      "y": 10352,
+      "y": 12460,
       "w": 390,
       "h": 1296,
       "title": "Deutsch article · translation badge"
     },
+    "IntlJaTablet.dc.html": {
+      "x": 3290,
+      "y": 12460,
+      "w": 820,
+      "h": 1180,
+      "title": "日本語 · tablet light · awake · review banner",
+      "is_interactive": true
+    },
     "IntlZhDesk.dc.html": {
       "x": 0,
-      "y": 11908,
+      "y": 14136,
       "w": 1280,
       "h": 800,
       "title": "简体中文 · desktop light",
@@ -452,7 +516,7 @@
     },
     "IntlEsDesk.dc.html": {
       "x": 1360,
-      "y": 11908,
+      "y": 14136,
       "w": 1280,
       "h": 800,
       "title": "Español · desktop dark · paused",
@@ -460,7 +524,7 @@
     },
     "A11yKeyboardDesk.dc.html": {
       "x": 0,
-      "y": 12968,
+      "y": 15316,
       "w": 1760,
       "h": 800,
       "title": "Keyboard focus order",
@@ -468,64 +532,71 @@
     },
     "A11yNoJsDesk.dc.html": {
       "x": 1840,
-      "y": 12968,
+      "y": 15316,
       "w": 1760,
       "h": 800,
       "title": "Before JavaScript · desktop"
     },
     "A11yForcedDark.dc.html": {
       "x": 0,
-      "y": 14028,
+      "y": 16496,
       "w": 870,
       "h": 844,
       "title": "Forced colours · High Contrast Black"
     },
     "A11yForcedLight.dc.html": {
       "x": 950,
-      "y": 14028,
+      "y": 16496,
       "w": 870,
       "h": 844,
       "title": "Forced colours · High Contrast White"
     },
     "A11yZoomPhone.dc.html": {
       "x": 1900,
-      "y": 14028,
+      "y": 16496,
       "w": 870,
       "h": 1532,
       "title": "Text 200% on phone"
     },
     "A11yReflow320.dc.html": {
       "x": 2850,
-      "y": 14028,
+      "y": 16496,
       "w": 800,
       "h": 832,
       "title": "Reflow 320 px at 400% zoom"
     },
     "A11yReducedPhone.dc.html": {
       "x": 0,
-      "y": 15820,
+      "y": 18408,
       "w": 870,
       "h": 844,
       "title": "Reduced motion"
     },
     "A11yNoJsPhone.dc.html": {
       "x": 950,
-      "y": 15820,
+      "y": 18408,
       "w": 870,
       "h": 844,
       "title": "Before JavaScript · phone"
     },
     "A11yScreenReader.dc.html": {
       "x": 1900,
-      "y": 15820,
+      "y": 18408,
       "w": 870,
       "h": 844,
       "title": "Screen reader announcements",
       "is_interactive": true
     },
+    "A11yReducedTablet.dc.html": {
+      "x": 2850,
+      "y": 18408,
+      "w": 1300,
+      "h": 1180,
+      "title": "Reduced motion · tablet"
+    },
     "Extras.dc.html": {
       "x": 0,
-      "y": 16924,
+      "y": 19968,
       "w": 390,
       "h": 844,
       "title": "▶ Tool overlays · play me",
@@ -533,7 +604,7 @@
     },
     "ExtrasSecondTab.dc.html": {
       "x": 470,
-      "y": 16924,
+      "y": 19968,
       "w": 390,
       "h": 844,
       "title": "Second tab banner · phone light",
@@ -541,7 +612,7 @@
     },
     "ExtrasInstall.dc.html": {
       "x": 940,
-      "y": 16924,
+      "y": 19968,
       "w": 390,
       "h": 844,
       "title": "Install prompt · phone dark",
@@ -549,7 +620,7 @@
     },
     "ExtrasDenied.dc.html": {
       "x": 1410,
-      "y": 16924,
+      "y": 19968,
       "w": 390,
       "h": 844,
       "title": "Blocked notice · phone light",
@@ -557,15 +628,23 @@
     },
     "ExtrasRating.dc.html": {
       "x": 1880,
-      "y": 16924,
+      "y": 19968,
       "w": 390,
       "h": 844,
       "title": "Rating prompt · phone dark",
       "is_interactive": true
     },
+    "ExtrasTabletRating.dc.html": {
+      "x": 2350,
+      "y": 19968,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Rating prompt · light",
+      "is_interactive": true
+    },
     "ExtrasShortcutsDesk.dc.html": {
       "x": 0,
-      "y": 18028,
+      "y": 21528,
       "w": 1280,
       "h": 800,
       "title": "Keyboard shortcuts · desktop dark",
@@ -573,7 +652,7 @@
     },
     "ExtrasShareDesk.dc.html": {
       "x": 1360,
-      "y": 18028,
+      "y": 21528,
       "w": 1280,
       "h": 800,
       "title": "Share · desktop light",
@@ -581,7 +660,7 @@
     },
     "ExtrasToasts.dc.html": {
       "x": 2720,
-      "y": 18028,
+      "y": 21528,
       "w": 1280,
       "h": 800,
       "title": "Toasts · desktop dark",
@@ -589,7 +668,7 @@
     },
     "Ambient.dc.html": {
       "x": 0,
-      "y": 19088,
+      "y": 22708,
       "w": 1280,
       "h": 800,
       "title": "▶ Ambient · all modes (play me)",
@@ -597,7 +676,7 @@
     },
     "AmbientClockDesk.dc.html": {
       "x": 1360,
-      "y": 19088,
+      "y": 22708,
       "w": 1280,
       "h": 800,
       "title": "Ambient · Clock · desktop dark",
@@ -605,7 +684,7 @@
     },
     "AmbientClockPhone.dc.html": {
       "x": 2720,
-      "y": 19088,
+      "y": 22708,
       "w": 390,
       "h": 844,
       "title": "Ambient · Clock · phone light",
@@ -613,7 +692,7 @@
     },
     "AmbientNightPhone.dc.html": {
       "x": 3190,
-      "y": 19088,
+      "y": 22708,
       "w": 390,
       "h": 844,
       "title": "Ambient · Night · phone OLED",
@@ -621,15 +700,23 @@
     },
     "AmbientFocusDesk.dc.html": {
       "x": 3660,
-      "y": 19088,
+      "y": 22708,
       "w": 1280,
       "h": 800,
       "title": "Ambient · Focus · cycle 2 of 4",
       "is_interactive": true
     },
+    "AmbientClockTablet.dc.html": {
+      "x": 5020,
+      "y": 22708,
+      "w": 1180,
+      "h": 820,
+      "title": "Ambient · Clock · tablet · dark",
+      "is_interactive": true
+    },
     "AmbientMinimalDesk.dc.html": {
       "x": 0,
-      "y": 20192,
+      "y": 23932,
       "w": 1280,
       "h": 800,
       "title": "Ambient · Minimal (bar auto-hides)",
@@ -637,7 +724,7 @@
     },
     "AmbientMessageDesk.dc.html": {
       "x": 1360,
-      "y": 20192,
+      "y": 23932,
       "w": 1280,
       "h": 800,
       "title": "Ambient · Message · free preview · light",
@@ -645,7 +732,7 @@
     },
     "AmbientCookTablet.dc.html": {
       "x": 2720,
-      "y": 20192,
+      "y": 23932,
       "w": 1180,
       "h": 820,
       "title": "Ambient · Cook · 3 timers · tablet light",
@@ -653,7 +740,7 @@
     },
     "AmbientCookTabletDark.dc.html": {
       "x": 3980,
-      "y": 20192,
+      "y": 23932,
       "w": 1180,
       "h": 820,
       "title": "Ambient · Cook · quick add · tablet dark",
@@ -661,7 +748,7 @@
     },
     "PipDark.dc.html": {
       "x": 0,
-      "y": 21272,
+      "y": 25132,
       "w": 632,
       "h": 236,
       "title": "Floating window · dark · free and Pro",
@@ -669,7 +756,7 @@
     },
     "PipLight.dc.html": {
       "x": 712,
-      "y": 21272,
+      "y": 25132,
       "w": 632,
       "h": 236,
       "title": "Floating window · light · free and Pro",
@@ -677,7 +764,7 @@
     },
     "PipWindow.dc.html": {
       "x": 1424,
-      "y": 21272,
+      "y": 25132,
       "w": 280,
       "h": 120,
       "title": "Floating window · free",
@@ -685,1300 +772,1605 @@
     },
     "PipOverDesk.dc.html": {
       "x": 1784,
-      "y": 21272,
+      "y": 25132,
       "w": 1280,
       "h": 800,
       "title": "Floating window over a spreadsheet",
       "is_interactive": true
     },
     "ContentArticle.dc.html": {
-      "x": 0,
-      "y": 22332,
+      "x": 7520,
+      "y": 0,
       "w": 390,
-      "h": 5212,
+      "h": 5344,
       "title": "▶ Article · play me · follows your system",
       "is_interactive": true
     },
     "ContentArticlePhoneLight.dc.html": {
-      "x": 470,
-      "y": 22332,
+      "x": 7990,
+      "y": 0,
       "w": 390,
-      "h": 5212,
+      "h": 5344,
       "title": "/for/cooking · phone · light · awake",
       "is_interactive": true
     },
     "ContentArticleTablet.dc.html": {
-      "x": 940,
-      "y": 22332,
+      "x": 8460,
+      "y": 0,
       "w": 820,
-      "h": 4644,
+      "h": 4724,
       "title": "/for/cooking · tablet · light",
       "is_interactive": true
     },
     "ContentArticleDeskDark.dc.html": {
-      "x": 1840,
-      "y": 22332,
+      "x": 9360,
+      "y": 0,
       "w": 1280,
-      "h": 4510,
+      "h": 4534,
       "title": "/for/cooking · desktop · dark · awake",
       "is_interactive": true
     },
     "ContentArticleDeskLight.dc.html": {
-      "x": 3200,
-      "y": 22332,
+      "x": 10720,
+      "y": 0,
       "w": 1280,
-      "h": 4510,
+      "h": 4534,
       "title": "/for/cooking · desktop · light",
       "is_interactive": true
     },
     "HubFor.dc.html": {
-      "x": 0,
-      "y": 27804,
+      "x": 7520,
+      "y": 5724,
       "w": 390,
-      "h": 4312,
+      "h": 3803,
       "title": "▶ /for hub · play me",
       "is_interactive": true
     },
     "HubForPhone.dc.html": {
-      "x": 470,
-      "y": 27804,
+      "x": 7990,
+      "y": 5724,
       "w": 390,
-      "h": 4312,
+      "h": 3803,
       "title": "/for hub · phone · light",
       "is_interactive": true
     },
     "HubForDesk.dc.html": {
-      "x": 940,
-      "y": 27804,
+      "x": 8460,
+      "y": 5724,
       "w": 1280,
-      "h": 2928,
+      "h": 2491,
       "title": "/for hub · desktop · light",
       "is_interactive": true
     },
     "HomeBelow.dc.html": {
-      "x": 2300,
-      "y": 27804,
+      "x": 9820,
+      "y": 5724,
       "w": 390,
-      "h": 7956,
+      "h": 7908,
       "title": "▶ Home below the tool · play me",
       "is_interactive": true
     },
     "HomeBelowPhone.dc.html": {
-      "x": 2770,
-      "y": 27804,
+      "x": 10290,
+      "y": 5724,
       "w": 390,
-      "h": 7956,
+      "h": 7908,
       "title": "Home below the tool · phone · light",
       "is_interactive": true
     },
     "HomeBelowDesk.dc.html": {
-      "x": 3240,
-      "y": 27804,
+      "x": 10760,
+      "y": 5724,
       "w": 1280,
       "h": 6028,
       "title": "Home below the tool · desktop · light",
       "is_interactive": true
     },
+    "HubForTablet.dc.html": {
+      "x": 12120,
+      "y": 5724,
+      "w": 820,
+      "h": 3073,
+      "title": "/for hub · tablet · dark",
+      "is_interactive": true
+    },
+    "HubForDeskDark.dc.html": {
+      "x": 13020,
+      "y": 5724,
+      "w": 1280,
+      "h": 2491,
+      "title": "/for hub · desktop · dark",
+      "is_interactive": true
+    },
+    "HomeBelowTablet.dc.html": {
+      "x": 7520,
+      "y": 13752,
+      "w": 820,
+      "h": 6048,
+      "title": "Home below the tool · tablet · dark",
+      "is_interactive": true
+    },
+    "LangSwitcherPhoneDark.dc.html": {
+      "x": 7520,
+      "y": 20180,
+      "w": 390,
+      "h": 844,
+      "title": "Language switcher · phone · dark · sheet open",
+      "is_interactive": true
+    },
+    "LangSwitcherDeskLight.dc.html": {
+      "x": 7990,
+      "y": 20180,
+      "w": 1280,
+      "h": 800,
+      "title": "Language switcher · desktop · light · list open",
+      "is_interactive": true
+    },
+    "HubOnPhoneDark.dc.html": {
+      "x": 7520,
+      "y": 21404,
+      "w": 390,
+      "h": 3664,
+      "title": "/on hub · phone · dark",
+      "is_interactive": true
+    },
+    "HubOnDeskLight.dc.html": {
+      "x": 7990,
+      "y": 21404,
+      "w": 1280,
+      "h": 2232,
+      "title": "/on hub · desktop · light",
+      "is_interactive": true
+    },
+    "HubVsPhoneLight.dc.html": {
+      "x": 9350,
+      "y": 21404,
+      "w": 390,
+      "h": 2812,
+      "title": "/vs hub · phone · light",
+      "is_interactive": true
+    },
+    "HubVsDeskDark.dc.html": {
+      "x": 9820,
+      "y": 21404,
+      "w": 1280,
+      "h": 1708,
+      "title": "/vs hub · desktop · dark",
+      "is_interactive": true
+    },
+    "HubGuidesPhoneDark.dc.html": {
+      "x": 11180,
+      "y": 21404,
+      "w": 390,
+      "h": 2772,
+      "title": "/guides hub · phone · dark",
+      "is_interactive": true
+    },
+    "HubGuidesDeskLight.dc.html": {
+      "x": 11650,
+      "y": 21404,
+      "w": 1280,
+      "h": 1684,
+      "title": "/guides hub · desktop · light",
+      "is_interactive": true
+    },
+    "HubLearnPhoneLight.dc.html": {
+      "x": 13010,
+      "y": 21404,
+      "w": 390,
+      "h": 2560,
+      "title": "/learn hub · phone · light",
+      "is_interactive": true
+    },
+    "HubLearnDeskDark.dc.html": {
+      "x": 7520,
+      "y": 25188,
+      "w": 1280,
+      "h": 1432,
+      "title": "/learn hub · desktop · dark",
+      "is_interactive": true
+    },
     "ExtPopup.dc.html": {
-      "x": 0,
-      "y": 36020,
+      "x": 7520,
+      "y": 27000,
       "w": 360,
       "h": 600,
       "title": "▶ Extension popup · play me",
       "is_interactive": true
     },
     "ExtPopupAwakeLight.dc.html": {
-      "x": 440,
-      "y": 36020,
+      "x": 7960,
+      "y": 27000,
       "w": 360,
       "h": 600,
       "title": "Popup · Screen awake · light",
       "is_interactive": true
     },
     "ExtPopupReady.dc.html": {
-      "x": 880,
-      "y": 36020,
+      "x": 8400,
+      "y": 27000,
       "w": 360,
       "h": 600,
       "title": "Popup · Ready",
       "is_interactive": true
     },
     "ExtPopupSystem.dc.html": {
-      "x": 1320,
-      "y": 36020,
+      "x": 8840,
+      "y": 27000,
       "w": 360,
       "h": 600,
       "title": "Popup · System awake",
       "is_interactive": true
     },
     "ExtPopupLong2h.dc.html": {
-      "x": 1760,
-      "y": 36020,
+      "x": 9280,
+      "y": 27000,
       "w": 360,
       "h": 600,
       "title": "Popup · 2 h session (H:MM:SS) · dark",
       "is_interactive": true
     },
     "ExtPopupOvernight.dc.html": {
-      "x": 2200,
-      "y": 36020,
+      "x": 9720,
+      "y": 27000,
       "w": 360,
       "h": 600,
       "title": "Popup · ends after midnight (tomorrow) · dark",
       "is_interactive": true
     },
     "ExtPopupMultiDay.dc.html": {
-      "x": 2640,
-      "y": 36020,
+      "x": 10160,
+      "y": 27000,
       "w": 360,
       "h": 600,
       "title": "Popup · multi-day session · light",
       "is_interactive": true
     },
     "ExtPopupUnlimited.dc.html": {
-      "x": 3080,
-      "y": 36020,
+      "x": 10600,
+      "y": 27000,
       "w": 360,
       "h": 600,
       "title": "Popup · no limit (∞, counts up) · dark",
       "is_interactive": true
     },
     "ExtBadges.dc.html": {
-      "x": 3520,
-      "y": 36020,
+      "x": 11040,
+      "y": 27000,
       "w": 1280,
       "h": 400,
       "title": "Toolbar icon and badge states"
     },
     "ExtOptions.dc.html": {
-      "x": 0,
-      "y": 36880,
+      "x": 15100,
+      "y": 0,
       "w": 1280,
       "h": 3892,
       "title": "▶ Extension settings · play me",
       "is_interactive": true
     },
     "ExtOptionsDark.dc.html": {
-      "x": 1360,
-      "y": 36880,
+      "x": 16460,
+      "y": 0,
       "w": 1280,
       "h": 3892,
       "title": "Extension settings · dark · Pro",
       "is_interactive": true
     },
     "ExtOptionsLight.dc.html": {
-      "x": 2720,
-      "y": 36880,
+      "x": 17820,
+      "y": 0,
       "w": 1280,
       "h": 4144,
       "title": "Extension settings · light · no Pro",
       "is_interactive": true
     },
     "ExtEdge.dc.html": {
-      "x": 0,
-      "y": 41284,
+      "x": 15100,
+      "y": 4524,
       "w": 360,
       "h": 600,
       "title": "▶ Popup edge states (all)",
       "is_interactive": true
     },
     "ExtEdgeAutostart.dc.html": {
-      "x": 440,
-      "y": 41284,
+      "x": 15540,
+      "y": 4524,
       "w": 360,
       "h": 600,
       "title": "Popup · auto-start",
       "is_interactive": true
     },
     "ExtEdgeProLocked.dc.html": {
-      "x": 880,
-      "y": 41284,
+      "x": 15980,
+      "y": 4524,
       "w": 360,
       "h": 600,
       "title": "Popup · Pro locked",
       "is_interactive": true
     },
     "ExtEdgeError.dc.html": {
-      "x": 1320,
-      "y": 41284,
+      "x": 16420,
+      "y": 4524,
       "w": 360,
       "h": 600,
       "title": "Popup · blocked",
       "is_interactive": true
     },
     "ExtEdgeTimesUp.dc.html": {
-      "x": 1760,
-      "y": 41284,
+      "x": 16860,
+      "y": 4524,
       "w": 360,
       "h": 600,
       "title": "Popup · time's up",
       "is_interactive": true
     },
     "ExtEdgeUpdate.dc.html": {
-      "x": 2200,
-      "y": 41284,
+      "x": 17300,
+      "y": 4524,
       "w": 360,
       "h": 600,
       "title": "Popup · updated"
     },
     "ExtEdgeFirstOpen.dc.html": {
-      "x": 2640,
-      "y": 41284,
+      "x": 17740,
+      "y": 4524,
       "w": 360,
       "h": 600,
       "title": "Popup · first open",
       "is_interactive": true
     },
     "WelcomeLight.dc.html": {
-      "x": 0,
-      "y": 42144,
+      "x": 15100,
+      "y": 5504,
       "w": 1280,
       "h": 2760,
       "title": "Welcome · light",
       "is_interactive": true
     },
     "EmbedCompactLight.dc.html": {
-      "x": 0,
-      "y": 45164,
+      "x": 15100,
+      "y": 8644,
       "w": 320,
       "h": 104,
-      "title": "Embed · Compact 320 × 96 · light",
+      "title": "Embed · Compact 320 × 104 · light",
       "is_interactive": true
     },
     "EmbedFullDark.dc.html": {
-      "x": 400,
-      "y": 45164,
+      "x": 15500,
+      "y": 8644,
       "w": 720,
       "h": 240,
       "title": "Embed · Full width · dark · kitchen timers",
       "is_interactive": true
     },
     "EmbedWidget.dc.html": {
-      "x": 1200,
-      "y": 45164,
+      "x": 16300,
+      "y": 8644,
       "w": 720,
       "h": 240,
       "title": "▶ Embed widget · play me",
       "is_interactive": true
     },
     "EmbedShowcase.dc.html": {
-      "x": 2000,
-      "y": 45164,
+      "x": 17100,
+      "y": 8644,
       "w": 1280,
-      "h": 1548,
+      "h": 1552,
       "title": "Embed · on a recipe page + snippet builder",
       "is_interactive": true
     },
-    "Pro.dc.html": {
-      "x": 0,
-      "y": 46972,
+    "EmbedShowcasePhone.dc.html": {
+      "x": 18460,
+      "y": 8644,
       "w": 390,
-      "h": 6180,
+      "h": 2961,
+      "title": "Embed page · phone · dark",
+      "is_interactive": true
+    },
+    "EmbedShowcaseTablet.dc.html": {
+      "x": 18930,
+      "y": 8644,
+      "w": 820,
+      "h": 2456,
+      "title": "Embed page · tablet · light",
+      "is_interactive": true
+    },
+    "Pro.dc.html": {
+      "x": 15100,
+      "y": 11985,
+      "w": 390,
+      "h": 6257,
       "title": "▶ Pro · play me · follows your system",
       "is_interactive": true
     },
     "ProPhoneLight.dc.html": {
-      "x": 470,
-      "y": 46972,
+      "x": 15570,
+      "y": 11985,
       "w": 390,
-      "h": 6180,
+      "h": 6257,
       "title": "Pro · phone · light",
       "is_interactive": true
     },
     "ProTablet.dc.html": {
-      "x": 940,
-      "y": 46972,
+      "x": 16040,
+      "y": 11985,
       "w": 820,
-      "h": 4596,
+      "h": 4616,
       "title": "Pro · tablet · light",
       "is_interactive": true
     },
     "ProDeskDark.dc.html": {
-      "x": 1840,
-      "y": 46972,
+      "x": 16940,
+      "y": 11985,
       "w": 1280,
       "h": 4148,
       "title": "Pro · desktop · dark",
       "is_interactive": true
     },
     "ProDeskLight.dc.html": {
-      "x": 3200,
-      "y": 46972,
+      "x": 18300,
+      "y": 11985,
       "w": 1280,
       "h": 4148,
       "title": "Pro · desktop · light",
       "is_interactive": true
     },
     "ProActivate.dc.html": {
-      "x": 0,
-      "y": 53412,
+      "x": 15100,
+      "y": 18622,
       "w": 390,
-      "h": 1608,
+      "h": 1704,
       "title": "▶ Activate · try the flow",
       "is_interactive": true
     },
     "ProActivatePhone.dc.html": {
-      "x": 470,
-      "y": 53412,
+      "x": 15570,
+      "y": 18622,
       "w": 390,
-      "h": 1120,
+      "h": 1170,
       "title": "Activate · phone · dark · success",
       "is_interactive": true
     },
     "ProActivateDesk.dc.html": {
-      "x": 940,
-      "y": 53412,
+      "x": 16040,
+      "y": 18622,
       "w": 1280,
       "h": 984,
       "title": "Activate · desktop · light · error",
       "is_interactive": true
     },
     "ProManage.dc.html": {
-      "x": 2300,
-      "y": 53412,
+      "x": 17400,
+      "y": 18622,
       "w": 390,
-      "h": 1088,
+      "h": 1175,
       "title": "▶ Manage devices · phone",
       "is_interactive": true
     },
     "ProManageDesk.dc.html": {
-      "x": 2770,
-      "y": 53412,
+      "x": 17870,
+      "y": 18622,
       "w": 1280,
-      "h": 1020,
+      "h": 1026,
       "title": "Manage devices · desktop · dark",
       "is_interactive": true
     },
     "ProManagePhoneEmpty.dc.html": {
-      "x": 4130,
-      "y": 53412,
+      "x": 19230,
+      "y": 18622,
       "w": 390,
-      "h": 960,
+      "h": 1009,
       "title": "Manage devices · phone · light · empty",
       "is_interactive": true
     },
+    "ProActivateTablet.dc.html": {
+      "x": 19700,
+      "y": 18622,
+      "w": 820,
+      "h": 1602,
+      "title": "Activate · tablet · dark · activation limit",
+      "is_interactive": true
+    },
+    "ProManageTablet.dc.html": {
+      "x": 20600,
+      "y": 18622,
+      "w": 820,
+      "h": 1104,
+      "title": "Manage devices · tablet · light",
+      "is_interactive": true
+    },
     "GuideOn.dc.html": {
-      "x": 0,
-      "y": 55280,
+      "x": 15100,
+      "y": 20706,
       "w": 390,
-      "h": 6810,
+      "h": 6910,
       "title": "▶ /on/iphone-safari · follows your system",
       "is_interactive": true
     },
     "GuideOnStalePhone.dc.html": {
-      "x": 470,
-      "y": 55280,
+      "x": 15570,
+      "y": 20706,
       "w": 390,
-      "h": 6810,
+      "h": 6910,
       "title": "/on · phone · light · stale badge",
       "is_interactive": true
     },
     "GuideOnDeskLight.dc.html": {
-      "x": 940,
-      "y": 55280,
+      "x": 16040,
+      "y": 20706,
       "w": 1280,
       "h": 6180,
       "title": "/on · desktop · light",
       "is_interactive": true
     },
+    "GuideOnTablet.dc.html": {
+      "x": 17400,
+      "y": 20706,
+      "w": 820,
+      "h": 6160,
+      "title": "/on · tablet · dark",
+      "is_interactive": true
+    },
     "GuideVs.dc.html": {
-      "x": 0,
-      "y": 62350,
+      "x": 22220,
+      "y": 0,
       "w": 390,
-      "h": 6250,
+      "h": 6350,
       "title": "▶ /vs/nosleep-page · follows your system",
       "is_interactive": true
     },
     "GuideVsPhoneLight.dc.html": {
-      "x": 470,
-      "y": 62350,
+      "x": 22690,
+      "y": 0,
       "w": 390,
-      "h": 6250,
+      "h": 6350,
       "title": "/vs · phone · light",
       "is_interactive": true
     },
     "GuideVsDeskDark.dc.html": {
-      "x": 940,
-      "y": 62350,
+      "x": 23160,
+      "y": 0,
       "w": 1280,
       "h": 4840,
       "title": "/vs · desktop · dark",
       "is_interactive": true
     },
+    "GuideVsTablet.dc.html": {
+      "x": 24520,
+      "y": 0,
+      "w": 820,
+      "h": 4780,
+      "title": "/vs · tablet · light",
+      "is_interactive": true
+    },
     "GuideLearn.dc.html": {
-      "x": 0,
-      "y": 68860,
+      "x": 22220,
+      "y": 6730,
       "w": 390,
-      "h": 7970,
+      "h": 3976,
       "title": "▶ /learn · follows your system",
       "is_interactive": true
     },
     "GuideLearnPhoneLight.dc.html": {
-      "x": 470,
-      "y": 68860,
+      "x": 22690,
+      "y": 6730,
       "w": 390,
-      "h": 7970,
-      "title": "/learn · phone · light",
+      "h": 3976,
+      "title": "/learn · phone · light · top",
       "is_interactive": true
     },
     "GuideLearnDeskDark.dc.html": {
-      "x": 940,
-      "y": 68860,
+      "x": 23160,
+      "y": 6730,
       "w": 1280,
       "h": 6910,
       "title": "/learn · desktop · dark",
       "is_interactive": true
     },
-    "GuideGuides.dc.html": {
-      "x": 0,
-      "y": 77090,
+    "GuideLearnTablet.dc.html": {
+      "x": 24520,
+      "y": 6730,
+      "w": 820,
+      "h": 6620,
+      "title": "/learn · tablet · light",
+      "is_interactive": true
+    },
+    "GuideLearnPhoneLightBottom.dc.html": {
+      "x": 25420,
+      "y": 6730,
       "w": 390,
-      "h": 5080,
+      "h": 4094,
+      "title": "/learn · phone · light · bottom",
+      "is_interactive": true
+    },
+    "GuideGuides.dc.html": {
+      "x": 22220,
+      "y": 14020,
+      "w": 390,
+      "h": 5180,
       "title": "▶ /guides · follows your system",
       "is_interactive": true
     },
     "GuideGuidesPhoneLight.dc.html": {
-      "x": 470,
-      "y": 77090,
+      "x": 22690,
+      "y": 14020,
       "w": 390,
-      "h": 5080,
+      "h": 5180,
       "title": "/guides · phone · light",
       "is_interactive": true
     },
     "GuideGuidesDeskLight.dc.html": {
-      "x": 940,
-      "y": 77090,
+      "x": 23160,
+      "y": 14020,
       "w": 1280,
       "h": 4350,
       "title": "/guides · desktop · light",
       "is_interactive": true
     },
+    "GuideGuidesTablet.dc.html": {
+      "x": 24520,
+      "y": 14020,
+      "w": 820,
+      "h": 4320,
+      "title": "/guides · tablet · dark",
+      "is_interactive": true
+    },
+    "GuideGuidesDeskDark.dc.html": {
+      "x": 25420,
+      "y": 14020,
+      "w": 1280,
+      "h": 4350,
+      "title": "/guides · desktop · dark",
+      "is_interactive": true
+    },
     "PresetPage.dc.html": {
-      "x": 0,
-      "y": 82430,
+      "x": 22220,
+      "y": 19580,
       "w": 390,
-      "h": 2452,
+      "h": 2552,
       "title": "▶ /30m · follows your system",
       "is_interactive": true
     },
     "PresetPhoneLight.dc.html": {
-      "x": 470,
-      "y": 82430,
+      "x": 22690,
+      "y": 19580,
       "w": 390,
-      "h": 2452,
+      "h": 2552,
       "title": "/30m · phone · light",
       "is_interactive": true
     },
     "PresetTablet.dc.html": {
-      "x": 940,
-      "y": 82430,
+      "x": 23160,
+      "y": 19580,
       "w": 820,
-      "h": 2364,
+      "h": 2420,
       "title": "/30m · tablet · dark",
       "is_interactive": true
     },
     "PresetDeskLight.dc.html": {
-      "x": 1840,
-      "y": 82430,
+      "x": 24060,
+      "y": 19580,
       "w": 1280,
       "h": 2080,
       "title": "/30m · desktop · light",
       "is_interactive": true
     },
     "UntilPage.dc.html": {
-      "x": 3200,
-      "y": 82430,
+      "x": 25420,
+      "y": 19580,
       "w": 390,
-      "h": 2124,
+      "h": 2224,
       "title": "▶ /until/07-30 · follows your system",
       "is_interactive": true
     },
     "UntilPhoneLight.dc.html": {
-      "x": 3670,
-      "y": 82430,
+      "x": 25890,
+      "y": 19580,
       "w": 390,
-      "h": 2124,
+      "h": 2224,
       "title": "/until · phone · light · ends tomorrow",
       "is_interactive": true
     },
     "UntilDeskDark.dc.html": {
-      "x": 4140,
-      "y": 82430,
+      "x": 26360,
+      "y": 19580,
       "w": 1280,
       "h": 1856,
       "title": "/until · desktop · dark · ends today",
       "is_interactive": true
     },
+    "UntilTablet.dc.html": {
+      "x": 27720,
+      "y": 19580,
+      "w": 820,
+      "h": 2248,
+      "title": "/until/07-30 · tablet · dark · awake",
+      "is_interactive": true
+    },
     "PageKioskDesk.dc.html": {
-      "x": 0,
-      "y": 85142,
+      "x": 22220,
+      "y": 22512,
       "w": 1280,
-      "h": 2992,
+      "h": 2983,
       "title": "Kiosk · desktop light · URL builder",
       "is_interactive": true
     },
     "PageKioskPhone.dc.html": {
-      "x": 1360,
-      "y": 85142,
+      "x": 23580,
+      "y": 22512,
       "w": 390,
-      "h": 4360,
+      "h": 4353,
       "title": "Kiosk · phone light",
       "is_interactive": true
     },
     "PageLibraryDesk.dc.html": {
-      "x": 1830,
-      "y": 85142,
+      "x": 24050,
+      "y": 22512,
       "w": 1280,
-      "h": 3104,
+      "h": 3128,
       "title": "Library · desktop light · live state machine",
       "is_interactive": true
     },
+    "PageKioskTablet.dc.html": {
+      "x": 25410,
+      "y": 22512,
+      "w": 820,
+      "h": 3598,
+      "title": "Kiosk · tablet light",
+      "is_interactive": true
+    },
+    "PageLibraryTablet.dc.html": {
+      "x": 26310,
+      "y": 22512,
+      "w": 820,
+      "h": 3483,
+      "title": "Library · tablet dark",
+      "is_interactive": true
+    },
+    "PageLibraryPhoneLight.dc.html": {
+      "x": 27210,
+      "y": 22512,
+      "w": 390,
+      "h": 4470,
+      "title": "Library · phone light",
+      "is_interactive": true
+    },
     "PageExtensionDesk.dc.html": {
-      "x": 0,
-      "y": 89762,
+      "x": 29340,
+      "y": 0,
       "w": 1280,
-      "h": 3512,
+      "h": 3545,
       "title": "Extension · desktop light",
       "is_interactive": true
     },
     "PageExtensionPhone.dc.html": {
-      "x": 1360,
-      "y": 89762,
+      "x": 30700,
+      "y": 0,
       "w": 390,
-      "h": 5544,
+      "h": 5624,
       "title": "Extension · phone dark",
       "is_interactive": true
     },
     "PageAboutDesk.dc.html": {
-      "x": 1830,
-      "y": 89762,
+      "x": 31170,
+      "y": 0,
       "w": 1280,
       "h": 2066,
       "title": "About · desktop light",
       "is_interactive": true
     },
     "PageChangelogPhone.dc.html": {
-      "x": 3190,
-      "y": 89762,
+      "x": 32530,
+      "y": 0,
       "w": 390,
-      "h": 7844,
+      "h": 7894,
       "title": "Changelog · phone light",
       "is_interactive": true
     },
-    "PagePrivacyDesk.dc.html": {
-      "x": 0,
-      "y": 97866,
+    "PageExtensionTablet.dc.html": {
+      "x": 33000,
+      "y": 0,
+      "w": 820,
+      "h": 4583,
+      "title": "Extension · tablet light",
+      "is_interactive": true
+    },
+    "PageAboutTablet.dc.html": {
+      "x": 33900,
+      "y": 0,
+      "w": 820,
+      "h": 2348,
+      "title": "About · tablet dark",
+      "is_interactive": true
+    },
+    "PageAboutPhoneDark.dc.html": {
+      "x": 34800,
+      "y": 0,
+      "w": 390,
+      "h": 3156,
+      "title": "About · phone dark",
+      "is_interactive": true
+    },
+    "PageChangelogTablet.dc.html": {
+      "x": 35270,
+      "y": 0,
+      "w": 820,
+      "h": 5877,
+      "title": "Changelog · tablet light",
+      "is_interactive": true
+    },
+    "PageChangelogDeskLight.dc.html": {
+      "x": 29340,
+      "y": 8014,
       "w": 1280,
-      "h": 4312,
+      "h": 5945,
+      "title": "Changelog · desktop light",
+      "is_interactive": true
+    },
+    "PagePrivacyDesk.dc.html": {
+      "x": 29340,
+      "y": 14339,
+      "w": 1280,
+      "h": 4311,
       "title": "Privacy · desktop light",
       "is_interactive": true
     },
     "PageTermsPhone.dc.html": {
-      "x": 1360,
-      "y": 97866,
+      "x": 30700,
+      "y": 14339,
       "w": 390,
-      "h": 2236,
+      "h": 2286,
       "title": "Terms · phone dark",
       "is_interactive": true
     },
     "Page404Phone.dc.html": {
-      "x": 1830,
-      "y": 97866,
+      "x": 31170,
+      "y": 14339,
       "w": 390,
-      "h": 1536,
+      "h": 1588,
       "title": "404 · phone light · mini tool",
       "is_interactive": true
     },
     "Page404Desk.dc.html": {
-      "x": 2300,
-      "y": 97866,
+      "x": 31640,
+      "y": 14339,
       "w": 1280,
-      "h": 1040,
+      "h": 1039,
       "title": "404 · desktop light",
       "is_interactive": true
     },
+    "PageLegalTablet.dc.html": {
+      "x": 33000,
+      "y": 14339,
+      "w": 820,
+      "h": 4733,
+      "title": "Privacy · tablet dark",
+      "is_interactive": true
+    },
+    "Page404Tablet.dc.html": {
+      "x": 33900,
+      "y": 14339,
+      "w": 820,
+      "h": 1702,
+      "title": "404 · tablet light",
+      "is_interactive": true
+    },
     "KioskScreen.dc.html": {
-      "x": 0,
-      "y": 102438,
+      "x": 29340,
+      "y": 19452,
       "w": 1920,
       "h": 1080,
       "title": "▶ Kiosk · source (tweak size, mode, licence)",
       "is_interactive": true
     },
     "KioskTvClock.dc.html": {
-      "x": 2000,
-      "y": 102438,
+      "x": 31340,
+      "y": 19452,
       "w": 1920,
       "h": 1080,
       "title": "Kiosk TV · Clock · licensed"
     },
     "KioskTvMessage.dc.html": {
-      "x": 4000,
-      "y": 102438,
+      "x": 33340,
+      "y": 19452,
       "w": 1920,
       "h": 1080,
       "title": "Kiosk TV · Message · licensed"
     },
     "KioskTvUnlicensed.dc.html": {
-      "x": 0,
-      "y": 103778,
+      "x": 29340,
+      "y": 20912,
       "w": 1920,
       "h": 1080,
       "title": "Kiosk TV · free: wordmark + message preview"
     },
     "KioskTvDashboard.dc.html": {
-      "x": 2000,
-      "y": 103778,
+      "x": 31340,
+      "y": 20912,
       "w": 1920,
       "h": 1080,
       "title": "Kiosk TV · dashboard with docked widget · light",
       "is_interactive": true
     },
     "KioskPortraitLogo.dc.html": {
-      "x": 4000,
-      "y": 103778,
+      "x": 33340,
+      "y": 20912,
       "w": 1080,
       "h": 1920,
       "title": "Kiosk portrait · Your logo · licensed"
     },
     "EmbedEdge.dc.html": {
-      "x": 0,
-      "y": 105958,
+      "x": 29340,
+      "y": 23212,
       "w": 1280,
       "h": 800,
       "title": "▶ Embed edge states · source",
       "is_interactive": true
     },
     "EmbedEdgeSidebar.dc.html": {
-      "x": 1360,
-      "y": 105958,
+      "x": 30700,
+      "y": 23212,
       "w": 1280,
       "h": 800,
       "title": "Embed · 280 px sidebar · dark host",
       "is_interactive": true
     },
     "EmbedEdgeLicensed.dc.html": {
-      "x": 2720,
-      "y": 105958,
+      "x": 32060,
+      "y": 23212,
       "w": 1280,
       "h": 800,
       "title": "Embed · licensed, no attribution",
       "is_interactive": true
     },
     "EmbedEdgeUnsupportedTablet.dc.html": {
-      "x": 0,
-      "y": 107018,
+      "x": 29340,
+      "y": 24392,
       "w": 820,
       "h": 1100,
       "title": "Embed · unsupported browser · tablet",
       "is_interactive": true
     },
     "EmbedEdgeBatteryPhone.dc.html": {
-      "x": 900,
-      "y": 107018,
+      "x": 30240,
+      "y": 24392,
       "w": 390,
       "h": 1120,
       "title": "Embed · refused · phone dark",
       "is_interactive": true
     },
     "EmbedCook.dc.html": {
-      "x": 1370,
-      "y": 107018,
+      "x": 30710,
+      "y": 24392,
       "w": 720,
       "h": 240,
       "title": "▶ /embed/cook · source",
       "is_interactive": true
     },
     "EmbedCookCompact.dc.html": {
-      "x": 2170,
-      "y": 107018,
+      "x": 31510,
+      "y": 24392,
       "w": 320,
       "h": 104,
-      "title": "/embed/cook · 320×96 running",
+      "title": "/embed/cook · 320×104 running",
       "is_interactive": true
     },
     "EmbedCookFull.dc.html": {
-      "x": 2570,
-      "y": 107018,
+      "x": 31910,
+      "y": 24392,
       "w": 720,
       "h": 240,
       "title": "/embed/cook · timer done",
       "is_interactive": true
     },
     "OgArticle.dc.html": {
-      "x": 0,
-      "y": 108398,
+      "x": 29340,
+      "y": 25892,
       "w": 1200,
       "h": 630,
       "title": "OG · /for/cooking"
     },
     "OgDevice.dc.html": {
-      "x": 1280,
-      "y": 108398,
+      "x": 30620,
+      "y": 25892,
       "w": 1200,
       "h": 630,
       "title": "OG · /on/ipad"
     },
     "OgVs.dc.html": {
-      "x": 2560,
-      "y": 108398,
+      "x": 31900,
+      "y": 25892,
       "w": 1200,
       "h": 630,
       "title": "OG · /vs/mouse-jigglers"
     },
     "OgPro.dc.html": {
-      "x": 3840,
-      "y": 108398,
+      "x": 33180,
+      "y": 25892,
       "w": 1200,
       "h": 630,
       "title": "OG · /pro"
     },
     "OgPreset.dc.html": {
-      "x": 5120,
-      "y": 108398,
+      "x": 34460,
+      "y": 25892,
       "w": 1200,
       "h": 630,
       "title": "OG · /30m"
     },
     "StoreShot2.dc.html": {
-      "x": 0,
-      "y": 109288,
+      "x": 29340,
+      "y": 26902,
       "w": 1280,
       "h": 800,
       "title": "Store 2 · schedule editor"
     },
     "StoreShot3.dc.html": {
-      "x": 1360,
-      "y": 109288,
+      "x": 30700,
+      "y": 26902,
       "w": 1280,
       "h": 800,
       "title": "Store 3 · badge states"
     },
     "StoreShot4.dc.html": {
-      "x": 2720,
-      "y": 109288,
+      "x": 32060,
+      "y": 26902,
       "w": 1280,
       "h": 800,
       "title": "Store 4 · Screen vs System"
     },
     "StoreShot5.dc.html": {
-      "x": 4080,
-      "y": 109288,
+      "x": 33420,
+      "y": 26902,
       "w": 1280,
       "h": 800,
       "title": "Store 5 · Pro auto-start"
     },
     "StorePromoSmall.dc.html": {
-      "x": 0,
-      "y": 110348,
+      "x": 29340,
+      "y": 28082,
       "w": 440,
       "h": 280,
       "title": "Store · small promo tile"
     },
     "StoreMarquee.dc.html": {
-      "x": 520,
-      "y": 110348,
+      "x": 29860,
+      "y": 28082,
       "w": 1400,
       "h": 560,
       "title": "Store · marquee"
     },
     "IconSet.dc.html": {
-      "x": 2000,
-      "y": 110348,
+      "x": 31340,
+      "y": 28082,
       "w": 1280,
       "h": 900,
       "title": "Icons · app, maskable, themed, favicon states, PWA splash"
     },
     "Sys.dc.html": {
-      "x": 0,
-      "y": 111508,
+      "x": 36890,
+      "y": 0,
       "w": 390,
       "h": 844,
       "title": "▶ System states (all kinds)",
       "is_interactive": true
     },
     "SysOfflineDesk.dc.html": {
-      "x": 470,
-      "y": 111508,
+      "x": 37360,
+      "y": 0,
       "w": 1280,
       "h": 888,
       "title": "Offline · desktop"
     },
     "SysNotify.dc.html": {
-      "x": 1830,
-      "y": 111508,
+      "x": 38720,
+      "y": 0,
       "w": 1280,
       "h": 900,
       "title": "Time's up notifications"
     },
     "SysTabsLight.dc.html": {
-      "x": 0,
-      "y": 112668,
+      "x": 36890,
+      "y": 1280,
       "w": 1280,
       "h": 1088,
       "title": "Tab strip · light"
     },
     "SysTabsDark.dc.html": {
-      "x": 1360,
-      "y": 112668,
+      "x": 38250,
+      "y": 1280,
       "w": 1280,
       "h": 1088,
       "title": "Tab strip · dark"
     },
     "SysProLapsed.dc.html": {
-      "x": 2720,
-      "y": 112668,
+      "x": 39610,
+      "y": 1280,
       "w": 1280,
-      "h": 2044,
-      "title": "Pro lapsed · tool + manage"
+      "h": 2055,
+      "title": "Pro lapsed · tool + manage",
+      "is_interactive": true
+    },
+    "SysProLapsedPhone.dc.html": {
+      "x": 40970,
+      "y": 1280,
+      "w": 390,
+      "h": 2966,
+      "title": "Pro lapsed · phone · dark",
+      "is_interactive": true
     },
     "SysCheckoutSuccess.dc.html": {
-      "x": 0,
-      "y": 114972,
+      "x": 36890,
+      "y": 4626,
       "w": 1280,
       "h": 948,
       "title": "Checkout · success",
       "is_interactive": true
     },
     "SysCheckoutFailed.dc.html": {
-      "x": 1360,
-      "y": 114972,
+      "x": 38250,
+      "y": 4626,
       "w": 1280,
       "h": 912,
       "title": "Checkout · payment failed"
     },
     "SysUpdate.dc.html": {
-      "x": 2720,
-      "y": 114972,
+      "x": 39610,
+      "y": 4626,
       "w": 1280,
       "h": 860,
       "title": "PWA update waits",
       "is_interactive": true
     },
     "SysInstalledDesk.dc.html": {
-      "x": 4080,
-      "y": 114972,
+      "x": 40970,
+      "y": 4626,
       "w": 1280,
       "h": 800,
       "title": "Installed · desktop window"
     },
     "SysInstalledPhone.dc.html": {
-      "x": 5440,
-      "y": 114972,
+      "x": 42330,
+      "y": 4626,
       "w": 1280,
       "h": 1084,
       "title": "Installed · phone launch"
     },
+    "SysCheckoutSuccessPhone.dc.html": {
+      "x": 43690,
+      "y": 4626,
+      "w": 390,
+      "h": 1659,
+      "title": "Checkout success · phone · dark",
+      "is_interactive": true
+    },
+    "SysCheckoutFailedPhone.dc.html": {
+      "x": 36890,
+      "y": 6405,
+      "w": 390,
+      "h": 1413,
+      "title": "Checkout failed · phone · light",
+      "is_interactive": true
+    },
+    "SysCheckoutSuccessTablet.dc.html": {
+      "x": 37360,
+      "y": 6405,
+      "w": 820,
+      "h": 1445,
+      "title": "Checkout success · tablet · light",
+      "is_interactive": true
+    },
     "GrowthFirstVisit.dc.html": {
-      "x": 0,
-      "y": 116316,
+      "x": 36890,
+      "y": 8230,
       "w": 390,
       "h": 844,
       "title": "▶ First visit · proof in 5 seconds · play me",
       "is_interactive": true
     },
     "GrowthFirstVisitPhoneLight.dc.html": {
-      "x": 470,
-      "y": 116316,
+      "x": 37360,
+      "y": 8230,
       "w": 390,
       "h": 844,
       "title": "First visit · phone · light · proof shown",
       "is_interactive": true
     },
     "GrowthFirstVisitTabletDark.dc.html": {
-      "x": 940,
-      "y": 116316,
+      "x": 37830,
+      "y": 8230,
       "w": 820,
       "h": 1180,
       "title": "First visit · tablet · dark · auto-start",
       "is_interactive": true
     },
     "GrowthFirstVisitDeskDark.dc.html": {
-      "x": 1840,
-      "y": 116316,
+      "x": 38730,
+      "y": 8230,
       "w": 1280,
       "h": 800,
       "title": "First visit · desktop · dark · proof shown",
       "is_interactive": true
     },
     "GrowthFirstVisitDeskLight.dc.html": {
-      "x": 3200,
-      "y": 116316,
+      "x": 40090,
+      "y": 8230,
       "w": 1280,
       "h": 800,
       "title": "First visit · desktop · light · tap to start",
       "is_interactive": true
     },
     "GrowthTrust.dc.html": {
-      "x": 0,
-      "y": 117756,
+      "x": 36890,
+      "y": 9790,
       "w": 390,
       "h": 844,
       "title": "▶ Trust panel · how AwakeTab knows · play me",
       "is_interactive": true
     },
     "GrowthTrustPhoneLight.dc.html": {
-      "x": 470,
-      "y": 117756,
+      "x": 37360,
+      "y": 9790,
       "w": 390,
       "h": 844,
       "title": "Trust panel · phone · light · paused",
       "is_interactive": true
     },
     "GrowthTrustDeskDark.dc.html": {
-      "x": 940,
-      "y": 117756,
+      "x": 37830,
+      "y": 9790,
       "w": 1280,
       "h": 800,
       "title": "Trust panel · desktop · dark · fallback",
       "is_interactive": true
     },
     "GrowthTrustDeskLight.dc.html": {
-      "x": 2300,
-      "y": 117756,
+      "x": 39190,
+      "y": 9790,
       "w": 1280,
       "h": 800,
       "title": "Trust panel · desktop · light · blocked",
       "is_interactive": true
     },
     "GrowthDone.dc.html": {
-      "x": 0,
-      "y": 118860,
+      "x": 36890,
+      "y": 11014,
       "w": 390,
       "h": 844,
       "title": "▶ Session done · one gentle next step · play me",
       "is_interactive": true
     },
     "GrowthDoneIosPhoneLight.dc.html": {
-      "x": 470,
-      "y": 118860,
+      "x": 37360,
+      "y": 11014,
       "w": 390,
       "h": 844,
       "title": "Done · iPhone Home Screen steps · phone · light",
       "is_interactive": true
     },
     "GrowthDoneExtensionDeskDark.dc.html": {
-      "x": 940,
-      "y": 118860,
+      "x": 37830,
+      "y": 11014,
       "w": 1280,
       "h": 800,
       "title": "Done · hidden 3 times · extension · desktop · dark",
       "is_interactive": true
     },
     "GrowthDoneProDeskLight.dc.html": {
-      "x": 2300,
-      "y": 118860,
+      "x": 39190,
+      "y": 11014,
       "w": 1280,
       "h": 800,
       "title": "Done · one Pro line · desktop · light",
       "is_interactive": true
     },
     "GrowthDoneNonePhoneLight.dc.html": {
-      "x": 3660,
-      "y": 118860,
+      "x": 40550,
+      "y": 11014,
       "w": 390,
       "h": 844,
       "title": "Done · nothing to suggest · phone · light",
       "is_interactive": true
     },
     "GrowthPaused.dc.html": {
-      "x": 0,
-      "y": 119964,
+      "x": 36890,
+      "y": 12238,
       "w": 390,
       "h": 844,
       "title": "▶ Back from a hidden tab · honest options · play me",
       "is_interactive": true
     },
     "GrowthPausedDeskDark.dc.html": {
-      "x": 470,
-      "y": 119964,
+      "x": 37360,
+      "y": 12238,
       "w": 1280,
       "h": 800,
       "title": "Back from hidden · 3rd time · Chrome · desktop · dark",
       "is_interactive": true
     },
     "GrowthPausedDeskLight.dc.html": {
-      "x": 1830,
-      "y": 119964,
+      "x": 38720,
+      "y": 12238,
       "w": 1280,
       "h": 800,
       "title": "Back from hidden · 3rd time · Firefox · desktop · light",
       "is_interactive": true
     },
     "GrowthPausedPhoneDark.dc.html": {
-      "x": 3190,
-      "y": 119964,
+      "x": 40080,
+      "y": 12238,
       "w": 390,
       "h": 844,
       "title": "Back from hidden · 1st time · quiet · phone · dark",
       "is_interactive": true
     },
     "GrowthPausedPhoneLight.dc.html": {
-      "x": 3660,
-      "y": 119964,
+      "x": 40550,
+      "y": 12238,
       "w": 390,
       "h": 844,
       "title": "Back from hidden · 3rd time · phone · light",
       "is_interactive": true
     },
     "GrowthProMoment.dc.html": {
-      "x": 0,
-      "y": 121068,
+      "x": 36890,
+      "y": 13462,
       "w": 390,
       "h": 844,
       "title": "▶ Pro moments · informative, never pushy · play me",
       "is_interactive": true
     },
     "GrowthProLampDeskLight.dc.html": {
-      "x": 470,
-      "y": 121068,
+      "x": 37360,
+      "y": 13462,
       "w": 1280,
       "h": 800,
       "title": "Pro moment · previewing a Pro lamp · desktop · light",
       "is_interactive": true
     },
     "GrowthProMessageDeskDark.dc.html": {
-      "x": 1830,
-      "y": 121068,
+      "x": 38720,
+      "y": 13462,
       "w": 1280,
       "h": 800,
       "title": "Pro moment · end of the 60 s Message preview · desktop · dark",
       "is_interactive": true
     },
     "GrowthProMessagePhoneLight.dc.html": {
-      "x": 3190,
-      "y": 121068,
+      "x": 40080,
+      "y": 13462,
       "w": 390,
       "h": 844,
       "title": "Pro moment · end of the 60 s Message preview · phone · light",
       "is_interactive": true
     },
     "GrowthProStatsPhoneLight.dc.html": {
-      "x": 3660,
-      "y": 121068,
+      "x": 40550,
+      "y": 13462,
       "w": 390,
       "h": 844,
       "title": "Pro moment · day 8 of stats · phone · light",
       "is_interactive": true
     },
     "GrowthProStatsDeskDark.dc.html": {
-      "x": 4130,
-      "y": 121068,
+      "x": 41020,
+      "y": 13462,
       "w": 1280,
       "h": 800,
       "title": "Pro moment · day 8 of stats · desktop · dark",
       "is_interactive": true
     },
     "GrowthPlanHelper.dc.html": {
-      "x": 0,
-      "y": 122172,
+      "x": 36890,
+      "y": 14686,
       "w": 390,
-      "h": 2080,
+      "h": 2151,
       "title": "▶ Which plan fits · /pro helper · play me",
       "is_interactive": true
     },
     "GrowthPlanPhoneLight.dc.html": {
-      "x": 470,
-      "y": 122172,
+      "x": 37360,
+      "y": 14686,
       "w": 390,
-      "h": 2080,
+      "h": 2151,
       "title": "Which plan fits · pay once · phone · light",
       "is_interactive": true
     },
     "GrowthPlanTabletLight.dc.html": {
-      "x": 940,
-      "y": 122172,
+      "x": 37830,
+      "y": 14686,
       "w": 820,
-      "h": 1600,
+      "h": 1635,
       "title": "Which plan fits · kiosk · tablet · light",
       "is_interactive": true
     },
     "GrowthPlanDeskDark.dc.html": {
-      "x": 1840,
-      "y": 122172,
+      "x": 38730,
+      "y": 14686,
       "w": 1280,
       "h": 1100,
       "title": "Which plan fits · yearly · desktop · dark",
       "is_interactive": true
     },
     "GrowthPlanDeskLight.dc.html": {
-      "x": 3200,
-      "y": 122172,
+      "x": 40090,
+      "y": 14686,
       "w": 1280,
       "h": 1100,
       "title": "Which plan fits · recipe site · desktop · light",
       "is_interactive": true
     },
     "GrowthShare.dc.html": {
-      "x": 0,
-      "y": 124512,
+      "x": 36890,
+      "y": 17217,
       "w": 390,
       "h": 844,
       "title": "▶ Tell a friend · share a setup · no referral codes · play me",
       "is_interactive": true
     },
     "GrowthShareLowPhoneLight.dc.html": {
-      "x": 470,
-      "y": 124512,
+      "x": 37360,
+      "y": 17217,
       "w": 390,
       "h": 844,
       "title": "Low rating · ask what to fix, no share · phone · light",
       "is_interactive": true
     },
     "GrowthSharePresetDeskLight.dc.html": {
-      "x": 940,
-      "y": 124512,
+      "x": 37830,
+      "y": 17217,
       "w": 1280,
       "h": 800,
       "title": "Share a setup · link preview · desktop · light",
       "is_interactive": true
     },
     "GrowthSharePresetPhoneDark.dc.html": {
-      "x": 2300,
-      "y": 124512,
+      "x": 39190,
+      "y": 17217,
       "w": 390,
       "h": 844,
       "title": "Share a setup · link preview · phone · dark",
       "is_interactive": true
     },
     "GrowthShareTellDeskDark.dc.html": {
-      "x": 2770,
-      "y": 124512,
+      "x": 39660,
+      "y": 17217,
       "w": 1280,
       "h": 800,
       "title": "Tell a friend · after 5 stars · desktop · dark",
       "is_interactive": true
     },
     "GrowthB2B.dc.html": {
-      "x": 0,
-      "y": 125616,
+      "x": 36890,
+      "y": 18441,
       "w": 390,
-      "h": 1680,
+      "h": 1742,
       "title": "▶ Business entry points inside a use-case article · play me",
       "is_interactive": true
     },
     "GrowthB2BRecipePhoneLight.dc.html": {
-      "x": 470,
-      "y": 125616,
+      "x": 37360,
+      "y": 18441,
       "w": 390,
-      "h": 1680,
+      "h": 1742,
       "title": "B2B entry · recipe sites · /for/cooking · phone · light",
       "is_interactive": true
     },
     "GrowthB2BRecipeDeskDark.dc.html": {
-      "x": 940,
-      "y": 125616,
+      "x": 37830,
+      "y": 18441,
       "w": 1280,
       "h": 1280,
       "title": "B2B entry · recipe sites · /for/cooking · desktop · dark",
       "is_interactive": true
     },
     "GrowthB2BKioskPhoneDark.dc.html": {
-      "x": 2300,
-      "y": 125616,
+      "x": 39190,
+      "y": 18441,
       "w": 390,
-      "h": 1680,
+      "h": 1742,
       "title": "B2B entry · kiosks · /for/dashboards · phone · dark",
       "is_interactive": true
     },
     "GrowthB2BKioskDeskLight.dc.html": {
-      "x": 2770,
-      "y": 125616,
+      "x": 39660,
+      "y": 18441,
       "w": 1280,
       "h": 1280,
       "title": "B2B entry · kiosks · /for/dashboards · desktop · light",
       "is_interactive": true
     },
     "Brand.dc.html": {
-      "x": 0,
-      "y": 127556,
+      "x": 36890,
+      "y": 20563,
       "w": 1280,
-      "h": 932,
+      "h": 1470,
       "title": "Logo, colour, type"
     },
     "PageKiosk.dc.html": {
-      "x": 0,
-      "y": 128748,
+      "x": 36890,
+      "y": 22413,
       "w": 1280,
-      "h": 2992,
+      "h": 2983,
       "title": "▶ Kiosk page",
       "is_interactive": true
     },
     "PageLibrary.dc.html": {
-      "x": 1360,
-      "y": 128748,
+      "x": 38250,
+      "y": 22413,
       "w": 1280,
-      "h": 3104,
+      "h": 3128,
       "title": "▶ Library page",
       "is_interactive": true
     },
     "PageExtension.dc.html": {
-      "x": 2720,
-      "y": 128748,
+      "x": 39610,
+      "y": 22413,
       "w": 1280,
-      "h": 3512,
+      "h": 3545,
       "title": "▶ Extension page",
       "is_interactive": true
     },
     "PageAbout.dc.html": {
-      "x": 4080,
-      "y": 128748,
+      "x": 40970,
+      "y": 22413,
       "w": 1280,
       "h": 2066,
       "title": "▶ About page",
       "is_interactive": true
     },
     "PageLegal.dc.html": {
-      "x": 5440,
-      "y": 128748,
+      "x": 42330,
+      "y": 22413,
       "w": 1280,
-      "h": 4312,
+      "h": 4311,
       "title": "▶ Privacy / Terms page",
       "is_interactive": true
     },
     "PageChangelog.dc.html": {
-      "x": 6800,
-      "y": 128748,
+      "x": 43690,
+      "y": 22413,
       "w": 390,
-      "h": 7844,
+      "h": 7894,
       "title": "▶ Changelog page",
       "is_interactive": true
     },
     "Page404.dc.html": {
-      "x": 7270,
-      "y": 128748,
+      "x": 36890,
+      "y": 30427,
       "w": 390,
-      "h": 1536,
+      "h": 1588,
       "title": "▶ 404 page",
       "is_interactive": true
     },
     "OgCards.dc.html": {
-      "x": 7740,
-      "y": 128748,
+      "x": 37360,
+      "y": 30427,
       "w": 1200,
       "h": 630,
       "title": "▶ OG · home (switch kind for the others)",
       "is_interactive": true
     },
     "StoreAssets.dc.html": {
-      "x": 9020,
-      "y": 128748,
+      "x": 38640,
+      "y": 30427,
       "w": 1280,
       "h": 800,
       "title": "▶ Store 1 · popup over a page (switch kind)",
       "is_interactive": true
     },
     "Welcome.dc.html": {
-      "x": 10380,
-      "y": 128748,
+      "x": 40000,
+      "y": 30427,
       "w": 1280,
       "h": 2760,
       "title": "▶ Extension welcome page",
       "is_interactive": true
     },
     "A11y.dc.html": {
-      "x": 11740,
-      "y": 128748,
+      "x": 41360,
+      "y": 30427,
       "w": 870,
       "h": 844,
       "title": "▶ Accessibility source (mode)",
@@ -2010,10 +2402,13 @@
     "ToolStats.dc.html",
     "ToolTimesUp.dc.html",
     "ToolTimesUpLight.dc.html",
+    "ToolStatsTablet.dc.html",
+    "ToolSettingsTablet.dc.html",
     "DeskRingDark.dc.html",
     "DeskHorizonDark.dc.html",
     "DeskTideDark.dc.html",
     "ToolSettingsDesk.dc.html",
+    "ToolStatsDesk.dc.html",
     "DeskRingLight.dc.html",
     "DeskHorizonLight.dc.html",
     "DeskTideLight.dc.html",
@@ -2022,6 +2417,10 @@
     "SizeLandscape.dc.html",
     "SizeLandscapeLight.dc.html",
     "SizeTabletLandscape.dc.html",
+    "SizeTabletSmallDark.dc.html",
+    "SizeTabletSmallLight.dc.html",
+    "SizeDeskSmallDark.dc.html",
+    "SizeDeskSmallLight.dc.html",
     "SizeXL.dc.html",
     "SizeXLLight.dc.html",
     "EdgeLastMinute.dc.html",
@@ -2040,6 +2439,7 @@
     "IntlFrPhone.dc.html",
     "IntlPtPhone.dc.html",
     "IntlArticleDe.dc.html",
+    "IntlJaTablet.dc.html",
     "IntlZhDesk.dc.html",
     "IntlEsDesk.dc.html",
     "A11yKeyboardDesk.dc.html",
@@ -2051,11 +2451,13 @@
     "A11yReducedPhone.dc.html",
     "A11yNoJsPhone.dc.html",
     "A11yScreenReader.dc.html",
+    "A11yReducedTablet.dc.html",
     "Extras.dc.html",
     "ExtrasSecondTab.dc.html",
     "ExtrasInstall.dc.html",
     "ExtrasDenied.dc.html",
     "ExtrasRating.dc.html",
+    "ExtrasTabletRating.dc.html",
     "ExtrasShortcutsDesk.dc.html",
     "ExtrasShareDesk.dc.html",
     "ExtrasToasts.dc.html",
@@ -2064,6 +2466,7 @@
     "AmbientClockPhone.dc.html",
     "AmbientNightPhone.dc.html",
     "AmbientFocusDesk.dc.html",
+    "AmbientClockTablet.dc.html",
     "AmbientMinimalDesk.dc.html",
     "AmbientMessageDesk.dc.html",
     "AmbientCookTablet.dc.html",
@@ -2083,6 +2486,19 @@
     "HomeBelow.dc.html",
     "HomeBelowPhone.dc.html",
     "HomeBelowDesk.dc.html",
+    "HubForTablet.dc.html",
+    "HubForDeskDark.dc.html",
+    "HomeBelowTablet.dc.html",
+    "LangSwitcherPhoneDark.dc.html",
+    "LangSwitcherDeskLight.dc.html",
+    "HubOnPhoneDark.dc.html",
+    "HubOnDeskLight.dc.html",
+    "HubVsPhoneLight.dc.html",
+    "HubVsDeskDark.dc.html",
+    "HubGuidesPhoneDark.dc.html",
+    "HubGuidesDeskLight.dc.html",
+    "HubLearnPhoneLight.dc.html",
+    "HubLearnDeskDark.dc.html",
     "ExtPopup.dc.html",
     "ExtPopupAwakeLight.dc.html",
     "ExtPopupReady.dc.html",
@@ -2107,6 +2523,8 @@
     "EmbedFullDark.dc.html",
     "EmbedWidget.dc.html",
     "EmbedShowcase.dc.html",
+    "EmbedShowcasePhone.dc.html",
+    "EmbedShowcaseTablet.dc.html",
     "Pro.dc.html",
     "ProPhoneLight.dc.html",
     "ProTablet.dc.html",
@@ -2118,18 +2536,26 @@
     "ProManage.dc.html",
     "ProManageDesk.dc.html",
     "ProManagePhoneEmpty.dc.html",
+    "ProActivateTablet.dc.html",
+    "ProManageTablet.dc.html",
     "GuideOn.dc.html",
     "GuideOnStalePhone.dc.html",
     "GuideOnDeskLight.dc.html",
+    "GuideOnTablet.dc.html",
     "GuideVs.dc.html",
     "GuideVsPhoneLight.dc.html",
     "GuideVsDeskDark.dc.html",
+    "GuideVsTablet.dc.html",
     "GuideLearn.dc.html",
     "GuideLearnPhoneLight.dc.html",
     "GuideLearnDeskDark.dc.html",
+    "GuideLearnTablet.dc.html",
+    "GuideLearnPhoneLightBottom.dc.html",
     "GuideGuides.dc.html",
     "GuideGuidesPhoneLight.dc.html",
     "GuideGuidesDeskLight.dc.html",
+    "GuideGuidesTablet.dc.html",
+    "GuideGuidesDeskDark.dc.html",
     "PresetPage.dc.html",
     "PresetPhoneLight.dc.html",
     "PresetTablet.dc.html",
@@ -2137,17 +2563,28 @@
     "UntilPage.dc.html",
     "UntilPhoneLight.dc.html",
     "UntilDeskDark.dc.html",
+    "UntilTablet.dc.html",
     "PageKioskDesk.dc.html",
     "PageKioskPhone.dc.html",
     "PageLibraryDesk.dc.html",
+    "PageKioskTablet.dc.html",
+    "PageLibraryTablet.dc.html",
+    "PageLibraryPhoneLight.dc.html",
     "PageExtensionDesk.dc.html",
     "PageExtensionPhone.dc.html",
     "PageAboutDesk.dc.html",
     "PageChangelogPhone.dc.html",
+    "PageExtensionTablet.dc.html",
+    "PageAboutTablet.dc.html",
+    "PageAboutPhoneDark.dc.html",
+    "PageChangelogTablet.dc.html",
+    "PageChangelogDeskLight.dc.html",
     "PagePrivacyDesk.dc.html",
     "PageTermsPhone.dc.html",
     "Page404Phone.dc.html",
     "Page404Desk.dc.html",
+    "PageLegalTablet.dc.html",
+    "Page404Tablet.dc.html",
     "KioskScreen.dc.html",
     "KioskTvClock.dc.html",
     "KioskTvMessage.dc.html",
@@ -2180,11 +2617,15 @@
     "SysTabsLight.dc.html",
     "SysTabsDark.dc.html",
     "SysProLapsed.dc.html",
+    "SysProLapsedPhone.dc.html",
     "SysCheckoutSuccess.dc.html",
     "SysCheckoutFailed.dc.html",
     "SysUpdate.dc.html",
     "SysInstalledDesk.dc.html",
     "SysInstalledPhone.dc.html",
+    "SysCheckoutSuccessPhone.dc.html",
+    "SysCheckoutFailedPhone.dc.html",
+    "SysCheckoutSuccessTablet.dc.html",
     "GrowthFirstVisit.dc.html",
     "GrowthFirstVisitPhoneLight.dc.html",
     "GrowthFirstVisitTabletDark.dc.html",
@@ -2264,399 +2705,413 @@
       "y": -320,
       "w": 480,
       "fill": "yellow",
-      "text": "BUILD STATUS · updated 5:43 AM\n\nCanvas design  ·  Real app (new design)\n\nA · Tool\n1. Tool phone + desktop · 4 faces · all states · dark/light  —  ✅ on canvas  ·  app ⬜\n2. Tool on tablet  —  ✅ on canvas  ·  app ⬜\n3. Settings + lamp colour picker  —  ✅ on canvas  ·  app ⬜\n4. Stats (12-week heatmap)  —  ✅ on canvas  ·  app ⬜\n5. Time's up prompt  —  ✅ on canvas  ·  app ⬜\n6. Ambient: Clock, Focus, Minimal, Night, Message, Cook  —  ✅ on canvas  ·  app ⬜\n7. Floating window (PiP)  —  ✅ on canvas  ·  app ⬜\n8. Banners: resume, second tab, install  —  ✅ on canvas  ·  app ⬜\n9. Rating, shortcuts, share, toasts  —  ✅ on canvas  ·  app ⬜\n10. Logo, colour, type  —  ✅ on canvas  ·  app ⬜\n\nB · Content\n11. Home below the tool  —  ✅ on canvas  ·  app ⬜\n12. Article page (51 pages)  —  ✅ on canvas  ·  app ⬜\n13. Hub pages (5)  —  ✅ on canvas  ·  app ⬜\n\nC · Pro & business\n14. /pro  —  ✅ on canvas  ·  app ⬜\n15. /pro/activate  —  ✅ on canvas  ·  app ⬜\n16. /pro/manage  —  ✅ on canvas  ·  app ⬜\n17. Embed widget + builder  —  ✅ on canvas  ·  app ⬜\n18. /kiosk  —  ✅ on canvas  ·  app ⬜\n19. /library  —  ✅ on canvas  ·  app ⬜\n\nD · Extension\n20. Popup  —  ✅ on canvas  ·  app ⬜\n21. Options + schedule editor  —  ✅ on canvas  ·  app ⬜\n22. Toolbar icon + badges  —  ✅ on canvas  ·  app ⬜\n\nE · Other\n23. /extension landing  —  ✅ on canvas  ·  app ⬜\n24. About, Changelog  —  ✅ on canvas  ·  app ⬜\n25. Privacy, Terms  —  ✅ on canvas  ·  app ⬜\n26. 404  —  ✅ on canvas  ·  app ⬜\n\nF · Edge cases, sizes, languages, assets\n27. Tool: more sizes (small phone, landscape, tablet landscape, 1920 desktop, TV)  —  ✅ on canvas  ·  app ⬜\n28. Tool edge states (last minute, multi-day, deferred, offline, low battery, OLED)  —  ✅ on canvas  ·  app ⬜\n29. Languages: de, es, ja, zh, hi + translated badges  —  ✅ on canvas  ·  app ⬜\n30. Accessibility: keyboard focus, high contrast, 200% zoom, reduced motion, no-JS  —  ✅ on canvas  ·  app ⬜\n31. Guide types: /on device, /vs comparison, /learn, /guides  —  ✅ on canvas  ·  app ⬜\n32. Preset page /30m and /until/HH-MM page  —  ✅ on canvas  ·  app ⬜\n33. Kiosk wall screens (TV, portrait signage)  —  ✅ on canvas  ·  app ⬜\n34. Embed edge states + /embed/cook  —  ✅ on canvas  ·  app ⬜\n35. Social share images (OG)  —  ✅ on canvas  ·  app ⬜\n36. Store listing, app icons, PWA splash  —  ✅ on canvas  ·  app ⬜\n37. Extension edge states + welcome page  —  ✅ on canvas  ·  app ⬜\n38. System: offline, notifications, tab/favicon states, Pro lapsed, checkout errors  —  ✅ on canvas  ·  app ⬜\n\nG · Research (saved in repo docs/research/)\n39. Content verification: all product text (content-audit.md)  —  ✅ on canvas  ·  app ⬜\n40. Market + competitor research (market.md)  —  ✅ on canvas  ·  app ⬜\n41. Growth, retention, conversion (growth-conversion.md)  —  ✅ on canvas  ·  app ⬜\n42. Design gaps + new boards to drive use and purchase (design-gaps.md)  —  ✅ on canvas  ·  app ⬜\n\nH · Audits\n43. Audit A: tool, ambient, PiP, banners, content (overflow, contrast, targets)  —  ✅ on canvas  ·  app ⬜\n44. Audit B: Pro, extension, embed, brand + cross-board consistency  —  ✅ on canvas  ·  app ⬜\n46. Design director critique + system drift report (design-critique.md)  —  ✅ on canvas  ·  app ⬜\n47. Apply strict system §11 + critique fixes, batch 1 (tool, content, edge)  —  ✅ on canvas  ·  app ⬜\n48. Apply strict system §11 + critique fixes, batch 2 (Pro, ext, embed, pages, assets)  —  ✅ on canvas  ·  app ⬜\n45. Final audit: every board (docs/research/final-audit.md)  —  ✅ on canvas  ·  app ⬜\n\nI · Marketing audit (senior marketing leads, docs/research/marketing-*.md)\n49. Positioning + messaging + page copy rewrites  —  ✅ on canvas  ·  app ⬜\n50. SEO + content strategy + 90-day content plan  —  ✅ on canvas  ·  app ⬜\n51. Pricing, packaging, /pro sales page, CRO copy  —  ✅ on canvas  ·  app ⬜\n52. Go-to-market + launch plan + channel copy  —  ✅ on canvas  ·  app ⬜\n\nCanvas: 52 done · 0 building · 0 not started (of 52)\nReal app: 0 of 26 (starts after your approval)"
+      "text": "BUILD STATUS · updated 12:09 PM\n\nCanvas design  ·  Real app (new design)\n\nA · Tool\n1. Tool phone + desktop · 4 faces · all states · dark/light  —  ✅ on canvas  ·  app ⬜\n2. Tool on tablet  —  ✅ on canvas  ·  app ⬜\n3. Settings + lamp colour picker  —  ✅ on canvas  ·  app ⬜\n4. Stats (12-week heatmap)  —  ✅ on canvas  ·  app ⬜\n5. Time's up prompt  —  ✅ on canvas  ·  app ⬜\n6. Ambient: Clock, Focus, Minimal, Night, Message, Cook  —  ✅ on canvas  ·  app ⬜\n7. Floating window (PiP)  —  ✅ on canvas  ·  app ⬜\n8. Banners: resume, second tab, install  —  ✅ on canvas  ·  app ⬜\n9. Rating, shortcuts, share, toasts  —  ✅ on canvas  ·  app ⬜\n10. Logo, colour, type  —  ✅ on canvas  ·  app ⬜\n\nB · Content\n11. Home below the tool  —  ✅ on canvas  ·  app ⬜\n12. Article page (51 pages)  —  ✅ on canvas  ·  app ⬜\n13. Hub pages (5)  —  ✅ on canvas  ·  app ⬜\n\nC · Pro & business\n14. /pro  —  ✅ on canvas  ·  app ⬜\n15. /pro/activate  —  ✅ on canvas  ·  app ⬜\n16. /pro/manage  —  ✅ on canvas  ·  app ⬜\n17. Embed widget + builder  —  ✅ on canvas  ·  app ⬜\n18. /kiosk  —  ✅ on canvas  ·  app ⬜\n19. /library  —  ✅ on canvas  ·  app ⬜\n\nD · Extension\n20. Popup  —  ✅ on canvas  ·  app ⬜\n21. Options + schedule editor  —  ✅ on canvas  ·  app ⬜\n22. Toolbar icon + badges  —  ✅ on canvas  ·  app ⬜\n\nE · Other\n23. /extension landing  —  ✅ on canvas  ·  app ⬜\n24. About, Changelog  —  ✅ on canvas  ·  app ⬜\n25. Privacy, Terms  —  ✅ on canvas  ·  app ⬜\n26. 404  —  ✅ on canvas  ·  app ⬜\n\nF · Edge cases, sizes, languages, assets\n27. Tool: more sizes (small phone, landscape, tablet landscape, 1920 desktop, TV)  —  ✅ on canvas  ·  app ⬜\n28. Tool edge states (last minute, multi-day, deferred, offline, low battery, OLED)  —  ✅ on canvas  ·  app ⬜\n29. Languages: de, es, ja, zh, hi + translated badges  —  ✅ on canvas  ·  app ⬜\n30. Accessibility: keyboard focus, high contrast, 200% zoom, reduced motion, no-JS  —  ✅ on canvas  ·  app ⬜\n31. Guide types: /on device, /vs comparison, /learn, /guides  —  ✅ on canvas  ·  app ⬜\n32. Preset page /30m and /until/HH-MM page  —  ✅ on canvas  ·  app ⬜\n33. Kiosk wall screens (TV, portrait signage)  —  ✅ on canvas  ·  app ⬜\n34. Embed edge states + /embed/cook  —  ✅ on canvas  ·  app ⬜\n35. Social share images (OG)  —  ✅ on canvas  ·  app ⬜\n36. Store listing, app icons, PWA splash  —  ✅ on canvas  ·  app ⬜\n37. Extension edge states + welcome page  —  ✅ on canvas  ·  app ⬜\n38. System: offline, notifications, tab/favicon states, Pro lapsed, checkout errors  —  ✅ on canvas  ·  app ⬜\n\nG · Research (saved in repo docs/research/)\n39. Content verification: all product text (content-audit.md)  —  ✅ on canvas  ·  app ⬜\n40. Market + competitor research (market.md)  —  ✅ on canvas  ·  app ⬜\n41. Growth, retention, conversion (growth-conversion.md)  —  ✅ on canvas  ·  app ⬜\n42. Design gaps + new boards to drive use and purchase (design-gaps.md)  —  ✅ on canvas  ·  app ⬜\n\nH · Audits\n43. Audit A: tool, ambient, PiP, banners, content (overflow, contrast, targets)  —  ✅ on canvas  ·  app ⬜\n44. Audit B: Pro, extension, embed, brand + cross-board consistency  —  ✅ on canvas  ·  app ⬜\n46. Design director critique + system drift report (design-critique.md)  —  ✅ on canvas  ·  app ⬜\n47. Apply strict system §11 + critique fixes, batch 1 (tool, content, edge)  —  ✅ on canvas  ·  app ⬜\n48. Apply strict system §11 + critique fixes, batch 2 (Pro, ext, embed, pages, assets)  —  ✅ on canvas  ·  app ⬜\n45. Final audit: every board (docs/research/final-audit.md)  —  ✅ on canvas  ·  app ⬜\n\nI · Marketing audit (senior marketing leads, docs/research/marketing-*.md)\n49. Positioning + messaging + page copy rewrites  —  ✅ on canvas  ·  app ⬜\n50. SEO + content strategy + 90-day content plan  —  ✅ on canvas  ·  app ⬜\n51. Pricing, packaging, /pro sales page, CRO copy  —  ✅ on canvas  ·  app ⬜\n52. Go-to-market + launch plan + channel copy  —  ✅ on canvas  ·  app ⬜\n\nJ · Owner review fixes and gap closing (27 Sep)\n53. Stop and strong buttons follow the theme (D-R20) on every board  —  ✅ on canvas  ·  app ⬜\n54. Tablet views and missing themes for every page  —  ✅ on canvas  ·  app ⬜\n55. Language switcher (footer + Settings) and the /on, /vs, /guides, /learn hubs  —  ✅ on canvas  ·  app ⬜\n56. /embed page on phone and tablet; stats and settings on tablet/desktop  —  ✅ on canvas  ·  app ⬜\n57. Real-runtime render check of every board + compact canvas layout (D-R21)  —  ✅ on canvas  ·  app ⬜\n58. Popup spacing and padding (owner comments)  —  ✅ on canvas  ·  app ⬜\n59. Runtime bug: styles starting with a {{hole}} were dropped; fixed on every board, and the scanner now catches it  —  ✅ on canvas  ·  app ⬜\n60. Design system tokens (DESIGN §12, D-R23) + real-runtime §11 audit: 0 violations on all 300 boards  —  ✅ on canvas  ·  app ⬜\n61. Responsive contract (D-R22) + tool boards at the 600 and 1024 breakpoint edges  —  ✅ on canvas  ·  app ⬜\n62. /for hub cut to 14 (OD-3), embed 320×104 + credit outside the widget, docs updated  —  ✅ on canvas  ·  app ⬜\n\nCanvas: 62 done · 0 building · 0 not started (of 62)\nReal app: 0 of 26 (starts after your approval)"
     },
-    "sec_0": {
+    "sec_0_0": {
       "x": 0,
       "y": -120,
       "text": "Tool · phone · dark",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4150
     },
-    "sec_1": {
+    "sec_0_1": {
       "x": 0,
-      "y": 984,
+      "y": 1104,
       "text": "Tool · phone · light",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3680
     },
-    "sec_2": {
+    "sec_0_2": {
       "x": 0,
-      "y": 2088,
+      "y": 2328,
       "text": "Tool · tablet, settings, stats, time's up",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 5870
     },
-    "sec_3": {
+    "sec_0_3": {
       "x": 0,
-      "y": 3528,
+      "y": 3888,
       "text": "Tool · desktop",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 6720
     },
-    "sec_4": {
+    "sec_0_4": {
       "x": 0,
-      "y": 4588,
+      "y": 5068,
       "text": "Tool · desktop · light",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4000
     },
-    "sec_5": {
+    "sec_0_5": {
       "x": 0,
-      "y": 5648,
-      "text": "Tool · more screen sizes (320 phone, landscape, tablet landscape)",
+      "y": 6248,
+      "text": "Tool · more screen sizes (320, 600, 1024, landscape, tablet landscape)",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 6292
     },
-    "sec_6": {
+    "sec_0_6": {
       "x": 0,
-      "y": 6728,
+      "y": 8476,
       "text": "Tool · large displays (1920)",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3920
     },
-    "sec_7": {
+    "sec_0_7": {
       "x": 0,
-      "y": 8068,
+      "y": 9936,
       "text": "Tool · edge states",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3210
     },
-    "sec_8": {
+    "sec_0_8": {
       "x": 0,
-      "y": 9172,
+      "y": 11160,
       "text": "Tool · edge states on desktop",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 2640
     },
-    "sec_9": {
+    "sec_0_9": {
       "x": 0,
-      "y": 10232,
+      "y": 12340,
       "text": "Languages (real translations, 7 locales)",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4110
     },
-    "sec_10": {
+    "sec_0_10": {
       "x": 0,
-      "y": 11788,
+      "y": 14016,
       "text": "Languages · desktop",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 2640
     },
-    "sec_11": {
+    "sec_0_11": {
       "x": 0,
-      "y": 12848,
+      "y": 15196,
       "text": "Accessibility · keyboard, before JavaScript",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3600
     },
-    "sec_12": {
+    "sec_0_12": {
       "x": 0,
-      "y": 13908,
+      "y": 16376,
       "text": "Accessibility · high contrast, zoom, reduced motion, screen reader",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3650
     },
-    "sec_13": {
+    "sec_0_13": {
       "x": 0,
-      "y": 15700,
+      "y": 18288,
       "text": "Accessibility · reduced motion, no JS phone, screen reader",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4150
     },
-    "sec_14": {
+    "sec_0_14": {
       "x": 0,
-      "y": 16804,
+      "y": 19848,
       "text": "Tool · banners, prompts, overlays",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3170
     },
-    "sec_15": {
+    "sec_0_15": {
       "x": 0,
-      "y": 17908,
+      "y": 21408,
       "text": "Tool · shortcuts, share, toasts",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4000
     },
-    "sec_16": {
+    "sec_0_16": {
       "x": 0,
-      "y": 18968,
+      "y": 22588,
       "text": "Ambient modes · floating window",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 6200
     },
-    "sec_17": {
+    "sec_0_17": {
       "x": 0,
-      "y": 20072,
+      "y": 23812,
       "text": "Ambient · minimal, message, cook",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 5160
     },
-    "sec_18": {
+    "sec_0_18": {
       "x": 0,
-      "y": 21152,
+      "y": 25012,
       "text": "Floating window (PiP)",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3064
     },
-    "sec_19": {
-      "x": 0,
-      "y": 22212,
+    "sec_1_0": {
+      "x": 7520,
+      "y": -120,
       "text": "Content · /for/cooking article (51 pages use this)",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4480
     },
-    "sec_20": {
-      "x": 0,
-      "y": 27684,
+    "sec_1_1": {
+      "x": 7520,
+      "y": 5604,
       "text": "Content · hub and home below the tool",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 6780
     },
-    "sec_21": {
-      "x": 0,
-      "y": 35900,
+    "sec_1_2": {
+      "x": 7520,
+      "y": 20060,
+      "text": "Language switcher",
+      "kind": "title1",
+      "maxW": 2000
+    },
+    "sec_1_3": {
+      "x": 7520,
+      "y": 21284,
+      "text": "Hubs · /on /vs /guides /learn",
+      "kind": "title1",
+      "maxW": 5880
+    },
+    "sec_1_4": {
+      "x": 7520,
+      "y": 26880,
       "text": "Chrome extension · popup and badges",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4800
     },
-    "sec_22": {
-      "x": 0,
-      "y": 36760,
+    "sec_2_0": {
+      "x": 15100,
+      "y": -120,
       "text": "Chrome extension · settings",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4000
     },
-    "sec_23": {
-      "x": 0,
-      "y": 41164,
+    "sec_2_1": {
+      "x": 15100,
+      "y": 4404,
       "text": "Extension · popup edge states",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3000
     },
-    "sec_24": {
-      "x": 0,
-      "y": 42024,
+    "sec_2_2": {
+      "x": 15100,
+      "y": 5384,
       "text": "Extension · welcome page after install",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 2000
     },
-    "sec_25": {
-      "x": 0,
-      "y": 45044,
+    "sec_2_3": {
+      "x": 15100,
+      "y": 8524,
       "text": "Embed widget",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4650
     },
-    "sec_26": {
-      "x": 0,
-      "y": 46852,
+    "sec_2_4": {
+      "x": 15100,
+      "y": 11865,
       "text": "Pro · /pro",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4480
     },
-    "sec_27": {
-      "x": 0,
-      "y": 53292,
+    "sec_2_5": {
+      "x": 15100,
+      "y": 18502,
       "text": "Pro · activate and manage devices",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 6320
     },
-    "sec_28": {
-      "x": 0,
-      "y": 55160,
+    "sec_2_6": {
+      "x": 15100,
+      "y": 20586,
       "text": "Guide types · /on device page",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3120
     },
-    "sec_29": {
-      "x": 0,
-      "y": 62230,
+    "sec_3_0": {
+      "x": 22220,
+      "y": -120,
       "text": "Guide types · /vs comparison",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3120
     },
-    "sec_30": {
-      "x": 0,
-      "y": 68740,
+    "sec_3_1": {
+      "x": 22220,
+      "y": 6610,
       "text": "Guide types · /learn with code",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3590
     },
-    "sec_31": {
-      "x": 0,
-      "y": 76970,
+    "sec_3_2": {
+      "x": 22220,
+      "y": 13900,
       "text": "Guide types · /guides how-to",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4480
     },
-    "sec_32": {
-      "x": 0,
-      "y": 82310,
+    "sec_3_3": {
+      "x": 22220,
+      "y": 19460,
       "text": "Preset page /30m and /until/07-30",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 6320
     },
-    "sec_33": {
-      "x": 0,
-      "y": 85022,
+    "sec_3_4": {
+      "x": 22220,
+      "y": 22392,
       "text": "Kiosk and library",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 5380
     },
-    "sec_34": {
-      "x": 0,
-      "y": 89642,
+    "sec_4_0": {
+      "x": 29340,
+      "y": -120,
       "text": "Extension landing, about, changelog",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 6750
     },
-    "sec_35": {
-      "x": 0,
-      "y": 97746,
+    "sec_4_1": {
+      "x": 29340,
+      "y": 14219,
       "text": "Privacy, terms, 404",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 5380
     },
-    "sec_36": {
-      "x": 0,
-      "y": 102318,
+    "sec_4_2": {
+      "x": 29340,
+      "y": 19332,
       "text": "Kiosk wall screens",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 5920
     },
-    "sec_37": {
-      "x": 0,
-      "y": 103658,
+    "sec_4_3": {
+      "x": 29340,
+      "y": 20792,
       "text": "Kiosk · free, dashboard, portrait",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 5080
     },
-    "sec_38": {
-      "x": 0,
-      "y": 105838,
+    "sec_4_4": {
+      "x": 29340,
+      "y": 23092,
       "text": "Embed edge states",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4000
     },
-    "sec_39": {
-      "x": 0,
-      "y": 106898,
+    "sec_4_5": {
+      "x": 29340,
+      "y": 24272,
       "text": "Embed · tablet, phone, /embed/cook",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3290
     },
-    "sec_40": {
-      "x": 0,
-      "y": 108278,
+    "sec_4_6": {
+      "x": 29340,
+      "y": 25772,
       "text": "Social share images (1200×630)",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 6320
     },
-    "sec_41": {
-      "x": 0,
-      "y": 109168,
+    "sec_4_7": {
+      "x": 29340,
+      "y": 26782,
       "text": "Chrome Web Store listing",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 5360
     },
-    "sec_42": {
-      "x": 0,
-      "y": 110228,
+    "sec_4_8": {
+      "x": 29340,
+      "y": 27962,
       "text": "Store promo tiles, icons",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3280
     },
-    "sec_43": {
-      "x": 0,
-      "y": 111388,
+    "sec_5_0": {
+      "x": 36890,
+      "y": -120,
       "text": "System · offline, notifications, tab states",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3110
     },
-    "sec_44": {
-      "x": 0,
-      "y": 112548,
+    "sec_5_1": {
+      "x": 36890,
+      "y": 1160,
       "text": "System · browser tabs, Pro lapsed",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4470
     },
-    "sec_45": {
-      "x": 0,
-      "y": 114852,
+    "sec_5_2": {
+      "x": 36890,
+      "y": 4506,
       "text": "System · checkout, update, installed app",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 7190
     },
-    "sec_46": {
-      "x": 0,
-      "y": 116196,
+    "sec_5_3": {
+      "x": 36890,
+      "y": 8110,
       "text": "Growth · first visit: proof in 5 seconds",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4480
     },
-    "sec_47": {
-      "x": 0,
-      "y": 117636,
+    "sec_5_4": {
+      "x": 36890,
+      "y": 9670,
       "text": "Growth · trust panel: how AwakeTab knows",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 3580
     },
-    "sec_48": {
-      "x": 0,
-      "y": 118740,
+    "sec_5_5": {
+      "x": 36890,
+      "y": 10894,
       "text": "Growth · session done: one gentle next step",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4050
     },
-    "sec_49": {
-      "x": 0,
-      "y": 119844,
+    "sec_5_6": {
+      "x": 36890,
+      "y": 12118,
       "text": "Growth · back from a hidden tab",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4050
     },
-    "sec_50": {
-      "x": 0,
-      "y": 120948,
+    "sec_5_7": {
+      "x": 36890,
+      "y": 13342,
       "text": "Growth · Pro moments (informative, never pushy)",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 5410
     },
-    "sec_51": {
-      "x": 0,
-      "y": 122052,
+    "sec_5_8": {
+      "x": 36890,
+      "y": 14566,
       "text": "Growth · which plan fits (/pro helper)",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4480
     },
-    "sec_52": {
-      "x": 0,
-      "y": 124392,
+    "sec_5_9": {
+      "x": 36890,
+      "y": 17097,
       "text": "Growth · tell a friend, share a setup",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4050
     },
-    "sec_53": {
-      "x": 0,
-      "y": 125496,
+    "sec_5_10": {
+      "x": 36890,
+      "y": 18321,
       "text": "Growth · business entry points in articles",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 4050
     },
-    "sec_54": {
-      "x": 0,
-      "y": 127436,
+    "sec_5_11": {
+      "x": 36890,
+      "y": 20443,
       "text": "Brand",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 2000
     },
-    "sec_55": {
-      "x": 0,
-      "y": 128628,
+    "sec_5_12": {
+      "x": 36890,
+      "y": 22293,
       "text": "Page components · play with all props (Tweaks)",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 7190
     }
   },
   "designSystems": []

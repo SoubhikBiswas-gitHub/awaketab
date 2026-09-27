@@ -19,7 +19,7 @@ let missing = 0, combos = 0, holes = 0;
 const combosOf = (extra) => {
   let out = [{}];
   for (const theme of ['auto', 'light', 'dark']) void theme;
-  const axes = Object.assign({ theme: ['auto', 'light', 'dark'], layout: ['phone', 'tablet', 'desktop'], sys: [true, false] }, extra);
+  const axes = Object.assign({ theme: ['auto', 'light', 'dark'], layout: ['phone', 'tablet', 'desktop'], sys: [true, false], language: ['closed', 'open'] }, extra);
   for (const [k, vs] of Object.entries(axes)) out = out.flatMap((o) => vs.map((v) => ({ ...o, [k]: v })));
   return out;
 };
@@ -181,6 +181,39 @@ for (const [file, comp, , props, w, h] of WRAPS) {
   const ev = e.renderVals();
   assert.equal(ev.levelPill, 'System awake'); assert.equal(ev.popStatus, 'system'); assert.equal(ev.levelBadge, 'SYS');
   renderCheck('PageExtension', E.markup, e, 'system');
+}
+
+// ---- Footer language switcher (PRIMITIVES.md P-LANG): 8 locales in order, current row, locale-home links, open/close.
+{
+  const ORDER = 'English|Español|Português (Brasil)|Deutsch|Français|日本語|简体中文|हिन्दी';
+  const HOME = ['', '/es/', '/pt-br/', '/de/', '/fr/', '/ja/', '/zh/', '/hi/'];
+  const PATH = { Page404: '/', PageAbout: '/about', PageChangelog: '/changelog', PageExtension: '/extension', PageKiosk: '/kiosk', PageLibrary: '/library' };
+  for (const name of Object.keys(PAGES)) {
+    const { src, markup, Component } = load(name + '.dc.html');
+    assert.ok(src.includes('AT-LANG v1') && markup.includes('onKeyDown="{{lang.key}}"') && src.includes('.at-chev{'), name + ' lang markup');
+    for (const layout of ['phone', 'tablet', 'desktop']) {
+      const c = new Component({ layout, theme: 'dark', doc: 'terms' });
+      let v = c.renderVals();
+      assert.equal(v.lang.open, false); assert.equal(v.lang.label, 'English'); assert.equal(v.lang.aria, 'Language: English');
+      assert.equal(v.lang.rows.map((r) => r.name).join('|'), ORDER, name + ' order');
+      const path = PATH[name] || '/terms';
+      v.lang.rows.forEach((r, i) => {
+        assert.equal(r.href, i ? HOME[i] : path, name + ' href ' + i);
+        assert.equal(r.hreflang, i ? '' : 'en', name + ' hreflang ' + i);
+        assert.equal(r.cur, i ? 'false' : 'true');
+        assert.equal(r.note, i ? 'Translation in review' : 'Current');
+      });
+      v.lang.toggle(); v = c.renderVals();
+      assert.equal(v.lang.open, true); assert.equal(v.lang.sheet, layout === 'phone'); assert.equal(v.lang.pop, layout !== 'phone');
+      assert.equal(v.lang.expanded, 'true'); assert.equal(v.lang.role, layout === 'phone' ? 'dialog' : 'group');
+      renderCheck(name, markup, c, 'lang open ' + layout);
+      v.lang.key({ key: 'Escape', preventDefault() {}, currentTarget: { querySelector: () => ({ focus() {} }) } });
+      assert.equal(c.renderVals().lang.open, false, name + ' Esc closes');
+      const o = new Component({ layout, language: 'open' });
+      assert.equal(o.renderVals().lang.open, true, name + ' language=open seeds');
+    }
+  }
+  console.log('lang: 7 pages × 3 layouts, 8 locales in order, locale-home links, Esc closes');
 }
 
 console.log('pages', Object.keys(PAGES).length, '· prop combinations', combos, '· distinct holes', holes, '· missing', missing);

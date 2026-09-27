@@ -179,6 +179,20 @@
     844,
     "Light · Time's up",
     true
+   ],
+   [
+    "ToolStatsTablet.dc.html",
+    820,
+    1180,
+    "Tablet · Stats · dark",
+    true
+   ],
+   [
+    "ToolSettingsTablet.dc.html",
+    820,
+    1180,
+    "Tablet · Settings · language list open · light",
+    true
    ]
   ]
  ],
@@ -212,6 +226,13 @@
     800,
     "Light · Desktop · Settings side sheet",
     true
+   ],
+   [
+    "ToolStatsDesk.dc.html",
+    1280,
+    800,
+    "Desktop · Stats · light",
+    true
    ]
   ]
  ],
@@ -242,7 +263,7 @@
   ]
  ],
  [
-  "Tool · more screen sizes (320 phone, landscape, tablet landscape)",
+  "Tool · more screen sizes (320, 600, 1024, landscape, tablet landscape)",
   [
    [
     "SizeSmallDark.dc.html",
@@ -277,6 +298,34 @@
     1180,
     820,
     "Tablet landscape · light · Horizon",
+    true
+   ],
+   [
+    "SizeTabletSmallDark.dc.html",
+    600,
+    960,
+    "Small tablet 600 · dark · awake · Ring",
+    true
+   ],
+   [
+    "SizeTabletSmallLight.dc.html",
+    600,
+    960,
+    "Small tablet 600 · light · ready · Tide",
+    true
+   ],
+   [
+    "SizeDeskSmallDark.dc.html",
+    1024,
+    768,
+    "Small desktop 1024 · dark · awake · Bold",
+    true
+   ],
+   [
+    "SizeDeskSmallLight.dc.html",
+    1024,
+    768,
+    "Small desktop 1024 · light · ready · Horizon",
     true
    ]
   ]
@@ -424,6 +473,13 @@
     1296,
     "Deutsch article · translation badge",
     false
+   ],
+   [
+    "IntlJaTablet.dc.html",
+    820,
+    1180,
+    "日本語 · tablet light · awake · review banner",
+    true
    ]
   ]
  ],
@@ -521,6 +577,13 @@
     844,
     "Screen reader announcements",
     true
+   ],
+   [
+    "A11yReducedTablet.dc.html",
+    1300,
+    1180,
+    "Reduced motion · tablet",
+    false
    ]
   ]
  ],
@@ -560,6 +623,13 @@
     390,
     844,
     "Rating prompt · phone dark",
+    true
+   ],
+   [
+    "ExtrasTabletRating.dc.html",
+    820,
+    1180,
+    "Tablet · Rating prompt · light",
     true
    ]
   ]
@@ -626,6 +696,13 @@
     1280,
     800,
     "Ambient · Focus · cycle 2 of 4",
+    true
+   ],
+   [
+    "AmbientClockTablet.dc.html",
+    1180,
+    820,
+    "Ambient · Clock · tablet · dark",
     true
    ]
   ]
@@ -702,35 +779,35 @@
    [
     "ContentArticle.dc.html",
     390,
-    5212,
+    5344,
     "▶ Article · play me · follows your system",
     true
    ],
    [
     "ContentArticlePhoneLight.dc.html",
     390,
-    5212,
+    5344,
     "/for/cooking · phone · light · awake",
     true
    ],
    [
     "ContentArticleTablet.dc.html",
     820,
-    4644,
+    4724,
     "/for/cooking · tablet · light",
     true
    ],
    [
     "ContentArticleDeskDark.dc.html",
     1280,
-    4510,
+    4534,
     "/for/cooking · desktop · dark · awake",
     true
    ],
    [
     "ContentArticleDeskLight.dc.html",
     1280,
-    4510,
+    4534,
     "/for/cooking · desktop · light",
     true
    ]
@@ -742,35 +819,35 @@
    [
     "HubFor.dc.html",
     390,
-    4312,
+    3803,
     "▶ /for hub · play me",
     true
    ],
    [
     "HubForPhone.dc.html",
     390,
-    4312,
+    3803,
     "/for hub · phone · light",
     true
    ],
    [
     "HubForDesk.dc.html",
     1280,
-    2928,
+    2491,
     "/for hub · desktop · light",
     true
    ],
    [
     "HomeBelow.dc.html",
     390,
-    7956,
+    7908,
     "▶ Home below the tool · play me",
     true
    ],
    [
     "HomeBelowPhone.dc.html",
     390,
-    7956,
+    7908,
     "Home below the tool · phone · light",
     true
    ],
@@ -779,6 +856,107 @@
     1280,
     6028,
     "Home below the tool · desktop · light",
+    true
+   ],
+   [
+    "HubForTablet.dc.html",
+    820,
+    3073,
+    "/for hub · tablet · dark",
+    true
+   ],
+   [
+    "HubForDeskDark.dc.html",
+    1280,
+    2491,
+    "/for hub · desktop · dark",
+    true
+   ],
+   [
+    "HomeBelowTablet.dc.html",
+    820,
+    6048,
+    "Home below the tool · tablet · dark",
+    true
+   ]
+  ]
+ ],
+ [
+  "Language switcher",
+  [
+   [
+    "LangSwitcherPhoneDark.dc.html",
+    390,
+    844,
+    "Language switcher · phone · dark · sheet open",
+    true
+   ],
+   [
+    "LangSwitcherDeskLight.dc.html",
+    1280,
+    800,
+    "Language switcher · desktop · light · list open",
+    true
+   ]
+  ]
+ ],
+ [
+  "Hubs · /on /vs /guides /learn",
+  [
+   [
+    "HubOnPhoneDark.dc.html",
+    390,
+    3664,
+    "/on hub · phone · dark",
+    true
+   ],
+   [
+    "HubOnDeskLight.dc.html",
+    1280,
+    2232,
+    "/on hub · desktop · light",
+    true
+   ],
+   [
+    "HubVsPhoneLight.dc.html",
+    390,
+    2812,
+    "/vs hub · phone · light",
+    true
+   ],
+   [
+    "HubVsDeskDark.dc.html",
+    1280,
+    1708,
+    "/vs hub · desktop · dark",
+    true
+   ],
+   [
+    "HubGuidesPhoneDark.dc.html",
+    390,
+    2772,
+    "/guides hub · phone · dark",
+    true
+   ],
+   [
+    "HubGuidesDeskLight.dc.html",
+    1280,
+    1684,
+    "/guides hub · desktop · light",
+    true
+   ],
+   [
+    "HubLearnPhoneLight.dc.html",
+    390,
+    2560,
+    "/learn hub · phone · light",
+    true
+   ],
+   [
+    "HubLearnDeskDark.dc.html",
+    1280,
+    1432,
+    "/learn hub · desktop · dark",
     true
    ]
   ]
@@ -950,7 +1128,7 @@
     "EmbedCompactLight.dc.html",
     320,
     104,
-    "Embed · Compact 320 × 96 · light",
+    "Embed · Compact 320 × 104 · light",
     true
    ],
    [
@@ -970,8 +1148,22 @@
    [
     "EmbedShowcase.dc.html",
     1280,
-    1548,
+    1552,
     "Embed · on a recipe page + snippet builder",
+    true
+   ],
+   [
+    "EmbedShowcasePhone.dc.html",
+    390,
+    2961,
+    "Embed page · phone · dark",
+    true
+   ],
+   [
+    "EmbedShowcaseTablet.dc.html",
+    820,
+    2456,
+    "Embed page · tablet · light",
     true
    ]
   ]
@@ -982,21 +1174,21 @@
    [
     "Pro.dc.html",
     390,
-    6180,
+    6257,
     "▶ Pro · play me · follows your system",
     true
    ],
    [
     "ProPhoneLight.dc.html",
     390,
-    6180,
+    6257,
     "Pro · phone · light",
     true
    ],
    [
     "ProTablet.dc.html",
     820,
-    4596,
+    4616,
     "Pro · tablet · light",
     true
    ],
@@ -1022,14 +1214,14 @@
    [
     "ProActivate.dc.html",
     390,
-    1608,
+    1704,
     "▶ Activate · try the flow",
     true
    ],
    [
     "ProActivatePhone.dc.html",
     390,
-    1120,
+    1170,
     "Activate · phone · dark · success",
     true
    ],
@@ -1043,22 +1235,36 @@
    [
     "ProManage.dc.html",
     390,
-    1088,
+    1175,
     "▶ Manage devices · phone",
     true
    ],
    [
     "ProManageDesk.dc.html",
     1280,
-    1020,
+    1026,
     "Manage devices · desktop · dark",
     true
    ],
    [
     "ProManagePhoneEmpty.dc.html",
     390,
-    960,
+    1009,
     "Manage devices · phone · light · empty",
+    true
+   ],
+   [
+    "ProActivateTablet.dc.html",
+    820,
+    1602,
+    "Activate · tablet · dark · activation limit",
+    true
+   ],
+   [
+    "ProManageTablet.dc.html",
+    820,
+    1104,
+    "Manage devices · tablet · light",
     true
    ]
   ]
@@ -1069,14 +1275,14 @@
    [
     "GuideOn.dc.html",
     390,
-    6810,
+    6910,
     "▶ /on/iphone-safari · follows your system",
     true
    ],
    [
     "GuideOnStalePhone.dc.html",
     390,
-    6810,
+    6910,
     "/on · phone · light · stale badge",
     true
    ],
@@ -1085,6 +1291,13 @@
     1280,
     6180,
     "/on · desktop · light",
+    true
+   ],
+   [
+    "GuideOnTablet.dc.html",
+    820,
+    6160,
+    "/on · tablet · dark",
     true
    ]
   ]
@@ -1095,14 +1308,14 @@
    [
     "GuideVs.dc.html",
     390,
-    6250,
+    6350,
     "▶ /vs/nosleep-page · follows your system",
     true
    ],
    [
     "GuideVsPhoneLight.dc.html",
     390,
-    6250,
+    6350,
     "/vs · phone · light",
     true
    ],
@@ -1111,6 +1324,13 @@
     1280,
     4840,
     "/vs · desktop · dark",
+    true
+   ],
+   [
+    "GuideVsTablet.dc.html",
+    820,
+    4780,
+    "/vs · tablet · light",
     true
    ]
   ]
@@ -1121,15 +1341,15 @@
    [
     "GuideLearn.dc.html",
     390,
-    7970,
+    3976,
     "▶ /learn · follows your system",
     true
    ],
    [
     "GuideLearnPhoneLight.dc.html",
     390,
-    7970,
-    "/learn · phone · light",
+    3976,
+    "/learn · phone · light · top",
     true
    ],
    [
@@ -1137,6 +1357,20 @@
     1280,
     6910,
     "/learn · desktop · dark",
+    true
+   ],
+   [
+    "GuideLearnTablet.dc.html",
+    820,
+    6620,
+    "/learn · tablet · light",
+    true
+   ],
+   [
+    "GuideLearnPhoneLightBottom.dc.html",
+    390,
+    4094,
+    "/learn · phone · light · bottom",
     true
    ]
   ]
@@ -1147,14 +1381,14 @@
    [
     "GuideGuides.dc.html",
     390,
-    5080,
+    5180,
     "▶ /guides · follows your system",
     true
    ],
    [
     "GuideGuidesPhoneLight.dc.html",
     390,
-    5080,
+    5180,
     "/guides · phone · light",
     true
    ],
@@ -1163,6 +1397,20 @@
     1280,
     4350,
     "/guides · desktop · light",
+    true
+   ],
+   [
+    "GuideGuidesTablet.dc.html",
+    820,
+    4320,
+    "/guides · tablet · dark",
+    true
+   ],
+   [
+    "GuideGuidesDeskDark.dc.html",
+    1280,
+    4350,
+    "/guides · desktop · dark",
     true
    ]
   ]
@@ -1173,21 +1421,21 @@
    [
     "PresetPage.dc.html",
     390,
-    2452,
+    2552,
     "▶ /30m · follows your system",
     true
    ],
    [
     "PresetPhoneLight.dc.html",
     390,
-    2452,
+    2552,
     "/30m · phone · light",
     true
    ],
    [
     "PresetTablet.dc.html",
     820,
-    2364,
+    2420,
     "/30m · tablet · dark",
     true
    ],
@@ -1201,14 +1449,14 @@
    [
     "UntilPage.dc.html",
     390,
-    2124,
+    2224,
     "▶ /until/07-30 · follows your system",
     true
    ],
    [
     "UntilPhoneLight.dc.html",
     390,
-    2124,
+    2224,
     "/until · phone · light · ends tomorrow",
     true
    ],
@@ -1217,6 +1465,13 @@
     1280,
     1856,
     "/until · desktop · dark · ends today",
+    true
+   ],
+   [
+    "UntilTablet.dc.html",
+    820,
+    2248,
+    "/until/07-30 · tablet · dark · awake",
     true
    ]
   ]
@@ -1227,22 +1482,43 @@
    [
     "PageKioskDesk.dc.html",
     1280,
-    2992,
+    2983,
     "Kiosk · desktop light · URL builder",
     true
    ],
    [
     "PageKioskPhone.dc.html",
     390,
-    4360,
+    4353,
     "Kiosk · phone light",
     true
    ],
    [
     "PageLibraryDesk.dc.html",
     1280,
-    3104,
+    3128,
     "Library · desktop light · live state machine",
+    true
+   ],
+   [
+    "PageKioskTablet.dc.html",
+    820,
+    3598,
+    "Kiosk · tablet light",
+    true
+   ],
+   [
+    "PageLibraryTablet.dc.html",
+    820,
+    3483,
+    "Library · tablet dark",
+    true
+   ],
+   [
+    "PageLibraryPhoneLight.dc.html",
+    390,
+    4470,
+    "Library · phone light",
     true
    ]
   ]
@@ -1253,14 +1529,14 @@
    [
     "PageExtensionDesk.dc.html",
     1280,
-    3512,
+    3545,
     "Extension · desktop light",
     true
    ],
    [
     "PageExtensionPhone.dc.html",
     390,
-    5544,
+    5624,
     "Extension · phone dark",
     true
    ],
@@ -1274,8 +1550,43 @@
    [
     "PageChangelogPhone.dc.html",
     390,
-    7844,
+    7894,
     "Changelog · phone light",
+    true
+   ],
+   [
+    "PageExtensionTablet.dc.html",
+    820,
+    4583,
+    "Extension · tablet light",
+    true
+   ],
+   [
+    "PageAboutTablet.dc.html",
+    820,
+    2348,
+    "About · tablet dark",
+    true
+   ],
+   [
+    "PageAboutPhoneDark.dc.html",
+    390,
+    3156,
+    "About · phone dark",
+    true
+   ],
+   [
+    "PageChangelogTablet.dc.html",
+    820,
+    5877,
+    "Changelog · tablet light",
+    true
+   ],
+   [
+    "PageChangelogDeskLight.dc.html",
+    1280,
+    5945,
+    "Changelog · desktop light",
     true
    ]
   ]
@@ -1286,29 +1597,43 @@
    [
     "PagePrivacyDesk.dc.html",
     1280,
-    4312,
+    4311,
     "Privacy · desktop light",
     true
    ],
    [
     "PageTermsPhone.dc.html",
     390,
-    2236,
+    2286,
     "Terms · phone dark",
     true
    ],
    [
     "Page404Phone.dc.html",
     390,
-    1536,
+    1588,
     "404 · phone light · mini tool",
     true
    ],
    [
     "Page404Desk.dc.html",
     1280,
-    1040,
+    1039,
     "404 · desktop light",
+    true
+   ],
+   [
+    "PageLegalTablet.dc.html",
+    820,
+    4733,
+    "Privacy · tablet dark",
+    true
+   ],
+   [
+    "Page404Tablet.dc.html",
+    820,
+    1702,
+    "404 · tablet light",
     true
    ]
   ]
@@ -1419,7 +1744,7 @@
     "EmbedCookCompact.dc.html",
     320,
     104,
-    "/embed/cook · 320×96 running",
+    "/embed/cook · 320×104 running",
     true
    ],
    [
@@ -1576,9 +1901,16 @@
    [
     "SysProLapsed.dc.html",
     1280,
-    2044,
+    2055,
     "Pro lapsed · tool + manage",
-    false
+    true
+   ],
+   [
+    "SysProLapsedPhone.dc.html",
+    390,
+    2966,
+    "Pro lapsed · phone · dark",
+    true
    ]
   ]
  ],
@@ -1619,6 +1951,27 @@
     1084,
     "Installed · phone launch",
     false
+   ],
+   [
+    "SysCheckoutSuccessPhone.dc.html",
+    390,
+    1659,
+    "Checkout success · phone · dark",
+    true
+   ],
+   [
+    "SysCheckoutFailedPhone.dc.html",
+    390,
+    1413,
+    "Checkout failed · phone · light",
+    true
+   ],
+   [
+    "SysCheckoutSuccessTablet.dc.html",
+    820,
+    1445,
+    "Checkout success · tablet · light",
+    true
    ]
   ]
  ],
@@ -1828,21 +2181,21 @@
    [
     "GrowthPlanHelper.dc.html",
     390,
-    2080,
+    2151,
     "▶ Which plan fits · /pro helper · play me",
     true
    ],
    [
     "GrowthPlanPhoneLight.dc.html",
     390,
-    2080,
+    2151,
     "Which plan fits · pay once · phone · light",
     true
    ],
    [
     "GrowthPlanTabletLight.dc.html",
     820,
-    1600,
+    1635,
     "Which plan fits · kiosk · tablet · light",
     true
    ],
@@ -1908,14 +2261,14 @@
    [
     "GrowthB2B.dc.html",
     390,
-    1680,
+    1742,
     "▶ Business entry points inside a use-case article · play me",
     true
    ],
    [
     "GrowthB2BRecipePhoneLight.dc.html",
     390,
-    1680,
+    1742,
     "B2B entry · recipe sites · /for/cooking · phone · light",
     true
    ],
@@ -1929,7 +2282,7 @@
    [
     "GrowthB2BKioskPhoneDark.dc.html",
     390,
-    1680,
+    1742,
     "B2B entry · kiosks · /for/dashboards · phone · dark",
     true
    ],
@@ -1948,7 +2301,7 @@
    [
     "Brand.dc.html",
     1280,
-    932,
+    1470,
     "Logo, colour, type",
     false
    ]
@@ -1960,21 +2313,21 @@
    [
     "PageKiosk.dc.html",
     1280,
-    2992,
+    2983,
     "▶ Kiosk page",
     true
    ],
    [
     "PageLibrary.dc.html",
     1280,
-    3104,
+    3128,
     "▶ Library page",
     true
    ],
    [
     "PageExtension.dc.html",
     1280,
-    3512,
+    3545,
     "▶ Extension page",
     true
    ],
@@ -1988,21 +2341,21 @@
    [
     "PageLegal.dc.html",
     1280,
-    4312,
+    4311,
     "▶ Privacy / Terms page",
     true
    ],
    [
     "PageChangelog.dc.html",
     390,
-    7844,
+    7894,
     "▶ Changelog page",
     true
    ],
    [
     "Page404.dc.html",
     390,
-    1536,
+    1588,
     "▶ 404 page",
     true
    ],

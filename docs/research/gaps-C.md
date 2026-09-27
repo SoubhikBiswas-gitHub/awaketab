@@ -1,0 +1,40 @@
+# Gap agent C: product and business family (27 Sep 2026)
+
+Brief: `design/canvas/GAPS.md` (Agent C). Scope after the lead's split: Pro*, ProActivate*, ProManage*, ExtPopup*, ExtOptions*, ExtBadges, ExtEdge*, Welcome*, Kiosk*, Og*, Store*, IconSet, Growth* and Brand. Embed* went to agent D and Page* to agent E. Agent C did not edit those files.
+
+## What changed
+- **Footer language switcher (P-LANG)** on Pro, ProActivate, ProManage and on the two Growth web pages that carry the site footer (GrowthPlanHelper, GrowthB2B). Each got the footer markup from `tools/gap-b/lang-footer.html`, the AT-LANG v1 JS copied byte for byte from PRIMITIVES.md, the `.at-chev` rule and a `language` prop (closed | open, listed after the existing props). The tool is `design/canvas/tools/gap-c/addlang.py` and it is idempotent.
+  - /pro, /pro/activate and /pro/manage have no translations yet (`src/pages/[lang]` has only the home, /pip and the content kinds). On those pages, en links to the page itself and the other seven locales link to their home (`/es/` and so on), as P-LANG says.
+  - GrowthB2B's recipe variant is /for/cooking, which exists in every locale. Its rows use the translated slugs from `slugs.json` (`/es/for/cocinar` and the others), the same as ContentArticle. The kiosk variant is /kiosk, which links to the locale homes.
+  - Routes have no trailing slash, the same as Sys (agent A) and docs/00 §7.
+- **Extension options: the Language row** in "Look and language" uses the settings variant: a row with the current value and a chevron, which opens the list inline. It replaces the old `<select>`. The extension stores its language in `settings.locale` (no URL), so the rows are radio buttons, not links. There are 9 rows: "Browser language" first (the old empty option), then the 8 locales in P-LANG order, with "Current" and "Translation in review" notes. Arrows and Home/End select, and Esc closes and returns focus. The page height grows by 485 px while the list is open. This work was recovered from agent C's first run, which the cloud merge had dropped, and 3-way merged onto the cloud's D-R20 version.
+- **Brand:** a "Buttons · follow the theme (D-R20)" chart shows lamp, raised (Stop, Retry) and outlined (+15 min, Copy) buttons on a dark and a light tile, with the rules. A "Component inventory" lists one of each shared primitive, marks the language switcher New and shows its open list and both trigger themes. The footer row now reads "honest line, five links, language". The board is now 1470 px tall (canvas.json still says 932).
+- **D-R20:** it was already applied in every base file here. A real-runtime probe of all 95 boards found no ink-filled buttons. The new markup (the Brand chart, the language controls) uses raised or outlined buttons only.
+- **Owner padding rule** (min 16 px; 20 px below the last row of actions), measured with the real runtime by `tools/gap-c/padscan.mjs`. The scan skips the shared P-HEADER band and judges borderless icon buttons and links by what is drawn. Fixes:
+  - ExtEdge: the time's-up card padding went from 12 to 16. The first-open "Good to know" card went to 16 all round (Got it had been 9 px from the edge). It also drops "Works with the tab hidden.", which repeats the status text next to the ring, so the popup still fits in 600 px. The Pro-locked panel now has 20 px below its buttons, and its two paragraphs merged into one block with shorter copy, because the popup had overflowed 600 px and pushed "Open AwakeTab" 4 px from the bottom. The hidden "Time's up" heading now has an explicit weight of 600.
+  - Pro (phone): the figure padding went from 12 to `16px 16px 20px`. The seven 44 px day chips now use fixed 44 px columns spread with `space-between`, so they stay 44 px wide inside the new padding.
+  - ProManage: the phone list rows went from 12 to 16 px padding, and the table and list got room below their last Remove button.
+  - GrowthDone: the "About Pro" note padding went from 4 to 16 vertically. GrowthProMoment: the preview card has 20 px below its buttons, and the stat tiles went from 12 to 16 px padding.
+  - Brand: the light and dark pill tiles went from 12 to 16 px padding.
+- **Runtime style fix (lead):** 9 `style` attributes that began with a `{{hole}}` in IconSet (1, inside a 12-item loop), OgCards (5) and KioskScreen (3) now begin with `--dc: 0; `. The real runtime renders them again: IconSet's size labels and the OG card's awaketab.com line are back.
+- **Heights:** these were re-measured with the real runtime (natural height, root at `height: auto`), and the HEIGHTS tables, base `$preview` values and wrappers were updated:
+  - Pro phone: 6180 to 6257.
+  - Pro tablet: 4596 to 4616.
+  - ProActivate: phone [1704, 1170] and tablet [1602, 952]. The old 1608 already clipped the `ext` error state.
+  - ProManage: phone [1175, 1009], tablet [1104, 865] and desktop [1026, 856].
+  - GrowthB2B: phone 1742 and tablet 1662. The old 1680 already clipped 10 px on the kiosk variant.
+  - GrowthPlanHelper: phone 2151 and tablet 1635. The old 2080 already clipped 19 px on "once".
+- **New boards:** ProActivateTablet (820 × 1602, dark, error `activation_limit`, which differs from the desktop board's `invalid_key`) and ProManageTablet (820 × 1104, light).
+
+## Verification
+- `rtscan` (real runtime), 95 boards: 6 flagged, all of them because of the `nodes < 40` heuristic alone. These are sparse by design and render fully: the Message-mode screens (GrowthProMessage × 2, KioskTvMessage), KioskTvUnlicensed, the 440 × 280 store promo tile and the store marquee. None of them has errors or overflow, and agent C did not change them. After the style fix, IconSet, OgCards, the Og* wrappers and Kiosk* scan with 0 flagged.
+- `tools/final/gapC-smoke.mjs` (new): 1726 checks, all pass. It covers every prop combination with the language open and closed, locale order, hreflang, routes, the phone sheet versus the popover, toggle and Esc, the ExtOptions rows and keys, the Brand chart and inventory, D-R20 tokens, and that every Pro and Growth-page wrapper size equals its base's own W × H.
+- Existing smoke tests: ProSmoke OK (783 combinations), ExtEdgeSmoke 0 bad, ext-tools 0 missing, bigscreens 0 failures, and growth 0 errors across 396 combinations. The growth smoke now stubs `document` so the P-LANG handlers can run in Node.
+- `fix1b/render.mjs`, then `final/check.py`: 0 issues on Pro*, Ext*, Brand and Growth*. `final/analyze.mjs` reports only issues that predate this work: the decorative dashes in the ExtOptions previews, the ExtOptions preview inset of 56 px, the 520 px padding that reserves room for the desktop sheet in GrowthTrust and GrowthProMoment, and the 0.4em "min" unit in GrowthShare.
+- `padscan`: 94 of 95 boards are clean. GrowthTrustDeskDark's side sheet scrolls (`overflow-y: auto`), and its last visible row sits at the fold. That is scrolled content, not padding.
+
+## Open questions
+1. **Header band versus the padding rule.** The shared P-HEADER centres 44 px targets in a 60 px header (8 px from the top), and the 54 px theme bar sits 3 to 7 px from the board's top edge. The drawn text is 16 px or more from the edge, but the theme bar's outline is close to it. This is the one primitive on every board, so agent C left it alone. Should the header grow to 68 on phones, or the theme bar get a top margin?
+2. **hreflang when a page has no translation.** P-LANG says to drop `hreflang` on rows that fall back to the locale home. But the AT-LANG key handler finds rows by `a[hreflang]`, so dropping it breaks arrow-key movement. On a link, `hreflang` names the language of the target, and `/es/` is Spanish, so the rows keep it. Suggestion: key the handler on `a[lang]` and drop `hreflang` in the build.
+3. **Extension language.** The options list offers "Browser language" as a ninth row, because the extension follows the browser until the user picks one. Confirm that this stays, and that the popup follows it.
+4. canvas.json and sections.json need the new heights and the two new boards (JSON in the agent report).

@@ -2,7 +2,7 @@
 
 Auto-generated from the canvas status table. Canvas: https://claude.ai/artifact/MArJ4zoZRiYmppEd9hXv5e
 
-Updated Sunday, 27 September 2026 · 5:43 AM
+Updated Sunday, 27 September 2026 · 12:09 PM
 
 | # | Item | Canvas design | Real app |
 |---|---|---|---|
@@ -67,5 +67,16 @@ Updated Sunday, 27 September 2026 · 5:43 AM
 | 50 | SEO + content strategy + 90-day content plan | ✅ on canvas | ⬜ |
 | 51 | Pricing, packaging, /pro sales page, CRO copy | ✅ on canvas | ⬜ |
 | 52 | Go-to-market + launch plan + channel copy | ✅ on canvas | ⬜ |
+| | **J · Owner review fixes and gap closing (27 Sep)** | | |
+| 53 | Stop and strong buttons follow the theme (D-R20) on every board | ✅ on canvas | ⬜ |
+| 54 | Tablet views and missing themes for every page | ✅ on canvas | ⬜ |
+| 55 | Language switcher (footer + Settings) and the /on, /vs, /guides, /learn hubs | ✅ on canvas | ⬜ |
+| 56 | /embed page on phone and tablet; stats and settings on tablet/desktop | ✅ on canvas | ⬜ |
+| 57 | Real-runtime render check of every board + compact canvas layout (D-R21) | ✅ on canvas | ⬜ |
+| 58 | Popup spacing and padding (owner comments) | ✅ on canvas | ⬜ |
+| 59 | Runtime bug: styles starting with a {{hole}} were dropped; fixed on every board, and the scanner now catches it | ✅ on canvas | ⬜ |
+| 60 | Design system tokens (DESIGN §12, D-R23) + real-runtime §11 audit: 0 violations on all 300 boards | ✅ on canvas | ⬜ |
+| 61 | Responsive contract (D-R22) + tool boards at the 600 and 1024 breakpoint edges | ✅ on canvas | ⬜ |
+| 62 | /for hub cut to 14 (OD-3), embed 320×104 + credit outside the widget, docs updated | ✅ on canvas | ⬜ |
 
-**Canvas:** 52 done · 0 building · 0 not started (of 52). **Real app:** 0 of 26, starts after owner approval.
+**Canvas:** 62 done · 0 building · 0 not started (of 62). **Real app:** 0 of 26, starts after owner approval.

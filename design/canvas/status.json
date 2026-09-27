@@ -315,26 +315,46 @@
    [
     54,
     "Tablet views and missing themes for every page",
-    "wip"
+    "done"
    ],
    [
     55,
     "Language switcher (footer + Settings) and the /on, /vs, /guides, /learn hubs",
-    "wip"
+    "done"
    ],
    [
     56,
     "/embed page on phone and tablet; stats and settings on tablet/desktop",
-    "wip"
+    "done"
    ],
    [
     57,
     "Real-runtime render check of every board + compact canvas layout (D-R21)",
-    "wip"
+    "done"
    ],
    [
     58,
     "Popup spacing and padding (owner comments)",
+    "done"
+   ],
+   [
+    59,
+    "Runtime bug: styles starting with a {{hole}} were dropped; fixed on every board, and the scanner now catches it",
+    "done"
+   ],
+   [
+    60,
+    "Design system tokens (DESIGN §12, D-R23) + real-runtime §11 audit: 0 violations on all 300 boards",
+    "done"
+   ],
+   [
+    61,
+    "Responsive contract (D-R22) + tool boards at the 600 and 1024 breakpoint edges",
+    "done"
+   ],
+   [
+    62,
+    "/for hub cut to 14 (OD-3), embed 320×104 + credit outside the widget, docs updated",
     "done"
    ]
   ]

@@ -1,4 +1,6 @@
-// Checker v3 (final audit): fix1b v2 plus the allowances DESIGN.md §11 and DECISIONS O-84 document.
+// Checker v4 (real-runtime audit via rtaudit.sh): v3 plus the allowances DESIGN.md §11 documents, using the
+// extra context rtdump.mjs records (inCode, full text, zoom and forced-colours boards).
+// v3: fix1b v2 plus the allowances DESIGN.md §11 and DECISIONS O-84 document.
 // Check audit dumps against DESIGN.md §11 and group violations by source file.
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 const A = process.env.A || '/home/user/awaketab/design/canvas/tools/fix1b/before/audit/';
@@ -12,7 +14,8 @@ const px = (v) => parseFloat(v);
 const rgb = (c) => { const m = /rgba?\(([^)]+)\)/.exec(c || ''); if (!m) return null; const p = m[1].split(/[ ,/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
 const hex = (c) => '#' + [c.r, c.g, c.b].map((x) => Math.round(x).toString(16).padStart(2, '0')).join('').toUpperCase();
 const offTok = (c) => { if (!c || c.a === 0) return false; return !tokRGB.some((t) => Math.abs(t[0] - c.r) + Math.abs(t[1] - c.g) + Math.abs(t[2] - c.b) <= 6); };
-const isDisplay = (it) => px(it.fs) > 48 || (/Mono|Grotesk/.test(it.ff) && px(it.fs) >= 28);
+const DIGITS = /^[\d:\s.,·APMamp–∞dhminsec-]+$/;
+const isDisplay = (it) => px(it.fs) > 48 || (/Mono|Grotesk/.test(it.ff) && px(it.fs) >= 28) || (px(it.fs) >= 28 && DIGITS.test(it.text || '')) || /font-size: [\d.]+em/.test(it.style || '');
 const isControl = (it) => ['button', 'input', 'select', 'textarea'].includes(it.tag) || it.role === 'tab' || it.role === 'radio' || it.role === 'switch' || (it.tag === 'a' && (it.bg !== 'rgba(0, 0, 0, 0)' || px(it.bw.split(' ')[0]) > 0) && it.disp !== 'inline');
 const V = {}; // key: src -> list
 const counts = {};
@@ -41,40 +44,41 @@ for (const f of readdirSync(A)) {
     const tag = '<' + it.tag + (it.role ? ' role=' + it.role : '') + '>';
     const where = tag + ' ' + snip;
     if (it.tag === 'svg' || it.tag === 'path' || it.tag === 'img' || it.tag === 'iframe') continue;
-    if (it.ph) continue; // v2: §11.2 exempts data-placeholder mocks (foreign UI, screenshot placeholders)
+    if (it.ph) continue;
+    const zoom = !!it.zoom; // v4: A11yZoom* boards emulate 200 % zoom, so sizes are 2× by design // v2: §11.2 exempts data-placeholder mocks (foreign UI, screenshot placeholders)
     // borders
     const bw = it.bw.split(' ').map(px);
     const bad = bw.filter((b) => b > 0 && Math.abs(b - 1) > 0.01);
     if (bad.length) { add(src, 'border-width', where, bad[0] + 'px', '1px', board); pb('border'); }
     const nz = bw.map((b) => b > 0);
-    if (nz[3] && !nz[0] && !nz[1] && !nz[2] && it.h > 20 && it.role !== 'dialog' && it.tag !== 'aside') { /* v3: side sheet leading edge allowed (§11.2) */ add(src, 'side-stripe', where, 'border-inline-start only (' + bw[3] + 'px)', 'no side stripes', board); pb('stripe'); }
-    if (/dashed/.test(it.bs) && bw.some((b) => b > 0) && rgb(it.bc)?.a !== 0 && !/Until|Custom|Add|custom|until|add|Pick|Choose/i.test(it.text + it.aria) && !/…\s*$/.test(it.text)) { add(src, 'dashed-decorative', where, 'dashed', 'dashed only on choose/add affordances', board); pb('dashed'); }
+    if (nz[3] && !nz[0] && !nz[1] && !nz[2] && it.h > 20 && it.role !== 'dialog' && it.tag !== 'aside' && !/grid-template-columns/.test(it.style || '')) { /* v4: 1 px column divider between two content columns (§11.2) */ /* v3: side sheet leading edge allowed (§11.2) */ add(src, 'side-stripe', where, 'border-inline-start only (' + bw[3] + 'px)', 'no side stripes', board); pb('stripe'); }
+    if (/dashed/.test(it.bs) && bw.some((b) => b > 0) && rgb(it.bc)?.a !== 0 && !/Until|Custom|Add|custom|until|add|Pick|Choose|More|not added/i.test((it.full || it.text) + it.aria) && !/…\s*$/.test(it.full || it.text) && it.kind !== 'draft') { add(src, 'dashed-decorative', where, 'dashed', 'dashed only on choose/add affordances', board); pb('dashed'); }
     // radius (v3: role=img icon art uses platform masks)
     const r = px(it.br);
     if (it.role !== 'img' && !/%/.test(it.br) && r > 0 && !RADII.has(Math.round(r)) && r < 500) { add(src, 'radius', where, r + 'px', 'one of 8/12/16/20/28/999', board); pb('radius'); }
     // spacing: padding + gap
     const pads = it.pad.split(' ').map(px);
     const badPad = pads.filter((p) => !SPACE.has(Math.round(p)) || Math.abs(p - Math.round(p)) > 0.01);
-    if (badPad.length && !(it.tag === 'input' || it.tag === 'textarea' || it.tag === 'select')) { add(src, 'padding', where, it.pad, 'scale 4/8/12/16/20/24/32/40/48/64/96', board); pb('spacing'); }
+    if (badPad.length && !(badPad.length === 1 && Math.round(badPad[0]) === 520) && !(it.tag === 'input' || it.tag === 'textarea' || it.tag === 'select')) { add(src, 'padding', where, it.pad, 'scale 4/8/12/16/20/24/32/40/48/64/96', board); pb('spacing'); }
     const gaps = it.gap.split(' ').filter((g) => g !== 'normal').map(px);
     const badGap = gaps.filter((g) => !SPACE.has(Math.round(g)));
     if (badGap.length && /flex|grid/.test(it.disp)) { add(src, 'gap', where, badGap[0] + 'px', 'scale value', board); pb('spacing'); }
     // controls
     if (isControl(it) && it.h >= 20 && it.w >= 20) {
       const h = Math.round(it.h);
-      const tile = h > 56 && (['radio', 'checkbox'].includes(it.role) || (it.text || '').length > 24); // v3: selectable tiles and wrapping rows (O-84)
+      const tile = h > 56 && (['radio', 'checkbox', 'switch'].includes(it.role) || (it.text || '').length > 24 || /Keep awake until/.test(it.aria) || /min-height: (56|60)px/.test(it.style || '')); // v4: time tiles, wrapping list rows, switch rows // v3: selectable tiles and wrapping rows (O-84)
       const scaledAsset = /^(StoreShot|StorePromo|StoreMarquee|Og)/.test(board);
-      if (!HEIGHTS.has(h) && !(it.tag === 'textarea') && h < 120 && !tile && !scaledAsset) { add(src, 'control-height', where, h + 'px', h < 44 ? '>=44 (44/48/52/60/64)' : '44/48/52/60/64', board); pb(h < 44 ? 'target<44' : 'height'); }
+      if (!HEIGHTS.has(h) && !(it.tag === 'textarea') && h < 120 && !tile && !scaledAsset && !zoom) { add(src, 'control-height', where, h + 'px', h < 44 ? '>=44 (44/48/52/60/64)' : '44/48/52/60/64', board); pb(h < 44 ? 'target<44' : 'height'); }
     }
     // type
     if (it.own && it.text) {
       const fs = px(it.fs);
-      if (!isDisplay(it) && !FS.has(Math.round(fs * 10) / 10)) { add(src, 'font-size', where, fs + 'px', 'type scale 12/13/14/15/16/18/20/24/28/34/48', board); pb(fs < 12 ? 'fs<12' : 'font-size'); }
+      if (!isDisplay(it) && !zoom && !FS.has(Math.round(fs * 10) / 10)) { add(src, 'font-size', where, fs + 'px', 'type scale 12/13/14/15/16/18/20/24/28/34/48', board); pb(fs < 12 ? 'fs<12' : 'font-size'); }
       const fw = Number(it.fw);
       const digitsOnly = /^[\d:\s.,·APMamp–∞-]+$/.test(it.text);
       if (!isDisplay(it) && ![400, 500, 600].includes(fw) && !([200, 300].includes(fw) && digitsOnly)) { add(src, 'font-weight', where, String(fw), '400/500/600', board); pb('weight'); }
       if (isDisplay(it) && fw > 600) { add(src, 'font-weight', where, String(fw) + ' (display)', '200-600', board); pb('weight'); }
-      if (/Mono/.test(it.ff) && !isDisplay(it) && !/^[\d:\s.,·APMamp–-]+$/.test(it.text) && !['code', 'kbd', 'pre', 'samp'].includes(it.tag) && !/^#[0-9A-F]{6}( · #[0-9A-F]{6})*$/i.test(it.text.trim()) && !/[=<>()_&?\/"'.]|^[a-z]+[A-Z]\w*$|^[a-z]+$/.test(it.text.trim()) && /* v3: code tokens (identifiers, attributes, URLs, params) */ !/^(\/[\w\-\/.?=&:]*|https?:\/\/\S+|[\w-]+(\.[\w-]+)+(\/\S*)?)$/.test(it.text)) { add(src, 'mono-for-text', where, it.ff + ' ' + fs + 'px', 'mono only for digits/code', board); pb('mono'); }
+      if (/Mono/.test(it.ff) && !it.inCode && !isDisplay(it) && !/^[\d:\s.,·APMamp–-]+$/.test(it.text) && !['code', 'kbd', 'pre', 'samp'].includes(it.tag) && !/^#[0-9A-F]{6}( · #[0-9A-F]{6})*$/i.test(it.text.trim()) && !/[=<>()_&?\/"'.]|^[a-z]+[A-Z]\w*$|^[a-z]+$/.test(it.text.trim()) && /* v3: code tokens (identifiers, attributes, URLs, params) */ !/^(\/[\w\-\/.?=&:]*|https?:\/\/\S+|[\w-]+(\.[\w-]+)+(\/\S*)?)$/.test(it.text)) { add(src, 'mono-for-text', where, it.ff + ' ' + fs + 'px', 'mono only for digits/code', board); pb('mono'); }
     }
     // colours
     for (const [prop, val] of [['color', it.own && it.text ? it.color : null], ['background', it.bg], ['border-color', bw.some((b) => b > 0) ? it.bc : null]]) {

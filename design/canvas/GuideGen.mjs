@@ -7,6 +7,19 @@ const dir = new URL('./project/', import.meta.url);
 const sizesFile = new URL('./GuideSizes.json', import.meta.url);
 const SIZES = existsSync(sizesFile) ? JSON.parse(readFileSync(sizesFile, 'utf8')) : {};
 const J = (x) => JSON.stringify(x);
+// P-LANG (PRIMITIVES.md): footer markup and the AT-LANG v1 block, verbatim from tools/gap-b.
+const LANG_FOOT = readFileSync(new URL('./tools/gap-b/lang-footer.html', import.meta.url), 'utf8').trimEnd();
+const LANG_JS = readFileSync(new URL('./tools/gap-b/lang.js', import.meta.url), 'utf8').trimEnd();
+// Where each locale row points: the same page when that locale has it (slug translated through slugs.json),
+// else that locale's home (P-LANG). Read from apps/web so the boards match the real content tree.
+const WEB = new URL('../../apps/web/src/', import.meta.url);
+const SLUGS = JSON.parse(readFileSync(new URL('i18n/slugs.json', WEB), 'utf8'));
+const ROUTE = { 'GuideOn.dc.html': ['on', 'iphone-safari'], 'GuideVs.dc.html': ['vs', 'nosleep-page'], 'GuideLearn.dc.html': ['learn', 'screen-wake-lock-api-guide'], 'GuideGuides.dc.html': ['guides', 'iphone-auto-lock-never-greyed-out'] };
+const langPaths = (file) => {
+  const [kind, slug] = ROUTE[file];
+  return Object.fromEntries(['en', 'es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'].map((l) => [l,
+    l === 'en' || existsSync(new URL(`content/${kind}/${l}/${slug}.md`, WEB)) ? `/${kind}/${(SLUGS[kind]?.[slug] || {})[l] || slug}` : '/']));
+};
 
 const MONO = "'Geist Mono', ui-monospace, monospace";
 // P-KICKER (verbatim when extra is empty)
@@ -58,9 +71,9 @@ const HEADER = `  <header style="position: relative; height: {{hdr.h}}; flex-shr
       AwakeTab
     </a>
     <sc-if value="{{isDesk}}" hint-placeholder-val="{{false}}">
-      <nav aria-label="Main" style="display: flex; gap: 32px; font-size: 15px; line-height: 22px; font-weight: 500">
+      <nav aria-label="Main" style="display: flex; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 500">
         <sc-for list="{{nav}}" as="n" hint-placeholder-count="4">
-          <a href="#" aria-current="{{n.cur}}" style="color: {{n.ink}}; font-weight: {{n.weight}}; text-decoration: none; display: flex; align-items: center; gap: 8px; min-height: 44px"><sc-if value="{{n.on}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: {{p.lamp}}"></span></sc-if>{{n.label}}</a>
+          <a href="#" aria-current="{{n.cur}}" style="padding: 0 12px; box-sizing: border-box; color: {{n.ink}}; font-weight: {{n.weight}}; text-decoration: none; display: flex; align-items: center; gap: 8px; min-height: 44px"><sc-if value="{{n.on}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: {{p.lamp}}"></span></sc-if>{{n.label}}</a>
         </sc-for>
       </nav>
     </sc-if>
@@ -187,7 +200,7 @@ function toolCard(area = 'tool') {
               <sc-if value="{{canExtend}}" hint-placeholder-val="{{true}}">
                 <button onClick="{{extend}}" aria-label="Add 15 minutes" style="height: 60px; padding: 0 16px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.ink}}">+15 min</button>
               </sc-if>
-              <button onClick="{{stop}}" style="height: 60px; padding: 0 16px; border-radius: 20px; border: 0; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
+              <button onClick="{{stop}}" style="height: 60px; padding: 0 16px; border-radius: 20px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
             </div>
           </sc-if>
         </div>
@@ -277,13 +290,14 @@ const FOOTER = `  <div style="flex-grow: 1; min-height: 64px"></div>
 
   <footer style="border-top: 1px solid {{t.line}}; padding: {{foot.pad}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px">
     <p style="margin: 0; font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p>
-    <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; column-gap: 16px; font-size: 13px; line-height: 18px">
-      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Privacy</a>
-      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Terms</a>
-      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Changelog</a>
-      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">About</a>
-      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a>
+    <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; column-gap: 16px; font-size: 13px; line-height: 18px; font-weight: 500">
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Privacy</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Terms</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Changelog</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">About</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a>
     </nav>
+    ${LANG_FOOT}
   </footer>`;
 
 // P-TAG tone variant (result badges). w.line is transparent for tone tags, line-strong for neutral ones.
@@ -313,12 +327,12 @@ const AT_TYPE = {
 const COMMON_JS = `${AT_CONST}
 const DARK = Object.assign({
   surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE',
-  track: '#1A2336', tick: '#2A3752', primaryBg: '#EAF0F7', primaryInk: '#0A0E16'
-}, { raised: AT_TOK.dark.raised, sunken: AT_TOK.dark.sunken });
+  track: '#1A2336', tick: '#2A3752', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C'
+}, { raised: AT_TOK.dark.raised, sunken: AT_TOK.dark.sunken, inputBorder: AT_TOK.dark.inputBorder });
 const LIGHT = Object.assign({
   surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779',
-  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#0E1726', primaryInk: '#F2F6FA'
-}, { raised: AT_TOK.light.raised, sunken: AT_TOK.light.sunken });
+  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA'
+}, { raised: AT_TOK.light.raised, sunken: AT_TOK.light.sunken, inputBorder: AT_TOK.light.inputBorder });
 // Long-page ground: the same night lift as the tool, anchored to the top.
 const PAGE = {
   dark: { ground: 'radial-gradient(1400px 900px at 50% -160px, #13203A 0%, rgba(10,14,22,0) 72%), #0A0E16', lamp: '#5BE0E8', lampFill: '#5BE0E8', lampInk: '#04232A', link: '#5BE0E8', warn: '#F2B34C', bad: '#FF7A7A', hatch: 'rgba(234,240,247,0.04)', adBg: 'rgba(17,24,38,0.55)' },
@@ -341,7 +355,7 @@ const COMMON_METHODS = `  constructor(props) {
     const awake = props.status === 'awake';
     const sec = this.secsOf(PRESET0);
     const left = awake ? (sec ? Math.round(sec * 0.81) : 0) : sec;
-    this.state = Object.assign({ theme: props.theme ?? 'auto', sysDark: this.sys(), now: Date.now(), mode: awake ? 'awake' : 'ready', preset: PRESET0, total: sec, left, el: awake ? 754 : 0, startedAt: Date.now() - (awake ? (sec ? (sec - left) : 754) * 1000 : 0), faqOpen: 0, toc: TOC[0][0] }, this.initPage(props));
+    this.state = Object.assign({ theme: props.theme ?? 'auto', sysDark: this.sys(), now: Date.now(), mode: awake ? 'awake' : 'ready', preset: PRESET0, total: sec, left, el: awake ? 754 : 0, startedAt: Date.now() - (awake ? (sec ? (sec - left) : 754) * 1000 : 0), faqOpen: 0, toc: TOC[0][0], langOpen: props.language === 'open' }, this.initPage(props));
   }
   sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
   componentDidMount() {
@@ -361,6 +375,7 @@ const COMMON_METHODS = `  constructor(props) {
   componentDidUpdate(prev) {
     const p = this.props;
     if (prev.theme !== p.theme && p.theme) this.setState({ theme: p.theme });
+    if (prev.language !== p.language) this.setState({ langOpen: p.language === 'open' });
   }
   secsOf(id) { const f = PRESETS.find((x) => x[0] === id); return f ? f[3] : 1800; }
   tick() {
@@ -433,6 +448,9 @@ const COMMON_METHODS = `  constructor(props) {
     const presets = PRESETS.map(([id, label, aria], i) => Object.assign({ label, aria, sel: s.preset === id ? 'true' : 'false', pick: () => this.pick(id),
       span: 'span ' + (i < 5 ? 4 : 5), line: s.preset === id ? this.rgba(p.lamp, 0.45) : t.line, bg: s.preset === id ? this.rgba(p.lamp, 0.14) : t.surface }, sel(s.preset === id)));
     const [W, H] = (SIZES[layout] || [390, 4000]);
+    // Boards stay ≤ 8000 px: a taller page shows as a top and a bottom board, cut in a section gap (SIZES.cut).
+    const cut = (SIZES.cut || {})[layout] || 0, part0 = this.props.part || 'auto';
+    const part = !cut ? 'all' : part0 === 'auto' ? (H > 8000 ? 'top' : 'all') : part0;
     const ringPx = desk ? 280 : tab ? 260 : 236;
     const cardGrid = desk
       ? 'position: relative; display: grid; grid-template-columns: ' + ringPx + 'px minmax(0, 1fr); grid-template-areas: "clock top" "clock len" "clock cta" "clock note"; column-gap: 48px; row-gap: 16px; align-items: center; padding: 32px'
@@ -447,8 +465,11 @@ const COMMON_METHODS = `  constructor(props) {
     });
     const nav = [['Use cases', 'for'], ['Devices', 'on'], ['Extension', 'ext'], ['Pro', 'pro']].map(([label, id]) => ({ label, on: NAV === id, cur: NAV === id ? 'page' : 'false', ink: NAV === id ? t.ink : t.ink2, weight: NAV === id ? 600 : 500 }));
     const ctx = { s, layout, desk, tab, phone, dark, t, p };
+    const lang = atLang({ layout, t, lamp: p.lamp, open: s.langOpen, path: LANG_PATHS.en, toggle: () => this.setState({ langOpen: !this.state.langOpen }), close: () => this.setState({ langOpen: false }) });
+    // Rows follow this page's real translations (LANG_PATHS): a locale without it links to its home.
+    lang.rows.forEach((r, i) => { r.href = AT_LOCALES[i][1] + LANG_PATHS[AT_LOCALES[i][0]]; });
     const base = {
-      W: W + 'px', H: H + 'px', isDesk: desk, isTab: tab, isPhone: phone, showCrumb: !phone, t, p, tone, nav,
+      W: W + 'px', H: H + 'px', viewH: (part === 'top' ? cut : part === 'bottom' ? H - cut : H) + 'px', shift: (part === 'bottom' ? -cut : 0) + 'px', isDesk: desk, isTab: tab, isPhone: phone, showCrumb: !phone, t, p, tone, nav, lang,
       hdr: AT_HDR[layout], foot: { pad: AT_FOOT[layout] }, cardPad: AT_CARD_PAD[layout],
       shellStyle: SHELL(layout, ty), cardGrid,
       fs: { h1: ty.h1, h1lh: ty.h1lh, h2: ty.h2, h2lh: ty.h2lh },
@@ -497,7 +518,8 @@ function page({ file, title, props, pageConsts, pageMethods, body }) {
 <body>
 <x-dc>
 ${HELMET}
-<div class="at-root" style="width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{p.ground}}; color: {{t.ink}}; display: flex; flex-direction: column">
+<div style="width: {{W}}; height: {{viewH}}; overflow: hidden">
+<div class="at-root" style="width: {{W}}; height: {{H}}; margin-top: {{shift}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{p.ground}}; color: {{t.ink}}; display: flex; flex-direction: column">
 
 ${HEADER}
 
@@ -507,14 +529,19 @@ ${body}
 
 ${FOOTER}
 </div>
+</div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='${JSON.stringify(Object.assign({
     theme: { editor: 'enum', options: ['auto', 'light', 'dark'], default: 'auto' },
     layout: { editor: 'enum', options: ['phone', 'tablet', 'desktop'], default: 'phone' },
-    status: { editor: 'enum', options: ['ready', 'awake'], default: 'ready' }
-  }, props, { $preview: { width: 390, height: sizes.phone[1] } }))}'>
+    status: { editor: 'enum', options: ['ready', 'awake'], default: 'ready' },
+    language: { editor: 'enum', options: ['closed', 'open'], default: 'closed' }
+  }, sizes.cut ? { part: { editor: 'enum', options: ['auto', 'all', 'top', 'bottom'], default: 'auto' } } : {}, props,
+  { $preview: { width: 390, height: sizes.cut && sizes.cut.phone && sizes.phone[1] > 8000 ? sizes.cut.phone : sizes.phone[1] } }))}'>
 ${COMMON_JS}const SIZES = ${JSON.stringify(sizes)};
 ${pageConsts}
+const LANG_PATHS = ${JSON.stringify(langPaths(file))};
+${LANG_JS}
 class Component extends DCLogic {
 ${COMMON_METHODS}${pageMethods}}
 </script>

@@ -44,7 +44,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         <div style="display: flex; align-items: center; gap: 24px; min-width: 0">
           <sc-if value="{{showPreview}}" hint-placeholder-val="{{false}}">
             <span style="display: inline-flex; align-items: center; height: 48px; padding: 0 20px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{lampLine}}; background: {{lampSoft}}; color: {{t.ink}}; font-size: 20px; line-height: 24px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase">Preview</span>
-            <span role="timer" style="{{digitFont}}; font-size: 32px; line-height: 40px; color: {{t.ink2}}; white-space: nowrap">{{previewText}}</span>
+            <span role="timer" style="--dc: 0; {{digitFont}}; font-size: 32px; line-height: 40px; color: {{t.ink2}}; white-space: nowrap">{{previewText}}</span>
           </sc-if>
           <sc-if value="{{showEndedNote}}" hint-placeholder-val="{{false}}">
             <span class="at-in" style="font-size: 32px; line-height: 40px; color: {{t.ink2}}">Message preview ended. A Kiosk licence or Pro keeps it on.</span>
@@ -93,7 +93,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
       <div class="at-in" style="position: absolute; inset: 0; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: {{z.msgGap}}; padding: {{z.clockPad}}; padding-inline: {{z.side}}; text-align: center">
         <p dir="auto" style="margin: 0; max-width: {{z.msgMax}}; font-size: {{z.msgSize}}; font-weight: 600; line-height: 1.05; letter-spacing: -0.03em; text-wrap: balance; color: {{t.ink}}">{{message}}</p>
         <div style="display: flex; align-items: baseline; justify-content: center; gap: 16px 32px; flex-wrap: wrap; font-size: 32px; line-height: 40px; color: {{t.muted}}">
-          <time style="{{digitFont}}; color: {{t.ink2}}">{{nowTime}}</time>
+          <time style="--dc: 0; {{digitFont}}; color: {{t.ink2}}">{{nowTime}}</time>
           <span>{{dateLong}}</span>
         </div>
       </div>
@@ -125,7 +125,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             </sc-if>
           </div>
           <div style="position: relative; height: 44px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 12px">
-            <span role="timer" aria-label="{{elapsedAria}}" style="{{digitFont}}; font-weight: 300; font-size: 28px; line-height: 1; letter-spacing: -0.02em; color: {{t.ink}}; white-space: nowrap">{{elapsed}}</span>
+            <span role="timer" aria-label="{{elapsedAria}}" style="--dc: 0; {{digitFont}}; font-weight: 300; font-size: 28px; line-height: 1; letter-spacing: -0.02em; color: {{t.ink}}; white-space: nowrap">{{elapsed}}</span>
             <button onClick="{{toggleRun}}" style="{{wBtn}}">{{wBtnLabel}}</button>
           </div>
         </div>

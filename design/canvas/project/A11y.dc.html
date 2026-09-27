@@ -402,7 +402,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #5BE0
   </aside>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["keyboard","forced","zoom","reduced","nojs","screenreader"],"default":"keyboard"},"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","desktop"],"default":"phone"},"variant":{"editor":"enum","options":["text200","reflow320"],"default":"text200"},"$preview":{"width":870,"height":844}}'>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["keyboard","forced","zoom","reduced","nojs","screenreader"],"default":"keyboard"},"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"variant":{"editor":"enum","options":["text200","reflow320"],"default":"text200"},"$preview":{"width":870,"height":844}}'>
 const C = 2 * Math.PI * 146;
 // AT-PRIMITIVES v1 (fix batch 1b): DESIGN.md §2.1 tokens and §11 geometry. Keep identical across files.
 const AT_TOK = {
@@ -525,6 +525,7 @@ class Component extends DCLogic {
     const reflow = zoom && this.props.variant === 'reflow320';
     const text200 = zoom && !reflow;
     const desk = (kb || nojs) && this.props.layout === 'desktop'; // a board's default layout matches its width (870 = phone + rail)
+    const tab = !desk && !zoom && this.props.layout === 'tablet'; // 820 × 1180 screen + rail (zoom boards stay phone-sized by definition)
     const ORD = this.order();
     const hc = HC[dark ? 'dark' : 'light'];
     const lampN = dark ? '#5BE0E8' : '#087B87';
@@ -574,13 +575,15 @@ class Component extends DCLogic {
     };
 
     // Screen geometry.
-    const W = desk ? 1280 : reflow ? 320 : 390;
+    const W = desk ? 1280 : tab ? 820 : reflow ? 320 : 390;
     const natural = text200 || reflow;
-    const SH = desk ? 800 : text200 ? 1532 : reflow ? 832 : 844;
+    const SH = desk ? 800 : tab ? 1180 : text200 ? 1532 : reflow ? 832 : 844;
     const capOut = text200;
     const areas = capOut ? "'tabs' 'pill' 'face' 'cap' 'note' 'dock'" : "'tabs' 'pill' 'face' 'note' '.' 'dock'";
     const body = desk
       ? "position: relative; flex-grow: 1; display: grid; grid-template-columns: 620px minmax(0, 1fr); grid-template-rows: 1fr auto auto auto auto 1fr; grid-template-areas: 'face .' 'face pill' 'face note' 'face dock' 'face tabs' 'face .'; column-gap: 64px; row-gap: 20px; padding: 8px 80px 40px; min-height: 0"
+      : tab
+        ? "position: relative; flex-grow: 1; display: grid; grid-template-columns: minmax(0, 520px); justify-content: center; grid-template-rows: auto auto minmax(260px, 459px) auto 1fr auto; grid-template-areas: " + areas + "; row-gap: 20px; padding: 24px 32px 48px; min-height: 0"
       : natural
         ? "position: relative; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto " + (reflow ? '272px' : '340px') + " auto auto auto; grid-template-areas: " + areas + "; row-gap: " + (text200 ? '20px' : '12px') + "; padding: 12px 16px 40px"
         : "position: relative; flex-grow: 1; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(160px, 340px) auto 1fr auto; grid-template-areas: " + areas + "; row-gap: 12px; padding: 12px 16px 20px; min-height: 0";
@@ -589,9 +592,9 @@ class Component extends DCLogic {
       w: W + 'px', h: SH + 'px', desk, cls: still ? 'a-still' : '',
       aura: !forced && !reduced, auraCls: still ? '' : 'at-aura', inCls: still ? '' : 'at-in', riseCls: still ? '' : 'at-rise', slideCls: still ? '' : 'at-slide',
       arcCls: still ? '' : 'at-arc', linCls: still ? '' : 'at-lin', ticks: !forced,
-      linePad: desk ? '0 80px' : '0 16px',
+      linePad: desk ? '0 80px' : tab ? '0 32px' : '0 16px',
       themeFull: !reflow, themeCycle: reflow, body, align: desk ? 'start' : 'center', textAlign: desk ? 'start' : 'center',
-      tabsW: desk ? '360px' : '100%', ringMax: desk ? '496px' : '320px', metaFs: desk ? '20px' : '15px', metaLh: desk ? '28px' : '22px',
+      tabsW: desk ? '360px' : tab ? '440px' : '100%', ringMax: desk ? '496px' : tab ? '432px' : '320px', metaFs: desk ? '20px' : tab ? '18px' : '15px', metaLh: desk || tab ? '28px' : '22px',
       chipJustify: desk ? 'flex-start' : 'center', gridCols: text200 ? 2 : 4,
       tabCols: text200 ? 2 : 4, clusterMs: text200 ? 'auto' : '0', tabsRadius: text200 ? '28px' : '999px'
     };
@@ -606,7 +609,7 @@ class Component extends DCLogic {
     // Presets: buttons, or real links to the preset routes before JavaScript runs.
     // All seven presets on every size (D-R14): a bar on desktop, a 4-column grid on phones (2 columns at 200% text).
     const rows = PRESETS;
-    const presetGrid = !desk;
+    const presetGrid = !desk && !tab;
     const selBg = forced ? hc.Highlight : this.rgba(lampN, 0.14);
     const selLine = forced ? hc.Highlight : this.rgba(lampN, 0.45);
     const selInk = forced ? hc.HighlightText : t.ink;
@@ -711,7 +714,7 @@ class Component extends DCLogic {
     return {
       W: (W + railW) + 'px', H: H + 'px', S, t, r, fz, f, navs, tabs, presets, tabsTop: !desk, tabsEnd: desk,
       // Shared primitives (fix batch 1b): P-HEADER, P-THEME (Auto selected, static on this board), P-PILL-M, P-CTA, P-KBD, P-TAG.
-      hdr: AT_HDR[desk ? 'desktop' : 'phone'], hdrStd: !text200, text200, pillStd: !text200, cardPad: AT_CARD_PAD.phone,
+      hdr: AT_HDR[desk ? 'desktop' : tab ? 'tablet' : 'phone'], hdrStd: !text200, text200, pillStd: !text200, cardPad: AT_CARD_PAD[tab ? 'tablet' : 'phone'],
       themeX: '88px', themeLight: 'false', themeDark: 'false', themeAuto: 'true', setLight: () => {}, setDark: () => {}, setAuto: () => {},
       themeLightInk: t.ink2, themeDarkInk: t.ink2, themeAutoInk: forced ? hc.HighlightText : t.ink,
       p: { lampFill: lampN, lampInk }, lampGlow: this.rgba(lampN, 0.55),

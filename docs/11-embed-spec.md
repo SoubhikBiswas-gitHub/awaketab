@@ -6,6 +6,13 @@ Status: v1.1 · 2026-09-26 (as built in M8, §11) · Owner: Soubhik
 
 Related docs: `00-conventions.md` §7, §8, §9 · `04-engine-spec.md` (engine reused) · `05-frontend-spec.md` §3.16 (Cook Mode) · `09-monetization-impl.md` §7 (Embed licence) · `14-devops.md` (headers for `/embed/*`).
 
+**Redesign changes (Clear Night, decided 2026-09-27, applied in the build phase).** The sections below describe what is built today. The redesign changes two things, and the build must update this spec, the loader, the widget and their tests together:
+
+- **O-58: compact size is 320 × 104** (was 320 × 96). At 96 px the Start button and pill cannot both keep 44 px targets with 16 px padding. Every `96` below (§1, §2, §11.1 iframe style, §11.2 reserved box) becomes `104`.
+- **O-47: the credit sits outside the widget.** The loader inserts a visible link "Keep awake by AwakeTab" (`rel="nofollow"`, same URL and `ref`/`source` params as today) into the host page's own HTML, directly below the iframe. The attribution line inside the iframe is removed. A licensed domain (`{ licensed: true, attribution: false }`) gets no link: the loader asks the same config endpoint. If the lookup fails, the link stays, which matches today's "free by default" rule (§11.3). With the iframe-only install (§11.1), the snippet includes the link as plain HTML after the `<iframe>`.
+
+Design boards: `EmbedWidget`, `EmbedCook*`, `EmbedCompactLight`, `EmbedEdge*` and `EmbedShowcase*` on the redesign canvas (`design/canvas/project/`).
+
 ---
 
 ## 1. Integration

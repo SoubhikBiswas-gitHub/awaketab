@@ -36,7 +36,8 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid 
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </helmet>
-<div class="at-root" style="width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{p.ground}}; color: {{t.ink}}; display: flex; flex-direction: column">
+<div style="width: {{W}}; height: {{viewH}}; overflow: hidden">
+<div class="at-root" style="width: {{W}}; height: {{H}}; margin-top: {{shift}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{p.ground}}; color: {{t.ink}}; display: flex; flex-direction: column">
 
   <header style="position: relative; height: {{hdr.h}}; flex-shrink: 0; box-sizing: border-box; padding: {{hdr.pad}}; display: flex; align-items: center; justify-content: space-between; gap: 12px">
     <a href="#" aria-label="AwakeTab home" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: {{t.ink}}; font-weight: 600; font-size: 17px; line-height: 24px; letter-spacing: -0.01em; min-height: 44px">
@@ -317,10 +318,38 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid 
       <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">About</a>
       <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a>
     </nav>
+    <div onKeyDown="{{lang.key}}" style="{{lang.wrapStyle}}">
+      <button type="button" id="{{lang.btnId}}" aria-expanded="{{lang.expanded}}" aria-controls="{{lang.listId}}" aria-label="{{lang.aria}}" onClick="{{lang.toggle}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"></path></svg>{{lang.label}}<svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: {{lang.chev}}"><path d="M6 9l6 6 6-6"></path></svg></button>
+      <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+        <div aria-hidden="true" onClick="{{lang.close}}" style="position: fixed; inset: 0; z-index: 29; background: rgba(4,7,12,.55)"></div>
+      </sc-if>
+      <sc-if value="{{lang.open}}" hint-placeholder-val="{{false}}">
+        <div id="{{lang.listId}}" role="{{lang.role}}" aria-modal="{{lang.modal}}" aria-labelledby="{{lang.headId}}" class="at-in" style="{{lang.panelStyle}}">
+          <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+            <div aria-hidden="true" style="width: 36px; height: 4px; margin: 0 auto 8px; border-radius: 999px; background: {{t.line2}}"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 8px 4px">
+              <h2 id="{{lang.headId}}" style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; color: {{t.ink}}">{{lang.title}}</h2>
+              <button type="button" aria-label="{{lang.closeLabel}}" onClick="{{lang.close}}" style="width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+            </div>
+          </sc-if>
+          <sc-if value="{{lang.pop}}" hint-placeholder-val="{{true}}">
+            <p id="{{lang.headId}}" style="margin: 0; padding: 8px 12px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{lang.title}}</p>
+          </sc-if>
+          <ul role="list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px">
+            <sc-for list="{{lang.rows}}" as="r" hint-placeholder-count="8">
+              <li style="display: flex">
+                <a href="{{r.href}}" lang="{{r.lang}}" hreflang="{{r.hreflang}}" aria-current="{{r.cur}}" style="flex: 1; min-width: 0; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{t.ink}}; text-decoration: none"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="{{r.ring}}" stroke-width="1.8"></circle><circle cx="10" cy="10" r="4" fill="{{r.dot}}"></circle></svg><span style="font-size: 15px; line-height: 22px; font-weight: {{r.weight}}">{{r.name}}</span><span lang="{{lang.pageLang}}" style="font-size: 13px; line-height: 18px; color: {{r.noteInk}}; text-align: end">{{r.note}}</span></a>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-if>
+    </div>
   </footer>
 </div>
+</div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"status":{"editor":"enum","options":["ready","awake"],"default":"ready"},"$preview":{"width":390,"height":5080}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"status":{"editor":"enum","options":["ready","awake"],"default":"ready"},"language":{"editor":"enum","options":["closed","open"],"default":"closed"},"$preview":{"width":390,"height":5180}}'>
 // AT-PRIMITIVES v1 (fix batch 1b): DESIGN.md §2.1 tokens and §11 geometry. Keep identical across files.
 const AT_TOK = {
   dark: { raised: '#26324B', sunken: '#0D131F', horizonInk: '#F6F2EA', line2: '#33405C', inputBorder: '#5A6781', groundEnd: '#070A11' },
@@ -339,11 +368,11 @@ const AT_TYPE = {
 const DARK = Object.assign({
   surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE',
   track: '#1A2336', tick: '#2A3752', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C'
-}, { raised: AT_TOK.dark.raised, sunken: AT_TOK.dark.sunken });
+}, { raised: AT_TOK.dark.raised, sunken: AT_TOK.dark.sunken, inputBorder: AT_TOK.dark.inputBorder });
 const LIGHT = Object.assign({
   surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779',
   track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA'
-}, { raised: AT_TOK.light.raised, sunken: AT_TOK.light.sunken });
+}, { raised: AT_TOK.light.raised, sunken: AT_TOK.light.sunken, inputBorder: AT_TOK.light.inputBorder });
 // Long-page ground: the same night lift as the tool, anchored to the top.
 const PAGE = {
   dark: { ground: 'radial-gradient(1400px 900px at 50% -160px, #13203A 0%, rgba(10,14,22,0) 72%), #0A0E16', lamp: '#5BE0E8', lampFill: '#5BE0E8', lampInk: '#04232A', link: '#5BE0E8', warn: '#F2B34C', bad: '#FF7A7A', hatch: 'rgba(234,240,247,0.04)', adBg: 'rgba(17,24,38,0.55)' },
@@ -359,7 +388,7 @@ const GLYPHS = {
   ring: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
   dash: 'M1.5 5.1h9v1.8h-9z'
 };
-const SIZES = {"phone":[390,5080],"tablet":[820,4260],"desktop":[1280,4350]};
+const SIZES = {"phone":[390,5180],"tablet":[820,4320],"desktop":[1280,4350]};
 const PRESET0 = 'p30';
 const NAV = '';
 const VERIFIED = '26 September 2026';
@@ -372,13 +401,69 @@ const TOC = [['s-steps', 'Get Never back'], ['s-still', 'Still greyed out'], ['s
 const FAQS = [["Why does Low Power Mode keep turning back on?","iPhone offers to switch it on when the battery runs low. If it turns on with no prompt, look in the Shortcuts app under Automation for a rule that sets Low Power Mode."],["Is it bad to leave Auto-Lock on Never?","It will not harm the phone, but a lit screen drains the battery and anyone can pick up an unlocked phone. Set it back when you finish, or use AwakeTab for one task instead."],["Does Never stop the side button from locking the phone?","No. Pressing the side button always locks the screen. Never only stops the automatic lock after a period without touches."],["Will turning off Low Power Mode drain my battery faster?","A little. Low Power Mode also cuts back background activity such as mail fetch and downloads, not just Auto-Lock."]];
 // title, short nav label, path, body
 const STEPS = [["Turn off Low Power Mode","Low Power Mode off","Settings › Battery › Low Power Mode","A yellow battery icon means it is on. Switch it off here, or with the battery button in Control Centre if you have added it."],["Choose Never in Auto-Lock","Auto-Lock to Never","Settings › Display & Brightness › Auto-Lock","Never should now be available. Pick it only if you want the whole phone to stay on. For most tasks, 5 minutes is a kinder choice for the battery."],["Look for a work or school profile","Check for a profile","Settings › General › VPN & Device Management","If a management profile is listed, it may cap Auto-Lock. Older iOS versions may give this screen a different name."],["Check that it stuck","Check it stuck","Leave the phone untouched for a while","Put the phone down for longer than your old Auto-Lock time. If it still dims after 30 seconds, Low Power Mode has come back on."]];
+const LANG_PATHS = {"en":"/guides/iphone-auto-lock-never-greyed-out","es":"/guides/iphone-bloqueo-automatico-nunca-gris","pt-br":"/guides/iphone-bloqueio-automatico-nunca-cinza","de":"/guides/iphone-automatische-sperre-nie-ausgegraut","fr":"/guides/iphone-verrouillage-auto-jamais-gris","ja":"/guides/iphone-auto-lock-never-greyed-out","zh":"/guides/iphone-auto-lock-never-greyed-out","hi":"/guides/iphone-auto-lock-never-greyed-out"};
+// AT-LANG v1 (language switcher; PRIMITIVES.md P-LANG). Keep identical across files.
+const AT_LOCALES = [
+  ['en', '', 'en', 'English', true], ['es', '/es', 'es', 'Español', false], ['pt-br', '/pt-br', 'pt-BR', 'Português (Brasil)', false],
+  ['de', '/de', 'de', 'Deutsch', false], ['fr', '/fr', 'fr', 'Français', false], ['ja', '/ja', 'ja', '日本語', false],
+  ['zh', '/zh', 'zh-Hans', '简体中文', false], ['hi', '/hi', 'hi', 'हिन्दी', false]
+];
+const AT_LANG_COPY = { title: 'Language', current: 'Current', review: 'Translation in review', close: 'Close' };
+// o = { layout, t, lamp, open, toggle, close, cur: 'en', path: '/', variant: 'footer' | 'settings' }
+function atLang(o) {
+  const t = o.t, cur = o.cur || 'en', path = o.path || '/', settings = o.variant === 'settings', open = !!o.open;
+  const id = settings ? 'at-lang-set' : 'at-lang', sheet = !settings && o.layout === 'phone';
+  const a = (hex, x) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + x + ')'; };
+  const here = AT_LOCALES.find((l) => l[0] === cur) || AT_LOCALES[0];
+  const panel = 'box-sizing: border-box; display: flex; flex-direction: column; background: ' + t.surface + '; border: 1px solid ' + t.line + '; box-shadow: 0 24px 64px -24px rgba(0,0,0,.45); ';
+  return {
+    open, sheet: sheet && open, pop: !sheet && !settings, btnId: id + '-btn', listId: id + '-list', headId: id + '-h',
+    label: here[3], aria: AT_LANG_COPY.title + ': ' + here[3], title: AT_LANG_COPY.title, closeLabel: AT_LANG_COPY.close, pageLang: here[2],
+    expanded: open ? 'true' : 'false', chev: open ? 'rotate(180deg)' : 'none', role: sheet ? 'dialog' : 'group', modal: sheet ? 'true' : 'false',
+    wrapStyle: sheet ? 'display: flex' : 'position: relative; display: flex; margin-inline-start: auto',
+    panelStyle: sheet
+      ? panel + 'position: fixed; inset-inline: 0; bottom: 0; z-index: 30; padding: 8px 16px 32px; border-radius: 28px 28px 0 0; border-bottom: 0'
+      : panel + 'position: absolute; inset-inline-end: 0; bottom: calc(100% + 8px); z-index: 30; width: 360px; padding: 4px; border-radius: 16px',
+    toggle: () => {
+      o.toggle();
+      if (!open) setTimeout(() => { try { document.querySelector('#' + id + '-list a[aria-current="true"]').focus(); } catch (e) {} }, 60);
+    },
+    close: () => o.close(),
+    key: (e) => {
+      const k = e && e.key, box = (e && e.currentTarget) || document;
+      if (k === 'Escape' && open) {
+        if (e.preventDefault) e.preventDefault();
+        o.close();
+        try { box.querySelector('button[aria-controls]').focus(); } catch (x) {}
+        return;
+      }
+      const step = { ArrowDown: 1, ArrowUp: -1, Home: 'home', End: 'end' }[k];
+      if (!step || !open) return;
+      let rows = [];
+      try { rows = Array.from(box.querySelectorAll('a[hreflang]')); } catch (x) {}
+      if (!rows.length) return;
+      if (e.preventDefault) e.preventDefault();
+      const i = rows.indexOf(document.activeElement), n = rows.length;
+      rows[step === 'home' ? 0 : step === 'end' ? n - 1 : i < 0 ? (step > 0 ? 0 : n - 1) : (i + step + n) % n].focus();
+    },
+    rows: AT_LOCALES.map(([lid, prefix, lang, name, reviewed]) => {
+      const on = lid === cur;
+      return {
+        href: prefix + path, lang, hreflang: lang, name, cur: on ? 'true' : 'false',
+        border: on ? a(o.lamp, 0.45) : 'transparent', bg: on ? a(o.lamp, 0.14) : 'transparent', weight: on ? 600 : 500,
+        ring: on ? o.lamp : t.inputBorder, dot: on ? o.lamp : 'transparent',
+        note: on ? AT_LANG_COPY.current : reviewed ? '' : AT_LANG_COPY.review, noteInk: on ? t.ink2 : t.muted
+      };
+    })
+  };
+}
 class Component extends DCLogic {
   constructor(props) {
     super(props);
     const awake = props.status === 'awake';
     const sec = this.secsOf(PRESET0);
     const left = awake ? (sec ? Math.round(sec * 0.81) : 0) : sec;
-    this.state = Object.assign({ theme: props.theme ?? 'auto', sysDark: this.sys(), now: Date.now(), mode: awake ? 'awake' : 'ready', preset: PRESET0, total: sec, left, el: awake ? 754 : 0, startedAt: Date.now() - (awake ? (sec ? (sec - left) : 754) * 1000 : 0), faqOpen: 0, toc: TOC[0][0] }, this.initPage(props));
+    this.state = Object.assign({ theme: props.theme ?? 'auto', sysDark: this.sys(), now: Date.now(), mode: awake ? 'awake' : 'ready', preset: PRESET0, total: sec, left, el: awake ? 754 : 0, startedAt: Date.now() - (awake ? (sec ? (sec - left) : 754) * 1000 : 0), faqOpen: 0, toc: TOC[0][0], langOpen: props.language === 'open' }, this.initPage(props));
   }
   sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
   componentDidMount() {
@@ -398,6 +483,7 @@ class Component extends DCLogic {
   componentDidUpdate(prev) {
     const p = this.props;
     if (prev.theme !== p.theme && p.theme) this.setState({ theme: p.theme });
+    if (prev.language !== p.language) this.setState({ langOpen: p.language === 'open' });
   }
   secsOf(id) { const f = PRESETS.find((x) => x[0] === id); return f ? f[3] : 1800; }
   tick() {
@@ -470,6 +556,9 @@ class Component extends DCLogic {
     const presets = PRESETS.map(([id, label, aria], i) => Object.assign({ label, aria, sel: s.preset === id ? 'true' : 'false', pick: () => this.pick(id),
       span: 'span ' + (i < 5 ? 4 : 5), line: s.preset === id ? this.rgba(p.lamp, 0.45) : t.line, bg: s.preset === id ? this.rgba(p.lamp, 0.14) : t.surface }, sel(s.preset === id)));
     const [W, H] = (SIZES[layout] || [390, 4000]);
+    // Boards stay ≤ 8000 px: a taller page shows as a top and a bottom board, cut in a section gap (SIZES.cut).
+    const cut = (SIZES.cut || {})[layout] || 0, part0 = this.props.part || 'auto';
+    const part = !cut ? 'all' : part0 === 'auto' ? (H > 8000 ? 'top' : 'all') : part0;
     const ringPx = desk ? 280 : tab ? 260 : 236;
     const cardGrid = desk
       ? 'position: relative; display: grid; grid-template-columns: ' + ringPx + "px minmax(0, 1fr); grid-template-areas: 'clock top' 'clock len' 'clock cta' 'clock note'; column-gap: 48px; row-gap: 16px; align-items: center; padding: 32px"
@@ -484,8 +573,11 @@ class Component extends DCLogic {
     });
     const nav = [['Use cases', 'for'], ['Devices', 'on'], ['Extension', 'ext'], ['Pro', 'pro']].map(([label, id]) => ({ label, on: NAV === id, cur: NAV === id ? 'page' : 'false', ink: NAV === id ? t.ink : t.ink2, weight: NAV === id ? 600 : 500 }));
     const ctx = { s, layout, desk, tab, phone, dark, t, p };
+    const lang = atLang({ layout, t, lamp: p.lamp, open: s.langOpen, path: LANG_PATHS.en, toggle: () => this.setState({ langOpen: !this.state.langOpen }), close: () => this.setState({ langOpen: false }) });
+    // Rows follow this page's real translations (LANG_PATHS): a locale without it links to its home.
+    lang.rows.forEach((r, i) => { r.href = AT_LOCALES[i][1] + LANG_PATHS[AT_LOCALES[i][0]]; });
     const base = {
-      W: W + 'px', H: H + 'px', isDesk: desk, isTab: tab, isPhone: phone, showCrumb: !phone, t, p, tone, nav,
+      W: W + 'px', H: H + 'px', viewH: (part === 'top' ? cut : part === 'bottom' ? H - cut : H) + 'px', shift: (part === 'bottom' ? -cut : 0) + 'px', isDesk: desk, isTab: tab, isPhone: phone, showCrumb: !phone, t, p, tone, nav, lang,
       hdr: AT_HDR[layout], foot: { pad: AT_FOOT[layout] }, cardPad: AT_CARD_PAD[layout],
       shellStyle: SHELL(layout, ty), cardGrid,
       fs: { h1: ty.h1, h1lh: ty.h1lh, h2: ty.h2, h2lh: ty.h2lh },

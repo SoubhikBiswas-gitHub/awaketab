@@ -22,6 +22,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .at-in{animation:at-in .7s var(--ease) both}
 .at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
 .at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-chev{transition:transform .6s var(--ease)}
 .at-u{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
 .at-u:hover{text-decoration-thickness:2px}
 @keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
@@ -30,7 +31,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </helmet>
-<div class="at-root" style="--at-focus: {{t.lamp}}; width: 1280px; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{bg}}; color: {{t.ink}}; display: flex; flex-direction: column">
+<div class="at-root" style="--at-focus: {{t.lamp}}; width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{bg}}; color: {{t.ink}}; display: flex; flex-direction: column">
   <div aria-hidden="true" class="at-aura" style="position: absolute; left: -10%; top: -420px; width: 120%; height: 900px; background: radial-gradient(40% 40% at 50% 50%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
   <header style="{{hdr.style}}">
     <a href="Main.dc.html" aria-label="AwakeTab home" style="{{hdr.logo}}"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{hdr.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{hdr.bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{hdr.bead}}" style="transition: fill .6s"></circle></svg>AwakeTab</a>
@@ -49,45 +50,47 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </div>
   </header>
 
-  <main style="position: relative; flex-grow: 1; padding: 0 80px; display: flex; flex-direction: column">
-    <div class="at-in" style="padding: 48px 0; display: flex; flex-direction: column; gap: 16px; max-width: 760px">
-      <div style="{{type.kicker}}; color: {{t.lamp}}">AwakeTab Embed</div>
-      <h1 style="margin: 0; {{type.h1}}">Keep your readers' screens awake</h1>
+  <main style="position: relative; flex-grow: 1; padding: 0 {{gutter}}; display: flex; flex-direction: column">
+    <div class="at-in" style="padding: {{introPad}}; display: flex; flex-direction: column; gap: 16px; max-width: 760px">
+      <div style="margin: 0; {{type.kicker}}; color: {{t.lamp}}">AwakeTab Embed</div>
+      <h1 style="margin: 0; {{h1}}; text-wrap: balance">Keep your readers' screens awake</h1>
       <p style="margin: 0; {{type.lead}}; color: {{t.ink2}}; text-wrap: pretty">Recipe blogs, dashboards and documentation sites: give readers a button that keeps their screen from dimming while they follow along. One script tag, the same honest status as AwakeTab itself, in eight languages.</p>
     </div>
 
-    <div style="position: relative; display: grid; grid-template-columns: 704px minmax(0, 1fr); column-gap: 48px; align-items: start">
+    <div style="{{gridStyle}}">
 
-      <div style="display: flex; flex-direction: column; gap: 32px; min-width: 0">
-        <figure aria-label="The widget on a placeholder recipe page" data-placeholder="host page" style="margin: 0; border-radius: 28px; overflow: hidden; background: #FBFAF7; border: 1px solid {{t.line}}; box-shadow: 0 30px 80px -40px rgba(0,0,0,0.55); color: #22201C">
-          <div style="height: 48px; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: #EFECE6; border-bottom: 1px solid #E0DCD3">
-            <div style="flex-grow: 1; height: 32px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #E0DCD3; display: flex; align-items: center; padding: 0 16px; font-size: 13px; color: #6B665C">yourrecipesite.example/lemon-lentil-soup</div>
+      <div style="{{colL}}">
+        <figure aria-label="The widget on a placeholder recipe page" data-placeholder="host page" style="order: 1; min-width: 0; margin: 0; border-radius: 28px; overflow: hidden; background: #FBFAF7; border: 1px solid {{t.line}}; box-shadow: 0 30px 80px -40px rgba(0,0,0,0.55); color: #22201C">
+          <div style="height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 16px; background: #EFECE6; border-bottom: 1px solid #E0DCD3">
+            <div style="flex-grow: 1; min-width: 0; height: 32px; box-sizing: border-box; border-radius: 999px; background: #FFFFFF; border: 1px solid #E0DCD3; display: flex; align-items: center; padding: 0 16px; font-size: 13px; color: #6B665C"><span style="min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis">yourrecipesite.example/lemon-lentil-soup</span></div>
             <span style="height: 24px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 999px; background: #22201C; color: #FBFAF7; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap">Placeholder site</span>
           </div>
-          <div style="padding: 24px 40px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #ECE8E0">
+          <div style="padding: {{siteHdPad}}; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #ECE8E0">
             <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 22px; font-style: italic; letter-spacing: -0.01em">[Your recipe site]</span>
-            <span aria-hidden="true" style="display: flex; gap: 12px"><span style="width: 54px; height: 8px; border-radius: 4px; background: #E3DED4"></span><span style="width: 44px; height: 8px; border-radius: 4px; background: #E3DED4"></span><span style="width: 62px; height: 8px; border-radius: 4px; background: #E3DED4"></span></span>
+            <sc-if value="{{hostNav}}" hint-placeholder-val="{{true}}">
+              <span aria-hidden="true" style="display: flex; gap: 12px"><span style="width: 54px; height: 8px; border-radius: 4px; background: #E3DED4"></span><span style="width: 44px; height: 8px; border-radius: 4px; background: #E3DED4"></span><span style="width: 62px; height: 8px; border-radius: 4px; background: #E3DED4"></span></span>
+            </sc-if>
           </div>
-          <div style="padding: 32px 40px 40px; display: flex; flex-direction: column; gap: 24px">
+          <div style="padding: {{siteBodyPad}}; display: flex; flex-direction: column; gap: 24px">
             <div style="display: flex; flex-direction: column; gap: 8px">
               <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #8A6A3A">Soups</span>
-              <h2 style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 36px; line-height: 1.1; font-weight: 400; letter-spacing: -0.01em">Lemon and red lentil soup</h2>
+              <h2 style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: {{recipeH}}; line-height: 1.1; font-weight: 400; letter-spacing: -0.01em; text-wrap: balance">Lemon and red lentil soup</h2>
               <span style="font-size: 14px; line-height: 20px; color: #6B665C">Serves 4 · 40 minutes · Sample recipe text</span>
             </div>
-            <div aria-hidden="true" style="height: 160px; border-radius: 16px; background: repeating-linear-gradient(135deg, #EDE8DE 0 10px, #E6E0D4 10px 20px); display: grid; place-items: center; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #3D3A33">Recipe photo</div>
+            <div aria-hidden="true" style="height: {{photoH}}; border-radius: 16px; background: repeating-linear-gradient(135deg, #EDE8DE 0 10px, #E6E0D4 10px 20px); display: grid; place-items: center; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #3D3A33">Recipe photo</div>
 
             <div style="display: flex; flex-direction: column; gap: 12px">
-              <div style="display: flex; align-items: center; gap: 12px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #6B665C">
+              <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #6B665C">
                 <span>Pasted snippet renders here</span>
-                <span aria-hidden="true" style="flex-grow: 1; height: 1px; background: #E3DED4"></span>
-                <span style="{{digitFont}}; letter-spacing: 0; text-transform: none; font-weight: 500">{{boxLabel}}</span>
+                <span aria-hidden="true" style="flex-grow: 1; min-width: 24px; height: 1px; background: #E3DED4"></span>
+                <span style="margin: 0; {{digitFont}}; letter-spacing: 0; text-transform: none; font-weight: 500">{{boxLabel}}</span>
               </div>
               <div style="display: flex; justify-content: flex-start">
                 <sc-if value="{{isCompact}}" hint-placeholder-val="{{true}}">
                   <dc-import name="EmbedWidget" size="compact" mode="{{mode}}" theme="{{wTheme}}" running="{{false}}" width="320" hint-size="320px,104px"></dc-import>
                 </sc-if>
                 <sc-if value="{{isFull}}" hint-placeholder-val="{{false}}">
-                  <dc-import name="EmbedWidget" size="full" mode="{{mode}}" theme="{{wTheme}}" running="{{false}}" width="624" hint-size="624px,240px"></dc-import>
+                  <dc-import name="EmbedWidget" size="full" mode="{{mode}}" theme="{{wTheme}}" running="{{false}}" width="{{fullW}}" hint-size="624px,240px"></dc-import>
                 </sc-if>
               </div>
               <p style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; color: #6B665C">
@@ -95,7 +98,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
               </p>
             </div>
 
-            <div style="display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px">
+            <div style="display: grid; grid-template-columns: {{recipeCols}}; gap: 24px 32px">
               <div style="display: flex; flex-direction: column; gap: 12px">
                 <h3 style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: 20px; font-weight: 400">Ingredients</h3>
                 <ul style="margin: 0; padding-inline-start: 20px; display: flex; flex-direction: column; gap: 4px; font-size: 15px; line-height: 22px; color: #3D3A33">
@@ -116,21 +119,21 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             </div>
           </div>
         </figure>
-        <section aria-labelledby="h-free" style="display: flex; flex-direction: column; gap: 12px">
+        <section aria-labelledby="h-free" style="order: 4; display: flex; flex-direction: column; gap: 12px">
           <h2 id="h-free" style="margin: 0; {{type.h3}}">Free, or licensed for your brand</h2>
           <p style="margin: 0; {{type.body}}; color: {{t.ink2}}; max-width: 68ch">The free widget is ready now and carries a small "Keep awake by AwakeTab" credit. An Embed licence ($29 / year per site) will remove the credit and apply your brand colour. The wake lock and every mode are identical either way.</p>
           <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; padding-top: 8px">
             <span style="{{tagSoon}}">Licences open soon</span>
-            <span style="{{type.small}}; color: {{t.muted}}">No payment is taken until a purchase can set up your domain.</span>
+            <span style="margin: 0; {{type.small}}; color: {{t.muted}}">No payment is taken until a purchase can set up your domain.</span>
           </div>
         </section>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 40px; min-width: 0">
-        <section aria-labelledby="h-install" style="display: flex; flex-direction: column; gap: 16px">
-          <h2 id="h-install" style="margin: 0; {{type.h2}}">Install: one line</h2>
+      <div style="{{colR}}">
+        <section aria-labelledby="h-install" style="order: 2; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+          <h2 id="h-install" style="margin: 0; {{h2}}">Install: one line</h2>
           <p style="margin: 0; {{type.ui}}; color: {{t.ink2}}">Paste this where the button should appear, for example inside your recipe card, above the method or in a sidebar.</p>
-          <div style="position: relative; border-radius: 8px; background: {{t.sunken}}; border: 1px solid {{t.line}}; padding: 16px 16px 12px 20px; display: flex; flex-direction: column; gap: 12px">
+          <div style="position: relative; border-radius: 8px; background: {{t.sunken}}; border: 1px solid {{t.line}}; padding: 16px 16px 20px; display: flex; flex-direction: column; gap: 12px">
             <code tabindex="0" aria-label="Your snippet" style="display: block; {{mono}}; font-size: 14px; line-height: 24px; color: {{t.ink2}}; white-space: pre-wrap; word-break: break-word">{{snipHead}}<sc-for list="{{attrs}}" as="a" hint-placeholder-count="3"><span>{{a.pre}}</span><span style="white-space: nowrap"><span style="color: {{t.violet}}">{{a.name}}</span>=<span class="at-slide" style="color: {{t.lamp}}">{{a.value}}</span></span></sc-for>{{snipTail}}
 <span style="color: {{t.ink}}">{{creditLine}}</span></code>
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
@@ -141,7 +144,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
           <p style="margin: 0; {{type.small}}; color: {{t.muted}}">The script replaces itself with a lazy-loaded iframe and reserves its box before it loads (no layout shift). It talks only to awaketab.com, and it sends anonymous start and end counts, including your site's domain. The credit sits in your page's own HTML as a plain nofollow link.</p>
         </section>
 
-        <section aria-labelledby="h-builder" style="{{card}}; display: flex; flex-direction: column; gap: 20px">
+        <section aria-labelledby="h-builder" style="order: 3; min-width: 0; {{card}}; display: flex; flex-direction: column; gap: 20px">
           <h2 id="h-builder" style="margin: 0; {{type.h3}}">Your snippet</h2>
           <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
             <div role="radiogroup" aria-labelledby="{{g.id}}" style="display: flex; flex-direction: column; gap: 8px">
@@ -164,10 +167,37 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     <nav aria-label="Footer" style="{{ftr.nav}}">
       <sc-for list="{{ftr.links}}" as="f" hint-placeholder-count="5"><a href="{{f.href}}" style="{{ftr.link}}">{{f.label}}</a></sc-for>
     </nav>
+    <div onKeyDown="{{lang.key}}" style="{{lang.wrapStyle}}">
+      <button type="button" id="{{lang.btnId}}" aria-expanded="{{lang.expanded}}" aria-controls="{{lang.listId}}" aria-label="{{lang.aria}}" onClick="{{lang.toggle}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"></path></svg>{{lang.label}}<svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: {{lang.chev}}"><path d="M6 9l6 6 6-6"></path></svg></button>
+      <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+        <div aria-hidden="true" onClick="{{lang.close}}" style="position: fixed; inset: 0; z-index: 29; background: rgba(4,7,12,.55)"></div>
+      </sc-if>
+      <sc-if value="{{lang.open}}" hint-placeholder-val="{{false}}">
+        <div id="{{lang.listId}}" role="{{lang.role}}" aria-modal="{{lang.modal}}" aria-labelledby="{{lang.headId}}" class="at-in" style="{{lang.panelStyle}}">
+          <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+            <div aria-hidden="true" style="width: 36px; height: 4px; margin: 0 auto 8px; border-radius: 999px; background: {{t.line2}}"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 8px 4px">
+              <h2 id="{{lang.headId}}" style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; color: {{t.ink}}">{{lang.title}}</h2>
+              <button type="button" aria-label="{{lang.closeLabel}}" onClick="{{lang.close}}" style="width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+            </div>
+          </sc-if>
+          <sc-if value="{{lang.pop}}" hint-placeholder-val="{{true}}">
+            <p id="{{lang.headId}}" style="margin: 0; padding: 8px 12px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{lang.title}}</p>
+          </sc-if>
+          <ul role="list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px">
+            <sc-for list="{{lang.rows}}" as="r" hint-placeholder-count="8">
+              <li style="display: flex">
+                <a href="{{r.href}}" lang="{{r.lang}}" hreflang="{{r.hreflang}}" aria-current="{{r.cur}}" style="flex: 1; min-width: 0; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{t.ink}}; text-decoration: none"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="{{r.ring}}" stroke-width="1.8"></circle><circle cx="10" cy="10" r="4" fill="{{r.dot}}"></circle></svg><span style="font-size: 15px; line-height: 22px; font-weight: {{r.weight}}">{{r.name}}</span><span lang="{{lang.pageLang}}" style="font-size: 13px; line-height: 18px; color: {{r.noteInk}}; text-align: end">{{r.note}}</span></a>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-if>
+    </div>
   </footer>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["desktop"],"default":"desktop"},"$preview":{"width":1280,"height":1548}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"desktop"},"language":{"editor":"enum","options":["closed","open"],"default":"closed"},"$preview":{"width":1280,"height":1552}}'>
 /* ── AwakeTab primitives v2 · fix batch 2b · DESIGN.md §2, §3, §11. Byte-identical in every file of the batch; edit prims/prims.js and rebuild, never one copy. ── */
 const AT_TOK = {
   dark: { ground: '#0A0E16', lift: '#13203A', surface: '#111826', raised: '#26324B', sunken: '#0D131F', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', warn: '#F2B34C', bad: '#FF7A7A', lamp: '#5BE0E8', onLamp: '#04232A', stopBg: '#26324B', stopInk: '#EAF0F7', stopLine: '#33405C', horizonInk: '#F6F2EA', violet: '#A594FF', inputLine: '#5A6781', groundEnd: '#0A0E16', elev: 'none' },
@@ -316,6 +346,62 @@ function atFooter(t, layout) {
 }
 /* ── end primitives ── */
 
+// AT-LANG v1 (language switcher; PRIMITIVES.md P-LANG). Keep identical across files.
+const AT_LOCALES = [
+  ['en', '', 'en', 'English', true], ['es', '/es', 'es', 'Español', false], ['pt-br', '/pt-br', 'pt-BR', 'Português (Brasil)', false],
+  ['de', '/de', 'de', 'Deutsch', false], ['fr', '/fr', 'fr', 'Français', false], ['ja', '/ja', 'ja', '日本語', false],
+  ['zh', '/zh', 'zh-Hans', '简体中文', false], ['hi', '/hi', 'hi', 'हिन्दी', false]
+];
+const AT_LANG_COPY = { title: 'Language', current: 'Current', review: 'Translation in review', close: 'Close' };
+// o = { layout, t, lamp, open, toggle, close, cur: 'en', path: '/', variant: 'footer' | 'settings' }
+function atLang(o) {
+  const t = o.t, cur = o.cur || 'en', path = o.path || '/', settings = o.variant === 'settings', open = !!o.open;
+  const id = settings ? 'at-lang-set' : 'at-lang', sheet = !settings && o.layout === 'phone';
+  const a = (hex, x) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + x + ')'; };
+  const here = AT_LOCALES.find((l) => l[0] === cur) || AT_LOCALES[0];
+  const panel = 'box-sizing: border-box; display: flex; flex-direction: column; background: ' + t.surface + '; border: 1px solid ' + t.line + '; box-shadow: 0 24px 64px -24px rgba(0,0,0,.45); ';
+  return {
+    open, sheet: sheet && open, pop: !sheet && !settings, btnId: id + '-btn', listId: id + '-list', headId: id + '-h',
+    label: here[3], aria: AT_LANG_COPY.title + ': ' + here[3], title: AT_LANG_COPY.title, closeLabel: AT_LANG_COPY.close, pageLang: here[2],
+    expanded: open ? 'true' : 'false', chev: open ? 'rotate(180deg)' : 'none', role: sheet ? 'dialog' : 'group', modal: sheet ? 'true' : 'false',
+    wrapStyle: sheet ? 'display: flex' : 'position: relative; display: flex; margin-inline-start: auto',
+    panelStyle: sheet
+      ? panel + 'position: fixed; inset-inline: 0; bottom: 0; z-index: 30; padding: 8px 16px 32px; border-radius: 28px 28px 0 0; border-bottom: 0'
+      : panel + 'position: absolute; inset-inline-end: 0; bottom: calc(100% + 8px); z-index: 30; width: 360px; padding: 4px; border-radius: 16px',
+    toggle: () => {
+      o.toggle();
+      if (!open) setTimeout(() => { try { document.querySelector('#' + id + '-list a[aria-current="true"]').focus(); } catch (e) {} }, 60);
+    },
+    close: () => o.close(),
+    key: (e) => {
+      const k = e && e.key, box = (e && e.currentTarget) || document;
+      if (k === 'Escape' && open) {
+        if (e.preventDefault) e.preventDefault();
+        o.close();
+        try { box.querySelector('button[aria-controls]').focus(); } catch (x) {}
+        return;
+      }
+      const step = { ArrowDown: 1, ArrowUp: -1, Home: 'home', End: 'end' }[k];
+      if (!step || !open) return;
+      let rows = [];
+      try { rows = Array.from(box.querySelectorAll('a[hreflang]')); } catch (x) {}
+      if (!rows.length) return;
+      if (e.preventDefault) e.preventDefault();
+      const i = rows.indexOf(document.activeElement), n = rows.length;
+      rows[step === 'home' ? 0 : step === 'end' ? n - 1 : i < 0 ? (step > 0 ? 0 : n - 1) : (i + step + n) % n].focus();
+    },
+    rows: AT_LOCALES.map(([lid, prefix, lang, name, reviewed]) => {
+      const on = lid === cur;
+      return {
+        href: prefix + path, lang, hreflang: lang, name, cur: on ? 'true' : 'false',
+        border: on ? a(o.lamp, 0.45) : 'transparent', bg: on ? a(o.lamp, 0.14) : 'transparent', weight: on ? 600 : 500,
+        ring: on ? o.lamp : t.inputBorder, dot: on ? o.lamp : 'transparent',
+        note: on ? AT_LANG_COPY.current : reviewed ? '' : AT_LANG_COPY.review, noteInk: on ? t.ink2 : t.muted
+      };
+    })
+  };
+}
+
 const MODES = [['cook', 'Cook'], ['standard', 'Standard'], ['clock', 'Clock'], ['minimal', 'Minimal']];
 const THEMES = [['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark'], ['oled', 'OLED']];
 const SIZES = [['compact', 'Compact', 'Compact, 320 by 104'], ['full', 'Full width', 'Full width, 240 pixels tall']];
@@ -326,11 +412,18 @@ const NOTES = {
   minimal: 'Minimal: just the status and one button.'
 };
 const CREDIT = '<a href="https://awaketab.com/?ref=embed" rel="nofollow">Keep awake by AwakeTab</a>';
+// Natural board heights per layout (measured with the canvas runtime, tools/final/rtscan.sh). fullCook: phone full-width Cook stacks its timers (420 tall).
+const PAGE_H = {
+  desktop: { compact: 1552, full: 1688, fullCook: 1688 },
+  tablet: { compact: 2456, full: 2592, fullCook: 2592 },
+  phone: { compact: 2961, full: 3097, fullCook: 3277 }
+};
+const PAGE_W = { phone: 390, tablet: 820, desktop: 1280 };
 
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { theme: props.theme ?? 'auto', sysDark: this.sys(), mode: 'cook', wTheme: 'auto', size: 'compact', copied: false };
+    this.state = { theme: props.theme ?? 'auto', sysDark: this.sys(), mode: 'cook', wTheme: 'auto', size: 'compact', copied: false, langOpen: props.language === 'open' };
   }
   sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
   componentDidMount() {
@@ -346,6 +439,7 @@ class Component extends DCLogic {
   }
   componentDidUpdate(prev) {
     if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme });
+    if (prev.language !== this.props.language) this.setState({ langOpen: this.props.language === 'open' });
   }
   snippet(s) {
     return '<script async src="https://awaketab.com/embed.js" data-mode="' + s.mode + '" data-theme="' + s.wTheme + '" data-size="' + s.size + '"></' + 'script>\n' + CREDIT;
@@ -355,13 +449,28 @@ class Component extends DCLogic {
     const { dark, t } = atTheme(s.theme, s.sysDark);
     const group = (id, label, list, key) => { const seg = atSeg(list, s[key], (v) => this.setState({ [key]: v, copied: false }), t, { fs: 14 }); return { id, label, seg, opts: seg.items }; };
     const snip = this.snippet(s);
+    const layout = PAGE_W[this.props.layout] ? this.props.layout : 'desktop';
+    const phone = layout === 'phone', desk = layout === 'desktop';
+    const g = AT_GUTTER[layout];
+    // Host figure inner width (border 1 + body padding): the full-width widget fills it on phone, 624 elsewhere.
+    const fullW = phone ? PAGE_W.phone - 2 * g - 2 - 32 : 624;
+    const hk = s.size === 'compact' ? 'compact' : s.mode === 'cook' ? 'fullCook' : 'full';
+    const col = (gap) => desk ? 'display: flex; flex-direction: column; gap: ' + gap + 'px; min-width: 0' : 'display: contents';
     return {
-      t, H: (s.size === 'full' ? 1684 : 1548) + 'px', bg: atGround(t), type: AT_TYPE, mono: AT_MONO, digitFont: AT_DIGITS,
-      hdr: atHeader(this, t, 'desktop', '', t.muted), ftr: atFooter(t, 'desktop'),
-      card: atCard(t, false), tagSoon: atTag(t, t.lamp),
+      t, W: PAGE_W[layout] + 'px', H: PAGE_H[layout][hk] + 'px', bg: atGround(t), type: AT_TYPE, mono: AT_MONO, digitFont: AT_DIGITS,
+      hdr: atHeader(this, t, layout, '', t.muted), ftr: atFooter(t, layout),
+      lang: atLang({ layout, t: Object.assign({}, t, { inputBorder: t.inputLine }), lamp: t.lamp, open: s.langOpen, path: '/embed', toggle: () => this.setState({ langOpen: !this.state.langOpen }), close: () => this.setState({ langOpen: false }) }),
+      gutter: g + 'px', introPad: phone ? '32px 0 40px' : '48px 0',
+      h1: phone ? AT_TYPE.h1Phone : AT_TYPE.h1, h2: phone ? AT_TYPE.h2Phone : AT_TYPE.h2,
+      gridStyle: 'position: relative; display: grid; align-items: start; ' + (desk ? 'grid-template-columns: 704px minmax(0, 1fr); column-gap: 48px' : 'grid-template-columns: minmax(0, 1fr); row-gap: ' + (phone ? 40 : 48) + 'px'),
+      colL: col(32), colR: col(40),
+      hostNav: !phone, siteHdPad: phone ? '20px 16px 16px' : '24px 40px 16px', siteBodyPad: phone ? '24px 16px 32px' : '32px 40px 40px',
+      recipeH: phone ? '28px' : '36px', photoH: phone ? '120px' : '160px', recipeCols: phone ? 'minmax(0, 1fr)' : '200px minmax(0, 1fr)',
+      fullW: String(fullW),
+      card: atCard(t, phone), tagSoon: atTag(t, t.lamp),
       aura: atRgba(t.lamp, dark ? 0.1 : 0.08),
       mode: s.mode, wTheme: s.wTheme, isCompact: s.size === 'compact', isFull: s.size === 'full',
-      boxLabel: s.size === 'compact' ? '320 × 104' : '100% × 240',
+      boxLabel: s.size === 'compact' ? '320 × 104' : phone && s.mode === 'cook' ? '100% × 420' : '100% × 240',
       snipHead: '<script async src="https://awaketab.com/embed.js"',
       attrs: [['data-mode', s.mode], ['data-theme', s.wTheme], ['data-size', s.size]].map(([name, value]) => ({ pre: ' ', name, value: '"' + value + '"' })),
       snipTail: '></' + 'script>', creditLine: CREDIT,

@@ -7,7 +7,7 @@ This file replaces `tools/fix1b/PRIMITIVES.md` (batch 1b) and the batch 2a `prim
 `tools/final/primvariance.py` renders-and-compares the primitives across every board (header, theme bar, nav, pill, footer, kbd, logo); any second variant is a bug.
 
 
-Source of numbers: /Users/soubhik/Work/github/awaketab/DESIGN.md §2.1, §3, §11. Every file in batch 1b that shows one of
+Source of numbers: /home/user/awaketab/DESIGN.md §2.1, §3, §11. Every file in batch 1b that shows one of
 these primitives must contain exactly the markup below (whitespace inside the tag included). Where a primitive needs
 data, the file's renderVals() must expose the hole names used here (add aliases if the file uses other names).
 Indentation before the first `<` may differ; everything from the first `<` to the matching close must match.
@@ -194,7 +194,7 @@ Numbers:
 - **Trigger (footer):** small-button geometry. Height 44, r12, padding 0 12, gap 8, 1 px `line-strong`, fill `surface`, text `ink` 14/20 500. It holds a 16 px globe, the current language's **native name** ("English") and a 16 px chevron (`rotate(180deg)` while open). Accessible name "Language: English"; `aria-expanded` + `aria-controls`.
 - **Where:** tablet and desktop put it at the end of the footer row (`margin-inline-start: auto`): the honest line and the links read from the start edge, and the language control sits alone at the end edge (on its own line when the row wraps). On a phone it sits on its own line at the start, below the links.
 - **List:** 8 locales, always in this order, each in its own native name: English · Español · Português (Brasil) · Deutsch · Français · 日本語 · 简体中文 · हिन्दी. Names come from `LOCALE_META.label` in `apps/web/src/i18n/locales.ts` (so Chinese reads 简体中文, as on the Intl boards).
-- **Row:** a real `<a>` to the same page in that locale (`/`, `/es/`, `/pt-br/`, `/de/`, `/fr/`, `/ja/`, `/zh/`, `/hi/` + the path; es, pt-br, de and fr translate the slug through `src/i18n/slugs.json`). Each row carries `lang` and `hreflang` (`pt-BR`, `zh-Hans` per locales.ts). When no translation of this page exists, the row links to that locale's home and drops `hreflang` (docs/07 §2: hreflang lists only existing pages).
+- **Row:** a real `<a>` to the same page in that locale (`/`, `/es/`, `/pt-br/`, `/de/`, `/fr/`, `/ja/`, `/zh/`, `/hi/` + the path; es, pt-br, de and fr translate the slug through `src/i18n/slugs.json`). Each row carries `lang` and `hreflang` (`pt-BR`, `zh-Hans` per locales.ts). When no translation of this page exists, the row links to that locale's home and keeps `hreflang`: on a link it names the language of the page it points to, and that home page is in that language (decided 27 Sep 2026; the keyboard handler also finds rows by `a[hreflang]`). docs/07 §2's rule, that hreflang lists only existing pages, applies to the `<link rel="alternate">` tags in the page head, not to these links.
   - Geometry: min-height 48, padding 0 12, r12, grid `20px 1fr auto`, gap 12. Name 15/22, 500 (600 on the current row).
   - Radio-style mark: a 20 px ring. It uses `input-border` (≥ 3:1) on other rows, and a lamp ring with an 8 px lamp dot on the current row.
   - Current row: the selected-item rule (1 px lamp 45 % border + lamp 14 % fill), `aria-current="true"`, and the note "Current" (13/18, `ink2`).

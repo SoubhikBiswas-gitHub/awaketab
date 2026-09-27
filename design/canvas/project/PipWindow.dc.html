@@ -25,7 +25,7 @@ button:focus-visible,a:focus-visible{outline:2px solid #5BE0E8;outline-offset:3p
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </helmet>
-<div class="at-root" style="width: 280px; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column; gap: {{gap}}; padding: 12px">
+<div class="at-root" style="width: 280px; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column; gap: {{gap}}; padding: 16px 16px 20px">
   <div aria-hidden="true" class="at-aura" style="position: absolute; left: -30%; top: -40%; width: 160%; height: 160%; background: radial-gradient(40% 40% at 50% 50%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
 
   <div style="position: relative; height: 32px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
@@ -168,7 +168,7 @@ class Component extends DCLogic {
     }
     const endMs = Math.round((s.now + s.left * 1000) / 60000) * 60000;
     return {
-      t, H: pro ? '160px' : '120px', gap: pro ? '8px' : '12px',
+      t, H: pro ? '160px' : '120px', gap: '8px',
       tone, toneSoft: this.rgba(tone, 0.12), toneLine: this.rgba(tone, 0.38), toneGlow: live ? this.rgba(tone, 0.8) : 'transparent',
       aura: this.rgba(tone, live ? (dark ? 0.16 : 0.1) : 0.05),
       glyph: GLYPH[st] ?? DOT, glyphFill: st === 'ready' ? 'transparent' : tone, statusLabel: LABEL[st] ?? 'Screen awake',

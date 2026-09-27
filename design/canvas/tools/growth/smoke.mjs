@@ -2,6 +2,8 @@
 // markup tags balance, handlers run without throwing, wrappers point at a real base with real props.
 import { readFileSync, readdirSync } from 'node:fs';
 import { load, missing, balance, dir } from '../directions/ProLib.mjs';
+// P-LANG handlers focus rows through document (browser only); a stub keeps them callable here.
+globalThis.document = globalThis.document ?? { querySelector: () => ({ focus() {} }), querySelectorAll: () => [], activeElement: null };
 
 const files = readdirSync(dir).filter((f) => f.startsWith('Growth') && f.endsWith('.dc.html'));
 const bases = files.filter((f) => /data-props='\{"theme"/.test(readFileSync(new URL(f, dir), 'utf8')));

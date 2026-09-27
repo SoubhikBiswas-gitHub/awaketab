@@ -38,25 +38,26 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   <div aria-hidden="true" style="position: absolute; left: -20%; top: -60%; width: 90%; height: 180%; background: radial-gradient(45% 45% at 50% 50%, {{aura}} 0%, transparent 70%); pointer-events: none; transition: background .6s"></div>
 
   <sc-if value="{{compact}}" hint-placeholder-val="{{true}}">
-    <div style="position: relative; height: 26px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
-      <output aria-live="polite" class="at-slide" style="{{pill.style}}"><svg width="{{pill.g}}" height="{{pill.g}}" viewBox="0 0 12 12" aria-hidden="true" style="{{pill.gStyle}}"><path d="{{pill.d}}" fill="{{pill.fill}}" stroke="{{pill.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pill.label}}</output>
-      <sc-if value="{{showCredit}}" hint-placeholder-val="{{true}}">
-        <a href="https://awaketab.com/?ref=embed&amp;source=embed" target="_blank" rel="noopener" style="{{credit}}">Keep awake by AwakeTab</a>
-      </sc-if>
-    </div>
-    <div style="position: relative; height: 44px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 12px">
-      <sc-if value="{{showDigits}}" hint-placeholder-val="{{true}}">
-        <button onClick="{{tapDigits}}" aria-pressed="{{pausedAria}}" aria-label="{{digitsAria}}" title="{{hint}}" style="justify-self: start; height: 44px; padding: 0; border: 0; background: transparent; {{digitFont}}; font-weight: 300; font-size: 28px; line-height: 1; letter-spacing: -0.02em; color: {{digitColor}}; white-space: nowrap"><span role="timer">{{digits}}</span></button>
-      </sc-if>
-      <sc-if value="{{noDigits}}" hint-placeholder-val="{{false}}">
-        <span style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{minimalNote}}</span>
-      </sc-if>
-      <sc-if value="{{live}}" hint-placeholder-val="{{false}}">
-        <button onClick="{{stop}}" style="{{btnStopS}}">Stop</button>
-      </sc-if>
-      <sc-if value="{{idle}}" hint-placeholder-val="{{true}}">
-        <button onClick="{{start}}" style="{{btnStartS}}"><svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>Start</button>
-      </sc-if>
+    <div style="position: relative; flex-grow: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 12px">
+      <div style="display: flex; flex-direction: column; align-items: flex-start; min-width: 0; margin-bottom: 4px">
+        <div style="height: 26px; display: flex; align-items: center; max-width: 100%">
+          <output aria-live="polite" class="at-slide" style="{{pill.style}}"><svg width="{{pill.g}}" height="{{pill.g}}" viewBox="0 0 12 12" aria-hidden="true" style="{{pill.gStyle}}"><path d="{{pill.d}}" fill="{{pill.fill}}" stroke="{{pill.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pill.label}}</output>
+        </div>
+        <sc-if value="{{showDigits}}" hint-placeholder-val="{{true}}">
+          <button onClick="{{tapDigits}}" aria-pressed="{{pausedAria}}" aria-label="{{digitsAria}}" title="{{hint}}" style="height: 44px; margin-top: -4px; padding: 0; border: 0; background: transparent; {{digitFont}}; font-weight: 300; font-size: 28px; line-height: 1; letter-spacing: -0.02em; color: {{digitColor}}; white-space: nowrap"><span role="timer">{{digits}}</span></button>
+        </sc-if>
+        <sc-if value="{{noDigits}}" hint-placeholder-val="{{false}}">
+          <span style="min-height: 44px; margin-top: -4px; display: flex; align-items: center; font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{minimalNoteS}}</span>
+        </sc-if>
+      </div>
+      <div style="display: flex; margin-bottom: 4px">
+        <sc-if value="{{live}}" hint-placeholder-val="{{false}}">
+          <button onClick="{{stop}}" style="{{btnStopS}}">Stop</button>
+        </sc-if>
+        <sc-if value="{{idle}}" hint-placeholder-val="{{true}}">
+          <button onClick="{{start}}" style="{{btnStartS}}"><svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>Start</button>
+        </sc-if>
+      </div>
     </div>
   </sc-if>
 
@@ -97,7 +98,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             <sc-for list="{{timers}}" as="k" hint-placeholder-count="2">
               <li class="{{k.cls}}" style="height: 46px; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) auto 44px; align-items: center; gap: 8px; padding-inline-start: 12px; border-radius: 12px; background: {{k.bg}}; border: 1px solid {{k.line}}">
                 <span style="font-size: 14px; line-height: 20px; font-weight: 500; color: {{t.ink2}}">{{k.name}}</span>
-                <span style="{{digitFont}}; font-size: 18px; line-height: 24px; font-weight: {{k.weight}}; color: {{t.ink}}">{{k.left}}</span>
+                <span style="margin: 0; {{digitFont}}; font-size: 18px; line-height: 24px; font-weight: {{k.weight}}; color: {{t.ink}}">{{k.left}}</span>
                 <button onClick="{{k.remove}}" aria-label="{{k.removeAria}}" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.muted}}; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
               </li>
             </sc-for>
@@ -115,11 +116,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         </section>
       </sc-if>
     </div>
-    <div style="position: relative; height: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px; line-height: 16px">
-      <sc-if value="{{showCredit}}" hint-placeholder-val="{{true}}">
-        <a href="https://awaketab.com/?ref=embed&amp;source=embed" target="_blank" rel="noopener" style="{{credit}}">Keep awake by AwakeTab</a>
-      </sc-if>
-      <span style="color: {{t.muted}}; white-space: nowrap">{{footMeta}}</span>
+    <div style="position: relative; height: 16px; display: flex; align-items: center; gap: 12px; font-size: 12px; line-height: 16px">
+      <span style="min-width: 0; color: {{t.muted}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{footMeta}}</span>
     </div>
   </sc-if>
   <p aria-live="polite" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); margin: 0">{{announce}}</p>
@@ -274,7 +272,7 @@ function atFooter(t, layout) {
 }
 /* ── end primitives ── */
 
-// Embed: compact 320 × 104 (O-58; pill XS, r16, padding 12 12 12 16) and full width × 240 (pill S, r28, padding 16 24).
+// Embed: compact 320 × 104 (O-58; pill XS, r16, padding 16, Start/Stop 20 from the bottom edge) and full width × 240 (pill S, r28, padding 16 24).
 const QUICK = [5, 10, 15, 30, 60];
 let wid = 0;
 
@@ -396,13 +394,14 @@ class Component extends DCLogic {
 
     return {
       t, W: (compact ? 320 : width) + 'px', H: (compact ? 104 : stacked ? 420 : 240) + 'px',
-      radius: compact ? '16px' : '28px', pad: compact ? '12px 12px 12px 16px' : '16px 24px', gap: compact ? '8px' : '8px',
+      radius: compact ? '16px' : '28px', pad: compact ? '16px' : '16px 24px', gap: compact ? '8px' : '8px',
       aura: atRgba(live ? t.lamp : t.muted, live ? (dark ? 0.16 : 0.1) : 0.04),
       pill: atPill(compact ? 'XS' : 'S', s.lock, t), statusLabel: AT_PILL_TEXT[s.lock],
-      compact, full: !compact, live, idle: !live, showCredit: true,
-      credit: 'display: inline-flex; align-items: center; min-height: 24px; font-size: 12px; line-height: 16px; color: ' + t.muted + '; text-decoration: underline; text-decoration-color: ' + t.line2 + '; text-underline-offset: 2px; white-space: nowrap',
+      // O-47: the "Keep awake by AwakeTab" credit is a nofollow link in the host page's own HTML (the snippet's second line), not inside this frame.
+      compact, full: !compact, live, idle: !live,
       showDigits: !isMin, noDigits: isMin, digitFont: AT_DIGITS,
       minimalNote: live ? 'Keeping this screen on while this page is visible.' : 'Keeps this screen on while you read.',
+      minimalNoteS: live ? 'On while this page is visible.' : 'Keeps this screen on while you read.',
       digits, digitColor: running || (isClock && live) ? t.ink : t.muted,
       digitsAria: isCook && held ? (s.paused ? 'Resume the timer, ' + digits : 'Pause the timer, ' + digits) : (isClock ? 'Current time ' + digits : 'Keep screen awake, ' + digits),
       pausedAria: s.paused ? 'true' : 'false',

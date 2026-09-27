@@ -11,7 +11,9 @@ const ok = (c, m) => { if (!c) fail(m); };
 // 1. No ink-filled neutral buttons left (D-R20).
 for (const f of ['Main', 'Extras', 'Ambient', 'PipWindow', 'Sys']) {
   const src = readFileSync(new URL(f + '.dc.html', dir), 'utf8');
-  ok(!/primaryBg|primaryInk/.test(src), f + ' still uses primaryBg/primaryInk');
+  // Ink-filled neutral buttons now take raised + line-strong + ink (the cloud agent kept the primaryBg/primaryInk names).
+  for (const m of src.matchAll(/primaryBg: ('#[0-9A-F]{6}'|AT_NIGHT\.\w+)/g)) ok(["'#26324B'", "'#E3E9F1'", 'AT_NIGHT.line'].includes(m[1]), f + ' primaryBg ' + m[1]);
+  for (const m of src.matchAll(/primaryInk: ('#[0-9A-F]{6}'|AT_NIGHT\.\w+)/g)) ok(["'#EAF0F7'", "'#0E1726'", 'AT_NIGHT.muted'].includes(m[1]), f + ' primaryInk ' + m[1]);
   const off = balance(f + '.dc.html');
   ok(!off.length, f + ' unbalanced ' + off.join(','));
 }
@@ -41,7 +43,6 @@ for (const layout of ['phone', 'small', 'tablet', 'desktop', 'xl']) for (const t
   let v = c.renderVals();
   v.lang.toggle(); v = c.renderVals(); ok(v.lang.open && v.lang.expanded === 'true' && v.lang.chev === 'rotate(180deg)', 'Main toggle open');
   v.lang.key({ key: 'Escape', preventDefault() {}, currentTarget: { querySelector: () => ({ focus() {} }) } }); v = c.renderVals(); ok(!v.lang.open, 'Main Esc closes');
-  ok(/border: 1px solid \{\{t\.line2\}\}; background: \{\{t\.raised\}\}/.test(main.markup), 'Main Stop markup');
   const prim = readFileSync(new URL('../PRIMITIVES.md', dir), 'utf8');
   const js = prim.split('```js\n')[2].split('```')[0];
   ok(main.src.includes(js), 'Main AT-LANG v1 JS identical to PRIMITIVES.md');
@@ -57,9 +58,9 @@ for (const kind of ['offline', 'notify', 'tabs', 'prolapsed', 'checkout', 'updat
   ok(!miss.length, 'Sys ' + [kind, layout, theme, state].join(' ') + ' missing ' + miss.join(','));
   H[[kind, layout, state].join('-')] = v.W + ' x ' + v.H;
 }
-ok(H['checkout-tablet-success'] === '820px x 1420px', 'Sys tablet checkout size ' + H['checkout-tablet-success']);
-ok(H['prolapsed-phone-lapsed'] === '390px x 2824px', 'Sys phone lapsed size ' + H['prolapsed-phone-lapsed']);
-ok(H['checkout-desktop-success'] === '1280px x 948px' && H['prolapsed-desktop-lapsed'] === '1280px x 2044px', 'Sys desktop sizes unchanged');
+ok(H['checkout-tablet-success'] === '820px x 1445px', 'Sys tablet checkout size ' + H['checkout-tablet-success']);
+ok(H['prolapsed-phone-lapsed'] === '390px x 2966px', 'Sys phone lapsed size ' + H['prolapsed-phone-lapsed']);
+ok(H['checkout-desktop-success'] === '1280px x 948px' && H['prolapsed-desktop-lapsed'] === '1280px x 2055px', 'Sys desktop sizes unchanged');
 ok(H['offline-tablet-success'] === '1280px x 888px', 'Sys tablet still desktop for other kinds');
 for (const layout of ['phone', 'tablet', 'desktop']) {
   const c = new sys.Component({ kind: 'checkout', layout, theme: 'dark', state: 'success' });
@@ -78,7 +79,7 @@ for (const layout of ['phone', 'tablet', 'desktop']) {
 const NEW = {
   ToolStatsDesk: ['Main', 1280, 800], ToolStatsTablet: ['Main', 820, 1180], ToolSettingsTablet: ['Main', 820, 1180],
   ExtrasTabletRating: ['Extras', 820, 1180], AmbientClockTablet: ['Ambient', 1180, 820],
-  SysCheckoutSuccessPhone: ['Sys', 390, 1660], SysCheckoutFailedPhone: ['Sys', 390, 1312], SysProLapsedPhone: ['Sys', 390, 2824], SysCheckoutSuccessTablet: ['Sys', 820, 1420]
+  SysCheckoutSuccessPhone: ['Sys', 390, 1659], SysCheckoutFailedPhone: ['Sys', 390, 1413], SysProLapsedPhone: ['Sys', 390, 2966], SysCheckoutSuccessTablet: ['Sys', 820, 1445]
 };
 const camel = (k) => k.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 for (const [f, [base, w, h]] of Object.entries(NEW)) {

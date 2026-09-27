@@ -45,6 +45,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 @keyframes at-breathe{from{opacity:.55}to{opacity:1}}
 @keyframes at-ignite{0%{transform:scale(.6);opacity:.4}55%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:1}}
 @keyframes at-travel{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--at-tx,0),var(--at-ty,0)) scale(.5);opacity:0}}
+.at-chev{transition:transform .6s var(--ease)}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 <style>
@@ -163,10 +164,36 @@ ul,ol{margin:0;padding:0;list-style:none}
       <p style="font-size: 18px; line-height: 28px; color: {{t.muted}}">The article continues here, unchanged.</p>
     </section>
   </main>
-  <footer style="position: relative; flex-shrink: 0; box-sizing: border-box; width: 100%; padding: {{footPad}}; border-top: 1px solid {{t.line}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px"><p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p><nav aria-label="Site" style="display: flex; flex-wrap: wrap; column-gap: 16px"><a href="PagePrivacyDesk.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Privacy</a><a href="PageTermsPhone.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Terms</a><a href="PageChangelog.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Changelog</a><a href="PageAbout.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">About</a><a href="#" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a></nav></footer>
+  <footer style="position: relative; flex-shrink: 0; box-sizing: border-box; width: 100%; padding: {{footPad}}; border-top: 1px solid {{t.line}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px"><p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p><nav aria-label="Site" style="display: flex; flex-wrap: wrap; column-gap: 16px"><a href="PagePrivacyDesk.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Privacy</a><a href="PageTermsPhone.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Terms</a><a href="PageChangelog.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Changelog</a><a href="PageAbout.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">About</a><a href="#" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a></nav><div onKeyDown="{{lang.key}}" style="{{lang.wrapStyle}}">
+      <button type="button" id="{{lang.btnId}}" aria-expanded="{{lang.expanded}}" aria-controls="{{lang.listId}}" aria-label="{{lang.aria}}" onClick="{{lang.toggle}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"></path></svg>{{lang.label}}<svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: {{lang.chev}}"><path d="M6 9l6 6 6-6"></path></svg></button>
+      <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+        <div aria-hidden="true" onClick="{{lang.close}}" style="position: fixed; inset: 0; z-index: 29; background: rgba(4,7,12,.55)"></div>
+      </sc-if>
+      <sc-if value="{{lang.open}}" hint-placeholder-val="{{false}}">
+        <div id="{{lang.listId}}" role="{{lang.role}}" aria-modal="{{lang.modal}}" aria-labelledby="{{lang.headId}}" class="at-in" style="{{lang.panelStyle}}">
+          <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+            <div aria-hidden="true" style="width: 36px; height: 4px; margin: 0 auto 8px; border-radius: 999px; background: {{t.line2}}"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 8px 4px">
+              <h2 id="{{lang.headId}}" style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; color: {{t.ink}}">{{lang.title}}</h2>
+              <button type="button" aria-label="{{lang.closeLabel}}" onClick="{{lang.close}}" style="width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+            </div>
+          </sc-if>
+          <sc-if value="{{lang.pop}}" hint-placeholder-val="{{true}}">
+            <p id="{{lang.headId}}" style="margin: 0; padding: 8px 12px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{lang.title}}</p>
+          </sc-if>
+          <ul role="list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px">
+            <sc-for list="{{lang.rows}}" as="r" hint-placeholder-count="8">
+              <li style="display: flex">
+                <a href="{{r.href}}" lang="{{r.lang}}" hreflang="{{r.hreflang}}" aria-current="{{r.cur}}" style="flex: 1; min-width: 0; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{t.ink}}; text-decoration: none"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="{{r.ring}}" stroke-width="1.8"></circle><circle cx="10" cy="10" r="4" fill="{{r.dot}}"></circle></svg><span style="font-size: 15px; line-height: 22px; font-weight: {{r.weight}}">{{r.name}}</span><span lang="{{lang.pageLang}}" style="font-size: 13px; line-height: 18px; color: {{r.noteInk}}; text-align: end">{{r.note}}</span></a>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-if>
+    </div></footer>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"variant":{"editor":"enum","options":["recipe","kiosk"],"default":"recipe"},"$preview":{"width":390,"height":1680}}'>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"variant":{"editor":"enum","options":["recipe","kiosk"],"default":"recipe"},"language":{"editor":"enum","options":["closed","open"],"default":"closed"},"$preview":{"width":390,"height":1742}}'>
 // AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
 const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C', shadow: 'none' };
 const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA', shadow: '0 1px 2px rgba(14,23,38,.06)' };
@@ -236,12 +263,72 @@ const GLYPH = { paused: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z', blocked: 'M6 1L11.
 // Pill strings are a contract: exactly these seven.
 const LABEL = { ready: 'Ready', ended: 'Ready', starting: 'Starting…', awake: 'Screen awake', paused: 'Paused — tab hidden', blocked: "Blocked — here's the fix", needtap: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
 
+// AT-LANG v1 (language switcher; PRIMITIVES.md P-LANG). Keep identical across files.
+const AT_LOCALES = [
+  ['en', '', 'en', 'English', true], ['es', '/es', 'es', 'Español', false], ['pt-br', '/pt-br', 'pt-BR', 'Português (Brasil)', false],
+  ['de', '/de', 'de', 'Deutsch', false], ['fr', '/fr', 'fr', 'Français', false], ['ja', '/ja', 'ja', '日本語', false],
+  ['zh', '/zh', 'zh-Hans', '简体中文', false], ['hi', '/hi', 'hi', 'हिन्दी', false]
+];
+const AT_LANG_COPY = { title: 'Language', current: 'Current', review: 'Translation in review', close: 'Close' };
+// o = { layout, t, lamp, open, toggle, close, cur: 'en', path: '/', variant: 'footer' | 'settings' }
+function atLang(o) {
+  const t = o.t, cur = o.cur || 'en', path = o.path || '/', settings = o.variant === 'settings', open = !!o.open;
+  const id = settings ? 'at-lang-set' : 'at-lang', sheet = !settings && o.layout === 'phone';
+  const a = (hex, x) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + x + ')'; };
+  const here = AT_LOCALES.find((l) => l[0] === cur) || AT_LOCALES[0];
+  const panel = 'box-sizing: border-box; display: flex; flex-direction: column; background: ' + t.surface + '; border: 1px solid ' + t.line + '; box-shadow: 0 24px 64px -24px rgba(0,0,0,.45); ';
+  return {
+    open, sheet: sheet && open, pop: !sheet && !settings, btnId: id + '-btn', listId: id + '-list', headId: id + '-h',
+    label: here[3], aria: AT_LANG_COPY.title + ': ' + here[3], title: AT_LANG_COPY.title, closeLabel: AT_LANG_COPY.close, pageLang: here[2],
+    expanded: open ? 'true' : 'false', chev: open ? 'rotate(180deg)' : 'none', role: sheet ? 'dialog' : 'group', modal: sheet ? 'true' : 'false',
+    wrapStyle: sheet ? 'display: flex' : 'position: relative; display: flex; margin-inline-start: auto',
+    panelStyle: sheet
+      ? panel + 'position: fixed; inset-inline: 0; bottom: 0; z-index: 30; padding: 8px 16px 32px; border-radius: 28px 28px 0 0; border-bottom: 0'
+      : panel + 'position: absolute; inset-inline-end: 0; bottom: calc(100% + 8px); z-index: 30; width: 360px; padding: 4px; border-radius: 16px',
+    toggle: () => {
+      o.toggle();
+      if (!open) setTimeout(() => { try { document.querySelector('#' + id + '-list a[aria-current="true"]').focus(); } catch (e) {} }, 60);
+    },
+    close: () => o.close(),
+    key: (e) => {
+      const k = e && e.key, box = (e && e.currentTarget) || document;
+      if (k === 'Escape' && open) {
+        if (e.preventDefault) e.preventDefault();
+        o.close();
+        try { box.querySelector('button[aria-controls]').focus(); } catch (x) {}
+        return;
+      }
+      const step = { ArrowDown: 1, ArrowUp: -1, Home: 'home', End: 'end' }[k];
+      if (!step || !open) return;
+      let rows = [];
+      try { rows = Array.from(box.querySelectorAll('a[hreflang]')); } catch (x) {}
+      if (!rows.length) return;
+      if (e.preventDefault) e.preventDefault();
+      const i = rows.indexOf(document.activeElement), n = rows.length;
+      rows[step === 'home' ? 0 : step === 'end' ? n - 1 : i < 0 ? (step > 0 ? 0 : n - 1) : (i + step + n) % n].focus();
+    },
+    rows: AT_LOCALES.map(([lid, prefix, lang, name, reviewed]) => {
+      const on = lid === cur;
+      return {
+        href: prefix + path, lang, hreflang: lang, name, cur: on ? 'true' : 'false',
+        border: on ? a(o.lamp, 0.45) : 'transparent', bg: on ? a(o.lamp, 0.14) : 'transparent', weight: on ? 600 : 500,
+        ring: on ? o.lamp : t.inputBorder, dot: on ? o.lamp : 'transparent',
+        note: on ? AT_LANG_COPY.current : reviewed ? '' : AT_LANG_COPY.review, noteInk: on ? t.ink2 : t.muted
+      };
+    })
+  };
+}
+// P-LANG: this page has no translations yet, so every other locale links to its home (PRIMITIVES.md P-LANG).
+function atLangHome(v) { v.rows.forEach((r, i) => { if (i) r.href = r.href.replace(/^(\/[a-z-]+)\/.+$/, '$1/'); }); return v; }
+// /for/cooking exists in every locale; es, pt-br, de and fr translate the slug (src/i18n/slugs.json). Other routes link home.
+const AT_COOK_SLUG = { es: 'cocinar', 'pt-BR': 'cozinhar', de: 'kochen', fr: 'cuisine' };
+function atLangCook(v) { if (v.rows[0].href.indexOf('/for/cooking') < 0) return atLangHome(v); v.rows.forEach((r) => { const x = AT_COOK_SLUG[r.lang]; if (x) r.href = r.href.replace('/for/cooking', '/for/' + x); }); return v; }
 class Component extends DCLogic {
 constructor(props) {
     super(props);
-    this.state = { theme: props.theme || 'auto', sysDark: this.sys(), now: Date.now(), mode: 'minimal', tapped: false };
+    this.state = { theme: props.theme || 'auto', langOpen: props.language === 'open', sysDark: this.sys(), now: Date.now(), mode: 'minimal', tapped: false };
   }
-  heights() { return { phone: 1680, tablet: 1640, desktop: 1280 }; }
+  heights() { return { phone: 1742, tablet: 1662, desktop: 1280 }; }
   vals(b) {
     const s = this.state, t = b.t, desk = b.isDesk, tab = b.isTab, phone = b.isPhone;
     const recipe = (this.props.variant || 'recipe') === 'recipe';
@@ -380,7 +467,7 @@ constructor(props) {
       aura: this.rgba(lamp, dark ? 0.1 : 0.08)
     });
   }
-  renderVals() { const b = this.base(); Object.assign(b, this.vals(b)); b.bead = b.tone || b.lamp; return b; }
+  renderVals() { const b = this.base(); b.lang = atLangCook(atLang({ layout: b.layout, t: b.t, lamp: b.lamp, path: (this.props.variant || 'recipe') === 'recipe' ? '/for/cooking' : '/kiosk', open: this.state.langOpen, toggle: () => this.setState({ langOpen: !this.state.langOpen }), close: () => this.setState({ langOpen: false }) })); Object.assign(b, this.vals(b)); b.bead = b.tone || b.lamp; return b; }
 }
 </script>
 </body>

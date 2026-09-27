@@ -108,6 +108,12 @@ Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · butt
 | Tablet | 600–1023 | Single column centred, face scaled ×1.35, controls max 520 wide, actions stay bottom |
 | Desktop | ≥ 1024 | Two columns: face left (×1.55), right column pill · note · length block · actions · face tabs |
 
+Responsive contract (owner requirement, 27 Sep 2026): every screen is responsive at every width, not only at the drawn ones.
+
+- **Canvas:** the reference. Each screen is drawn at the key sizes (phone 390, tablet 820, desktop 1280; small phone 320/360, landscape and 1920 where the layout changes) in dark and light. It shows how the layout adapts; it cannot show every width.
+- **Code:** fluid between the drawn sizes. Layout comes from flex/grid, `max-width` and the gutter steps (16 / 32 / 80 / 120), never from fixed page widths. Logical properties only. No horizontal page scroll at any width from 320 to 2560. Text reflows at 400 % zoom (WCAG 1.4.10). Nothing sits flush against an edge (16 px minimum, 20 px below the last row of actions). Targets stay ≥ 44 px at every width.
+- **Gate:** an e2e sweep loads every route at every 40 px step from 320 to 2560 (plus phone landscape and 400 % zoom). It fails on horizontal scroll, controls within 16 px of the viewport edge, targets under 44 px, or clipped text. It runs in CI and blocks the release.
+
 Phone bottom dock (user decision): the length block (15m · 30m · 1h · 2h · No limit, then Until a time… · Custom…) always stays above the actions with a 20 px gap; the actions (+15 min · Stop, or the lamp CTA "Keep awake · 30 min") sit at the very bottom. Changing the length while running applies immediately.
 
 Presets per size (decision O-74): every phone shows all seven in a two-row grid, 15 min · 30 min · 45 min · 1 h · 2 h / 4 h · ∞ · Until… · Custom… (at 320 px four columns, the eighth cell More… holds Until… and Custom…); tablet and desktop show 15 min · 30 min · 45 min · 1 h · 2 h · 4 h · ∞ in one bar. ∞ is named "Until I stop".
@@ -224,3 +230,76 @@ TV / kiosk scale (≥ 1920 wide): meta 32, date 40, message 96–128, clock digi
   Footer spec: 1 px `line` top border, padding 24 (phone 32 bottom), honest line left in caption 13 `muted`, links right in the order Privacy · Terms · Changelog · About · Buy me a coffee. Pro, Activate and Manage pages included.
 - A notice, toast or banner never covers the primary action or the status pill; it pushes content or sits above the dock.
 - Canvas boards: height ≤ 8000; a board's default `layout` prop must match its width.
+
+## 12. Token system (scalable, responsive; how §11 is built)
+
+§11 lists the allowed values. This section names them, so code and canvas use **names, never raw numbers**. It is one system for the web app, content pages, Pro, the extension and the embed.
+
+### 12.1 Three layers
+1. **Primitives:** the scales in §11 (spacing, radius, type, control sizes). Defined once, in `apps/web/src/styles/tokens.css` (the extension and embed import the same file).
+2. **Semantic tokens:** what a value is for (`--at-gutter`, `--at-section`, `--at-type-h1`). Only these change per breakpoint.
+3. **Components:** use semantic tokens and primitives by name. A component never holds a raw px or rem value for spacing, radius, font size or control height.
+
+Existing `--at-*` names and their shadcn aliases stay (contract, docs/05 §1.1, §1.5). New names are additions. Two values change: `--at-r-sm` 6 → 8 and `--at-r-md` 10 → 12. The build adds the new names to docs/00 §13 and docs/05 §1.1 first (CLAUDE.md contracts rule).
+
+### 12.2 Breakpoints (the only four)
+| Band | Width | Used for |
+|---|---|---|
+| phone | < 600 | one column, actions at the bottom, phone type step |
+| tablet | 600–1023 | one column centred (controls max 520), large type step |
+| desktop | 1024–1599 | two columns where the layout has them |
+| xl | ≥ 1600 | xl gutter; TV and kiosk scale from 1920 |
+
+Media queries use `min-width: 600px`, `1024px` and `1600px` only (mobile first). Components that live inside other layouts (the tool card on content pages, the embed, the popup) respond to their **container** with container queries at the same widths, not to the viewport.
+
+### 12.3 Spacing
+Primitives: `--at-s-N` = N × 4 px: `s-1` 4 · `s-2` 8 · `s-3` 12 · `s-4` 16 · `s-5` 20 · `s-6` 24 · `s-8` 32 · `s-10` 40 · `s-12` 48 · `s-16` 64 · `s-20` 80 · `s-24` 96 · `s-30` 120 (existing: s-1, 2, 3, 4, 6, 8).
+
+| Semantic | phone | tablet | desktop | xl |
+|---|---|---|---|---|
+| `--at-gutter` (page side padding) | 16 | 32 | 80 | 120 |
+| `--at-section` (between sections) | 48 | 64 | 96 | 96 |
+| `--at-card-pad` | 20 | 24 | 24 | 24 |
+| `--at-edge-min` (nothing closer to an edge) | 16 | 16 | 16 | 16 |
+| `--at-dock-bottom` (below the last row of actions) | 20 | 20 | 20 | 20 |
+
+Gaps are fixed at every width and chosen by relationship: `--at-gap-tight` 8 (inside a control, icon + label) · `--at-gap-item` 12 (related items) · `--at-gap-group` 20 (between groups) · `--at-gap-group-lg` 24 (between groups in a card or wide column). Max content width `--at-content-max` 1200; reading measure `--at-measure` 68ch.
+
+### 12.4 Radius
+`--at-r-xs` 4 · `--at-r-sm` 8 · `--at-r-md` 12 · `--at-r-lg` 16 · `--at-r-xl` 20 · `--at-r-2xl` 28 · `--at-r-pill` 999. What each is for: §11.3. Radii do not change per breakpoint. Nested rule: inner = outer − padding, so an inner radius is always a smaller step of the same scale.
+
+### 12.5 Type
+Each role is one `font` shorthand token (weight, size/line-height, family), in rem so the user's browser font size scales everything (1rem = 16 px). Use `font: var(--at-type-body)`.
+
+| Token | phone (< 600) | ≥ 600 | Weight |
+|---|---|---|---|
+| `--at-type-kicker` (+ `letter-spacing: .14em; text-transform: uppercase`) | 12/16 | 12/16 | 600 |
+| `--at-type-caption` | 13/18 | 13/18 | 400 |
+| `--at-type-small` | 14/20 | 14/20 | 400 |
+| `--at-type-ui` | 15/22 | 15/22 | 500 |
+| `--at-type-action` (primary action label) | 17/24 | 17/24 | 600 |
+| `--at-type-body` | 16/26 | 16/26 | 400 |
+| `--at-type-lead` | 18/28 | 18/28 | 400 |
+| `--at-type-h3` | 20/28 | 20/28 | 600 |
+| `--at-type-h2` | 24/32 | 28/36 | 600 |
+| `--at-type-h1` (+ `letter-spacing: -.02em`) | 34/42 | 48/56 | 600 |
+| `--at-type-price` | 40/48 | 48/56 | 600 |
+
+Where §11.5 gives a weight range (caption and small 400–500, ui 500–600), the token carries the lower weight and the stronger one is set with `font-weight` after it (`--at-type-ui` + 600 for the pill, selected items and buttons). Two steps only: headings and prices grow at 600 px, and nothing else changes size between bands. This matches every board on the canvas: tablet and desktop share the large step. Display digits keep their face-specific sizes (§3) and scale with the face through container units, capped as in §3. Existing `--at-t-*` size primitives stay; `--at-t-xl` changes 22 → 20 (`h3`), since 22 is off the scale.
+
+### 12.6 Control sizes and icons
+`--at-h-control` 44 (chip, segmented item, icon button, small button) · `--at-h-input` 48 · `--at-h-button` 52 · `--at-h-primary` 60 (52 on screens ≤ 568 tall and landscape phones) · `--at-h-cook` 64 · `--at-h-header` 60 phone / 68 ≥ 600 · `--at-h-row` 56 (min-height of list rows). Icons `--at-icon-sm` 16 · `--at-icon-md` 20 · `--at-icon-lg` 24. Border `--at-border` 1px; focus ring 2px, offset 3px. Targets are never below 44 at any width.
+
+### 12.7 Patterns (how every screen is put together)
+- **Page:** header (`--at-h-header`) → main with `padding-inline: var(--at-gutter)`, `max-width: var(--at-content-max)`, sections separated by `--at-section` → footer. Same on every product.
+- **Stack:** vertical `display: flex; flex-direction: column; gap:` a spacing token. Space comes from `gap` on the parent, never margins on the children. Margins are 0 except `margin-inline: auto` for centring.
+- **Cluster:** a wrapping row (`flex-wrap: wrap; gap: var(--at-gap-item)`) for chips, tags and button rows; it wraps instead of overflowing at any width.
+- **Grid:** `grid-template-columns: repeat(auto-fit, minmax(min(100%, <n>px), 1fr))` for card lists and tiles, so columns follow the width without breakpoints.
+- **Two-column tool:** from 1024 the face column and the control column; the control column never goes below 400 px, and the face scales to the space left (see the 1024 board).
+- **Dock (phone):** status and content on top; length block, 20 px gap, actions at the bottom, 20 px from the bottom edge.
+- **Sheets and panels:** bottom sheet on phone, side sheet from 1024, inline panel otherwise; padding `--at-card-pad`, 20 px below the last button.
+- **Text:** `max-inline-size: var(--at-measure)` for paragraphs; `text-wrap: balance` on headings, `pretty` on paragraphs; long words and URLs break (`overflow-wrap: anywhere`) and never push the page wider.
+
+### 12.8 Gates
+- **Canvas:** `design/canvas/tools/final/rtaudit.sh` (every board rendered with the real canvas runtime, checked against §11: radius, spacing, gap, type size and weight, control height, borders, colours, nested cards) must report nothing; `rtscan.sh` must flag 0 boards (empty boards, overflow, dropped styles, controls within 12 px of an edge).
+- **Code:** a stylelint rule rejects raw px or rem for `padding`, `margin`, `gap`, `border-radius`, `font-size`, `line-height`, `height` of controls and `font` outside `tokens.css` (allowed: 0, 1px borders, percentages, `auto`). Plus the responsive sweep in §5 (every route, every 40 px from 320 to 2560). Both run in CI and block the release.
