@@ -96,6 +96,7 @@
   ascent-override: 95.26%;
   descent-override: 27.96%;
   line-gap-override: 0%;
+  unicode-range: U+0-221D, U+221F-10FFFF;
 }
 
 @font-face {
@@ -114,6 +115,7 @@
   ascent-override: 89.7%;
   descent-override: 26.62%;
   line-gap-override: 0%;
+  unicode-range: U+0-221D, U+221F-10FFFF;
 }
 
 @layer base {
