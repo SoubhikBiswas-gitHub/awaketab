@@ -43,6 +43,9 @@ const {
   bare = false,
 } = Astro.props;
 const localeMeta = LOCALE_META[locale];
+// Tool pages (the ones without the shared header) paint their first frame only once the whole tool is parsed, so a
+// slow connection never shows it half built (docs/05 §3.33, First load).
+const wholeTool = !header && !bare;
 const t = createT(locale);
 ---
 
@@ -72,6 +75,7 @@ const t = createT(locale);
       alternates={alternates}
     />
     <script is:inline set:html={bootJs} />
+    {wholeTool && <link rel="expect" href="#at-tabs-late" blocking="render" />}
     <slot name="head" />
   </head>
   <body>

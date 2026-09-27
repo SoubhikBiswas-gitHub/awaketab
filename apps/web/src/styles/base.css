@@ -168,4 +168,8 @@
       transition-duration: 1ms !important;
     }
   }
+
+  :root[data-swap] * {
+    transition: none !important;
+  }
 }

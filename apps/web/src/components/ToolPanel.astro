@@ -11,15 +11,18 @@ import Button from './shell/Button.astro';
 import Dialog from './ui/Dialog.astro';
 import Sheet from './ui/Sheet.astro';
 import StatusPill from './shell/StatusPill.astro';
+import type { IToolReady } from '../lib/tool-ready';
 
 interface Props {
   locale?: TLocale;
   embed?: boolean;
   until?: string | undefined;
   kicker?: string | undefined;
+  ready: IToolReady;
+  untilAt?: string;
 }
 
-const { locale = 'en', embed = false, until, kicker } = Astro.props;
+const { locale = 'en', embed = false, until, kicker, ready, untilAt = '' } = Astro.props;
 const t = createT(locale);
 const catalogJson = JSON.stringify(islandCatalog(locale)).replaceAll(
   '<',
@@ -91,6 +94,12 @@ const ICON_SHARE =
   'M12 3.5v11M8 7.5l4-4 4 4M5.5 12v6.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12';
 const here = LOCALE_META[locale];
 const untilWall = until?.replace('-', ':');
+// An /until page's digits and end time depend on the visitor's clock: boot.js writes them before the first paint.
+const a = untilWall ? '' : ready.a;
+const b = untilWall ? '' : ready.b;
+const meta = untilWall ? t('tool.meta.endsAt') : ready.meta;
+const cta = untilWall ? t('tool.cta.until', { time: untilAt }) : ready.ctaAria;
+const eight = ready.chip === 'custom';
 ---
 
 <div class="at-tool" data-panel id="content" tabindex="-1">
@@ -185,10 +194,10 @@ const untilWall = until?.replace('-', ':');
     <div class="at-face-cell">
       <div class="at-mini">
         <div class="at-digits" role="timer" data-l="timer">
-          <span data-t="a">30</span><span class="at-secs" data-t="b">:00</span>
+          <span data-t="a">{a}</span><span class="at-secs" data-t="b">{b}</span>
         </div>
         <p class="at-meta">
-          <span data-t="ma">{t('tool.meta.endsAt')}</span>
+          <span data-t="ma">{meta}</span>
           <span class="at-meta-b" data-t="mb"></span>
         </p>
       </div>
@@ -286,12 +295,12 @@ const untilWall = until?.replace('-', ':');
               <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
               <div class="at-digits" role="timer" data-timer data-l="timer">
                 <span data-timer-digits
-                  ><span data-t="a">30</span><span class="at-secs" data-t="b"
-                    >:00</span
+                  ><span data-t="a">{a}</span><span class="at-secs" data-t="b"
+                    >{b}</span
                   ></span>
               </div>
               <div class="at-meta">
-                <span data-t="ma">{t('tool.meta.endsAt')}</span>
+                <span data-t="ma">{meta}</span>
                 <span class="at-meta-b" data-t="mb"></span>
               </div>
             </div>
@@ -301,17 +310,17 @@ const untilWall = until?.replace('-', ':');
         <div class="at-face at-face-bold">
           <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
           <div class="at-digits" role="timer" data-l="timer">
-            <span data-t="a">30</span><span class="at-secs" data-t="b"
-              >:00</span>
+            <span data-t="a">{a}</span><span class="at-secs" data-t="b"
+              >{b}</span>
           </div>
           <div class="at-bar-track" aria-hidden="true">
             <div class="at-bar-fill"><div class="at-shim"></div></div>
           </div>
           <div class="at-bold-meta">
             <span
-              ><span data-t="ma">{t('tool.meta.endsAt')}</span>
+              ><span data-t="ma">{meta}</span>
               <span data-t="mb"></span></span
-            ><span data-t="of"></span>
+            ><span data-t="of">{untilWall ? '' : ready.of}</span>
           </div>
         </div>
 
@@ -365,13 +374,13 @@ const untilWall = until?.replace('-', ':');
           <div class="at-hz-line" aria-hidden="true"></div>
           <div class="at-hz-text">
             <div class="at-digits" role="timer" data-l="timer">
-              <span data-t="a">30</span><span class="at-secs" data-t="b"
-                >:00</span>
+              <span data-t="a">{a}</span><span class="at-secs" data-t="b"
+                >{b}</span>
             </div>
             <div class="at-hz-meta">
               <span class="at-hz-name" data-t="hz"></span>
               <span class="at-hz-when"
-                ><span data-t="ma">{t('tool.meta.endsAt')}</span>
+                ><span data-t="ma">{meta}</span>
                 <span data-t="mb"></span></span
               >
             </div>
@@ -406,20 +415,20 @@ const untilWall = until?.replace('-', ':');
           <div class="at-tide-text">
             <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
             <div class="at-digits" role="timer" data-l="timer">
-              <span data-t="a">30</span><span data-t="b">:00</span>
+              <span data-t="a">{a}</span><span data-t="b">{b}</span>
             </div>
             <div class="at-meta">
-              <span data-t="ma">{t('tool.meta.endsAt')}</span>
+              <span data-t="ma">{meta}</span>
               <span data-t="mb"></span>
             </div>
           </div>
           <div class="at-tide-text at-tide-under" aria-hidden="true">
             <div class="at-kick" data-t="k">{t('tool.kicker.ready')}</div>
             <div class="at-digits">
-              <span data-t="a">30</span><span data-t="b">:00</span>
+              <span data-t="a">{a}</span><span data-t="b">{b}</span>
             </div>
             <div class="at-meta">
-              <span data-t="ma">{t('tool.meta.endsAt')}</span>
+              <span data-t="ma">{meta}</span>
               <span data-t="mb"></span>
             </div>
           </div>
@@ -573,7 +582,7 @@ const untilWall = until?.replace('-', ':');
                 class="at-seg-item at-chip"
                 type="button"
                 data-preset={id}
-                aria-pressed="false"
+                aria-pressed={String(id === ready.chip)}
                 aria-label={t(`tool.preset.${id}.sr`)}
               >
                 {t(`tool.preset.${id}`)}
@@ -583,7 +592,7 @@ const untilWall = until?.replace('-', ':');
               class="at-seg-item at-chip"
               type="button"
               data-preset="pinf"
-              aria-pressed="false"
+              aria-pressed={String(ready.chip === 'pinf')}
               aria-label={t('tool.preset.pinf.sr')}
             >
               {t('tool.preset.pinf')}
@@ -607,21 +616,21 @@ const untilWall = until?.replace('-', ':');
               class="at-chip at-chip-choose at-c-custom"
               type="button"
               data-preset="custom"
-              aria-pressed="false"
+              aria-pressed={String(eight)}
               data-l="customAria"
               aria-label={t('tool.chip.customAria')}
             >
-              <span data-t="custom">{t('tool.preset.custom')}</span>
+              <span data-t="custom">{eight ? ready.len : t('tool.preset.custom')}</span>
             </button>
             <button
               class="at-chip at-chip-choose at-c-more"
               type="button"
               data-act="more"
-              aria-pressed="false"
+              aria-pressed={String(eight)}
               data-l="moreAria"
               aria-label={t('tool.chip.moreAria')}
             >
-              <span data-t="more">{t('tool.chip.more')}</span>
+              <span data-t="more">{t(eight ? 'tool.chip.moreCustom' : 'tool.chip.more')}</span>
             </button>
           </div>
         </div>
@@ -660,8 +669,8 @@ const untilWall = until?.replace('-', ':');
           class="at-chip at-chip-choose at-c-custom"
           type="button"
           data-preset="custom"
-          aria-pressed="false"
-          ><span data-t="custom">{t('tool.preset.custom')}</span></button
+          aria-pressed={String(eight)}
+          ><span data-t="custom">{eight ? ready.len : t('tool.preset.custom')}</span></button
         >
       </div>
     </div>
@@ -987,10 +996,11 @@ const untilWall = until?.replace('-', ':');
       variant="primary"
       data-act="start"
       data-l="cta"
+      aria-label={cta}
       kbd="Space"
       aria-keyshortcuts="Space"
       ><span data-t="cta"
-        >{t('tool.cta.keep', { length: t('tool.preset.p30') })}</span
+        >{untilWall ? cta : ready.cta}</span
       ></Button
     >
 
@@ -1078,7 +1088,7 @@ const untilWall = until?.replace('-', ':');
     }
   </div>
 
-  <div class="at-tabs at-tabs-late">
+  <div class="at-tabs at-tabs-late" id="at-tabs-late">
     <div
       class="at-seg at-faces"
       role="tablist"

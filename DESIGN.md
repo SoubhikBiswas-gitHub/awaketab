@@ -98,7 +98,7 @@ Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · butt
 - Show consequences before acting: Ready shows `ends at 10:30 PM`; running shows `until 10:30 PM`; no-limit shows `since 9:12 PM`.
 - End times are rounded to the nearest minute before display.
 - Long sessions, same rule on every surface (tool, popup, PiP, embed, kiosk): under 1 h "MM:SS"; 1 h and over "H:MM:SS" (tabular, sized so 12:59:59 never wraps); 24 h and over "1d 02:15:00" with the full end line ("Sunday, 27 September · 10:30 AM"); ends 2+ days away show the weekday.
-- No limit (∞, "Until I stop"): no countdown. Digits count up as elapsed with the caption "Awake for" and "since 9:04 PM" ("since yesterday 7:43 PM" after midnight); ring full and steady; extend buttons hidden; Stop stays; extension badge ON/SYS.
+- No limit (∞, "Until I stop"): no countdown. Ready shows the count-up at rest, 00:00. Digits count up as elapsed with the caption "Awake for" and "since 9:04 PM" ("since yesterday 7:43 PM" after midnight); ring full and steady; extend buttons hidden; Stop stays; extension badge ON/SYS.
 
 ## 5. Layout and breakpoints
 
@@ -146,6 +146,7 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 - Durations: state colour 450–600 ms, slides 600 ms, content rise 700–900 ms, time-driven transforms 1 s linear (matches the tick), ambient loops 3–130 s.
 - Animate `transform`, `opacity`, `clip-path`, `stroke-dasharray` only; never layout properties.
 - `prefers-reduced-motion: reduce` stops every loop and transition (burn-in pixel shift still applies, instantly).
+- Nothing moves into its first place: the page paints its settled state (docs/05 §3.33, First load), so primary buttons, the pill, the note and the selected-segment indicators never fade or slide on load. Motion answers a change the user can see coming; a theme swap runs no transitions at all.
 - Implementation is CSS-only (keyframes + `@property --at-p` for progress); the island only writes `--at-p` and `data-state`. JS budget has ~1 KB headroom.
 - **Interactive cards and icons** (content pages, the homepage below the tool, header menus). No raster or 3D-engine icons: the inline SVG line icons do the work.
   - *Tilt:* cards marked `[data-tilt]` lean toward a mouse pointer (`perspective(64rem)`, at most 5° on each axis) and a soft lamp-tinted glow (`--at-accent` at 14 %) follows it; the card's icon (`[data-tilt-z]`) floats 24 px above the card plane. Only for `(hover: hover) and (pointer: fine)`. A keyboard-focused card lifts 4 px and never tilts; on touch a pressed card dips to 98.5 % for a moment. The pointer position comes from `lib/tilt.ts` (one passive listener, one write per frame), never from the tool's critical bundle.

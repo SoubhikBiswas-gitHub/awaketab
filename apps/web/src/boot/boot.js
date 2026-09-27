@@ -28,14 +28,16 @@
     document.querySelector('meta[name="theme-color"]:not([media])')?.setAttribute('content', GROUND[resolved] ?? '');
   };
   let theme = 'auto';
+  let face = '';
+  /** @type {boolean | null} */
+  let c24 = null;
+  let secs = false;
   try {
     const allowed = ['auto', 'light', 'dark', 'oled'];
     const q = new URLSearchParams(location.search).get('theme');
     const raw = localStorage.getItem(KEY);
-    /** @type {{ theme?: unknown; accent?: unknown; face?: unknown; keyboardHints?: unknown } | null} */
-    const saved = raw
-      ? /** @type {{ theme?: unknown; accent?: unknown; face?: unknown; keyboardHints?: unknown }} */ (JSON.parse(raw))
-      : null;
+    /** @type {Record<string, unknown> | null} */
+    const saved = raw ? JSON.parse(raw) : null;
     if (q && allowed.includes(q)) theme = q;
     else if (saved && typeof saved.theme === 'string' && allowed.includes(saved.theme)) theme = saved.theme;
     // Mirror of src/tool/accent.ts ACCENTS + LEGACY_ACCENTS (aqua, the default, has no attribute); the island
@@ -53,9 +55,13 @@
     if (accent) root.dataset.accent = accent;
     // The remembered clock face (DESIGN.md §7) and the keyboard-hint switch paint before first frame too, so the
     // tool never flashes the Ring face or a keycap it is about to hide.
-    const face = saved && typeof saved.face === 'string' ? saved.face : '';
-    if (['bold', 'horizon', 'tide'].includes(face)) root.dataset.face = face;
+    const f = saved && typeof saved.face === 'string' ? saved.face : '';
+    if (['bold', 'horizon', 'tide'].includes(f)) root.dataset.face = face = f;
     if (saved && saved.keyboardHints === false) root.dataset.hints = 'off';
+    const clock = /** @type {{ clock24h?: unknown; showSeconds?: unknown } | undefined} */ (saved?.ambient);
+    const h24 = clock?.clock24h;
+    if (typeof h24 === 'boolean') c24 = h24;
+    secs = clock?.showSeconds === true;
   } catch {
     // private mode
   }
@@ -80,15 +86,21 @@
   dark.addEventListener('change', () => {
     if (root.dataset.themePref === 'auto' && root.dataset.theme !== 'oled') apply('auto');
   });
-  // The switch's native radios mirror <html data-theme-pref> (OLED counts as Dark), whoever set it.
+  // The switch's native radios mirror <html data-theme-pref> (OLED counts as Dark), whoever set it. A theme swap from
+  // anywhere (this switch, the island, the system) runs no transitions: every themed edge easing at once is a flicker.
   const sync = () => {
     const pref = root.dataset.themePref === 'oled' ? 'dark' : root.dataset.themePref;
     for (const r of document.querySelectorAll('input[name="at-theme"]')) {
       if (r instanceof HTMLInputElement) r.checked = r.value === pref;
     }
   };
-  new MutationObserver(sync).observe(root, {
-    attributeFilter: ['data-theme-pref'],
+  new MutationObserver(() => {
+    sync();
+    root.dataset.swap = '';
+    root.getBoundingClientRect();
+    delete root.dataset.swap;
+  }).observe(root, {
+    attributeFilter: ['data-theme', 'data-theme-pref'],
   });
   addEventListener('change', (e) => {
     const el = e.target;
@@ -182,6 +194,83 @@
     const wrap = langOpen;
     if (wrap && e.target instanceof Node && !wrap.contains(e.target)) lang(wrap, false);
   });
+
+  // The tool's first paint (docs/05 §3.33, First load): the markup already holds the page's length; before every
+  // frame while the page parses, this fills what depends on the clock or this device (date, time, end time, Horizon
+  // sky, an /until countdown, the remembered face tab), so the island's first render changes nothing on screen.
+  const locale = root.lang || 'en';
+  /** @param {Intl.DateTimeFormatOptions} o @param {number} ms @param {string} [l] */
+  const fmt = (o, ms, l = locale) => new Intl.DateTimeFormat(l, { ...o, numberingSystem: 'latn' }).format(ms);
+  /** @param {number} ms @param {boolean} [s] */
+  const hm = (ms, s) =>
+    fmt(
+      {
+        hour: 'numeric',
+        minute: '2-digit',
+        ...(s ? { second: '2-digit' } : {}),
+        ...(c24 === null ? {} : { hour12: !c24 }),
+      },
+      ms,
+    );
+  /** @param {number} n */
+  const pad = (n) => String(Math.floor(n)).padStart(2, '0');
+  const quiet = /[?&]autostart=0(?:&|$)/u.test(location.search);
+  const fill = () => {
+    const tool = document.getElementById('awaketab-tool');
+    if (tool && !('booted' in tool.dataset)) {
+      const d = tool.dataset;
+      // The markup holds the pill back on routes that start on load; ?autostart=0 does not start.
+      if (quiet) delete d.auto;
+      const now = Date.now();
+      const nowT = hm(now, secs);
+      /** @type {Intl.DateTimeFormatOptions} */
+      const long = { day: 'numeric', month: 'long', year: 'numeric' };
+      /** @param {string} k @param {string} v */
+      const put = (k, v) => {
+        for (const n of tool.querySelectorAll(`[data-t="${k}"]`)) n.textContent = v;
+      };
+      const h = new Date(now).getHours();
+      const i = h < 5 ? 3 : h < 8 ? 0 : h < 17 ? 1 : h < 20 ? 2 : 3;
+      d.phase = ['dawn', 'day', 'dusk', 'night'][i];
+      put('hz', `${d.sky?.split('|')[i] ?? ''} · ${nowT}`);
+      put('now', nowT);
+      put(
+        'date',
+        locale === 'en'
+          ? `${fmt({ weekday: 'long' }, now, 'en-GB')}, ${fmt(long, now, 'en-GB')}`
+          : fmt({ weekday: 'long', ...long }, now),
+      );
+      let end = now + Number(d.sec) * 1000;
+      if (d.until) {
+        const at = new Date(now);
+        at.setHours(Number(d.until.slice(0, 2)), Number(d.until.slice(3)), 0, 0);
+        if (+at <= now) at.setDate(at.getDate() + 1);
+        const left = Math.max(60, Math.round((+at - now) / 1000));
+        const hh = Math.floor(left / 3600);
+        put('a', hh ? `${hh}:${pad((left % 3600) / 60)}` : pad(left / 60));
+        put('b', `:${pad(left % 60)}`);
+        d.units = hh ? 'h' : '';
+        end = now + left * 1000;
+      }
+      if (end) {
+        end = Math.round(end / 60_000) * 60_000;
+        const later = new Date(end).getDate() !== new Date(now).getDate();
+        const at = later ? (d.tmr ?? '').replace('{time}', hm(end)) : hm(end);
+        put('mb', at);
+        if (d.until) {
+          tool.toggleAttribute('data-tomorrow', later);
+          put('untilChip', (d.chip ?? '').replace('{time}', at));
+        }
+      }
+      if (face) {
+        for (const tab of tool.querySelectorAll('[role="tab"][data-face]')) {
+          tab.setAttribute('aria-selected', String(tab.getAttribute('data-face') === face));
+        }
+      }
+    }
+    if (document.readyState === 'loading') requestAnimationFrame(fill);
+  };
+  requestAnimationFrame(fill);
 
   // Module entries (the tool island, content-page scripts) start after the first contentful paint (docs/00 §11: LCP
   // lab ≤ 1.2 s) and never later than 150 ms after DOMContentLoaded, so the wake lock is still requested within the

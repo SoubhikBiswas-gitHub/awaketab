@@ -102,10 +102,13 @@ test('/30m first load with a refused lock stays honest and moves nothing', async
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/30m');
-  // The refused auto-start keeps the Ready layout (decision O-70): the pill tells the truth, the face says a tap is
-  // needed and the lamp button is the fix. No card swaps in, so nothing shifts.
-  await expect(page.locator('[data-pill-text]')).toHaveText("Blocked — here's the fix", { timeout: 4000 });
-  await expect(page.locator('#awaketab-tool .at-face-ring [data-t="k"]')).toHaveText('One tap needed');
+  // A start nobody asked for that the browser refuses leaves the calm Ready state exactly as it was first painted:
+  // Blocked is for a refused tap. No card swaps in, so nothing shifts.
+  await expect(page.locator('#awaketab-tool')).toHaveAttribute('data-settled', '', { timeout: 4000 });
+  await expect(page.locator('[data-pill-text]')).toBeVisible();
+  await expect(page.locator('[data-pill-text]')).toHaveText('Ready');
+  await expect(page.locator('#awaketab-tool')).toHaveAttribute('data-status', 'ready');
+  await expect(page.locator('#awaketab-tool .at-face-ring [data-t="k"]')).toHaveText('Keeps awake for');
   await expect(page.locator('#awaketab-tool .at-cta')).toBeVisible();
   await expect(page.locator('.at-blocked')).toBeHidden();
   await expect(page.locator('#awaketab-tool')).not.toContainText(/battery saver|low power mode|energy saver/iu, {
@@ -119,6 +122,48 @@ test('/30m first load with a refused lock stays honest and moves nothing', async
   });
   await page.locator('#awaketab-tool .at-cta').click();
   await expect(page.locator('.at-blocked .at-causes')).toBeVisible();
+});
+
+test('the first paint is the settled tool: the island changes nothing on screen when it starts', async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as Window & { __at: { rejectNext: string | null } }).__at.rejectNext = 'NotAllowedError';
+  });
+  const read = async () => {
+    await page.evaluate(() => new Promise(requestAnimationFrame));
+    return page.evaluate(() => {
+      const tool = document.querySelector('#awaketab-tool');
+      const text = (sel: string) =>
+        [...(tool?.querySelectorAll(sel) ?? [])].map((n) => (n.textContent ?? '').trim()).join('|');
+      return {
+        status: tool?.getAttribute('data-status'),
+        pill: text('[data-pill-text]'),
+        face: text('.at-face-ring .at-face-text'),
+        cta: text('.at-cta [data-t="cta"]'),
+        date: text('.at-first [data-t="date"]'),
+        pressed: text('[data-chips] [aria-pressed="true"]'),
+      };
+    });
+  };
+  // Without the island's modules the page shows what the markup and the inline boot script paint first.
+  await page.route('**/*.js', (route) => route.abort());
+  await page.goto('/');
+  const first = await read();
+  // Nothing fades or slides into place on the first frames (entrance motion is for later, user-driven changes).
+  const moving = await page.evaluate(
+    () =>
+      document
+        .querySelector('#awaketab-tool .at-tool')
+        ?.getAnimations({ subtree: true })
+        .filter((a) => a.effect?.getTiming().iterations !== Infinity).length,
+  );
+  expect(moving).toBe(0);
+  await page.unrouteAll();
+  await page.goto('/');
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
+  await page.waitForTimeout(300);
+  expect(first).toMatchObject({ status: 'ready', pill: 'Ready', pressed: '∞' });
+  expect(first.date).not.toBe('');
+  expect(await read()).toEqual(first);
 });
 
 test('a toast on a content page has a 44 px close button', async ({ page }) => {
