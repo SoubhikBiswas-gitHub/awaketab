@@ -23,6 +23,7 @@
   "ext.extend.note": "La pantalla ya puede apagarse. Añade tiempo para mantenerla despierta. Disponible hasta las {time}.",
   "ext.footer.honest": "Sin anuncios en la pantalla despierta, ni ahora ni después.",
   "ext.footer.nav": "Sitio",
+  "ext.license.device": "Chrome en {os}",
   "ext.options.duration.help": "Se usa al pulsar Iniciar en la ventana emergente o el atajo.",
   "ext.options.end.askHelp": "La ventana emergente ofrece +15 min, +30 min o +1 h durante cinco minutos.",
   "ext.options.end.stopHelp": "La sesión termina sin avisar a su hora de fin.",

@@ -23,6 +23,7 @@
   "ext.extend.note": "L’écran peut de nouveau se mettre en veille. Ajoutez du temps pour le garder allumé. Proposé jusqu’à {time}.",
   "ext.footer.honest": "Pas de publicité sur l’écran éveillé, ni maintenant ni plus tard.",
   "ext.footer.nav": "Site",
+  "ext.license.device": "Chrome sur {os}",
   "ext.options.duration.help": "Utilisée quand vous cliquez sur Démarrer dans la fenêtre ou utilisez le raccourci.",
   "ext.options.end.askHelp": "La fenêtre propose +15 min, +30 min ou +1 h pendant cinq minutes.",
   "ext.options.end.stopHelp": "La session se termine sans bruit à l’heure de fin.",

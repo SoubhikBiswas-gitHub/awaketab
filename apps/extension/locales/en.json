@@ -23,6 +23,7 @@
   "ext.extend.note": "The screen can sleep again now. Add time to keep it awake. Offered until {time}.",
   "ext.footer.honest": "No ads on the awake screen, now or later.",
   "ext.footer.nav": "Site",
+  "ext.license.device": "Chrome on {os}",
   "ext.options.duration.help": "Used when you click Start in the popup or press the shortcut.",
   "ext.options.end.askHelp": "The popup offers +15 min, +30 min or +1 h for five minutes.",
   "ext.options.end.stopHelp": "The session ends quietly at its end time.",

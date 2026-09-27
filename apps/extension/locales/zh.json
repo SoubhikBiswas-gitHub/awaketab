@@ -23,6 +23,7 @@
   "ext.extend.note": "屏幕现在可以再次休眠。增加时间可让它保持常亮。可在 {time} 前增加。",
   "ext.footer.honest": "常亮屏幕上不放广告，现在不会，以后也不会。",
   "ext.footer.nav": "网站",
+  "ext.license.device": "{os} 上的 Chrome",
   "ext.options.duration.help": "在弹出窗口中点击“开始”或按快捷键时使用。",
   "ext.options.end.askHelp": "弹出窗口会在五分钟内提供 +15 分钟、+30 分钟或 +1 小时。",
   "ext.options.end.stopHelp": "会话到结束时间时安静结束。",

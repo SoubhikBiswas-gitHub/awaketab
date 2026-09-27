@@ -23,6 +23,7 @@
   "ext.extend.note": "画面はスリープできる状態に戻りました。オンに保つには時間を追加してください。{time} まで追加できます。",
   "ext.footer.honest": "起動中の画面に広告は出しません。今も、これからも。",
   "ext.footer.nav": "サイト",
+  "ext.license.device": "{os} の Chrome",
   "ext.options.duration.help": "ポップアップで「開始」を押したときや、ショートカットを使ったときに使われます。",
   "ext.options.end.askHelp": "ポップアップが 5 分間、+15 分、+30 分、+1 時間を提案します。",
   "ext.options.end.stopHelp": "終了時刻になると静かに終了します。",

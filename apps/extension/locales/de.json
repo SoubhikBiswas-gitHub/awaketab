@@ -23,6 +23,7 @@
   "ext.extend.note": "Der Bildschirm darf jetzt wieder ausgehen. Füge Zeit hinzu, damit er an bleibt. Angebot gilt bis {time}.",
   "ext.footer.honest": "Keine Werbung auf dem wachen Bildschirm, weder jetzt noch später.",
   "ext.footer.nav": "Website",
+  "ext.license.device": "Chrome unter {os}",
   "ext.options.duration.help": "Gilt, wenn du im Pop-up auf Starten klickst oder das Tastenkürzel drückst.",
   "ext.options.end.askHelp": "Das Pop-up bietet fünf Minuten lang +15 Min., +30 Min. oder +1 Std. an.",
   "ext.options.end.stopHelp": "Die Sitzung endet still zu ihrer Endzeit.",

@@ -23,6 +23,7 @@
   "ext.extend.note": "A tela já pode apagar. Adicione tempo para mantê-la ligada. Oferta válida até {time}.",
   "ext.footer.honest": "Sem anúncios na tela ligada, nem agora nem depois.",
   "ext.footer.nav": "Site",
+  "ext.license.device": "Chrome no {os}",
   "ext.options.duration.help": "Usada quando você clica em Iniciar no pop-up ou usa o atalho.",
   "ext.options.end.askHelp": "O pop-up oferece +15 min, +30 min ou +1 h por cinco minutos.",
   "ext.options.end.stopHelp": "A sessão termina em silêncio no horário final.",
