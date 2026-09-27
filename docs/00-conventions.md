@@ -464,6 +464,9 @@ Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`), as written with
 | Popup states (B9) | `<main data-mode>`: `ready` · `starting` · `held` · `ended` (time's up, `IExtState.extend`) · `blocked` (`denied` or `unsupported`) |
 | `TExtRequest` | Popup → worker messages: `state` · `start {presetId}` · `until {wall}` · `stop` · `toggle` · `extend {ms}` · `dismiss` · `level {level}` |
 | `ISessionOptions.resumeIndefiniteMs` | `@awaketab/core`: how long an `indefinite` session stays resumable (default 12 h; the extension passes `Infinity`) |
+| Extension times | `createTimeFormat()` (`src/format.ts`): 12-hour with AM/PM in English, the locale's own clock elsewhere unless the user picks 12 or 24 h; `hour()` names the week axis `12 AM · 6 AM · Noon · 6 PM · 12 AM` (`ext.time.noon`, 12-hour clocks only); `range(start, end)` writes a schedule window as "9:00 AM to 6:00 PM" (`ext.time.span`, plus `ext.time.nextDay` past midnight) for the popup and options |
+| Auto-start and schedule popup lines | A held session started by auto-start (`startup` or `autostart` origin) with no end: caption `tool.timer.elapsedCaption` ("Elapsed"), meta `ext.popup.sinceMeta` ("Since 8:02 AM"), level help shown, no "Awake for" kicker. A scheduled session: `ext.schedule.until` plus a second line with its days (`ext.days.weekdays` "Weekdays" for Mon–Fri, otherwise the day list) |
+| `ext.schedules.intro` | The options schedule intro with a `{range}` the extension formats ("such as weekdays 9:00 AM to 6:00 PM"); replaces the web key `ext.schedules.help`, which the extension no longer reads |
 | `IStorageAdapter` | Now exported from `@awaketab/core` (docs/04 §16) |
 
 **Build and test**
@@ -476,6 +479,8 @@ Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`), as written with
 | `apps/extension/locales/<locale>.json` (B9) | The extension's own copy (Clear Night popup states, options help, welcome page): `ext.*` keys only, never a web key, same keys and placeholders in all 8 locales (unit test). Merged under the web keys; move them to `apps/web/src/i18n` when the web catalog is next edited |
 | `apps/extension/public/fonts/` (B9, D-R26) | `geist-latin-wght-normal.woff2`, `geist-mono-latin-wght-normal.woff2`, `OFL-Geist.txt` (copied from `apps/web/public/fonts`); `@font-face` + metric fallbacks in `src/styles/base.css`; no remote font request |
 | `--ext-*` (B9) | Extension-local CSS values tokens.css has no name for: `--ext-lift`, `--ext-lift-end` (ground radial lift), `--ext-halo`, `--ext-shadow`, `--ext-float`, `--ext-ease`, `--ext-lamp-{soft,line,tag,faint,glow}` (lamp at 14 / 45 / 12 / 8 / 55 %). Never a replacement for an `--at-*` token |
+| Options page type and layout | `options.css` names the board's settings-row text once: `--at-type-ext-row-label` (600 16/normal), `--at-type-ext-row-help` (400 14/normal), `--at-type-ext-field` (600 13/normal) and `--at-type-ext-lead` (400 15/20), used through `.op-tight` where the ExtOptions board sets no line height. `.op-main` is the `op-main` inline-size container; the schedule and site lists, the site form, the licence row and the seven-length bar switch at a 600 px container width (DESIGN.md §12.2), and the welcome page uses 600 / 1024 px viewport queries (no 720) |
+| `.at-link-underline` | `base.css`: the underlined text link the boards draw for "Privacy policy" and "What's new" |
 | Scripts | `pnpm -F extension zip` → `.output/awaketab-chrome-<version>.zip` · `zip:check` · `store:assets` · `build:test`; root `pnpm test:e2e:ext` |
 | `support-matrix.json` → `extension` | `{ minimumChromeVersion, browsers, unsupported, notes }` — the manifest's `minimum_chrome_version` and `/extension` read it |
 
