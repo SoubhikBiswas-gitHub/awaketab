@@ -166,11 +166,12 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 | `/` | The tool + full home content |
 | `/15m` `/30m` `/45m` `/1h` `/2h` `/4h` `/8h` | Preset deep links (indexable duration pages; canonical self) |
 | `/until/HH-MM` | Until-time deep link (noindex, canonical `/`) |
-| `/for/{slug}` | 18 scenario pages (tool embedded with scenario preset) |
-| `/on/{slug}` | 12 device/browser pages |
+| `/for/{slug}` | 14 scenario pages (tool embedded with scenario preset) |
+| `/on/{slug}` | 11 device/browser pages |
 | `/vs/{slug}` | 7 comparison pages |
-| `/guides/{slug}` | 8 OS how-to pages |
-| `/learn/{slug}` | 6 deep/dev pages |
+| `/guides/{slug}` | 7 OS how-to pages |
+| `/learn/{slug}` | 5 deep/dev pages |
+| Retired content URLs (OD-3, §13.20) | `/for/second-monitor` → `/guides/second-monitor-turns-off`, `/on/windows-10` → `/on/windows-11`, `/guides/modern-standby` → `/guides/lock-screen-vs-sleep`, `/learn/nosleep-js-vs-wake-lock` → `/vs/nosleep-js` (all 301, `_redirects`). Cut, no redirect (404): `/for/navigation`, `/for/live-streams`, `/for/exams-proctoring`, `/for/baby-monitor` |
 | `/pro` · `/pro/activate` · `/pro/manage` | Pricing, key entry, device list |
 | `/extension` · `/embed` · `/kiosk` · `/library` | Product landing pages |
 | `/embed/cook` | Iframe app for the Cook Mode widget (noindex) |
@@ -186,11 +187,11 @@ Query params (all optional): `autostart=1`, `mode=`, `msg=` (≤ 80 chars), `the
 Locales and folders: `en` (root), `es`, `pt-br`, `de`, `fr`, `ja`, `zh` (Simplified), `hi`. `x-default` → root. Phase 2 locales: `id`, `tr`, `ko`, `it`, `ru`, `vi`, `ar`.
 
 Content slugs (English canonical; translated slugs for the Latin-script locales `es`, `pt-br`, `de`, `fr` only, with hreflang linking; `ja`, `zh` and `hi` keep the English slug, e.g. `/ja/for/cooking` — `06-content-seo-spec.md` §5, decision D-03):
-- `/for/`: cooking · presentations · downloads · ai-agents · dashboards · kiosk · sheet-music · reading · night-clock · baby-monitor · navigation · video-calls · live-streams · teleprompter · workouts · second-monitor · work-laptop · exams-proctoring
-- `/on/`: iphone-safari · ios-home-screen · ipad · android-chrome · samsung-internet · chromebook · windows-11 · windows-10 · macos · linux · firefox · edge
+- `/for/`: cooking · presentations · downloads · ai-agents · dashboards · kiosk · sheet-music · reading · night-clock · video-calls · teleprompter · workouts · work-laptop · classroom
+- `/on/`: iphone-safari · ios-home-screen · ipad · android-chrome · samsung-internet · chromebook · windows-11 ("Windows 11 and 10") · macos · linux · firefox · edge
 - `/vs/`: caffeine · amphetamine · powertoys-awake · caffeinate-command · nosleep-page · nosleep-js · mouse-jigglers
-- `/guides/`: windows-11-screen-turns-off-after-1-minute · mac-prevent-sleep-lid-closed · iphone-auto-lock-never-greyed-out · chrome-energy-saver · android-screen-timeout-one-app · modern-standby · second-monitor-turns-off · lock-screen-vs-sleep
-- `/learn/`: screen-wake-lock-api-guide · nosleep-js-vs-wake-lock · does-a-wake-lock-keep-teams-green · low-power-mode-and-wake-locks · browser-support-matrix · how-we-tested
+- `/guides/`: windows-11-screen-turns-off-after-1-minute · mac-prevent-sleep-lid-closed · iphone-auto-lock-never-greyed-out · chrome-energy-saver · android-screen-timeout-one-app · second-monitor-turns-off · lock-screen-vs-sleep
+- `/learn/`: screen-wake-lock-api-guide · does-a-wake-lock-keep-teams-green · low-power-mode-and-wake-locks · browser-support-matrix · how-we-tested
 
 ---
 
@@ -715,6 +716,18 @@ Accepted on 2026-09-27 with milestone B2 (`docs/redesign/BUILD-PLAN.md`). Specs:
 | i18n keys | `header.home` · `header.nav` · `header.nav.for` · `header.nav.on` · `header.nav.extension` · `header.nav.pro` · `header.theme.auto` · `header.theme.autoTitle` · `header.theme.change` · `footer.honest` · `footer.about` · `footer.nav` · `footer.language` · `footer.language.current` · `footer.language.review` · `footer.language.close` (all eight locales) |
 | Stylelint | `stylelint.config.mjs` override for `**/styles/shell.css`: padding, margin, gap, `font`, `font-size`, `line-height` and block/inline sizes take tokens only (DESIGN.md §12.8), besides the radius guard |
 | Tests | `apps/web/test/e2e/shell.spec.ts` (header, footer, theme switch, language switcher keyboard and axe, pill and bead, Stop); `responsive.spec.ts` also fails on header or footer controls under 44 × 44 or within 16 px of a side edge |
+
+### 13.20 Content routes and the draft gate (redesign B11, OD-3)
+
+Accepted on 2026-09-27 with milestone B11 (`docs/redesign/BUILD-PLAN.md`), applying owner decisions OD-3, OD-2 / O-45 and O-23 (`docs/redesign/DECISIONS.md`, `docs/research/marketing-seo-content.md` §5.3). Spec: `06-content-seo-spec.md` §20.
+
+| Identifier | Decision |
+|---|---|
+| `/for` hub | 14 scenarios. Cut: `navigation`, `live-streams`, `exams-proctoring`, `baby-monitor` (never indexed; no redirect, 404). New: `/for/classroom` (English only; translated slugs reserved in `slugs.json`: `aula`, `sala-de-aula`, `klassenzimmer`, `salle-de-classe`) |
+| 301 merges | `/for/second-monitor` → `/guides/second-monitor-turns-off` · `/on/windows-10` → `/on/windows-11` (retitled "Windows 11 and 10") · `/guides/modern-standby` → `/guides/lock-screen-vs-sleep` · `/learn/nosleep-js-vs-wake-lock` → `/vs/nosleep-js`. Source: `CONTENT_REDIRECTS` in `apps/web/scripts/headers.mjs` (written to `public/_redirects` by the build). No locale redirects: none of these pages had a translation |
+| Content counts | 44 English pages: 14 `/for`, 11 `/on`, 7 `/vs`, 7 `/guides`, 5 `/learn` |
+| Draft gate | The existing frontmatter field `noindex: true` marks a draft: live, `noindex, follow`, no hreflang, out of the sitemaps and IndexNow. 25 rewritten English pages are indexable; the other 19 are drafts until rewritten (list: `06-content-seo-spec.md` §20). No new schema field |
+| `test/lib/content.test.ts` | Source-level guard: the route set above, slug map, redirect targets, the launch set, and the fact-check claims (battery saver refusing the lock, unrecorded testing, em dashes in English prose) never coming back |
 
 ## 14. Writing conventions for these docs
 

@@ -1,6 +1,6 @@
 ---
 title: "Verrouillage auto « Jamais » grisé sur iPhone — AwakeTab"
-description: "Sur iPhone, Jamais est grisé dans Verrouillage automatique par le mode Économie d’énergie, qui impose 30 s. Désactivez-le, puis utilisez Safari 16.4+."
+description: "Sur iPhone, Jamais est grisé quand le mode Économie d’énergie règle le Verrouillage automatique sur 30 s, ou quand un profil professionnel le limite."
 h1: "Verrouillage automatique « Jamais » grisé sur iPhone : la solution"
 ogTitle: "« Jamais » grisé sur iPhone : que faire"
 intent: "verrouillage automatique jamais grisé iphone"
@@ -15,26 +15,27 @@ browsers: []
 os: []
 faq:
   - q: "Pourquoi « Jamais » est-il grisé alors que ma batterie est chargée ?"
-    a: "Parce que le mode Économie d’énergie reste actif tant que vous ne le coupez pas, même quand la batterie remonte. Vérifiez Réglages → Batterie ou l’icône de batterie dans le Centre de contrôle : si elle est jaune, le mode est encore activé."
-  - q: "AwakeTab peut-il contourner le mode Économie d’énergie ?"
-    a: "Non. Tant que le mode est actif, iOS impose le verrouillage après 30 secondes et l’emporte sur AwakeTab. La pastille affiche « Bloqué — voici la solution » et vous invite à le désactiver dans Réglages → Batterie, puis à recharger la page."
+    a: "Parce que le mode Économie d’énergie peut rester actif alors que la batterie est remontée. Vérifiez Réglages → Batterie ou l’icône de batterie : si elle est jaune, le mode est encore activé. Sinon, un profil professionnel ou scolaire (MDM) limite peut-être le délai : voyez Réglages → Général → VPN et gestion de l’appareil."
+  - q: "AwakeTab fonctionne-t-il quand le mode Économie d’énergie est activé ?"
+    a: "Safari ne vérifie pas ce mode et ne refuse donc pas le verrou pour cette raison. Mais le mode règle le Verrouillage automatique sur 30 secondes, et nous n’avons pas encore vérifié sur un appareil si l’écran reste allumé malgré tout. Le résultat figurera sur notre page consacrée aux tests."
   - q: "Si je quitte Safari pour une autre appli, l’écran reste-t-il allumé ?"
     a: "Non. Dès que l’onglet AwakeTab n’est plus visible, iOS retire le verrou et la pastille passe à « En pause — onglet masqué ». C’est alors le Verrouillage automatique qui reprend la main."
   - q: "Faut-il laisser le Verrouillage automatique sur Jamais en permanence ?"
     a: "Ce n’est pas nécessaire. Vous pouvez garder un délai court au quotidien et ouvrir AwakeTab dans Safari seulement quand un écran doit rester allumé ; la session s’arrête à la fin de la durée choisie."
-honestLimit: "Le mode Économie d’énergie grise l’option Jamais et impose un verrouillage après 30 s ; même AwakeTab est neutralisé tant que ce mode reste activé."
+honestLimit: "Le mode Économie d’énergie grise l’option Jamais et règle le verrouillage sur 30 s ; nous n’avons pas encore vérifié sur un appareil si le verrou de Safari tient malgré tout. Un profil professionnel peut aussi limiter ce délai."
 related:
   - "/on/iphone-safari"
   - "/learn/low-power-mode-and-wake-locks"
   - "/for/cooking"
-  - "/for/baby-monitor"
+  - "/for/night-clock"
 author: soubhik
 published: 2026-09-26
+updated: 2026-09-27
 ---
 
 ## Pourquoi l’option est grisée
 
-La cause tient en une phrase : le mode Économie d’énergie grise l’option Jamais dans Réglages → Luminosité et affichage → Verrouillage automatique, et force un verrouillage au bout de 30 secondes. Cela se produit aussi après une forte décharge de la batterie. Désactivez d’abord ce mode ; ensuite, vous pouvez choisir Jamais, ou laisser Safari 16.4+ garder l’écran allumé grâce à AwakeTab tant que vous restez sur l’onglet.
+La cause tient en une phrase : le mode Économie d’énergie grise l’option Jamais dans Réglages → Luminosité et affichage → Verrouillage automatique, et force un verrouillage au bout de 30 secondes. Plus rarement, un profil professionnel ou scolaire (MDM) limite ce délai. Désactivez le mode pour choisir Jamais, ou laissez le réglage tel quel et gardez l’écran allumé avec AwakeTab dans Safari 16.4+ tant que vous restez sur l’onglet.
 
 ## Débloquer « Jamais » en trois étapes
 
@@ -46,13 +47,13 @@ Si l’option devient sélectionnable, le problème venait bien du mode Économi
 
 ## Si l’option reste grisée
 
-Revérifiez l’icône de batterie en haut de l’écran : jaune, elle signale que le mode Économie d’énergie est encore actif. Tant qu’il l’est, iOS ne vous laissera pas choisir Jamais, et aucune page web ne pourra faire mieux que les 30 secondes imposées. Rechargez un peu l’iPhone si la batterie est très basse, puis refaites les étapes ci-dessus.
+Revérifiez l’icône de batterie en haut de l’écran : jaune, elle signale que le mode Économie d’énergie est encore actif. Tant qu’il l’est, iOS ne vous laissera pas choisir Jamais. Si l’icône n’est pas jaune, ouvrez Réglages → Général → VPN et gestion de l’appareil : un profil professionnel ou scolaire peut limiter le Verrouillage automatique, et seul son administrateur peut le changer. Rechargez un peu l’iPhone si la batterie est très basse, puis refaites les étapes ci-dessus.
 
 ## Ou passez les réglages : ouvrez AwakeTab
 
 Vous ne voulez pas toucher au Verrouillage automatique pour une seule recette ou un seul tutoriel ? AwakeTab garde l’écran allumé depuis Safari, sans modifier vos réglages. La durée proposée ici est de « 30 min » ; touchez Démarrer et attendez que la pastille indique « Écran allumé ».
 
-Deux conditions à respecter. D’abord, le mode Économie d’énergie doit être désactivé : sinon la pastille affiche « Bloqué — voici la solution » avec ce conseil, repris mot pour mot de l’outil : « Le mode économie d’énergie de l’iPhone impose un verrouillage automatique après 30 secondes. Désactivez-le dans Réglages → Batterie, puis rechargez la page. » Ensuite, Safari doit rester au premier plan : changer d’application libère le verrou jusqu’à votre retour.
+Deux conditions à respecter. D’abord, touchez Démarrer vous-même : Safari n’accorde le verrou qu’après un toucher. Ensuite, Safari doit rester au premier plan : changer d’application libère le verrou jusqu’à votre retour. Avec le mode Économie d’énergie actif, Safari ne refuse pas le verrou, mais son effet sur l’écran n’a pas encore été vérifié sur un appareil.
 
 Les versions requises : Safari 16.4 ou ultérieur dans le navigateur, et iOS 18.4 si vous avez ajouté AwakeTab à l’écran d’accueil. Sur un iOS plus ancien, un toucher lance une vidéo de secours, plus gourmande en batterie. Tous les détails pour Safari sont sur notre page [iPhone et Safari](/fr/on/iphone-safari).
 

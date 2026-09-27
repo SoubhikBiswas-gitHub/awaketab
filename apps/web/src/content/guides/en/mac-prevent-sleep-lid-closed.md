@@ -1,65 +1,91 @@
 ---
-title: "Mac sleep with the lid closed — AwakeTab"
-description: "A closed Mac lid is a hardware sleep path. AwakeTab cannot override it. Clamshell mode with power plus an external display, pmset, or Amphetamine are the"
-h1: "Mac sleep with the lid closed"
-intent: "prevent mac sleep lid closed"
+title: "Keep your Mac awake with the lid closed — AwakeTab"
+description: "No web page or extension can keep a closed Mac awake. Clamshell mode with power and an external display does. The other options and their heat risk."
+h1: "Keep a Mac awake with the lid closed: what works"
+intent: "keep mac awake with lid closed"
+secondaryQueries:
+  - "prevent mac sleep lid closed"
+  - "macbook clamshell mode"
+  - "caffeinate lid closed"
+  - "pmset disablesleep"
+  - "keep macbook running with lid closed"
 preset: pinf
 mode: standard
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+lastVerified: 2026-09-26
+browsers:
+  - chrome
+  - edge
+os:
+  - macos
 faq:
-  - q: "Does mac sleep with the lid closed work in a hidden tab?"
-    a: "No. The mac-prevent-sleep-lid-closed flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "No browser can keep a closed Mac awake; needs an external display and power, or pmset or Amphetamine."
+  - q: "Does caffeinate keep a MacBook awake with the lid closed?"
+    a: "Not with its usual options. `caffeinate -i` or `caffeinate -di` stops idle sleep while the lid is open. Closing the lid is not idle time, so the Mac sleeps anyway unless it is in clamshell mode with power and an external display."
+  - q: "My Mac is on power and a monitor but still sleeps when I close it. Why?"
+    a: "Apple's closed-display mode guide lists what each model needs, and we have not checked every model. Make sure the adapter is charging and the external display is on and showing your desktop before you close the lid."
+  - q: "Can I close the lid on battery and keep a download running?"
+    a: "Not in a supported way, because clamshell mode needs the power adapter. The pmset switch can do it, but you trade heat and a draining battery for it. Lid open, brightness down, is safer."
+  - q: "Will AwakeTab for Chrome keep my Mac awake with the lid shut?"
+    a: "No. The extension also works through a power assertion, without needing the tab in view. Closing the lid still sleeps the Mac."
+honestLimit: "Nothing in a browser, AwakeTab for Chrome included, can keep a Mac awake once you close the lid. Clamshell mode with power and an external display is the supported way; anything beyond that runs hotter and is your call."
 related:
-  - "/learn/screen-wake-lock-api-guide"
-  - "/for/presentations"
-  - "/for/night-clock"
+  - "/on/macos"
+  - "/vs/caffeine"
+  - "/for/ai-agents"
+  - "/vs/amphetamine"
+  - "/vs/caffeinate-command"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+No web page or browser extension can keep a Mac awake after you close the lid. Closing it puts the Mac to sleep whatever the browser asks. The supported exception is clamshell mode: the Mac on power with an external display connected. Terminal settings and some apps can go further, at a cost in heat and battery. With the lid open, a visible tab is enough.
 
-A closed Mac lid is a hardware sleep path. AwakeTab cannot override it. Clamshell mode with power plus an external display, pmset, or Amphetamine are the native options. This page exists to say that plainly.
+## Why closing the lid wins
 
-## How the lock works on this page
+Apps keep a Mac awake by holding a power assertion, a note to macOS that says "don't sleep yet". Chrome holds one while a page keeps the screen on, and `caffeinate` creates the same kind from Terminal. These assertions stop idle sleep: the sleep that follows a stretch with no keyboard or mouse input.
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for mac-prevent-sleep-lid-closed.
+Closing the lid is not idle: it is a direct request to sleep. So the browser, AwakeTab for Chrome and `caffeinate` with its usual options all stop at the lid.
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+## Your options, safest first
 
-## Practical setup for Mac sleep with the lid closed
+### 1. Clamshell mode (closed-display mode)
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+1. Connect the power adapter.
+2. Connect an external display and make sure it shows your desktop.
+3. Close the lid. The desktop moves to the external display and the Mac keeps running.
 
-## Operating-system notes
+Apple's guide on closed-display mode lists what your model needs. We have not checked every model's requirements, so read it for yours.
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+### 2. Keep the lid open with the screen dimmed
 
-## What success looks like
+Turn the brightness down to its lowest and leave the lid open. Then either keep a tab visible, or run `caffeinate -di` in Terminal to stop both display and idle sleep until you press Control-C. `caffeinate -i` alone keeps the Mac awake and lets the screen turn off.
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+### 3. An app with a closed-display option
 
-## Related paths
+Amphetamine, from the Mac App Store, has a closed-display mode option (as of 26 September 2026). Read its own help for what it needs on your Mac. Caffeine for Mac holds a power assertion like `caffeinate` does, so it keeps the Mac awake with the lid open only; see [AwakeTab vs Caffeine](/vs/caffeine).
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no guides claim here that is missing from the matrix.
+### 4. The pmset switch (advanced)
 
-## A short checklist before you walk away
+`sudo pmset -a disablesleep 1` is widely used to stop a Mac sleeping at all, lid included. It is not described in the pmset manual, so Apple can change or remove it. It needs an administrator password. Turn it off with `sudo pmset -a disablesleep 0` as soon as you are done.
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For mac-prevent-sleep-lid-closed, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+## Heat and battery
 
-## Why the pill is the product
+A closed Mac that stays awake still makes heat. Inside a bag or sleeve it has nowhere to go, so never keep one awake there; use a hard, open surface. On battery, a Mac that cannot sleep drains until it shuts down, and unsaved work goes with it. Clamshell mode avoids the battery problem because it needs the power adapter.
 
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On mac-prevent-sleep-lid-closed, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
+## If you can't change the settings
 
-## Battery, heat and overnight use
+On a work or school Mac without admin rights, `sudo pmset` will ask for a password you don't have, and energy settings may be set by a profile. Ask your IT team. Clamshell mode and a visible tab need no admin rights.
 
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Mac sleep with the lid closed to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+## Confirm what is keeping it awake
+
+- `pmset -g assertions` lists every process asking macOS not to sleep. A browser keeping the screen on shows a PreventUserIdleDisplaySleep or NoDisplaySleep entry. `caffeinate -i` shows PreventUserIdleSystemSleep.
+- `pmset -g` prints your current settings. After using the pmset switch, check it is off again.
+- `pmset -g log` records each sleep and wake with a reason, which tells you whether the lid or idle time put the Mac to sleep.
+
+## With the lid open, a tab is enough
+
+The AwakeTab timer near the top runs until you stop it. Open in Chrome or Edge and kept in view, it holds the display on through macOS, and the Mac skips idle sleep for as long as that lasts. You'll see "Screen awake" on the pill after the browser grants it. Switch to another tab and it shows "Paused — tab hidden".
+
+If the job runs out of sight, [AwakeTab for Chrome](/extension) at its System level keeps the Mac awake with the tab hidden while Chrome runs. For long builds and agents, [keeping your computer awake for an AI agent](/for/ai-agents) compares the options. The full Mac setup is on [the macOS page](/on/macos).

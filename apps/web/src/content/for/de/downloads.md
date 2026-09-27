@@ -1,6 +1,6 @@
 ---
 title: "Display beim Download anlassen — AwakeTab"
-description: "AwakeTab hält das Display an, solange der Tab sichtbar ist. Ob der PC auch nicht in den Standby geht, hängt vom System ab. Zugeklappt schläft er immer."
+description: "AwakeTab hält das Display an, solange der Tab sichtbar ist. In Chrome und Edge schläft dann auch der PC nicht ein, zugeklappt aber schon."
 h1: "Display beim Download anlassen – was ein Browser-Tab kann"
 ogTitle: "Display beim Download anlassen"
 intent: "pc beim download wach halten"
@@ -17,25 +17,26 @@ faq:
   - q: "Kann ich das AwakeTab-Fenster minimieren, während die Datei lädt?"
     a: "Dann endet der Wake Lock. Sobald Sie minimieren oder den Tab wechseln, gibt der Browser ihn frei, und die Anzeige springt auf „Pausiert — Tab ausgeblendet“. Ab da gelten wieder Ihre normalen Energieeinstellungen. Lassen Sie AwakeTab lieber in einem eigenen, kleinen Fenster sichtbar."
   - q: "Verhindert AwakeTab unter Windows den Standby?"
-    a: "In unseren Tests hat Chromium unter Windows neben dem Display auch den Leerlauf-Ruhezustand des Systems hinausgezögert. Zugesagt wird das nicht, und der Energiesparmodus kann den Lock ablehnen. Wer den PC über Nacht sicher wach halten muss, greift zu einer Energieoption des Systems oder einem nativen Werkzeug."
+    a: "Ja, solange der Tab sichtbar ist. Chrome und Edge bitten Windows, das Display anzulassen, und solange es an bleibt, geht Windows nicht in den Leerlauf-Ruhezustand. So steht es in Browser-Dokumentation und Quellcode (geprüft am 26. September 2026). Der Energiesparmodus kann das Display dimmen, lehnt den Lock aber nicht ab. Für eine Nacht mit ausgeschaltetem Bildschirm nehmen Sie eine Energieoption oder ein natives Werkzeug."
   - q: "Und auf dem Mac läuft der Download dann durch?"
-    a: "Nicht zwingend. Unter macOS bleibt nur das Display an; den Leerlauf-Ruhezustand des Systems hat macOS in unseren Tests nicht aufgehalten. Für einen Download bei ausgeschaltetem Bildschirm brauchen Sie eine Systemeinstellung oder ein natives Dienstprogramm."
+    a: "Ja, solange der Tab sichtbar und der Deckel offen ist. Solange das Display an bleibt, schläft der Mac laut Apples IOKit-Dokumentation nicht bei Inaktivität ein. Für einen Download bei ausgeschaltetem Bildschirm brauchen Sie eine Systemeinstellung oder ein natives Dienstprogramm wie caffeinate."
   - q: "Zeigt mich Teams als verfügbar, solange der Download läuft?"
     a: "Nein. Teams, Slack und Zoom werten Tastatur- und Mausaktivität aus, nicht das Display. AwakeTab simuliert keine Eingaben, auch nicht bei langen Downloads."
-honestLimit: "Hält das Display an. Ob auch der Leerlauf-Ruhezustand des Systems ausbleibt, hängt vom Betriebssystem ab (Chromium unter Windows: in unseren Tests ja; macOS: nein). Wird der Deckel zugeklappt, schläft das Gerät immer."
+honestLimit: "Hält das Display an, solange der Tab sichtbar ist. In Chrome und Edge unter Windows und macOS bleibt dabei auch der Rechner wach. Wird der Deckel zugeklappt, schläft das Gerät trotzdem ein."
 related:
   - "/for/work-laptop"
   - "/on/windows-11"
   - "/on/macos"
-  - "/for/baby-monitor"
+  - "/for/night-clock"
   - "/on/chromebook"
 author: soubhik
 published: 2026-09-26
+updated: 2026-09-27
 ---
 
-## Die ehrliche Kurzantwort
+## Die Kurzantwort
 
-Große Downloads und lange Kopiervorgänge stocken oder brechen ab, wenn der Laptop einschläft. AwakeTab hält in einem sichtbaren Browser-Tab das Display an. Ob der Rest des Rechners dabei ebenfalls wach bleibt, entscheidet das Betriebssystem, nicht diese Seite: Mit Chromium unter Windows blieb in unseren Tests auch der Leerlauf-Ruhezustand aus, unter macOS nicht. Einen zugeklappten Laptop hält keine Webseite wach.
+Große Downloads und lange Kopiervorgänge stocken oder brechen ab, wenn der Laptop einschläft. AwakeTab hält in einem sichtbaren Browser-Tab das Display an. Solange das Display an bleibt, gehen Windows und macOS auch nicht in den Leerlauf-Ruhezustand; das gilt laut Browser-Dokumentation und Quellcode (geprüft am 26. September 2026) für Chrome und Edge. Einen zugeklappten Laptop hält keine Webseite wach.
 
 ## Bildschirm an heißt nicht automatisch: kein Standby
 
@@ -43,14 +44,14 @@ Wer „Standby verhindern Browser“ sucht, meint meist zwei Dinge auf einmal. E
 
 ## So richten Sie den Download-Abend ein
 
-1. Schließen Sie das Notebook ans Netzteil an. Ein leuchtendes Display kostet Energie, und im Akkubetrieb lehnen Energiesparmodi den Lock gern ab.
+1. Schließen Sie das Notebook ans Netzteil an. Ein leuchtendes Display kostet Energie, und im Akkubetrieb können Energiesparmodi das Display dimmen oder früher abschalten.
 2. Öffnen Sie diese Seite. Voreingestellt ist „∞“, also bis Sie selbst beenden. Klicken Sie auf „Bildschirm eingeschaltet lassen“.
 3. Ziehen Sie den AwakeTab-Tab in ein eigenes Fenster und legen Sie es neben den Download-Manager, sodass beide sichtbar bleiben.
 4. Prüfen Sie die Anzeige. Steht dort „Blockiert — so beheben Sie es“, lesen Sie den Hinweis darunter, statt immer wieder auf Starten zu klicken.
 
 ## Welche Browser mitspielen
 
-Einen nativen Lock gewähren laut Matrix vom 9. September 2026 Chrome und Edge ab Version 84, Firefox ab 126, Safari ab 16.4 und Samsung Internet ab 14. Ältere Firefox-Versionen nutzen nach einem Klick eine Video-Ersatzlösung, die mehr Strom verbraucht. Unter Linux haben wir Ubuntu 24.04 mit GNOME-Idle-Inhibit getestet, jeweils mit Firefox 126+ und Chrome 84+.
+Einen nativen Lock gewähren laut Matrix vom 9. September 2026 Chrome und Edge ab Version 84, Firefox ab 126, Safari ab 16.4 und Samsung Internet ab 14. Ältere Firefox-Versionen nutzen nach einem Klick eine Video-Ersatzlösung, die mehr Strom verbraucht. Unter Linux bitten Chrome und Firefox den Desktop über D-Bus, nicht in den Ruhezustand zu gehen; ob das greift, hängt vom Desktop ab.
 
 ## Wenn der Rechner trotzdem abschaltet
 

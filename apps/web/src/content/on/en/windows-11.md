@@ -1,65 +1,89 @@
 ---
-title: "Keep the screen on in Windows 11 — AwakeTab"
-description: "Chrome 84+ and Edge 84+ on Windows 11 grant a native lock in a visible tab. Battery saver denies. Lid close sleeps. Modern Standby is a separate firmware"
-h1: "Keep the screen on in Windows 11"
+title: "Keep the screen on in Windows 11 and 10 — AwakeTab"
+description: "Chrome or Edge keeps a Windows 11 or 10 screen on from a visible tab. Energy saver does not refuse it, and closing the lid follows your lid setting."
+h1: "Keep the screen on in Windows 11 and 10"
 intent: "keep screen on windows 11"
+secondaryQueries:
+  - "keep screen on windows 10"
+  - "stop screen turning off windows 11"
+  - "windows 11 screen timeout"
+  - "keep laptop screen on without admin rights"
 preset: p60
 mode: standard
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: ["chrome", "edge"]
+lastVerified: 2026-09-26
+browsers: ["chrome", "edge", "firefox"]
 os: ["windows"]
 faq:
-  - q: "Does keep the screen on in Windows 11 work in a hidden tab?"
-    a: "No. The windows-11 flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "Battery saver denies the lock; Modern Standby has extra quirks; lid close sleeps."
+  - q: "Is anything different on Windows 10?"
+    a: "Only the Settings path: System > Power & sleep instead of Power & battery. Chrome and Edge keep the display on the same way from a visible tab, and on Windows 10 Chrome also asks Windows to keep the system itself awake."
+  - q: "Why does the screen go dark a minute after I lock the PC?"
+    a: "When the PC is locked, Windows uses a separate lock-screen display timeout of 60 seconds, and your normal screen setting does not change it. A locked PC also hides the tab. Microsoft documents a powercfg setting for this timeout; the one-minute guide has the steps."
+  - q: "Do I need admin rights to use AwakeTab on a work laptop?"
+    a: "No. The tab needs no install and no admin rights. Only the optional check, powercfg /requests, needs an administrator terminal. If your company sets a screen lock policy, that policy still applies."
+  - q: "Can I keep the tab on a second monitor while I work on the first?"
+    a: "Yes. A window that is visible but not focused keeps the display on, so a small AwakeTab window on another monitor works while you type on the first."
+honestLimit: "The tab has to stay visible. Minimise the window, lock the PC or close the lid, and Windows follows its own screen, lock-screen and lid settings again."
 related:
-  - "/vs/amphetamine"
-  - "/guides/mac-prevent-sleep-lid-closed"
-  - "/learn/screen-wake-lock-api-guide"
+  - "/guides/windows-11-screen-turns-off-after-1-minute"
+  - "/guides/lock-screen-vs-sleep"
+  - "/vs/powertoys-awake"
+  - "/for/work-laptop"
+  - "/extension"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+Windows has its own screen timeout: Settings > System > Power & battery > Screen, sleep & hibernate timeouts on Windows 11, or Settings > System > Power & sleep on Windows 10. If you can't or don't want to change it, a visible AwakeTab tab in Chrome or Edge 84 or later asks Windows to keep the display on, and Windows doesn't idle-sleep while it does.
 
-Chrome 84+ and Edge 84+ on Windows 11 grant a native lock in a visible tab. Battery saver denies. Lid close sleeps. Modern Standby is a separate firmware story.
+## Change the timeout in Windows 11
 
-## How the lock works on this page
+1. Press Windows key + I to open Settings.
+2. Go to System > Power & battery.
+3. Open Screen, sleep & hibernate timeouts. Older Windows 11 builds call it Screen and sleep.
+4. Choose longer screen times for battery and for plugged in, or Never.
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for windows-11.
+## Change the timeout in Windows 10
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+1. Open Settings > System > Power & sleep.
+2. Under Screen, choose the times for battery and for plugged in.
 
-## Practical setup for Keep the screen on in Windows 11
+Windows 10 mainstream support ended in October 2025. Everything below applies to both versions.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+## When a tab is the better choice
 
-## Operating-system notes
+On a managed laptop the power settings may be locked. A tab keeps the display on for a set time or until a clock time, then hands control back to Windows; [keeping a work laptop display awake](/for/work-laptop) covers what office policy can still do.
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+## Browser support on Windows
 
-## What success looks like
+| Browser | First version | What it asks Windows for |
+|---|---|---|
+| Chrome, Edge | 84 (July 2020) | A display-required power request, so the screen stays on and Windows does not idle-sleep |
+| Firefox | 126 (May 2024) | Also works from a visible tab, but Firefox refuses when the battery is at 5 % or less and not charging |
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+Dates and sources are in the [full support table](/learn/browser-support-matrix).
 
-## Related paths
+## Check it with powercfg
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no on claim here that is missing from the matrix.
+1. Start a session and wait for "Screen awake".
+2. Right-click Start and open Terminal (Admin). On Windows 10, open Windows PowerShell (Admin).
+3. Run `powercfg /requests`.
+4. Your browser should be listed under DISPLAY. Hide the tab, run it again, and the entry should disappear.
 
-## A short checklist before you walk away
+## What stops it on Windows
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For windows-11, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+- **Hiding the tab.** Minimising the window or switching tabs releases it, and the pill shows "Paused — tab hidden". A visible window that is not focused keeps it.
+- **Locking the PC.** A locked PC turns the monitor off after 60 seconds by design. [Windows 11 screen turns off after 1 minute](/guides/windows-11-screen-turns-off-after-1-minute) gives Microsoft's powercfg fix.
+- **Energy saver.** Windows 11 24H2 renamed Battery saver to Energy saver. It does not refuse the wake lock, but it may dim the screen.
+- **Closing the lid.** The laptop follows Control Panel > Power Options > Choose what closing the lid does, and no tab or extension changes that.
+- **A sign-in policy.** A work screen lock is separate from display sleep. [Lock screen versus display sleep](/guides/lock-screen-vs-sleep) explains the difference.
 
-## Why the pill is the product
+## When another tool fits better
 
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On windows-11, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
+PowerToys Awake needs no open tab, and its "Keep screen on" switch holds the display; [PowerToys Awake compared with a tab](/vs/powertoys-awake) weighs the two. If the AwakeTab tab needs to stay hidden, the Chrome and Edge [extension](/extension), AwakeTab for Chrome, keeps the screen on with the window minimised.
 
-## Battery, heat and overnight use
+## What we have checked
 
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Keep the screen on in Windows 11 to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+Microsoft's documentation and the Chromium power code were last checked on 26 September 2026. A Windows device run is still to come; once it is done, its results go on /learn/how-we-tested.

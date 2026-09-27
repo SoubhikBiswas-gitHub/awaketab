@@ -17,9 +17,9 @@ faq:
   - q: "¿La pantalla sigue encendida si contesto un WhatsApp en medio de la receta?"
     a: "No. Al cambiar de app o de pestaña, el navegador libera el bloqueo y el indicador pasa a “En pausa — pestaña oculta”. Vuelve a AwakeTab y espera a que diga “Pantalla despierta” o “Despierta con video de respaldo” antes de seguir cocinando."
   - q: "¿Puedo ver la receta en otra app al mismo tiempo?"
-    a: "Sí, siempre que AwakeTab siga a la vista. En una tablet usa la pantalla dividida (Split View en iPad) con la receta en un lado y AwakeTab en el otro. Si la receta tapa por completo la pestaña, el bloqueo se libera."
+    a: "En una tablet, sí: pon la receta y AwakeTab lado a lado (apps en ventanas en iPadOS 26, Split View en iPadOS 18 o anterior, pantalla dividida en Android). En un iPhone solo hay una app al frente, así que AwakeTab no puede mantener despierta una receta abierta en otra app. Si la receta tapa por completo la pestaña, el bloqueo se libera."
   - q: "¿Por qué el iPhone se bloquea a los 30 segundos aunque inicié AwakeTab?"
-    a: "Porque el Modo de bajo consumo está activado. En ese modo iOS fuerza un Bloqueo automático de 30 segundos y anula el Wake Lock. Desactívalo en Ajustes → Batería y vuelve a iniciar la sesión."
+    a: "Probablemente porque el Modo de bajo consumo está activado: en ese modo iOS fija el Bloqueo automático en 30 segundos. Safari no rechaza el Wake Lock por ese modo, pero aún no registramos una prueba en un dispositivo que confirme si la pantalla sigue encendida con él. Si se bloquea igual, desactívalo en Ajustes → Batería para recuperar tu tiempo normal."
   - q: "¿En qué navegadores funciona para cocinar?"
     a: "Con bloqueo nativo: Safari 16.4+, Chrome 84+, Samsung Internet 14+, Edge 84+ y Firefox 126+, según la matriz del 9 de septiembre de 2026. Un Firefox más antiguo puede usar el video de respaldo después de que toques la pantalla."
 honestLimit: "Funciona mientras la pestaña de AwakeTab está en pantalla; si abres otra app en el teléfono, el bloqueo se libera hasta que regreses."
@@ -30,6 +30,7 @@ related:
   - "/on/iphone-safari"
 author: soubhik
 published: 2026-09-26
+updated: 2026-09-27
 ---
 
 ## La respuesta rápida
@@ -39,7 +40,7 @@ Con las manos llenas de masa no vas a tocar el teléfono cada medio minuto. Abre
 ## Prepara el teléfono o la tablet antes de empezar
 
 1. Apoya el dispositivo donde puedas leerlo sin tocarlo y, si la receta es larga, conéctalo al cargador.
-2. Deja AwakeTab visible. Puede ser junto a la receta en pantalla dividida, en Split View si usas iPad, o como la única pestaña que miras mientras lees un recetario de papel.
+2. Deja AwakeTab visible. En una tablet puede ir junto a la receta: con apps en ventanas en iPadOS 26, en Split View en iPadOS 18 o anterior, o en pantalla dividida en Android. En un iPhone solo se ve una app a la vez: úsalo como única pestaña, por ejemplo con un recetario de papel.
 3. Toca para empezar y confirma que el indicador cambió a “Pantalla despierta”. Si en cambio ves “Despierta con video de respaldo”, tu navegador no tiene Wake Lock nativo y AwakeTab usa un video silencioso, que gasta más batería.
 
 ## Cuando sales de la pestaña a media receta
@@ -48,13 +49,13 @@ Un mensaje, un video de la técnica o la calculadora para convertir tazas a gram
 
 ## Batería baja y modos de ahorro
 
-En iPhone, el Modo de bajo consumo manda un Bloqueo automático de 30 segundos y le gana a cualquier página web. En Android, el Ahorro de batería puede rechazar la solicitud. En ambos casos aparece “Bloqueado — aquí está la solución” junto al motivo exacto. Tocar Iniciar otra vez sin cambiar nada da el mismo resultado: desactiva el modo de ahorro o conecta el cargador primero. Si quieres revisar el tiempo de pantalla del sistema, en iPhone es Bloqueo automático, dentro de Pantalla y brillo; en Android busca Tiempo de espera de la pantalla dentro de Ajustes → Pantalla. Algunos fabricantes de Android además tienen listas de “apps en suspensión” que conviene revisar.
+En iPhone, el Modo de bajo consumo fija el Bloqueo automático en 30 segundos. Safari no rechaza el Wake Lock por ese modo, pero aún no registramos una prueba en un dispositivo que lo confirme. En Android, el Ahorro de batería puede acortar el tiempo de espera o atenuar la pantalla; Chrome no rechaza el bloqueo por eso. Si ves “Bloqueado — aquí está la solución”, el motivo aparece al lado: casi siempre la pestaña no estaba a la vista o Safari necesita que toques la pantalla primero (en Firefox, también la batería al 5 % o menos sin cargar). Para revisar el tiempo de pantalla del sistema, en iPhone es Bloqueo automático, dentro de Pantalla y brillo; en Android busca Tiempo de espera de la pantalla en Ajustes → Pantalla (en un Pixel, Pantalla y función táctil). Algunos fabricantes de Android además tienen listas de “apps en suspensión” que pueden cerrar el navegador cuando lo dejas en segundo plano.
 
 Hay guías específicas para [iPhone con Safari](/es/on/iphone-safari) y para [Android con Chrome](/es/on/android-chrome) si tu equipo se sigue apagando.
 
 ## Navegadores que sirven en la cocina
 
-Nuestra matriz, verificada el 9 de septiembre de 2026, registra bloqueo nativo desde Safari 16.4, Chrome 84, Samsung Internet 14, Edge 84 y Firefox 126. Si instalaste AwakeTab como app en la pantalla de inicio del iPhone, necesitas iOS 18.4 o posterior. Con versiones anteriores de Firefox puedes usar el video de respaldo tocando la pantalla una vez.
+Según la documentación de los navegadores, revisada el 26 de septiembre de 2026, hay bloqueo nativo desde Safari 16.4, Chrome 84, Samsung Internet 14, Edge 84 y Firefox 126. Si instalaste AwakeTab como app en la pantalla de inicio del iPhone, necesitas iOS 18.4 o posterior. Con versiones anteriores de Firefox puedes usar el video de respaldo tocando la pantalla una vez.
 
 ## Lo que AwakeTab no hace
 

@@ -135,25 +135,77 @@ describe('built site SEO', () => {
     expect(words.length).toBeLessThanOrEqual(1800);
   });
 
-  it('publishes fifty-one English content pages in the 600–1,000 word band', async () => {
+  // OD-3 (redesign B11): 51 generated pages became 44 (4 cut, 4 merged with a 301, /for/classroom added). The 25
+  // rewritten pages are indexed and meet their family's word band (docs/06 §2; learn per marketing-seo-content.md
+  // §4); the 19 drafts stay live but noindex (OD-2 / O-45) and keep the old 600–1,000 band until rewritten.
+  it('publishes forty-four English content pages: rewritten pages in their family band, drafts in 600–1,000', async () => {
+    const BANDS: Record<string, readonly [number, number]> = {
+      for: [600, 1000],
+      on: [600, 900],
+      vs: [700, 1000],
+      guides: [700, 1100],
+      learn: [1000, 2000],
+    };
     const files = (await htmlFiles(dist)).filter((file) => {
       const relative = path.relative(new URL(dist).pathname, file.pathname).replace(/\\/gu, '/');
       return /^(for|on|vs|guides|learn)\/[^/]+\.html$/u.test(relative);
     });
-    expect(files).toHaveLength(51);
+    expect(files).toHaveLength(44);
+    const english = await readFile(new URL('sitemap-en.xml', dist), 'utf8');
     const descriptions = new Set<string>();
+    let indexed = 0;
     for (const file of files) {
       const html = await readFile(file, 'utf8');
-      const relative = path.relative(new URL(dist).pathname, file.pathname);
+      const relative = path.relative(new URL(dist).pathname, file.pathname).replace(/\\/gu, '/');
+      const family = relative.split('/')[0] ?? '';
+      const route = `/${relative.replace(/\.html$/u, '')}`;
       expect(html.match(/<h1(?:\s[^>]*)?>/gu), relative).toHaveLength(1);
-      const text = extractProse(html);
-      const count = text.split(/\s+/u).filter(Boolean).length;
-      expect(count, relative).toBeGreaterThanOrEqual(600);
-      expect(count, relative).toBeLessThanOrEqual(1000);
+      const count = extractProse(html).split(/\s+/u).filter(Boolean).length;
+      const draft = meta(html, 'robots')?.includes('noindex') ?? false;
+      const [low, high] = draft ? [600, 1000] : (BANDS[family] ?? [600, 1000]);
+      expect(count, `${relative} (${draft ? 'draft' : family})`).toBeGreaterThanOrEqual(low);
+      expect(count, `${relative} (${draft ? 'draft' : family})`).toBeLessThanOrEqual(high);
+      // Drafts: noindex, no hreflang, out of the sitemap. Rewritten pages: in the sitemap.
+      if (draft) {
+        expect(english, `${route} draft in sitemap`).not.toContain(`<loc>${site}${route}</loc>`);
+        expect(html, `${route} draft hreflang`).not.toContain('<link rel="alternate" hreflang=');
+      } else {
+        indexed += 1;
+        expect(english, `${route} missing from sitemap`).toContain(`<loc>${site}${route}</loc>`);
+      }
       const description = meta(html, 'description') ?? '';
       expect(descriptions.has(description), relative).toBe(false);
       descriptions.add(description);
     }
+    expect(indexed).toBe(25);
+  });
+
+  it('builds no page for the OD-3 cut and merged routes, and 301s the merged ones (docs/00 §7)', async () => {
+    const redirects = await readFile(new URL('_redirects', dist), 'utf8');
+    const merged: Array<[string, string]> = [
+      ['/for/second-monitor', '/guides/second-monitor-turns-off'],
+      ['/on/windows-10', '/on/windows-11'],
+      ['/guides/modern-standby', '/guides/lock-screen-vs-sleep'],
+      ['/learn/nosleep-js-vs-wake-lock', '/vs/nosleep-js'],
+    ];
+    const english = await readFile(new URL('sitemap-en.xml', dist), 'utf8');
+    for (const [from, to] of merged) {
+      expect(redirects.split('\n'), from).toContain(`${from} ${to} 301`);
+      await expect(stat(built(from)), from).rejects.toThrow();
+      // The target is a live, indexable page, so the redirect never lands on a noindex draft.
+      const target = await readFile(built(to), 'utf8');
+      expect(meta(target, 'robots'), to).not.toContain('noindex');
+      expect(english, to).toContain(`<loc>${site}${to}</loc>`);
+      expect(english, from).not.toContain(`${site}${from}<`);
+    }
+    for (const cut of ['/for/navigation', '/for/live-streams', '/for/exams-proctoring', '/for/baby-monitor']) {
+      await expect(stat(built(cut)), cut).rejects.toThrow();
+      expect(redirects, cut).not.toContain(`${cut} `);
+      expect(english, cut).not.toContain(`${site}${cut}<`);
+    }
+    const classroom = await readFile(built('/for/classroom'), 'utf8');
+    expect(meta(classroom, 'robots'), '/for/classroom').not.toContain('noindex');
+    expect(classroom).toContain(`<link rel="canonical" href="${site}/for/classroom">`);
   });
 
   it('does not leave indexable pages linking to missing routes', async () => {

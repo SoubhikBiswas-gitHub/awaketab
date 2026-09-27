@@ -5,6 +5,7 @@ export interface IParsedRule {
 
 export function generateHeaders(): string;
 export function generateRedirects(): string;
+export const CONTENT_REDIRECTS: ReadonlyArray<readonly [string, string]>;
 export function parseRules(text: string): IParsedRule[];
 export interface IHeaderRule {
   readonly route: string;

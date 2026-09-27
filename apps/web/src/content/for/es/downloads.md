@@ -1,6 +1,6 @@
 ---
 title: "Pantalla encendida al descargar — AwakeTab"
-description: "AwakeTab mantiene la pantalla encendida mientras descargas. Que el equipo no se suspenda depende del sistema, y cerrar la tapa siempre lo suspende."
+description: "AwakeTab mantiene la pantalla encendida mientras descargas y, en Chrome o Edge, también evita la suspensión por inactividad. Cerrar la tapa sí la provoca."
 h1: "Pantalla encendida mientras descargas: qué evita y qué no"
 ogTitle: "Pantalla encendida al descargar"
 intent: "evitar que la pc se suspenda mientras descarga"
@@ -15,37 +15,38 @@ browsers: []
 os: []
 faq:
   - q: "¿Mi descarga sigue si cierro la tapa de la laptop?"
-    a: "No. Cerrar la tapa siempre suspende el equipo, y ni una página web ni una extensión pueden impedirlo. Si necesitas trabajar con la tapa cerrada, eso se configura en el sistema operativo o con una herramienta nativa."
+    a: "Normalmente no. Cerrar la tapa suspende el equipo (en Mac, salvo en modo de tapa cerrada con corriente y pantalla externa), y ni una página web ni una extensión pueden impedirlo. Si necesitas trabajar con la tapa cerrada, eso se configura en el sistema operativo o con una herramienta nativa."
   - q: "¿AwakeTab evita que Windows se suspenda o solo mantiene la pantalla?"
-    a: "Lo que garantiza es la pantalla. En nuestras pruebas, Chromium en Windows también evitó la suspensión por inactividad del sistema; en macOS no ocurrió. Para una copia larga en Mac con la pantalla apagada, usa una utilidad nativa."
+    a: "Lo que pide es la pantalla, y eso alcanza: en Chrome y Edge, mientras la pantalla sigue encendida, ni Windows ni macOS entran en suspensión por inactividad, según la documentación de Microsoft y Apple. Para una copia larga con la pantalla apagada, usa una utilidad nativa o el nivel Sistema de la extensión."
   - q: "¿Puedo minimizar el navegador mientras se descarga el archivo?"
     a: "No. Una ventana minimizada o una pestaña en segundo plano pierden el bloqueo, y el indicador muestra “En pausa — pestaña oculta” hasta que vuelves. Deja AwakeTab en una ventana a la vista, aunque sea pequeña."
   - q: "Si la laptop se suspendió de todos modos, ¿el temporizador miente?"
     a: "No. Cada cálculo usa la hora del sistema y las estadísticas solo suman mientras el bloqueo está activo, así que al despertar verás un número honesto en lugar de horas que no ocurrieron."
-honestLimit: "Mantiene la pantalla encendida; que el equipo tampoco entre en suspensión por inactividad depende del sistema (Chromium en Windows: sí en nuestras pruebas; macOS: no). Cerrar la tapa siempre lo suspende."
+honestLimit: "Mantiene la pantalla encendida y, en Chrome y Edge sobre Windows o macOS, eso también evita la suspensión por inactividad mientras la pestaña está a la vista. Cerrar la tapa sí suspende el equipo."
 related:
   - "/for/work-laptop"
   - "/on/windows-11"
   - "/on/macos"
-  - "/for/baby-monitor"
+  - "/for/night-clock"
   - "/on/chromebook"
 author: soubhik
 published: 2026-09-26
+updated: 2026-09-27
 ---
 
 ## Lo que de verdad resuelve AwakeTab en una descarga
 
-Un juego de 80 GB, una copia de seguridad a la nube o un respaldo a un disco externo se cortan si la laptop se suspende a mitad del camino. AwakeTab mantiene la pantalla encendida desde una pestaña visible usando el Wake Lock del navegador. Si el resto del equipo también se salva de la suspensión por inactividad ya no depende de esta página, sino del sistema operativo. Lo que sí es universal: cerrar la tapa siempre suspende el equipo.
+Un juego de 80 GB, una copia de seguridad a la nube o un respaldo a un disco externo se cortan si la laptop se suspende a mitad del camino. AwakeTab mantiene la pantalla encendida desde una pestaña visible usando el Wake Lock del navegador. Mientras la pantalla siga encendida, Windows y macOS tampoco entran en suspensión por inactividad. Lo que no evita: cerrar la tapa suspende el equipo (en Mac, salvo en modo de tapa cerrada con corriente y pantalla externa).
 
-## Windows y macOS no se comportan igual
+## Qué pasa en Windows, macOS y Linux
 
-En nuestras pruebas, Chromium en Windows mantuvo la pantalla y además retrasó la suspensión del sistema mientras la pestaña estaba a la vista. En macOS fue distinto: la pantalla siguió encendida, pero el equipo no quedó protegido contra el reposo por inactividad. Si descargas en una Mac y te preocupa ese caso, revisa la guía de [macOS](/es/on/macos). Para Windows tienes la guía de [Windows 11](/es/on/windows-11).
+Según la documentación de los navegadores, de Microsoft y de Apple (revisada el 26 de septiembre de 2026), Chrome y Edge le piden a Windows que mantenga la pantalla encendida, y en macOS sostienen una aserción que impide el reposo de la pantalla; mientras está activa, la Mac tampoco entra en reposo por inactividad. Si quieres comprobarlo: en Mac, `pmset -g assertions` en la Terminal; en Windows, `powercfg /requests` en una terminal de administrador. Más detalles en las guías de [macOS](/es/on/macos) y [Windows 11](/es/on/windows-11).
 
-En Linux probamos la inhibición de inactividad de GNOME en Ubuntu 24.04 con Firefox 126+ y Chrome 84+.
+En Linux, Chrome y Firefox le piden al escritorio que no se suspenda; que lo respete depende del escritorio que uses.
 
 ## Cómo dejarlo corriendo sin sorpresas
 
-1. Conecta la laptop a la corriente. El ahorro de batería de Windows puede rechazar la solicitud, y en ese caso el indicador muestra “Bloqueado — aquí está la solución”.
+1. Conecta la laptop a la corriente si la descarga es larga. El ahorro de energía de Windows (“Energy saver”, antes Ahorro de batería) no rechaza el bloqueo, pero puede atenuar la pantalla.
 2. Abre AwakeTab en una ventana propia y déjala a la vista, al lado del gestor de descargas o en un segundo monitor. Puede ser pequeña, pero no minimizada.
 3. Elige “∞” para que no se detenga sola; cuando el indicador muestre “Pantalla despierta”, ya puedes dejarla.
 4. No cierres la tapa. Si necesitas la laptop cerrada, configura el sistema o usa una herramienta nativa.
@@ -56,7 +57,7 @@ Muchas páginas reproducen un video en bucle y esperan que la pantalla no se apa
 
 ## Navegadores con bloqueo nativo en escritorio
 
-Chrome 84, Opera 70 y Firefox 126 en adelante tienen Wake Lock nativo en Windows, macOS y Linux. Edge lo tiene desde la versión 84 en Windows y macOS, y Safari desde la 16.4 en Mac. En un Firefox anterior, AwakeTab ofrece el video de respaldo después de un clic, que consume algo más de energía.
+Chrome 84, Edge 84, Opera 70 y Firefox 126 en adelante tienen Wake Lock nativo en Windows, macOS y Linux, y Safari desde la 16.4 en Mac. En un Firefox anterior, AwakeTab ofrece el video de respaldo después de un clic, que consume algo más de energía.
 
 ## Límites que conviene tener claros
 

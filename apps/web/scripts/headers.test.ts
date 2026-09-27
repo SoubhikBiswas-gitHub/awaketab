@@ -111,4 +111,24 @@ describe('Cloudflare generated rules', () => {
       '/support-matrix /learn/browser-support-matrix 301',
     );
   });
+
+  it('301s the OD-3 merged content URLs to the page that now answers them, and nothing for the cut /for pages', () => {
+    const redirects = headerTools.generateRedirects();
+    for (const line of [
+      '/for/second-monitor /guides/second-monitor-turns-off 301',
+      '/on/windows-10 /on/windows-11 301',
+      '/guides/modern-standby /guides/lock-screen-vs-sleep 301',
+      '/learn/nosleep-js-vs-wake-lock /vs/nosleep-js 301',
+    ]) {
+      expect(redirects.split('\n')).toContain(line);
+    }
+    expect(headerTools.CONTENT_REDIRECTS).toHaveLength(4);
+    // Cut pages (never indexed) answer 404; a redirect to an unrelated page would be a soft 404.
+    for (const cut of ['/for/navigation', '/for/live-streams', '/for/exams-proctoring', '/for/baby-monitor']) {
+      expect(redirects).not.toContain(`${cut} `);
+    }
+    // No chains: a redirect target is never itself redirected.
+    const sources = new Set(headerTools.CONTENT_REDIRECTS.map(([from]) => from));
+    for (const [, to] of headerTools.CONTENT_REDIRECTS) expect(sources.has(to), to).toBe(false);
+  });
 });

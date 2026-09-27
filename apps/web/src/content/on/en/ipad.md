@@ -1,65 +1,81 @@
 ---
 title: "Keep an iPad display awake — AwakeTab"
-description: "iPad Split View can show AwakeTab beside a score, PDF or slides. Stage Manager backgrounding and Low Power Mode still release or override the lock."
+description: "Safari on iPadOS 16.4 or later keeps an iPad display on from a visible tab after one tap. Low Power Mode sets Auto-Lock to 30 seconds."
 h1: "Keep an iPad display awake"
 intent: "keep ipad screen on"
+secondaryQueries:
+  - "ipad auto-lock never"
+  - "keep ipad awake for sheet music"
+  - "stop ipad screen turning off safari"
 preset: p60
 mode: minimal
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: ["safari"]
 os: ["ipados"]
 faq:
-  - q: "Does keep an iPad display awake work in a hidden tab?"
-    a: "No. The ipad flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "Split View works; Stage Manager backgrounding and Low Power Mode release or override the lock."
+  - q: "Which layout keeps AwakeTab beside my music on iPadOS 26?"
+    a: "Use windowed apps and tile Safari next to your score app, or open Safari in Slide Over, which returned in iPadOS 26.1. Split View is the name on iPadOS 18 and earlier."
+  - q: "Why does my school iPad still lock after two minutes?"
+    a: "A school or work profile can cap Auto-Lock, and only its administrator can change it. You can see installed profiles in Settings > General > VPN & Device Management. A visible AwakeTab tab may help within those rules, but it does not change them."
+  - q: "Does the screen stay on if my score app fills the whole screen?"
+    a: "No. If the score app covers the display, Safari is no longer visible and iPadOS releases the wake lock. Keep a small AwakeTab window on screen beside it, or change Auto-Lock for the length of the rehearsal."
+  - q: "Is the iPad any different from an iPhone here?"
+    a: "Two things. An iPad can show more than one app, so AwakeTab can stay visible next to a recipe or score. And Safari on iPad lets a page go full screen, which iPhone Safari does not allow for page elements."
+honestLimit: "The display stays on only while the AwakeTab tab is visible. If another app fills the screen or you switch Safari tabs, the iPad falls back to its Auto-Lock time, which Low Power Mode cuts to 30 seconds."
 related:
-  - "/on/linux"
-  - "/vs/nosleep-page"
-  - "/guides/android-screen-timeout-one-app"
+  - "/for/cooking"
+  - "/on/iphone-safari"
+  - "/guides/iphone-auto-lock-never-greyed-out"
+  - "/for/sheet-music"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+The iPad's own switch is Settings > Display & Brightness > Auto-Lock, where you can pick a longer time or Never. To keep the display on for one session instead, open AwakeTab in Safari on iPadOS 16.4 or later and tap Start. The display stays on while the tab is visible and goes back to your Auto-Lock time when you stop, switch tabs or leave Safari.
 
-iPad Split View can show AwakeTab beside a score, PDF or slides. Stage Manager backgrounding and Low Power Mode still release or override the lock.
+## Change Auto-Lock
 
-## How the lock works on this page
+1. Go to Settings, tap Display & Brightness, then Auto-Lock.
+2. Pick a longer interval, or Never.
+3. If the choices are greyed out, check Settings > Battery for Low Power Mode, then Settings > General > VPN & Device Management for a work or school profile.
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for ipad.
+The guide to [Auto-Lock being greyed out](/guides/iphone-auto-lock-never-greyed-out) is written for iPhone, and the same two causes apply to an iPad.
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+## Why use a tab on a shared iPad
 
-## Practical setup for Keep an iPad display awake
+A family or school iPad is often shared, and a changed Auto-Lock setting is easy to forget. A tab keeps the display on for one rehearsal, one recipe or one talk, then lets it lock as usual. The Minimal view keeps the screen uncluttered, which suits a music stand. For the kitchen, [cook mode](/for/cooking) adds big timers you can tap with a floury finger.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+## Keep AwakeTab beside your score or recipe
 
-## Operating-system notes
+Unlike an iPhone, an iPad can show two apps, so the tab can stay visible next to what you are reading.
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+- **iPadOS 26:** turn on windowed apps and tile Safari beside the other app. Slide Over came back in iPadOS 26.1, if you prefer a narrow floating panel.
+- **iPadOS 18 and earlier:** open the other app and Safari in Split View.
 
-## What success looks like
+The AwakeTab window can be small; it only needs to be on screen. We have not yet recorded which of these layouts keep the wake lock on a real iPad, and the results will appear on /learn/how-we-tested.
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+## Full screen for a clock or timer
 
-## Related paths
+Safari on iPad lets a page element go full screen, which iPhone Safari does not. Tap Fullscreen in AwakeTab's header and the clock or countdown fills the display for a class or a talk, readable from across the room.
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no on claim here that is missing from the matrix.
+## Safari support on iPad
 
-## A short checklist before you walk away
+| Where you open AwakeTab | Keeps the display on? | What to know |
+|---|---|---|
+| Safari on iPadOS 16.4 or later | Yes, once you tap Start | Keep the tab visible |
+| Home Screen web app | iPadOS 18.4 or later | Earlier versions have no wake lock there |
+| Safari before iPadOS 16.4 | No Screen Wake Lock API | You will see "Tap to use the fallback" |
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For ipad, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+## What stops it on an iPad
 
-## Why the pill is the product
+- **Hiding the tab.** Another app filling the screen, a different Safari tab or the Home Screen releases it. The pill shows "Paused — tab hidden" until you come back.
+- **Low Power Mode.** It sets Auto-Lock to 30 seconds. Whether the tab still holds the display with it on is not yet tested.
+- **No tap.** Safari needs one tap before it grants a wake lock, even from a shared /1h link.
+- **Closing the cover or pressing the top button.** Either locks the iPad straight away.
 
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On ipad, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
+## What we have checked
 
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Keep an iPad display awake to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+Apple's Auto-Lock and Low Power Mode documentation, the WebKit source and the iPadOS 26 multitasking changes were checked on 26 September 2026. No iPad device result is recorded yet.
