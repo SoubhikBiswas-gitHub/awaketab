@@ -309,9 +309,10 @@ Remaining steps:
 ### N-06 · npm trusted publishing for `@awaketab/wake`
 
 1. npm → create or claim the org `awaketab` (scope `@awaketab`), 2FA on.
-2. For the first publish: npmjs.com → package settings → Trusted Publisher → GitHub Actions, repository `awaketab/awaketab`, workflow `release.yml`, environment **`npm`**. If the package does not exist yet, either publish once with a granular automation token in the repo secret `NPM_TOKEN` (the workflow falls back to it and still adds provenance), or pre-register the trusted publisher if npm offers it for new packages.
+2. For the first publish: npmjs.com → package settings → Trusted Publisher → GitHub Actions, repository `SoubhikBiswas-gitHub/awaketab`, workflow `release.yml`, environment **`npm`**. If the package does not exist yet, either publish once with a granular automation token in the repo secret `NPM_TOKEN` (the workflow falls back to it and still adds provenance), or pre-register the trusted publisher if npm offers it for new packages.
 3. GitHub → Settings → Environments → create **`npm`** (optionally with required reviewers).
-4. Merge to `main` with no pending changesets. `release.yml` → job `publish-wake` runs tests, build and size, then `npm pack --dry-run` and `npm publish --provenance --access public`, and pushes tag `@awaketab/wake@1.0.0`. Check: `npm view @awaketab/wake version` → `1.0.0`, and the npm page shows the provenance badge. Then create the GitHub release notes (docs/17 §4).
+4. GitHub → Settings → Secrets and variables → Actions → Variables: set `NPM_PUBLISH_ENABLED` to `true` (publishing is off without it).
+5. Merge to `main` with no pending changesets. `release.yml` → job `publish-wake` runs tests, build and size, then `npm pack --dry-run` and `npm publish --provenance --access public`, and pushes tag `@awaketab/wake@1.0.0`. Check: `npm view @awaketab/wake version` → `1.0.0`, and the npm page shows the provenance badge. Then create the GitHub release notes (docs/17 §4).
 
 ### N-07 · Search Console, Bing, sitemap (P1-17a, P2-05b)
 

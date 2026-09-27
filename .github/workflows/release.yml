@@ -2,12 +2,14 @@ name: Release
 
 # docs/12 §7, docs/14 §6. On every push to main:
 #   1. changesets/action opens (or updates) a "version packages" PR while changesets are pending;
-#   2. once none are pending, the publish job publishes @awaketab/wake if its package.json version is not on
-#      npm yet — `npm publish --provenance --access public` from this workflow (GitHub OIDC). Nothing else in
+#   2. once none are pending AND the repository variable NPM_PUBLISH_ENABLED is 'true', the publish job
+#      publishes @awaketab/wake if its package.json version is not on npm yet — `npm publish --provenance --access public` from this workflow (GitHub OIDC). Nothing else in
 #      the monorepo is published (web, extension and @awaketab/core are private / changeset-ignored).
 # Auth: prefer npm trusted publishing (npmjs.com → @awaketab/wake → Settings → Trusted publisher →
-# GitHub Actions, repo awaketab/awaketab, workflow release.yml), which needs npm ≥ 11.5.1 and no secret.
+# GitHub Actions, repo SoubhikBiswas-gitHub/awaketab, workflow release.yml), which needs npm ≥ 11.5.1 and no secret.
 # Until that is configured, an automation token in the NPM_TOKEN secret works too (provenance still applies).
+# Publishing stays off until the owner sets NPM_PUBLISH_ENABLED=true (Settings → Secrets and variables →
+# Actions → Variables), so no push to main can release the library by accident.
 
 on:
   push:
@@ -71,7 +73,7 @@ jobs:
 
   publish-wake:
     needs: version
-    if: needs.version.outputs.hasChangesets == 'false'
+    if: needs.version.outputs.hasChangesets == 'false' && vars.NPM_PUBLISH_ENABLED == 'true'
     runs-on: ubuntu-24.04
     environment: npm
     steps:
