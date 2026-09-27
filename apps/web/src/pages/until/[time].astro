@@ -25,6 +25,7 @@ const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://awaketab.com'
   description={t('page.home.description')}
   canonical={site}
   noindex
+  header={false}
 >
   <ToolIsland heading={t('page.until.title', { time: wall })} />
 </BaseLayout>

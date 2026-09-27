@@ -1,0 +1,51 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Glyph from './LogoGlyph.astro';
+
+/*
+ * Button (DESIGN.md §6, §11.4, §11.7; PRIMITIVES.md P-CTA; decision D-R20). Build-time markup only.
+ * - primary: the one lamp-filled action per screen, with the logo glyph; 60 px (lg) by default.
+ * - stop: the strong neutral (Stop, Retry, Send, Install, Exit): `raised` fill + 1 px line-strong + ink; follows
+ *   the theme, never an inverted slab.
+ * - secondary: surface + 1 px line-strong. quiet: text only, ink-2.
+ * Sizes: sm 44 r12 · md 52 r20 · lg 60 r20 · cook 64 r20. `href` renders an <a>. `kbd` adds the keyboard hint
+ * keycap (P-KBD): aria-hidden, only with a fine pointer; pass `aria-keyshortcuts` for the accessible key.
+ */
+type TVariant = 'primary' | 'stop' | 'secondary' | 'quiet';
+type TSize = 'sm' | 'md' | 'lg' | 'cook';
+interface Props extends HTMLAttributes<'button'> {
+  variant?: TVariant;
+  size?: TSize;
+  href?: string;
+  kbd?: string;
+  /** Show the logo glyph (default for primary). */
+  glyph?: boolean;
+}
+
+const { variant = 'secondary', size, href, kbd, glyph = variant === 'primary', class: className, type = 'button', ...rest } =
+  Astro.props;
+const resolvedSize = size ?? (variant === 'primary' || variant === 'stop' ? 'lg' : 'md');
+const classes = [
+  'at-button',
+  `at-button-${variant}`,
+  resolvedSize === 'md' ? undefined : `at-button-${resolvedSize}`,
+  className,
+];
+---
+
+{
+  href ? (
+    <a class:list={classes} href={href} {...(rest as HTMLAttributes<'a'>)}>
+      {glyph && <Glyph />}
+      <slot />
+      {kbd && <span class="at-kbd-hint" aria-hidden="true"><kbd class="at-kbd">{kbd}</kbd></span>}
+    </a>
+  ) : (
+    <button class:list={classes} type={type} {...rest}>
+      {glyph && <Glyph />}
+      <slot />
+      {kbd && <span class="at-kbd-hint" aria-hidden="true"><kbd class="at-kbd">{kbd}</kbd></span>}
+    </button>
+  )
+}
+

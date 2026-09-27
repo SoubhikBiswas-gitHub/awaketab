@@ -1,0 +1,55 @@
+---
+import { createT } from '../../i18n/load';
+import { LOCALES, localePath, type TLocale } from '../../i18n/locales';
+import ThemeSwitch from './ThemeSwitch.astro';
+
+/*
+ * Site header (DESIGN.md §6, §11.6; PRIMITIVES.md P-HEADER): 60 px on phones, 68 px from 600, side padding = the
+ * page gutter. Logo lockup (ring + lamp bead that takes the page's lock-state tone) · site nav from 1024 · theme
+ * switch · the page's own actions (the tool passes Stats and Settings through the default slot). One header on
+ * every product surface; BaseLayout renders it, except on tool pages, where ToolIsland renders it inside the
+ * island root so main.ts can bind the actions with root.querySelector().
+ */
+interface Props {
+  locale: TLocale;
+  /** Tool pages: enables the compact theme button below 360 px (the header also holds Stats and Settings). */
+  tool?: boolean;
+}
+
+const { locale, tool = false } = Astro.props;
+const t = createT(locale);
+// The section the page belongs to, for aria-current (locale prefix stripped: /es/for/cocinar → for).
+const parts = Astro.url.pathname.split('/').filter(Boolean);
+const first = parts[0] && (LOCALES as readonly string[]).includes(parts[0]) ? parts[1] : parts[0];
+// Hubs and product pages are English-only routes (docs/00 §7), so every locale links to them.
+const nav = [
+  ['for', '/for', t('header.nav.for')],
+  ['on', '/on', t('header.nav.on')],
+  ['extension', '/extension', t('header.nav.extension')],
+  ['pro', '/pro', t('header.nav.pro')],
+] as const;
+---
+
+<header class="at-site-header" data-tool={tool ? '' : undefined}>
+  <a class="at-logo at-wordmark" href={localePath(locale, '/')} aria-label={t('header.home')}>
+    <svg class="at-logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+      <path class="at-logo-ring" d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path>
+      <circle class="at-logo-halo" cx="24" cy="9" r="7.5"></circle>
+      <circle class="at-logo-bead" cx="24" cy="9" r="4.2"></circle>
+    </svg>
+    {t('app.name')}
+  </a>
+  <nav class="at-nav" aria-label={t('header.nav')}>
+    {
+      nav.map(([id, href, label]) => (
+        <a class="at-nav-link" href={href} aria-current={id === first ? 'page' : undefined}>
+          {label}
+        </a>
+      ))
+    }
+  </nav>
+  <div class="at-header-end">
+    <ThemeSwitch locale={locale} compact={tool} />
+    <slot />
+  </div>
+</header>

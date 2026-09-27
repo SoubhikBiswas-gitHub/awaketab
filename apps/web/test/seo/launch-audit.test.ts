@@ -79,7 +79,8 @@ describe('F-07 · /changelog renders Markdown and orders by date', () => {
   });
 
   it('puts the 1.0 launch entry first, then newest date first', async () => {
-    const html = await page('/changelog');
+    // Entries only: the shared footer (B2) carries the language switcher's own "Language" heading.
+    const html = (await page('/changelog')).split('<footer')[0] ?? '';
     const titles = [...html.matchAll(/<h2[^>]*>([^<]+)<\/h2>/gu)].map((m) => m[1]);
     const dates = [...html.matchAll(/<time datetime="(\d{4}-\d{2}-\d{2})">/gu)].map((m) => m[1] ?? '');
     expect(titles[0]).toBe('1.0 — launch');

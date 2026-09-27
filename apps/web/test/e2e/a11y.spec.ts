@@ -135,7 +135,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     name: 'shortcuts overlay',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.locator('#awaketab-tool header [data-open-shortcuts]').click();
+      await page.locator('#awaketab-tool [data-open-shortcuts]').click();
       await expect(page.locator('dialog[data-dialog="shortcuts"]')).toBeVisible();
     },
   },
@@ -159,7 +159,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     name: 'share dialog',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.locator('#awaketab-tool header [data-open-share]').click();
+      await page.locator('#awaketab-tool [data-open-share]').click();
       await expect(page.locator('dialog[data-dialog="share"] [data-share-url]')).toHaveValue(/^http/u);
     },
   },

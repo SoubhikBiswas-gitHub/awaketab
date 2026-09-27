@@ -1,0 +1,62 @@
+---
+import { createT } from '../../i18n/load';
+import type { TLocale } from '../../i18n/locales';
+
+/*
+ * Theme switch (DESIGN.md §6, §9, §11.4; PRIMITIVES.md P-THEME): a neutral segmented bar, Light · Dark · Auto,
+ * 44 px items and one sliding indicator. The items are native radios (arrow keys move and select, one Tab stop,
+ * decision O-85's roving focus for free). src/boot/boot.js persists the choice to at.v1.settings.theme, applies
+ * it, keeps the radios in sync with <html data-theme-pref> and follows the system live while on Auto; the
+ * indicator position is pure CSS from that attribute. `compact` adds the one-button variant the tool header
+ * swaps in below 360 px (the canvas "small" layout).
+ */
+interface Props {
+  locale: TLocale;
+  compact?: boolean;
+}
+
+const { locale, compact = false } = Astro.props;
+const t = createT(locale);
+const ICONS = {
+  light: ['M12 8a4 4 0 1 1 0 8a4 4 0 1 1 0-8zM12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4', ''],
+  dark: ['M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z', ''],
+  auto: ['M12 4a8 8 0 1 1 0 16a8 8 0 1 1 0-16z', 'M12 4a8 8 0 0 1 0 16z'],
+} as const;
+const themes = [
+  ['light', t('settings.theme.light'), t('settings.theme.light')],
+  ['dark', t('settings.theme.dark'), t('settings.theme.dark')],
+  ['auto', t('header.theme.auto'), t('header.theme.autoTitle')],
+] as const;
+---
+
+<div class="at-seg at-theme" role="radiogroup" aria-label={t('settings.theme')}>
+  <span class="at-seg-ind" aria-hidden="true"></span>
+  {
+    themes.map(([value, label, title]) => (
+      <label class="at-theme-item" data-v={value} title={title}>
+        <input class="sr-only" type="radio" name="at-theme" value={value} aria-label={label} checked={value === 'auto'} />
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d={ICONS[value][0]} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+          {ICONS[value][1] && <path d={ICONS[value][1]} fill="currentColor" />}
+        </svg>
+      </label>
+    ))
+  }
+</div>
+{
+  compact && (
+    <button class="at-icon-button at-theme-cycle" type="button" data-theme-cycle>
+      <span class="sr-only">{t('settings.theme')}: </span>
+      {themes.map(([value, label]) => (
+        <span class="sr-only" data-v={value}>{label}. </span>
+      ))}
+      <span class="sr-only">{t('header.theme.change')}</span>
+      {themes.map(([value]) => (
+        <svg data-v={value} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d={ICONS[value][0]} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+          {ICONS[value][1] && <path d={ICONS[value][1]} fill="currentColor" />}
+        </svg>
+      ))}
+    </button>
+  )
+}

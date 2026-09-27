@@ -56,7 +56,7 @@ describe('shadcn theme bridge (docs/05 §1.5)', () => {
     ['--success', 'var(--at-good)'],
     ['--warning', 'var(--at-warn)'],
     ['--border', 'var(--at-line)'],
-    ['--input', 'var(--at-line)'],
+    ['--input', 'var(--at-input-border)'],
     ['--ring', 'var(--at-focus)'],
     ['--radius', 'var(--at-r-md)'],
   ];

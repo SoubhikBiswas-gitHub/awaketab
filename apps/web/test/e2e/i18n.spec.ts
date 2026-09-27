@@ -76,7 +76,7 @@ test.describe('per-locale smoke', () => {
       // Unreviewed translation: labelled as such, linked to the English original.
       await expect(page.locator('[data-translation-pending]')).toContainText(strings['content.translation.pending'] ?? '');
       // The locale switcher offers this page's English version, not the English home.
-      await expect(page.locator('footer nav a[hreflang="en"]')).toHaveAttribute('href', '/on/iphone-safari');
+      await expect(page.locator('footer a[hreflang="en"]')).toHaveAttribute('href', '/on/iphone-safari');
       const pill = page.locator('[data-pill-text]');
       await expect(pill).toHaveText(strings['tool.pill.idle'] ?? '');
       await page.locator('[data-chips] [data-preset="p15"]').click();
@@ -88,12 +88,12 @@ test.describe('per-locale smoke', () => {
 
   test('an English top-10 page links its translations in the locale switcher', async ({ page }) => {
     await page.goto('/for/cooking');
-    await expect(page.locator('footer nav a[hreflang="es"]')).toHaveAttribute('href', cookingPath('es'));
-    await expect(page.locator('footer nav a[hreflang="es"]')).toHaveAttribute('href', '/es/for/cocinar');
+    await expect(page.locator('footer a[hreflang="es"]')).toHaveAttribute('href', cookingPath('es'));
+    await expect(page.locator('footer a[hreflang="es"]')).toHaveAttribute('href', '/es/for/cocinar');
     // ja, zh and hi keep the English slug (docs/06 §5, LAUNCH-AUDIT D-03).
-    await expect(page.locator('footer nav a[hreflang="ja"]')).toHaveAttribute('href', '/ja/for/cooking');
-    await expect(page.locator('footer nav a[hreflang="zh-Hans"]')).toHaveAttribute('href', '/zh/for/cooking');
-    await expect(page.locator('footer nav a[hreflang="hi"]')).toHaveAttribute('href', '/hi/for/cooking');
+    await expect(page.locator('footer a[hreflang="ja"]')).toHaveAttribute('href', '/ja/for/cooking');
+    await expect(page.locator('footer a[hreflang="zh-Hans"]')).toHaveAttribute('href', '/zh/for/cooking');
+    await expect(page.locator('footer a[hreflang="hi"]')).toHaveAttribute('href', '/hi/for/cooking');
     // No reviewed translation yet: the English page lists only itself and x-default.
     await expect(page.locator('link[rel="alternate"][hreflang]')).toHaveCount(2);
   });

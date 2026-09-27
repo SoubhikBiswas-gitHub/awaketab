@@ -80,4 +80,4 @@ Updated Sunday, 27 September 2026 · 12:45 PM
 | 62 | /for hub cut to 14 (OD-3), embed 320×104 + credit outside the widget, docs updated | ✅ on canvas | ⬜ |
 | 63 | Coverage check: tablet for the /on /vs /guides /learn hubs, checkout failed and Pro lapsed; blocked and time's up at desktop and tablet | ✅ on canvas | ⬜ |
 
-**Canvas:** 63 done · 0 building · 0 not started (of 63). **Real app:** B1 foundation done (27 Sep); screens start with B2.
+**Canvas:** 63 done · 0 building · 0 not started (of 63). **Real app:** B1 foundation done (27 Sep); B2 shared shell done (27 Sep: header, footer with language switcher, theme switch, pill, buttons, chips, kbd, sheet on every page); page bodies follow in B3–B7.

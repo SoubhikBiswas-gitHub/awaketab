@@ -5,8 +5,9 @@ import type { TLocale } from '../i18n/locales';
 import { badgeVariants } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Kbd } from '@/components/ui/kbd';
-import { toggleVariants } from '@/components/ui/toggle';
 import SponsorCard from './SponsorCard.astro';
+import Button from './shell/Button.astro';
+import StatusPill from './shell/StatusPill.astro';
 
 interface Props {
   locale?: TLocale;
@@ -33,11 +34,10 @@ const btnLink = cn(buttonVariants({ variant: 'link' }), 'min-h-11 px-2');
 // The advice link carries a full phrase (Lighthouse link-text); it wraps instead of overflowing at 320 px.
 const btnLinkWrap = cn(btnLink, 'h-auto whitespace-normal');
 const inlineLink = buttonVariants({ variant: 'link', size: 'sm' });
-// shadcn Toggle keys its pressed look on data-[state=on]; the island toggles aria-pressed instead.
-const chip = cn(
-  toggleVariants({ variant: 'outline', size: 'lg' }),
-  'at-chip min-h-11 cursor-pointer text-center leading-tight whitespace-normal wrap-anywhere hyphens-auto aria-pressed:border-primary aria-pressed:bg-accent aria-pressed:font-semibold aria-pressed:text-accent-foreground',
-);
+// Preset chips use the Clear Night chip primitive (shell.css .at-chip): the island toggles aria-pressed, the
+// selected look keys on it. Custom… and Until… open a chooser, so they carry the dashed "choose" affordance.
+const chip = 'at-chip';
+const chooseChip = 'at-chip at-chip-choose';
 const proTag = cn(badgeVariants({ variant: 'secondary' }), 'ms-1');
 // SponsorCard slot (docs/05 §3.23): rendered only when the flag is on at build time, so CLS stays 0 when off.
 const sponsorEnabled = import.meta.env.PUBLIC_SPONSOR_ENABLED === '1';
@@ -81,10 +81,10 @@ const shortcuts = [
       <circle class="at-ring-progress" data-ring-progress cx="96" cy="96" r="88"></circle>
       <circle class="at-ring-dot" data-ring-dot cx="96" cy="8" r="5"></circle>
     </svg>
-    <button class="at-pill" type="button" data-pill aria-live="polite" aria-atomic="true">
+    <StatusPill as="button" size="M" data-pill aria-live="polite" aria-atomic="true">
       <output data-pill-text>{t('tool.pill.idle')}</output>
-      <span data-pill-extra hidden></span>
-    </button>
+      <span class="at-pill-extra" data-pill-extra hidden></span>
+    </StatusPill>
     <div class="at-timer" data-timer role="timer" aria-live="off">
       <div class="at-timer-digits is-muted" data-timer-digits>--:--:--</div>
       <div class="at-timer-caption" data-timer-caption></div>
@@ -133,11 +133,11 @@ const shortcuts = [
       {t('tool.preset.pinf')}
       <span class="sr-only">{t('tool.preset.pinf.sr')}</span>
     </button>
-    <button class={chip} type="button" data-preset="custom" aria-pressed="false">{t('tool.preset.custom')}</button>
-    <button class={chip} type="button" data-preset="until" aria-pressed="false">{t('tool.preset.until')}</button>
+    <button class={chooseChip} type="button" data-preset="custom" aria-pressed="false">{t('tool.preset.custom')}</button>
+    <button class={chooseChip} type="button" data-preset="until" aria-pressed="false">{t('tool.preset.until')}</button>
   </div>
   <div class="at-stop-slot">
-    <button class:list={['at-stop', btnDanger]} type="button" data-stop hidden>{t('tool.ring.stop')}</button>
+    <Button class="at-stop" variant="stop" data-stop hidden>{t('tool.ring.stop')}</Button>
   </div>
   {
     sponsorEnabled && (
@@ -171,7 +171,7 @@ const shortcuts = [
       </div>
     </form>
   </dialog>
-  <dialog data-dialog="settings" aria-labelledby="settings-title">
+  <dialog class="at-sheet" data-dialog="settings" aria-labelledby="settings-title">
     <h2 id="settings-title">{t('settings.title')}</h2>
     <form class="at-fields">
       <fieldset>
@@ -263,7 +263,7 @@ const shortcuts = [
       {
         shortcuts.map(([key, label]) => (
           <div class="flex items-center gap-3">
-            <dt class="min-w-12"><Kbd className="h-6 min-w-6 px-1.5 text-sm text-foreground">{key}</Kbd></dt>
+            <dt class="min-w-12"><Kbd>{key}</Kbd></dt>
             <dd class="m-0 text-sm text-muted-foreground">{label}</dd>
           </div>
         ))
@@ -295,7 +295,7 @@ const shortcuts = [
     <p><a class={inlineLink} href="/pro">{t('pro.cta')}</a> · <a class={inlineLink} href="/pro/activate">{t('pro.activate')}</a></p>
     <button class={btnOutline} type="button" data-pro-close>{t('settings.close')}</button>
   </dialog>
-  <dialog data-dialog="stats" aria-labelledby="stats-title">
+  <dialog class="at-sheet" data-dialog="stats" aria-labelledby="stats-title">
     <h2 id="stats-title">{t('stats.open')}</h2>
     <p data-stats-empty hidden>{t('stats.empty')}</p>
     <dl class="at-stats">

@@ -5,6 +5,7 @@ import {
   planUntil,
   type TPlan,
   type TPresetId,
+  type TTheme,
 } from '@awaketab/core';
 import { createWakeLock } from '@awaketab/wake';
 import type { IToolCtx } from './ctx.js';
@@ -346,11 +347,14 @@ export function boot(root: HTMLElement): () => void {
       m.openSettings(ctx);
     });
   });
-  root.querySelector('[data-open-stats]')?.addEventListener('click', () => {
-    void import('./stats/panel.js').then((m) => {
-      m.openStats(ctx);
+  // Header Stats (600 and up) and its phone twin in the tool's action row (B2).
+  for (const btn of root.querySelectorAll('[data-open-stats]')) {
+    btn.addEventListener('click', () => {
+      void import('./stats/panel.js').then((m) => {
+        m.openStats(ctx);
+      });
     });
-  });
+  }
 
   shortcutsDlg?.addEventListener('close', () => {
     store.set({ ui: { dialog: null } });
@@ -412,9 +416,11 @@ export function boot(root: HTMLElement): () => void {
   );
 
   root.querySelector('[data-open-pip]')?.addEventListener('click', pip);
-  root.querySelector('[data-cycle-theme]')?.addEventListener('click', () => {
+  // The header theme switch is run by the inline boot script (it also works on pages without the island);
+  // it announces each pick so the store's settings, which the island writes back, stay in step.
+  document.addEventListener('at-theme', (e) => {
     act((m) => {
-      m.cycleTheme(ctx);
+      m.cycleTheme(ctx, (e as CustomEvent<TTheme>).detail);
     });
   });
 

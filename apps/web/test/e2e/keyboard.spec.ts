@@ -131,7 +131,7 @@ test('journey 1 (keyboard): autostart, skip link, and the whole page tabs throug
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/#content$/u);
 
-  // The last focusable element of the page (the footer's locale links), which Tab must reach.
+  // The last focusable element of the page (the footer's language switcher), which Tab must reach.
   const lastFocusable = await page.evaluate(() => {
     const els = [
       ...document.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, select, textarea, summary, [tabindex]'),

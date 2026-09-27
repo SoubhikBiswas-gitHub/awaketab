@@ -2,6 +2,10 @@
 // raw values. Allowed: 0, 50 %, the tokens and calc() over them.
 // tokens.css defines the scale and is exempt.
 const RADIUS_TOKENS = /^(?:0|50%|inherit|calc\(|var\(--at-r-[a-z0-9]+\)|[\s()+-])+$/u;
+// DESIGN.md §12.8, from B2 on: rebuilt stylesheets (shell.css) take spacing, type and control heights by token only.
+// Allowed: 0, auto, percentages, 1px borders, the tokens and calc() over them.
+const SPACING_TOKENS = /^(?:0|auto|-?\d+%|calc\(|var\(--at-(?:s|gutter|section|card-pad|edge-min|dock-bottom|gap|h|border|icon)[a-z0-9-]*\)|[\s()*/+-]|\d+(?:\.\d+)?(?![\w%]))+$/u;
+const TYPE_TOKENS = /^(?:inherit|var\(--at-type-[a-z0-9-]+\))$/u;
 
 export default {
   extends: ['stylelint-config-standard'],
@@ -25,5 +29,24 @@ export default {
       { message: (prop, value) => `${prop}: ${value} is not a radius token; use var(--at-r-*) (DESIGN.md §12.4)` },
     ],
   },
-  overrides: [{ files: ['**/styles/tokens.css'], rules: { 'declaration-property-value-allowed-list': null } }],
+  overrides: [
+    { files: ['**/styles/tokens.css'], rules: { 'declaration-property-value-allowed-list': null } },
+    {
+      files: ['**/styles/shell.css'],
+      rules: {
+        'declaration-property-value-allowed-list': [
+          {
+            '/^border(-[a-z]+)*-radius$/': [RADIUS_TOKENS],
+            '/^(padding|margin|gap|row-gap|column-gap)(-[a-z]+)*$/': [SPACING_TOKENS],
+            '/^(min-|max-)?(block|inline)-size$/': [/^(?!.*\d+(?:\.\d+)?(?:px|rem|em)\b).*$/u, /^(?:26px|6px|4px|36px)$/u],
+            '/^font$/': [TYPE_TOKENS],
+            '/^(font-size|line-height)$/': [/^$/u],
+          },
+          {
+            message: (prop, value) => `${prop}: ${value} is not a token; use var(--at-*) (DESIGN.md §12)`,
+          },
+        ],
+      },
+    },
+  ],
 };

@@ -1,0 +1,34 @@
+---
+import type { TLockState } from '@awaketab/wake';
+import type { HTMLAttributes } from 'astro/types';
+
+/*
+ * Status pill (DESIGN.md §2.3, §11.4; PRIMITIVES.md P-PILL; docs/05 §3.2). One of the seven exact lock-state
+ * strings, alone, with a shape glyph and the state's tone (12 % fill, 38 % border). The glyph is one SVG with
+ * all four shapes; CSS shows the one for `data-lock`, so the island only writes `data-lock` and the text.
+ * Sizes: L 48 (kiosk, xl) · M 38 (tool; may wrap to two lines, O-62) · S 32 (popup, PiP, full embed) · XS 26.
+ */
+interface Props extends HTMLAttributes<'output'> {
+  state?: TLockState;
+  size?: 'L' | 'M' | 'S' | 'XS';
+  /** `button` while the pill can open the fix (the tool, denied / unsupported); otherwise an `<output>` or `<span>`. */
+  as?: 'output' | 'button' | 'span';
+  label?: string;
+}
+
+const { state = 'idle', size = 'M', as: Tag = 'output', label, class: className, ...rest } = Astro.props;
+const sizeClass = size === 'M' ? undefined : `at-pill-${size.toLowerCase()}`;
+---
+
+<Tag class:list={['at-pill', sizeClass, className]} data-lock={state} {...(Tag === 'button' ? { type: 'button' } : {})} {...rest}>
+  <svg class="at-pill-glyph" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+    <path class="at-g-dot" d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path>
+    <path class="at-g-pause" d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z"></path>
+    <path class="at-g-tri" d="M6 1L11.2 10.5H.8z"></path>
+    <path
+      class="at-g-ring"
+      d="M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z"
+    ></path>
+  </svg>
+  <slot>{label}</slot>
+</Tag>

@@ -10,28 +10,27 @@ All eight routes pass at every 40 px step from 320 to 2560, except:
 |---|---|---|---|
 | `/embed` | 320 | "Already bought? Activate your domain" link is `whitespace-nowrap` inside a 283 px card, page scrollWidth 324 | B8 (embed page) |
 
-That width runs as `test.fixme` (listed in the spec's `DEBT` map), so the suite is green and the debt stays visible. The sweep does not yet check the other §5 Gate rules (controls within 16 px of an edge, targets under 44 px, clipped text, phone landscape, 400 % zoom); add them with B2.
+That width runs as `test.fixme` (listed in the spec's `DEBT` map), so the suite is green and the debt stays visible. Since B2 the sweep also fails on header and footer controls under 44 × 44 or within 16 px of a side edge (the shared shell passes at every width). Still to add as the page bodies are rebuilt (B3–B7): the same target and edge rules for every control on the page, clipped text, phone landscape and 400 % zoom.
 
 ## Stylelint guard (DESIGN.md §12.8)
 
 - **Radius:** enforced in B1. The six raw radii that existed were on the scale and are now tokens (`embed.css` 999px ×2, 4px, 8px; `tool.css` 4px ×2). The two `border-radius:12px` strings in `src/tool/embed/snippet.ts` and `src/tool/embed/loader.ts` are inline styles on the host page's iframe, where the tokens do not exist; they stay raw on purpose.
-- **Spacing, type size and control height:** not enforced yet. Raw values outside `tokens.css` today (hand-written CSS only):
-  - `content.css`: lines 15, 25, 31, 43 (rem margins and padding).
-  - `embed.css`: lines 38, 72, 110 (`min-block-size` 44 / 28 / 44 px).
-  - `tool.css`: lines 265 (`var(--at-s-12, 48px)` fallback), 273, 286, 386, 486, 648, 1106 (44 / 56 px control heights), 683, 687, 920, 940, 948, 1060, 1064 (`font-size: 8px`, below the 12 px floor), 1132, 1138, 1150; face digits at 896 and 961 use `clamp()` in rem.
-  - Markup: shadcn/Tailwind utilities (`text-sm`, `px-4`, `h-9`, `rounded-md`, …) in `.astro`/`.tsx` bypass a CSS-only rule. B2 maps the shared shell to `--at-type-*`, `--at-h-*` and `--at-gap-*`; the rule is added once each surface is rebuilt.
+- **Spacing, type size and control height:** enforced for `shell.css` since B2 (the shared shell and primitives: padding, margin, gap, `font`, `font-size`, `line-height` and block/inline sizes take tokens only; a `stylelint.config.mjs` override). Raw values still outside `tokens.css` (hand-written CSS only), for the milestone that rebuilds each surface:
+  - `content.css`: lines 15, 25, 31, 43 (rem margins and padding). B5.
+  - `embed.css`: lines 38, 72, 110 (`min-block-size` 44 / 28 / 44 px). B8.
+  - `tool.css` (B2 line numbers): 435 (dialog `max-block-size` 2rem inset), 549, 1004 (44 px control heights), 584, 588 (ad slot boxes), 794, 859 (ambient digits `clamp()` in rem), 818, 958, 1030, 1036, 1048, 1145 (ambient and stats sizes), 838, 846 (64 px cook targets), 962 (`font-size: 8px`, below the 12 px floor). B3/B4.
+  - Markup: shadcn/Tailwind utilities (`text-sm`, `px-4`, `h-9`, `rounded-md`, …) in `.astro`/`.tsx` bypass a CSS-only rule. The shared shell (header, footer, theme switch, language switcher, pill, chips, Stop, keycaps) uses `shell.css` classes on `--at-type-*`, `--at-h-*` and `--at-gap-*` since B2; page bodies still use the utilities until B3–B7.
 
 ## Colour
 
 - `tool.css` `.at-stars` checked label: `--at-accent-text` on `--accent` (lamp 12 % tint) is 4.25:1 for Aqua in light (fine for the other lamps and in dark). Fix with the rating prompt in B3/B10 (ink text, lamp glyph).
-- Inputs and toggles still use `--input` → `--at-line`; decision O-56 wants `--at-input-border` (≥ 3:1). Changing the alias also restyles outline buttons in dark (`dark:bg-input/30`), so it belongs to the B2 button/input work.
 - Ring track and ticks still use `--at-line`; B3 moves them to `--at-track` and `--at-tick`.
-- The ground's radial lift and the status halo (`--at-halo`) are page backgrounds, added with the shell in B2/B3.
+- The status halo (`--at-halo`) behind the pill and face comes with the tool face in B3 (the ground's radial lift shipped in B2: `--at-lift`, `--at-ground-end`).
 - Brand assets still drawn in the old amber palette: `public/favicon.svg`, `public/og/awaketab-placeholder.svg`, `src/lib/og.ts` (OG card ground and ink), `apps/extension/scripts/icons.mjs` (toolbar ring), `apps/extension/scripts/store-assets.mts`. They move with the logo lockup and status favicon (B3), OG (B5/B12) and the extension (B9). `BADGE_COLORS.display` is already Aqua `#087B87`.
 
 ## Type and fonts
 
-- Components still use the `--at-t-*` sizes and Tailwind text utilities; the `--at-type-*` roles exist but nothing reads them yet (B2 onwards).
+- Page bodies still use the `--at-t-*` sizes and Tailwind text utilities; since B2 the shared shell reads the `--at-type-*` roles. Each page moves over when B3–B7 rebuild it.
 - `--at-font-display` (Space Grotesk digits) is defined but unused until the Bold face lands (B3), so it downloads nothing yet.
 - The extension popup and options keep the system stack (their token import skips the `@font-face` rules); B9 decides whether the extension bundles the woff2 files.
 - The service worker does not precache `/fonts/*`; offline the tool falls back to the metric-matched system face. Add the Geist file to the precache in B3 if offline first paint should use it.
@@ -50,3 +49,12 @@ LCP budget is 1.2 s (docs/00 §11). Measured on 27 Sep 2026 on the owner's Mac:
 | `/es/` | ≤ 1,200 ms (pass) | 1,202 ms |
 
 Three paths already missed the lab LCP budget locally before the fonts; the preloaded 29 KB Geist file adds about 150 ms in the simulation (removing the preload or using `font-display: optional` does not change it; removing the preload adds CLS). CLS stays 0 in Lighthouse and in Playwright (`/` at 390 and 1280 with a working wake lock: 0.0000). Options for the owner: a smaller Geist subset (basic Latin + Latin-1 letters only), preloading only on the tool routes, or accepting the lab figure. Re-measure on the deployed preview (`LHCI_BASE_URL`), which is what CI audits.
+
+## Found in B2 (for B3 and later)
+
+- **Tool action row (`.at-tool-more`):** Share, floating window, keyboard shortcuts, Stats (phones) and Install left the header, which now holds only Stats (from 600) and Settings as on the canvas. They sit as icon buttons in a fixed five-column row under the tool until the dock (B3) and the floating window (B4) place them; on desktop the row is visibly off-centre because two of its five cells are empty (phone-only Stats, Install until installable).
+- **Pill extra text:** "until 10:30 PM" (`[data-pill-extra]`) still sits inside the tool pill's button after the exact string; B3 moves it beside the pill (DESIGN.md §10: meaning around the pill copy, not inside it).
+- **Preset chips:** the grid cell is 80 px (was 72) so "Custom…" no longer breaks mid-word at 1280; B3 replaces the grid with the preset segmented bar and phone grid (O-74).
+- **Keyboard hints on buttons:** `.at-kbd-hint` honours `<html data-hints="off">`, but nothing sets it yet; B3 wires the Settings toggle (`settings.keyboardHints`).
+- **Nav and footer links on localized pages** point at English-only routes (`/for`, `/on`, `/extension`, `/pro`, `/privacy`, …), as before; they carry no `hreflang="en"` yet.
+- **Content-visibility sections** (`.at-prose`, `content-visibility: auto`) take their real height when scrolled into view, which can move the footer between a press and its release; B5 reserves better intrinsic sizes.

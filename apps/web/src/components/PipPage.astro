@@ -1,6 +1,7 @@
 ---
 import { cn } from 'cn';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import StatusPill from './shell/StatusPill.astro';
 import { buttonVariants } from '@/components/ui/button';
 import { catalogFor, createT } from '../i18n/load';
 import { localePath, type TLocale } from '../i18n/locales';
@@ -25,9 +26,9 @@ const btn = cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'min-h-11 cur
   <main id="awaketab-pip" class="at-pip-body">
     <h1 class="sr-only">{t('page.pip.title')}</h1>
     <script is:inline type="application/json" data-i18n-catalog set:html={catalogJson}></script>
-    <output class="at-pill" data-pill data-lock="idle" aria-live="polite" aria-atomic="true">
+    <StatusPill size="S" data-pill aria-live="polite" aria-atomic="true">
       <span data-pill-text>{t('tool.pill.idle')}</span>
-    </output>
+    </StatusPill>
     <div class="at-timer" data-timer role="timer" aria-live="off">
       <div class="at-timer-digits is-muted" data-timer-digits>{t('tool.timer.indefiniteIdle')}</div>
     </div>
