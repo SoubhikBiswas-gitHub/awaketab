@@ -3,8 +3,6 @@ import type { ILicenseRecord, ISession, ISettings } from '@awaketab/core';
 import { DEFAULT_SETTINGS } from '@awaketab/core';
 import type { TAmbientMode } from '@awaketab/core';
 
-export type TDialogName = 'settings' | 'shortcuts' | 'share' | 'rating' | 'stats' | 'pro' | null;
-
 export type TLogEntry = [0 | 1, number, number?];
 
 export interface IDone {
@@ -38,7 +36,6 @@ export interface IToolState {
   ui: {
     mode: TAmbientMode;
     controlsHidden: boolean;
-    dialog: TDialogName;
     toasts: IToastItem[];
     secondTab: boolean;
     pip: 'closed' | 'document' | 'popup';
@@ -84,7 +81,6 @@ export function initialState(settings: ISettings = DEFAULT_SETTINGS): IToolState
     ui: {
       mode: settings.ambient.mode,
       controlsHidden: false,
-      dialog: null,
       toasts: [],
       secondTab: false,
       pip: 'closed',

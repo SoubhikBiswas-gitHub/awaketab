@@ -6,7 +6,10 @@ import {
   RATING_REARM_SESSIONS,
   ratingEligible,
 } from '../../src/tool/ui/rating.js';
-import { makeCtx } from './ctx-helper.js';
+import { dialogSettled, makeCtx } from './ctx-helper.js';
+
+// The prompt opens once tool-more.css has loaded (ui/dialog.ts); happy-dom never loads the stylesheet.
+vi.mock('../../src/tool/ui/more-css.js', () => ({ moreCss: async () => undefined }));
 
 // Mirrors the rating dialog in src/components/ToolPanel.astro.
 const RATING_HTML = `
@@ -59,6 +62,12 @@ function setup(sessionCount = RATING_MIN_SESSIONS) {
   return { ...env, dialog, form, submit };
 }
 
+const show = async (ctx: Parameters<typeof maybeShowRating>[0]) => {
+  const shown = maybeShowRating(ctx);
+  await dialogSettled();
+  return shown;
+};
+
 const flush = async () => {
   for (let i = 0; i < 5; i += 1) await Promise.resolve();
 };
@@ -73,76 +82,80 @@ describe('maybeShowRating', () => {
     vi.unstubAllGlobals();
   });
 
-  it('does nothing before the 5th counted session', () => {
+  it('does nothing before the 5th counted session', async () => {
     const { ctx, dialog } = setup(4);
-    expect(maybeShowRating(ctx)).toBe(false);
+    expect(await show(ctx)).toBe(false);
     expect(dialog.open).toBe(false);
   });
 
-  it('shows once and records shownAt', () => {
-    const { ctx, dialog, store, storage } = setup();
-    expect(maybeShowRating(ctx)).toBe(true);
+  it('shows once and records shownAt', async () => {
+    const { ctx, dialog, storage } = setup();
+    expect(await show(ctx)).toBe(true);
     expect(dialog.open).toBe(true);
-    expect(store.get().ui.dialog).toBe('rating');
     expect(storage.meta().ratingPrompt.shownAt).toEqual(expect.any(Number));
     // Already open: not shown on top of itself.
-    expect(maybeShowRating(ctx)).toBe(false);
+    expect(await show(ctx)).toBe(false);
   });
 
   it('never while a session is active or another dialog is open', async () => {
     const { ctx, dialog, store } = setup();
     await ctx.startPlan({ type: 'indefinite' }, 'pinf');
     expect(store.get().session?.status).toBe('active');
-    expect(maybeShowRating(ctx)).toBe(false);
+    expect(await show(ctx)).toBe(false);
     expect(dialog.open).toBe(false);
 
     ctx.stop();
     await flush();
-    store.set({ lock: 'idle', ui: { dialog: 'settings' } });
-    expect(maybeShowRating(ctx)).toBe(false);
-    store.set({ ui: { dialog: null, mode: 'clock' } });
-    expect(maybeShowRating(ctx)).toBe(false);
+    store.set({ lock: 'idle' });
+    // Another sheet is up (its open <dialog> is the truth): the prompt waits.
+    const other = document.createElement('dialog');
+    other.className = 'at-dialog';
+    document.body.append(other);
+    other.show();
+    expect(await show(ctx)).toBe(false);
+    other.close();
+    store.set({ ui: { mode: 'clock' } });
+    expect(await show(ctx)).toBe(false);
     store.set({ ui: { mode: 'standard' } });
-    expect(maybeShowRating(ctx)).toBe(true);
+    expect(await show(ctx)).toBe(true);
   });
 
-  it("'later' re-arms 10 sessions on and is not shown again before that", () => {
-    const { ctx, dialog, store, storage } = setup(7);
-    expect(maybeShowRating(ctx)).toBe(true);
+  it("'later' re-arms 10 sessions on and is not shown again before that", async () => {
+    const { ctx, dialog, storage } = setup(7);
+    expect(await show(ctx)).toBe(true);
     dialog.querySelector<HTMLButtonElement>('[data-rating-later]')?.click();
     expect(dialog.open).toBe(false);
-    expect(store.get().ui.dialog).toBeNull();
     expect(storage.meta().ratingPrompt).toMatchObject({ action: 'later', rearmAt: 7 + RATING_REARM_SESSIONS });
     expect(ctx.track).toHaveBeenCalledWith('rating_prompt', { action: 'later' });
-    expect(maybeShowRating(ctx)).toBe(false);
+    expect(await show(ctx)).toBe(false);
 
     storage.writeMeta({ ...storage.meta(), sessionCount: 7 + RATING_REARM_SESSIONS });
-    expect(maybeShowRating(ctx)).toBe(true);
+    expect(await show(ctx)).toBe(true);
   });
 
-  it("'never' is final", () => {
+  it("'never' is final", async () => {
     const { ctx, dialog, storage } = setup();
-    maybeShowRating(ctx);
+    await show(ctx);
     dialog.querySelector<HTMLButtonElement>('[data-rating-never]')?.click();
     expect(storage.meta().ratingPrompt.action).toBe('never');
     storage.writeMeta({ ...storage.meta(), sessionCount: 500 });
-    expect(maybeShowRating(ctx)).toBe(false);
+    expect(await show(ctx)).toBe(false);
   });
 
-  it('Esc (close without a choice) counts as later', () => {
+  it('Esc (close without a choice) counts as later', async () => {
     const { ctx, dialog, storage } = setup();
-    maybeShowRating(ctx);
+    await show(ctx);
     dialog.close();
     expect(storage.meta().ratingPrompt).toMatchObject({
       action: 'later',
       rearmAt: RATING_MIN_SESSIONS + RATING_REARM_SESSIONS,
     });
-    expect(maybeShowRating(ctx)).toBe(false);
+    expect(await show(ctx)).toBe(false);
   });
 
-  it('submitting without stars shows an error and keeps the dialog open', () => {
+  it('submitting without stars shows an error and keeps the dialog open', async () => {
     const { ctx, dialog, storage, submit } = setup();
-    maybeShowRating(ctx);
+    await show(ctx);
     submit();
     expect(dialog.querySelector('[data-rating-error]')?.textContent).toBe('Choose 1 to 5 stars');
     expect(dialog.open).toBe(true);
@@ -153,7 +166,7 @@ describe('maybeShowRating', () => {
   it('submitting stars posts to /api/rating, records rated and thanks the user', async () => {
     const { ctx, dialog, form, store, storage, submit } = setup();
     document.documentElement.lang = 'de';
-    maybeShowRating(ctx);
+    await show(ctx);
     (form.querySelector('input[name="stars"][value="4"]') as HTMLInputElement).checked = true;
     (form.querySelector('textarea') as HTMLTextAreaElement).value = 'x'.repeat(300);
     submit();
@@ -167,7 +180,7 @@ describe('maybeShowRating', () => {
     expect(ctx.track).toHaveBeenCalledWith('rating_submitted', { stars: 4 });
     await flush();
     expect(store.get().ui.toasts.map((x) => x.text)).toContain('Thanks — that helps.');
-    expect(maybeShowRating(ctx)).toBe(false);
+    expect(await show(ctx)).toBe(false);
     document.documentElement.lang = '';
   });
 
@@ -176,7 +189,7 @@ describe('maybeShowRating', () => {
       throw new Error('offline');
     });
     const { ctx, form, store, storage, submit } = setup();
-    maybeShowRating(ctx);
+    await show(ctx);
     (form.querySelector('input[name="stars"][value="2"]') as HTMLInputElement).checked = true;
     submit();
     await flush();

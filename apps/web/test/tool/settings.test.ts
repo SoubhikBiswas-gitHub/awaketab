@@ -1,8 +1,11 @@
 import { DEFAULT_SETTINGS, type ISettings } from '@awaketab/core';
-import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { fillSettings, openSettings, readSettings } from '../../src/tool/ui/settings.js';
 import en from '../../src/i18n/en.json';
-import { makeCtx } from './ctx-helper.js';
+import { dialogSettled, makeCtx } from './ctx-helper.js';
+
+// Sheets wait for tool-more.css (ui/dialog.ts); happy-dom never loads the stylesheet.
+vi.mock('../../src/tool/ui/more-css.js', () => ({ moreCss: async () => undefined }));
 
 // happy-dom's RadioNodeList has a `value` getter only; browsers also have the setter fillSettings relies on
 // (check the first radio whose value matches, else change nothing — HTML §4.10.21.3).
@@ -69,7 +72,7 @@ const SETTINGS_HTML = `
       <label><input type="checkbox" name="telemetry" checked /> Telemetry</label>
       <label><input type="checkbox" name="keyboardShortcuts" checked /> Shortcuts</label>
       <label><input type="checkbox" name="keyboardHints" checked /> Hints</label>
-      <button type="button" data-settings-close>Close</button>
+      <button type="button" data-dialog-close>Close</button>
       <button type="button" data-settings-reset>Reset</button>
     </form>
   </dialog>`;
@@ -228,16 +231,16 @@ describe('openSettings', () => {
     delete document.documentElement.dataset.accent;
   });
 
-  it('opens on the stored values and a change keeps them (no default overwrite)', () => {
+  it('opens on the stored values and a change keeps them (no default overwrite)', async () => {
     const { ctx, root, store, storage } = makeCtx({
       html: SETTINGS_HTML,
       settings: STORED,
     });
     openSettings(ctx);
+    await dialogSettled();
     const dialog = root.querySelector<HTMLDialogElement>('[data-dialog="settings"]') as HTMLDialogElement;
     const f = dialog.querySelector('form') as HTMLFormElement;
     expect(dialog.open).toBe(true);
-    expect(store.get().ui.dialog).toBe('settings');
     expect((f.elements.namedItem('theme') as RadioNodeList).value).toBe('oled');
 
     // happy-dom has no Notification API: the switch is disabled and its help line says why.
@@ -270,9 +273,8 @@ describe('openSettings', () => {
     bold.dispatchEvent(new Event('change', { bubbles: true }));
     expect(storage.settings().face).toBe('bold');
 
-    dialog.querySelector<HTMLButtonElement>('[data-settings-close]')?.click();
+    dialog.querySelector<HTMLButtonElement>('[data-dialog-close]')?.click();
     expect(dialog.open).toBe(false);
-    expect(store.get().ui.dialog).toBeNull();
     expect(document.documentElement.dataset.accent).toBe('violet');
   });
 });

@@ -1,6 +1,7 @@
 ---
 import { createT } from '../../i18n/load';
 import { LOCALE_META, LOCALES, localePath, type TLocale } from '../../i18n/locales';
+import Drawer from '../ui/Drawer.astro';
 
 interface Props {
   locale: TLocale;
@@ -22,26 +23,23 @@ const pageLang = here.htmlLang;
     aria-controls="at-lang-list"
     aria-label={`${t('footer.language')}: ${here.label}`}
   >
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
       <circle cx="12" cy="12" r="9"></circle>
       <path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"></path>
     </svg>
     {here.label}
-    <svg class="at-lang-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <svg class="at-lang-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
       <path d="M6 9l6 6 6-6"></path>
     </svg>
   </button>
-  <div class="at-lang-scrim" data-lang-close aria-hidden="true"></div>
-  <div class="at-lang-panel" id="at-lang-list" role="group" aria-labelledby="at-lang-h" data-lang-panel hidden>
-    <div class="at-lang-handle" aria-hidden="true"></div>
-    <div class="at-lang-head">
-      <h2 class="at-lang-title" id="at-lang-h">{t('footer.language')}</h2>
-      <button class="at-icon-button at-lang-close" type="button" data-lang-close aria-label={t('footer.language.close')}>
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
-          <path d="M6 6l12 12M18 6L6 18"></path>
-        </svg>
-      </button>
-    </div>
+  <Drawer
+    class="at-lang-panel"
+    id="at-lang-list"
+    title={t('footer.language')}
+    titleId="at-lang-h"
+    closeLabel={t('footer.language.close')}
+    closeAttrs={{ 'data-lang-close': '' }}
+  >
     <ul class="at-lang-list" role="list">
       {
         LOCALES.map((code) => {
@@ -57,7 +55,7 @@ const pageLang = here.htmlLang;
                 hreflang={meta.hreflang}
                 aria-current={current ? 'true' : undefined}
               >
-                <svg class="at-lang-mark" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false">
+                <svg class="at-lang-mark" width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
                   <circle class="at-lang-ring" cx="10" cy="10" r="8" />
                   <circle class="at-lang-dot" cx="10" cy="10" r="4" />
                 </svg>
@@ -69,5 +67,5 @@ const pageLang = here.htmlLang;
         })
       }
     </ul>
-  </div>
+  </Drawer>
 </div>

@@ -444,7 +444,7 @@ test('stats dialog: opens from the keyboard, Tab reaches Close, Esc closes and r
   await page.keyboard.press('Enter');
   const dlg = page.locator('dialog[data-dialog="stats"]');
   await expect(dlg).toBeVisible();
-  await tabTo(page, keys, 'dialog[data-dialog="stats"] [data-stats-close]', 10);
+  await tabTo(page, keys, 'dialog[data-dialog="stats"] [data-dialog-close]', 10);
   await page.keyboard.press('Escape');
   await expect(dlg).toBeHidden();
   expect(await focusedMatches(page, '#awaketab-tool header [data-open-stats]')).toBe(true);

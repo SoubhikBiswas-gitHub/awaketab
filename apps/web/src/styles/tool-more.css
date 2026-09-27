@@ -10,7 +10,6 @@
   --at-tl-legend-h: 8px;
   --at-tl-mark: 32px;
   --at-tl-badge: 40px;
-  --at-tl-grab: 40px;
   --at-tl-star: 28px;
   --at-tl-swatch: 20px;
   --at-tl-switch-w: 52px;
@@ -18,10 +17,8 @@
   --at-tl-heat: 16px;
   --at-tl-banner: 36rem;
   --at-tl-receipt: 520px;
-  --at-tl-sheet: 400px;
-  --at-tl-sheet-lg: 440px;
-  --at-tl-sheet-xl: 480px;
   --at-tl-float: 720px;
+  --at-tl-dialog: 24rem;
   --at-tl-ig-bead: 24px;
   --at-tl-ig-pill: 32px;
   --at-tl-ig-glow: 96px;
@@ -806,45 +803,6 @@
   background: transparent;
 }
 
-.at-float-sheet {
-  flex-direction: column;
-  gap: var(--at-s-4);
-  inline-size: 100%;
-  max-inline-size: none;
-  max-block-size: calc(100dvh - var(--at-s-12));
-  margin-block: auto 0;
-  margin-inline: 0;
-  padding-block: var(--at-s-2) var(--at-s-8);
-  padding-inline: var(--at-s-5);
-  border: 0;
-  border-block-start: 1px solid var(--at-line-strong);
-  border-radius: var(--at-r-2xl) var(--at-r-2xl) 0 0;
-  background: var(--at-surface);
-  color: var(--at-ink);
-  box-shadow: 0 -24px 64px -24px rgb(0 0 0 / 45%);
-  text-align: start;
-}
-
-.at-float-sheet[open] {
-  display: flex;
-  animation: at-up 0.7s var(--at-ease) both;
-}
-
-.at-float-sheet h2 {
-  margin: 0;
-  color: var(--at-ink);
-  font: var(--at-type-h3);
-  letter-spacing: -0.01em;
-}
-
-.at-grab {
-  align-self: center;
-  inline-size: var(--at-tl-grab);
-  block-size: 4px;
-  border-radius: var(--at-r-pill);
-  background: var(--at-line-strong);
-}
-
 .at-fs-bar {
   display: flex;
   align-items: center;
@@ -856,16 +814,41 @@
   margin-inline-end: calc(-1 * var(--at-s-2));
 }
 
-.at-fs-titles {
+.at-dialog {
+  --at-dlg-w: var(--at-sheet-inline);
+}
+
+.at-dialog-titles {
   display: flex;
   flex-direction: column;
   gap: var(--at-s-1);
+  min-inline-size: 0;
 }
 
-.at-fs-titles p {
+.at-dialog-description {
   margin: 0;
   color: var(--at-ink-2);
   font: var(--at-type-small);
+}
+
+.at-dialog-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--at-s-2) var(--at-s-6);
+  padding-block: var(--at-s-4) var(--at-s-5);
+  padding-inline: var(--at-card-pad);
+  border-block-start: 1px solid var(--at-line);
+}
+
+.at-dialog:is([data-side="end"], [data-side="start"]) .at-dialog-header {
+  padding-block-end: var(--at-s-3);
+  border-block-end: 1px solid var(--at-line);
+}
+
+.at-dialog:is([data-side="end"], [data-side="start"]) .at-dialog-body {
+  gap: var(--at-s-8);
+  padding-block-start: var(--at-s-6);
 }
 
 .at-share-row {
@@ -942,6 +925,20 @@
   border-radius: var(--at-r-md);
   color: var(--at-muted);
   cursor: pointer;
+}
+
+.at-star-word > :not(:first-child),
+.at-rate-top:has(:checked) .at-star-word > :first-child,
+.at-rating:has(:checked) .at-error {
+  display: none;
+}
+
+.at-rate-top:has([value="1"]:checked) [data-n="1"],
+.at-rate-top:has([value="2"]:checked) [data-n="2"],
+.at-rate-top:has([value="3"]:checked) [data-n="3"],
+.at-rate-top:has([value="4"]:checked) [data-n="4"],
+.at-rate-top:has([value="5"]:checked) [data-n="5"] {
+  display: inline;
 }
 
 .at-stars svg {
@@ -1039,65 +1036,6 @@
 
 .at-keys-foot {
   margin: 0;
-}
-
-dialog.at-tsheet {
-  inset-block: auto 0;
-  inset-inline: 0;
-  inline-size: 100%;
-  max-inline-size: none;
-  block-size: 80dvh;
-  max-block-size: none;
-  margin: 0;
-  padding: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  border: 0;
-  border-block-start: 1px solid var(--at-line);
-  border-radius: var(--at-r-2xl) var(--at-r-2xl) 0 0;
-  background: var(--at-surface);
-  color: var(--at-ink);
-  box-shadow: var(--at-shadow-float);
-  scrollbar-width: thin;
-}
-
-dialog.at-tsheet::before {
-  display: none;
-}
-
-.at-tsheet-head {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  gap: var(--at-s-1);
-  padding-block: var(--at-s-2) var(--at-s-3);
-  padding-inline: var(--at-s-5);
-  border-block-end: 1px solid var(--at-line);
-  background: var(--at-surface);
-}
-
-.at-tsheet-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--at-gap-item);
-}
-
-.at-tsheet-bar h2 {
-  margin: 0;
-  color: var(--at-ink);
-  font: var(--at-type-h3);
-  letter-spacing: -0.01em;
-}
-
-.at-tsheet-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--at-s-8);
-  padding-block: var(--at-s-6) var(--at-s-10);
-  padding-inline: var(--at-s-5);
 }
 
 .at-settings > section {
@@ -1342,7 +1280,12 @@ dialog.at-tsheet::before {
   color: var(--at-ink);
   font: var(--at-type-ui);
   text-align: start;
+  list-style: none;
   cursor: pointer;
+}
+
+.at-langrow-btn::-webkit-details-marker {
+  display: none;
 }
 
 .at-langrow-cur {
@@ -1357,17 +1300,13 @@ dialog.at-tsheet::before {
   block-size: var(--at-icon-sm);
 }
 
-.at-langrow-btn[aria-expanded="true"] .at-lang-chev {
+.at-langrow[open] .at-lang-chev {
   transform: rotate(180deg);
 }
 
 .at-langrow-list {
   padding-block: var(--at-s-2);
   border-block-end: 1px solid var(--at-line);
-}
-
-.at-langrow-list[hidden] {
-  display: none;
 }
 
 .at-settings-foot,
@@ -1617,6 +1556,10 @@ dialog.at-tsheet::before {
   margin: 0;
 }
 
+.at-lang-banner .at-fs-bar > p {
+  flex: 1;
+}
+
 .at-lang-banner .at-button {
   block-size: auto;
   min-block-size: var(--at-h-control);
@@ -1629,7 +1572,7 @@ dialog.at-tsheet::before {
 }
 
 @media (width < 600px) {
-  dialog.at-tsheet .at-phone-only {
+  .at-dialog .at-phone-only {
     display: inline-flex;
   }
 
@@ -1694,10 +1637,6 @@ dialog.at-tsheet::before {
     block-size: var(--at-h-control);
   }
 
-  dialog.at-tsheet {
-    block-size: 88dvh;
-  }
-
   .at-sseg .at-seg-item {
     font: var(--at-type-kicker);
     font-weight: 500;
@@ -1706,70 +1645,80 @@ dialog.at-tsheet::before {
 }
 
 @media (width >= 600px) {
-  dialog.at-tsheet {
-    inset-block: 0;
-    inset-inline: auto 0;
-    inline-size: var(--at-tl-sheet);
-    max-inline-size: 100%;
-    block-size: 100dvh;
-    border-block-start: 0;
-    border-inline-start: 1px solid var(--at-line);
-    border-radius: var(--at-r-2xl) 0 0 var(--at-r-2xl);
-  }
-
-  dialog.at-tsheet[open] {
-    animation: at-side 0.7s var(--at-ease) both;
-  }
-
-  [dir="rtl"] dialog.at-tsheet {
-    border-radius: 0 var(--at-r-2xl) var(--at-r-2xl) 0;
-  }
-
-  .at-grab,
   .at-keys-note {
     display: none;
-  }
-
-  .at-tsheet-head {
-    padding-block: var(--at-s-5) var(--at-s-4);
-    padding-inline: var(--at-s-6);
-  }
-
-  .at-tsheet-body {
-    padding-inline: var(--at-s-6);
   }
 
   .at-textlink.at-phone-only {
     display: none;
   }
 
-  .at-island:has(.at-docked[open]) :is(.at-tabs, .at-len, .at-untilchips, .at-lpanel) {
+  .at-dialog[data-size="sm"] {
+    --at-dlg-w: var(--at-tl-dialog);
+  }
+
+  .at-dialog[data-size="lg"] {
+    --at-dlg-w: var(--at-tl-float);
+  }
+
+  .at-dialog:is([data-side="center"], [data-side="end"], [data-side="start"]) .at-dialog-header {
+    padding-block-start: var(--at-card-pad);
+  }
+
+  .at-dialog[data-side="center"] {
+    --at-dlg-from: 0 var(--at-s-4);
+
+    inset: 0;
+    inline-size: min(var(--at-dlg-w), 100% - 2 * var(--at-gutter));
+    block-size: fit-content;
+    max-block-size: calc(100dvh - 2 * var(--at-s-8));
+    margin: auto;
+    padding: 0;
+    border-block-end: 1px solid var(--at-line);
+    border-radius: var(--at-r-2xl);
+  }
+
+  .at-dialog:is([data-side="end"], [data-side="start"]) {
+    --at-dlg-from: calc(var(--at-seg-dir) * 100%) 0;
+
+    inset-block: 0;
+    inset-inline: auto 0;
+    inline-size: min(var(--at-dlg-w), 100%);
+    block-size: 100dvh;
+    max-block-size: none;
+    padding: 0;
+    border: 0;
+    border-inline-start: 1px solid var(--at-line);
+    border-radius: 0;
+    border-start-start-radius: var(--at-r-2xl);
+    border-end-start-radius: var(--at-r-2xl);
+  }
+
+  .at-dialog[data-side="start"] {
+    --at-dlg-from: calc(var(--at-seg-dir) * -100%) 0;
+
+    inset-inline: 0 auto;
+    border-inline-start: 0;
+    border-inline-end: 1px solid var(--at-line);
+    border-radius: 0;
+    border-start-end-radius: var(--at-r-2xl);
+    border-end-end-radius: var(--at-r-2xl);
+  }
+
+  .at-island:has(.at-dialog[data-docked][open]) :is(.at-tabs, .at-len, .at-untilchips, .at-lpanel) {
     display: none;
   }
 
-  .at-docked[open] {
+  .at-dialog[data-docked] {
+    --at-dlg-from: 0 var(--at-s-2);
+
     position: static;
+    inline-size: auto;
+    max-inline-size: none;
     max-block-size: none;
     margin: 0;
-    padding: var(--at-card-pad);
-    border: 1px solid var(--at-line);
     border-radius: var(--at-r-lg);
     box-shadow: var(--at-elev);
-    animation: at-in 0.9s var(--at-ease) 0.08s both;
-  }
-
-  .at-float-sheet:not(.at-docked) {
-    inline-size: var(--at-tl-float);
-    max-inline-size: calc(100% - 2 * var(--at-gutter));
-    margin: auto;
-    padding: var(--at-s-8);
-    border: 1px solid var(--at-line-strong);
-    border-radius: var(--at-r-2xl);
-    box-shadow: var(--at-shadow-float);
-  }
-
-  .at-float-sheet:not(.at-docked)[open] {
-    animation: at-in 0.7s var(--at-ease) both;
   }
 
   .at-keys {
@@ -1791,21 +1740,11 @@ dialog.at-tsheet::before {
   .at-toasts {
     align-self: start;
   }
-
-  dialog.at-tsheet {
-    inline-size: var(--at-tl-sheet-lg);
-  }
 }
 
 @media (width < 768px) {
-  dialog.at-tsheet :is([data-open-share], [data-open-shortcuts]) {
+  .at-settings :is([data-open-share], [data-open-shortcuts]) {
     display: inline-flex;
-  }
-}
-
-@media (width >= 1600px) {
-  dialog.at-tsheet {
-    inline-size: var(--at-tl-sheet-xl);
   }
 }
 
@@ -1933,30 +1872,6 @@ dialog.at-tsheet::before {
 
 .at-island[data-ig] .at-ig-tip {
   animation: at-spark 0.8s var(--at-ease) 0.5s both;
-}
-
-@keyframes at-up {
-  from {
-    opacity: 0;
-    transform: translateY(72px);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@keyframes at-side {
-  from {
-    opacity: 0;
-    transform: translateX(calc(56px * var(--at-seg-dir, 1)));
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
 }
 
 @keyframes at-spark {

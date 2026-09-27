@@ -131,6 +131,7 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 - **Inline panels, not modals:** Until a time (4 half-hour slots with `today`/`tomorrow` sub-labels) and Custom (± 5 min stepper) replace the preset bar in place.
 - **Blocked card:** tinted bad 8% with 32% border, title + one-paragraph fix; actions become "Use video fallback" · "Try again".
 - **Settings sheet:** bottom sheet on phone, side sheet on desktop; sections Appearance (theme, lamp colour, clock face), Time (12/24 h, show seconds), Behaviour (existing settings from docs/05 §3.18).
+- **Dialogs, sheets and drawers** (one set: `components/ui/Dialog.astro`, `Sheet.astro`, `Drawer.astro`, native `<dialog>`, docs/05 §3.30): surface fill, 1 px line, `--at-shadow-float`, backdrop `--at-scrim`; header = 36 × 4 grab handle (phones), title 20/28 600, optional description (small, ink-2) and a labelled 44 × 44 Close at the end; body scrolls inside; footer holds the actions, primary last. Phones always get a bottom sheet in the thumb zone (r28 top corners, above the safe area and the keyboard). From 600: `Dialog` is a centred card (r28), `Sheet` a full-height side sheet (inner corners r28, 1 px line on the leading edge), a docked card (share, rating) sits in the tool dock and keeps the page live. Motion: slides up or in from its side while the backdrop fades, `--at-d-slide` in and `--at-d-slow` out, ease-out, no bounce, instant under reduced motion. One layer at a time; the page behind never scrolls. Still a last resort: inline panels come first.
 
 ## 7. Clock faces (user-switchable, remembered)
 
@@ -305,7 +306,7 @@ Where §11.5 gives a weight range (caption and small 400–500, ui 500–600), t
 - **Grid:** `grid-template-columns: repeat(auto-fit, minmax(min(100%, <n>px), 1fr))` for card lists and tiles, so columns follow the width without breakpoints.
 - **Two-column tool:** from 1024 the face column and the control column; the control column never goes below 400 px, and the face scales to the space left (see the 1024 board).
 - **Dock (phone):** status and content on top; length block, 20 px gap, actions at the bottom, 20 px from the bottom edge.
-- **Sheets and panels:** bottom sheet on phone, side sheet from 1024, inline panel otherwise; padding `--at-card-pad`, 20 px below the last button.
+- **Sheets and panels:** bottom sheet on phone; from 600 a side sheet, a centred dialog or a card docked in place (§6 dialogs, sheets and drawers); inline panel wherever a modal is not needed; padding `--at-card-pad`, 20 px below the last button.
 - **Text:** `max-inline-size: var(--at-measure)` for paragraphs; `text-wrap: balance` on headings, `pretty` on paragraphs; long words and URLs break (`overflow-wrap: anywhere`) and never push the page wider.
 
 ### 12.8 Gates

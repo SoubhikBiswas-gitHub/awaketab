@@ -1162,11 +1162,3 @@
     border: 1px solid CanvasText;
   }
 }
-
-dialog .at-sponsor {
-  margin-block-start: var(--at-s-3);
-}
-
-.at-lang-banner .at-fs-bar > p {
-  flex: 1;
-}
