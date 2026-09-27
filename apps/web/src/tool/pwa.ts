@@ -7,7 +7,7 @@ export function sessionBusy(status: string | undefined): boolean {
 }
 
 export function watchUpdates(
-  reg: Pick<ServiceWorkerRegistration, 'waiting' | 'installing' | 'addEventListener'>,
+  reg: Pick<ServiceWorkerRegistration, 'waiting' | 'installing' | 'active' | 'addEventListener'>,
   store: IStore,
   sessionStatus: () => string | undefined,
   sw: Pick<ServiceWorkerContainer, 'addEventListener'> = navigator.serviceWorker,
@@ -18,7 +18,8 @@ export function watchUpdates(
   let offered = false;
   let reloading = false;
   const offer = () => {
-    if (offered || !reg.waiting || sessionBusy(sessionStatus())) return;
+    // A first install also passes through waiting; only a worker replacing an active one is an update.
+    if (offered || !reg.waiting || !reg.active || sessionBusy(sessionStatus())) return;
     offered = true;
     pushToast(store, {
       kind: 'info',

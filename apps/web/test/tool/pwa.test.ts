@@ -5,6 +5,7 @@ import { createStore } from '../../src/tool/store.js';
 class FakeRegistration extends EventTarget {
   waiting: { postMessage: ReturnType<typeof vi.fn> } | null = { postMessage: vi.fn() };
   installing: EventTarget | null = null;
+  active: object | null = {};
 }
 
 function setup(initialStatus: string | undefined) {
@@ -111,6 +112,52 @@ describe('watchUpdates (FR-PWA-01)', () => {
     reg.dispatchEvent(new Event('updatefound'));
     installing.dispatchEvent(new Event('statechange'));
     expect(store.get().ui.toasts).toHaveLength(0);
+    reg.waiting = { postMessage: vi.fn() };
+    installing.dispatchEvent(new Event('statechange'));
+    expect(store.get().ui.toasts.map((x) => x.id)).toEqual(['sw']);
+    cleanup = off;
+  });
+
+  it('stays quiet on a first install, when no worker was active before', () => {
+    const reg = new FakeRegistration();
+    reg.waiting = null;
+    reg.active = null;
+    const store = createStore();
+    const off = watchUpdates(
+      reg as unknown as ServiceWorkerRegistration,
+      store,
+      () => 'inactive',
+      new EventTarget() as unknown as ServiceWorkerContainer,
+      vi.fn(),
+    );
+    const installing = new EventTarget();
+    reg.installing = installing;
+    reg.dispatchEvent(new Event('updatefound'));
+    reg.waiting = { postMessage: vi.fn() };
+    installing.dispatchEvent(new Event('statechange'));
+    expect(store.get().ui.toasts).toHaveLength(0);
+    reg.waiting = null;
+    reg.active = {};
+    installing.dispatchEvent(new Event('statechange'));
+    store.set({});
+    expect(store.get().ui.toasts).toHaveLength(0);
+    cleanup = off;
+  });
+
+  it('offers a new worker that replaces an active one', () => {
+    const reg = new FakeRegistration();
+    reg.waiting = null;
+    const store = createStore();
+    const off = watchUpdates(
+      reg as unknown as ServiceWorkerRegistration,
+      store,
+      () => 'inactive',
+      new EventTarget() as unknown as ServiceWorkerContainer,
+      vi.fn(),
+    );
+    const installing = new EventTarget();
+    reg.installing = installing;
+    reg.dispatchEvent(new Event('updatefound'));
     reg.waiting = { postMessage: vi.fn() };
     installing.dispatchEvent(new Event('statechange'));
     expect(store.get().ui.toasts.map((x) => x.id)).toEqual(['sw']);
