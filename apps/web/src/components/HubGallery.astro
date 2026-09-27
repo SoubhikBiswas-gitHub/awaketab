@@ -1,0 +1,253 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/content.css';
+import '../styles/hub.css';
+import '../styles/pick-gallery.css';
+import Button from './shell/Button.astro';
+import StatusPill from './shell/StatusPill.astro';
+import { t } from '../i18n/load';
+import { articleSchema, itemListSchema, type TSchemaNode } from '../lib/seo';
+import { HUBS, type IHubItem } from '../lib/hubs';
+
+interface Props {
+  kind: 'vs' | 'guides';
+}
+
+const { kind } = Astro.props;
+const hub = HUBS[kind];
+const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const ogImage = `/og/${kind}-en.png`;
+const canonical = `${site}/${kind}`;
+const title = t(`page.hub.${kind}.title`);
+const description = t(`page.hub.${kind}.description`);
+const h1 = t(`page.hub.${kind}.h1`);
+
+type TEntry = Awaited<ReturnType<typeof getCollection<'vs' | 'guides'>>>[number];
+const entries = new Map<string, TEntry>();
+for (const entry of await getCollection(kind)) {
+  if (entry.data.locale === 'en') entries.set(entry.id.replace(/^en\//u, ''), entry);
+}
+
+const ICON = {
+  tab: 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM3 9h18',
+  code: 'M9 7l-5 5 5 5M15 7l5 5-5 5',
+  laptop: 'M6 5h12a1 1 0 0 1 1 1v9H5V6a1 1 0 0 1 1-1zM3 18h18',
+  terminal: 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM7 10l3 2.5L7 15M13 15h4',
+  monitor: 'M4 4h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zM9 20h6M12 16v4',
+  mouse: 'M12 3a6 6 0 0 1 6 6v6a6 6 0 0 1-12 0V9a6 6 0 0 1 6-6zM12 7v3',
+  phone: 'M8 2.5h8A1.5 1.5 0 0 1 17.5 4v16a1.5 1.5 0 0 1-1.5 1.5H8A1.5 1.5 0 0 1 6.5 20V4A1.5 1.5 0 0 1 8 2.5zM11 18.5h2',
+} as const;
+const ICON_OF: Record<string, keyof typeof ICON> = {
+  'nosleep-page': 'tab',
+  'nosleep-js': 'code',
+  amphetamine: 'laptop',
+  caffeine: 'laptop',
+  'caffeinate-command': 'terminal',
+  'powertoys-awake': 'monitor',
+  'mouse-jigglers': 'mouse',
+  'iphone-auto-lock-never-greyed-out': 'phone',
+  'android-screen-timeout-one-app': 'phone',
+  'windows-11-screen-turns-off-after-1-minute': 'monitor',
+  'lock-screen-vs-sleep': 'monitor',
+  'mac-prevent-sleep-lid-closed': 'laptop',
+  'chrome-energy-saver': 'tab',
+  'second-monitor-turns-off': 'monitor',
+};
+const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
+
+interface ICard {
+  href: string;
+  name: string;
+  title: string;
+  icon: string;
+  tags: readonly string[];
+  fix: string;
+  pick: string | undefined;
+  instead: { who: string; when: string } | undefined;
+  k: number;
+}
+
+let k = 0;
+const toCard = (item: IHubItem): ICard | null => {
+  const entry = entries.get(item.slug);
+  if (!entry) return null;
+  const d = entry.data;
+  const us = d.compare?.cols.find((col) => col.us)?.name ?? 'AwakeTab';
+  const pick = d.picks?.them?.[0]?.title;
+  const insteadWhen = d.picks?.us?.[0]?.title;
+  k += 1;
+  return {
+    href: `/${kind}/${item.slug}`,
+    name: d.crumb ?? d.h1,
+    title: d.h1,
+    icon: ICON[ICON_OF[item.slug] ?? (kind === 'vs' ? 'tab' : 'monitor')],
+    tags: (item.meta ?? []).filter(Boolean),
+    fix: d.description,
+    pick: pick ?? item.line,
+    instead: insteadWhen ? { who: us, when: insteadWhen } : undefined,
+    k: Math.min(k - 1, 7),
+  };
+};
+
+const listed = new Set(hub.groups.flatMap((g) => g.items.map((i) => i.slug)));
+const unlisted = [...entries.keys()].filter((slug) => !listed.has(slug)).sort();
+const groups = hub.groups
+  .map((group, gi) => {
+    const items: IHubItem[] = [
+      ...group.items,
+      ...(gi === hub.groups.length - 1 ? unlisted.map((slug) => ({ slug })) : []),
+    ];
+    return { ...group, cards: items.map(toCard).filter((card): card is ICard => card !== null) };
+  })
+  .filter((group) => group.cards.length > 0);
+
+const base = articleSchema({
+  canonical,
+  title: h1,
+  description,
+  locale: 'en',
+  image: `${site}${ogImage}`,
+  published: '2026-09-09',
+  breadcrumbs: [
+    { name: 'AwakeTab', url: site },
+    { name: hub.crumb, url: canonical },
+  ],
+});
+const schema = {
+  ...base,
+  '@graph': [
+    ...(base['@graph'] as TSchemaNode[]),
+    itemListSchema(
+      h1,
+      groups.flatMap((group) => group.cards.map((card) => ({ name: card.title, url: `${site}${card.href}` }))),
+    ),
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} ogImage={ogImage} schema={schema}>
+  <main class="at-cp at-hub" data-gallery={kind}>
+    <div class="at-hub-intro">
+      <nav class="at-crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">{t('app.name')}</a></li>
+          <li aria-current="page">
+            <span class="at-crumb-sep" data-slot="breadcrumb-separator" aria-hidden="true">
+              <svg viewBox="0 0 16 16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
+            </span>
+            <span>{hub.crumb}</span>
+          </li>
+        </ol>
+      </nav>
+      <h1 class="at-h1-page">{h1}</h1>
+      <div class="at-pick-intro">
+        <p class="at-lead">{hub.lead}</p>
+        {hub.note && <p class="at-hub-note">{hub.note}</p>}
+        <slot />
+      </div>
+
+      <section class="at-try" aria-label="Try it now">
+        <div class="at-try-top">
+          <StatusPill as="span" state="idle" label={t('tool.pill.idle')} />
+          <span class="at-try-digits" aria-hidden="true">00<span>:00</span></span>
+        </div>
+        <Button variant="primary" href="/?preset=pinf&autostart=1" class="at-try-cta" aria-label="Keep awake until I stop">
+          Keep awake · ∞
+        </Button>
+        <p class="at-try-note">
+          Opens the tool and keeps the screen awake until you stop. Keep that tab visible and watch its pill: a hidden tab
+          releases the wake lock, and Safari needs a tap before it grants one.
+        </p>
+        <a class="at-try-link" href="/">Open the full tool <span aria-hidden="true">→</span></a>
+      </section>
+
+      <nav class="at-jump" aria-label={hub.jumpAria} data-spy style={`--at-n: ${String(groups.length)}; --at-i: 0`}>
+        <span class="at-jump-ind" aria-hidden="true"></span>
+        {
+          groups.map((group, i) => (
+            <a href={`#${group.id}`} aria-current={i === 0 ? 'location' : undefined}>
+              {group.short}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+
+    <div class="at-hub-groups">
+      {
+        groups.map((group) => (
+          <section id={group.id} class="at-hub-group" aria-labelledby={`${group.id}-h`}>
+            <div class="at-hub-group-head">
+              <div>
+                <h2 id={`${group.id}-h`}>{group.title}</h2>
+                <span class="at-hub-count">
+                  {group.cards.length} {hub.unit[group.cards.length === 1 ? 0 : 1]}
+                </span>
+              </div>
+              <p>{group.line}</p>
+            </div>
+            <ul class="at-pick" role="list">
+              {group.cards.map((card) => (
+                <li class="at-pick-card" style={`--at-k: ${String(card.k)}`}>
+                  <h3 class="at-pick-title">
+                    {kind === 'vs' ? (
+                      <a href={card.href} aria-label={card.title}>
+                        {card.name}
+                      </a>
+                    ) : (
+                      <a href={card.href}>{card.title}</a>
+                    )}
+                  </h3>
+                  {card.tags.length > 0 && (
+                    <ul class="at-pick-tags" role="list">
+                      {card.tags.map((tag, i) => (
+                        <li class="at-tag">
+                          {i === 0 && (
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                              <path d={card.icon} />
+                            </svg>
+                          )}
+                          {tag}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {kind === 'vs' ? (
+                    <dl class="at-pick-picks">
+                      {card.pick && (
+                        <div>
+                          <dt>{t('page.hub.vs.pick')}</dt>
+                          <dd>{card.pick}</dd>
+                        </div>
+                      )}
+                      {card.instead && (
+                        <div class="at-pick-us">
+                          <dt>{t('page.hub.vs.instead', { name: card.instead.who })}</dt>
+                          <dd>{card.instead.when}</dd>
+                        </div>
+                      )}
+                    </dl>
+                  ) : (
+                    <p class="at-pick-fix">{card.fix}</p>
+                  )}
+                  <span class="at-pick-more" aria-hidden="true">
+                    {t(`page.hub.${kind}.more`)}
+                    <svg class="at-go" viewBox="0 0 24 24" focusable="false">
+                      <path d={ICON_ARROW} />
+                    </svg>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </main>
+  <script>
+    import { initContentNav } from '../lib/content-nav';
+
+    initContentNav();
+  </script>
+</BaseLayout>
