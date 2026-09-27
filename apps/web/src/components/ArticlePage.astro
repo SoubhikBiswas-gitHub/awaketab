@@ -16,7 +16,9 @@ import {
   type TArticlePart,
   type TBlockName,
 } from '../lib/article';
-import { articleCss } from '../lib/article-css';
+import { articleCss, minifyCss } from '../lib/article-css';
+import tableSheet from '../styles/article/table.css?raw';
+import { HUBS } from '../lib/hubs';
 import {
   contentIndex,
   pageAlternates,
@@ -70,7 +72,7 @@ const canonical = `${site}${path}`;
 const indexable = pageIndexable({ locale, reviewed: data.reviewed, noindex: data.noindex });
 const alternates = indexable ? pageAlternates(index, kind, enSlug, locale, site) : undefined;
 const translations = pageTranslations(index, kind, enSlug);
-const hubH1 = t(`page.hub.${kind}.h1`);
+const hubCrumb = HUBS[kind].crumb;
 // Locale homes are the one page URL with a trailing slash, `/es/` (`es/index.html`, docs/14 §2.1).
 const homeHref = english ? '/' : `/${locale}/`;
 const published = data.published.toISOString().slice(0, 10);
@@ -99,7 +101,7 @@ const crumbLabel = data.crumb ?? data.h1;
 const breadcrumbs = english
   ? [
       { name: 'AwakeTab', url: site },
-      { name: hubH1, url: `${site}/${kind}` },
+      { name: hubCrumb, url: `${site}/${kind}` },
       { name: crumbLabel, url: canonical },
     ]
   : [
@@ -108,7 +110,7 @@ const breadcrumbs = english
     ];
 const crumbs: Array<{ href?: string; label: string }> = [
   { href: homeHref, label: t('app.name') },
-  ...(english ? [{ href: `/${kind}`, label: hubH1 }] : []),
+  ...(english ? [{ href: `/${kind}`, label: hubCrumb }] : []),
   { label: crumbLabel },
 ];
 
@@ -171,6 +173,12 @@ const blockCss = articleCss(
   placedBlocks(parts).map((b) => b.split(' ')[0] as TBlockName),
   data.steps ? stepVariant : null,
 );
+// Markdown tables (lib/article.ts) bring their own sheet, so pages without one do not pay for it.
+const tableCss = parts.some(
+  (part) => part.kind === 'section' && part.parts.some((p) => p.kind === 'html' && p.html.includes('class="at-table"')),
+)
+  ? minifyCss(tableSheet)
+  : '';
 
 // "On this page": the page's own sections and template sections in page order.
 const sectionToc = (
@@ -213,6 +221,7 @@ const author = 'Soubhik Biswas';
 const ICON_CHECK = 'M8 12.5l2.7 2.7L16.5 9.5';
 const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
 const ICON_TICK = 'M5 12.5l4.5 4.5L19 7.5';
+const ICON_TRANSLATE = 'M4 5h8M8 3v2M5.5 5c.8 3 3 5.5 6 7M10.5 5c-.6 3.4-2.8 6.2-6.5 8M12.5 20l4-9 4 9M13.8 17h5.4';
 const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
 ---
 
@@ -241,6 +250,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
   })}
 >
   {blockCss && <style is:inline slot="styles" set:html={blockCss} />}
+  {tableCss && <style is:inline slot="styles" set:html={tableCss} />}
 
   {
     tracked && data.steps ? (
@@ -254,7 +264,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
           <span class="at-kicker" aria-hidden="true">
             {t('content.progress')}
           </span>
-          <span class="at-bar" aria-hidden="true">
+          <span class="at-progress" aria-hidden="true">
             <span data-bar />
           </span>
           <span
@@ -350,18 +360,16 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
     <nav class="at-crumbs" aria-label={english ? 'Breadcrumb' : t('content.breadcrumb')}>
       <ol>
         {
-          crumbs.map((crumb, i) =>
-            crumb.href ? (
-              <li>
-                <a href={crumb.href}>{crumb.label}</a>
+          crumbs.map((crumb, i) => (
+            <li aria-current={crumb.href ? undefined : 'page'} data-crumb={i}>
+              {i > 0 && (
                 <span class="at-crumb-sep" data-slot="breadcrumb-separator" aria-hidden="true">
                   <svg viewBox="0 0 16 16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
                 </span>
-              </li>
-            ) : (
-              <li aria-current="page" data-crumb={i}>{crumb.label}</li>
-            ),
-          )
+              )}
+              {crumb.href ? <a href={crumb.href}>{crumb.label}</a> : <span>{crumb.label}</span>}
+            </li>
+          ))
         }
       </ol>
     </nav>
@@ -390,14 +398,17 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
       }
       {
         !english && !data.reviewed && (
-          <span class="at-meta-pending" data-translation-pending>
-            {t('content.translation.pending')}
-            {englishHref && (
-              <a href={englishHref} hreflang="en" lang="en">
-                {t('content.translation.original')}
-              </a>
-            )}
-          </span>
+          <p class="at-meta-pending" role="note" data-translation-pending>
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ICON_TRANSLATE} /></svg>
+            <span>
+              {t('content.translation.pending')}{' '}
+              {englishHref && (
+                <a href={englishHref} hreflang="en">
+                  {t('content.translation.original')}
+                </a>
+              )}
+            </span>
+          </p>
         )
       }
       <span class="at-meta-by">{t('content.byline', { name: author })}</span>
@@ -487,14 +498,14 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
           data.faq.map((item, i) => (
             <details open={i === 0}>
               <summary>
-                <span>{item.q}</span>
+                <h3 class="at-faq-q">{item.q}</h3>
                 <span class="at-faq-icon" aria-hidden="true">
                   <span>
                     <svg viewBox="0 0 24 24" focusable="false"><path d="M12 5v14M5 12h14" /></svg>
                   </span>
                 </span>
               </summary>
-              <p>{item.a}</p>
+              <p set:html={inline(item.a)} />
             </details>
           ))
         }
@@ -507,13 +518,15 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
       variant === 'guide' && (
         <nav class="at-related-links" aria-labelledby="h-related">
           <h2 id="h-related">{t('content.related')}</h2>
-          <a class="at-start-pill" href={startHref}>
-            <svg class="at-button-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-              <path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
-              <circle cx="24" cy="9" r="4.6" fill="currentColor" />
-            </svg>
-            {startLabel}
-          </a>
+          {kind !== 'learn' && (
+            <a class="at-start-pill" href={startHref}>
+              <svg class="at-button-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+                <circle cx="24" cy="9" r="4.6" fill="currentColor" />
+              </svg>
+              {startLabel}
+            </a>
+          )}
           <div>
             {related.map((link) => (
               <a href={link.href} hreflang={link.lang} lang={link.lang}>

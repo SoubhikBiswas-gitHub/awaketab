@@ -77,7 +77,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
     published: '2026-09-09',
     breadcrumbs: [
       { name: 'AwakeTab', url: site },
-      { name: h1, url: canonical },
+      { name: hub.crumb, url: canonical },
     ],
   })}
 >
@@ -85,13 +85,13 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
     <div class="at-hub-intro">
       <nav class="at-crumbs" aria-label="Breadcrumb">
         <ol>
-          <li>
-            <a href="/">{t('app.name')}</a>
+          <li><a href="/">{t('app.name')}</a></li>
+          <li aria-current="page">
             <span class="at-crumb-sep" data-slot="breadcrumb-separator" aria-hidden="true">
               <svg viewBox="0 0 16 16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
             </span>
+            <span>{hub.crumb}</span>
           </li>
-          <li aria-current="page">{h1}</li>
         </ol>
       </nav>
       <h1 class="at-h1-page">{h1}</h1>
@@ -100,15 +100,15 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
 
       <section class="at-try" aria-label="Try it now">
         <div class="at-try-top">
-          <StatusPill state="idle" label={t('tool.pill.idle')} />
+          <StatusPill as="span" state="idle" label={t('tool.pill.idle')} />
           <span class="at-try-digits" aria-hidden="true">00<span>:00</span></span>
         </div>
         <Button variant="primary" href="/?preset=pinf&autostart=1" class="at-try-cta" aria-label="Keep awake until I stop">
           Keep awake · ∞
         </Button>
         <p class="at-try-note">
-          Keep this tab visible and watch the pill. A hidden tab releases the wake lock, and Safari needs a tap before it
-          grants one; the pill changes immediately when that happens.
+          Opens the tool and keeps the screen awake until you stop. Keep that tab visible and watch its pill: a hidden tab
+          releases the wake lock, and Safari needs a tap before it grants one.
         </p>
         <a class="at-try-link" href="/">Open the full tool <span aria-hidden="true">→</span></a>
       </section>

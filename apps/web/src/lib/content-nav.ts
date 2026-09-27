@@ -1,5 +1,5 @@
 function spy(nav: HTMLElement): void {
-  const links = [...nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
+  const links = [...nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]:not([data-tool-mirror])')];
   const targets = links.map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))));
   const mark = (index: number): void => {
     links.forEach((a, i) => {
@@ -8,24 +8,45 @@ function spy(nav: HTMLElement): void {
     });
     nav.style.setProperty('--at-i', String(index));
   };
+  // A rail click keeps its item current until the reader scrolls by hand: the last sections cannot reach the top.
+  let pinned = -1;
   links.forEach((a, i) => {
     a.addEventListener('click', () => {
+      pinned = i;
       mark(i);
     });
   });
-  const visible = new Set<Element>();
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) visible.add(entry.target);
-        else visible.delete(entry.target);
-      }
-      const index = targets.findIndex((t) => t !== null && visible.has(t));
-      if (index >= 0) mark(index);
+  for (const type of ['wheel', 'touchmove', 'keydown'])
+    addEventListener(
+      type,
+      () => {
+        pinned = -1;
+      },
+      { passive: true },
+    );
+  let queued = false;
+  const update = (): void => {
+    queued = false;
+    if (pinned >= 0) return;
+    const line = innerHeight * 0.4;
+    const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 2;
+    let index = 0;
+    targets.forEach((t, i) => {
+      const top = t?.getBoundingClientRect().top;
+      if (top !== undefined && top <= (atEnd ? innerHeight - 1 : line)) index = i;
+    });
+    mark(index);
+  };
+  addEventListener(
+    'scroll',
+    () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
     },
-    { rootMargin: '0px 0px -60% 0px' },
+    { passive: true },
   );
-  for (const target of targets) if (target) io.observe(target);
+  update();
 }
 
 function mirror(card: HTMLElement): void {

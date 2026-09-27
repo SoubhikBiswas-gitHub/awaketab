@@ -1,0 +1,83 @@
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-cp {
+    --at-ad-w: 300px;
+    --at-ad-h: 250px;
+    --at-rail-w: 320px;
+    --at-rail-h: 50px;
+  }
+
+  .at-ad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--at-s-2);
+    min-inline-size: 0;
+  }
+
+  .at-ad-label {
+    color: var(--at-muted);
+    font: var(--at-type-kicker);
+    letter-spacing: var(--at-trk-k, 0.14em);
+    text-transform: uppercase;
+  }
+
+  .at-ad-box {
+    display: grid;
+    place-items: center;
+    inline-size: var(--at-ad-w);
+    max-inline-size: 100%;
+    block-size: var(--at-ad-h);
+    overflow: hidden;
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-md);
+    background: var(--at-hatch), color-mix(in srgb, var(--at-surface) 58%, transparent);
+  }
+
+  .at-ad-box:empty::after {
+    content: attr(data-size-sm);
+    color: var(--at-muted);
+    font: var(--at-type-caption);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .at-ad-rail {
+    grid-area: auto;
+  }
+
+  .at-ad-rail .at-ad-box {
+    inline-size: var(--at-rail-w);
+    block-size: var(--at-rail-h);
+  }
+
+  @media (width >= 600px) {
+    .at-cp {
+      --at-ad-w: 336px;
+      --at-ad-h: 280px;
+    }
+
+    .at-ad-inline .at-ad-box:empty::after {
+      content: attr(data-size);
+    }
+  }
+
+  @media (width >= 1024px) {
+    .at-cp {
+      --at-rail-w: 160px;
+      --at-rail-h: 600px;
+    }
+
+    .at-ad-rail .at-ad-box:empty::after {
+      content: attr(data-size);
+    }
+
+    .at-ad-rail {
+      position: sticky;
+      inset-block-start: var(--at-s-6);
+      grid-area: rail;
+      align-items: flex-start;
+      align-self: start;
+    }
+  }
+}

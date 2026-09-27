@@ -103,7 +103,7 @@ const ICON_TICK = 'M5 12.5l4.5 4.5L19 7.5';
                   </svg>
                 </a>
               </div>
-              <span class="at-kicker at-next" hidden>
+              <span class="at-kicker at-next" hidden={i !== 0}>
                 {t('content.nextUp')}
               </span>
               {step.path && <span class="at-path">{step.path}</span>}

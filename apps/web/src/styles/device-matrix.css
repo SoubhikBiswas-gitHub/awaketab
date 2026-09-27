@@ -14,14 +14,19 @@
     margin: 0;
     color: var(--at-ink);
     font: var(--at-type-h2);
-    letter-spacing: -0.02em;
+    letter-spacing: var(--at-trk-2, -0.01em);
+  }
+
+  .at-dm .at-note .at-kicker {
+    color: var(--at-muted);
+    font: var(--at-type-kicker);
   }
 
   .at-dm ol {
     margin: 0;
     padding-inline-start: var(--at-s-6);
     color: var(--at-ink-2);
-    font: var(--at-type-small);
+    font: var(--at-type-body);
     list-style: decimal;
   }
 
@@ -54,7 +59,7 @@
     background: var(--at-sunken);
     color: var(--at-muted);
     font: var(--at-type-kicker);
-    letter-spacing: 0.14em;
+    letter-spacing: var(--at-trk-k, 0.14em);
     text-align: start;
     text-transform: uppercase;
   }

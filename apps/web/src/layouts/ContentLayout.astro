@@ -6,6 +6,8 @@ import AdSlot from '../components/AdSlot.astro';
 import type { TLocale } from '../i18n/locales';
 import type { TSchemaNode } from '../lib/seo';
 import { shouldRenderAdSlots } from '../lib/ads';
+import { minifyCss } from '../lib/article-css';
+import adSheet from '../styles/article/ads.css?raw';
 
 interface Props {
   title: string;
@@ -56,11 +58,12 @@ const showAds = shouldRenderAdSlots();
   contentPage
 >
   <slot name="styles" slot="head" />
+  {showAds && <style is:inline slot="head" set:html={minifyCss(adSheet)} />}
   <main class="at-cp">
     <article class="at-art" data-tool-at={toolAt} data-variant={variant}>
-      <slot name="toc" />
       <div class="at-head"><slot name="head" /></div>
       {toolAt === 'top' && <slot name="tool" />}
+      <slot name="toc" />
       <div class="at-body">
         <div class="at-prose">
           <slot name="intro" />

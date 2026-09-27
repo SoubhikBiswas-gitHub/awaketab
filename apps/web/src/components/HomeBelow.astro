@@ -1,9 +1,17 @@
 ---
 import { getCollection } from 'astro:content';
 import StatusPill from './shell/StatusPill.astro';
-import { t } from '../i18n/load';
+import { createT, t } from '../i18n/load';
+import { LOCALE_META, type TLocale } from '../i18n/locales';
 import matrix from '../data/support-matrix.json';
-import { CONTENT_KINDS, type TContentKind } from '../lib/content-i18n';
+import { CONTENT_KINDS, contentIndex, pagePath, type TContentKind } from '../lib/content-i18n';
+import type { ILocaleHomeCopy } from '../content/locale-home/types';
+
+interface Props {
+  locale?: TLocale;
+  copy?: ILocaleHomeCopy | undefined;
+}
+const { locale = 'en', copy } = Astro.props;
 
 type TLock = 'idle' | 'requesting' | 'held' | 'lost' | 'denied' | 'unsupported' | 'fallback';
 
@@ -62,10 +70,109 @@ const FAQ: Array<[string, string]> = [
   ['Is it free, and what happens to my data?', 'Free, no sign-up. Settings, session and stats stay in this browser, with no cookies and no fingerprinting. The optional first-party beacon sends no identifiers and can be turned off. No ads on the awake screen, now or later.'],
 ];
 const ARROW = 'M5 12h13M13 6l6 6-6 6';
+
+// Locale homes (HomeBelow board): only the sections this locale has translated copy for, never English filler.
+const tl = createT(locale);
+const sentence = (text: string): [string, string] => {
+  const m = /^(.+?[.。।!?！？])\s*([\s\S]*)$/u.exec(text);
+  return m ? [m[1] ?? text, m[2] ?? ''] : [text, ''];
+};
+const index = copy ? await contentIndex() : [];
+const localGroups = CONTENT_KINDS.map((kind) => ({
+  kind,
+  title: tl(`page.hub.${kind}.h1`),
+  links: index
+    .filter((page) => page.kind === kind && page.locale === locale)
+    .map((page) => ({ href: pagePath(kind, page.enSlug, locale), label: page.h1 })),
+})).filter((group) => group.links.length > 0);
+const localVerified = new Intl.DateTimeFormat(LOCALE_META[locale].htmlLang, { dateStyle: 'long', timeZone: 'UTC', numberingSystem: 'latn' }).format(
+  new Date(`${matrix.lastUpdated}T00:00:00Z`),
+);
 const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
 const RINGDOT = 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z';
 ---
 
+{copy ? (
+<div class="at-hb">
+  <div class="at-hb-band">
+    <span class="at-hb-line" aria-hidden="true"></span>
+    <a class="at-hb-jump" href="#home-what">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M6 13l6 6 6-6"></path></svg>
+      {tl('page.home.how.title')} · {tl('page.home.limits.title')}
+    </a>
+  </div>
+  <div class="at-prose">
+    <section id="home-what" class="at-hb-sec" aria-labelledby="h-what">
+      <h2 id="h-what">{tl('page.home.what.title')}</h2>
+      <div class="at-hb-stack at-hb-measure">
+        {copy.whatItDoes.map((text) => <p>{text}</p>)}
+      </div>
+    </section>
+
+    <section id="home-how" class="at-hb-sec" aria-labelledby="h-how">
+      <h2 id="h-how">{tl('page.home.how.title')}</h2>
+      <div class="at-hb-how">
+        <ol class="at-hb-steps">
+          {copy.howItWorks.map((text, i) => (
+            <li>
+              <span class="at-hb-num" aria-hidden="true">{i + 1}</span>
+              <span class="at-hb-step">
+                <strong>{sentence(text)[0]}</strong>
+                <span>{sentence(text)[1]}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+        <ul class="at-hb-states">
+          {STATES.map(([state]) => (
+            <li>
+              <StatusPill as="span" size="S" state={state} label={tl(`tool.pill.${state}`)} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section id="home-limits" class="at-hb-sec" aria-labelledby="h-limits">
+      <h2 id="h-limits">{tl('page.home.limits.title')}</h2>
+      <ul class="at-hb-limits">
+        {copy.honestLimits.map((text) => (
+          <li>
+            <strong>{sentence(text)[0]}</strong>{' '}
+            <span>{sentence(text)[1]}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section id="home-guides" class="at-hb-sec" aria-labelledby="h-guides">
+      <h2 id="h-guides">{tl('content.related')}</h2>
+      <div class="at-hb-stack">
+        <div class="at-hb-pair">
+          {localGroups.map((group) => (
+            <div class="at-hb-col">
+              <h3>{group.title}</h3>
+              <ul class="at-hb-rows">
+                {group.links.map((l) => <li><a href={l.href}><span>{l.label}</span><svg class="at-hb-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ARROW} /></svg></a></li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div class="at-hb-card">
+          <div class="at-hb-who">
+            <span class="at-hb-avatar" aria-hidden="true">SB</span>
+            <span>
+              <span class="at-hb-name">Soubhik Biswas</span>
+              <span class="at-hb-small">{tl('content.author.role')} {tl('content.verified', { date: localVerified })}.</span>
+            </span>
+          </div>
+          <a class="at-hb-link" href="/about" hreflang="en">{tl('content.author.about')}</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+) : (
 <div class="at-hb">
   <div class="at-hb-band">
     <span class="at-hb-line" aria-hidden="true"></span>
@@ -354,6 +461,7 @@ const RINGDOT = 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 
     </section>
   </div>
 </div>
+)}
 
 <style>
   .at-hb {
@@ -551,7 +659,7 @@ const RINGDOT = 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 
     list-style: none;
   }
 
-  .at-hb-states > div {
+  .at-hb-states > * {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -907,7 +1015,7 @@ const RINGDOT = 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 
       gap: var(--at-s-10);
     }
 
-    .at-hb-states > div,
+    .at-hb-states > *,
     .at-hb-limits > li {
       padding-block: var(--at-s-4);
     }

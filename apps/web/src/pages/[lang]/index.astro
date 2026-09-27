@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ToolIsland from '../../components/ToolIsland.astro';
+import HomeBelow from '../../components/HomeBelow.astro';
 import '../../styles/tool-full.css';
 import { createT } from '../../i18n/load';
 import { LOCALE_META, isLocale, type TLocale } from '../../i18n/locales';
@@ -44,17 +45,7 @@ const COPY: Record<Exclude<TLocale, 'en'>, ILocaleHomeCopy> = {
 };
 const copy = COPY[locale];
 
-const pillKeys = [
-  'tool.pill.idle',
-  'tool.pill.requesting',
-  'tool.pill.held',
-  'tool.pill.lost',
-  'tool.pill.denied',
-  'tool.pill.unsupported',
-  'tool.pill.fallback',
-] as const;
-
-const card = 'rounded-xl border bg-card text-card-foreground shadow-sm';
+const ICON_TRANSLATE = 'M4 5h8M8 3v2M5.5 5c.8 3 3 5.5 6 7M10.5 5c-.6 3.4-2.8 6.2-6.5 8M12.5 20l4-9 4 9M13.8 17h5.4';
 ---
 
 <BaseLayout
@@ -68,35 +59,78 @@ const card = 'rounded-xl border bg-card text-card-foreground shadow-sm';
   header={false}
 >
   <ToolIsland heading={t('page.home.h1')} locale={locale}>
-    <div class="at-prose">
-      <section class="at-section" aria-labelledby="answer-title">
-        <h2 id="answer-title">{t('page.home.what.title')}</h2>
-        <p>{copy.whatItDoes[0]}</p>
-        <p>{copy.whatItDoes[1]}</p>
-      </section>
-
-      <section class="at-section" aria-labelledby="how-title">
-        <h2 id="how-title">{t('page.home.how.title')}</h2>
-        <ol>
-          {copy.howItWorks.map((step) => <li>{step}</li>)}
-        </ol>
-        <ul class:list={['m-0 grid list-none gap-2 p-0 sm:grid-cols-2', 'mt-4']}>
-          {
-            pillKeys.map((key) => (
-              <li class:list={['px-3 py-2 text-sm font-medium', card]}>{t(key)}</li>
-            ))
-          }
-        </ul>
-      </section>
-
-      <section class="at-section" aria-labelledby="limits-title">
-        <h2 id="limits-title">{t('page.home.limits.title')}</h2>
-        <aside class="at-limit">
-          <ul>
-            {copy.honestLimits.map((point) => <li>{point}</li>)}
-          </ul>
-        </aside>
-      </section>
-    </div>
+    {
+      !meta.reviewed && (
+        <p class="at-hb-note" role="note" data-translation-pending>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ICON_TRANSLATE} /></svg>
+          <span>
+            {t('content.translation.pending')} <a href="/" hreflang="en">{t('content.translation.original')}</a>
+          </span>
+        </p>
+      )
+    }
+    <HomeBelow locale={locale} copy={copy} />
   </ToolIsland>
 </BaseLayout>
+
+<style>
+  :global(.at-hb .at-hb-how .at-hb-states) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--at-s-2);
+    border: 0;
+  }
+
+  :global(.at-hb .at-hb-how .at-hb-states .at-pill) {
+    max-inline-size: 100%;
+    padding-block: var(--at-s-1);
+    border-radius: var(--at-r-lg);
+    white-space: normal;
+    text-wrap: balance;
+  }
+
+  :global(.at-hb .at-hb-how .at-hb-states > li) {
+    padding: 0;
+    border: 0;
+  }
+
+  @media (width >= 1024px) {
+    :global(.at-hb .at-hb-how .at-hb-steps) {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--at-s-5);
+    }
+  }
+
+  .at-hb-note {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--at-s-2);
+    margin: 0;
+    padding-block: var(--at-s-2);
+    padding-inline: var(--at-s-3);
+    border: var(--at-border) solid var(--at-line-strong);
+    border-radius: var(--at-r-lg);
+    color: var(--at-ink-2);
+    font: var(--at-type-small);
+  }
+
+  .at-hb-note svg {
+    flex-shrink: 0;
+    inline-size: var(--at-icon-sm);
+    block-size: var(--at-icon-sm);
+    margin-block-start: calc(var(--at-s-1) / 2);
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .at-hb-note a {
+    padding-block: var(--at-s-3);
+    color: var(--at-accent-text);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

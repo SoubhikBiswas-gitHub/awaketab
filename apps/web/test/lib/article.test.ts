@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { inline, placedBlocks, plain, splitArticle, tokenize } from '../../src/lib/article';
+import { breakCode, inline, placedBlocks, plain, splitArticle, tables, tokenize } from '../../src/lib/article';
 
 // docs/06 §22: a Markdown body places structured blocks on lines of their own (`::name` or `::name key`), which
 // Astro renders as a paragraph each.
@@ -117,5 +117,40 @@ describe('code block tokens (GuideLearn highlighter)', () => {
       'tag',
       'tag',
     ]);
+  });
+});
+
+describe('tables', () => {
+  const md =
+    '<table><thead><tr><th>Browser</th><th>From</th></tr></thead><tbody><tr><td>Chrome</td><td><code>84</code></td></tr></tbody></table>';
+
+  it('wraps a table in a focusable scroll region named by its columns (WCAG 2.1.1)', () => {
+    expect(tables(md)).toMatch(
+      /^<div class="at-table" role="region" tabindex="0" aria-label="Browser, From"><table role="table">/u,
+    );
+  });
+
+  it('labels each cell with its column so a phone can stack the row', () => {
+    const html = tables(md);
+    expect(html).toContain('<td role="cell" data-label="Browser"><span>Chrome</span></td>');
+    expect(html).toContain('<td role="cell" data-label="From"><span><code>84</code></span></td>');
+    expect(html).toContain('<th role="columnheader">Browser</th>');
+    expect(html.match(/role="row"/gu)).toHaveLength(2);
+  });
+
+  it('is applied to the Markdown sections splitArticle returns', () => {
+    const [section] = splitArticle(`<h2 id="s">S</h2>${md}`);
+    const first = section?.kind === 'section' ? section.parts[0] : undefined;
+    expect(first?.kind === 'html' && first.html).toContain('class="at-table"');
+  });
+});
+
+describe('breakCode', () => {
+  it('lets inline code break after a dot only', () => {
+    expect(breakCode('<code>navigator.wakeLock.request()</code>')).toBe(
+      '<code>navigator.<wbr>wakeLock.<wbr>request()</code>',
+    );
+    expect(inline('`a.b`')).toBe('<code>a.<wbr>b</code>');
+    expect(breakCode('<pre><code><span>a.b</span></code></pre>')).toBe('<pre><code><span>a.b</span></code></pre>');
   });
 });

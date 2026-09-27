@@ -1,0 +1,91 @@
+/* stylelint-disable no-descending-specificity */
+@layer properties, theme, base, components, utilities, content;
+
+@layer content {
+  .at-table {
+    overflow-x: auto;
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-lg);
+    background: var(--at-surface);
+  }
+
+  .at-table:lang(ja) {
+    word-break: auto-phrase;
+  }
+
+  .at-cp .at-md table {
+    inline-size: 100%;
+    border-collapse: collapse;
+  }
+
+  .at-cp .at-md thead th {
+    background: var(--at-sunken);
+    color: var(--at-muted);
+    font: var(--at-type-kicker);
+    letter-spacing: var(--at-trk-k, 0.14em);
+    text-transform: uppercase;
+  }
+
+  .at-cp .at-md :is(th, td) {
+    padding-block: var(--at-s-3);
+    padding-inline: var(--at-s-4);
+    border-block-end: var(--at-border) solid var(--at-line);
+    font: var(--at-type-ui);
+    font-weight: 400;
+    text-align: start;
+    vertical-align: top;
+  }
+
+  .at-cp .at-md tbody th,
+  .at-cp .at-md td:first-child {
+    color: var(--at-ink);
+    font-weight: 600;
+  }
+
+  .at-cp .at-md tr:last-child > td {
+    border-block-end: 0;
+  }
+
+  @media (width < 600px) {
+    .at-table :is(table, tbody, tr, td) {
+      display: block;
+    }
+
+    .at-table thead {
+      position: absolute;
+      inline-size: var(--at-border);
+      block-size: var(--at-border);
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    .at-table tr {
+      padding-block: var(--at-s-3);
+      padding-inline: var(--at-s-4);
+      border-block-end: var(--at-border) solid var(--at-line);
+    }
+
+    .at-table tr:last-child {
+      border: 0;
+    }
+
+    .at-cp .at-md .at-table td {
+      padding-block: var(--at-s-1);
+      padding-inline: 0;
+      border: 0;
+    }
+
+    .at-table td + td {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: var(--at-s-3);
+    }
+
+    .at-table td + td::before {
+      content: attr(data-label);
+      color: var(--at-muted);
+      font: var(--at-type-small);
+      text-wrap: balance;
+    }
+  }
+}

@@ -196,7 +196,7 @@
     cursor: pointer;
   }
 
-  .at-bar {
+  .at-progress {
     display: block;
     block-size: var(--at-s-1);
     overflow: hidden;
@@ -204,7 +204,7 @@
     background: var(--at-track);
   }
 
-  .at-bar > span {
+  .at-progress > span {
     display: block;
     block-size: 100%;
     border-radius: inherit;
@@ -214,8 +214,8 @@
     transition: transform var(--at-d-slide) var(--at-ease);
   }
 
-  .at-cp .at-md > .at-bar-top,
-  .at-cp .at-md > .at-bar-top + p {
+  .at-cp .at-md > .at-progress-top,
+  .at-cp .at-md > .at-progress-top + p {
     margin-block-start: calc(-1 * var(--at-s-2));
   }
 
@@ -300,7 +300,7 @@
   }
 
   @media (width >= 1024px) {
-    .at-bar-top {
+    .at-progress-top {
       display: none;
     }
   }

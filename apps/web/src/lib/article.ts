@@ -105,10 +105,40 @@ export function splitArticle(html: string): TArticlePart[] {
   }
   pushHtml(html.slice(cursor));
   for (const part of parts) {
-    if (part.kind === 'section')
-      part.parts = part.parts.filter((p) => p.kind !== 'html' || p.html.replace(/<p>\s*<\/p>/gu, '').trim() !== '');
+    if (part.kind !== 'section') continue;
+    part.parts = part.parts.filter((p) => p.kind !== 'html' || p.html.replace(/<p>\s*<\/p>/gu, '').trim() !== '');
+    for (const p of part.parts) if (p.kind === 'html') p.html = breakCode(tables(p.html));
   }
   return parts;
+}
+
+// Inline code may break after a dot (`navigator.wakeLock.request()`), never mid-identifier.
+export const breakCode = (html: string): string =>
+  html.replace(/<code>([^<]*)<\/code>/gu, (_, code: string) => `<code>${code.replace(/\.(?=\w)/gu, '.<wbr>')}</code>`);
+
+// A Markdown table scrolls inside a named, focusable region (WCAG 2.1.1). Each cell carries its column name so a
+// phone can show a row as "column · value" lines; the explicit roles keep the table semantics when CSS restacks it.
+export function tables(html: string): string {
+  return html.replace(/<table>([\s\S]*?)<\/table>/gu, (_, inner: string) => {
+    const head = /<thead>([\s\S]*?)<\/thead>/u.exec(inner)?.[1] ?? '';
+    const labels = [...head.matchAll(/<th\b[^>]*>([\s\S]*?)<\/th>/gu)].map((m) => escapeHtml(strip(m[1] ?? '')));
+    const body = inner
+      .replace(/<(thead|tbody)>/gu, '<$1 role="rowgroup">')
+      .replace(/<tr>/gu, '<tr role="row">')
+      .replace(/<th\b([^>]*)>/gu, '<th role="columnheader"$1>')
+      .replace(/<tr role="row">([\s\S]*?)<\/tr>/gu, (row: string, cells: string) => {
+        if (!cells.includes('<td')) return row;
+        let i = 0;
+        const out = cells.replace(/<td\b([^>]*)>([\s\S]*?)<\/td>/gu, (__, attrs: string, cell: string) => {
+          const label = labels[i] ?? '';
+          i += 1;
+          return `<td role="cell" data-label="${label}"${attrs}><span>${cell}</span></td>`;
+        });
+        return `<tr role="row">${out}</tr>`;
+      });
+    // Named by its columns: the section around it already carries the heading's name (axe landmark-unique).
+    return `<div class="at-table" role="region" tabindex="0" aria-label="${labels.join(', ')}"><table role="table">${body}</table></div>`;
+  });
 }
 
 export function placedBlocks(parts: TArticlePart[]): string[] {
@@ -128,7 +158,7 @@ export function inline(text: string): string {
   let i = 0;
   for (const m of text.matchAll(re)) {
     out.push(escapeHtml(text.slice(i, m.index)));
-    if (m[1] !== undefined) out.push(`<code>${escapeHtml(m[1])}</code>`);
+    if (m[1] !== undefined) out.push(breakCode(`<code>${escapeHtml(m[1])}</code>`));
     else if (m[2] !== undefined) out.push(`<strong>${escapeHtml(m[2])}</strong>`);
     else {
       const href = m[4] ?? '';
