@@ -50,7 +50,10 @@ const SETTINGS_HTML = `
       <select name="defaultPreset">
         ${['p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf'].map((p) => `<option value="${p}">${p}</option>`).join('')}
       </select>
-      <select name="sound"><option value="chime">Chime</option><option value="none">None</option></select>
+      <fieldset>${['chime', 'bell', 'soft', 'digital', 'birds', 'none'].map((v) => `<label><input type="radio" name="sound" value="${v}" ${v === 'chime' ? 'checked' : ''} /></label>`).join('')}</fieldset>
+      <input type="range" name="soundVolume" min="0" max="100" step="5" value="60" />
+      <label data-vibrate-row hidden><input type="checkbox" name="vibrate" checked /> Vibrate</label>
+      <label><input type="checkbox" name="tick" /> Tick</label>
       <label><input type="checkbox" name="notifications" /> Notify</label>
       <p data-notifications-note hidden></p>
       <fieldset>
@@ -140,6 +143,24 @@ describe('fillSettings → readSettings', () => {
       fillSettings(f, s);
       expect(readSettings(f, s, ALL).ambient.clock24h).toBe(clock24h);
     }
+  });
+});
+
+describe('end sound, vibrate and tick', () => {
+  it('round-trips every end sound, its volume and both switches', () => {
+    const f = form();
+    for (const id of ['chime', 'bell', 'soft', 'digital', 'birds', 'none'] as const) {
+      const s: ISettings = { ...STORED, sound: { id, volume: 0.45 }, vibrate: false, tick: true };
+      fillSettings(f, s);
+      expect(readSettings(f, s, ALL), id).toEqual(s);
+    }
+  });
+
+  it('keeps a stored sound no radio offers only while nothing is picked', () => {
+    const f = form();
+    for (const r of f.querySelectorAll<HTMLInputElement>('input[name="sound"]')) r.checked = false;
+    const cur: ISettings = { ...STORED, sound: { id: 'custom:x', volume: 0.5 } };
+    expect(readSettings(f, cur, ALL).sound.id).toBe('custom:x');
   });
 });
 

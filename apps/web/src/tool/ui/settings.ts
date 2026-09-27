@@ -1,4 +1,5 @@
 import type { ISettings, TAmbientMode, TFace, TTheme } from '@awaketab/core';
+import type { TSoundAction } from '../packs/sound/index.js';
 import { DEFAULT_SETTINGS } from '@awaketab/core';
 import { ACCENTS, accentHex, applyAccent, PACK_ACCENTS } from '../accent.js';
 import { hasFeature, type IToolCtx } from '../ctx.js';
@@ -27,6 +28,12 @@ const FACES = new Set<TFace>([
 
 type TField = HTMLInputElement | HTMLSelectElement;
 
+// The sound pack (panel, focus sounds, the richer end sounds) loads the first time any of it is used.
+export const sound = (ctx: IToolCtx, what: TSoundAction, el?: Element | null): Promise<void> =>
+  import('../packs/sound/index.js').then((m) => {
+    m.run(ctx, what, el);
+  });
+
 function field(form: HTMLFormElement, name: string): TField | RadioNodeList | null {
   return (form.elements.namedItem(name) as TField | RadioNodeList | null) ?? null;
 }
@@ -48,7 +55,10 @@ export function fillSettings(form: HTMLFormElement, s: ISettings): void {
   setValue(form, 'accent', accentHex(s.accent));
   setValue(form, 'face', s.face);
   setValue(form, 'defaultPreset', s.defaultPreset);
-  setValue(form, 'sound', s.sound.id === 'none' ? 'none' : 'chime');
+  setValue(form, 'sound', s.sound.id);
+  setValue(form, 'soundVolume', String(Math.round(s.sound.volume * 100)));
+  setValue(form, 'vibrate', s.vibrate);
+  setValue(form, 'tick', s.tick);
   setValue(form, 'notifications', s.notifications);
   setValue(form, 'endBehaviour', s.endBehaviour);
   setValue(form, 'batteryAuto', s.battery.autoStop);
@@ -90,7 +100,9 @@ export function readSettings(
     keyboardHints: data.get('keyboardHints') === 'on',
     notifications: notifDisabled ? cur.notifications : data.get('notifications') === 'on',
     endBehaviour: str('endBehaviour') === 'stop' ? 'stop' : 'prompt_extend',
-    sound: { ...cur.sound, id: str('sound') === 'none' ? 'none' : 'chime' },
+    sound: { id: (str('sound') || cur.sound.id) as ISettings['sound']['id'], volume: Number(str('soundVolume')) / 100 },
+    vibrate: data.get('vibrate') === 'on',
+    tick: data.get('tick') === 'on',
     battery: {
       ...cur.battery,
       autoStop: data.get('batteryAuto') === 'on',
@@ -150,6 +162,8 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
             ? t('settings.notifications.blocked')
             : t('settings.notifications.help');
     }
+    const vib = q('[data-vibrate-row]');
+    if (vib) vib.hidden = !('vibrate' in navigator);
     const hasBattery = 'getBattery' in navigator;
     const batt = q('[data-battery-fields]');
     if (batt) batt.hidden = !hasBattery;
@@ -175,6 +189,10 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
     bound = true;
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+    });
+    form.addEventListener('click', (e) => {
+      const b = e.target instanceof Element ? e.target.closest<HTMLElement>('[data-sound]') : null;
+      if (b) void sound(ctx, b.dataset.sound === 'open' ? 'open' : 'play', b);
     });
     form.addEventListener('input', (e) => {
       // The threshold slider reads its value live while dragging.
@@ -209,6 +227,9 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
       }
       save(next);
       refresh();
+      // Hearing a pick is the point of picking it; turning the tick on starts it without a reload.
+      const n = target instanceof HTMLInputElement ? target.name : '';
+      if (n === 'sound' || n === 'soundVolume' || n === 'tick') void sound(ctx, n === 'tick' ? 'mount' : 'play');
     });
     const reset = dialog.querySelector<HTMLButtonElement>('[data-settings-reset]');
     reset?.addEventListener('click', () => {

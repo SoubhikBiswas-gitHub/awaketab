@@ -293,6 +293,33 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
             </svg>
           </button>
           <button
+            class="at-icon-button at-snd-btn"
+            type="button"
+            data-act="sound"
+            aria-label={t('tool.header.sound')}
+            title={t('tool.header.sound')}
+            aria-haspopup="dialog"
+            aria-keyshortcuts="S"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <>
+                <path d="M5 10v4" />
+                <path d="M9.5 6v12" />
+                <path d="M14 8.5v7" />
+                <path d="M18.5 11v2" />
+              </>
+            </svg>
+          </button>
+          <button
             class="at-icon-button at-phone-hide"
             type="button"
             data-open-stats

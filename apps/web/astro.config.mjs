@@ -9,7 +9,11 @@ import { polarDefines } from './scripts/polar-server.mjs';
 const PACK_LIBS = [
   [/\/node_modules\/.*(?:@pqina|embla-carousel)/u, 'faces'],
   [/\/node_modules\/.*\/(?:number-flow|esm-env)\//u, 'faces-rolling'],
-  [/\/node_modules\/.*\/(?:tone|howler|standardized-audio-context|automation-events)\//u, 'sound'],
+  [
+    /\/node_modules\/(?:.*\/(?:tone|standardized-audio-context|automation-events|tslib)|@babel\/runtime)\//u,
+    'sound-tone',
+  ],
+  [/\/node_modules\/.*\/howler\//u, 'sound-howler'],
   [
     /\/node_modules\/.*(?:@tiptap|prosemirror-|orderedmap|rope-sequence|w3c-keyname|linkifyjs|idb-keyval|annyang)/u,
     'notes',
@@ -98,6 +102,9 @@ export default defineConfig({
               id,
             )?.[1];
             if (face) return `pack-faces-${face}`;
+            // The sound pack's synth engine and track player load when something first plays, not with its panel.
+            const snd = /\/src\/tool\/packs\/sound\/(engine|player)\./u.exec(id)?.[1];
+            if (snd) return snd === 'engine' ? 'pack-sound-tone' : 'pack-sound-howler';
             const own = /\/src\/tool\/packs\/(faces|sound|notes|themes|extras)\//u.exec(id)?.[1];
             if (own) return `pack-${own}`;
             const lib = PACK_LIBS.find(([re]) => re.test(id));
