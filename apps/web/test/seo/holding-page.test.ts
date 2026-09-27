@@ -96,6 +96,18 @@ describe('built site SEO', () => {
     expect(schema['@graph']?.find((node) => node['@type'] === 'WebApplication')?.aggregateRating).toBeUndefined();
   });
 
+  // sameAs lists only profiles that exist today: the public source repository. The npm package is added when it
+  // is published; the github.com/awaketab account does not exist.
+  it('points the Organization sameAs only at the real repository, on every home page', async () => {
+    for (const home of ['/', '/es/', '/pt-br/', '/de/', '/fr/', '/ja/', '/zh/', '/hi/']) {
+      const html = await readFile(built(home), 'utf8');
+      const value = /<script type="application\/ld\+json">(.*?)<\/script>/u.exec(html)?.[1] ?? '{}';
+      const schema = JSON.parse(value) as { '@graph'?: Array<{ '@type'?: string; sameAs?: unknown }> };
+      const org = schema['@graph']?.find((node) => node['@type'] === 'Organization');
+      expect(org?.sameAs, home).toEqual(['https://github.com/SoubhikBiswas-gitHub/awaketab']);
+    }
+  });
+
   it('publishes canonical robots and locale sitemaps', async () => {
     const [robots, sitemap] = await Promise.all([
       readFile(new URL('robots.txt', dist), 'utf8'),
