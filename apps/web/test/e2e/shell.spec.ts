@@ -93,7 +93,6 @@ test.describe('header and footer on every surface', () => {
         'https://github.com/SoubhikBiswas-gitHub/awaketab',
         'https://buymeacoffee.com/awaketab',
       ]);
-      // Five site-map columns: headings from 600, closed native accordions on phones.
       await expect(footer.locator('h2.at-foot-h')).toHaveCount(5);
       await expect(footer.locator('h2.at-foot-h').first()).toBeVisible();
       await page.setViewportSize({ width: 390, height: 800 });

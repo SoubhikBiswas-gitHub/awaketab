@@ -21,9 +21,7 @@ async function expectNoViolations(page: Page, theme: TTheme): Promise<void> {
   if ((await html.getAttribute('data-theme')) !== 'oled' || theme === 'oled') {
     await expect(html).toHaveAttribute('data-theme', theme);
   }
-  // Entrance rises (0.7 s from opacity 0, DESIGN.md §8) must end first: mid-fade colours are not the resting
-  // colours axe must judge. Infinite loops (aura, halo) and scroll-driven rises (the home) never end, so they
-  // are skipped.
+  // Wait for entrance rises; endless loops and scroll-driven rises are skipped.
   await page.waitForFunction(() =>
     document
       .getAnimations()

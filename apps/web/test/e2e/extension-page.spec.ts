@@ -26,7 +26,6 @@ test('/extension: store links record extension_click, no ad code, axe clean in b
     }, theme);
     expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   }
-  // The hero and the closing band each carry a Chrome store button.
   const install = page.locator('[data-store="chrome"]');
   await expect(install).toHaveCount(2);
   if (browserName === 'firefox' || browserName === 'webkit') {

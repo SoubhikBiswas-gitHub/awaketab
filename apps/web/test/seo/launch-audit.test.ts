@@ -110,8 +110,7 @@ describe('F-07 · /changelog renders Markdown and orders by date', () => {
 describe('F-05 · IndexNow URL selection', () => {
   it('selects only indexable pages from the built sitemaps', async () => {
     const urls = selectUrls(await readSitemapUrls({ from: 'dist', dist, site: SITE, fetchFn: fetch }));
-    // Redesign B11 (OD-2 / O-45): 28 rewritten content pages are indexable and 19 drafts are noindex, so the site
-    // submits about 50 URLs instead of the 73 of the generated set. Drafts never reach IndexNow.
+    // Only indexed pages reach the sitemap and IndexNow.
     expect(urls.length).toBeGreaterThan(40);
     expect(urls).toContain(`${SITE}/`);
     expect(urls).toContain(`${SITE}/for/cooking`);

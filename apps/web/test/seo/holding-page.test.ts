@@ -173,8 +173,6 @@ describe('built site SEO', () => {
     expect(/<title>(.*?)<\/title>/u.exec(html)?.[1]).toBe('Keep the screen awake for 15 min — AwakeTab');
   });
 
-  // The home sells: use cases, the extension, the levels and a closing band. How it works, the limits and the FAQ
-  // live in /learn, one link away.
   it('builds the English home as a short product page below the tool', async () => {
     const html = await readFile(built('/'), 'utf8');
     for (const id of ['home-uses', 'home-final']) expect(html, id).toContain(`id="${id}"`);
@@ -198,7 +196,6 @@ describe('built site SEO', () => {
     expect(words.length).toBeLessThanOrEqual(800);
   });
 
-  // Its stylesheet is linked after the tool, so it never counts against the tool's inline CSS budget.
   it('links the home stylesheet instead of inlining it', async () => {
     const html = await readFile(built('/'), 'utf8');
     const href = /<link rel="stylesheet" href="(\/_astro\/home\.[^"]+\.css)"/u.exec(html)?.[1] ?? '';
@@ -206,10 +203,7 @@ describe('built site SEO', () => {
     expect(html.indexOf(href)).toBeGreaterThan(html.indexOf('id="content"'));
   });
 
-  // OD-3 (redesign B11): 51 generated pages became 44 (4 cut, 4 merged with a 301, /for/classroom added), and three
-  // /learn pages that took over the home page's story make 47. The 28 rewritten pages are indexed and meet their
-  // family's word band (docs/06 §2; learn per marketing-seo-content.md §4); the 19 drafts stay live but noindex
-  // (OD-2 / O-45) and keep the old 600–1,000 band until rewritten.
+  // Indexed pages meet their family word band; drafts keep the old 600–1,000 band.
   it('publishes forty-seven English content pages: rewritten pages in their family band, drafts in 600–1,000', async () => {
     const BANDS: Record<string, readonly [number, number]> = {
       for: [600, 1000],
@@ -294,7 +288,7 @@ describe('built site SEO', () => {
         const href = match[1] ?? '';
         if (href.startsWith('/api/') || href.startsWith('/og/') || href.startsWith('/icons/')) continue;
         if (href.endsWith('.webmanifest') || href.endsWith('.svg') || href.endsWith('.js')) continue;
-        // Self-hosted font preloads (D-R26) and linked stylesheets must point at a file that ships.
+        // Font preloads and linked stylesheets must point at a file that ships.
         if (href.startsWith('/fonts/') || (href.startsWith('/_astro/') && href.endsWith('.css'))) {
           await expect(stat(new URL(`.${href}`, dist)), `${relative} -> ${href}`).resolves.toBeTruthy();
           continue;

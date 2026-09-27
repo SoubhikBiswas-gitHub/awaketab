@@ -15,13 +15,11 @@ const PLATFORM: Record<string, string> = {
   ios: 'iOS',
   ipados: 'iPadOS',
 };
-// Pages whose support rests on a matrix context rather than a browser row.
 const CONTEXT: Record<string, string> = { 'ios-home-screen': 'ios-pwa' };
 
 const version = (v: string | null): string => (v ? `${v}+` : '');
 
-// Every tag comes from src/data/support-matrix.json: the page's browsers, kept only where the matrix lists them on
-// one of the page's systems.
+// Tags come only from support-matrix.json, never invented.
 export function supportTags(slug: string, browsers: readonly string[], os: readonly string[]): ISupportTag[] {
   const contextId = CONTEXT[slug];
   if (contextId) {

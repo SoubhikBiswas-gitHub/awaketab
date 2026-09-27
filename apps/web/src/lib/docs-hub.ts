@@ -14,7 +14,7 @@ export interface IDocsTile {
   icon: string;
 }
 
-// The /learn hub (Docs). Featured pages render only once they exist in the collection, in this order.
+// Featured pages render only once they exist, in this order.
 export const DOCS_FEATURED: readonly string[] = ['how-awaketab-works', 'honest-limits', 'faq'];
 
 export const DOCS_GROUPS: readonly IDocsGroup[] = [
@@ -85,7 +85,6 @@ export function docsIcon(slug: string): string {
   return ICONS[slug] ?? ICON_PAGE;
 }
 
-// Only the fields a reader sees on the page count toward reading time; ids, paths and enum values do not.
 const READ_KEYS = [
   'lead',
   'steps',

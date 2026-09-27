@@ -23,7 +23,7 @@ const home = localePath(locale, '/');
 const trim = (path: string): string => path.replace(/(.)\/$/u, '$1');
 const here = trim(Astro.url.pathname);
 
-// Hubs, product and legal pages are English-only routes (docs/00 §7); only the tool itself is per locale.
+// Hubs, product and legal pages are English-only routes.
 const columns: Array<{ title: string; items: ILink[] }> = [
   {
     title: t('footer.col.product'),

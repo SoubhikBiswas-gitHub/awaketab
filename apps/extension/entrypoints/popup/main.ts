@@ -70,7 +70,7 @@ async function boot(): Promise<void> {
     ...(stored[STORAGE_KEYS.onboarding] as Partial<IOnboarding> | undefined),
   };
   const incognito = api.extension?.inIncognitoContext === true;
-  // `failed`: the worker did not answer, so the popup cannot vouch for what it shows.
+  // `failed`: the worker never answered, so the popup shows no state.
   const ui = {
     panel: 'none' as 'none' | 'until' | 'pro',
     draft: 0,
@@ -192,7 +192,7 @@ async function boot(): Promise<void> {
     keepFocus(focused);
   };
 
-  // A control that just hid (the Until form, the Time's up card) must not strand keyboard focus on the page.
+  // A control that just hid must not strand keyboard focus.
   const keepFocus = (was: Element | null) => {
     if (!(was instanceof HTMLElement) || !was.closest('[hidden]')) return;
     if (document.activeElement !== was && document.activeElement !== document.body) return;
@@ -319,7 +319,6 @@ async function boot(): Promise<void> {
       metaText = t(view.lock === 'unsupported' ? 'ext.error.unsupported.meta' : 'ext.error.denied.meta');
       meta2 = ui.retrying ? t('ext.error.retrying') : t('ext.error.nothing');
     }
-    // No answer from the worker: say so in the meta lines' place instead of vouching for a state.
     const failed = ui.failed && pending === null;
     show(el.fail, failed);
     show(el.meta, !failed && !(held && system && !originKey));

@@ -1,8 +1,4 @@
 ---
-// /extension: product page on BaseLayout, no ad code (docs/00 §8.3), zero hydration.
-// The popup preview is a static, aria-hidden drawing of the popup's awake state; the Screen or System switch drives it
-// and the laptop figure with CSS alone.
-// One small script: hide the store buttons where the extension cannot exist, and record extension_click.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Crumbs from '../components/pages/Crumbs.astro';
 import SegRadio from '../components/pages/SegRadio.astro';
@@ -19,8 +15,7 @@ const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com
 const canonical = `${site}/extension`;
 const title = t('page.extension.title');
 const description = t('page.extension.description');
-// Every browser claim comes from src/data/support-matrix.json. The page names only the two stores the extension is
-// published to, never an unverified Brave, Arc or Opera claim.
+// Name only the two stores the extension is published to.
 const support = matrix.extension;
 const stores = support.browsers.filter((b) => b === 'Chrome' || b === 'Edge');
 const browsers = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(stores);

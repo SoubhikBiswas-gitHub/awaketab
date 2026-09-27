@@ -61,7 +61,6 @@ const PRESET_ROUTE: Record<string, string> = {
   until: '/',
 };
 
-// The tool route for a use case's preset, carrying its scenario mode as the documented `mode=` query (docs/00 §7).
 export function startHref(preset: string, mode: string): string {
   const route = PRESET_ROUTE[preset] ?? '/';
   return mode === 'standard' ? route : `${route}?mode=${mode}`;
@@ -399,7 +398,6 @@ export const HUBS: Record<TContentKind, IHub> = {
       },
     ],
   },
-  // The /learn hub renders through DocsHub.astro (groups in lib/docs-hub.ts); articles take its crumb from here.
   learn: {
     crumb: 'Docs',
     lead: 'How AwakeTab keeps a screen awake, where a web page stops, and what each browser supports.',

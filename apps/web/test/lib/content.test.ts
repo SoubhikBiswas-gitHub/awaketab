@@ -75,9 +75,7 @@ const ROUTES: Record<string, readonly string[]> = {
   ],
 };
 
-// The launch set (docs/06 §20): marketing-seo-content.md §7 top pages + the days 15–45 wave + /for/classroom + the
-// two 301 targets that absorbed merged pages, plus the three /learn pages that took over the home page's story.
-// Everything else is a draft: live, noindex, out of the sitemap.
+// The indexed launch set; everything else is a live, noindex draft.
 const READY = [
   '/for/cooking',
   '/for/ai-agents',

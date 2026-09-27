@@ -4,7 +4,7 @@ import { createT } from '../../i18n/load';
 import { LOCALE_META, type TLocale } from '../../i18n/locales';
 import { EXTENSION_LISTED, EXTENSION_STORE_URLS } from '../../lib/extension';
 import matrix from '../../data/support-matrix.json';
-// A linked file, not a scoped <style>: every inline style on / counts against the tool CSS budget.
+// Linked, not scoped: inline styles on / count against the tool CSS budget.
 import sheet from '../../styles/home-extension.css?url';
 
 interface Props {
@@ -30,7 +30,6 @@ const benefits = [
   { id: 'badge', icon: 'M3 7h13v10H3zM20 7v.01M20 12v.01M20 17v.01' },
 ] as const;
 
-// The drawing shows the popup's awake state: a 1 h preset started at 9:30 PM with 44:18 left, like /extension.
 const clock = new Intl.DateTimeFormat(lang, { hour: 'numeric', minute: '2-digit', timeZone: 'UTC', numberingSystem: 'latn' });
 const at = (h: number, m: number): string => clock.format(Date.UTC(2026, 8, 26, h, m));
 const untilWord = t('tool.meta.until');
@@ -39,8 +38,7 @@ const C = 2 * Math.PI * 56;
 const P = 2658 / 3600;
 const TICK = (2 * Math.PI * 46.5) / 60;
 
-// Odometer strips that count down in whole seconds: n digits, shown at index i, one step every `step` seconds, with
-// `done` seconds of the current step already gone, so every strip rolls over on the same beat as the ones beside it.
+// Odometer strips tick in whole seconds and roll over on the same beat.
 const roll = (digits: string, i: number, step: number, done: number) => ({
   digits: [...digits],
   style: `--at-hx-n: ${digits.length}; --at-hx-i: ${i}; --at-hx-dur: ${digits.length * step}s; --at-hx-delay: -${i * step + done}s`,
@@ -49,7 +47,7 @@ const TENS = '543210';
 const UNITS = '9876543210';
 const minutes = [roll(TENS, 1, 600, 341), roll(UNITS, 5, 60, 41)];
 const seconds = [roll(TENS, 4, 10, 1), roll(UNITS, 1, 1, 0)];
-// Chrome's badge shows whole minutes left, rounded up (45m at 44:18), and changes when the clock passes :00.
+// Chrome's badge rounds minutes up: 45m at 44:18.
 const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
 ---
 

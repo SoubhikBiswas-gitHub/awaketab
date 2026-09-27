@@ -115,7 +115,7 @@
     const el = e.target instanceof Element ? e.target : null;
     if (!el) return;
     if (el.closest('[data-theme-cycle]')) choose(NEXT[root.dataset.themePref ?? 'auto'] ?? 'light');
-    // The footer's Keyboard shortcuts link opens the tool's own list where the tool is on the page.
+    // On a tool page the footer's shortcuts link opens the tool's own list.
     const keys = el.closest('[data-keys]') && document.querySelector('[data-open-shortcuts]');
     if (keys instanceof HTMLElement) {
       e.preventDefault();
