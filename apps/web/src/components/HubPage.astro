@@ -1,65 +1,71 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from 'cn';
+import '../styles/content.css';
+import Button from './shell/Button.astro';
+import StatusPill from './shell/StatusPill.astro';
 import { t } from '../i18n/load';
 import { articleSchema } from '../lib/seo';
+import { EXTRA, HUBS, MODE_LABEL, PRESET_LABEL, type IHubItem } from '../lib/hubs';
+import { CONTENT_KINDS, type TContentKind } from '../lib/content-i18n';
 
+/*
+ * Hub page (redesign B5; canvas HubFor.dc.html with hub = for | on | vs | guides | learn). Desktop: a sticky
+ * intro column (breadcrumb, h1, lead, "Try it now" card, jump bar) beside the grouped list; phone and tablet
+ * stack them. The card's lamp action opens the tool with no end time (the hub page loads no tool island), and
+ * its pill reads "Ready" because nothing has been requested yet. Lists come from the collections (lib/hubs.ts
+ * groups them as drawn); draft pages (noindex, OD-2) are listed too, as on the board.
+ */
 interface Props {
-  kind: 'for' | 'on' | 'vs' | 'guides' | 'learn';
+  kind: TContentKind;
 }
 
 const { kind } = Astro.props;
+const hub = HUBS[kind];
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/${kind}`;
 const title = t(`page.hub.${kind}.title`);
 const description = t(`page.hub.${kind}.description`);
 const h1 = t(`page.hub.${kind}.h1`);
-const copy = {
-  for: [
-    'Start with the task you need to finish: following a recipe, presenting slides, reading reference material or watching a long download. Each guide pairs a suitable timer preset with the limits that matter in that situation.',
-    'AwakeTab works through the browser. Keep its tab visible, leave the device open and watch the live status pill. A hidden tab or a battery-saving policy can release the wake lock; the pill changes immediately when that happens.',
-  ],
-  on: [
-    'Browser and operating-system behavior varies. These guides separate native Screen Wake Lock support from the video fallback and document the settings that can block either mechanism.',
-    'No browser page can override a closed laptop lid, force a hidden tab to stay eligible or guarantee operation under Low Power Mode. Check the live pill rather than assuming support from a device name alone.',
-  ],
-  vs: [
-    'Screen-awake tools use different mechanisms. AwakeTab requests the standard browser API and reports the returned state. Native utilities may have broader system access; extensions may continue in contexts where an ordinary tab cannot.',
-    'Comparisons focus on mechanism, permissions, privacy, installation, battery impact and failure visibility. They do not award points for synthetic input or misleading claims about chat presence.',
-  ],
-  guides: [
-    'Troubleshooting starts with evidence: confirm HTTPS, keep the tab visible, check battery-saving settings and read the advice shown after a denied request. Retrying without fixing the reported condition usually produces the same result.',
-    'The guides use operating-system menu paths only where they have been verified. Product versions and browser support come from the maintained support matrix rather than assumptions.',
-  ],
-  learn: [
-    'The Screen Wake Lock API lets a visible page ask the browser to prevent display sleep. The browser remains in control and can reject or release the request when visibility, permissions or power conditions change.',
-    'Learn how AwakeTab models those changes, why timers run only while a lock is held or the fallback is active, and how the project tests claims before publishing them.',
-  ],
-} as const;
-const pages = (await getCollection(kind))
-  .filter((entry) => entry.data.locale === 'en')
-  .sort((a, b) => a.data.h1.localeCompare(b.data.h1));
 
-// 44 px targets throughout (docs/05 accessibility rules). Ghost (not link) so these read as
-// secondary navigation, not competing with primary CTAs for the one accent colour on the page;
-// it also lets the `.at-prose nav a` chip rule in tool.css take effect instead of being
-// overridden by the link variant's `text-primary` utility.
-const crumbLink = 'inline-flex min-h-11 items-center';
-const relatedLink = cn(
-  buttonVariants({ variant: 'ghost' }),
-  'h-auto min-h-11 max-w-full shrink px-4 py-2 text-start whitespace-normal',
-);
+type TEntry = Awaited<ReturnType<typeof getCollection<TContentKind>>>[number];
+const all = new Map<string, TEntry>();
+for (const k of CONTENT_KINDS) {
+  for (const entry of await getCollection(k)) {
+    if (entry.data.locale === 'en') all.set(`/${k}/${entry.id.replace(/^en\//u, '')}`, entry);
+  }
+}
+
+interface IRow {
+  href: string;
+  title: string;
+  line: string;
+  meta: readonly string[];
+}
+const toRow = (item: IHubItem): IRow | null => {
+  const href = item.slug.startsWith('/') ? item.slug : `/${kind}/${item.slug}`;
+  const entry = all.get(href);
+  if (!entry) return null;
+  const meta =
+    item.meta ?? (kind === 'for' ? [PRESET_LABEL[entry.data.preset] ?? '', MODE_LABEL[entry.data.mode] ?? ''] : []);
+  return { href, title: entry.data.h1, line: item.line ?? entry.data.honestLimit, meta: meta.filter(Boolean) };
+};
+const listed = new Set(hub.groups.flatMap((g) => g.items.map((i) => (i.slug.startsWith('/') ? i.slug : `/${kind}/${i.slug}`))));
+const unlisted = [...all.keys()].filter((href) => href.startsWith(`/${kind}/`) && !listed.has(href));
+const groups = hub.groups
+  .map((group, gi) => {
+    const extra = unlisted.filter((href) => {
+      const slug = href.slice(kind.length + 2);
+      const home = EXTRA[kind]?.[slug];
+      return home ? home === group.id : gi === hub.groups.length - 1;
+    });
+    const rows = [...group.items.map(toRow), ...extra.map((href) => toRow({ slug: href.slice(kind.length + 2) }))].filter(
+      (row): row is IRow => row !== null,
+    );
+    return { ...group, rows };
+  })
+  .filter((group) => group.rows.length > 0);
+const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
 ---
 
 <BaseLayout
@@ -79,53 +85,94 @@ const relatedLink = cn(
     ],
   })}
 >
-  <main class="mx-auto mt-6 w-full max-w-3xl">
-    <Breadcrumb aria-label="Breadcrumb">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>{h1}</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-    <h1 class="mt-4 text-3xl font-semibold leading-tight tracking-tight">{h1}</h1>
-    <div class="mt-4 space-y-4 leading-relaxed">
-      {copy[kind].map((paragraph) => <p>{paragraph}</p>)}
+  <main class="at-cp at-hub">
+    <div class="at-hub-intro">
+      <nav class="at-crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li>
+            <a href="/">{t('app.name')}</a>
+            <span class="at-crumb-sep" data-slot="breadcrumb-separator" aria-hidden="true">
+              <svg viewBox="0 0 16 16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
+            </span>
+          </li>
+          <li aria-current="page">{h1}</li>
+        </ol>
+      </nav>
+      <h1 class="at-h1-page">{h1}</h1>
+      <p class="at-lead">{hub.lead}</p>
+      {hub.note && <p class="at-hub-note">{hub.note}</p>}
+
+      <section class="at-try" aria-label="Try it now">
+        <div class="at-try-top">
+          <StatusPill state="idle" label={t('tool.pill.idle')} />
+          <span class="at-try-digits" aria-hidden="true">00<span>:00</span></span>
+        </div>
+        <Button variant="primary" href="/?preset=pinf&autostart=1" class="at-try-cta" aria-label="Keep awake until I stop">
+          Keep awake · ∞
+        </Button>
+        <p class="at-try-note">
+          Keep this tab visible and watch the pill. A hidden tab releases the wake lock, and Safari needs a tap before it
+          grants one; the pill changes immediately when that happens.
+        </p>
+        <a class="at-try-link" href="/">Open the full tool <span aria-hidden="true">→</span></a>
+      </section>
+
+      <nav class="at-jump" aria-label={hub.jumpAria} data-spy style={`--at-n: ${String(groups.length)}; --at-i: 0`}>
+        <span class="at-jump-ind" aria-hidden="true"></span>
+        {
+          groups.map((group, i) => (
+            <a href={`#${group.id}`} aria-current={i === 0 ? 'location' : undefined}>
+              {group.short}
+            </a>
+          ))
+        }
+      </nav>
     </div>
-    <Alert role="note" className="mt-6 border-s-4 border-s-warning">
-      <AlertDescription className="text-foreground">
-        AwakeTab never claims to work in a hidden tab, keep Teams or Slack “Available”, prevent sleep after
-        closing a laptop lid, or simulate mouse and keyboard input.
-      </AlertDescription>
-    </Alert>
-    {/*
-      A row list, not a grid of identical cards: 18+ plain links don't each need their own
-      bordered box (the generic "SaaS card kit" look). One shared list border plus a divider
-      per row reads as a considered index; the tint and ring only appear on hover/focus.
-    */}
-    <ul class="mt-8 list-none rounded-lg border divide-y divide-border p-0 sm:columns-2 sm:gap-0 sm:[column-fill:balance]">
+
+    <div class="at-hub-groups">
       {
-        pages.map((entry) => {
-          const slug = entry.id.replace(/^en\//u, '');
-          return (
-            <li class="break-inside-avoid">
-              <div class="relative px-4 py-3 leading-snug transition-colors hover:bg-accent/40 has-[a:focus-visible]:ring-[3px] has-[a:focus-visible]:ring-inset has-[a:focus-visible]:ring-ring/50">
-                <a class="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none" href={`/${kind}/${slug}`}>
-                  {entry.data.h1}
-                </a>
+        groups.map((group) => (
+          <section id={group.id} class="at-hub-group" aria-labelledby={`${group.id}-h`}>
+            <div class="at-hub-group-head">
+              <div>
+                <h2 id={`${group.id}-h`}>{group.title}</h2>
+                <span class="at-hub-count">
+                  {group.rows.length} {hub.unit[group.rows.length === 1 ? 0 : 1]}
+                </span>
               </div>
-            </li>
-          );
-        })
+              <p>{group.line}</p>
+            </div>
+            <ul class="at-hub-list">
+              {group.rows.map((row) => (
+                <li>
+                  <a href={row.href}>
+                    <span class="at-hub-item">
+                      <span class="at-hub-title">{row.title}</span>
+                      <span class="at-hub-line">{row.line}</span>
+                      {row.meta.length > 0 && (
+                        <span class="at-hub-meta">
+                          {row.meta.map((m, i) => (
+                            <>
+                              {i > 0 && <span aria-hidden="true">·</span>}
+                              <span>{m}</span>
+                            </>
+                          ))}
+                        </span>
+                      )}
+                    </span>
+                    <svg class="at-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
       }
-    </ul>
-    <nav aria-label="Related pages" class="mt-8 flex flex-wrap gap-x-6 gap-y-1">
-      <a class={relatedLink} href="/">Open AwakeTab</a>
-      <a class={relatedLink} href="/30m">Start a 30-minute session</a>
-      <a class={relatedLink} href="/about">How AwakeTab is tested</a>
-    </nav>
+    </div>
   </main>
+  <script>
+    import { initContentNav } from '../lib/content-nav';
+
+    initContentNav();
+  </script>
 </BaseLayout>

@@ -32,7 +32,7 @@ export default {
   overrides: [
     { files: ['**/styles/tokens.css'], rules: { 'declaration-property-value-allowed-list': null } },
     {
-      files: ['**/styles/shell.css'],
+      files: ['**/styles/shell.css', '**/styles/content.css'],
       rules: {
         'declaration-property-value-allowed-list': [
           {

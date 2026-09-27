@@ -412,6 +412,19 @@ Behaviour lives in `src/boot/boot.js` (the page's only inline script, so it work
 - `.at-input` (inputs, selects, textareas): 48 (`--at-h-input`), r8, 1 px `--at-input-border` (≥ 3:1), `--at-sunken` fill, `--at-type-body` (16 px, so iOS never zooms); focus draws a 2 px `--at-focus` outline on `:focus-within`.
 - `dialog.at-sheet`: a bottom sheet on phones (full width, r28 top corners, padding 8 16 32, a 36 × 4 handle, slides up over `--at-d-slide`), a side sheet from 600 (`--at-sheet-inline` wide at the end edge, full height, 1 px line on its leading edge only, rises in). The native modal `<dialog>` supplies the scrim (`::backdrop` = `--at-scrim`), focus trap and Esc. `.at-scrim` is the same scrim for non-dialog overlays.
 
+### 3.31 Content pages: article, hub, home below the tool (B5)
+
+Canvas: `ContentArticle` (`/for`), `GuideOn` / `GuideVs` / `GuideGuides` / `GuideLearn`, `HubFor` (`hub` = for · on · vs · guides · learn), `HomeBelow`. Styles in `content.css` (layer `content`, scoped `.at-cp`); home styles scoped in `HomeBelow.astro`. Build-time markup; the only script is `lib/content-nav.ts` (~1 KB).
+
+- **Article grid** (`ContentLayout`). Phone/tablet one column: head → tool card → body (32 / 40 apart); `/guides` and `/learn` put the tool after the body (head → body → tool → tail, `--at-section` apart), as docs/06 §2.6–§2.7 ask. Desktop (≥ 1024): `200 | 680 | 160` with 40 gaps, centred: a sticky "On this page" list (the article's h2s, then Honest limit, Related on `/for`, Questions, Try it) with a "Back to the tool" card that mirrors the tool's pill and digits; the tool card spans the main and rail columns; the rail holds the 160 × 600 ad. Page top padding 8 (phone) / 24.
+- **Head.** Breadcrumb (14/20 muted, links ink-2, 44 px rows, a `›` chevron that mirrors in RTL; the current page drops on phones), h1 (`--at-type-h1`, −0.02em), then the meta line: "Sources checked {date}" with a lamp check, the stale notice (warn tone chip), the translation-pending chip and "By Soubhik Biswas". The guide boards draw "Sources checked" as a 32 px chip.
+- **Tool card.** r28 hero panel, surface, 1 px line, a slow radial aura (26 s); while the lock is held (`[data-lock="held"|"fallback"]` anywhere inside) the border turns lamp 38 % with a lamp shadow. Padding 20 phone, 24 × 32 (guides) / 24 (articles) tablet, 32 desktop. The panel inside is `ToolIsland embed` (B3 owns its content).
+- **Body.** Markdown in `.at-md`: h2 `--at-type-h2` with `--at-gap-article` above, body 16/26 ink-2, the first paragraph as the lead (18/28 ink), inline code 14 px r4 sunken, code blocks a sunken r8 well with token colours from Shiki's css-variables theme, tables as the board's matrix card (r16, sunken kicker header, 1 px row lines), blockquotes as a card (no side stripes).
+- **Notes and tail.** Honest limit: a surface card, info glyph, "Honest limit" kicker (an h2), the text in ink (no side stripe). FAQ: `<details>` rows, 56 px questions (16/24 600), a plus in a 32 px ring (guide boards: bare plus) that turns 45° when open; the first is open. Related: `/for` shows 56 px rows with a sliding arrow and a 52 px secondary "Start this session" with the lamp glyph; the guide boards show an h2, a lamp-tinted 44 px "Start this session" pill and inline links. Author card: 48 px lamp-tinted "SB" avatar, name, role, About link.
+- **Ads.** `AdSlot` renders a labelled box: "Advertisement" kicker above a hatch-patterned r12 box of the reserved size (inline 300 × 250 → 336 × 280 from 600, after the prose; rail 320 × 50 below 1024, else 160 × 600 sticky in the rail column). Never touching the tool card or the honest limit.
+- **Hub.** Desktop `360 | 664`, 96 apart; the intro column is sticky: breadcrumb, h1, lead (18/28 ink-2), an optional honest note (14/20 muted), the "Try it now" card (static Ready pill and 00:00, the lamp action "Keep awake · ∞" opening `/?preset=pinf&autostart=1`, a note, "Open the full tool →"), and the jump bar (segmented, lamp indicator follows the group in view). Groups: h2 + count ("4 guides"), a muted one-liner, then rows (title 20/28, line 15/22 ink-2, meta 13/18 muted: preset · mode on `/for`), 48 / 64 apart.
+- **Home below the tool** (`HomeBelow.astro`): a band (a 1 px lamp line and the floating "How it works, limits and support" link), then sections with a 1 px line on top, `--at-section` padding, and on desktop a sticky 300 px heading column beside the content: what AwakeTab does (lead + two paragraphs) · how it works (three numbered steps with key hints, then the seven pill states as S pills with their meanings, two columns from 600) · honest limits (two columns from 600) · browser and device support (a table card from `support-matrix.json`, "Sources checked", link to the matrix page) · guides and devices · comparisons and fixes (row lists, two columns from 600, hub links with live counts) · eight FAQs · "How AwakeTab is checked" author card.
+
 ---
 
 ## 4. Layout
@@ -436,6 +449,8 @@ The tool occupies the first viewport on every tool page. Header (§3.25): 60 px 
 10. Author box → `/about`, changelog link, footer (privacy, terms, shortcuts, language switcher).
 
 Each section is `content-visibility: auto; contain-intrinsic-size: auto 480px` and lazily hydrates nothing — sections are static HTML.
+
+As built in B5 (§3.31, canvas `HomeBelow`): what AwakeTab does → how it works (steps, then the seven pill states) → honest limits → support table → guides and devices → comparisons and fixes → eight FAQs → how AwakeTab is checked. The Pro strip and product cards are not on the canvas and wait for B10. Sections reserve `contain-intrinsic-size: auto 720px`.
 
 ### 4.3 Breakpoints
 

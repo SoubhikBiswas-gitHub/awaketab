@@ -18,6 +18,11 @@ export default defineConfig({
     },
     fallback: {},
   },
+  // Code blocks take their colours from content.css (--astro-code-* → Clear Night tokens), so they follow the theme
+  // and keep AA contrast on the sunken well in light and dark (redesign B5; canvas GuideLearn code blocks).
+  markdown: {
+    shikiConfig: { theme: 'css-variables' },
+  },
   build: {
     inlineStylesheets: 'always',
     // The file layout IS the URL shape Cloudflare Pages serves with no redirect (docs/14 §2.1):

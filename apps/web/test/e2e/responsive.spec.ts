@@ -7,7 +7,7 @@ import { installFakeWakeLock } from './fake-wakelock';
  * (layout is engine-independent enough here, and 57 widths × 8 routes × 3 engines would not pay for itself).
  */
 
-const ROUTES = ['/', '/30m', '/until/07-30', '/for/cooking', '/pro', '/embed', '/extension', '/about'] as const;
+const ROUTES = ['/', '/30m', '/until/07-30', '/for/cooking', '/for', '/guides/iphone-auto-lock-never-greyed-out', '/pro', '/embed', '/extension', '/about'] as const;
 const WIDTHS = Array.from({ length: (2560 - 320) / 40 + 1 }, (_, i) => 320 + i * 40);
 
 // Known overflow on the current (pre-redesign) pages, listed in docs/redesign/B1-token-debt.md. These widths
