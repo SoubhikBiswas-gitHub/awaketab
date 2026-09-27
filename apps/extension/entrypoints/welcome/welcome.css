@@ -793,6 +793,10 @@
   max-inline-size: var(--at-ext-level-head);
 }
 
+.wl-level-head .wl-lead {
+  max-inline-size: none;
+}
+
 .wl-levels {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -1097,6 +1101,14 @@
 @media (width < 600px) {
   .wl-mock {
     block-size: var(--at-ext-mock-h-phone);
+  }
+
+  .wl-next-actions {
+    flex: 1 1 100%;
+  }
+
+  .wl-next-actions .at-btn {
+    flex: 1 1 auto;
   }
 
   .wl-mock-foot {

@@ -77,7 +77,8 @@ async function boot(): Promise<void> {
     kbd.className = 'at-kbd';
     kbd.textContent = cap;
     caps.append(kbd);
-    if (i < all.length - 1 && shortcut.includes('+')) caps.append('+');
+    // The board spells the chord with "+" between caps, macOS glyph shortcuts (⌥⇧A) included.
+    if (i < all.length - 1) caps.append('+');
   });
   q(root, '[data-key-title]').textContent = t('ext.welcome.key.title', { shortcut });
   q(root, '[data-shortcut-change]', HTMLButtonElement).addEventListener('click', () => {
