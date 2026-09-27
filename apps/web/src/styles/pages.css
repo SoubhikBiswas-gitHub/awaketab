@@ -991,10 +991,11 @@
   }
 
   .at-cl-aura {
-    inset-block-start: -40%;
+    inset-block-start: 0;
     inset-inline-start: -20%;
     inline-size: 140%;
     block-size: 120%;
+    translate: 0 -33.333%;
     background: radial-gradient(
       40% 45% at 75% 30%,
       light-dark(
@@ -1416,10 +1417,11 @@
   }
 
   .at-ext-aura {
-    inset-block-start: -10%;
+    inset-block-start: 0;
     inset-inline-start: -30%;
     inline-size: 160%;
     block-size: 120%;
+    translate: 0 -8.333%;
     background: radial-gradient(
       40% 40% at 50% 45%,
       light-dark(
@@ -2872,10 +2874,11 @@
   }
 
   .at-lib-aura {
-    inset-block-start: -20%;
+    inset-block-start: 0;
     inset-inline-start: -10%;
     inline-size: 120%;
     block-size: 90%;
+    translate: 0 -22.222%;
     background: radial-gradient(
       40% 45% at 60% 40%,
       color-mix(in srgb, var(--at-tone) 4%, transparent) 0%,
@@ -3927,6 +3930,7 @@
 
     .at-ext-hero {
       grid-template-columns: minmax(0, 1fr) var(--at-pg-hero-side);
+      min-block-size: calc(var(--at-pg-popup-h) + 2 * var(--at-s-4));
     }
 
     .at-ext-split {

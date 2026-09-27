@@ -7,6 +7,10 @@
   padding: 0;
 }
 
+.at-tool-embed .at-tool:not(:has(> .at-tabs-late)) {
+  visibility: hidden;
+}
+
 .at-tool-embed .at-pillrow {
   justify-self: stretch;
   align-items: stretch;

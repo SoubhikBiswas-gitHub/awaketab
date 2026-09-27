@@ -19,6 +19,31 @@
     gap: var(--at-s-3) var(--at-s-5);
   }
 
+  @supports (hanging-punctuation: first) or (-moz-appearance: none) {
+    .at-ext [data-install] {
+      display: none;
+    }
+
+    .at-ext .at-ext-alt {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--at-s-3) var(--at-s-5);
+    }
+  }
+
+  .at-ext-hero:not(:has(> .at-ext-stage)) > .at-pg-intro {
+    visibility: hidden;
+  }
+
+  .at-ext-ctas > .at-button {
+    max-inline-size: 100%;
+    padding-block: var(--at-s-2);
+    white-space: normal;
+    text-align: center;
+    text-wrap: balance;
+  }
+
   .at-ext-value {
     max-inline-size: var(--at-measure);
   }
