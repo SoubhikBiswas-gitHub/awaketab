@@ -1,6 +1,6 @@
 import type { ISettings, TAmbientMode, TTheme } from '@awaketab/core';
 import { DEFAULT_SETTINGS } from '@awaketab/core';
-import { applyAccent, PACK_ACCENTS } from '../accent.js';
+import { accentHex, applyAccent, PACK_ACCENTS } from '../accent.js';
 import { hasFeature, type IToolCtx } from '../ctx.js';
 import { t } from '../i18n.js';
 import { sanitizeMsg } from '../params.js';
@@ -29,7 +29,8 @@ function setValue(form: HTMLFormElement, name: string, value: string | boolean):
 /** Writes the stored settings into the form so opening Settings never shows (or saves) stale defaults. */
 export function fillSettings(form: HTMLFormElement, s: ISettings): void {
   setValue(form, 'theme', s.theme);
-  setValue(form, 'accent', s.accent.toUpperCase());
+  // A legacy palette hex (amber, indigo, teal, rose) selects the lamp that replaced it (docs/08 §2.1).
+  setValue(form, 'accent', accentHex(s.accent));
   setValue(form, 'defaultPreset', s.defaultPreset);
   setValue(form, 'sound', s.sound.id === 'none' ? 'none' : 'chime');
   setValue(form, 'notifications', s.notifications);

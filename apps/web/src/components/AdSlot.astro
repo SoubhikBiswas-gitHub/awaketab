@@ -3,23 +3,21 @@ interface Props {
   kind: 'rail' | 'inline';
 }
 
-// docs/00-conventions.md §8.3 and docs/09-monetization-impl.md §3.1: the box is reserved in
-// static HTML with a fixed min-height (tool.css `.at-ad-slot*`) so CLS stays 0, and it is never
-// removed after first paint. `data-ad-slot` / `data-size*` are read by lib/ads.ts and by the
-// Playwright placement check (`[data-ad-slot]`); keep them byte-exact.
+// docs/00-conventions.md §8.3 and docs/09-monetization-impl.md §3.1: the box is reserved in static HTML with a fixed
+// size (content.css `.at-ad-box`: rail 160 × 600 on desktop, 320 × 50 below it; inline 336 × 280, 300 × 250 on
+// phones) so CLS stays 0, and it is never removed after first paint. Labelled "Advertisement" as on the canvas
+// (ContentArticle, Guide*). `data-ad-slot` / `data-size*` are read by lib/ads.ts and by the Playwright placement
+// check (`[data-ad-slot]`); keep them byte-exact. Rendered by ContentLayout only.
+import { createT } from '../i18n/load';
+import { localeFromPath } from '../i18n/locales';
+
 const { kind } = Astro.props;
+const t = createT(localeFromPath(Astro.url.pathname));
 const size = kind === 'rail' ? '160x600' : '336x280';
-const placement =
-  kind === 'rail'
-    ? 'order-last w-full max-w-40 lg:order-none lg:col-start-2 lg:row-start-1 lg:self-start'
-    : 'my-8 w-full max-w-[336px]';
+const sizeSm = kind === 'rail' ? '320x50' : '300x250';
 ---
 
-<aside
-  class={`at-ad-slot at-ad-slot-${kind} mx-auto rounded-lg bg-muted/40 ${placement}`}
-  data-ad-slot={kind}
-  data-size-sm={kind === 'rail' ? '320x50' : '300x250'}
-  data-size={size}
-  hidden={false}
-  aria-hidden="true"
-></aside>
+<aside class={`at-ad at-ad-${kind}`} aria-label={t('content.ad')}>
+  <span class="at-ad-label" aria-hidden="true">{t('content.ad')}</span>
+  <div class="at-ad-box" data-ad-slot={kind} data-size-sm={sizeSm} data-size={size}></div>
+</aside>

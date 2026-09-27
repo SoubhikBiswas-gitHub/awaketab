@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · Business entry points inside a use-case article</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease),opacity .45s var(--ease)}
+button:active{transform:scale(.96)}
+button:disabled,input:disabled,select:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+a{transition:color .45s var(--ease),background-color .45s var(--ease),border-color .45s var(--ease)}
+h1,h2,h3,h4,p,figure,blockquote{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+.at-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.at-num{font-family:Geist,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"zero" 0}
+.at-kick{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.2s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-fade{transition:background-color .6s var(--ease),border-color .6s var(--ease),opacity .6s var(--ease),fill .6s var(--ease),stroke .6s var(--ease)}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-breathe{animation:at-breathe 3.4s var(--ease) infinite alternate}
+.at-ignite{transform-box:fill-box;transform-origin:center;animation:at-ignite .6s var(--ease) .3s both}
+.at-travel{animation:at-travel .6s var(--ease) both}
+.at-off{transition:stroke-dasharray .9s var(--ease),stroke-opacity .9s var(--ease),opacity .9s var(--ease),fill .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-breathe{from{opacity:.55}to{opacity:1}}
+@keyframes at-ignite{0%{transform:scale(.6);opacity:.4}55%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes at-travel{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--at-tx,0),var(--at-ty,0)) scale(.5);opacity:0}}
+.at-chev{transition:transform .6s var(--ease)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+<style>
+.at-wave{animation:at-wave 9s linear infinite}
+.at-wave2{animation:at-wave 15s linear infinite reverse}
+.at-bub{animation:at-bub 9s ease-in infinite}
+.at-cloud{animation:at-drift 90s linear infinite}
+.at-cloud2{animation:at-drift 130s linear infinite;animation-delay:-60s}
+.at-tw{animation:at-tw 5s ease-in-out infinite}
+.at-tw2{animation:at-tw 7s ease-in-out infinite;animation-delay:-3s}
+.at-glint{transform-origin:top center;animation:at-glint 6s ease-in-out infinite}
+.at-shim{animation:at-shim 3.8s var(--ease) infinite}
+.at-float{animation:at-float 7s ease-in-out infinite}
+.at-scrim{animation:at-fade .5s var(--ease) both}
+.at-sheet-up{animation:at-up .7s var(--ease) both}
+.at-sheet-side{animation:at-side .7s var(--ease) both}
+.at-sheet-body{scrollbar-width:thin}
+.at-time{color-scheme:inherit}
+.at-ig{opacity:0;pointer-events:none}
+.at-ig-dock{animation:at-flash .5s var(--ease) both}
+.at-ig-travel{animation:at-travel .6s var(--ease) .1s both}
+.at-ig-pill{animation:at-spark .7s var(--ease) .3s both}
+.at-ig-face{animation:at-flash .9s var(--ease) .45s both}
+.at-ig-tip{transform-box:fill-box;transform-origin:center;animation:at-spark .8s var(--ease) .5s both}
+.at-ig-bead{animation:at-spark .8s var(--ease) .55s both}
+@keyframes at-wave{to{transform:translateX(-358px)}}
+@keyframes at-bub{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.55}100%{transform:translateY(-240px) scale(1.1);opacity:0}}
+@keyframes at-drift{from{transform:translateX(-170px)}to{transform:translateX(420px)}}
+@keyframes at-tw{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes at-glint{0%,100%{transform:scaleX(.6);opacity:.35}50%{transform:scaleX(1);opacity:.7}}
+@keyframes at-shim{0%{transform:translateX(-120%)}100%{transform:translateX(420%)}}
+@keyframes at-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes at-fade{from{opacity:0}to{opacity:1}}
+@keyframes at-up{from{opacity:0;transform:translateY(72px)}to{opacity:1;transform:none}}
+@keyframes at-side{from{opacity:0;transform:translateX(56px)}to{opacity:1;transform:none}}
+@keyframes at-flash{0%{opacity:0}35%{opacity:1}100%{opacity:0}}
+@keyframes at-spark{0%{opacity:0;transform:scale(.4)}40%{opacity:1;transform:scale(1.15)}100%{opacity:0;transform:scale(2.4)}}
+@keyframes at-off{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(.94)}}
+.at-rise3{animation:at-in .9s var(--ease) both;animation-delay:.35s}
+.at-step{transition:opacity .6s var(--ease),transform .6s var(--ease),background-color .6s var(--ease),border-color .6s var(--ease)}
+.at-l button:focus-visible,.at-l a:focus-visible,.at-l input:focus-visible,.at-l textarea:focus-visible{outline-color:#087B87}
+</style>
+</helmet>
+<div class="{{rootCls}}" style="width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column">
+  <header style="position: relative; height: {{hdrH}}; flex-shrink: 0; box-sizing: border-box; padding: 0 {{gutter}}; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+    <a href="Main.dc.html" aria-label="AwakeTab, open the tool" style="display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; color: {{t.ink}}; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{bead}}" style="transition: fill .6s"></circle></svg>AwakeTab</a>
+    <sc-if value="{{isDesk}}" hint-placeholder-val="{{false}}"><nav aria-label="Main" style="display: flex; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 500"><a href="#" aria-current="page" style="padding: 0 12px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; color: {{t.ink}}; font-weight: 600; text-decoration: none"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: {{lamp}}"></span>Use cases</a><a href="#" style="padding: 0 12px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Devices</a><a href="#" style="padding: 0 12px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Extension</a><a href="#" style="padding: 0 12px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Pro</a></nav></sc-if>
+    <div role="radiogroup" aria-label="Theme" style="position: relative; flex-shrink: 0; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}"><div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{themeX}})"></div><button role="radio" aria-checked="{{themeLight}}" aria-label="Light" title="Light" onClick="{{setLight}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeLightInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button><button role="radio" aria-checked="{{themeDark}}" aria-label="Dark" title="Dark" onClick="{{setDark}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeDarkInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button><button role="radio" aria-checked="{{themeAuto}}" aria-label="Auto, follows your system" title="Auto: follows your system" onClick="{{setAuto}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeAutoInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button></div>
+  </header>
+  <main style="position: relative; flex-grow: 1; box-sizing: border-box; width: 100%; max-width: {{colMax}}; margin: 0 auto; padding: {{mainPad}}; display: flex; flex-direction: column; gap: 32px">
+    <nav aria-label="Breadcrumb" style="font-size: 14px; color: {{t.muted}}; display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+      <a href="HubFor.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: {{t.ink2}}; text-decoration: none">AwakeTab</a><span aria-hidden="true">›</span>
+      <a href="HubFor.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; color: {{t.ink2}}; text-decoration: none">Keep your screen awake for a task</a>
+    </nav>
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <h1 style="font-size: {{h1Size}}; line-height: {{h1LH}}; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance">{{h1}}</h1>
+      <p style="font-size: 14px; color: {{t.muted}}">Article excerpt · the section before “Operating-system notes”</p>
+    </div>
+
+    <section aria-labelledby="ar-setup" style="display: flex; flex-direction: column; gap: 12px">
+      <h2 id="ar-setup" style="font-size: {{h2Size}}; line-height: {{h2LH}}; font-weight: 600">Practical setup</h2>
+      <p style="font-size: 18px; line-height: 28px; color: {{t.ink2}}; text-wrap: pretty">{{setup}}</p>
+    </section>
+
+    <aside aria-labelledby="b2b-h" class="at-in" style="display: grid; grid-template-columns: {{asideCols}}; gap: 24px; padding: {{asidePad}}; border-radius: 28px; background: {{t.surface}}; border: 1px solid {{t.line}}; align-items: center">
+      <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <p style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{kicker}}</p>
+        <h2 id="b2b-h" style="font-size: {{h2Size}}; line-height: {{h2LH}}; font-weight: 600; text-wrap: balance">{{title}}</h2>
+        <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">{{lead}}</p>
+        <ul style="display: flex; flex-direction: column; gap: 8px">
+          <sc-for list="{{facts}}" as="f" hint-placeholder-count="3">
+            <li style="display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 12px; font-size: 15px; line-height: 22px"><svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true" style="margin-top: 4px"><path d="M2 6.4l2.6 2.6L10 3.4" fill="none" stroke="{{lamp}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{f}}</li>
+          </sc-for>
+        </ul>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center">
+          <a href="{{ctaHref}}" style="height: 52px; box-sizing: border-box; padding: 0 20px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.ground}}; font-size: 16px; font-weight: 600; color: {{t.ink}}; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; white-space: nowrap">{{cta}}</a>
+          <a href="{{moreHref}}" style="display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600; color: {{t.ink}}; text-decoration: underline; text-decoration-color: {{lamp}}; text-underline-offset: 5px">{{more}}</a>
+        </div>
+      </div>
+
+      <sc-if value="{{isRecipe}}" hint-placeholder-val="{{true}}">
+        <figure style="margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+          <figcaption style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">On your recipe page</figcaption>
+          <div data-placeholder="embed on the host page" style="border-radius: 16px; padding: 16px; background: {{hostBg}}; border: 1px solid {{t.line2}}; display: flex; flex-direction: column; gap: 12px">
+            <div aria-hidden="true" style="display: flex; flex-direction: column; gap: 8px"><span style="height: 10px; width: 62%; border-radius: 999px; background: {{hostLine}}"></span><span style="height: 10px; width: 88%; border-radius: 999px; background: {{hostLine}}"></span><span style="height: 10px; width: 74%; border-radius: 999px; background: {{hostLine}}"></span></div>
+            <div style="max-width: 320px; width: 100%; box-sizing: border-box; min-height: 96px; padding: 12px 12px 12px 16px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 12px">
+              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0"><span style="font-size: 15px; font-weight: 600">Keep screen awake</span><span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: {{t.muted}}"><svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="4.5" fill="none" stroke="{{t.muted}}" stroke-width="1.6"></circle></svg>Ready</span></span>
+              <button onClick="{{demo}}" style="height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 15px; font-weight: 600">{{demoLabel}}</button>
+              <span style="grid-column: 1 / -1; font-size: 12px; color: {{t.muted}}">Keep awake by AwakeTab</span>
+            </div>
+            <div aria-hidden="true" style="display: flex; flex-direction: column; gap: 8px"><span style="height: 10px; width: 80%; border-radius: 999px; background: {{hostLine}}"></span><span style="height: 10px; width: 56%; border-radius: 999px; background: {{hostLine}}"></span></div>
+          </div>
+          <p style="font-size: 13px; color: {{t.muted}}">Compact size, 320 × 96. A full-width size is 240 tall.</p>
+        </figure>
+      </sc-if>
+
+      <sc-if value="{{isKiosk}}" hint-placeholder-val="{{false}}">
+        <figure style="margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+          <figcaption style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">One link per screen</figcaption>
+          <div role="radiogroup" aria-label="Screen mode" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+            <sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
+              <button role="radio" aria-checked="{{m.sel}}" onClick="{{m.pick}}" style="height: 44px; border-radius: 999px; border: 1px solid {{m.ring}}; background: {{m.bg}}; font-size: 14px; font-weight: {{m.weight}}; color: {{t.ink}}">{{m.label}}</button>
+            </sc-for>
+          </div>
+          <sc-if value="{{msgNote}}" hint-placeholder-val="{{false}}"><p role="status" style="font-size: 13px; line-height: 18px; color: {{t.muted}}">Message mode needs a Kiosk licence or Pro. Without one you get a 60-second preview.</p></sc-if>
+          <output aria-label="Kiosk link" style="min-height: 52px; box-sizing: border-box; padding: 12px 16px; border-radius: 8px; border: 1px solid {{t.line2}}; background: {{t.field}}; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 14px; line-height: 20px; overflow-wrap: anywhere">{{kioskUrl}}</output>
+          <div aria-hidden="true" data-placeholder="wall screen" style="aspect-ratio: 16 / 9; box-sizing: border-box; border-radius: 16px; background: #0A0E16; border: 1px solid #33405C; box-shadow: inset 0 0 0 8px #1A2336; display: grid; place-items: center; color: #EAF0F7">
+            <span style="display: flex; flex-direction: column; align-items: center; gap: 8px"><span style="font-family: Geist, system-ui, sans-serif; font-weight: 300; font-size: {{wallSize}}; letter-spacing: -0.02em">{{wallText}}</span><span style="font-size: 12px; line-height: 16px; color: #8E9AAE">{{wallSub}}</span></span>
+          </div>
+        </figure>
+      </sc-if>
+    </aside>
+
+    <section aria-labelledby="ar-os" style="display: flex; flex-direction: column; gap: 12px">
+      <h2 id="ar-os" style="font-size: {{h2Size}}; line-height: {{h2LH}}; font-weight: 600">Operating-system notes</h2>
+      <p style="font-size: 18px; line-height: 28px; color: {{t.muted}}">The article continues here, unchanged.</p>
+    </section>
+  </main>
+  <footer style="position: relative; flex-shrink: 0; box-sizing: border-box; width: 100%; padding: {{footPad}}; border-top: 1px solid {{t.line}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px"><p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p><nav aria-label="Site" style="display: flex; flex-wrap: wrap; column-gap: 16px"><a href="PagePrivacyDesk.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Privacy</a><a href="PageTermsPhone.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Terms</a><a href="PageChangelog.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Changelog</a><a href="PageAbout.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">About</a><a href="#" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a></nav><div onKeyDown="{{lang.key}}" style="{{lang.wrapStyle}}">
+      <button type="button" id="{{lang.btnId}}" aria-expanded="{{lang.expanded}}" aria-controls="{{lang.listId}}" aria-label="{{lang.aria}}" onClick="{{lang.toggle}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"></path></svg>{{lang.label}}<svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: {{lang.chev}}"><path d="M6 9l6 6 6-6"></path></svg></button>
+      <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+        <div aria-hidden="true" onClick="{{lang.close}}" style="position: fixed; inset: 0; z-index: 29; background: rgba(4,7,12,.55)"></div>
+      </sc-if>
+      <sc-if value="{{lang.open}}" hint-placeholder-val="{{false}}">
+        <div id="{{lang.listId}}" role="{{lang.role}}" aria-modal="{{lang.modal}}" aria-labelledby="{{lang.headId}}" class="at-in" style="{{lang.panelStyle}}">
+          <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+            <div aria-hidden="true" style="width: 36px; height: 4px; margin: 0 auto 8px; border-radius: 999px; background: {{t.line2}}"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 8px 4px">
+              <h2 id="{{lang.headId}}" style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; color: {{t.ink}}">{{lang.title}}</h2>
+              <button type="button" aria-label="{{lang.closeLabel}}" onClick="{{lang.close}}" style="width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+            </div>
+          </sc-if>
+          <sc-if value="{{lang.pop}}" hint-placeholder-val="{{true}}">
+            <p id="{{lang.headId}}" style="margin: 0; padding: 8px 12px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{lang.title}}</p>
+          </sc-if>
+          <ul role="list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px">
+            <sc-for list="{{lang.rows}}" as="r" hint-placeholder-count="8">
+              <li style="display: flex">
+                <a href="{{r.href}}" lang="{{r.lang}}" hreflang="{{r.hreflang}}" aria-current="{{r.cur}}" style="flex: 1; min-width: 0; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{t.ink}}; text-decoration: none"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="{{r.ring}}" stroke-width="1.8"></circle><circle cx="10" cy="10" r="4" fill="{{r.dot}}"></circle></svg><span style="font-size: 15px; line-height: 22px; font-weight: {{r.weight}}">{{r.name}}</span><span lang="{{lang.pageLang}}" style="font-size: 13px; line-height: 18px; color: {{r.noteInk}}; text-align: end">{{r.note}}</span></a>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-if>
+    </div></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"variant":{"editor":"enum","options":["recipe","kiosk"],"default":"recipe"},"language":{"editor":"enum","options":["closed","open"],"default":"closed"},"$preview":{"width":390,"height":1742}}'>
+// AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
+const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C', shadow: 'none' };
+const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA', shadow: '0 1px 2px rgba(14,23,38,.06)' };
+const AT_OLED = Object.assign({}, AT_DARK, { bg: '#000000', ground: '#000000', surface: '#0A0A0A' });
+const AT_LAMPS = [
+  { id: 'aqua', name: 'Aqua', dark: '#5BE0E8', light: '#087B87', pro: false },
+  { id: 'violet', name: 'Violet', dark: '#A594FF', light: '#5A47CF', pro: false },
+  { id: 'mint', name: 'Mint', dark: '#7EF0B8', light: '#167A50', pro: true },
+  { id: 'sky', name: 'Sky', dark: '#7CB8FF', light: '#255FBD', pro: true }
+];
+const AT_GLYPH = {
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z'
+};
+// Status pill sizes (§11.4): L kiosk, M tool, S popup / PiP / full embed, XS compact embed.
+const AT_PILL = {
+  L: { h: '48px', pad: '0 20px 0 16px', gap: '8px', fs: '20px', lh: '28px' },
+  M: { h: '38px', pad: '0 16px 0 12px', gap: '8px', fs: '15px', lh: '22px' },
+  S: { h: '32px', pad: '0 12px 0 8px', gap: '8px', fs: '14px', lh: '20px' },
+  XS: { h: '26px', pad: '0 8px', gap: '4px', fs: '13px', lh: '18px' }
+};
+function atRgba(hex, a) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atPill(o) {
+  const s = AT_PILL[o.size || 'M'];
+  return { label: o.label, h: s.h, pad: s.pad, gap: s.gap, fs: s.fs, lh: s.lh, tone: o.tone, glyph: o.glyph || AT_GLYPH.dot, fill: o.hollow ? 'transparent' : o.tone, stroke: o.stroke || '1.6', soft: atRgba(o.tone, 0.12), line: atRgba(o.tone, 0.38), glow: o.glow ? atRgba(o.tone, 0.8) : 'transparent', cls: 'at-fade' };
+}
+// Page chrome shared by every board: tokens, lamp, header, theme switch, card and footer metrics.
+function atChrome(o) {
+  const L = o.layout || 'phone';
+  const desk = L === 'desktop', tab = L === 'tablet', phone = !desk && !tab;
+  const theme = o.theme || 'auto';
+  const dark = theme === 'dark' || theme === 'oled' || (theme === 'auto' && o.sysDark !== false);
+  const t = theme === 'oled' ? AT_OLED : dark ? AT_DARK : AT_LIGHT;
+  const def = AT_LAMPS.find((l) => l.id === o.lamp) || AT_LAMPS[0];
+  const lamp = dark ? def.dark : def.light;
+  const set = (id) => () => { if (o.set) o.set(id); };
+  const ink = (id) => (theme === id ? t.ink : t.ink2);
+  return {
+    t, dark, lamp, lampText: lamp, lampInk: dark ? '#04232A' : '#FFFFFF', bead: lamp,
+    lampSoft: atRgba(lamp, 0.14), lampLine: atRgba(lamp, 0.45), lampGlow: atRgba(lamp, 0.55), lampFaint: atRgba(lamp, 0.08), lampTag: atRgba(lamp, 0.12),
+    halo: 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(lamp, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(lamp, 0) + ' 100%)',
+    isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone,
+    hdrH: phone ? '60px' : '68px', gutter: desk ? '80px' : tab ? '32px' : '16px', secGap: desk ? '96px' : tab ? '64px' : '48px',
+    cardPad: phone ? '20px' : '24px', cardShadow: t.shadow, footPad: phone ? '24px 16px 32px' : desk ? '24px 80px' : '24px 32px',
+    themeX: (theme === 'light' ? 0 : theme === 'dark' ? 44 : 88) + 'px',
+    themeLight: theme === 'light', themeDark: theme === 'dark', themeAuto: theme === 'auto',
+    themeLightInk: ink('light'), themeDarkInk: ink('dark'), themeAutoInk: ink('auto'),
+    setLight: set('light'), setDark: set('dark'), setAuto: set('auto')
+  };
+}
+const C = 2 * Math.PI * 146;
+// Growth names on top of the shared tokens (all values are tokens).
+const DARK = Object.assign({}, AT_DARK, { chip: AT_DARK.raised, chipShadow: 'transparent', field: AT_DARK.sunken, screen: AT_DARK.sunken });
+const LIGHT = Object.assign({}, AT_LIGHT, { chip: AT_LIGHT.raised, chipShadow: 'transparent', field: AT_LIGHT.sunken, screen: AT_LIGHT.sunken });
+// Lamp colours (DESIGN.md 2.2): id, name, dark, light, Pro.
+const LAMPS = [['aqua', 'Aqua', '#5BE0E8', '#087B87', false], ['violet', 'Violet', '#A594FF', '#5A47CF', false], ['mint', 'Mint', '#7EF0B8', '#167A50', true], ['sky', 'Sky', '#7CB8FF', '#255FBD', true]];
+// Preset labels from en.json; phones show all seven (PRODUCT.md anti-reference). ∞ is named Until I stop.
+const PRESET_ROWS = [['p15', '15 min', '15 minutes', 900], ['p30', '30 min', '30 minutes', 1800], ['p45', '45 min', '45 minutes', 2700], ['p60', '1 h', '1 hour', 3600], ['p120', '2 h', '2 hours', 7200], ['p240', '4 h', '4 hours', 14400], ['pinf', '∞', 'Until I stop', 0]];
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const GLYPH = { paused: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z', blocked: 'M6 1L11.2 10.5H.8z', fallback: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z' };
+// Pill strings are a contract: exactly these seven.
+const LABEL = { ready: 'Ready', ended: 'Ready', starting: 'Starting…', awake: 'Screen awake', paused: 'Paused — tab hidden', blocked: "Blocked — here's the fix", needtap: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
+
+// AT-LANG v1 (language switcher; PRIMITIVES.md P-LANG). Keep identical across files.
+const AT_LOCALES = [
+  ['en', '', 'en', 'English', true], ['es', '/es', 'es', 'Español', false], ['pt-br', '/pt-br', 'pt-BR', 'Português (Brasil)', false],
+  ['de', '/de', 'de', 'Deutsch', false], ['fr', '/fr', 'fr', 'Français', false], ['ja', '/ja', 'ja', '日本語', false],
+  ['zh', '/zh', 'zh-Hans', '简体中文', false], ['hi', '/hi', 'hi', 'हिन्दी', false]
+];
+const AT_LANG_COPY = { title: 'Language', current: 'Current', review: 'Translation in review', close: 'Close' };
+// o = { layout, t, lamp, open, toggle, close, cur: 'en', path: '/', variant: 'footer' | 'settings' }
+function atLang(o) {
+  const t = o.t, cur = o.cur || 'en', path = o.path || '/', settings = o.variant === 'settings', open = !!o.open;
+  const id = settings ? 'at-lang-set' : 'at-lang', sheet = !settings && o.layout === 'phone';
+  const a = (hex, x) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + x + ')'; };
+  const here = AT_LOCALES.find((l) => l[0] === cur) || AT_LOCALES[0];
+  const panel = 'box-sizing: border-box; display: flex; flex-direction: column; background: ' + t.surface + '; border: 1px solid ' + t.line + '; box-shadow: 0 24px 64px -24px rgba(0,0,0,.45); ';
+  return {
+    open, sheet: sheet && open, pop: !sheet && !settings, btnId: id + '-btn', listId: id + '-list', headId: id + '-h',
+    label: here[3], aria: AT_LANG_COPY.title + ': ' + here[3], title: AT_LANG_COPY.title, closeLabel: AT_LANG_COPY.close, pageLang: here[2],
+    expanded: open ? 'true' : 'false', chev: open ? 'rotate(180deg)' : 'none', role: sheet ? 'dialog' : 'group', modal: sheet ? 'true' : 'false',
+    wrapStyle: sheet ? 'display: flex' : 'position: relative; display: flex; margin-inline-start: auto',
+    panelStyle: sheet
+      ? panel + 'position: fixed; inset-inline: 0; bottom: 0; z-index: 30; padding: 8px 16px 32px; border-radius: 28px 28px 0 0; border-bottom: 0'
+      : panel + 'position: absolute; inset-inline-end: 0; bottom: calc(100% + 8px); z-index: 30; width: 360px; padding: 4px; border-radius: 16px',
+    toggle: () => {
+      o.toggle();
+      if (!open) setTimeout(() => { try { document.querySelector('#' + id + '-list a[aria-current="true"]').focus(); } catch (e) {} }, 60);
+    },
+    close: () => o.close(),
+    key: (e) => {
+      const k = e && e.key, box = (e && e.currentTarget) || document;
+      if (k === 'Escape' && open) {
+        if (e.preventDefault) e.preventDefault();
+        o.close();
+        try { box.querySelector('button[aria-controls]').focus(); } catch (x) {}
+        return;
+      }
+      const step = { ArrowDown: 1, ArrowUp: -1, Home: 'home', End: 'end' }[k];
+      if (!step || !open) return;
+      let rows = [];
+      try { rows = Array.from(box.querySelectorAll('a[hreflang]')); } catch (x) {}
+      if (!rows.length) return;
+      if (e.preventDefault) e.preventDefault();
+      const i = rows.indexOf(document.activeElement), n = rows.length;
+      rows[step === 'home' ? 0 : step === 'end' ? n - 1 : i < 0 ? (step > 0 ? 0 : n - 1) : (i + step + n) % n].focus();
+    },
+    rows: AT_LOCALES.map(([lid, prefix, lang, name, reviewed]) => {
+      const on = lid === cur;
+      return {
+        href: prefix + path, lang, hreflang: lang, name, cur: on ? 'true' : 'false',
+        border: on ? a(o.lamp, 0.45) : 'transparent', bg: on ? a(o.lamp, 0.14) : 'transparent', weight: on ? 600 : 500,
+        ring: on ? o.lamp : t.inputBorder, dot: on ? o.lamp : 'transparent',
+        note: on ? AT_LANG_COPY.current : reviewed ? '' : AT_LANG_COPY.review, noteInk: on ? t.ink2 : t.muted
+      };
+    })
+  };
+}
+// P-LANG: this page has no translations yet, so every other locale links to its home (PRIMITIVES.md P-LANG).
+function atLangHome(v) { v.rows.forEach((r, i) => { if (i) r.href = r.href.replace(/^(\/[a-z-]+)\/.+$/, '$1/'); }); return v; }
+// /for/cooking exists in every locale; es, pt-br, de and fr translate the slug (src/i18n/slugs.json). Other routes link home.
+const AT_COOK_SLUG = { es: 'cocinar', 'pt-BR': 'cozinhar', de: 'kochen', fr: 'cuisine' };
+function atLangCook(v) { if (v.rows[0].href.indexOf('/for/cooking') < 0) return atLangHome(v); v.rows.forEach((r) => { const x = AT_COOK_SLUG[r.lang]; if (x) r.href = r.href.replace('/for/cooking', '/for/' + x); }); return v; }
+class Component extends DCLogic {
+constructor(props) {
+    super(props);
+    this.state = { theme: props.theme || 'auto', langOpen: props.language === 'open', sysDark: this.sys(), now: Date.now(), mode: 'minimal', tapped: false };
+  }
+  heights() { return { phone: 1742, tablet: 1662, desktop: 1280 }; }
+  vals(b) {
+    const s = this.state, t = b.t, desk = b.isDesk, tab = b.isTab, phone = b.isPhone;
+    const recipe = (this.props.variant || 'recipe') === 'recipe';
+    const MODES = [['minimal', 'Minimal'], ['clock', 'Clock'], ['message', 'Message']];
+    const modes = MODES.map(([id, label]) => ({ label, sel: s.mode === id ? 'true' : 'false', ring: s.mode === id ? b.lamp : t.line, bg: s.mode === id ? b.lampSoft : 'transparent', weight: s.mode === id ? 600 : 500, pick: () => this.setState({ mode: id }) }));
+    const clock = this.hm(s.now).replace(/ [AP]M$/, '');
+    const R = recipe ? {
+      h1: 'Keep your screen on while cooking',
+      setup: 'Prop the tablet where you can see it from the stove, open this page, pick a length a little longer than the recipe and tap Keep awake. The pill tells you from across the kitchen whether the screen is really being held on.',
+      kicker: 'For recipe sites', title: 'Run a recipe site? Put this button on your recipes.',
+      lead: 'Your readers keep the screen on while the page is visible, without leaving it, with the same honest status and kitchen timers.',
+      facts: ['One script tag, nothing to host', 'Free, with a small credit under the button', 'An Embed licence removes the credit: $29 a year per site, opening soon'],
+      cta: 'Get the embed code', ctaHref: 'EmbedShowcase.dc.html', more: 'Embed licences open soon', moreHref: 'EmbedShowcase.dc.html'
+    } : {
+      h1: 'Keep a wall dashboard on all day',
+      setup: 'Open AwakeTab on the device that shows the dashboard, choose Until I stop (∞) and switch to Minimal mode. After a restart the browser brings the tab back and the session resumes on its own.',
+      kicker: 'For screens you manage', title: 'Running screens nobody touches?',
+      lead: 'Build one link that starts by itself in Minimal or Clock mode and resumes after a restart.',
+      facts: ['Free to use, no account', 'No ads on the screen, ever', 'A Kiosk licence adds your logo and a message: $19 one site, $49 five sites'],
+      cta: 'Build a kiosk link', ctaHref: 'PageKiosk.dc.html', more: 'See the Kiosk licence', moreHref: 'Pro.dc.html'
+    };
+    return Object.assign(R, {
+      tone: b.lamp, msgNote: s.mode === 'message', isRecipe: recipe, isKiosk: !recipe, modes,
+      colMax: desk ? '1040px' : '820px', mainPad: desk ? '24px 80px 96px' : tab ? '24px 32px 64px' : '12px 16px 48px',
+      h1Size: phone ? '34px' : '48px', h1LH: phone ? '42px' : '56px', h2Size: phone ? '24px' : '28px', h2LH: phone ? '32px' : '36px',
+      asideCols: desk ? 'minmax(0, 1fr) 380px' : 'minmax(0, 1fr)', asidePad: desk ? '32px' : '24px',
+      hostBg: t.ground, hostLine: t.track,
+      demoLabel: s.tapped ? 'Stop' : 'Start', demo: () => this.setState({ tapped: !this.state.tapped }),
+      kioskUrl: 'awaketab.com/?autostart=1&mode=' + s.mode + (s.mode === 'message' ? '&msg=Lobby%20open%20until%206%20PM' : ''),
+      wallText: s.mode === 'message' ? 'Lobby open until 6 PM' : clock, wallSub: s.mode === 'minimal' ? 'Screen awake' : s.mode === 'clock' ? this.dateLong(s.now) : 'Screen awake',
+      wallSize: s.mode === 'message' ? (desk ? '26px' : '22px') : desk ? '48px' : '40px'
+    });
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    this.timer = setInterval(() => this.tick(), 1000);
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+    if (this.mount) this.mount();
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    (this.timers || []).forEach((x) => clearTimeout(x));
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+  }
+  componentDidUpdate(prev) {
+    if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme });
+    if (this.update) this.update(prev);
+  }
+  tick() { this.setState({ now: Date.now() }); if (this.onTick) this.onTick(); }
+  later(ms, fn) { (this.timers = this.timers || []).push(setTimeout(fn, ms)); }
+  rgba(hex, a) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  hm(ms, secs) {
+    const o = { hour: 'numeric', minute: '2-digit', hour12: true };
+    if (secs) o.second = '2-digit';
+    return new Date(ms).toLocaleTimeString('en-US', o);
+  }
+  nextDay(ms) { return new Date(ms).toDateString() !== new Date(this.state.now).toDateString(); }
+  when(ms) { return this.hm(ms) + (this.nextDay(ms) && ms > this.state.now ? ' tomorrow' : ''); }
+  dateLong(ms) {
+    const d = new Date(ms);
+    return d.toLocaleDateString('en-GB', { weekday: 'long' }) + ', ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  split(sec) {
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+    const p = (n) => String(n).padStart(2, '0');
+    return h ? [h + ':' + p(m), ':' + p(s)] : [p(m), ':' + p(s)];
+  }
+  words(sec) {
+    if (!sec) return 'no limit';
+    const h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60);
+    if (h && m) return h + ' h ' + m + ' min';
+    if (h) return h === 1 ? '1 hour' : h + ' hours';
+    return m + ' min';
+  }
+  mins(m) {
+    if (!m) return '0 min';
+    const h = Math.floor(m / 60), r = m % 60;
+    return h ? h + ' h' + (r ? ' ' + r + ' min' : '') : r + ' min';
+  }
+  pill(mode, b) {
+    const tone = { ready: b.t.muted, ended: b.t.muted, paused: b.amber, blocked: b.red }[mode] || b.lamp;
+    const live = mode === 'awake' || mode === 'fallback' || mode === 'starting';
+    const hollow = mode === 'ready' || mode === 'ended' || mode === 'starting';
+    return atPill({ size: 'M', label: LABEL[mode], tone, glyph: GLYPH[mode] || DOT, hollow, glow: live && mode !== 'starting' });
+  }
+  ring(o, b) {
+    const mode = o.mode, p = o.p;
+    const live = mode === 'awake' || mode === 'fallback' || mode === 'starting';
+    const tone = { paused: b.amber, blocked: b.red }[mode] || o.color || b.lamp;
+    const DASH = { paused: '18 12', blocked: '1 13' };
+    const shown = o.shown;
+    const parts = shown === null ? ['∞', ''] : this.split(shown);
+    const size = o.size || 320;
+    return {
+      box: size + 'px', scale: (size / 320).toFixed(4), live, color: tone, faint: this.rgba(tone, b.dark ? 0.16 : 0.12),
+      dash: DASH[mode] || (p <= 0 ? '0.01 ' + C.toFixed(1) : (C * p).toFixed(1) + ' ' + C.toFixed(1)),
+      op: mode === 'ready' ? 0.45 : mode === 'ended' ? 0 : 1, glowOp: live ? 0.45 : 0,
+      trackDash: mode === 'fallback' ? '3 9' : 'none',
+      tipDeg: (360 * p).toFixed(2) + 'deg', tipOp: live && shown !== null && p > 0 ? 1 : 0,
+      kicker: o.kicker, metaA: o.metaA, metaB: o.metaB, bigA: parts[0], bigB: parts[1],
+      size: shown !== null && shown >= 3600 ? '60px' : '76px', numColor: live ? b.t.ink : b.t.ink2,
+      aria: shown === null ? 'No limit' : parts[0] + parts[1] + ' left'
+    };
+  }
+  presetBar(cur, phone, b, set) {
+    const rows = PRESET_ROWS;
+    const i = Math.max(0, rows.findIndex((x) => x[0] === cur));
+    return {
+      presets: rows.map(([id, label, aria]) => ({ label, aria, sel: cur === id ? 'true' : 'false', weight: cur === id ? 600 : 500, color: cur === id ? b.t.ink : b.t.ink2, ring: cur === id ? b.lampLine : b.t.line, bg: cur === id ? b.lampSoft : 'transparent', pick: () => set(id) })),
+      presetN: rows.length, presetX: i * 100 + '%', presetFont: b.isTab ? '15px' : '13px'
+    };
+  }
+  presetSecs(id) { const f = PRESET_ROWS.find((x) => x[0] === id); return f ? f[3] : 1800; }
+  base() {
+    const s = this.state;
+    const L = this.props.layout || 'phone';
+    const c = atChrome({ theme: s.theme, sysDark: s.sysDark, layout: L, set: (id) => this.setState({ theme: id }) });
+    const dark = c.dark, lamp = c.lamp;
+    const t = dark ? DARK : LIGHT;
+    const amber = t.warn, red = t.bad;
+    const H = this.heights()[L];
+    return Object.assign(c, {
+      t, amber, red, amberSoft: this.rgba(amber, 0.1), amberLine: this.rgba(amber, 0.38), redSoft: this.rgba(red, 0.08), redLine: this.rgba(red, 0.32),
+      layout: L, W: c.isDesk ? '1280px' : c.isTab ? '820px' : '390px', H: H + 'px', rootCls: dark ? 'at-root' : 'at-root at-l',
+      hdrPad: '0 ' + c.gutter, linePad: '0 ' + c.gutter,
+      sheetShadow: '0 24px 64px -24px rgba(0,0,0,.45)',
+      dateLong: this.dateLong(s.now), nowTime: this.hm(s.now),
+      scrim: 'rgba(4,7,12,0.55)',
+      aura: this.rgba(lamp, dark ? 0.1 : 0.08)
+    });
+  }
+  renderVals() { const b = this.base(); b.lang = atLangCook(atLang({ layout: b.layout, t: b.t, lamp: b.lamp, path: (this.props.variant || 'recipe') === 'recipe' ? '/for/cooking' : '/kiosk', open: this.state.langOpen, toggle: () => this.setState({ langOpen: !this.state.langOpen }), close: () => this.setState({ langOpen: false }) })); Object.assign(b, this.vals(b)); b.bead = b.tone || b.lamp; return b; }
+}
+</script>
+</body>
+</html>

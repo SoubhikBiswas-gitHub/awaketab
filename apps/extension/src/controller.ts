@@ -57,6 +57,8 @@ export const STALE_NOTIFY_MS = 5 * 60_000;
 export const SYNC_DEBOUNCE_MS = 2_000;
 /** Same tag as the web's end notification (docs/00 §13.8). */
 export const NOTIFICATION_ID = 'at-end';
+/** Opened once, on first install (O-25). */
+export const WELCOME_PAGE = 'welcome.html';
 
 type TFetch = (input: string, init?: RequestInit) => Promise<Response>;
 
@@ -75,7 +77,7 @@ export interface IController {
   ready(): Promise<void>;
   state(): IExtState;
   onStartup(): Promise<void>;
-  onInstalled(reason: string): Promise<void>;
+  onInstalled(reason: string, previousVersion?: string): Promise<void>;
   onAlarm(name: string): Promise<void>;
   onCommand(command: string): Promise<void>;
   onMessage(raw: unknown): Promise<IExtState | null>;
@@ -340,8 +342,37 @@ export function createController(opts: IControllerOptions): IController {
   }
 
   async function extend(ms: number): Promise<void> {
-    const last = current() ?? storage.session();
+    const live = current();
+    // +15 / +30 / +1 h on a running session adds to it (docs/10 §13 "Popup"); a schedule session keeps its
+    // window, so only sessions the user or an auto-start rule began can grow.
+    if (isLive(live) && originOf(live) !== 'schedule' && live.endsAt !== null) {
+      engine?.addTime(ms);
+      await ensureSessionAlarms();
+      await render();
+      return;
+    }
+    const last = live ?? storage.session();
     await startPlan({ type: 'duration', ms }, 'custom', levelOf(last, ext().level), 'user');
+  }
+
+  /**
+   * First install opens the welcome page and records the version (at.v1.meta.lastSeenVersion), so the popup's
+   * "New in" chip appears only after a later update. An update from a build that never recorded a version
+   * records the previous one, so the chip shows once for it too.
+   */
+  async function installed(reason: string, previousVersion: string | undefined): Promise<void> {
+    const version = api.runtime.getManifest().version;
+    const meta = storage.meta();
+    if (reason === 'install') {
+      storage.writeMeta({ ...meta, installedAt: meta.installedAt || now(), lastSeenVersion: version });
+      try {
+        await api.tabs.create({ url: api.runtime.getURL(WELCOME_PAGE) });
+      } catch {
+        // No window to open a tab in (a headless start): the options page links the same content.
+      }
+    } else if (reason === 'update' && !meta.lastSeenVersion) {
+      storage.writeMeta({ ...meta, lastSeenVersion: previousVersion ?? '0' });
+    }
   }
 
   function dismiss(): void {
@@ -516,8 +547,9 @@ export function createController(opts: IControllerOptions): IController {
       // FR-EXT-04: Pro `ext.autostart` keeps the display awake whenever Chrome starts.
       if (hasFeature(license, 'ext.autostart') && ext().autostart.browserStart) await startPreset(presetOf(settings()), 'startup');
     },
-    async onInstalled() {
+    async onInstalled(reason, previousVersion) {
       await ready();
+      await installed(reason, previousVersion);
       lock.reassert();
       await render();
     },
@@ -630,7 +662,7 @@ export function createController(opts: IControllerOptions): IController {
     ready,
     state,
     onStartup: () => serial(() => handlers.onStartup()),
-    onInstalled: (reason) => serial(() => handlers.onInstalled(reason)),
+    onInstalled: (reason, previousVersion) => serial(() => handlers.onInstalled(reason, previousVersion)),
     onAlarm: (name) => serial(() => handlers.onAlarm(name)),
     onCommand: (command) => serial(() => handlers.onCommand(command)),
     onMessage: (raw) => serial(() => handlers.onMessage(raw)),

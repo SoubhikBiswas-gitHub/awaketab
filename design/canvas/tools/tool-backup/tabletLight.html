@@ -1,0 +1,210 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.96)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #5BE0E8;outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-wave{animation:at-wave 9s linear infinite}
+.at-wave2{animation:at-wave 15s linear infinite reverse}
+.at-bub{animation:at-bub 9s ease-in infinite}
+.at-cloud{animation:at-drift 90s linear infinite}
+.at-cloud2{animation:at-drift 130s linear infinite;animation-delay:-60s}
+.at-tw{animation:at-tw 5s ease-in-out infinite}
+.at-tw2{animation:at-tw 7s ease-in-out infinite;animation-delay:-3s}
+.at-glint{transform-origin:top center;animation:at-glint 6s ease-in-out infinite}
+.at-shim{animation:at-shim 3.8s var(--ease) infinite}
+.at-float{animation:at-float 7s ease-in-out infinite}
+.at-scrim{animation:at-fade .5s var(--ease) both}
+.at-sheet-up{animation:at-up .7s var(--ease) both}
+.at-sheet-side{animation:at-side .7s var(--ease) both}
+.at-sheet-body{scrollbar-width:thin}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-wave{to{transform:translateX(-358px)}}
+@keyframes at-bub{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.55}100%{transform:translateY(-240px) scale(1.1);opacity:0}}
+@keyframes at-drift{from{transform:translateX(-170px)}to{transform:translateX(420px)}}
+@keyframes at-tw{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes at-glint{0%,100%{transform:scaleX(.6);opacity:.35}50%{transform:scaleX(1);opacity:.7}}
+@keyframes at-shim{0%{transform:translateX(-120%)}100%{transform:translateX(420%)}}
+@keyframes at-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes at-fade{from{opacity:0}to{opacity:1}}
+@keyframes at-up{from{opacity:0;transform:translateY(72px)}to{opacity:1;transform:none}}
+@keyframes at-side{from{opacity:0;transform:translateX(56px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head><body>
+<div class="at-root" style="width: 820px; height: 1180px; box-sizing: border-box; position: relative; overflow: hidden; background: radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #E7EEF6 100%); color: #0E1726; display: flex; flex-direction: column">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; left: -25%; top: 4%; width: 150%; height: 70%; background: radial-gradient(45% 45% at 50% 50%, rgba(10,143,155,0.12) 0%, transparent 70%); pointer-events: none"></div>
+
+  <header style="position: relative; height: 60px; flex-shrink: 0; box-sizing: border-box; padding: 0 20px 0 32px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+    <a href="#" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #0E1726; font-weight: 600; font-size: 17px; letter-spacing: -0.01em; min-height: 44px">
+      <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#0E1726" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="#0A8F9B" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="#0A8F9B" style="transition: fill .6s"></circle></svg>
+      AwakeTab
+    </a>
+    
+    <div style="display: flex; align-items: center; gap: 6px">
+      <div role="radiogroup" aria-label="Theme" style="position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 3px; border-radius: 999px; background: #FFFFFF; border: 1px solid #DCE3EC">
+        <div aria-hidden="true" class="at-slide" style="position: absolute; left: 3px; top: 3px; width: 44px; height: 44px; border-radius: 999px; background: #E3EAF2; box-shadow: 0 1px 3px rgba(14,23,38,0.14); transform: translateX(0px)"></div>
+        <button role="radio" aria-checked="true" aria-label="Light" title="Light" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #0E1726; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button>
+        <button role="radio" aria-checked="false" aria-label="Dark" title="Dark" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #5B6779; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button>
+        <button role="radio" aria-checked="false" aria-label="Auto, follows your system" title="Auto: follows your system" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #5B6779; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button>
+      </div>
+      
+      <button aria-label="Your stats" aria-haspopup="dialog" aria-expanded="false" style="width: 44px; height: 44px; border: 0; background: transparent; border-radius: 12px; color: #3A4659; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-7"></path></svg></button>
+      
+      <button aria-label="Settings" aria-haspopup="dialog" aria-expanded="false" style="width: 44px; height: 44px; border: 0; background: transparent; border-radius: 12px; color: #3A4659; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></button>
+    </div>
+  </header>
+
+  <div style="position: relative; flex-shrink: 0; padding: 0 32px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+    <time style="font-size: 15px; color: #3A4659">Saturday, 26 September 2026</time>
+    <time style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 15px; color: #0E1726; font-variant-numeric: tabular-nums">10:00 PM</time>
+  </div>
+
+  <div style="position: relative; flex-grow: 1; display: grid; grid-template-columns: minmax(0, 520px); justify-content: center; grid-template-rows: auto auto 459px auto 1fr auto; grid-template-areas: &quot;tabs&quot; &quot;pill&quot; &quot;face&quot; &quot;note&quot; &quot;.&quot; &quot;dock&quot;; row-gap: 20px; padding: 28px 24px 48px">
+
+    <div style="grid-area: tabs; justify-self: center; width: 440px">
+      <div role="tablist" aria-label="Clock face" style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: #FFFFFF; border: 1px solid #DCE3EC">
+        <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 4); height: 38px; box-sizing: border-box; border-radius: 999px; background: rgba(10,143,155,0.12); border: 1px solid rgba(10,143,155,0.38); transform: translateX(300%)"></div>
+        
+          <button role="tab" aria-selected="false" style="position: relative; height: 38px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; font-weight: 500; color: #3A4659">Ring</button>
+        
+          <button role="tab" aria-selected="false" style="position: relative; height: 38px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; font-weight: 500; color: #3A4659">Bold</button>
+        
+          <button role="tab" aria-selected="false" style="position: relative; height: 38px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; font-weight: 500; color: #3A4659">Horizon</button>
+        
+          <button role="tab" aria-selected="true" style="position: relative; height: 38px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; font-weight: 600; color: #0E1726">Tide</button>
+        
+      </div>
+    </div>
+
+    <div style="grid-area: pill; justify-self: center">
+      <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: 10px; height: 38px; padding: 0 17px 0 13px; box-sizing: border-box; border-radius: 999px; background: rgba(10,143,155,0.12); border: 1px solid rgba(10,143,155,0.38); font-size: 15px; font-weight: 600; color: #0E1726">
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 0 5px rgba(10,143,155,0.8))"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z" fill="#0A8F9B" stroke="#0A8F9B" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+        Screen awake
+      </output>
+    </div>
+
+    <div style="grid-area: face; display: flex; align-items: center; justify-content: center">
+      <div style="position: relative; width: 483px; height: 459px">
+        <div style="position: absolute; left: 0; top: 0; width: 358px; height: 340px; transform: scale(1.35); transform-origin: 0 0">
+
+          
+
+          
+
+          
+
+          
+            <div class="at-in" style="position: absolute; inset: 0; border-radius: 28px; overflow: hidden; background: radial-gradient(90% 80% at 50% 15%, #FFFFFF 0%, #E8EFF6 100%); box-shadow: inset 0 0 0 1px #DCE3EC">
+              <div class="at-lin" style="position: absolute; left: 0; top: 0; width: 358px; height: 340px; transform: translateY(65px)">
+                <svg class="at-wave2" aria-hidden="true" width="716" height="28" viewBox="0 0 716 28" style="position: absolute; left: 0; top: -22px; display: block"><path d="M0 28L0 22.0L4 21.9L8 21.6L12 21.2L16 20.6L20 20.0L24 19.1L28 18.2L32 17.2L36 16.2L40 15.1L44 14.0L48 12.9L52 11.8L56 10.7L60 9.7L64 8.8L68 8.0L72 7.3L76 6.8L80 6.4L84 6.1L88 6.0L92 6.1L96 6.3L100 6.6L104 7.1L108 7.8L112 8.5L116 9.4L120 10.4L124 11.4L128 12.5L132 13.6L136 14.7L140 15.8L144 16.9L148 17.9L152 18.9L156 19.7L160 20.4L164 21.0L168 21.5L172 21.8L176 22.0L180 22.0L184 21.8L188 21.5L192 21.1L196 20.5L200 19.8L204 18.9L208 18.0L212 17.0L216 15.9L220 14.8L224 13.7L228 12.6L232 11.5L236 10.5L240 9.5L244 8.6L248 7.8L252 7.2L256 6.7L260 6.3L264 6.1L268 6.0L272 6.1L276 6.3L280 6.7L284 7.3L288 8.0L292 8.7L296 9.6L300 10.6L304 11.7L308 12.8L312 13.9L316 15.0L320 16.1L324 17.2L328 18.2L332 19.1L336 19.9L340 20.6L344 21.2L348 21.6L352 21.9L356 22.0L360 22.0L364 21.8L368 21.4L372 20.9L376 20.3L380 19.6L384 18.7L388 17.8L392 16.7L396 15.6L400 14.5L404 13.4L408 12.3L412 11.2L416 10.2L420 9.3L424 8.4L428 7.7L432 7.0L436 6.6L440 6.2L444 6.0L448 6.0L452 6.1L456 6.4L460 6.9L464 7.4L468 8.1L472 9.0L476 9.9L480 10.9L484 11.9L488 13.0L492 14.2L496 15.3L500 16.4L504 17.4L508 18.4L512 19.3L516 20.1L520 20.7L524 21.3L528 21.7L532 21.9L536 22.0L540 21.9L544 21.7L548 21.3L552 20.8L556 20.1L560 19.4L564 18.5L568 17.5L572 16.5L576 15.4L580 14.3L584 13.1L588 12.0L592 11.0L596 10.0L600 9.0L604 8.2L608 7.5L612 6.9L616 6.5L620 6.2L624 6.0L628 6.0L632 6.2L636 6.5L640 7.0L644 7.6L648 8.3L652 9.2L656 10.1L660 11.1L664 12.2L668 13.3L672 14.4L676 15.6L680 16.6L684 17.7L688 18.6L692 19.5L696 20.3L700 20.9L704 21.4L708 21.7L712 22.0L716 22.0L716 28Z" fill="#0A8F9B" fill-opacity="0.4"></path></svg>
+                <svg class="at-wave" aria-hidden="true" width="716" height="28" viewBox="0 0 716 28" style="position: absolute; left: 0; top: -16px; display: block"><path d="M0 28L0 14.0L4 14.8L8 15.7L12 16.5L16 17.2L20 17.9L24 18.5L28 19.0L32 19.4L36 19.7L40 19.9L44 20.0L48 20.0L52 19.8L56 19.5L60 19.2L64 18.7L68 18.1L72 17.5L76 16.7L80 16.0L84 15.2L88 14.3L92 13.5L96 12.6L100 11.8L104 11.1L108 10.4L112 9.7L116 9.2L120 8.7L124 8.4L128 8.1L132 8.0L136 8.0L140 8.1L144 8.3L148 8.7L152 9.1L156 9.7L160 10.3L164 11.0L168 11.7L172 12.5L176 13.4L180 14.2L184 15.0L188 15.9L192 16.6L196 17.4L200 18.0L204 18.6L208 19.1L212 19.5L216 19.8L220 19.9L224 20.0L228 19.9L232 19.8L236 19.5L240 19.1L244 18.5L248 18.0L252 17.3L256 16.5L260 15.8L264 14.9L268 14.1L272 13.3L276 12.4L280 11.6L284 10.9L288 10.2L292 9.6L296 9.1L300 8.6L304 8.3L308 8.1L312 8.0L316 8.0L320 8.2L324 8.4L328 8.8L332 9.3L336 9.8L340 10.5L344 11.2L348 11.9L352 12.7L356 13.6L360 14.4L364 15.3L368 16.1L372 16.8L376 17.5L380 18.2L384 18.7L388 19.2L392 19.6L396 19.8L400 20.0L404 20.0L408 19.9L412 19.7L416 19.4L420 18.9L424 18.4L428 17.8L432 17.1L436 16.4L440 15.6L444 14.7L448 13.9L452 13.1L456 12.2L460 11.5L464 10.7L468 10.0L472 9.5L476 8.9L480 8.5L484 8.2L488 8.1L492 8.0L496 8.1L500 8.2L504 8.5L508 8.9L512 9.4L516 10.0L520 10.6L524 11.4L528 12.1L532 13.0L536 13.8L540 14.6L544 15.5L548 16.3L552 17.0L556 17.7L560 18.3L564 18.9L568 19.3L572 19.7L576 19.9L580 20.0L584 20.0L588 19.9L592 19.6L596 19.3L600 18.8L604 18.3L608 17.6L612 16.9L616 16.2L620 15.4L624 14.5L628 13.7L632 12.8L636 12.0L640 11.3L644 10.5L648 9.9L652 9.3L656 8.8L660 8.5L664 8.2L668 8.0L672 8.0L676 8.1L680 8.3L684 8.6L688 9.0L692 9.5L696 10.1L700 10.8L704 11.5L708 12.3L712 13.2L716 14.0L716 28Z" fill="#0A8F9B"></path></svg>
+                <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 10px; height: 340px; background: linear-gradient(180deg, #0A8F9B 0%, rgba(10,143,155,0.75) 100%)"></div>
+                
+                  <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 0; height: 340px">
+                    
+                      <span class="at-bub" style="position: absolute; left: 40px; top: 300px; width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); animation-delay: 0s"></span>
+                    
+                      <span class="at-bub" style="position: absolute; left: 112px; top: 320px; width: 5px; height: 5px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); animation-delay: -2.5s"></span>
+                    
+                      <span class="at-bub" style="position: absolute; left: 196px; top: 310px; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); animation-delay: -5s"></span>
+                    
+                      <span class="at-bub" style="position: absolute; left: 262px; top: 325px; width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); animation-delay: -1.2s"></span>
+                    
+                      <span class="at-bub" style="position: absolute; left: 318px; top: 305px; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.7); animation-delay: -6.8s"></span>
+                    
+                  </div>
+                
+              </div>
+              <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #0E1726">
+                <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.75">Time left</div>
+                <div role="timer" aria-label="24:18 left" style="font-weight: 200; font-size: 84px; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums">24:18</div>
+                <div style="font-size: 15px; font-weight: 500">until 10:24 PM</div>
+              </div>
+              <div aria-hidden="true" class="at-lin" style="position: absolute; inset: 0; clip-path: inset(69px 0 0 0); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #FFFFFF">
+                <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.75">Time left</div>
+                <div style="font-weight: 200; font-size: 84px; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums">24:18</div>
+                <div style="font-size: 15px; font-weight: 500">until 10:24 PM</div>
+              </div>
+            </div>
+          
+
+        </div>
+      </div>
+    </div>
+
+    <div style="grid-area: note; text-align: center">
+      
+      
+        <p class="at-rise" style="margin: 0; font-size: 14px; line-height: 1.5; color: #5B6779; text-wrap: pretty">Started 10:17 PM · keep this tab visible</p>
+      
+    </div>
+
+    <div style="grid-area: dock; display: flex; flex-direction: column; gap: 20px">
+      
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          
+            <div role="group" aria-label="Session length" style="position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: #FFFFFF; border: 1px solid #DCE3EC">
+              <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 7); height: 46px; box-sizing: border-box; border-radius: 999px; background: rgba(10,143,155,0.14); border: 1px solid rgba(10,143,155,0.45); opacity: 1; transform: translateX(100%)"></div>
+              
+                <button aria-pressed="false" aria-label="15 minutes" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #3A4659; white-space: nowrap">15m</button>
+              
+                <button aria-pressed="true" aria-label="30 minutes" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 600; color: #0E1726; white-space: nowrap">30m</button>
+              
+                <button aria-pressed="false" aria-label="45 minutes" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #3A4659; white-space: nowrap">45m</button>
+              
+                <button aria-pressed="false" aria-label="1 hour" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #3A4659; white-space: nowrap">1h</button>
+              
+                <button aria-pressed="false" aria-label="2 hours" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #3A4659; white-space: nowrap">2h</button>
+              
+                <button aria-pressed="false" aria-label="4 hours" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #3A4659; white-space: nowrap">4h</button>
+              
+                <button aria-pressed="false" aria-label="No limit" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 15px; font-weight: 500; color: #3A4659; white-space: nowrap">No limit</button>
+              
+            </div>
+            <div style="display: flex; justify-content: center; gap: 8px">
+              <button style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px dashed #C3CDDA; background: transparent; font-size: 14px; font-weight: 500; color: #3A4659">Until a time…</button>
+              <button style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px dashed #C3CDDA; background: transparent; font-size: 14px; font-weight: 500; color: #3A4659">Custom…</button>
+            </div>
+          
+          
+          
+        </div>
+      
+
+      
+
+      
+        <div class="at-rise" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+          
+            <button style="height: 60px; border-radius: 20px; border: 1px solid #C3CDDA; background: #FFFFFF; font-size: 17px; font-weight: 600; color: #0E1726">+15 min</button>
+          
+          <button style="height: 60px; border-radius: 20px; border: 0; background: #0E1726; font-size: 17px; font-weight: 600; color: #F4F7FB; display: flex; align-items: center; justify-content: center; gap: 10px">Stop<kbd aria-hidden="true" style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; padding: 2px 7px; border-radius: 6px; border: 1px solid currentColor; opacity: 0.6">Space</kbd></button>
+        </div>
+      
+
+      
+
+      
+
+      
+    </div>
+  </div>
+
+  
+</div>
+</body></html>

@@ -1,12 +1,12 @@
 ---
 import '../styles/tokens.css';
 import '../styles/tool.css';
+import '../styles/shell.css';
 import bootJs from '../boot/boot.js?raw';
 import SeoHead from '../components/SeoHead.astro';
-import LocaleNav from '../components/LocaleNav.astro';
-import { cn } from 'cn';
-import { Separator } from '@/components/ui/separator';
-import { buttonVariants } from '@/components/ui/button';
+import SiteHeader from '../components/shell/SiteHeader.astro';
+import SiteFooter from '../components/shell/SiteFooter.astro';
+import { createT } from '../i18n/load';
 import { localeFromPath, localePath, LOCALE_META, textDirection, type TLocale } from '../i18n/locales';
 import type { TSchemaNode } from '../lib/seo';
 
@@ -23,8 +23,10 @@ interface Props {
   alternates?: Array<{ locale: TLocale; href: string }> | undefined;
   /** Locale-switcher targets for this page; locales without an entry link to their home. */
   localeLinks?: Partial<Record<TLocale, string>> | undefined;
-  footer?: { privacy: string; terms: string; changelog: string; donate: string };
-  /** Chrome-less page (the 280 × 120 /pip popup): no shell padding, separator or footer. */
+  /** `false` on tool pages: ToolIsland renders the same SiteHeader inside the island root (it holds the tool's
+   *  Stats and Settings buttons, which main.ts binds with root.querySelector()). */
+  header?: boolean;
+  /** Chrome-less page (the 280 × 120 /pip popup): no header, shell padding or footer. */
   bare?: boolean;
 }
 
@@ -41,14 +43,11 @@ const {
   schema,
   alternates,
   localeLinks,
-  footer = { privacy: 'Privacy', terms: 'Terms', changelog: 'Changelog', donate: 'Buy me a coffee' },
+  header = true,
   bare = false,
 } = Astro.props;
 const localeMeta = LOCALE_META[locale];
-// Ghost, not link: the footer is utility navigation, not a call to action, so it takes
-// .at-footer's muted-foreground colour instead of the page's one accent (docs/03 ADR-013).
-// min-h-11 keeps the 44 px target (docs/00 §11).
-const footerLink = cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'min-h-11 px-2 -mx-2');
+const t = createT(locale);
 ---
 
 <!doctype html>
@@ -56,9 +55,10 @@ const footerLink = cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'min-h-1
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF7F2" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#14161C" />
-    <meta name="theme-color" content="#FAF7F2" />
+    <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F2F6FA" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0A0E16" />
+    <meta name="theme-color" content="#F2F6FA" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="manifest" href={localePath(locale, '/manifest.webmanifest')} />
@@ -82,19 +82,22 @@ const footerLink = cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'min-h-1
       bare ? (
         <slot />
       ) : (
-        <div class="at-shell">
-          <slot />
-          <Separator className="mt-8 bg-border" />
-          <footer class="at-footer">
-            <a class={footerLink} href="/privacy">{footer.privacy}</a>
-            <a class={footerLink} href="/terms">{footer.terms}</a>
-            <a class={footerLink} href="/changelog">{footer.changelog}</a>
-            <a class={footerLink} href="https://buymeacoffee.com/awaketab" rel="noopener" target="_blank">
-              {footer.donate}
-            </a>
-            <LocaleNav locale={locale} links={localeLinks} />
-          </footer>
-        </div>
+        <>
+          {header && <a class="at-skip" href="#content">{t('tool.skip')}</a>}
+          {header && <SiteHeader locale={locale} />}
+          {/* Tool pages bring their own header and .at-shell (ToolIsland: the header must span the page, outside the
+              shell's gutter) and put #content on their h1; elsewhere the skip link lands on the page body. */}
+          {
+            header ? (
+              <div class="at-shell" id="content" tabindex="-1">
+                <slot />
+              </div>
+            ) : (
+              <slot />
+            )
+          }
+          <SiteFooter locale={locale} links={localeLinks} />
+        </>
       )
     }
   </body>

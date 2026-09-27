@@ -3,7 +3,17 @@
  * default snippet at build time and power the in-page generators, so what a site owner copies is exactly what
  * the loader parses (protocol.ts).
  */
-import { EMBED_BOX, EMBED_PATH, embedQuery, type IEmbedOptions, type TEmbedLocale } from './protocol.js';
+import {
+  EMBED_BOX,
+  EMBED_CREDIT_CLASS,
+  EMBED_CREDIT_LINK_STYLE,
+  EMBED_CREDIT_STYLE,
+  EMBED_CREDIT_URL,
+  EMBED_PATH,
+  embedQuery,
+  type IEmbedOptions,
+  type TEmbedLocale,
+} from './protocol.js';
 
 export const SITE_ORIGIN = 'https://awaketab.com';
 
@@ -26,18 +36,32 @@ export function loaderSnippet(opts: ISnippetOptions, origin = SITE_ORIGIN): stri
   return `<script async src="${origin}/embed.js" ${attrs.join(' ')}></script>`;
 }
 
-/** For platforms that strip <script>: the bare iframe. It must keep `allow="screen-wake-lock"`. */
-export function iframeSnippet(opts: ISnippetOptions, title: string, origin = SITE_ORIGIN): string {
+const escapeHtml = (text: string) => text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
+
+/**
+ * The credit line as plain HTML (O-47): what the loader inserts after its iframe, for sites that paste the bare
+ * iframe. Same class, URL, `rel="nofollow"` and inline styles as `loader.ts` `mountCredit()`.
+ */
+export function creditSnippet(text = 'Keep awake by AwakeTab'): string {
+  return `<div class="${EMBED_CREDIT_CLASS}" style="${EMBED_CREDIT_STYLE}"><a href="${EMBED_CREDIT_URL}" rel="nofollow" style="${EMBED_CREDIT_LINK_STYLE}">${escapeHtml(text)}</a></div>`;
+}
+
+/**
+ * For platforms that strip <script>: the bare iframe, then the credit line. The iframe must keep
+ * `allow="screen-wake-lock"`; the credit stays unless the domain holds an Embed licence.
+ */
+export function iframeSnippet(opts: ISnippetOptions, title: string, origin = SITE_ORIGIN, credit?: string): string {
   const box = EMBED_BOX[opts.size];
   const query = embedQuery({ ...opts, lang: opts.lang ?? 'en' }, '');
   return [
     `<iframe src="${origin}${EMBED_PATH}?${query}"`,
-    `  title="${title.replaceAll('"', '&quot;')}"`,
+    `  title="${escapeHtml(title)}"`,
     '  allow="screen-wake-lock"',
     '  loading="lazy"',
     '  referrerpolicy="strict-origin"',
     `  sandbox="${SNIPPET_SANDBOX}"`,
-    `  style="width:${box.width};max-width:100%;height:${String(box.height)}px;border:0;border-radius:12px"></iframe>`,
+    `  style="width:${box.width};max-width:100%;height:${String(box.height)}px;border:0;border-radius:${String(box.radius)}px;display:block"></iframe>`,
+    creditSnippet(credit),
   ].join('\n');
 }
 

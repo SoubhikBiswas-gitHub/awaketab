@@ -1,65 +1,77 @@
 ---
 title: "Keep the screen on while presenting — AwakeTab"
-description: "Slide decks often go full screen and hide the browser. AwakeTab can hold the display only while it remains a visible surface — a PiP pill on Chromium, a"
+description: "Full-screen slides hide the AwakeTab tab, so the browser stops keeping the screen on. Use the floating window, AwakeTab for Chrome or a longer timeout."
 h1: "Keep the screen on while presenting"
 intent: "keep screen on during presentation"
+secondaryQueries:
+  - "stop laptop screen turning off during presentation"
+  - "projector turns off during presentation"
+  - "keep screen awake powerpoint"
+  - "keep mac awake during keynote"
 preset: p120
 mode: standard
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+lastVerified: 2026-09-26
+browsers: ["chrome", "edge", "firefox"]
+os: ["windows", "macos", "chromeos", "linux"]
 faq:
-  - q: "Does keep the screen on while presenting work in a hidden tab?"
-    a: "No. The presentations flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "Full-screen slide apps hide the tab; use the PiP pill on Chromium or remember the projector still follows the OS display timeout."
+  - q: "My slides app is in full screen. Why did the pill change?"
+    a: "Full screen covers the AwakeTab tab, and browsers only keep the screen on for a page you can see. The pill reads “Paused — tab hidden” until the tab is visible again."
+  - q: "Will the audience see AwakeTab on the projector?"
+    a: "Only if you put it there. With an extended display, keep the floating window or the AwakeTab window on your laptop screen and the slides on the projector. When you mirror the display, the floating window shows on both, so drag it into a corner or rely on AwakeTab for Chrome instead."
+  - q: "Can I stop it at the end of the talk without touching the laptop?"
+    a: "Yes. Tap “Until…” before you start and pick the end of your slot, such as 11:30 AM. In Settings, set “When time is up” to “Just stop” and the end sound to None, so no prompt or chime lands in the Q&A."
+  - q: "Does a longer display timeout on a shared lectern PC cause problems?"
+    a: "It can, because the next person inherits it. If you change the timeout for your talk, put it back afterwards. A tab or the extension leaves the settings alone and stops when you tell it to."
+honestLimit: "Full-screen slides hide the AwakeTab tab, and then the screen follows its normal timeout. The projector follows that same timeout. Keep AwakeTab visible in a floating window or second window, or use AwakeTab for Chrome."
 related:
-  - "/for/night-clock"
-  - "/for/second-monitor"
-  - "/on/samsung-internet"
+  - "/on/windows-11"
+  - "/on/macos"
+  - "/guides/lock-screen-vs-sleep"
+  - "/for/classroom"
+  - "/extension"
+  - "/guides/second-monitor-turns-off"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+Yes, AwakeTab can keep the screen on while you present, with one catch. When your slides go full screen, they hide the AwakeTab tab, and the browser stops keeping the screen on. So keep AwakeTab visible another way: the floating window in desktop Chrome, Edge or Firefox; AwakeTab for Chrome, which works with the tab hidden; a second window on your own screen; or a longer display timeout for the talk.
 
-Slide decks often go full screen and hide the browser. AwakeTab can hold the display only while it remains a visible surface — a PiP pill on Chromium, a second window, or a confidence monitor that still shows the tab.
+## Why full-screen slides stop it
 
-## How the lock works on this page
+A browser keeps the screen on only for a page that is visible. PowerPoint, Keynote or Google Slides in full screen covers the AwakeTab tab, so the browser releases the wake lock and the pill says "Paused — tab hidden". From that moment, your computer's normal display timeout is running again.
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for presentations.
+## Four ways to keep it on
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+| Option | Where it works | What to know |
+|---|---|---|
+| Floating window | Desktop Chrome and Edge 116 or later, Firefox 151 or later | A small window that stays on top of other windows. Not in Safari or on Android |
+| AwakeTab for Chrome | Chrome and Edge on a computer | Uses Chrome's power setting, so the tab can be hidden or minimised |
+| A second window on your screen | Any browser, with an extended display | Slides full screen on the projector, AwakeTab visible on the laptop |
+| A longer display timeout | Any computer where you can change settings | Free and certain, but remember to set it back |
 
-## Practical setup for Keep the screen on while presenting
+**The floating window** is the quickest. Open it with the "Floating window" button in the AwakeTab header; the browser may ask you to allow pop-ups for awaketab.com. Whether it keeps the screen on while full-screen slides cover the main AwakeTab tab has not been device-tested yet; we will publish that result on our how-we-tested page. Until then, run the check in the last section before the talk.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+**[AwakeTab for Chrome](/extension)** is the most dependable choice for full-screen PowerPoint or Keynote on Chrome or Edge. Its Screen level keeps the display on while Chrome is running, whatever window is in front.
 
-## Operating-system notes
+**A longer timeout** is the right answer on your own laptop if you present often. The steps are in [Keep the screen on in Windows 11](/on/windows-11) and on [the Mac page](/on/macos).
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+## The projector and second displays
 
-## What success looks like
+A projector or second monitor follows the same display timeout as your laptop. When AwakeTab keeps the display on, it stays on too. When the wake lock is released, the projector goes dark on the same timer as your laptop screen. A projector that turns itself off after losing the signal is using its own setting; [Fix a second monitor that turns off](/guides/second-monitor-turns-off) covers that case.
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+A locked screen is a different matter. If your laptop locks during a long Q&A because of a work lock policy, AwakeTab won't prevent that. [Lock screen versus display sleep](/guides/lock-screen-vs-sleep) explains the difference.
 
-## Related paths
+## Set it up before you're introduced
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no for claim here that is missing from the matrix.
+1. Open AwakeTab and pick 2 h, or tap "Until…" and choose the end of your slot, such as 11:30 AM.
+2. Tap Start and wait for the pill to change from "Starting…" to "Screen awake".
+3. Open the floating window, or turn on the extension.
+4. Start the slideshow. The floating window should still say "Screen awake".
+5. Rehearse once: leave the slideshow running, untouched, for longer than your display timeout. If the screen stays on, you're set.
 
-## A short checklist before you walk away
+## What you'll see during the talk
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For presentations, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
-
-## Why the pill is the product
-
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On presentations, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Keep the screen on while presenting to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+A running time and "Screen awake" mean the display is covered. "Paused — tab hidden" means the slides are covering AwakeTab and the normal timeout is back in charge. If the browser refuses, for example because a school or work administrator has switched wake locks off, the pill reads "Blocked — here's the fix" and tells you why. Teaching a class? See [keep the classroom screen on while you teach](/for/classroom).

@@ -1,65 +1,79 @@
 ---
-title: "Keep the browser awake for AI agents — AwakeTab"
-description: "Long agent runs die when the tab is hidden or the display sleeps. Keep AwakeTab visible in the same window or a split, and expect the agent site to apply"
-h1: "Keep the browser awake for AI agents"
-intent: "keep browser awake while ai agent runs"
+title: "Keep your computer awake while an AI agent runs — AwakeTab"
+description: "Claude Code, Codex or a long build stalls when the computer sleeps. What a visible tab can hold, and when caffeinate or PowerToys Awake fits better."
+h1: "Keep your computer awake while an AI agent or long build runs"
+intent: "keep computer awake while ai agent runs"
+secondaryQueries:
+  - "claude code keep computer awake"
+  - "keep mac awake for claude"
+  - "keep computer awake for codex"
+  - "keep laptop awake during long build"
+  - "keep mac awake terminal command"
 preset: pinf
 mode: minimal
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+lastVerified: 2026-09-26
+browsers: ["chrome", "edge"]
+os: ["macos", "windows", "linux"]
 faq:
-  - q: "Does keep the browser awake for AI agents work in a hidden tab?"
-    a: "No. The ai-agents flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "Keeps the screen on; it cannot stop a site's own inactivity timeout or the throttling of a hidden agent tab."
+  - q: "What is the exact command to keep a Mac awake for one Claude Code session?"
+    a: "Run caffeinate -i claude instead of claude. The Mac will not idle-sleep until you quit Claude Code; the display can still turn off. Use caffeinate -di claude if you also want the screen to stay lit so you can glance at it. The same pattern works for codex or any build command."
+  - q: "Does the terminal window have to stay in front?"
+    a: "No. caffeinate and PowerToys Awake work whatever window is in front, even with the screen off. With the web page, the AwakeTab window is the one that must stay uncovered; the terminal can sit behind other windows."
+  - q: "Is the extension’s System level better than the web page for an overnight job?"
+    a: "Usually, yes. It keeps the computer awake with the tab hidden or the window minimised, and the popup shows “System awake”. The screen may still dim or lock, which suits a night run. Chrome or Edge must stay open."
+  - q: "Can AwakeTab stop a browser-based agent from timing out?"
+    a: "No. It keeps the display on and nothing else. A site that signs you out when idle, or a browser that slows a hidden agent tab, is outside its reach. Keep the agent’s tab visible, or run the agent from a terminal."
+honestLimit: "The web page keeps the display on, and with it stops idle sleep, only while its tab is visible. Minimise it or close the lid and the computer can sleep mid-run. For unattended jobs, use caffeinate, PowerToys Awake or AwakeTab for Chrome."
 related:
-  - "/for/navigation"
-  - "/for/exams-proctoring"
+  - "/on/macos"
   - "/on/windows-11"
+  - "/extension"
+  - "/vs/powertoys-awake"
+  - "/vs/caffeine"
+  - "/guides/mac-prevent-sleep-lid-closed"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+If your agent or build runs in a terminal, the simplest fix is the operating system's own: `caffeinate -i` on a Mac, or PowerToys Awake on Windows. AwakeTab helps when you also want to watch progress. In Chrome or Edge, a visible AwakeTab tab keeps the display on, and while the display is on, neither Windows nor macOS idle-sleeps. Closing the lid still sleeps. Check it with `pmset -g assertions` (Mac) or `powercfg /requests` (Windows).
 
-Long agent runs die when the tab is hidden or the display sleeps. Keep AwakeTab visible in the same window or a split, and expect the agent site to apply its own idle rules regardless.
+## Pick the tool for the job
 
-## How the lock works on this page
+| Your situation | Best fit | Why |
+|---|---|---|
+| Claude Code, Codex or a build in a Mac terminal | `caffeinate -i` in front of the command | Holds off idle sleep until the command exits, then lets go |
+| The same job on Windows | PowerToys Awake | Keeps the PC awake; the display turns off unless you switch on "Keep screen on" |
+| You want to watch the run on screen | A visible AwakeTab tab | The screen stays lit, so you can glance at progress from across the room |
+| Overnight, tab hidden, Chrome or Edge | AwakeTab for Chrome, System level | Keeps the computer awake with the tab hidden; the screen may dim or lock |
+| Laptop lid closed | None of these | See the lid section below |
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for ai-agents.
+On a Mac, that looks like `caffeinate -i codex` or `caffeinate -i npm run build`. Microsoft documents PowerToys Awake on [Microsoft Learn](https://learn.microsoft.com/en-us/windows/powertoys/awake) (checked 26 September 2026); [our PowerToys Awake comparison](/vs/powertoys-awake) sets the two side by side.
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+## What the web page does, precisely
 
-## Practical setup for Keep the browser awake for AI agents
+A web page can only ask for the screen to stay on, through the Screen Wake Lock API. What that means for the rest of the machine depends on the system:
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+- **Windows:** Chrome and Edge ask Windows to keep the display on. While it is on, Windows doesn't idle-sleep. [Keep the screen on in Windows 11](/on/windows-11) has the settings side.
+- **macOS:** Chrome holds a "no display sleep" power assertion, and Apple's rules mean the Mac does not idle-sleep while it's held. [The Mac page](/on/macos) covers the details.
+- **Linux:** the browser sends the request to your desktop environment over D-Bus, and some desktops honour it better than others.
 
-## Operating-system notes
+All of this lasts only while the tab is visible. Minimise the window or switch tabs and the pill shows "Paused — tab hidden"; from then on, the normal sleep timer runs. A work policy that locks the screen after a set time can still lock it, although a locked Mac or PC is not asleep.
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+## Set up a visible monitor for a long run
 
-## What success looks like
+1. Start the agent or build.
+2. Open AwakeTab in its own small window and choose ∞, or "Until…" with a clock time such as 7:00 AM tomorrow.
+3. Pick Minimal mode: a dim screen with the elapsed time, easy on the eyes and the panel.
+4. Place the window beside your terminal or the agent's page. It can sit unfocused; it only has to stay uncovered.
+5. Plug the laptop in for a long run.
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+## Check that it's working
 
-## Related paths
+With the pill showing "Screen awake" on a Mac, type `pmset -g assertions` into Terminal. Look for a PreventUserIdleDisplaySleep or NoDisplaySleep line from your browser; `caffeinate` shows up under its own name. On Windows, open Terminal as administrator and run `powercfg /requests`. The browser should be listed under DISPLAY.
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no for claim here that is missing from the matrix.
+## The lid, and other walls a tab can't climb
 
-## A short checklist before you walk away
-
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For ai-agents, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
-
-## Why the pill is the product
-
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On ai-agents, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Keep the browser awake for AI agents to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+Closing a laptop lid sleeps it, whatever any browser tab or command asks. The one exception is a Mac running closed with its charger and an external monitor connected (clamshell mode); our guide to [Mac sleep with the lid closed](/guides/mac-prevent-sleep-lid-closed) explains the trade-offs. For a remote machine you reach over SSH, set sleep on that machine, not in your local browser. For hidden-tab runs in Chrome or Edge, [AwakeTab for Chrome](/extension) is the tool built for it.

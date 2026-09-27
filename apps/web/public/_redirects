@@ -3,3 +3,7 @@ https://www.awaketab.com/* https://awaketab.com/:splat 301
 /support-matrix /learn/browser-support-matrix 301
 /how-we-tested /learn/how-we-tested 301
 /pro/buy /pro 302
+/for/second-monitor /guides/second-monitor-turns-off 301
+/on/windows-10 /on/windows-11 301
+/guides/modern-standby /guides/lock-screen-vs-sleep 301
+/learn/nosleep-js-vs-wake-lock /vs/nosleep-js 301

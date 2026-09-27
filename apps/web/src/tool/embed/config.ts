@@ -1,7 +1,8 @@
 /**
- * Free vs licensed rendering (docs/11 §2, docs/09 §7.1): `GET /api/embed/config?domain=<verified parent host>`.
- * Only `{ licensed: true, attribution: false }` removes the attribution line; any error, timeout or unexpected
- * shape renders the free variant. Brand colours are applied only from a validated `#RRGGBB`.
+ * Licensed rendering inside the frame (docs/11 §2, docs/09 §7.1): `GET /api/embed/config?domain=<verified parent
+ * host>`. A licensed domain's brand colour and scheme apply; any error, timeout or unexpected shape renders the
+ * free variant. Brand colours are applied only from a validated `#RRGGBB`. (The credit line lives in the host
+ * page and the loader asks the same endpoint for it, loader.ts `keepsCredit()`.)
  */
 export type TEmbedScheme = 'auto' | 'light' | 'dark';
 
@@ -66,14 +67,13 @@ export function onAccent(hex: string): '#000000' | '#ffffff' {
   return (l + 0.05) / 0.05 >= 1.05 / (l + 0.05) ? '#000000' : '#ffffff';
 }
 
-export function applyBranding(root: HTMLElement, attribution: HTMLElement | null, cfg: IEmbedConfig): void {
-  if (attribution) attribution.hidden = !cfg.attribution;
-  if (cfg.accent) {
-    // Accent surfaces only (pill border, focus ring, Start button fill with a computed black/white label, so AA
-    // holds for any brand colour). Text on the page keeps the AA-checked --at-accent-text.
-    root.style.setProperty('--at-accent', cfg.accent);
-    root.style.setProperty('--at-focus', cfg.accent);
-    root.style.setProperty('--at-embed-brand', cfg.accent);
-    root.style.setProperty('--at-embed-on-brand', onAccent(cfg.accent));
-  }
+/**
+ * A licensed brand colour fills the Start button only, with a computed black/white label so AA holds for any
+ * colour (board EmbedEdge "licensed"). The pill, glyphs and focus ring keep the lamp and state tones, so a
+ * state never changes meaning. The credit line is not in the frame any more (O-47): the loader drops it.
+ */
+export function applyBranding(root: HTMLElement, cfg: IEmbedConfig): void {
+  if (!cfg.accent) return;
+  root.style.setProperty('--at-embed-brand', cfg.accent);
+  root.style.setProperty('--at-embed-on-brand', onAccent(cfg.accent));
 }

@@ -1,0 +1,416 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.96)}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid #5BE0E8;outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,opacity 1s linear}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-float{animation:at-float 7s ease-in-out infinite}
+.at-prose a{text-decoration-thickness:1px;text-underline-offset:4px;transition:text-decoration-thickness .3s var(--ease)}
+.at-prose a:hover{text-decoration-thickness:2px}
+.at-row{transition:background-color .45s var(--ease)}
+.at-row:hover{background-color:rgba(127,140,160,0.08)}
+.at-chev{transition:transform .6s var(--ease)}
+.at-code{scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.at-bar{transition:transform .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+<style>.at-root{height:auto!important} *{animation:none!important;transition:none!important}</style></head><body>
+<div class="at-root" style="width: 1280px; height: 4070px; box-sizing: border-box; position: relative; overflow: hidden; background: radial-gradient(1400px 900px at 50% -160px, #13203A 0%, rgba(10,14,22,0) 72%), #0A0E16; color: #EAF0F7; display: flex; flex-direction: column">
+
+  <header style="position: relative; height: 64px; flex-shrink: 0; box-sizing: border-box; padding-inline: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+    <a href="#" aria-label="AwakeTab home" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #EAF0F7; font-weight: 600; font-size: 17px; letter-spacing: -0.01em; min-height: 44px">
+      <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#EAF0F7" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="#8E9AAE" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="#8E9AAE" style="transition: fill .6s"></circle></svg>
+      AwakeTab
+    </a>
+    
+      <nav aria-label="Main" style="display: flex; gap: 32px; font-size: 15px; font-weight: 500">
+        
+          <a href="#" aria-current="false" style="color: #B7C1D1; text-decoration: none; display: flex; align-items: center; gap: 8px; min-height: 44px">Use cases</a>
+        
+          <a href="#" aria-current="false" style="color: #B7C1D1; text-decoration: none; display: flex; align-items: center; gap: 8px; min-height: 44px">Devices</a>
+        
+          <a href="#" aria-current="false" style="color: #B7C1D1; text-decoration: none; display: flex; align-items: center; gap: 8px; min-height: 44px">Extension</a>
+        
+          <a href="#" aria-current="false" style="color: #B7C1D1; text-decoration: none; display: flex; align-items: center; gap: 8px; min-height: 44px">Pro</a>
+        
+      </nav>
+    
+    <div role="radiogroup" aria-label="Theme" style="position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 3px; border-radius: 999px; background: #111826; border: 1px solid #1F2940">
+      <div aria-hidden="true" class="at-slide" style="position: absolute; left: 3px; top: 3px; width: 44px; height: 44px; border-radius: 999px; background: #26324B; box-shadow: 0 1px 3px rgba(0,0,0,0.4); transform: translateX(44px)"></div>
+      <button role="radio" aria-checked="false" aria-label="Light" title="Light" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #8E9AAE; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button>
+      <button role="radio" aria-checked="true" aria-label="Dark" title="Dark" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #EAF0F7; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button>
+      <button role="radio" aria-checked="false" aria-label="Auto, follows your system" title="Auto: follows your system" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #8E9AAE; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button>
+    </div>
+  </header>
+
+  <div style="position: relative; display: grid; grid-template-columns: 200px 680px 160px; grid-template-areas: 'toc head .' 'toc body rail' 'toc tool tool' 'toc tail .'; column-gap: 64px; row-gap: 56px; padding: 24px 56px 0; align-items: start">
+    <div style="grid-area: head; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+      <nav aria-label="Breadcrumb">
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; font-size: 14px; color: #8E9AAE">
+          <li style="display: flex; align-items: center; gap: 8px"><a href="#" style="color: #B7C1D1; text-decoration: none; min-height: 44px; display: flex; align-items: center">AwakeTab</a><span aria-hidden="true">›</span></li>
+          <li style="display: flex; align-items: center; gap: 8px"><a href="#" style="color: #B7C1D1; text-decoration: none; min-height: 44px; display: flex; align-items: center">Compare screen-awake tools</a><span aria-hidden="true">›</span></li>
+          
+            <li aria-current="page" style="min-height: 44px; display: flex; align-items: center; color: #8E9AAE">nosleep.page</li>
+          
+        </ol>
+      </nav>
+      <h1 style="margin: 0; font-size: 56px; line-height: 1.06; font-weight: 600; letter-spacing: -0.035em; color: #EAF0F7; text-wrap: balance">nosleep.page vs AwakeTab</h1>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px">
+        <span style="display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 4px 14px 4px 11px; box-sizing: border-box; border-radius: 999px; border: 1px solid #33405C; font-size: 14px; font-weight: 500; color: #B7C1D1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5BE0E8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.7 2.7L16.5 9.5"></path></svg>
+          Last verified: 9 September 2026
+        </span>
+        <span style="font-size: 14px; color: #8E9AAE">By Soubhik Biswas</span>
+      </div>
+      <p style="margin: 0; font-size: 21px; line-height: 1.6; color: #EAF0F7; text-wrap: pretty">nosleep.page is also a tab. Hidden, both release. AwakeTab adds a seven-state pill, until-time, session restore and a documented fallback. Compare them as browsers, not as magic.</p>
+      <div role="note" style="display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 14px; row-gap: 4px; padding: 18px 20px; border-radius: 20px; background: #111826; border: 1px solid #1F2940">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B7C1D1" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
+        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8E9AAE">Honest scope</span>
+          <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #EAF0F7; text-wrap: pretty">Both are tabs and both release when hidden; the difference is honest status, until-time and persistence. Facts dated 9 September 2026.</p>
+        </div>
+      </div>
+    </div>
+
+    
+      <nav aria-label="On this page" style="grid-area: toc; align-self: start; position: sticky; top: 24px; display: flex; flex-direction: column; gap: 24px; padding-top: 58px">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8E9AAE; padding-bottom: 8px">On this page</span>
+          
+            <a href="#s-compare" aria-current="location" style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; line-height: 1.3; font-weight: 600; color: #EAF0F7; text-decoration: none">
+              <span aria-hidden="true" class="at-slide" style="flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: #5BE0E8"></span>
+              Side by side
+            </a>
+          
+            <a href="#s-better" aria-current="false" style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; line-height: 1.3; font-weight: 500; color: #B7C1D1; text-decoration: none">
+              <span aria-hidden="true" class="at-slide" style="flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: transparent"></span>
+              When nosleep.page is better
+            </a>
+          
+            <a href="#s-verdict" aria-current="false" style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; line-height: 1.3; font-weight: 500; color: #B7C1D1; text-decoration: none">
+              <span aria-hidden="true" class="at-slide" style="flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: transparent"></span>
+              Verdict
+            </a>
+          
+            <a href="#s-try" aria-current="false" style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; line-height: 1.3; font-weight: 500; color: #B7C1D1; text-decoration: none">
+              <span aria-hidden="true" class="at-slide" style="flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: transparent"></span>
+              Try it here
+            </a>
+          
+            <a href="#s-faq" aria-current="false" style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; line-height: 1.3; font-weight: 500; color: #B7C1D1; text-decoration: none">
+              <span aria-hidden="true" class="at-slide" style="flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: transparent"></span>
+              Questions
+            </a>
+          
+        </div>
+        <a href="#tool" style="display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 20px; background: #111826; border: 1px solid #1F2940; text-decoration: none; color: #EAF0F7">
+          <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600">
+            <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 0 4px transparent)"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z" fill="transparent" stroke="#8E9AAE" stroke-width="1.6"></path></svg>
+            Ready
+          </span>
+          <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 22px; font-weight: 300; font-variant-numeric: tabular-nums; color: #B7C1D1">∞</span>
+          <span style="font-size: 13px; color: #8E9AAE">Back to the tool ↑</span>
+        </a>
+      </nav>
+    
+
+    <article class="at-prose" style="grid-area: body; display: flex; flex-direction: column; gap: 56px; min-width: 0">
+      <section id="s-compare" aria-labelledby="h-compare" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <h2 id="h-compare" style="margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; color: #EAF0F7; text-wrap: balance">Side by side</h2>
+        <p style="margin: 0; font-size: 18px; line-height: 1.7; color: #B7C1D1; text-wrap: pretty">Checked against nosleep.page on 9 September 2026. Rows marked Same are real ties.</p>
+        
+          <div style="border-radius: 24px; border: 1px solid #1F2940; background: #111826; overflow: hidden">
+            <table style="width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.5; table-layout: fixed">
+              <caption style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%)">AwakeTab compared with nosleep.page, 9 September 2026</caption>
+              <colgroup><col style="width: 28%"><col style="width: 36%"><col style="width: 36%"></colgroup>
+              <thead>
+                <tr style="background: #1A2336">
+                  <th scope="col" style="text-align: start; padding: 14px 18px; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #8E9AAE">What</th>
+                  <th scope="col" style="text-align: start; padding: 14px 18px; font-size: 15px; font-weight: 600; color: #EAF0F7"><span style="display: inline-flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #5BE0E8"></span>AwakeTab</span></th>
+                  <th scope="col" style="text-align: start; padding: 14px 18px; font-size: 15px; font-weight: 600; color: #EAF0F7"><span style="display: inline-flex; align-items: center; gap: 8px"><span aria-hidden="true" style="width: 8px; height: 8px; box-sizing: border-box; border-radius: 50%; border: 1.5px solid #B7C1D1"></span>nosleep.page</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr style="border-top: 1px solid #1F2940">
+                    <th scope="row" style="text-align: start; vertical-align: top; padding: 15px 18px; font-weight: 600; color: #EAF0F7; text-wrap: pretty">What it is<span style="display: block; margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #8E9AAE">Same</span></th>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #EAF0F7; text-wrap: pretty">A browser tab</td>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #B7C1D1; text-wrap: pretty">A browser tab</td>
+                  </tr>
+                
+                  <tr style="border-top: 1px solid #1F2940">
+                    <th scope="row" style="text-align: start; vertical-align: top; padding: 15px 18px; font-weight: 600; color: #EAF0F7; text-wrap: pretty">When the tab is hidden<span style="display: block; margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #8E9AAE">Same</span></th>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #EAF0F7; text-wrap: pretty">Releases. The pill says Paused — tab hidden.</td>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #B7C1D1; text-wrap: pretty">Releases.</td>
+                  </tr>
+                
+                  <tr style="border-top: 1px solid #1F2940">
+                    <th scope="row" style="text-align: start; vertical-align: top; padding: 15px 18px; font-weight: 600; color: #EAF0F7; text-wrap: pretty">Status you see</th>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #EAF0F7; text-wrap: pretty">Seven-state pill. Screen awake appears only once the browser grants the lock.</td>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #B7C1D1; text-wrap: pretty">A ring and a timer that start when you click.</td>
+                  </tr>
+                
+                  <tr style="border-top: 1px solid #1F2940">
+                    <th scope="row" style="text-align: start; vertical-align: top; padding: 15px 18px; font-weight: 600; color: #EAF0F7; text-wrap: pretty">Lengths</th>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #EAF0F7; text-wrap: pretty">15 min to 4 h, no limit, or custom up to 7 days</td>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #B7C1D1; text-wrap: pretty">30 min, 1 hr, 2 hr or custom</td>
+                  </tr>
+                
+                  <tr style="border-top: 1px solid #1F2940">
+                    <th scope="row" style="text-align: start; vertical-align: top; padding: 15px 18px; font-weight: 600; color: #EAF0F7; text-wrap: pretty">End at a clock time</th>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #EAF0F7; text-wrap: pretty">Until a time, for example 7:30 AM</td>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #B7C1D1; text-wrap: pretty">Not offered</td>
+                  </tr>
+                
+                  <tr style="border-top: 1px solid #1F2940">
+                    <th scope="row" style="text-align: start; vertical-align: top; padding: 15px 18px; font-weight: 600; color: #EAF0F7; text-wrap: pretty">After a reload</th>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #EAF0F7; text-wrap: pretty">Offers to resume with the time you had left</td>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #B7C1D1; text-wrap: pretty">Not offered</td>
+                  </tr>
+                
+                  <tr style="border-top: 1px solid #1F2940">
+                    <th scope="row" style="text-align: start; vertical-align: top; padding: 15px 18px; font-weight: 600; color: #EAF0F7; text-wrap: pretty">If the browser refuses</th>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #EAF0F7; text-wrap: pretty">Says Blocked and names the fix</td>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #B7C1D1; text-wrap: pretty">General tips in its FAQ</td>
+                  </tr>
+                
+                  <tr style="border-top: 1px solid #1F2940">
+                    <th scope="row" style="text-align: start; vertical-align: top; padding: 15px 18px; font-weight: 600; color: #EAF0F7; text-wrap: pretty">Stats</th>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #EAF0F7; text-wrap: pretty">Today, this week, streak and all time</td>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #B7C1D1; text-wrap: pretty">Today and this week</td>
+                  </tr>
+                
+                  <tr style="border-top: 1px solid #1F2940">
+                    <th scope="row" style="text-align: start; vertical-align: top; padding: 15px 18px; font-weight: 600; color: #EAF0F7; text-wrap: pretty">Colours</th>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #EAF0F7; text-wrap: pretty">Four lamp colours, light and dark</td>
+                    <td style="vertical-align: top; padding: 15px 18px; color: #EAF0F7; text-wrap: pretty">Any ring and background colour</td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          </div>
+        
+        
+      </section>
+
+      <aside aria-label="Advertisement" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding-block: 8px">
+        <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8E9AAE">Advertisement</span>
+        <div style="width: 336px; height: 280px; max-width: 100%; box-sizing: border-box; border-radius: 12px; border: 1px solid #1F2940; background: repeating-linear-gradient(135deg, transparent 0 11px, rgba(234,240,247,0.04) 11px 12px), rgba(17,24,38,0.55); display: grid; place-items: center">
+          <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; color: #8E9AAE">336 × 280</span>
+        </div>
+      </aside>
+
+      <section id="s-better" aria-labelledby="h-better" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <h2 id="h-better" style="margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; color: #EAF0F7; text-wrap: balance">When nosleep.page is the better tool</h2>
+        <p style="margin: 0; font-size: 18px; line-height: 1.7; color: #B7C1D1; text-wrap: pretty">Pick the tool that fits the job. These are the cases where we would send you there.</p>
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border-top: 1px solid #1F2940">
+          
+            <li style="display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; padding: 18px 0; border-bottom: 1px solid #1F2940">
+              <span aria-hidden="true" style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 15px; color: #8E9AAE; padding-top: 2px">01</span>
+              <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <span style="font-size: 17px; font-weight: 600; line-height: 1.4; color: #EAF0F7; text-wrap: pretty">You want one round button and nothing else</span>
+                <span style="font-size: 18px; line-height: 1.6; color: #B7C1D1; text-wrap: pretty">nosleep.page is a single ring you click. AwakeTab shows more: a status pill, an end time and length presets.</span>
+              </div>
+            </li>
+          
+            <li style="display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; padding: 18px 0; border-bottom: 1px solid #1F2940">
+              <span aria-hidden="true" style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 15px; color: #8E9AAE; padding-top: 2px">02</span>
+              <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <span style="font-size: 17px; font-weight: 600; line-height: 1.4; color: #EAF0F7; text-wrap: pretty">You want your own colours</span>
+                <span style="font-size: 18px; line-height: 1.6; color: #B7C1D1; text-wrap: pretty">nosleep.page lets you pick any ring and background colour. AwakeTab offers four lamp colours.</span>
+              </div>
+            </li>
+          
+            <li style="display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; padding: 18px 0; border-bottom: 1px solid #1F2940">
+              <span aria-hidden="true" style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 15px; color: #8E9AAE; padding-top: 2px">03</span>
+              <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <span style="font-size: 17px; font-weight: 600; line-height: 1.4; color: #EAF0F7; text-wrap: pretty">It already works for you</span>
+                <span style="font-size: 18px; line-height: 1.6; color: #B7C1D1; text-wrap: pretty">Both ask for the same browser lock and both stop when the tab is hidden, so switching will not keep your screen on any longer.</span>
+              </div>
+            </li>
+          
+        </ol>
+      </section>
+
+      <section id="s-verdict" aria-labelledby="h-verdict" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8E9AAE">Verdict</span>
+        <h2 id="h-verdict" style="margin: 0; font-size: 34px; line-height: 1.2; font-weight: 500; letter-spacing: -0.02em; color: #EAF0F7; text-wrap: balance">Same lock, same limits. <span style="color: #5BE0E8">AwakeTab tells you when it is really working.</span></h2>
+        <p style="margin: 0; font-size: 18px; line-height: 1.7; color: #B7C1D1; text-wrap: pretty">Both are browser tabs that ask for the same wake lock, and both stop when the tab is hidden. Choose AwakeTab when you need to see that the lock is held, end at a clock time, or pick up after a reload. Choose nosleep.page when one round button and your own colours are all you want.</p>
+      </section>
+    </article>
+
+    <div id="s-try" style="grid-area: tool; display: flex; flex-direction: column; gap: 16px; min-width: 0">
+      <h2 id="h-try" style="margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; color: #EAF0F7; text-wrap: balance">Try it here</h2>
+    <section id="tool" aria-label="nosleep.page vs AwakeTab: tool" style="grid-area: auto; position: relative; overflow: hidden; border-radius: 28px; background: #111826; border: 1px solid #1F2940; box-shadow: 0 24px 60px -36px rgba(0,0,0,0.8); min-width: 0">
+      <div aria-hidden="true" class="at-aura" style="position: absolute; left: -20%; top: -30%; width: 140%; height: 160%; background: radial-gradient(40% 45% at 30% 50%, rgba(91,224,232,0.05) 0%, transparent 70%); pointer-events: none"></div>
+      <div style="position: relative; display: grid; grid-template-columns: 280px minmax(0, 1fr); grid-template-areas: 'clock top' 'clock len' 'clock cta' 'clock note'; column-gap: 48px; row-gap: 18px; align-items: center; padding: 32px 36px">
+        <div style="grid-area: top; display: flex; align-items: center; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap">
+          <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: 10px; height: 38px; padding: 0 17px 0 13px; box-sizing: border-box; border-radius: 999px; background: rgba(142,154,174,0.12); border: 1px solid rgba(142,154,174,0.38); font-size: 15px; font-weight: 600; color: #EAF0F7; white-space: nowrap">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 0 5px transparent)"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z" fill="transparent" stroke="#8E9AAE" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+            Ready
+          </output>
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8E9AAE; white-space: nowrap">Suggested · no limit</span>
+        </div>
+        <div style="grid-area: clock; display: flex; align-items: center; justify-content: center; min-width: 0">
+          <div style="position: relative; width: 280px; height: 280px; flex-shrink: 0">
+            
+            <svg width="100%" height="100%" viewBox="0 0 240 240" aria-hidden="true" style="position: absolute; inset: 0; overflow: visible">
+              <defs><filter id="toolGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"></feGaussianBlur></filter></defs>
+              <circle cx="120" cy="120" r="100" fill="none" stroke="#2A3752" stroke-width="5" stroke-dasharray="1.2 9.272"></circle>
+              <circle cx="120" cy="120" r="110" fill="none" stroke="#1A2336" stroke-width="5"></circle>
+              <g transform="rotate(-90 120 120)">
+                <circle class="at-arc" cx="120" cy="120" r="110" fill="none" stroke="#5BE0E8" stroke-opacity="0" stroke-width="11" stroke-linecap="round" filter="url(#toolGlow)" style="stroke-dasharray: 691.2 691.2"></circle>
+                <circle class="at-arc" cx="120" cy="120" r="110" fill="none" stroke="#5BE0E8" stroke-opacity="0.45" stroke-width="5" stroke-linecap="round" style="stroke-dasharray: 691.2 691.2"></circle>
+              </g>
+              <g class="at-lin" style="transform: rotate(360.00deg); transform-origin: 120px 120px; opacity: 0">
+                <circle class="at-halo" cx="120" cy="10" r="6" fill="#5BE0E8"></circle>
+                <circle cx="120" cy="10" r="4.5" fill="#EAF0F7"></circle>
+              </g>
+            </svg>
+            <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px">
+              <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8E9AAE">Keeps awake for</span>
+              <div role="timer" aria-label="No limit" style="font-family: 'Geist Mono', ui-monospace, monospace; font-weight: 300; font-size: 62px; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; color: #B7C1D1; transition: color .6s">∞<span style="color: #8E9AAE"></span></div>
+              <div style="font-size: 14px; color: #8E9AAE; white-space: nowrap">until you stop <span style="color: #EAF0F7; font-weight: 500"></span></div>
+            </div>
+          </div>
+        </div>
+        <div style="grid-area: len; min-width: 0">
+          <div role="group" aria-label="Session length" style="position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: #111826; border: 1px solid #1F2940">
+            <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 7); height: 46px; box-sizing: border-box; border-radius: 999px; background: rgba(91,224,232,0.12); border: 1px solid rgba(91,224,232,0.4); transform: translateX(600%)"></div>
+            
+              <button aria-pressed="false" aria-label="15 minutes" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 13px; font-weight: 500; color: #B7C1D1; white-space: nowrap">15m</button>
+            
+              <button aria-pressed="false" aria-label="30 minutes" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 13px; font-weight: 500; color: #B7C1D1; white-space: nowrap">30m</button>
+            
+              <button aria-pressed="false" aria-label="45 minutes" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 13px; font-weight: 500; color: #B7C1D1; white-space: nowrap">45m</button>
+            
+              <button aria-pressed="false" aria-label="1 hour" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 13px; font-weight: 500; color: #B7C1D1; white-space: nowrap">1h</button>
+            
+              <button aria-pressed="false" aria-label="2 hours" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 13px; font-weight: 500; color: #B7C1D1; white-space: nowrap">2h</button>
+            
+              <button aria-pressed="false" aria-label="4 hours" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 13px; font-weight: 500; color: #B7C1D1; white-space: nowrap">4h</button>
+            
+              <button aria-pressed="true" aria-label="No limit" style="position: relative; height: 46px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: 13px; font-weight: 600; color: #EAF0F7; white-space: nowrap">No limit</button>
+            
+          </div>
+        </div>
+        <div style="grid-area: cta; min-width: 0">
+          
+            <button class="at-rise" style="width: 100%; height: 60px; border-radius: 20px; border: 0; background: #5BE0E8; color: #04232A; font-size: 17px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px -8px rgba(91,224,232,0.5)">
+              <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>
+              Keep awake · no limit
+            </button>
+          
+          
+        </div>
+        <p style="grid-area: note; margin: 0; font-size: 14px; line-height: 1.5; color: #8E9AAE; text-align: start; text-wrap: pretty">Keeps this screen on while this tab stays visible.</p>
+      </div>
+    </section>
+    </div>
+
+    <div class="at-prose" style="grid-area: tail; display: flex; flex-direction: column; gap: 56px; min-width: 0">
+      <section id="s-faq" aria-labelledby="h-faq" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <h2 id="h-faq" style="margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; color: #EAF0F7; text-wrap: balance">Questions</h2>
+        <div style="display: flex; flex-direction: column; border-top: 1px solid #1F2940">
+          
+            <div style="border-bottom: 1px solid #1F2940">
+              <h3 style="margin: 0">
+                <button id="faq-q0" aria-expanded="true" aria-controls="faq-a0" style="width: 100%; min-height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 2px; border: 0; background: transparent; text-align: start; font-size: 17px; line-height: 1.4; font-weight: 600; color: #EAF0F7">
+                  <span style="text-wrap: pretty">Does either one work in a hidden tab?</span>
+                  <span aria-hidden="true" style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; border: 1px solid #33405C; display: grid; place-items: center; color: #B7C1D1">
+                    <svg class="at-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="transform: rotate(45deg)"><path d="M12 5v14M5 12h14"></path></svg>
+                  </span>
+                </button>
+              </h3>
+              
+                <p id="faq-a0" role="region" aria-labelledby="faq-q0" class="at-in" style="margin: 0; padding: 0 48px 20px 2px; font-size: 16px; line-height: 1.65; color: #B7C1D1; text-wrap: pretty">No. The lock is released when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback.</p>
+              
+            </div>
+          
+            <div style="border-bottom: 1px solid #1F2940">
+              <h3 style="margin: 0">
+                <button id="faq-q1" aria-expanded="false" aria-controls="faq-a1" style="width: 100%; min-height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 2px; border: 0; background: transparent; text-align: start; font-size: 17px; line-height: 1.4; font-weight: 600; color: #EAF0F7">
+                  <span style="text-wrap: pretty">Will this keep Teams or Slack Available?</span>
+                  <span aria-hidden="true" style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; border: 1px solid #33405C; display: grid; place-items: center; color: #B7C1D1">
+                    <svg class="at-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="transform: rotate(0deg)"><path d="M12 5v14M5 12h14"></path></svg>
+                  </span>
+                </button>
+              </h3>
+              
+            </div>
+          
+            <div style="border-bottom: 1px solid #1F2940">
+              <h3 style="margin: 0">
+                <button id="faq-q2" aria-expanded="false" aria-controls="faq-a2" style="width: 100%; min-height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 2px; border: 0; background: transparent; text-align: start; font-size: 17px; line-height: 1.4; font-weight: 600; color: #EAF0F7">
+                  <span style="text-wrap: pretty">What browsers are in scope?</span>
+                  <span aria-hidden="true" style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; border: 1px solid #33405C; display: grid; place-items: center; color: #B7C1D1">
+                    <svg class="at-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="transform: rotate(0deg)"><path d="M12 5v14M5 12h14"></path></svg>
+                  </span>
+                </button>
+              </h3>
+              
+            </div>
+          
+        </div>
+      </section>
+
+      <nav aria-label="Related" style="display: flex; flex-direction: column; gap: 12px">
+        <a href="#tool" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 20px; border-radius: 999px; background: rgba(91,224,232,0.12); border: 1px solid rgba(91,224,232,0.4); color: #EAF0F7; font-size: 16px; font-weight: 600; text-decoration: none">
+          <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#5BE0E8" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="#5BE0E8"></circle></svg>
+          Start this session
+        </a>
+        <div style="display: flex; flex-wrap: wrap; column-gap: 24px; row-gap: 0; font-size: 16px">
+          <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #5BE0E8">Compare screen-awake tools</a>
+          <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #5BE0E8">Android timeout for a single app</a>
+          <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #5BE0E8">Low Power Mode and wake locks</a>
+          <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #5BE0E8">Keep a dashboard screen switched on</a>
+        </div>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 16px; padding: 20px; border-radius: 24px; background: #111826; border: 1px solid #1F2940">
+        <span aria-hidden="true" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; background: rgba(91,224,232,0.12); border: 1px solid rgba(91,224,232,0.4); display: grid; place-items: center; font-size: 15px; font-weight: 600; color: #EAF0F7">SB</span>
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 16px; font-weight: 600; color: #EAF0F7">Soubhik Biswas</span>
+          <span style="font-size: 15px; color: #B7C1D1">Builds and tests AwakeTab. <a href="#" style="color: #5BE0E8">About AwakeTab</a></span>
+        </div>
+      </div>
+    </div>
+
+    
+      <aside aria-label="Advertisement" style="grid-area: rail; align-self: start; position: sticky; top: 24px; display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8E9AAE">Advertisement</span>
+        <div style="width: 160px; height: 600px; box-sizing: border-box; border-radius: 12px; border: 1px solid #1F2940; background: repeating-linear-gradient(135deg, transparent 0 11px, rgba(234,240,247,0.04) 11px 12px), rgba(17,24,38,0.55); display: grid; place-items: center">
+          <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; color: #8E9AAE">160 × 600</span>
+        </div>
+      </aside>
+    
+  </div>
+
+  <div style="flex-grow: 1"></div>
+
+  <footer style="flex-shrink: 0; margin-top: 64px; padding: 24px 56px 32px; border-top: 1px solid #1F2940; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; font-size: 14px; color: #8E9AAE">
+    <span>No ads on the awake screen, now or later.</span>
+    <div style="display: flex; flex-wrap: wrap; column-gap: 20px">
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #B7C1D1; text-decoration: none">Privacy</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #B7C1D1; text-decoration: none">Terms</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #B7C1D1; text-decoration: none">Changelog</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #B7C1D1; text-decoration: none">Buy me a coffee</a>
+    </div>
+  </footer>
+</div>
+</body></html>

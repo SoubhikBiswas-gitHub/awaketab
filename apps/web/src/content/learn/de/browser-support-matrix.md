@@ -17,12 +17,12 @@ faq:
   - q: "Gilt die Tabelle auch, wenn der Tab im Hintergrund liegt?"
     a: "Nein. In jedem aufgeführten Browser gilt der Wake Lock nur für ein sichtbares Dokument. Minimieren Sie das Fenster, wechseln Sie den Tab oder am Handy die App, gibt der Browser den Lock frei, und die Anzeige zeigt „Pausiert — Tab ausgeblendet“."
   - q: "Warum steht Chrome auf dem iPhone nicht in der Tabelle?"
-    a: "Wir führen nur Zeilen, die wir getestet haben. Für iPhone und iPad ist Safari ab 16.4 belegt, für Web-Apps auf dem Home-Bildschirm iOS 18.4. Andere Kombinationen beanspruchen wir nicht."
+    a: "Wir führen nur Zeilen, die wir anhand von Browser-Dokumentation und Quellcode geprüft haben. Für iPhone und iPad ist Safari ab 16.4 belegt, für Web-Apps auf dem Home-Bildschirm iOS 18.4. Andere Kombinationen beanspruchen wir nicht."
   - q: "Was bedeutet „Video-Ersatzlösung“ genau?"
     a: "Unterstützt ein Browser die Screen Wake Lock API nicht, etwa Firefox vor Version 126, kann AwakeTab nach einem Tippen oder Klick ein winziges stummes Video abspielen, das den Bildschirm anlässt. Die Anzeige lautet dann „Bildschirm bleibt per Video an“. Das verbraucht mehr Strom als der native Lock."
   - q: "Unterstützt ein Browser den Lock, heißt das, er wird immer gewährt?"
-    a: "Nein. Energiesparmodus, Stromsparmodus, eine unsichere Verbindung ohne HTTPS oder eine Einbettung ohne Berechtigung für screen-wake-lock führen zu „Blockiert — so beheben Sie es“, auch in einem Browser, der in der Tabelle steht."
-honestLimit: "Die Tabelle gibt den Stand vom 9. September 2026 wieder. Ältere Versionen weichen auf die Video-Ersatzlösung aus, und jede Zeile gilt nur für dieses Testdatum."
+    a: "Nein. Ein Tab, der beim Start nicht sichtbar ist, eine Einbettung ohne Berechtigung für screen-wake-lock, Safari ohne vorheriges Tippen oder Firefox bei 5 % Akku oder weniger ohne Ladekabel führen zu „Blockiert — so beheben Sie es“. Energiesparmodi lehnen nicht ab. Ohne HTTPS fehlt der Lock ganz."
+honestLimit: "Die Tabelle gibt den Stand vom 9. September 2026 wieder. Ältere Versionen weichen auf die Video-Ersatzlösung aus, und jede Zeile gilt nur für dieses Prüfdatum."
 related:
   - "/learn/screen-wake-lock-api-guide"
   - "/learn/how-we-tested"
@@ -32,21 +32,22 @@ related:
   - "/for/kiosk"
 author: soubhik
 published: 2026-09-26
+updated: 2026-09-27
 ---
 
 ## Kurzfassung
 
-Einen nativen Screen Wake Lock gewähren Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 und Opera 70; Web-Apps auf dem iPhone-Home-Bildschirm ab iOS 18.4. Das ist der Stand unserer Datei `support-matrix.json` vom 9. September 2026. Ältere Firefox-Versionen kommen nur über die Video-Ersatzlösung ans Ziel. Kombinationen, die wir nicht getestet haben, stehen nicht in der Tabelle und werden auch nicht beansprucht.
+Einen nativen Screen Wake Lock gewähren Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 und Opera 70; Web-Apps auf dem iPhone-Home-Bildschirm ab iOS 18.4. Das ist der Stand unserer Datei `support-matrix.json` vom 9. September 2026. Ältere Firefox-Versionen kommen nur über die Video-Ersatzlösung ans Ziel. Kombinationen, die wir nicht geprüft haben, stehen nicht in der Tabelle und werden auch nicht beansprucht.
 
 ## Browser und Mindestversionen
 
 | Browser | Nativ ab Version | Plattformen | Hinweis |
 |---|---|---|---|
-| Chrome | 84 | Windows, macOS, Linux, Android, ChromeOS | Tab muss sichtbar bleiben; der Energiesparmodus kann den Lock ablehnen oder beenden. |
-| Edge | 84 | Windows, macOS | Tab muss sichtbar bleiben; der Effizienzmodus kann den Lock beeinflussen. |
-| Firefox | 126 | Windows, macOS, Linux, Android | Frühere Versionen nutzen die Video-Ersatzlösung nach einer Nutzeraktion. |
-| Safari | 16.4 | macOS, iOS, iPadOS | Der Stromsparmodus kann den Lock verhindern; Tab muss sichtbar bleiben. |
-| Samsung Internet | 14 | Android | Energiespareinstellungen können den Lock ablehnen oder beenden. |
+| Chrome | 84 | Windows, macOS, Linux, Android, ChromeOS | Tab muss sichtbar bleiben; Energiesparmodi lehnen den Lock nicht ab. |
+| Edge | 84 | Windows, macOS, Linux, Android | Tab muss sichtbar bleiben. |
+| Firefox | 126 | Windows, macOS, Linux, Android | Frühere Versionen nutzen die Video-Ersatzlösung nach einer Nutzeraktion; lehnt bei 5 % Akku oder weniger ohne Ladekabel ab. |
+| Safari | 16.4 | macOS, iOS, iPadOS | Braucht zum Start ein Tippen oder einen Klick; Tab muss sichtbar bleiben. |
+| Samsung Internet | 14 | Android | Tab muss sichtbar bleiben; Energiespar-Listen können den Tab schließen, nachdem Sie ihn verlassen haben. |
 | Opera | 70 | Windows, macOS, Linux, Android | Chromium-Basis; Tab muss sichtbar bleiben. |
 
 ## Besondere Umgebungen
@@ -62,11 +63,11 @@ AwakeTab ruft `navigator.wakeLock.request('screen')` aus einer sicheren, sichtba
 
 ## Was die Tabelle nicht aussagt
 
-Eine Versionsnummer bedeutet Unterstützung der Schnittstelle, keine Garantie im Einzelfall. Energiesparmodi, fehlendes HTTPS oder eine Permissions-Policy, die `screen-wake-lock` sperrt, führen auch in unterstützten Browsern zur Ablehnung. Außerdem betrifft der Lock nur das Display. Auf dem Mac ging das System bei Inaktivität in unseren Tests dennoch schlafen, und einen zugeklappten Laptop hält kein Browser wach. Die Anwesenheit in Teams oder Slack beeinflusst er ebenfalls nicht, weil diese Dienste auf Eingaben achten.
+Eine Versionsnummer bedeutet Unterstützung der Schnittstelle, keine Garantie im Einzelfall. Ein ausgeblendeter Tab, eine Permissions-Policy, die `screen-wake-lock` sperrt, Safari ohne vorheriges Tippen und Firefox bei 5 % Akku oder weniger führen auch in unterstützten Browsern zur Ablehnung; ohne HTTPS fehlt die Schnittstelle ganz. Außerdem zielt der Lock auf das Display. Solange es an bleibt, schlafen Windows und macOS auch nicht bei Inaktivität ein, doch einen zugeklappten Laptop hält kein Browser wach. Die Anwesenheit in Teams oder Slack beeinflusst er ebenfalls nicht, weil diese Dienste auf Eingaben achten.
 
 ## Methodik und Datum
 
-Jede Zeile stammt aus einem Test und ist an das Datum 9. September 2026 gebunden. Für Linux liegt ein Test unter Ubuntu 24.04 (GNOME, Idle-Inhibit) vor, durchgeführt mit Chrome 84+ und Firefox 126+. Neuere Browserversionen gelten erst dann als geprüft, wenn eine Zeile ein neues Testdatum trägt. Gerätespezifische Details finden Sie auf den Seiten zu [Safari auf dem iPhone](/de/on/iphone-safari), [Chrome unter Android](/de/on/android-chrome) und [Windows 11](/de/on/windows-11).
+Jede Zeile beruht auf Browser-Dokumentation und Quellcode (zuletzt geprüft am 26. September 2026), nicht auf eigenen Gerätetests; die tragen wir nach, sobald sie vorliegen. Unter Linux bitten Chrome und Firefox den Desktop über D-Bus, nicht in den Ruhezustand zu gehen; ob das greift, hängt vom Desktop ab. Gerätespezifische Details finden Sie auf den Seiten zu [Safari auf dem iPhone](/de/on/iphone-safari), [Chrome unter Android](/de/on/android-chrome) und [Windows 11](/de/on/windows-11).
 
 ## Selbst ausprobieren
 

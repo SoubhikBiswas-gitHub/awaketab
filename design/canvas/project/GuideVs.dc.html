@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · AwakeTab vs nosleep.page</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.96)}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid #5BE0E8;outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,opacity 1s linear}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-prose a{text-decoration-thickness:1px;text-underline-offset:4px;transition:text-decoration-thickness .3s var(--ease)}
+.at-prose a:hover{text-decoration-thickness:2px}
+.at-chev{transition:transform .6s var(--ease)}
+.at-code{scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.at-bar{transition:transform .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: {{W}}; height: {{viewH}}; overflow: hidden">
+<div class="at-root" style="width: {{W}}; height: {{H}}; margin-top: {{shift}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{p.ground}}; color: {{t.ink}}; display: flex; flex-direction: column">
+
+  <header style="position: relative; height: {{hdr.h}}; flex-shrink: 0; box-sizing: border-box; padding: {{hdr.pad}}; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+    <a href="#" aria-label="AwakeTab home" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: {{t.ink}}; font-weight: 600; font-size: 17px; line-height: 24px; letter-spacing: -0.01em; min-height: 44px">
+      <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{tone}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{tone}}" style="transition: fill .6s"></circle></svg>
+      AwakeTab
+    </a>
+    <sc-if value="{{isDesk}}" hint-placeholder-val="{{false}}">
+      <nav aria-label="Main" style="display: flex; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 500">
+        <sc-for list="{{nav}}" as="n" hint-placeholder-count="4">
+          <a href="#" aria-current="{{n.cur}}" style="padding: 0 12px; box-sizing: border-box; color: {{n.ink}}; font-weight: {{n.weight}}; text-decoration: none; display: flex; align-items: center; gap: 8px; min-height: 44px"><sc-if value="{{n.on}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: {{p.lamp}}"></span></sc-if>{{n.label}}</a>
+        </sc-for>
+      </nav>
+    </sc-if>
+    <div role="radiogroup" aria-label="Theme" style="position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+      <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{themeX}})"></div>
+      <button role="radio" aria-checked="{{themeLight}}" aria-label="Light" title="Light" onClick="{{setLight}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeLightInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button>
+      <button role="radio" aria-checked="{{themeDark}}" aria-label="Dark" title="Dark" onClick="{{setDark}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeDarkInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button>
+      <button role="radio" aria-checked="{{themeAuto}}" aria-label="Auto, follows your system" title="Auto: follows your system" onClick="{{setAuto}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeAutoInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button>
+    </div>
+  </header>
+
+  <div style="{{shellStyle}}">
+    <div style="grid-area: head; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+      <nav aria-label="Breadcrumb">
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; font-size: 14px; line-height: 20px; color: {{t.muted}}">
+          <li style="display: flex; align-items: center; gap: 8px"><a href="#" style="color: {{t.ink2}}; text-decoration: none; min-height: 44px; display: flex; align-items: center">AwakeTab</a><span aria-hidden="true">›</span></li>
+          <li style="display: flex; align-items: center; gap: 8px"><a href="#" style="color: {{t.ink2}}; text-decoration: none; min-height: 44px; display: flex; align-items: center">Compare screen-awake tools</a><sc-if value="{{showCrumb}}" hint-placeholder-val="{{true}}"><span aria-hidden="true">›</span></sc-if></li>
+          <sc-if value="{{showCrumb}}" hint-placeholder-val="{{true}}">
+            <li aria-current="page" style="min-height: 44px; display: flex; align-items: center; color: {{t.muted}}">nosleep.page</li>
+          </sc-if>
+        </ol>
+      </nav>
+      <h1 style="margin: 0; font-size: {{fs.h1}}; line-height: {{fs.h1lh}}; font-weight: 600; letter-spacing: -0.02em; color: {{t.ink}}; text-wrap: balance">AwakeTab vs nosleep.page</h1>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px">
+        <span style="display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 4px 12px 4px 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; font-size: 14px; line-height: 20px; font-weight: 500; color: {{t.ink2}}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{p.lamp}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.7 2.7L16.5 9.5"></path></svg>
+          {{verifiedLabel}}
+        </span>
+        <span style="font-size: 14px; line-height: 20px; color: {{t.muted}}">By Soubhik Biswas</span>
+      </div>
+      <p style="margin: 0; font-size: 18px; line-height: 28px; color: {{t.ink}}; text-wrap: pretty">Both are browser tabs that use the Screen Wake Lock API, and both stop when the tab is hidden. Pick nosleep.page if you want one quick timer with nothing to set. Pick AwakeTab if you want a status pill that only says "Screen awake" once the browser agrees, an end time on the clock, or a session that survives a reload.</p>
+    </div>
+
+    <section id="tool" aria-label="{{toolAria}}" style="grid-area: tool; position: relative; overflow: hidden; border-radius: 28px; background: {{t.surface}}; border: 1px solid {{cardLine}}; box-shadow: {{cardShadow}}; min-width: 0">
+      <div aria-hidden="true" class="at-aura" style="position: absolute; left: -20%; top: -30%; width: 140%; height: 160%; background: radial-gradient(40% 45% at 30% 50%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
+      <div style="{{cardGrid}}">
+        <div style="grid-area: top; display: flex; align-items: center; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap">
+          <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px 0 12px; box-sizing: border-box; border-radius: 999px; background: {{toneSoft}}; border: 1px solid {{toneLine}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 0 5px {{toneGlow}})"><path d="{{glyph}}" fill="{{glyphFill}}" stroke="{{tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+            {{statusLabel}}
+          </output>
+          <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}; white-space: nowrap">{{cardKicker}}</span>
+        </div>
+        <div style="grid-area: clock; display: flex; align-items: center; justify-content: center; min-width: 0">
+          <div style="position: relative; width: {{ringPx}}; height: {{ringPx}}; flex-shrink: 0">
+            <sc-if value="{{live}}" hint-placeholder-val="{{false}}">
+              <div aria-hidden="true" class="at-sweep" style="position: absolute; inset: 10%; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg 240deg, {{toneFaint}} 360deg)"></div>
+            </sc-if>
+            <svg width="100%" height="100%" viewBox="0 0 240 240" aria-hidden="true" style="position: absolute; inset: 0; overflow: visible">
+              <defs><filter id="toolGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"></feGaussianBlur></filter></defs>
+              <circle cx="120" cy="120" r="100" fill="none" stroke="{{t.tick}}" stroke-width="5" stroke-dasharray="1.2 9.272"></circle>
+              <circle cx="120" cy="120" r="110" fill="none" stroke="{{t.track}}" stroke-width="5"></circle>
+              <g transform="rotate(-90 120 120)">
+                <circle class="at-arc" cx="120" cy="120" r="110" fill="none" stroke="{{faceColor}}" stroke-opacity="{{glowOp}}" stroke-width="11" stroke-linecap="round" filter="url(#toolGlow)" style="stroke-dasharray: {{arcDash}}"></circle>
+                <circle class="at-arc" cx="120" cy="120" r="110" fill="none" stroke="{{faceColor}}" stroke-opacity="{{arcOp}}" stroke-width="5" stroke-linecap="round" style="stroke-dasharray: {{arcDash}}"></circle>
+              </g>
+              <g class="at-lin" style="transform: rotate({{tipDeg}}); transform-origin: 120px 120px; opacity: {{tipOp}}">
+                <circle class="at-halo" cx="120" cy="10" r="6" fill="{{faceColor}}"></circle>
+                <circle cx="120" cy="10" r="4.5" fill="{{t.ink}}"></circle>
+              </g>
+            </svg>
+            <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px">
+              <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{kicker}}</span>
+              <div role="timer" aria-label="{{timerAria}}" style="font-family: Geist, system-ui, sans-serif; font-weight: 300; font-size: {{digitSize}}; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: {{numColor}}; transition: color .6s">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
+              <div style="font-size: 14px; line-height: 20px; color: {{t.muted}}; white-space: nowrap">{{metaA}} <span style="color: {{t.ink}}; font-weight: 500">{{metaB}}</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="grid-area: len; min-width: 0">
+          <sc-if value="{{presetGrid}}" hint-placeholder-val="{{true}}">
+            <div role="group" aria-label="Session length" style="display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 8px">
+              <sc-for list="{{presets}}" as="c" hint-placeholder-count="7">
+                <button aria-pressed="{{c.sel}}" aria-label="{{c.aria}}" onClick="{{c.pick}}" style="grid-column: {{c.span}}; height: 44px; padding: 0 4px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{c.line}}; background: {{c.bg}}; font-size: 14px; line-height: 20px; font-weight: {{c.weight}}; color: {{c.color}}; white-space: nowrap">{{c.label}}</button>
+              </sc-for>
+              <a href="#" style="grid-column: span 5; height: 44px; padding: 0 4px; box-sizing: border-box; border-radius: 999px; border: 1px dashed {{t.line2}}; display: flex; align-items: center; justify-content: center; font-size: 14px; line-height: 20px; font-weight: 500; color: {{t.ink2}}; text-decoration: none; white-space: nowrap">Until…</a>
+              <a href="#" style="grid-column: span 5; height: 44px; padding: 0 4px; box-sizing: border-box; border-radius: 999px; border: 1px dashed {{t.line2}}; display: flex; align-items: center; justify-content: center; font-size: 14px; line-height: 20px; font-weight: 500; color: {{t.ink2}}; text-decoration: none; white-space: nowrap">Custom…</a>
+            </div>
+          </sc-if>
+          <sc-if value="{{presetBar}}" hint-placeholder-val="{{false}}">
+          <div role="group" aria-label="Session length" style="position: relative; display: grid; grid-template-columns: repeat({{presetN}}, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+            <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / {{presetN}}); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{lampSoft}}; border: 1px solid {{lampLine}}; transform: translateX({{presetX}})"></div>
+            <sc-for list="{{presets}}" as="c" hint-placeholder-count="7">
+              <button aria-pressed="{{c.sel}}" aria-label="{{c.aria}}" onClick="{{c.pick}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: {{presetFont}}; line-height: 20px; font-weight: {{c.weight}}; color: {{c.color}}; white-space: nowrap">{{c.label}}</button>
+            </sc-for>
+          </div>
+          </sc-if>
+        </div>
+        <div style="grid-area: cta; min-width: 0">
+          <sc-if value="{{isSetup}}" hint-placeholder-val="{{true}}">
+            <button onClick="{{start}}" aria-label="{{primaryAria}}" style="width: 100%; height: 60px; padding: 0 16px; border-radius: 20px; border: 0; background: {{p.lampFill}}; color: {{p.lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}">
+              <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>
+              {{primaryLabel}}
+            </button>
+          </sc-if>
+          <sc-if value="{{isRunning}}" hint-placeholder-val="{{false}}">
+            <div class="at-rise" style="display: grid; grid-template-columns: {{runCols}}; gap: 12px">
+              <sc-if value="{{canExtend}}" hint-placeholder-val="{{true}}">
+                <button onClick="{{extend}}" aria-label="Add 15 minutes" style="height: 60px; padding: 0 16px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.ink}}">+15 min</button>
+              </sc-if>
+              <button onClick="{{stop}}" style="height: 60px; padding: 0 16px; border-radius: 20px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
+            </div>
+          </sc-if>
+        </div>
+        <p style="grid-area: note; margin: 0; font-size: 14px; line-height: 20px; color: {{t.muted}}; text-align: {{noteAlign}}; text-wrap: pretty">{{note}}</p>
+      </div>
+    </section>
+
+    <sc-if value="{{isDesk}}" hint-placeholder-val="{{false}}">
+      <nav aria-label="On this page" style="grid-area: toc; align-self: start; position: sticky; top: 24px; display: flex; flex-direction: column; gap: 24px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}; padding-bottom: 8px">On this page</span>
+          <sc-for list="{{toc}}" as="c" hint-placeholder-count="5">
+            <a href="{{c.href}}" onClick="{{c.pick}}" aria-current="{{c.current}}" style="display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; line-height: 20px; font-weight: {{c.weight}}; color: {{c.ink}}; text-decoration: none">
+              <span aria-hidden="true" class="at-slide" style="flex-shrink: 0; width: 6px; height: 6px; border-radius: 999px; background: {{c.dot}}"></span>
+              {{c.label}}
+            </a>
+          </sc-for>
+        </div>
+        <a href="#tool" style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; text-decoration: none; color: {{t.ink}}">
+          <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; font-weight: 600">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 0 4px {{toneGlow}})"><path d="{{glyph}}" fill="{{glyphFill}}" stroke="{{tone}}" stroke-width="1.6"></path></svg>
+            {{statusLabel}}
+          </span>
+          <span style="font-family: Geist, system-ui, sans-serif; font-size: 24px; line-height: 32px; font-weight: 300; font-variant-numeric: tabular-nums; color: {{numColor}}">{{bigA}}{{bigB}}</span>
+          <span style="font-size: 13px; line-height: 18px; color: {{t.muted}}">Back to the tool ↑</span>
+        </a>
+      </nav>
+    </sc-if>
+
+    <article class="at-prose" style="grid-area: body; display: flex; flex-direction: column; gap: {{gap.section}}; min-width: 0">
+      <section id="s-compare" aria-labelledby="h-compare" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <h2 id="h-compare" style="margin: 0; font-size: {{fs.h2}}; line-height: {{fs.h2lh}}; font-weight: 600; letter-spacing: -0.01em; color: {{t.ink}}; text-wrap: balance">Side by side</h2>
+        <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Facts about nosleep.page come from its own site, checked 26 September 2026. Where its site does not say, the table says so. Rows marked Same are real ties.</p>
+        <sc-if value="{{tableView}}" hint-placeholder-val="{{false}}">
+          <div role="table" aria-label="AwakeTab compared with nosleep.page, checked 26 September 2026" style="border-radius: 16px; border: 1px solid {{t.line}}; background: {{t.surface}}; overflow: hidden">
+            <div role="rowgroup">
+              <div role="row" style="display: grid; grid-template-columns: {{cmpCols}}; background: {{t.sunken}}">
+                <span role="columnheader" style="padding: 12px 16px"><span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">What</span></span>
+                <span role="columnheader" style="padding: 12px 16px; display: flex; align-items: center; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 999px; background: {{p.lamp}}"></span>AwakeTab</span>
+                <span role="columnheader" style="padding: 12px 16px; display: flex; align-items: center; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}"><span aria-hidden="true" style="width: 8px; height: 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.ink2}}"></span>nosleep.page</span>
+              </div>
+            </div>
+            <div role="rowgroup">
+              <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+                <div role="row" style="display: grid; grid-template-columns: {{cmpCols}}; border-top: 1px solid {{t.line}}">
+                  <span role="rowheader" style="padding: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; text-wrap: pretty">{{r.what}}<sc-if value="{{r.same}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink2}}; white-space: nowrap">Same</span></sc-if></span>
+                  <span role="cell" style="padding: 16px; font-size: 15px; line-height: 22px; color: {{t.ink}}; text-wrap: pretty">{{r.us}}</span>
+                  <span role="cell" style="padding: 16px; font-size: 15px; line-height: 22px; color: {{t.ink}}; text-wrap: pretty">{{r.them}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{listView}}" hint-placeholder-val="{{true}}">
+          <ul aria-label="AwakeTab compared with nosleep.page, checked 26 September 2026" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px">
+            <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+              <li style="display: flex; flex-direction: column; gap: 12px; padding: {{cardPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+                  <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}">{{r.what}}</span>
+                  <sc-if value="{{r.same}}" hint-placeholder-val="{{false}}"><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink2}}; white-space: nowrap">Same</span></sc-if>
+                </div>
+                <dl style="margin: 0; display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 8px 12px; font-size: 15px; line-height: 22px">
+                  <dt style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: {{t.ink}}"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 999px; background: {{p.lamp}}; flex-shrink: 0"></span>AwakeTab</dt>
+                  <dd style="margin: 0; color: {{t.ink}}; text-wrap: pretty">{{r.us}}</dd>
+                  <dt style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: {{t.ink}}"><span aria-hidden="true" style="width: 8px; height: 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.ink2}}; flex-shrink: 0"></span>nosleep.page</dt>
+                  <dd style="margin: 0; color: {{t.ink}}; text-wrap: pretty">{{r.them}}</dd>
+                </dl>
+              </li>
+            </sc-for>
+          </ul>
+        </sc-if>
+      </section>
+
+      <aside aria-label="Advertisement" style="display: flex; flex-direction: column; align-items: center; gap: 8px">
+        <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Advertisement</span>
+        <div style="width: {{adW}}; height: {{adH}}; max-width: 100%; box-sizing: border-box; border-radius: 12px; border: 1px solid {{t.line}}; background: repeating-linear-gradient(135deg, transparent 0 11px, {{p.hatch}} 11px 12px), {{p.adBg}}; display: grid; place-items: center">
+          <span style="font-size: 13px; line-height: 18px; font-variant-numeric: tabular-nums; color: {{t.muted}}">{{adSize}}</span>
+        </div>
+      </aside>
+
+      <section id="s-them" aria-labelledby="h-them" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <h2 id="h-them" style="margin: 0; font-size: {{fs.h2}}; line-height: {{fs.h2lh}}; font-weight: 600; letter-spacing: -0.01em; color: {{t.ink}}; text-wrap: balance">When nosleep.page is the better choice</h2>
+        <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">It is a good page. In these cases we would send you there.</p>
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border-top: 1px solid {{t.line}}">
+          <sc-for list="{{better}}" as="b" hint-placeholder-count="3">
+            <li style="display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-bottom: 1px solid {{t.line}}">
+              <span aria-hidden="true" style="font-size: 16px; line-height: 24px; font-weight: 500; font-variant-numeric: tabular-nums; color: {{t.muted}}">{{b.n}}</span>
+              <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}; text-wrap: pretty">{{b.title}}</span>
+                <span style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">{{b.body}}</span>
+              </div>
+            </li>
+          </sc-for>
+        </ol>
+      </section>
+
+      <section id="s-us" aria-labelledby="h-us" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <h2 id="h-us" style="margin: 0; font-size: {{fs.h2}}; line-height: {{fs.h2lh}}; font-weight: 600; letter-spacing: -0.01em; color: {{t.ink}}; text-wrap: balance">When AwakeTab is the better choice</h2>
+        <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">These are the jobs AwakeTab was built for.</p>
+        <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border-top: 1px solid {{t.line}}">
+          <sc-for list="{{ours}}" as="b" hint-placeholder-count="3">
+            <li style="display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-bottom: 1px solid {{t.line}}">
+              <span aria-hidden="true" style="font-size: 16px; line-height: 24px; font-weight: 500; font-variant-numeric: tabular-nums; color: {{t.muted}}">{{b.n}}</span>
+              <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}; text-wrap: pretty">{{b.title}}</span>
+                <span style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">{{b.body}}</span>
+              </div>
+            </li>
+          </sc-for>
+        </ol>
+      </section>
+
+      <section id="s-limit" aria-labelledby="h-limit" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <h2 id="h-limit" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: 0; font-size: 16px; font-weight: 600">Honest limit</h2>
+        <div role="note" style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 12px; row-gap: 4px; padding: {{cardPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.ink2}}" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="margin-top: 2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
+          <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+            <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Honest limit</span>
+            <p style="margin: 0; font-size: 16px; line-height: 26px; color: {{t.ink}}; text-wrap: pretty">Both are tabs. Hide the tab and both stop, because the browser releases the wake lock. AwakeTab cannot keep the screen on from the background any better than nosleep.page can.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="s-faq" aria-labelledby="h-faq" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+        <h2 id="h-faq" style="margin: 0; font-size: {{fs.h2}}; line-height: {{fs.h2lh}}; font-weight: 600; letter-spacing: -0.01em; color: {{t.ink}}; text-wrap: balance">Questions</h2>
+        <div style="display: flex; flex-direction: column; border-top: 1px solid {{t.line}}">
+          <sc-for list="{{faq}}" as="f" hint-placeholder-count="4">
+            <div style="border-bottom: 1px solid {{t.line}}">
+              <h3 style="margin: 0">
+                <button id="{{f.qid}}" aria-expanded="{{f.open}}" aria-controls="{{f.aid}}" onClick="{{f.toggle}}" style="width: 100%; min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0; box-sizing: border-box; border: 0; background: transparent; text-align: start; font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}">
+                  <span style="text-wrap: pretty">{{f.q}}</span>
+                  <span aria-hidden="true" style="flex-shrink: 0; width: 44px; height: 44px; margin-block: -12px; display: grid; place-items: center; color: {{t.ink2}}">
+                    <svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="transform: rotate({{f.rot}})"><path d="M12 5v14M5 12h14"></path></svg>
+                  </span>
+                </button>
+              </h3>
+              <sc-if value="{{f.isOpen}}" hint-placeholder-val="{{false}}">
+                <p id="{{f.aid}}" role="region" aria-labelledby="{{f.qid}}" class="at-in" style="margin: 0; padding: 0 48px 16px 0; font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">{{f.a}}</p>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <nav aria-label="Related" style="display: flex; flex-direction: column; gap: 12px">
+        <h2 id="h-related" style="margin: 0; font-size: {{fs.h2}}; line-height: {{fs.h2lh}}; font-weight: 600; letter-spacing: -0.01em; color: {{t.ink}}; text-wrap: balance">Related</h2>
+        <a href="#tool" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; background: {{lampSoft}}; border: 1px solid {{lampLine}}; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none">
+          <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{p.lamp}}" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="{{p.lamp}}"></circle></svg>
+          Start a 30-minute session
+        </a>
+        <div style="display: flex; flex-wrap: wrap; column-gap: 24px; row-gap: 0; font-size: 16px; line-height: 26px">
+          <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{p.link}}">Compare screen-awake tools</a>
+          <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{p.link}}">NoSleep.js vs the Screen Wake Lock API</a>
+          <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: {{p.link}}">Browser support for the Screen Wake Lock API</a>
+          <a href="GuideLearnDeskDark.dc.html" style="min-height: 44px; display: inline-flex; align-items: center; color: {{p.link}}">Screen Wake Lock API guide</a>
+        </div>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 16px; border-radius: 16px; padding: {{cardPad}}; background: {{t.surface}}; border: 1px solid {{t.line}}">
+        <span aria-hidden="true" style="flex-shrink: 0; width: 48px; height: 48px; border-radius: 999px; background: {{lampSoft}}; border: 1px solid {{lampLine}}; display: grid; place-items: center; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}">SB</span>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span style="font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}">Soubhik Biswas</span>
+          <span style="font-size: 15px; line-height: 22px; color: {{t.ink2}}">Builds AwakeTab. <a href="#" style="color: {{p.link}}">About AwakeTab</a></span>
+        </div>
+      </div>
+    </article>
+
+    <sc-if value="{{isDesk}}" hint-placeholder-val="{{false}}">
+      <aside aria-label="Advertisement" style="grid-area: rail; align-self: start; position: sticky; top: 24px; display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Advertisement</span>
+        <div style="width: 160px; height: 600px; max-width: 100%; box-sizing: border-box; border-radius: 12px; border: 1px solid {{t.line}}; background: repeating-linear-gradient(135deg, transparent 0 11px, {{p.hatch}} 11px 12px), {{p.adBg}}; display: grid; place-items: center">
+          <span style="font-size: 13px; line-height: 18px; font-variant-numeric: tabular-nums; color: {{t.muted}}">160 × 600</span>
+        </div>
+      </aside>
+    </sc-if>
+  </div>
+
+  <div style="flex-grow: 1; min-height: 64px"></div>
+
+  <footer style="border-top: 1px solid {{t.line}}; padding: {{foot.pad}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px">
+    <p style="margin: 0; font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p>
+    <nav aria-label="Footer" style="display: flex; flex-wrap: wrap; column-gap: 16px; font-size: 13px; line-height: 18px; font-weight: 500">
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Privacy</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Terms</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Changelog</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">About</a>
+      <a href="#" style="min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a>
+    </nav>
+    <div onKeyDown="{{lang.key}}" style="{{lang.wrapStyle}}">
+      <button type="button" id="{{lang.btnId}}" aria-expanded="{{lang.expanded}}" aria-controls="{{lang.listId}}" aria-label="{{lang.aria}}" onClick="{{lang.toggle}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"></path></svg>{{lang.label}}<svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: {{lang.chev}}"><path d="M6 9l6 6 6-6"></path></svg></button>
+      <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+        <div aria-hidden="true" onClick="{{lang.close}}" style="position: fixed; inset: 0; z-index: 29; background: rgba(4,7,12,.55)"></div>
+      </sc-if>
+      <sc-if value="{{lang.open}}" hint-placeholder-val="{{false}}">
+        <div id="{{lang.listId}}" role="{{lang.role}}" aria-modal="{{lang.modal}}" aria-labelledby="{{lang.headId}}" class="at-in" style="{{lang.panelStyle}}">
+          <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+            <div aria-hidden="true" style="width: 36px; height: 4px; margin: 0 auto 8px; border-radius: 999px; background: {{t.line2}}"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 8px 4px">
+              <h2 id="{{lang.headId}}" style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; color: {{t.ink}}">{{lang.title}}</h2>
+              <button type="button" aria-label="{{lang.closeLabel}}" onClick="{{lang.close}}" style="width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+            </div>
+          </sc-if>
+          <sc-if value="{{lang.pop}}" hint-placeholder-val="{{true}}">
+            <p id="{{lang.headId}}" style="margin: 0; padding: 8px 12px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{lang.title}}</p>
+          </sc-if>
+          <ul role="list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px">
+            <sc-for list="{{lang.rows}}" as="r" hint-placeholder-count="8">
+              <li style="display: flex">
+                <a href="{{r.href}}" lang="{{r.lang}}" hreflang="{{r.hreflang}}" aria-current="{{r.cur}}" style="flex: 1; min-width: 0; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{t.ink}}; text-decoration: none"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="{{r.ring}}" stroke-width="1.8"></circle><circle cx="10" cy="10" r="4" fill="{{r.dot}}"></circle></svg><span style="font-size: 15px; line-height: 22px; font-weight: {{r.weight}}">{{r.name}}</span><span lang="{{lang.pageLang}}" style="font-size: 13px; line-height: 18px; color: {{r.noteInk}}; text-align: end">{{r.note}}</span></a>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-if>
+    </div>
+  </footer>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"status":{"editor":"enum","options":["ready","awake"],"default":"ready"},"language":{"editor":"enum","options":["closed","open"],"default":"closed"},"$preview":{"width":390,"height":6350}}'>
+// AT-PRIMITIVES v1 (fix batch 1b): DESIGN.md §2.1 tokens and §11 geometry. Keep identical across files.
+const AT_TOK = {
+  dark: { raised: '#26324B', sunken: '#0D131F', horizonInk: '#F6F2EA', line2: '#33405C', inputBorder: '#5A6781', groundEnd: '#070A11' },
+  light: { raised: '#E3E9F1', sunken: '#F6F9FC', horizonInk: '#F6F2EA', line2: '#C3CDDA', inputBorder: '#8C98AA', groundEnd: '#EEF3F8' }
+};
+const AT_NIGHT = { ground: '#000000', ink: '#FF5A3C', ink2: '#E8563C', muted: '#A89690', line: '#3A2E2A' };
+const AT_SCRIM = 'rgba(4,7,12,.55)';
+const AT_HDR = { phone: { h: '60px', pad: '0 16px' }, tablet: { h: '68px', pad: '0 32px' }, desktop: { h: '68px', pad: '0 80px' }, xl: { h: '68px', pad: '0 120px' } };
+const AT_FOOT = { phone: '24px 16px 32px', tablet: '24px 32px', desktop: '24px 80px', xl: '24px 120px' };
+const AT_CARD_PAD = { phone: '20px', tablet: '24px', desktop: '24px', xl: '24px' };
+const AT_TYPE = {
+  phone: { h1: '34px', h1lh: '42px', h2: '24px', h2lh: '32px', gutter: '16px', section: '48px' },
+  tablet: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '32px', section: '64px' },
+  desktop: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '80px', section: '96px' }
+};
+const DARK = Object.assign({
+  surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE',
+  track: '#1A2336', tick: '#2A3752', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C'
+}, { raised: AT_TOK.dark.raised, sunken: AT_TOK.dark.sunken, inputBorder: AT_TOK.dark.inputBorder });
+const LIGHT = Object.assign({
+  surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779',
+  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA'
+}, { raised: AT_TOK.light.raised, sunken: AT_TOK.light.sunken, inputBorder: AT_TOK.light.inputBorder });
+// Long-page ground: the same night lift as the tool, anchored to the top.
+const PAGE = {
+  dark: { ground: 'radial-gradient(1400px 900px at 50% -160px, #13203A 0%, rgba(10,14,22,0) 72%), #0A0E16', lamp: '#5BE0E8', lampFill: '#5BE0E8', lampInk: '#04232A', link: '#5BE0E8', warn: '#F2B34C', bad: '#FF7A7A', hatch: 'rgba(234,240,247,0.04)', adBg: 'rgba(17,24,38,0.55)' },
+  light: { ground: 'radial-gradient(1400px 900px at 50% -160px, #FFFFFF 0%, rgba(242,246,250,0) 72%), #F2F6FA', lamp: '#087B87', lampFill: '#087B87', lampInk: '#FFFFFF', link: '#087B87', warn: '#B7791F', bad: '#D14343', hatch: 'rgba(14,23,38,0.045)', adBg: 'rgba(255,255,255,0.6)' }
+};
+// All seven presets on every layout (D-R14). The last one shows ∞ with the accessible name "Until I stop".
+const PRESETS = [['p15', '15 min', '15 minutes', 900], ['p30', '30 min', '30 minutes', 1800], ['p45', '45 min', '45 minutes', 2700], ['p60', '1 h', '1 hour', 3600], ['p120', '2 h', '2 hours', 7200], ['p240', '4 h', '4 hours', 14400], ['pinf', '∞', 'Until I stop', 0]];
+const RC = 2 * Math.PI * 110;
+const GLYPHS = {
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ring: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  dash: 'M1.5 5.1h9v1.8h-9z'
+};
+const SIZES = {"phone":[390,6350],"tablet":[820,4780],"desktop":[1280,4840]};
+const PRESET0 = 'p30';
+const NAV = '';
+const VERIFIED = '26 September 2026';
+const TOOL_ARIA = 'AwakeTab vs nosleep.page: tool';
+const CARD_KICKER = 'Suggested · 30 min';
+const SHELL = (layout, ty) => layout === 'desktop'
+  ? "position: relative; display: grid; grid-template-columns: 200px 680px 160px; grid-template-areas: 'toc head .' 'toc tool tool' 'toc body rail'; column-gap: 40px; row-gap: 48px; padding: 24px 80px 0; align-items: start"
+  : "position: relative; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'tool' 'body'; row-gap: " + (layout === 'tablet' ? 40 : 32) + 'px; padding: ' + (layout === 'tablet' ? 24 : 8) + 'px ' + ty.gutter + ' 0';
+const TOC = [['s-compare', 'Side by side'], ['s-them', 'When nosleep.page is better'], ['s-us', 'When AwakeTab is better'], ['s-limit', 'Honest limit'], ['s-faq', 'Questions']];
+const FAQS = [["Can I keep the screen on while the tab is hidden?","Not with either page. Browsers release the wake lock when a tab is hidden. On desktop Chrome and Edge, the AwakeTab extension can keep the screen on without a visible tab."],["Which one uses less battery?","They ask for the same wake lock, so the lit screen is the main cost either way. AwakeTab's video fallback, used only on older browsers after a tap, costs a little more."],["Is there any point in running both at once?","No. One visible tab holding a wake lock is enough, and on a phone only one tab can be in front anyway."],["Is AwakeTab made by the people behind nosleep.page?","No. They are separate projects. AwakeTab is built by Soubhik Biswas, and this page compares the two as fairly as we can."]];
+// what, AwakeTab, nosleep.page, same?
+const ROWS = [["How it keeps the screen on","Screen Wake Lock API","Screen Wake Lock API",true],["With the tab hidden","Stops. The pill says \"Paused — tab hidden\" and asks again when you return.","Stops. It asks you to keep the tab in front.",true],["Install","None","None",true],["Platforms","Chrome and Edge 84+, Firefox 126+, Safari 16.4+. Older browsers can use a video fallback after a tap.","Browsers that support the Screen Wake Lock API",false],["Price","Free. Optional Pro adds extras.","Not stated on its site",false],["Lengths","15 min to 4 h, until you stop, or a custom length","30 min, 1 h, 2 h or a custom length",false],["Status you see","A pill that says \"Screen awake\" only once the browser grants the lock, and \"Blocked — here's the fix\" when it refuses","Not stated on its site",false],["End at a clock time","Yes, for example 7:30 AM","Not stated on its site",false],["Resume after a reload","Offers to resume with the time you had left","Not stated on its site",false],["Facts checked","26 September 2026","26 September 2026",true]];
+const BETTER = [["You want the simplest page","nosleep.page asks very little of you: pick 30 minutes, 1 hour, 2 hours or a custom length, and keep the tab in front."],["You do not need status or an end time","AwakeTab's pill, end time and resume are extras. If you never look at them, a simpler page does the same job."],["It already works for you","Both ask the browser for the same wake lock and both stop when the tab is hidden, so switching will not keep your screen on any longer."]];
+const OURS = [["You want to know it is really working","The pill says \"Screen awake\" only after the browser grants the lock. If the browser refuses, it says \"Blocked — here's the fix\" and tells you what to try."],["You need to stop at a set time","Until a time ends the session at, say, 7:30 AM, so you do not have to work out the minutes."],["A reload should not lose your session","After a reload or a crash, AwakeTab offers to resume with the time you had left."],["Your browser is older","On browsers without the Screen Wake Lock API, a tap starts a video fallback and the pill says \"Awake via video fallback\". It needs this tab visible and uses a little more battery."]];
+const LANG_PATHS = {"en":"/vs/nosleep-page","es":"/","pt-br":"/","de":"/","fr":"/","ja":"/","zh":"/","hi":"/"};
+// AT-LANG v1 (language switcher; PRIMITIVES.md P-LANG). Keep identical across files.
+const AT_LOCALES = [
+  ['en', '', 'en', 'English', true], ['es', '/es', 'es', 'Español', false], ['pt-br', '/pt-br', 'pt-BR', 'Português (Brasil)', false],
+  ['de', '/de', 'de', 'Deutsch', false], ['fr', '/fr', 'fr', 'Français', false], ['ja', '/ja', 'ja', '日本語', false],
+  ['zh', '/zh', 'zh-Hans', '简体中文', false], ['hi', '/hi', 'hi', 'हिन्दी', false]
+];
+const AT_LANG_COPY = { title: 'Language', current: 'Current', review: 'Translation in review', close: 'Close' };
+// o = { layout, t, lamp, open, toggle, close, cur: 'en', path: '/', variant: 'footer' | 'settings' }
+function atLang(o) {
+  const t = o.t, cur = o.cur || 'en', path = o.path || '/', settings = o.variant === 'settings', open = !!o.open;
+  const id = settings ? 'at-lang-set' : 'at-lang', sheet = !settings && o.layout === 'phone';
+  const a = (hex, x) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + x + ')'; };
+  const here = AT_LOCALES.find((l) => l[0] === cur) || AT_LOCALES[0];
+  const panel = 'box-sizing: border-box; display: flex; flex-direction: column; background: ' + t.surface + '; border: 1px solid ' + t.line + '; box-shadow: 0 24px 64px -24px rgba(0,0,0,.45); ';
+  return {
+    open, sheet: sheet && open, pop: !sheet && !settings, btnId: id + '-btn', listId: id + '-list', headId: id + '-h',
+    label: here[3], aria: AT_LANG_COPY.title + ': ' + here[3], title: AT_LANG_COPY.title, closeLabel: AT_LANG_COPY.close, pageLang: here[2],
+    expanded: open ? 'true' : 'false', chev: open ? 'rotate(180deg)' : 'none', role: sheet ? 'dialog' : 'group', modal: sheet ? 'true' : 'false',
+    wrapStyle: sheet ? 'display: flex' : 'position: relative; display: flex; margin-inline-start: auto',
+    panelStyle: sheet
+      ? panel + 'position: fixed; inset-inline: 0; bottom: 0; z-index: 30; padding: 8px 16px 32px; border-radius: 28px 28px 0 0; border-bottom: 0'
+      : panel + 'position: absolute; inset-inline-end: 0; bottom: calc(100% + 8px); z-index: 30; width: 360px; padding: 4px; border-radius: 16px',
+    toggle: () => {
+      o.toggle();
+      if (!open) setTimeout(() => { try { document.querySelector('#' + id + '-list a[aria-current="true"]').focus(); } catch (e) {} }, 60);
+    },
+    close: () => o.close(),
+    key: (e) => {
+      const k = e && e.key, box = (e && e.currentTarget) || document;
+      if (k === 'Escape' && open) {
+        if (e.preventDefault) e.preventDefault();
+        o.close();
+        try { box.querySelector('button[aria-controls]').focus(); } catch (x) {}
+        return;
+      }
+      const step = { ArrowDown: 1, ArrowUp: -1, Home: 'home', End: 'end' }[k];
+      if (!step || !open) return;
+      let rows = [];
+      try { rows = Array.from(box.querySelectorAll('a[hreflang]')); } catch (x) {}
+      if (!rows.length) return;
+      if (e.preventDefault) e.preventDefault();
+      const i = rows.indexOf(document.activeElement), n = rows.length;
+      rows[step === 'home' ? 0 : step === 'end' ? n - 1 : i < 0 ? (step > 0 ? 0 : n - 1) : (i + step + n) % n].focus();
+    },
+    rows: AT_LOCALES.map(([lid, prefix, lang, name, reviewed]) => {
+      const on = lid === cur;
+      return {
+        href: prefix + path, lang, hreflang: lang, name, cur: on ? 'true' : 'false',
+        border: on ? a(o.lamp, 0.45) : 'transparent', bg: on ? a(o.lamp, 0.14) : 'transparent', weight: on ? 600 : 500,
+        ring: on ? o.lamp : t.inputBorder, dot: on ? o.lamp : 'transparent',
+        note: on ? AT_LANG_COPY.current : reviewed ? '' : AT_LANG_COPY.review, noteInk: on ? t.ink2 : t.muted
+      };
+    })
+  };
+}
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const awake = props.status === 'awake';
+    const sec = this.secsOf(PRESET0);
+    const left = awake ? (sec ? Math.round(sec * 0.81) : 0) : sec;
+    this.state = Object.assign({ theme: props.theme ?? 'auto', sysDark: this.sys(), now: Date.now(), mode: awake ? 'awake' : 'ready', preset: PRESET0, total: sec, left, el: awake ? 754 : 0, startedAt: Date.now() - (awake ? (sec ? (sec - left) : 754) * 1000 : 0), faqOpen: 0, toc: TOC[0][0], langOpen: props.language === 'open' }, this.initPage(props));
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    this.timer = setInterval(() => this.tick(), 1000);
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    clearTimeout(this.boot);
+    clearTimeout(this.copyT);
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+  }
+  componentDidUpdate(prev) {
+    const p = this.props;
+    if (prev.theme !== p.theme && p.theme) this.setState({ theme: p.theme });
+    if (prev.language !== p.language) this.setState({ langOpen: p.language === 'open' });
+  }
+  secsOf(id) { const f = PRESETS.find((x) => x[0] === id); return f ? f[3] : 1800; }
+  tick() {
+    const s = this.state;
+    const next = { now: Date.now() };
+    if (s.mode === 'awake') {
+      if (s.total === 0) next.el = s.el + 1;
+      else if (s.left <= 1) Object.assign(next, { mode: 'ready', left: s.total });
+      else next.left = s.left - 1;
+    }
+    this.setState(next);
+  }
+  start() {
+    clearTimeout(this.boot);
+    const sec = this.secsOf(this.state.preset);
+    this.setState({ mode: 'starting', total: sec, left: sec, el: 0, startedAt: Date.now() });
+    this.boot = setTimeout(() => this.setState({ mode: 'awake', startedAt: Date.now() }), 900);
+  }
+  stop() { clearTimeout(this.boot); this.setState({ mode: 'ready', left: this.state.total, el: 0 }); }
+  pick(id) {
+    const s = this.state, sec = this.secsOf(id);
+    const running = s.mode === 'awake' || s.mode === 'starting';
+    this.setState(running ? { preset: id, total: sec, left: sec, el: 0, startedAt: Date.now() } : { preset: id, total: sec, left: sec });
+  }
+  rgba(hex, a) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  hm(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }); }
+  when(ms) { return this.hm(ms) + (new Date(ms).toDateString() !== new Date(this.state.now).toDateString() ? ' tomorrow' : ''); }
+  split(sec) {
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), x = sec % 60;
+    const p = (n) => String(n).padStart(2, '0');
+    return h ? [h + ':' + p(m), ':' + p(x)] : [p(m), ':' + p(x)];
+  }
+  words(sec) {
+    if (!sec) return '∞';
+    const h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60);
+    if (h && m) return h + ' h ' + m + ' min';
+    if (h) return h === 1 ? '1 hour' : h + ' hours';
+    return m + ' min';
+  }
+  renderVals() {
+    const s = this.state;
+    const layout = ['phone', 'tablet', 'desktop'].includes(this.props.layout) ? this.props.layout : 'phone';
+    const desk = layout === 'desktop', tab = layout === 'tablet', phone = !desk && !tab;
+    const dark = s.theme === 'dark' || (s.theme === 'auto' && s.sysDark);
+    const t = dark ? DARK : LIGHT;
+    const p = dark ? PAGE.dark : PAGE.light;
+    const ty = AT_TYPE[layout];
+    const mode = s.mode;
+    const live = mode === 'awake' || mode === 'starting';
+    const setup = mode === 'ready';
+    const tone = live ? p.lamp : t.muted;
+    const faceColor = p.lamp;
+    const noLimit = s.total === 0;
+    const prog = noLimit ? 1 : s.left / s.total;
+    const shown = noLimit ? (mode === 'awake' ? s.el : null) : s.left;
+    const [bigA, bigB] = shown === null ? ['∞', ''] : this.split(shown);
+    const hours = shown !== null && shown >= 3600;
+    const endMs = Math.round((s.now + s.left * 1000) / 60000) * 60000;
+    const LABEL = { ready: 'Ready', starting: 'Starting…', awake: 'Screen awake' };
+    let kicker = 'Time left', metaA = 'until', metaB = this.when(endMs);
+    if (setup) { kicker = 'Keeps awake for'; metaA = noLimit ? 'until you stop' : 'ends at'; metaB = noLimit ? '' : this.when(endMs); }
+    if (mode === 'starting') kicker = 'Starting';
+    if (live && noLimit) { kicker = 'Awake for'; metaA = 'since'; metaB = this.hm(s.startedAt); }
+    const NOTE = { ready: 'Keeps this screen on while this tab stays visible.', starting: 'Asking your browser to keep the screen on…', awake: 'Started ' + this.hm(s.startedAt) + ' · keep this tab visible' };
+    const sel = (on) => ({ weight: on ? 600 : 500, color: on ? t.ink : t.ink2 });
+    const pi = Math.max(0, PRESETS.findIndex((x) => x[0] === s.preset));
+    const presets = PRESETS.map(([id, label, aria], i) => Object.assign({ label, aria, sel: s.preset === id ? 'true' : 'false', pick: () => this.pick(id),
+      span: 'span ' + (i < 5 ? 4 : 5), line: s.preset === id ? this.rgba(p.lamp, 0.45) : t.line, bg: s.preset === id ? this.rgba(p.lamp, 0.14) : t.surface }, sel(s.preset === id)));
+    const [W, H] = (SIZES[layout] || [390, 4000]);
+    // Boards stay ≤ 8000 px: a taller page shows as a top and a bottom board, cut in a section gap (SIZES.cut).
+    const cut = (SIZES.cut || {})[layout] || 0, part0 = this.props.part || 'auto';
+    const part = !cut ? 'all' : part0 === 'auto' ? (H > 8000 ? 'top' : 'all') : part0;
+    const ringPx = desk ? 280 : tab ? 260 : 236;
+    const cardGrid = desk
+      ? 'position: relative; display: grid; grid-template-columns: ' + ringPx + "px minmax(0, 1fr); grid-template-areas: 'clock top' 'clock len' 'clock cta' 'clock note'; column-gap: 48px; row-gap: 16px; align-items: center; padding: 32px"
+      : "position: relative; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'top' 'clock' 'len' 'cta' 'note'; row-gap: " + (tab ? 24 : 16) + 'px; padding: ' + (tab ? '24px 32px' : '16px 16px 20px');
+    const toc = TOC.map(([id, label]) => {
+      const on = s.toc === id;
+      return { href: '#' + id, label, current: on ? 'location' : 'false', weight: on ? 600 : 500, ink: on ? t.ink : t.ink2, dot: on ? p.lamp : 'transparent', pick: () => this.setState({ toc: id }) };
+    });
+    const faq = FAQS.map(([q, a], i) => {
+      const open = s.faqOpen === i;
+      return { q, a, qid: 'faq-q' + i, aid: 'faq-a' + i, open: open ? 'true' : 'false', isOpen: open, rot: open ? '45deg' : '0deg', toggle: () => this.setState({ faqOpen: this.state.faqOpen === i ? -1 : i }) };
+    });
+    const nav = [['Use cases', 'for'], ['Devices', 'on'], ['Extension', 'ext'], ['Pro', 'pro']].map(([label, id]) => ({ label, on: NAV === id, cur: NAV === id ? 'page' : 'false', ink: NAV === id ? t.ink : t.ink2, weight: NAV === id ? 600 : 500 }));
+    const ctx = { s, layout, desk, tab, phone, dark, t, p };
+    const lang = atLang({ layout, t, lamp: p.lamp, open: s.langOpen, path: LANG_PATHS.en, toggle: () => this.setState({ langOpen: !this.state.langOpen }), close: () => this.setState({ langOpen: false }) });
+    // Rows follow this page's real translations (LANG_PATHS): a locale without it links to its home.
+    lang.rows.forEach((r, i) => { r.href = AT_LOCALES[i][1] + LANG_PATHS[AT_LOCALES[i][0]]; });
+    const base = {
+      W: W + 'px', H: H + 'px', viewH: (part === 'top' ? cut : part === 'bottom' ? H - cut : H) + 'px', shift: (part === 'bottom' ? -cut : 0) + 'px', isDesk: desk, isTab: tab, isPhone: phone, showCrumb: !phone, t, p, tone, nav, lang,
+      hdr: AT_HDR[layout], foot: { pad: AT_FOOT[layout] }, cardPad: AT_CARD_PAD[layout],
+      shellStyle: SHELL(layout, ty), cardGrid,
+      fs: { h1: ty.h1, h1lh: ty.h1lh, h2: ty.h2, h2lh: ty.h2lh },
+      gap: { section: ty.section },
+      verifiedLabel: 'Sources checked ' + (this.verified ? this.verified() : VERIFIED),
+      warn: p.warn, warnSoft: this.rgba(p.warn, 0.12), warnLine: this.rgba(p.warn, 0.38),
+      toolAria: TOOL_ARIA, cardKicker: CARD_KICKER,
+      cardLine: live ? this.rgba(p.lamp, 0.38) : t.line,
+      cardShadow: live ? '0 24px 64px -24px ' + this.rgba(p.lamp, dark ? 0.45 : 0.3) : 'none',
+      aura: this.rgba(p.lamp, live ? (dark ? 0.18 : 0.1) : 0.05),
+      toneSoft: this.rgba(tone, 0.12), toneLine: this.rgba(tone, 0.38), toneGlow: live ? this.rgba(tone, 0.8) : 'transparent', toneFaint: this.rgba(faceColor, dark ? 0.16 : 0.12),
+      glyph: GLYPHS.dot, glyphFill: mode === 'awake' ? tone : 'transparent', statusLabel: LABEL[mode],
+      lampGlow: this.rgba(p.lamp, 0.5), lampSoft: this.rgba(p.lamp, 0.14), lampLine: this.rgba(p.lamp, 0.45),
+      live, faceColor, ringPx: ringPx + 'px', digitSize: hours ? (desk ? '52px' : '48px') : (desk ? '64px' : '56px'),
+      kicker, bigA, bigB, metaA, metaB, numColor: live ? t.ink : t.ink2,
+      timerAria: shown === null ? 'Until I stop' : bigA + bigB + ' ' + (live && noLimit ? 'awake so far' : 'left'),
+      arcDash: prog <= 0 ? '0.01 ' + RC.toFixed(1) : (RC * prog).toFixed(1) + ' ' + RC.toFixed(1),
+      arcOp: setup ? 0.45 : 1, glowOp: live ? 0.45 : 0,
+      tipDeg: (360 * prog).toFixed(2) + 'deg', tipOp: live && !noLimit && prog > 0 ? 1 : 0,
+      presets, presetGrid: phone, presetBar: !phone, presetN: PRESETS.length, presetX: pi * 100 + '%', presetFont: desk ? '14px' : phone ? '14px' : '15px',
+      primaryLabel: 'Keep awake · ' + this.words(s.total), primaryAria: noLimit ? 'Keep awake until I stop' : 'Keep awake for ' + this.words(s.total),
+      isSetup: setup, isRunning: live, canExtend: !noLimit, runCols: noLimit ? 'minmax(0, 1fr)' : 'repeat(2, minmax(0, 1fr))',
+      start: () => this.start(), stop: () => this.stop(),
+      extend: () => this.setState({ left: this.state.left + 900, total: this.state.total + 900 }),
+      note: NOTE[mode], noteAlign: desk ? 'start' : 'center',
+      toc, faq,
+      adW: phone ? '300px' : '336px', adH: phone ? '250px' : '280px', adSize: phone ? '300 × 250' : '336 × 280',
+      themeAuto: s.theme === 'auto', themeLight: s.theme === 'light', themeDark: s.theme === 'dark',
+      themeX: (s.theme === 'light' ? 0 : s.theme === 'dark' ? 44 : 88) + 'px',
+      themeLightInk: s.theme === 'light' ? t.ink : t.ink2, themeDarkInk: s.theme === 'dark' ? t.ink : t.ink2, themeAutoInk: s.theme === 'auto' ? t.ink : t.ink2,
+      setLight: () => this.setState({ theme: 'light' }), setDark: () => this.setState({ theme: 'dark' }), setAuto: () => this.setState({ theme: 'auto' })
+    };
+    return Object.assign(base, this.pageVals(ctx));
+  }
+  initPage(props) { return {}; }
+  pageVals(c) {
+    const { t, phone } = c;
+    const n = (list) => list.map(([title, body], i) => ({ n: String(i + 1), title, body }));
+    return {
+      tableView: !phone, listView: phone,
+      cmpCols: 'minmax(0, 0.8fr) minmax(0, 1.2fr) minmax(0, 1.2fr)',
+      rows: ROWS.map(([what, us, them, same]) => ({ what, us, them, same: !!same })),
+      better: n(BETTER), ours: n(OURS)
+    };
+  }
+}
+</script>
+</body>
+</html>

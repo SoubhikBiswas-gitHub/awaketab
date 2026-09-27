@@ -1,39 +1,61 @@
 ---
+// /extension (B6, canvas board PageExtension). Product page: BaseLayout, no ad code (docs/00 §8.3), zero hydration.
+// The popup preview is a static, aria-hidden drawing of the popup's awake state (the real popup is the extension's
+// own, milestone B9); the Screen or System switch on the page drives it and the laptop figure with CSS alone.
+// One small script: hide the store buttons where the extension cannot exist, and record extension_click.
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Crumbs from '../components/pages/Crumbs.astro';
+import SegRadio from '../components/pages/SegRadio.astro';
+import Button from '../components/shell/Button.astro';
+import '../styles/pages.css';
 import { t } from '../i18n/load';
 import { softwareSchema } from '../lib/seo';
 import { EXTENSION_STORE_URLS } from '../lib/extension';
 import matrix from '../data/support-matrix.json';
-// shadcn/ui renders at build time only (docs/03-architecture.md ADR-013): no client:* directives here.
-import { cn } from 'cn';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-// Product page (docs/06 §2 "Product"): BaseLayout, not ContentLayout — no ad code (docs/00 §8.3).
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/extension`;
 const title = t('page.extension.title');
 const description = t('page.extension.description');
-// Every browser claim comes from src/data/support-matrix.json (docs/19 B7).
+// Every browser claim comes from src/data/support-matrix.json (docs/19 B7). The page names only the two stores the
+// extension is published to (decision O-41: no unverified Brave, Arc or Opera claim here).
 const support = matrix.extension;
-const browsers = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(support.browsers);
+const stores = support.browsers.filter((b) => b === 'Chrome' || b === 'Edge');
+const browsers = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(stores);
 
-const ctaClass = cn(buttonVariants({ size: 'lg' }), 'min-h-11 text-base');
-const secondaryClass = cn(buttonVariants({ variant: 'outline', size: 'lg' }), 'min-h-11 text-base');
-const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balance';
-const subheadingClass = 'mt-10 mb-3 text-xl font-semibold leading-tight';
-const crumbLink = 'inline-flex min-h-11 items-center';
-const inlineLink = 'text-primary underline underline-offset-4';
-const permissions = ['power', 'storage', 'alarms', 'notifications', 'sites'] as const;
+type TSeg = string | { kbd: string };
+const adds: Array<[string, TSeg[], TSeg[]]> = [
+  ['With the tab hidden or the window minimised', ['Pauses until you come back'], ['Keeps going while Chrome is running']],
+  ['What stays awake', ['The screen'], ['The screen, or only the computer']],
+  ['Timers', ['Presets, custom lengths and until a time'], ['15 minutes to 4 hours, until a time, or until you stop']],
+  ['Status at a glance', ['The pill in the tab'], ['The popup pill and a toolbar badge: ON, SYS or minutes left']],
+  ['Shortcut', [{ kbd: 'Space' }, ', while the tab is in front'], [{ kbd: 'Alt' }, '+', { kbd: 'Shift' }, '+', { kbd: 'A' }, ' from any tab']],
+  ['Schedules and auto-start', ['No'], ['With Pro']],
+  ['Install', ['Nothing to install'], ['Chrome or Edge']],
+];
+const limits = ['page.extension.limits.running', 'page.extension.limits.lid', 'page.extension.limits.presence'] as const;
+const perms = [
+  ['power', '', 'Hold the display or system keep-awake.'],
+  ['storage', '', 'Save your settings and the current session.'],
+  ['alarms', '', 'Run timers and schedules while the background worker sleeps.'],
+  ['notifications', 'Optional', 'Tell you when a timer ends.'],
+  ['optional_host_permissions', 'Optional, one site at a time', 'Site access, so it can start automatically on sites you pick. None by default.'],
+] as const;
+const days = [
+  ['M', 'Monday', true],
+  ['T', 'Tuesday', true],
+  ['W', 'Wednesday', true],
+  ['T', 'Thursday', true],
+  ['F', 'Friday', true],
+  ['S', 'Saturday', false],
+  ['S', 'Sunday', false],
+] as const;
+const chips = ['15 min', '30 min', '45 min', '1 h', '2 h', '4 h', '∞'];
+const ICON_SCREEN = 'M3 5h18v11H3zM9 20h6M12 16v4';
+const ICON_SYSTEM = 'M5 4h14v12H5zM3 20h18M9 10h6';
+// Ring geometry of the preview (r 56): 1 h preset with 44:18 left.
+const C = 2 * Math.PI * 56;
+const P = 2658 / 3600;
 ---
 
 <BaseLayout
@@ -52,88 +74,244 @@ const permissions = ['power', 'storage', 'alarms', 'notifications', 'sites'] as 
     ],
   })}
 >
-  <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
-  <main class="mx-auto mt-6 w-full max-w-[45rem] leading-relaxed" data-extension-root>
-    <Breadcrumb aria-label="Breadcrumb">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>{t('page.extension.h1')}</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
+  <main class="at-page at-ext" data-extension-root>
+    <div class="at-ext-hero">
+      <div class="at-pg-intro">
+        <Crumbs current={t('page.extension.h1')} />
+        <h1 class="at-pg-h1">{t('page.extension.h1')}</h1>
+        <p class="at-pg-lead">{t('page.extension.lead')}</p>
+        <div class="at-ext-ctas" data-install>
+          <a class="at-button at-button-primary at-button-lg" href={EXTENSION_STORE_URLS.chrome} rel="noopener" target="_blank" data-store="chrome" aria-describedby="ext-store-note">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+            {t('page.extension.cta.chrome')}
+          </a>
+          <a class="at-button at-ext-edge" href={EXTENSION_STORE_URLS.edge} rel="noopener" target="_blank" data-store="edge" aria-describedby="ext-store-note">
+            {t('page.extension.cta.edge')}
+          </a>
+        </div>
+        <div id="ext-store-note" class="at-pg-small at-pg-stack-4" data-install>
+          <span>{t('page.extension.cta.note', { browsers, version: support.minimumChromeVersion })}</span>
+          <span>Store links go live once the listing is approved.</span>
+        </div>
+      </div>
 
-    <h1 class={cn(headingClass, 'mt-4')}>{t('page.extension.h1')}</h1>
-    <p class="mt-3 text-lg">{t('page.extension.lead')}</p>
-
-    <div class="mt-6 flex flex-wrap gap-3" data-install>
-      <a class={ctaClass} href={EXTENSION_STORE_URLS.chrome} rel="noopener" target="_blank" data-store="chrome">
-        {t('page.extension.cta.chrome')}
-      </a>
-      <a class={secondaryClass} href={EXTENSION_STORE_URLS.edge} rel="noopener" target="_blank" data-store="edge">
-        {t('page.extension.cta.edge')}
-      </a>
+      <div class="at-ext-stage" aria-hidden="true" inert data-placeholder="popup preview">
+        <div class="at-pg-aura at-ext-aura"></div>
+        <div class="at-xp">
+          <div class="at-xp-aura"></div>
+          <div class="at-xp-head">
+            <span class="at-xp-logo">
+              <svg viewBox="0 0 48 48"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" class="at-xp-ring"></path><circle cx="24" cy="9" r="7.5" class="at-xp-halo"></circle><circle cx="24" cy="9" r="4.2" class="at-xp-bead"></circle></svg>
+              AwakeTab
+            </span>
+            <span class="at-xp-icon"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span>
+          </div>
+          <div class="at-xp-status">
+            <div class="at-xp-face">
+              <div class="at-xp-ticks"></div>
+              <div class="at-xp-sweep"></div>
+              <svg viewBox="0 0 124 124" class="at-xp-arc">
+                <circle cx="62" cy="62" r="56" class="at-xp-track"></circle>
+                <g transform="rotate(-90 62 62)">
+                  <circle cx="62" cy="62" r="56" class="at-xp-glow" style={`stroke-dasharray: ${(C * P).toFixed(1)} ${C.toFixed(1)}`}></circle>
+                  <circle cx="62" cy="62" r="56" class="at-xp-fill" style={`stroke-dasharray: ${(C * P).toFixed(1)} ${C.toFixed(1)}`}></circle>
+                </g>
+                <g style={`transform: rotate(${(360 * P).toFixed(2)}deg); transform-origin: 62px 62px`}>
+                  <circle cx="62" cy="6" r="5" class="at-xp-tiphalo"></circle>
+                  <circle cx="62" cy="6" r="4" class="at-xp-tip"></circle>
+                </g>
+              </svg>
+              <div class="at-xp-digits">
+                <span>44<span>:18</span></span>
+                <span>Until 10:30 PM</span>
+              </div>
+            </div>
+            <div class="at-xp-side">
+              <span class="at-pill at-pill-s at-xp-pill" data-lock="held">
+                <svg class="at-pill-glyph" viewBox="0 0 12 12"><path class="at-g-dot at-xp-screen" d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path><path class="at-xp-halfglyph at-xp-system" d="M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z"></path></svg>
+                <span class="at-xp-screen">Screen awake</span><span class="at-xp-system">System awake</span>
+              </span>
+              <span class="at-xp-meta at-xp-screen">Started 9:30 PM</span>
+              <span class="at-xp-meta at-xp-system at-xp-caveat">
+                <svg viewBox="0 0 12 12"><path d="M10.4 7.6A4.6 4.6 0 1 1 4.4 1.6a3.7 3.7 0 0 0 6 6z"></path></svg>
+                Screen may dim or lock
+              </span>
+            </div>
+          </div>
+          <div class="at-xp-extend"><span>+15 min</span><span>+30 min</span><span>+1 h</span></div>
+          <div class="at-xp-stop">Stop</div>
+          <div class="at-xp-level">
+            <span>Keep awake</span>
+            <div class="at-xp-seg">
+              <span class="at-xp-ind"></span>
+              <span class="at-xp-opt at-xp-opt-screen"><svg viewBox="0 0 24 24"><path d={ICON_SCREEN}></path></svg>Screen</span>
+              <span class="at-xp-opt at-xp-opt-system"><svg viewBox="0 0 24 24"><path d={ICON_SYSTEM}></path></svg>System</span>
+            </div>
+          </div>
+          <div class="at-xp-chips">
+            {chips.map((c) => <span class:list={[c === '1 h' && 'at-xp-on']}>{c}</span>)}
+            <span class="at-xp-until">Until…</span>
+          </div>
+          <div class="at-xp-foot">
+            Open AwakeTab<svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+          </div>
+        </div>
+      </div>
     </div>
-    <p class="mt-3 text-sm text-muted-foreground" data-install>
-      {t('page.extension.cta.note', { browsers, version: support.minimumChromeVersion })}
-    </p>
 
-    <Alert className="mt-6" data-unsupported-note>
-      <AlertTitle>{t('page.extension.firefox.title')}</AlertTitle>
-      <AlertDescription>
-        <p>{t('page.extension.firefox.body')}</p>
-        <p><a class={inlineLink} href="/on/firefox">{t('page.extension.firefox.link')}</a></p>
-      </AlertDescription>
-    </Alert>
-
-    <section aria-labelledby="ext-features">
-      <h2 id="ext-features" class={subheadingClass}>{t('page.extension.features.title')}</h2>
-      <ul class="grid list-disc gap-2 ps-6">
-        <li>{t('page.extension.features.levels')}</li>
-        <li>{t('page.extension.features.timers')}</li>
-        <li>{t('page.extension.features.badge')}</li>
-        <li>{t('page.extension.features.pro')} <a class={inlineLink} href="/pro">{t('pro.see')}</a></li>
-      </ul>
+    <section class="at-pg-stack-32" aria-labelledby="ext-adds">
+      <div class="at-pg-stack-8 at-ext-sechead">
+        <h2 id="ext-adds" class="at-pg-h2">What the extension adds</h2>
+        <p class="at-pg-body">Same honest status as the web app. The difference is who holds the lock: the tab, or Chrome itself.</p>
+      </div>
+      <div class="at-pg-panel at-pg-table at-pg-wide" role="table" aria-label="The web app compared with AwakeTab for Chrome" style="--at-pg-cols: minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1fr)">
+        <div class="at-pg-tr at-pg-th" role="row">
+          <span role="columnheader"><span class="sr-only">Feature</span></span>
+          <span role="columnheader" class="at-pg-ink2">The web app</span>
+          <span role="columnheader" class="at-pg-th-lamp">AwakeTab for Chrome</span>
+        </div>
+        {
+          adds.map(([label, web, ext]) => (
+            <div class="at-pg-tr" role="row">
+              <span role="rowheader" class="at-pg-rowhead">{label}</span>
+              <span role="cell" class="at-pg-ink2">{web.map((s) => (typeof s === 'string' ? s : <kbd class="at-kbd">{s.kbd}</kbd>))}</span>
+              <span role="cell" class="at-pg-ink">{ext.map((s) => (typeof s === 'string' ? s : <kbd class="at-kbd">{s.kbd}</kbd>))}</span>
+            </div>
+          ))
+        }
+      </div>
+      <dl class="at-pg-panel at-pg-dl at-pg-narrow">
+        {
+          adds.map(([label, web, ext]) => (
+            <div>
+              <dt>{label}</dt>
+              <dd><span class="at-pg-dl-label at-pg-lampdot">Extension</span><span>{ext.map((s) => (typeof s === 'string' ? s : <kbd class="at-kbd">{s.kbd}</kbd>))}</span></dd>
+              <dd><span class="at-pg-dl-label">Web app</span><span>{web.map((s) => (typeof s === 'string' ? s : <kbd class="at-kbd">{s.kbd}</kbd>))}</span></dd>
+            </div>
+          ))
+        }
+      </dl>
     </section>
 
-    <section aria-labelledby="ext-limits">
-      <h2 id="ext-limits" class={subheadingClass}>{t('page.home.limits.title')}</h2>
-      <ul class="grid list-disc gap-2 ps-6">
-        <li>{t('page.extension.limits.running')}</li>
-        <li>{t('page.extension.limits.lid')}</li>
-        <li>{t('page.extension.limits.presence')}</li>
-      </ul>
+    <section class="at-ext-split" aria-labelledby="ext-level">
+      <div class="at-pg-stack-20">
+        <h2 id="ext-level" class="at-pg-h2">Screen or System</h2>
+        <p class="at-pg-body">Keep the display on, or keep only the computer awake and let the screen dim.</p>
+        <SegRadio
+          name="ext-level"
+          label="Keep awake"
+          options={[{ value: 'screen', label: 'Screen' }, { value: 'system', label: 'System' }]}
+          checked="screen"
+          class="at-ext-level"
+        />
+        <p class="at-pg-body at-pg-ink at-ext-levelhelp" aria-live="polite">
+          <span class="at-xp-screen">Keeps the screen on and the computer awake.</span>
+          <span class="at-xp-system">Keeps the computer awake. The screen may still dim or turn off.</span>
+        </p>
+      </div>
+      <figure class="at-ext-figure">
+        <svg class="at-ext-laptop" viewBox="0 0 320 200" aria-hidden="true">
+          <rect x="44" y="8" width="232" height="150" rx="12" class="at-lap-frame"></rect>
+          <rect x="54" y="18" width="212" height="130" rx="4" class="at-lap-screen"></rect>
+          <rect x="54" y="18" width="212" height="130" rx="4" class="at-lap-glow"></rect>
+          <g class="at-lap-content">
+            <rect x="74" y="40" width="96" height="8" rx="4" class="at-lap-bar"></rect>
+            <rect x="74" y="58" width="150" height="6" rx="3" class="at-lap-bar2"></rect>
+            <rect x="74" y="72" width="130" height="6" rx="3" class="at-lap-bar2"></rect>
+            <rect x="74" y="86" width="140" height="6" rx="3" class="at-lap-bar2"></rect>
+            <rect x="74" y="110" width="70" height="18" rx="9" class="at-lap-chip"></rect>
+          </g>
+          <path d="M20 164h280l-14 20H34z" class="at-lap-frame"></path>
+          <rect x="136" y="164" width="48" height="5" rx="2.5" class="at-lap-notch"></rect>
+          <circle cx="282" cy="176" r="3.5" class="at-lap-led"></circle>
+        </svg>
+        <div class="at-pg-stack-8 at-ext-figstatus">
+          <span class="at-pill" data-lock="held">
+            <svg class="at-pill-glyph" viewBox="0 0 12 12" aria-hidden="true"><path class="at-g-dot" d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg>
+            <span class="at-xp-screen">Screen awake</span><span class="at-xp-system">System awake</span>
+          </span>
+          <span class="at-pg-small at-ext-sub"><span class="at-xp-system">Screen may dim or lock</span></span>
+        </div>
+        <figcaption>
+          Toolbar badge
+          <span class="at-ext-badge" aria-hidden="true">
+            <svg viewBox="0 0 48 48"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.4"></circle></svg>
+            <span><span class="at-xp-screen">ON</span><span class="at-xp-system">SYS</span></span>
+          </span>
+          <span class="sr-only"><span class="at-xp-screen">ON</span><span class="at-xp-system">SYS</span></span>
+        </figcaption>
+      </figure>
     </section>
 
-    <section aria-labelledby="ext-permissions">
-      <h2 id="ext-permissions" class={subheadingClass}>{t('page.extension.permissions.title')}</h2>
-      <Card>
-        <CardContent>
-          <ul class="grid gap-2">
-            {permissions.map((name) => <li>{t(`page.extension.permissions.${name}`)}</li>)}
-          </ul>
-        </CardContent>
-      </Card>
+    <section class="at-ext-split" aria-labelledby="ext-pro">
+      <div class="at-pg-stack-16">
+        <span class="at-pg-kicker">With Pro</span>
+        <h2 id="ext-pro" class="at-pg-h2">Schedules and auto-start</h2>
+        <p class="at-pg-body">
+          With Pro: weekly schedules, and auto-start when Chrome opens or when you visit a site you choose. Your Pro key activates it
+          as one of your five devices.
+        </p>
+        <a class="at-pg-link at-pg-textlink at-pg-body-size" href="/pro">See what's in Pro</a>
+      </div>
+      <div class="at-pg-panel at-ext-pro" role="group" aria-label="Example extension settings">
+        <div class="at-pg-stack-12">
+          <div class="at-ext-prohead"><span>Schedules</span><span class="at-tag at-pg-tag">Pro</span></div>
+          <div class="at-ext-days">
+            {days.map(([l, name, on]) => <span class:list={[on && 'at-on']} aria-label={`${name}, ${on ? 'on' : 'off'}`} role="img">{l}</span>)}
+          </div>
+          <div class="at-pg-ui at-ext-when">From <span class="at-pg-ink at-pg-digits">9:00 AM</span> to <span class="at-pg-ink at-pg-digits">5:30 PM</span> · Screen</div>
+        </div>
+        <div class="at-pg-stack-12">
+          <div class="at-ext-prohead"><span>Auto-start</span><span class="at-tag at-pg-tag">Pro</span></div>
+          <div class="at-ext-auto">Keep awake whenever Chrome starts<span class="at-pg-switch" data-on aria-hidden="true"></span></div>
+          <div class="at-ext-site"><span class="at-pg-mono">dashboard.example.com</span><span>2 h</span></div>
+        </div>
+      </div>
     </section>
 
-    <section aria-labelledby="ext-privacy">
-      <h2 id="ext-privacy" class={subheadingClass}>{t('ext.privacy.title')}</h2>
-      <p>
-        {t('page.extension.privacy')} <a class={inlineLink} href="/privacy#extension">{t('ext.privacy.policy')}</a>
-      </p>
-    </section>
+    <div class="at-ext-grid">
+      <section class="at-pg-stack-20" aria-labelledby="ext-limits">
+        <h2 id="ext-limits" class="at-pg-h2">Honest limits</h2>
+        <ul class="at-ext-limits">
+          {
+            limits.map((key) => (
+              <li>
+                <svg class="at-pg-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12h8"></path></svg>
+                {t(key)}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+      <section class="at-pg-stack-20" aria-labelledby="ext-perms">
+        <h2 id="ext-perms" class="at-pg-h2">{t('page.extension.permissions.title')}</h2>
+        <dl class="at-pg-panel at-ext-perms">
+          {
+            perms.map(([name, opt, why]) => (
+              <div>
+                <dt><code>{name}</code>{opt && <span>{opt}</span>}</dt>
+                <dd>{why}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+      <section class="at-pg-stack-16" aria-labelledby="ext-privacy">
+        <h2 id="ext-privacy" class="at-pg-h2">{t('ext.privacy.title')}</h2>
+        <p class="at-pg-body">{t('page.extension.privacy')}</p>
+        <a class="at-pg-link at-pg-textlink at-pg-body-size" href="/privacy#extension">{t('ext.privacy.policy')}</a>
+      </section>
+      <section class="at-card at-pg-stack-16" aria-labelledby="ext-ff" data-unsupported-note>
+        <h2 id="ext-ff" class="at-pg-h3">{t('page.extension.firefox.title')}</h2>
+        <p class="at-pg-ui">{t('page.extension.firefox.body')}</p>
+        <a class="at-pg-link at-pg-textlink" href="/on/firefox">{t('page.extension.firefox.link')}</a>
+      </section>
+    </div>
 
-    <Card className="mt-10">
-      <CardHeader>
-        <CardTitle>{t('page.extension.web')}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <a class={secondaryClass} href="/">{t('ext.popup.open')}</a>
-      </CardContent>
-    </Card>
+    <div class="at-card at-ext-web">
+      <p class="at-pg-lead at-pg-ink">{t('page.extension.web')}</p>
+      <Button href="/" glyph>{t('ext.popup.open')}</Button>
+    </div>
   </main>
   <script>
     import { bootExtensionPage } from '../lib/extension';

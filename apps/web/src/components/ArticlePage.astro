@@ -2,20 +2,8 @@
 import { render, type CollectionEntry } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
 import ToolIsland from './ToolIsland.astro';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { buttonVariants } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { cn } from 'cn';
-import { createT } from '../i18n/load';
+import Button from './shell/Button.astro';
+import { createT, t as tEn } from '../i18n/load';
 import { LOCALE_META } from '../i18n/locales';
 import { articleSchema } from '../lib/seo';
 import {
@@ -29,6 +17,14 @@ import {
   type TContentKind,
 } from '../lib/content-i18n';
 
+/*
+ * Content article (redesign B5). Canvas: ContentArticle (/for: "article" variant) and GuideOn / GuideVs /
+ * GuideGuides / GuideLearn ("guide" variant; /guides and /learn put the tool after the body, docs/06 §2.6–§2.7).
+ * Head: breadcrumb, h1, "Sources checked" (O-46) and byline (chips on the guide boards). Notes (inside the prose,
+ * so they count toward the word band as before): honest-limit note, FAQ (<details>, docs/06 §8) and, on /for,
+ * the related rows. Tail: the guide boards' related links with the start link, and the author card. Desktop adds the sticky "On this page"
+ * list with a "Back to the tool" card that mirrors the tool's pill (lib/content-nav.ts).
+ */
 interface Props {
   kind: TContentKind;
   entry: CollectionEntry<TContentKind>;
@@ -48,7 +44,7 @@ const PRESET_HREF = {
 
 const { kind, entry } = Astro.props;
 const data = entry.data;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const { locale, enSlug } = splitEntryId(entry.id);
 const english = locale === 'en';
@@ -91,38 +87,55 @@ const breadcrumbs = english
       { name: 'AwakeTab', url: `${site}${homeHref}` },
       { name: data.h1, url: canonical },
     ];
+const crumbs: Array<{ href?: string; label: string }> = [
+  { href: homeHref, label: t('app.name') },
+  ...(english ? [{ href: `/${kind}`, label: hubH1 }] : []),
+  { label: data.h1 },
+];
 
-// Related links: English pages keep their slug labels; translations link the same-locale page when it
-// exists (its h1 as anchor text, docs/06 §10), otherwise the English page, marked as English.
+// Related links: English pages use the target's h1 as anchor text (docs/06 §10); translations link the
+// same-locale page when it exists, otherwise the English page, marked as English.
 interface IRelatedLink {
   href: string;
   label: string;
   lang?: string;
 }
+// Site pages outside the collections (English only) that `related` may name, with the h1 of each as anchor text.
+const SITE_PAGES: Record<string, string> = {
+  '/embed': tEn('page.embed.h1'),
+  '/extension': tEn('page.extension.h1'),
+  '/kiosk': tEn('page.kiosk.h1'),
+  '/library': tEn('page.library.h1'),
+  '/pro': tEn('page.pro.h1'),
+  '/about': tEn('page.about.h1'),
+};
 const related: IRelatedLink[] = data.related.map((href) => {
-  if (english) {
-    return { href, label: href.replace(/^\//u, '').replaceAll('/', ' · ').replaceAll('-', ' ') };
-  }
   const [, targetKind = '', targetSlug = ''] = href.split('/');
+  const source = index.find((page) => page.kind === targetKind && page.enSlug === targetSlug && page.locale === 'en');
+  const fallback = SITE_PAGES[href] ?? href.replace(/^\//u, '').replaceAll('/', ' · ').replaceAll('-', ' ');
+  if (english) return { href, label: source?.h1 ?? fallback };
   const sameLocale = index.find(
     (page) => page.kind === targetKind && page.enSlug === targetSlug && page.locale === locale,
   );
   if (sameLocale) return { href: pagePath(sameLocale.kind, targetSlug, locale), label: sameLocale.h1 };
-  const source = index.find((page) => page.kind === targetKind && page.enSlug === targetSlug && page.locale === 'en');
-  return { href, label: `${source?.h1 ?? targetSlug} (${LOCALE_META.en.label})`, lang: 'en' };
+  return { href, label: `${source?.h1 ?? fallback} (${LOCALE_META.en.label})`, lang: 'en' };
 });
 const englishHref = translations.en;
 
-// 44 px targets throughout; related links may wrap because slugs become multi-word labels.
-// Ghost (not link) keeps these as secondary chips, not accent-coloured competitors to the page's
-// one primary action; it also lets the `.at-prose nav a` chip rule in tool.css take effect.
-const crumbLink = 'inline-flex min-h-11 items-center';
-// h-auto + shrink + max-w-full: translated h1 anchors are long; buttonVariants' fixed h-9 and shrink-0 would
-// push them past a 320 px viewport (E6-T07 overflow test).
-const relatedLink = cn(
-  buttonVariants({ variant: 'ghost' }),
-  'h-auto min-h-11 max-w-full shrink px-4 py-2 text-start whitespace-normal',
-);
+const variant = kind === 'for' ? 'article' : 'guide';
+const toolAt = kind === 'guides' || kind === 'learn' ? 'after' : 'top';
+const toolCopy = kind === 'guides' ? 'skip' : 'try';
+// "On this page": the article's own h2s (Astro gives them ids), then the template sections in page order.
+const toc = [
+  ...headings.filter((h) => h.depth === 2).map((h) => ({ href: `#${h.slug}`, label: h.text })),
+  { href: '#s-limit', label: t('content.limit') },
+  ...(variant === 'article' ? [{ href: '#s-related', label: t('content.related') }] : []),
+  { href: '#faq', label: t('content.faq') },
+  ...(toolAt === 'after' ? [{ href: '#s-tool', label: t(`content.${toolCopy}.title`) }] : []),
+];
+const author = 'Soubhik Biswas';
+const ICON_CHECK = 'M8 12.5l2.7 2.7L16.5 9.5';
+const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
 ---
 
 <ContentLayout
@@ -135,6 +148,8 @@ const relatedLink = cn(
   ogImageAlt={data.h1}
   alternates={alternates}
   localeLinks={translations}
+  toolAt={toolAt}
+  variant={variant}
   schema={articleSchema({
     canonical,
     title: data.h1,
@@ -146,113 +161,194 @@ const relatedLink = cn(
     breadcrumbs,
   })}
 >
-  <header slot="header" class="at-page-header">
-    <a class="at-wordmark" href={homeHref}>AwakeTab</a>
-  </header>
-  <Breadcrumb aria-label={english ? 'Breadcrumb' : t('content.breadcrumb')}>
-    <BreadcrumbList>
-      <BreadcrumbItem>
-        <BreadcrumbLink className={crumbLink} href={homeHref}>{t('app.name')}</BreadcrumbLink>
-      </BreadcrumbItem>
-      <BreadcrumbSeparator />
+  <nav slot="toc" class="at-toc" aria-label={t('content.toc')} data-spy>
+    <div class="at-toc-list">
+      <span class="at-kicker" aria-hidden="true">{t('content.toc')}</span>
       {
-        english && (
-          <>
-            <BreadcrumbItem>
-              <BreadcrumbLink className={crumbLink} href={`/${kind}`}>
-                {hubH1}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-          </>
+        toc.map((item, i) => (
+          <a href={item.href} aria-current={i === 0 ? 'location' : undefined}>
+            <span class="at-toc-dot" aria-hidden="true" />
+            {item.label}
+          </a>
+        ))
+      }
+    </div>
+    <a class="at-toc-card" href="#tool" data-tool-mirror>
+      <span class="at-pill at-pill-bare" data-lock="idle" data-mirror-pill>
+        <svg class="at-pill-glyph" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+          <path class="at-g-dot" d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path>
+          <path class="at-g-pause" d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z"></path>
+          <path class="at-g-tri" d="M6 1L11.2 10.5H.8z"></path>
+          <path class="at-g-ring" d="M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z"></path>
+        </svg>
+        <span data-mirror-text>{t('tool.pill.idle')}</span>
+      </span>
+      <span class="at-toc-digits" data-mirror-digits aria-hidden="true">00:00</span>
+      <span class="at-toc-back">{t('content.backToTool')} <span aria-hidden="true">↑</span></span>
+    </a>
+  </nav>
+
+  <Fragment slot="head">
+    <nav class="at-crumbs" aria-label={english ? 'Breadcrumb' : t('content.breadcrumb')}>
+      <ol>
+        {
+          crumbs.map((crumb, i) =>
+            crumb.href ? (
+              <li>
+                <a href={crumb.href}>{crumb.label}</a>
+                <span class="at-crumb-sep" data-slot="breadcrumb-separator" aria-hidden="true">
+                  <svg viewBox="0 0 16 16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
+                </span>
+              </li>
+            ) : (
+              <li aria-current="page" data-crumb={i}>{crumb.label}</li>
+            ),
+          )
+        }
+      </ol>
+    </nav>
+    <h1 class="at-h1-page">{data.h1}</h1>
+    <div class="at-meta">
+      {
+        verified && (
+          <span class="at-meta-verified">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d={ICON_CHECK} /></svg>
+            {t('content.verified', { date: verified })}
+          </span>
         )
       }
-      <BreadcrumbItem>
-        <BreadcrumbPage>{data.h1}</BreadcrumbPage>
-      </BreadcrumbItem>
-    </BreadcrumbList>
-  </Breadcrumb>
-  <header class="mt-4">
-    <h1 class="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">{data.h1}</h1>
-    {
-      (verified || stale || (!english && !data.reviewed)) && (
-        <div class="mt-3 flex flex-wrap items-center gap-2">
-          {verified && (
-            <Badge variant="outline" className="whitespace-normal">
-              {t('content.verified', { date: verified })}
-            </Badge>
-          )}
-          {stale && (
-            <Badge variant="outline" className="border-warning whitespace-normal text-warning">
-              {t('content.stale')}
-            </Badge>
-          )}
-          {!english && !data.reviewed && (
-            <Badge variant="outline" className="whitespace-normal" data-translation-pending>
-              {t('content.translation.pending')}
-              {englishHref && (
-                <a class="ms-1 underline underline-offset-4" href={englishHref} hreflang="en" lang="en">
-                  {t('content.translation.original')}
-                </a>
-              )}
-            </Badge>
-          )}
+      {
+        stale && (
+          <span class="at-meta-stale">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 12a8 8 0 1 1-2.3-5.6" /><path d="M20 4v4.5h-4.5" /></svg>
+            {t('content.stale')}
+          </span>
+        )
+      }
+      {
+        !english && !data.reviewed && (
+          <span class="at-meta-pending" data-translation-pending>
+            {t('content.translation.pending')}
+            {englishHref && (
+              <a href={englishHref} hreflang="en" lang="en">
+                {t('content.translation.original')}
+              </a>
+            )}
+          </span>
+        )
+      }
+      <span class="at-meta-by">{t('content.byline', { name: author })}</span>
+    </div>
+  </Fragment>
+
+  {
+    toolAt === 'after' ? (
+      <section slot="tool" id="s-tool" class="at-tool-area" aria-labelledby="h-tool">
+        <h2 id="h-tool">{t(`content.${toolCopy}.title`)}</h2>
+        <p>{t(`content.${toolCopy}.body`)}</p>
+        <div id="tool" class="at-tool-card">
+          <ToolIsland embed heading={data.h1} autostart="0" preset={data.preset} mode={data.mode} locale={locale} />
         </div>
+      </section>
+    ) : (
+      <div slot="tool" id="tool" class="at-tool-card">
+        <ToolIsland embed heading={data.h1} autostart="0" preset={data.preset} mode={data.mode} locale={locale} />
+      </div>
+    )
+  }
+
+  <Content />
+
+  <Fragment slot="notes">
+    <aside id="s-limit" class="at-limit-note" aria-labelledby="h-limit">
+      <div role="note" class="at-note">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.01" /></svg>
+        <div>
+          <h2 id="h-limit" class="at-kicker">{t('content.limit')}</h2>
+          <p>{data.honestLimit}</p>
+        </div>
+      </div>
+    </aside>
+
+    {
+      variant === 'article' && (
+        <section id="s-related" class="at-related-sec" aria-labelledby="h-related">
+          <h2 id="h-related">{t('content.related')}</h2>
+          <ul class="at-rows">
+            {related.map((link) => (
+              <li>
+                <a class="at-link-row" href={link.href} hreflang={link.lang} lang={link.lang}>
+                  <span>{link.label}</span>
+                  <svg class="at-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <Button class="at-start" href={startHref} glyph>
+            {t('content.start')}
+          </Button>
+        </section>
       )
     }
-  </header>
-  <Alert role="note" className="mt-6 border-s-4 border-s-warning">
-    <AlertDescription className="text-foreground">{data.honestLimit}</AlertDescription>
-  </Alert>
-  <Card className="my-6 gap-0 py-0">
-    <ToolIsland embed heading={data.h1} autostart="0" preset={data.preset} mode={data.mode} locale={locale} />
-  </Card>
-  <div class="at-prose">
-    <Content />
-    <section aria-labelledby="faq" class="mt-8">
+
+    <section class="at-faq-sec" aria-labelledby="faq">
       <h2 id="faq">{t('content.faq')}</h2>
-      <div class="grid gap-3">
+      <div class="at-faq">
         {
-          data.faq.map((item) => (
-            <details class="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <summary class="min-h-11 cursor-pointer px-4 py-3 font-medium marker:text-muted-foreground">
-                {item.q}
+          data.faq.map((item, i) => (
+            <details open={i === 0}>
+              <summary>
+                <span>{item.q}</span>
+                <span class="at-faq-icon" aria-hidden="true">
+                  <span>
+                    <svg viewBox="0 0 24 24" focusable="false"><path d="M12 5v14M5 12h14" /></svg>
+                  </span>
+                </span>
               </summary>
-              <p class="px-4 pb-4 text-muted-foreground">{item.a}</p>
+              <p>{item.a}</p>
             </details>
           ))
         }
       </div>
     </section>
-    <nav aria-label={t('content.related')} class="mt-6 flex flex-wrap gap-x-6 gap-y-1">
-      <a class={relatedLink} href={startHref}>{t('content.start')}</a>
-      {english && <a class={relatedLink} href={`/${kind}`}>{hubH1}</a>}
-      {
-        related.map((link) => (
-          <a class={relatedLink} href={link.href} hreflang={link.lang} lang={link.lang}>
-            {link.label}
+  </Fragment>
+
+  <Fragment slot="tail">
+    {
+      variant === 'guide' && (
+        <nav class="at-related-links" aria-labelledby="h-related">
+          <h2 id="h-related">{t('content.related')}</h2>
+          <a class="at-start-pill" href={startHref}>
+            <svg class="at-button-glyph" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+              <circle cx="24" cy="9" r="4.6" fill="currentColor" />
+            </svg>
+            {t('content.start')}
           </a>
-        ))
-      }
-    </nav>
-  </div>
-  {/* Page-specific data after the prose (e.g. the device matrix on /learn/how-we-tested); outside .at-prose so
-      it never counts toward the article word band. */}
-  <slot name="after" />
-  <Card className="mt-8 py-4">
-    <CardContent className="flex items-center gap-3 px-4 text-sm">
-      <span
-        aria-hidden="true"
-        class="grid size-10 shrink-0 place-items-center rounded-full bg-accent font-semibold text-accent-foreground"
-      >
-        SB
-      </span>
+          <div>
+            {related.map((link) => (
+              <a href={link.href} hreflang={link.lang} lang={link.lang}>
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </nav>
+      )
+    }
+
+    <div class="at-author">
+      <span class="at-avatar" aria-hidden="true">SB</span>
       <div>
-        <p class="font-medium">Soubhik Biswas</p>
-        <p class="text-muted-foreground">
-          {t('content.author.role')} <a class="text-primary underline underline-offset-4" href="/about">{t('content.author.about')}</a>
+        <p class="at-author-name">{author}</p>
+        <p class="at-author-role">
+          {t('content.author.role')}
+          {variant === 'article' && verified && <>{t('content.verified', { date: verified })}.</>}
+          <a href="/about">{t('content.author.about')}</a>
         </p>
       </div>
-    </CardContent>
-  </Card>
+    </div>
+  </Fragment>
+
+  {/* Page-specific data after the prose (e.g. the device matrix on /learn/how-we-tested). */}
+  <slot name="after" slot="after" />
 </ContentLayout>

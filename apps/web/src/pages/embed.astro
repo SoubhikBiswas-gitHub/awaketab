@@ -1,20 +1,17 @@
 ---
-// /embed — AwakeTab Embed sales and install page (docs/11 §10, docs/09 §7.3, E12-T02). No ads (docs/00 §8.3):
-// BaseLayout, never ContentLayout. Zero hydration (docs/03 ADR-013): shadcn renders at build time; the snippet
-// generator is one vanilla <script>. The two live demos are the real loader tag, exactly as a site pastes it.
+// /embed (B6, canvas board EmbedShowcase): AwakeTab Embed landing and install page (docs/11 §10, docs/09 §7.3,
+// E12-T02). No ads (docs/00 §8.3): BaseLayout, never ContentLayout. Zero hydration (docs/03 ADR-013). The widget on
+// the placeholder recipe page is the real loader tag, exactly as a site pastes it; the snippet builder rewrites the
+// tag and remounts it (lib/embed-page.ts). Embed licences are not on sale yet (decision O-29: "Licences open soon").
+// `#allow` stays: the widget's "How to fix" link points at it (docs/11 §4).
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SegRadio from '../components/pages/SegRadio.astro';
+import '../styles/pages.css';
 import { t } from '../i18n/load';
 import { articleSchema } from '../lib/seo';
-import { CHECKOUT_LINKS } from '../lib/checkout';
-import { PLAN_PRICES } from '../lib/license';
 import { DEFAULT_SNIPPET, iframeSnippet, loaderSnippet } from '../tool/embed/snippet';
-import { EMBED_LOCALES, EMBED_MODES, EMBED_THEMES } from '../tool/embed/protocol';
-import { cn } from 'cn';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { EMBED_LOCALES } from '../tool/embed/protocol';
+import { snippetParts } from '../lib/embed-page';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/embed`;
@@ -40,15 +37,28 @@ const langNames: Record<string, string> = {
   hi: 'हिन्दी',
 };
 const presets = ['pinf', 'p15', 'p30', 'p45', 'p60', 'p120', 'p240'] as const;
-
-const ctaClass = cn(buttonVariants({ size: 'lg' }), 'min-h-11 text-base');
-const outlineClass = cn(buttonVariants({ variant: 'outline' }), 'min-h-11 cursor-pointer');
-const navClass = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11');
-const h2 = 'mt-10 mb-3 text-xl font-semibold leading-tight';
-const field = 'grid gap-1 text-sm font-medium';
-const control =
-  'min-h-11 rounded-md border border-input bg-background px-3 text-base text-foreground focus-visible:outline-2 focus-visible:outline-ring';
-const code = 'block overflow-x-auto rounded-lg border bg-card p-4 text-sm leading-relaxed whitespace-pre';
+const modes = [
+  { value: 'cook', label: 'Cook' },
+  { value: 'standard', label: 'Standard' },
+  { value: 'clock', label: 'Clock' },
+  { value: 'minimal', label: 'Minimal' },
+];
+const themes = [
+  { value: 'auto', label: 'Auto' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'oled', label: 'OLED' },
+];
+const sizes = [
+  { value: 'compact', label: 'Compact', aria: 'Compact, 320 by 104' },
+  { value: 'full', label: 'Full width', aria: 'Full width, 240 pixels tall' },
+];
+const NOTES = {
+  cook: 'Cook: a big elapsed timer readers can tap to pause. Full width adds up to three kitchen timers.',
+  standard: 'Standard: Start, the honest status and the time kept awake.',
+  clock: 'Clock: the current time, large, while the screen stays on.',
+  minimal: 'Minimal: just the status and one button.',
+} as const;
 ---
 
 <BaseLayout
@@ -68,210 +78,178 @@ const code = 'block overflow-x-auto rounded-lg border bg-card p-4 text-sm leadin
     ],
   })}
 >
-  <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
-  <main class="mx-auto mt-8 max-w-[45rem] leading-normal">
-    <h1 class="text-3xl font-bold leading-tight tracking-tight text-balance">{t('page.embed.h1')}</h1>
-    <p class="mt-3 text-lg">
-      Recipe blogs, dashboards and documentation sites: give readers a button that keeps their screen from dimming
-      while they follow along. One script tag, the same honest status as AwakeTab itself, in eight languages.
-    </p>
+  <main class="at-page at-embed" data-embed-root>
+    <div class="at-pg-aura at-embed-aura" aria-hidden="true"></div>
+    <div class="at-pg-intro at-embed-intro">
+      <p class="at-embed-kicker">AwakeTab Embed</p>
+      <h1 class="at-pg-h1">{t('page.embed.h1')}</h1>
+      <p class="at-pg-lead">
+        Recipe blogs, dashboards and documentation sites: give readers a button that keeps their screen from dimming while they
+        follow along. One script tag, the same honest status as AwakeTab itself, in eight languages.
+      </p>
+    </div>
 
-    <section aria-labelledby="demo">
-      <h2 id="demo" class={h2}>Try it</h2>
-      <p class="text-muted-foreground">Both sizes below are the real widget, loaded by the same tag you paste.</p>
-      <div class="mt-4 grid gap-6">
-        <div>
-          <p class="mb-2 text-sm font-medium">Compact · 320 × 96</p>
-          <script is:inline async src="/embed.js" data-mode="cook" data-theme="auto" data-size="compact" data-lang="en"></script>
-        </div>
-        <div>
-          <p class="mb-2 text-sm font-medium">Full width · kitchen timers</p>
-          <script is:inline async src="/embed.js" data-mode="cook" data-theme="auto" data-size="full" data-lang="en"></script>
-        </div>
+    <div class="at-embed-grid">
+      <div class="at-embed-col">
+        <figure class="at-host" aria-label="The widget on a placeholder recipe page" data-placeholder="host page">
+          <div class="at-host-bar">
+            <div class="at-host-url"><span>yourrecipesite.example/lemon-lentil-soup</span></div>
+            <span class="at-host-tag">Placeholder site</span>
+          </div>
+          <div class="at-host-top">
+            <span class="at-host-brand">[Your recipe site]</span>
+            <span class="at-host-nav" aria-hidden="true"><span></span><span></span><span></span></span>
+          </div>
+          <div class="at-host-body">
+            <div class="at-host-title">
+              <span class="at-host-kicker">Soups</span>
+              <h2>Lemon and red lentil soup</h2>
+              <span class="at-host-meta">Serves 4 · 40 minutes · Sample recipe text</span>
+            </div>
+            <div class="at-host-photo" aria-hidden="true">Recipe photo</div>
+            <div class="at-host-slot">
+              <div class="at-host-label">
+                <span>Pasted snippet renders here</span>
+                <span aria-hidden="true"></span>
+                <span class="at-pg-digits" data-embed-box>320 × 104</span>
+              </div>
+              <div class="at-host-widget" data-embed-demo data-size="compact">
+                <script is:inline async src="/embed.js" data-mode="cook" data-theme="auto" data-size="compact" data-lang="en"></script>
+              </div>
+            </div>
+            <div class="at-host-recipe">
+              <div>
+                <h3>Ingredients</h3>
+                <ul>
+                  <li>200 g red lentils</li>
+                  <li>1 onion, diced</li>
+                  <li>1 litre stock</li>
+                  <li>1 lemon</li>
+                </ul>
+              </div>
+              <div>
+                <h3>Method</h3>
+                <ol>
+                  <li>Soften the onion in a little oil for 8 minutes.</li>
+                  <li>Add the lentils and stock. Simmer for 25 minutes.</li>
+                  <li>Blend, then finish with lemon juice and salt.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <section class="at-pg-stack-12 at-embed-free" aria-labelledby="licence">
+          <h2 id="licence" class="at-pg-h3">Free, or licensed for your brand</h2>
+          <p class="at-pg-body at-pg-measure">
+            The free widget is ready now and carries a small "Keep awake by AwakeTab" credit. An Embed licence ($29 / year per site)
+            will remove the credit and apply your brand colour. The wake lock and every mode are identical either way.
+          </p>
+          <div class="at-embed-soon">
+            <span class="at-tag at-tag-tone at-pg-tag">Licences open soon</span>
+            <span class="at-pg-small">No payment is taken until a purchase can set up your domain.</span>
+          </div>
+        </section>
       </div>
-    </section>
 
-    <section aria-labelledby="install">
-      <h2 id="install" class={h2}>Install: one line</h2>
-      <p>Paste this where the button should appear — inside your recipe card, above the method, or in a sidebar:</p>
-      <pre class="mt-3"><code tabindex="0" class={code} data-snippet>{snippet}</code></pre>
-      <p class="mt-3 text-sm text-muted-foreground">
-        The script replaces itself with a lazy-loaded iframe, reserves its box before it loads (no layout shift), and
-        makes no request to anyone but awaketab.com.
-      </p>
+      <div class="at-embed-col at-embed-col-r">
+        <section class="at-pg-stack-16 at-embed-install" aria-labelledby="install">
+          <h2 id="install" class="at-pg-h2">Install: one line</h2>
+          <p class="at-pg-ui">Paste this where the button should appear, for example inside your recipe card, above the method or in a sidebar.</p>
+          <div class="at-embed-snippet">
+            <code tabindex="0" aria-label="Your snippet" data-snippet>{snippetParts(snippet).map((p) => (p.name ? <span class="at-snip-attr">{p.text}<span data-tok="k">{p.name}</span>=<span data-tok="s">{p.value}</span></span> : p.text))}</code>
+            <div class="at-embed-snippet-foot">
+              <span class="at-pg-caption">The loader adds the visible credit link below the widget.</span>
+              <span class="sr-only" role="status" aria-live="polite" data-snippet-status data-copied={t('builder.copied')}></span>
+              <button class="at-button at-button-sm at-pg-copy at-embed-copy" type="button" data-snippet-copy>
+                <svg class="at-pg-copy-idle" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9h10v11H9zM5 15V4h10"></path></svg>
+                <svg class="at-pg-copy-done" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                <span class="at-pg-copy-idle">{t('tool.share.copy')}</span><span class="at-pg-copy-done">{t('builder.copied')}</span>
+              </button>
+            </div>
+          </div>
+          <p class="at-pg-small">
+            The script replaces itself with a lazy-loaded iframe and reserves its box before it loads (no layout shift). It talks
+            only to awaketab.com, and it sends anonymous start and end counts, including your site's domain. The credit sits in your
+            page's own HTML as a plain nofollow link.
+          </p>
+        </section>
 
-      <form class="mt-6 grid gap-4 rounded-lg border p-4 sm:grid-cols-2" data-snippet-form aria-labelledby="generator">
-        <h3 id="generator" class="text-base font-semibold sm:col-span-2">{t('builder.snippet')}</h3>
-        <label class={field}>
-          {t('builder.mode')}
-          <select class={control} name="mode">
-            {EMBED_MODES.map((m) => <option value={m} selected={m === DEFAULT_SNIPPET.mode}>{t(`ambient.mode.${m}`)}</option>)}
-          </select>
-        </label>
-        <label class={field}>
-          {t('settings.theme')}
-          <select class={control} name="theme">
-            {EMBED_THEMES.map((th) => <option value={th} selected={th === DEFAULT_SNIPPET.theme}>{t(`settings.theme.${th}`)}</option>)}
-          </select>
-        </label>
-        <label class={field}>
-          {t('builder.size')}
-          <select class={control} name="size">
-            <option value="compact" selected>{t('builder.size.compact')}</option>
-            <option value="full">{t('builder.size.full')}</option>
-          </select>
-        </label>
-        <label class={field}>
-          {t('builder.lang')}
-          <select class={control} name="lang">
-            <option value="" selected>{t('builder.lang.page')}</option>
-            {EMBED_LOCALES.map((l) => <option value={l}>{langNames[l]}</option>)}
-          </select>
-        </label>
-        <label class={field}>
-          {t('tool.presets')}
-          <select class={control} name="preset">
-            {presets.map((p) => <option value={p} selected={p === DEFAULT_SNIPPET.preset}>{p === 'pinf' ? t('tool.preset.pinf.sr') : t(`tool.preset.${p}`)}</option>)}
-          </select>
-        </label>
-        <div class="flex items-end gap-3">
-          <button class={outlineClass} type="button" data-snippet-copy>{t('tool.share.copy')}</button>
-          <span class="text-sm text-muted-foreground" role="status" data-snippet-status data-copied={t('builder.copied')}></span>
-        </div>
-      </form>
-    </section>
-
-    <section aria-labelledby="allow-heading" id="allow">
-      <h2 id="allow-heading" class={h2}>Why the <code>allow</code> attribute matters</h2>
-      <p>
-        Browsers only let an iframe from another site keep the screen awake when the page delegates the permission:
-        <code>allow="screen-wake-lock"</code>. The loader always sets it. If your platform strips script tags and you
-        paste the iframe yourself, keep that attribute — without it the widget cannot hold the screen on and shows
-        "Ask the site owner" instead of pretending.
-      </p>
-      <pre class="mt-3"><code tabindex="0" class={code}>{frame}</code></pre>
-      <Alert role="note" className="mt-4">
-        <AlertDescription>
-          The page also needs HTTPS: a wake lock is only available in a secure context, top to bottom. AMP pages are
-          not supported (amp-iframe cannot delegate the permission).
-        </AlertDescription>
-      </Alert>
-    </section>
-
-    <section aria-labelledby="api">
-      <h2 id="api" class={h2}>JavaScript API</h2>
-      <p>
-        The loader exposes <code>window.AwakeTabEmbed</code>: <code>.start(opts)</code>, <code>.stop()</code>,
-        <code>.setTheme(theme)</code> and <code>.on('state', callback)</code>. Messages are checked by origin in both
-        directions — the widget only listens to the page that embeds it, and the page only to awaketab.com.
-      </p>
-      <pre class="mt-3"><code tabindex="0" class={code}>{apiSample}</code></pre>
-    </section>
-
-    <section aria-labelledby="licence">
-      <h2 id="licence" class={h2}>Free, or licensed for your brand</h2>
-      <p>
-        The free widget carries a small "Keep awake by AwakeTab" link. The Embed licence removes it and applies your
-        brand colour. The wake lock and every mode are identical either way — readers never get a worse widget
-        because a site did not pay.
-      </p>
-      <div class="mt-4 overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead><span class="sr-only">Feature</span></TableHead>
-              <TableHead>Free</TableHead>
-              <TableHead>Embed licence</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow><TableCell>Wake lock, honest status, 8 languages</TableCell><TableCell>Yes</TableCell><TableCell>Yes</TableCell></TableRow>
-            <TableRow><TableCell>Cook mode and kitchen timers</TableCell><TableCell>Yes</TableCell><TableCell>Yes</TableCell></TableRow>
-            <TableRow><TableCell>Attribution link</TableCell><TableCell>Shown</TableCell><TableCell>Removed</TableCell></TableRow>
-            <TableRow><TableCell>Brand colour</TableCell><TableCell>—</TableCell><TableCell>Yes</TableCell></TableRow>
-            <TableRow><TableCell>Priority support</TableCell><TableCell>—</TableCell><TableCell>Yes</TableCell></TableRow>
-          </TableBody>
-        </Table>
+        <form class="at-card at-pg-stack-20 at-embed-builder" aria-labelledby="generator" data-snippet-form>
+          <h2 id="generator" class="at-pg-h3">{t('builder.snippet')}</h2>
+          <div class="at-pg-stack-8">
+            <span id="g-mode" class="at-pg-label at-embed-glabel">{t('builder.mode')}</span>
+            <SegRadio name="mode" labelledby="g-mode" options={modes} checked="cook" small />
+          </div>
+          <div class="at-pg-stack-8">
+            <span id="g-theme" class="at-pg-label at-embed-glabel">Theme</span>
+            <SegRadio name="theme" labelledby="g-theme" options={themes} checked="auto" small />
+          </div>
+          <div class="at-pg-stack-8">
+            <span id="g-size" class="at-pg-label at-embed-glabel">{t('builder.size')}</span>
+            <SegRadio name="size" labelledby="g-size" options={sizes} checked="compact" small />
+          </div>
+          <div class="at-embed-selects">
+            <div class="at-pg-field">
+              <label for="g-lang" class="at-pg-label at-embed-glabel">{t('builder.lang')}</label>
+              <div class="at-pg-select">
+                <select id="g-lang" class="at-input" name="lang">
+                  <option value="" selected>{t('builder.lang.page')}</option>
+                  {EMBED_LOCALES.map((l) => <option value={l}>{langNames[l]}</option>)}
+                </select>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+              </div>
+            </div>
+            <div class="at-pg-field">
+              <label for="g-preset" class="at-pg-label at-embed-glabel">Start length</label>
+              <div class="at-pg-select">
+                <select id="g-preset" class="at-input" name="preset">
+                  {presets.map((p) => <option value={p} selected={p === DEFAULT_SNIPPET.preset}>{p === 'pinf' ? t('tool.preset.pinf.sr') : t(`tool.preset.${p}`)}</option>)}
+                </select>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+              </div>
+            </div>
+          </div>
+          <p class="at-pg-small">
+            {Object.entries(NOTES).map(([mode, note]) => <span data-mode-note={mode} hidden={mode !== 'cook'}>{note}</span>)}
+          </p>
+        </form>
       </div>
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle className="text-2xl" id="embed-price">${PLAN_PRICES.biz_embed_site_yearly} / year per site</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-3">
-          <p class="text-sm text-muted-foreground">
-            One registrable domain, including <code>www.</code> and staging subdomains. Attribution returns quietly
-            if the licence lapses. <Badge variant="secondary">Business</Badge>
-          </p>
-          <a class={ctaClass} href={CHECKOUT_LINKS.biz_embed_site_yearly} rel="noopener" aria-describedby="embed-price">
-            Get the Embed licence
-          </a>
-          <a class={navClass} href="/pro/activate">Already bought? Activate your domain</a>
-        </CardContent>
-      </Card>
-    </section>
+    </div>
 
-    <section aria-labelledby="faq">
-      <h2 id="faq" class={h2}>Questions</h2>
-      <div class="grid gap-3">
-        <details class="rounded-lg border bg-card p-4">
-          <summary class="min-h-11 cursor-pointer font-medium">Will it slow my page down?</summary>
-          <p class="mt-2 text-muted-foreground">
-            The loader is under 3 KB compressed and async; the iframe loads lazily, so a widget below the fold costs
-            nothing until readers scroll to it. It sets no cookies and calls no third party.
-          </p>
-        </details>
-        <details class="rounded-lg border bg-card p-4">
-          <summary class="min-h-11 cursor-pointer font-medium">Does it keep the screen on when the reader switches tabs?</summary>
-          <p class="mt-2 text-muted-foreground">
-            No. Browsers release a wake lock when the page is hidden; the widget shows "Paused — tab hidden" and
-            re-acquires when the reader comes back.
-          </p>
-        </details>
-        <details class="rounded-lg border bg-card p-4">
-          <summary class="min-h-11 cursor-pointer font-medium">Is there a WordPress plugin?</summary>
-          <p class="mt-2 text-muted-foreground">
-            Not yet. Paste the tag into a Custom HTML block or your theme's recipe template; the plugin will output the
-            same tag when it ships.
-          </p>
-        </details>
-      </div>
-    </section>
-
-    <nav aria-label="Related" class="mt-8 flex flex-wrap gap-2">
-      <a class={navClass} href="/">Open AwakeTab</a>
-      <a class={navClass} href="/kiosk">Kiosk licence</a>
-      <a class={navClass} href="/library">The wake lock library</a>
-      <a class={navClass} href="/terms">Licence terms</a>
-    </nav>
+    <div class="at-embed-more">
+      <section class="at-pg-stack-16" aria-labelledby="allow-heading" id="allow">
+        <h2 id="allow-heading" class="at-pg-h3">Why the <code class="at-pg-code">allow</code> attribute matters</h2>
+        <p class="at-pg-body at-pg-measure">
+          Browsers only let an iframe from another site keep the screen awake when the page delegates the permission:
+          <code class="at-pg-code">allow="screen-wake-lock"</code>. The loader always sets it. If your platform strips script tags and you
+          paste the iframe yourself, keep that attribute: without it the widget cannot hold the screen on and shows "Ask the site
+          owner" instead of pretending. The page also needs HTTPS, because a wake lock is only available in a secure context.
+        </p>
+        <pre class="at-embed-pre" tabindex="0"><code>{frame}</code></pre>
+      </section>
+      <section class="at-pg-stack-16" aria-labelledby="api">
+        <h2 id="api" class="at-pg-h3">JavaScript API</h2>
+        <p class="at-pg-body at-pg-measure">
+          The loader exposes <code class="at-pg-code">window.AwakeTabEmbed</code>: <code class="at-pg-code">.start(opts)</code>,
+          <code class="at-pg-code">.stop()</code>, <code class="at-pg-code">.setTheme(theme)</code> and <code class="at-pg-code">.on('state', callback)</code>.
+          Messages are checked by origin in both directions: the widget only listens to the page that embeds it, and the page only
+          to awaketab.com.
+        </p>
+        <pre class="at-embed-pre" tabindex="0"><code>{apiSample}</code></pre>
+      </section>
+      <nav class="at-pg-related" aria-label="Related">
+        <a class="at-pg-chiplink" href="/">Open AwakeTab<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        <a class="at-pg-chiplink" href="/kiosk">Kiosk licence<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        <a class="at-pg-chiplink" href="/library">The wake lock library<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        <a class="at-pg-chiplink" href="/terms">Licence terms<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      </nav>
+    </div>
   </main>
   <script>
-    import { DEFAULT_SNIPPET, loaderSnippet, type ISnippetOptions } from '../tool/embed/snippet';
-    import { EMBED_LOCALES, EMBED_MODES, EMBED_PRESETS, EMBED_SIZES, EMBED_THEMES, pick } from '../tool/embed/protocol';
+    import { bindEmbedPage } from '../lib/embed-page';
 
-    const form = document.querySelector<HTMLFormElement>('[data-snippet-form]');
-    const out = document.querySelector<HTMLElement>('[data-snippet]');
-    const status = document.querySelector<HTMLElement>('[data-snippet-status]');
-    const read = (): ISnippetOptions => {
-      const data = new FormData(form ?? undefined);
-      const lang = String(data.get('lang') ?? '');
-      return {
-        mode: pick(EMBED_MODES, data.get('mode'), DEFAULT_SNIPPET.mode),
-        theme: pick(EMBED_THEMES, data.get('theme'), DEFAULT_SNIPPET.theme),
-        size: pick(EMBED_SIZES, data.get('size'), DEFAULT_SNIPPET.size),
-        preset: pick(EMBED_PRESETS, data.get('preset'), DEFAULT_SNIPPET.preset),
-        lang: (EMBED_LOCALES as readonly string[]).includes(lang) ? (lang as ISnippetOptions['lang']) : null,
-        until: null,
-      };
-    };
-    const render = () => {
-      if (out) out.textContent = loaderSnippet(read());
-      if (status) status.textContent = '';
-    };
-    form?.addEventListener('change', render);
-    document.querySelector('[data-snippet-copy]')?.addEventListener('click', () => {
-      void navigator.clipboard.writeText(out?.textContent ?? '').then(() => {
-        if (status) status.textContent = status.dataset.copied ?? '';
-      });
-    });
+    const root = document.querySelector<HTMLElement>('[data-embed-root]');
+    if (root) bindEmbedPage(root);
   </script>
 </BaseLayout>

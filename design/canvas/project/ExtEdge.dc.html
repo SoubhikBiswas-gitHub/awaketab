@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · popup edge states</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease),opacity .45s var(--ease)}
+button:active{transform:scale(.96)}
+button:disabled,input:disabled,select:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+a{transition:color .45s var(--ease),background-color .45s var(--ease),border-color .45s var(--ease)}
+h1,h2,h3,h4,p,figure,blockquote{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+.at-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.at-num{font-family:Geist,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"zero" 0}
+.at-kick{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.2s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-fade{transition:background-color .6s var(--ease),border-color .6s var(--ease),opacity .6s var(--ease),fill .6s var(--ease),stroke .6s var(--ease)}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-breathe{animation:at-breathe 3.4s var(--ease) infinite alternate}
+.at-ignite{transform-box:fill-box;transform-origin:center;animation:at-ignite .6s var(--ease) .3s both}
+.at-travel{animation:at-travel .6s var(--ease) both}
+.at-off{transition:stroke-dasharray .9s var(--ease),stroke-opacity .9s var(--ease),opacity .9s var(--ease),fill .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-breathe{from{opacity:.55}to{opacity:1}}
+@keyframes at-ignite{0%{transform:scale(.6);opacity:.4}55%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes at-travel{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--at-tx,0),var(--at-ty,0)) scale(.5);opacity:0}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+<style>
+.at-draw{animation:at-draw .4s var(--ease) backwards}
+@keyframes at-draw{from{stroke-dasharray:0.01 400}}
+</style>
+</helmet>
+<div class="at-root" style="--at-focus: {{lamp}}; width: 360px; height: 600px; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column; padding: 0 16px 12px">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; left: -30%; top: -8%; width: 160%; height: 60%; background: radial-gradient(45% 45% at 50% 50%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
+
+  <header style="position: relative; height: 60px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+    <div style="display: flex; align-items: center; gap: 8px; min-height: 44px; color: {{t.ink}}; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{bead}}" style="transition: fill .6s"></circle></svg><h1 style="font-size: 17px; line-height: 24px; font-weight: 600">AwakeTab</h1></div>
+    <div style="display: flex; align-items: center; gap: 4px">
+      <sc-if value="{{showNewChip}}" hint-placeholder-val="{{false}}">
+        <a class="at-in" href="https://awaketab.com/changelog?source=ext" target="_blank" rel="noopener" aria-label="{{newAria}}" style="height: 44px; padding: 0 12px; box-sizing: border-box; display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; background: {{lampTag}}; border: 1px solid {{lampLine}}; font-size: 13px; line-height: 18px; font-weight: 600; color: {{t.ink}}; text-decoration: none; white-space: nowrap">
+          <span aria-hidden="true" class="at-breathe" style="width: 8px; height: 8px; border-radius: 999px; background: {{lamp}}"></span>
+          {{newLabel}}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+        </a>
+      </sc-if>
+      <button aria-label="Settings" title="Settings" onClick="{{noop}}" style="width: 44px; height: 44px; margin-inline-end: -12px; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></button>
+    </div>
+  </header>
+
+  <section aria-label="Status" style="position: relative; min-height: 128px; flex-shrink: 0; display: grid; grid-template-columns: {{ringBox}} minmax(0, 1fr); column-gap: 16px; align-items: center">
+    <div style="position: relative; width: {{ringBox}}; height: {{ringBox}}">
+     <div style="position: absolute; left: 0; top: 0; width: 124px; height: 124px; transform: scale({{ringScale}}); transform-origin: 0 0">
+      <div aria-hidden="true" style="position: absolute; inset: 0; border-radius: 50%; background: repeating-conic-gradient(from -0.6deg, {{t.tick}} 0deg 1.2deg, transparent 1.2deg 6deg); -webkit-mask: radial-gradient(circle, transparent 44px, #000 45px, #000 48px, transparent 49px); mask: radial-gradient(circle, transparent 44px, #000 45px, #000 48px, transparent 49px)"></div>
+      <sc-if value="{{held}}" hint-placeholder-val="{{true}}">
+        <div aria-hidden="true" class="at-sweep" style="position: absolute; inset: 12px; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg 240deg, {{toneFaint}} 360deg)"></div>
+      </sc-if>
+      <svg width="124" height="124" viewBox="0 0 124 124" aria-hidden="true" style="position: absolute; inset: 0; overflow: visible">
+        <defs><filter id="{{gid}}" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"></feGaussianBlur></filter></defs>
+        <circle cx="62" cy="62" r="56" fill="none" stroke="{{t.track}}" stroke-width="5"></circle>
+        <g transform="rotate(-90 62 62)">
+          <circle class="{{arcCls}} at-draw" cx="62" cy="62" r="56" fill="none" stroke="{{tone2}}" stroke-opacity="{{glowOp}}" stroke-width="10" stroke-linecap="round" filter="url(#{{gid}})" style="stroke-dasharray: {{arcDash}}"></circle>
+          <circle class="{{arcCls}} at-draw" cx="62" cy="62" r="56" fill="none" stroke="{{tone2}}" stroke-opacity="{{arcOp}}" stroke-width="{{arcWidth}}" stroke-linecap="round" style="stroke-dasharray: {{arcDash}}"></circle>
+        </g>
+        <g class="at-lin" style="transform: rotate({{tipDeg}}); transform-origin: 62px 62px; opacity: {{tipOp}}">
+          <circle class="at-halo" cx="62" cy="6" r="5" fill="{{tone2}}"></circle>
+          <circle class="{{tipCls}}" cx="62" cy="6" r="4" fill="{{t.ink}}"></circle>
+        </g>
+      </svg>
+     </div>
+      <div style="position: absolute; inset: 0; display: {{ringText}}; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+        <div role="timer" aria-label="{{timerAria}}" class="at-num" style="font-weight: 300; font-size: {{digitSize}}; line-height: 1; letter-spacing: -0.02em; color: {{numColor}}; transition: color .6s">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
+        <div style="max-width: 96px; text-align: center; font-size: 13px; line-height: 16px; font-weight: 500; color: {{t.muted}}">{{caption}}</div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0">
+      <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: {{pl.gap}}; height: {{pl.h}}; max-width: 100%; padding: {{pl.pad}}; box-sizing: border-box; border-radius: 999px; background: {{pl.soft}}; border: 1px solid {{pl.line}}; font-size: {{pl.fs}}; line-height: {{pl.lh}}; font-weight: 600; color: {{t.ink}}; white-space: nowrap"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0; overflow: visible; filter: drop-shadow(0 0 4px {{pl.glow}})"><path class="{{pl.cls}}" d="{{pl.glyph}}" fill="{{pl.fill}}" stroke="{{pl.tone}}" stroke-width="{{pl.stroke}}" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pl.label}}</output>
+      <sc-if value="{{showOrigin}}" hint-placeholder-val="{{false}}">
+        <p class="at-in" style="display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="{{originIcon}}"></path></svg>
+          {{originText}}
+        </p>
+      </sc-if>
+      <sc-if value="{{showMeta}}" hint-placeholder-val="{{true}}">
+        <p class="{{metaCls}}" style="font-size: 13px; line-height: 18px; font-weight: {{metaWeight}}; color: {{metaColor}}; text-wrap: pretty">{{meta}}</p>
+      </sc-if>
+      <sc-if value="{{showMeta2}}" hint-placeholder-val="{{false}}">
+        <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{meta2}}</p>
+      </sc-if>
+    </div>
+  </section>
+
+  <sc-if value="{{showPrivate}}" hint-placeholder-val="{{false}}">
+    <section class="at-rise" aria-labelledby="pv-h" style="margin-top: 12px; flex-shrink: 0; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding: 12px 16px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+      <span style="width: 32px; height: 32px; border-radius: 12px; background: {{t.raised}}; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5h18M6.5 10.5l2-5h7l2 5M4 16a3 3 0 1 0 6 0a3 3 0 1 0-6 0zM14 16a3 3 0 1 0 6 0a3 3 0 1 0-6 0zM10 16h4"></path></svg></span>
+      <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+        <h2 style="font-size: 14px; line-height: 20px; font-weight: 600" id="pv-h">Private window</h2>
+        <p style="font-size: 13px; line-height: 18px; color: {{t.ink2}}; text-wrap: pretty">You allowed AwakeTab in Incognito. This is the same session as your other windows, so Stop here stops it everywhere. AwakeTab can't see the pages you open.</p>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{showExtendCard}}" hint-placeholder-val="{{false}}">
+    <section class="at-rise" aria-labelledby="ex-h" style="margin-top: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 16px; background: {{lampFaint}}; border: 1px solid {{lampLine}}">
+      <h2 id="ex-h" class="at-sr" style="font-weight: 600">Time's up. Keep going?</h2>
+      <div role="group" aria-labelledby="ex-h" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{extendOpts}}" as="x" hint-placeholder-count="3">
+          <button onClick="{{x.pick}}" aria-label="{{x.aria}}" style="height: 44px; border-radius: 12px; border: 1px solid {{lampLine}}; background: {{t.surface}}; font-size: 13px; line-height: 18px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">{{x.label}}</button>
+        </sc-for>
+      </div>
+      <button onClick="{{dismiss}}" style="height: 44px; box-sizing: border-box; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
+      <p style="font-size: 13px; line-height: 18px; color: {{t.ink2}}; text-wrap: pretty">{{extendNote}}</p>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{showErrorCard}}" hint-placeholder-val="{{false}}">
+    <section class="at-rise" role="{{errRole}}" aria-labelledby="er-h" style="margin-top: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 16px; background: {{errSoft}}; border: 1px solid {{errLine}}">
+      <h2 id="er-h" style="display: flex; align-items: flex-start; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 600">
+        <svg width="16" height="16" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px; overflow: visible"><path d="{{errGlyph}}" fill="none" stroke="{{errTone}}" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+        {{errTitle}}
+      </h2>
+      <p style="font-size: 13px; line-height: 18px; color: {{t.ink2}}; text-wrap: pretty">{{errBody}}</p>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{showPrimary}}" hint-placeholder-val="{{true}}">
+    <div style="margin-top: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px">
+      <sc-if value="{{showStop}}" hint-placeholder-val="{{false}}">
+        <button onClick="{{stop}}" style="width: 100%; height: 60px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; color: {{t.primaryInk}}; font-size: 17px; line-height: 24px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px">{{stopLabel}}</button>
+      </sc-if>
+      <sc-if value="{{showStart}}" hint-placeholder-val="{{true}}">
+        <button onClick="{{start}}" style="width: 100%; height: 60px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>{{startLabel}}</button>
+      </sc-if>
+      <sc-if value="{{showRetry}}" hint-placeholder-val="{{false}}">
+        <div style="display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 8px">
+          <button onClick="{{retry}}" aria-busy="{{retryBusy}}" style="height: 52px; border-radius: 20px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; color: {{t.primaryInk}}; font-size: 15px; line-height: 22px; font-weight: 600">{{retryLabel}}</button>
+          <a href="https://awaketab.com/?source=ext" target="_blank" rel="noopener" style="height: 52px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px">Open AwakeTab<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+        </div>
+      </sc-if>
+      <sc-if value="{{showOpenTab}}" hint-placeholder-val="{{false}}">
+        <a href="https://awaketab.com/?source=ext" target="_blank" rel="noopener" style="width: 100%; height: 60px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}">Open AwakeTab in a tab<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+      </sc-if>
+      <sc-if value="{{showNote}}" hint-placeholder-val="{{false}}">
+        <div aria-live="polite" style="padding: 0 4px; display: flex; align-items: center; justify-content: space-between; gap: 8px">
+          <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{note}}</p>
+          <sc-if value="{{showNoteLink}}" hint-placeholder-val="{{false}}">
+            <button onClick="{{noop}}" style="flex-shrink: 0; min-height: 44px; min-width: 44px; padding: 0 8px; border: 0; background: transparent; border-radius: 12px; font-size: 13px; line-height: 18px; font-weight: 600; color: {{lampText}}">{{noteLink}}</button>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{showLevel}}" hint-placeholder-val="{{true}}">
+    <div role="radiogroup" aria-label="Keep awake" style="margin-top: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 12px">
+        <span style="font-size: 13px; line-height: 18px; font-weight: 600; color: {{t.ink2}}">Keep awake</span>
+        <div style="position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+          <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / 2); height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{levelX}})"></div>
+          <sc-for list="{{levels}}" as="l" hint-placeholder-count="2">
+            <button role="radio" aria-checked="{{l.sel}}" onClick="{{l.pick}}" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; font-size: 14px; line-height: 20px; font-weight: {{l.weight}}; color: {{l.color}}; display: flex; align-items: center; justify-content: center; gap: 8px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{l.icon}}"></path></svg>
+              {{l.label}}
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      <sc-if value="{{showLevelHelp}}" hint-placeholder-val="{{true}}">
+        <p aria-live="polite" style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{levelHelp}}</p>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{showChips}}" hint-placeholder-val="{{true}}">
+    <div role="group" aria-label="Session length" style="margin-top: 12px; flex-shrink: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+      <sc-for list="{{chips}}" as="c" hint-placeholder-count="7">
+        <button aria-pressed="{{c.sel}}" aria-label="{{c.aria}}" onClick="{{c.pick}}" disabled="{{chipsOff}}" class="at-slide" style="height: 44px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{c.ring}}; background: {{c.bg}}; font-size: 14px; line-height: 20px; font-weight: {{c.weight}}; color: {{c.color}}; white-space: nowrap">{{c.label}}</button>
+      </sc-for>
+      <button aria-pressed="false" aria-label="Stay awake until a time" onClick="{{noop}}" disabled="{{chipsOff}}" style="height: 44px; box-sizing: border-box; border-radius: 999px; border: 1px dashed {{t.line2}}; background: transparent; font-size: 14px; line-height: 20px; font-weight: 500; color: {{t.ink2}}; white-space: nowrap">Until…</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{showSchedCard}}" hint-placeholder-val="{{false}}">
+    <section class="at-rise" aria-labelledby="sc-h" style="margin-top: 12px; flex-shrink: 0; padding: 8px 8px 8px 16px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 12px; align-items: center">
+      <span aria-hidden="true" style="width: 32px; height: 32px; border-radius: 12px; background: {{lampTag}}; color: {{lampText}}; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h16v13H4zM4 10.5h16M8.5 3.5v5M15.5 3.5v5"></path></svg></span>
+      <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+        <h2 id="sc-h" style="font-size: 14px; line-height: 20px; font-weight: 600">Mon to Fri</h2>
+        <span style="font-size: 13px; line-height: 18px; color: {{t.muted}}; font-variant-numeric: tabular-nums; white-space: nowrap">9:00 AM to 6:00 PM · Screen</span>
+      </div>
+      <button onClick="{{noop}}" aria-label="Edit schedules" style="height: 44px; min-width: 44px; padding: 0 12px; border-radius: 12px; border: 0; background: transparent; font-size: 14px; line-height: 20px; font-weight: 600; color: {{lampText}}; white-space: nowrap">Edit</button>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{showProRow}}" hint-placeholder-val="{{false}}">
+    <button onClick="{{openPro}}" aria-expanded="false" style="margin-top: 12px; flex-shrink: 0; height: 52px; padding: 0 12px 0 16px; border-radius: 20px; border: 1px solid {{t.line}}; background: transparent; color: {{t.ink}}; display: flex; align-items: center; gap: 12px; font-size: 14px; line-height: 20px; font-weight: 600">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{t.ink2}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.5h16v13H4zM4 10.5h16M8.5 3.5v5M15.5 3.5v5"></path></svg>
+      <span style="flex-grow: 1; text-align: start">Schedules and auto-start</span>
+      <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{lampLine}}; background: {{lampTag}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">Pro</span>
+    </button>
+  </sc-if>
+
+  <sc-if value="{{showProPanel}}" hint-placeholder-val="{{false}}">
+    <section class="at-rise" aria-labelledby="pro-h" style="margin-top: 12px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; padding: 16px 16px 20px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{lampLine}}">
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px">
+        <h2 id="pro-h" style="font-size: 16px; line-height: 24px; font-weight: 600; text-wrap: pretty">Schedules and auto-start are part of AwakeTab Pro.</h2>
+        <button onClick="{{closePro}}" aria-label="Close" style="width: 44px; height: 44px; margin: -12px -12px 0 0; flex-shrink: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+      </div>
+      <p style="font-size: 13px; line-height: 18px; color: {{t.ink2}}; text-wrap: pretty">Run on a weekly plan, like weekdays 9:00 AM to 6:00 PM, or start when Chrome opens. Everything else here stays free.<span style="display: block; margin-top: 4px; color: {{t.muted}}">$12 a year, or $19 once: launch price for the first 90 days, then $29. 5 devices, 14-day refund.</span></p>
+      <div style="display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 8px">
+        <a href="https://awaketab.com/pro?source=ext" target="_blank" rel="noopener" style="height: 52px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 12px">See Pro plans<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+        <button onClick="{{noop}}" style="height: 52px; border-radius: 20px; border: 0; background: transparent; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; text-decoration: underline; text-decoration-color: {{t.line2}}; text-underline-offset: 4px">I have a key</button>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{showTips}}" hint-placeholder-val="{{false}}">
+    <section class="at-rise" aria-labelledby="tips-h" style="margin-top: auto; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+        <h2 id="tips-h" class="at-kick" style="color: {{t.muted}}">Good to know</h2>
+        <button onClick="{{closeTips}}" style="height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: {{t.raised}}; font-size: 14px; line-height: 20px; font-weight: 600; color: {{t.ink}}">Got it</button>
+      </div>
+      <ul style="padding: 0 8px 0 0; display: flex; flex-direction: column; gap: 8px">
+        <li style="display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 8px; align-items: center; font-size: 13px; line-height: 18px; color: {{t.ink2}}">
+          <span aria-hidden="true" style="display: flex; gap: 4px">
+            <sc-for list="{{keyCaps}}" as="k" hint-placeholder-count="3">
+              <kbd style="display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; box-shadow: inset 0 -1px 0 {{t.line2}}; background: {{t.raised}}; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}; white-space: nowrap">{{k}}</kbd>
+            </sc-for>
+          </span>
+          <span><span class="at-sr">Alt+Shift+A </span>starts or stops from any tab.</span>
+        </li>
+        <li style="display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 8px; align-items: center; font-size: 13px; line-height: 18px; color: {{t.ink2}}">
+          <span aria-hidden="true" data-placeholder="toolbar icon" style="position: relative; width: 28px; height: 24px; display: grid; place-items: center">
+            <svg width="20" height="20" viewBox="0 0 48 48"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="5.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="5.2" fill="{{lamp}}"></circle></svg>
+            <span style="position: absolute; left: 16px; bottom: -4px; height: 16px; padding: 0 4px; border-radius: 4px; background: #087B87; color: #FFFFFF; font-size: 12px; font-weight: 600; line-height: 16px">25m</span>
+          </span>
+          <span>Pin it to see time left.</span>
+        </li>
+      </ul>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{showFooter}}" hint-placeholder-val="{{true}}">
+    <footer style="margin-top: 12px; padding-top: 8px; border-top: 1px solid {{t.line}}; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0">
+      <sc-if value="{{showLimits}}" hint-placeholder-val="{{true}}">
+        <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">Works while Chrome runs, even with the tab hidden or the window minimised. It can't stop sleep when you close the lid.</p>
+      </sc-if>
+      <a href="https://awaketab.com/?source=ext" target="_blank" rel="noopener" style="align-self: flex-start; min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; text-decoration: none">Open AwakeTab<svg style="color: {{lampText}}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+    </footer>
+  </sc-if>
+
+  <sc-if value="{{igniteOn}}" hint-placeholder-val="{{false}}">
+    <span aria-hidden="true" class="at-travel" style="position: absolute; left: 174px; top: 224px; width: 12px; height: 12px; border-radius: 999px; background: {{lamp}}; box-shadow: 0 0 12px {{lampGlow}}; pointer-events: none; --at-tx: -10px; --at-ty: -148px"></span>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"edge":{"editor":"enum","options":["scheduled","autostart","prolocked","error","timesup","update","incognito","firstopen"],"default":"scheduled"},"error":{"editor":"enum","options":["denied","unsupported"],"default":"denied"},"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["desktop"],"default":"desktop"},"$preview":{"width":360,"height":600}}'>
+// AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
+const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C', shadow: 'none' };
+const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA', shadow: '0 1px 2px rgba(14,23,38,.06)' };
+const AT_OLED = Object.assign({}, AT_DARK, { bg: '#000000', ground: '#000000', surface: '#0A0A0A' });
+const AT_LAMPS = [
+  { id: 'aqua', name: 'Aqua', dark: '#5BE0E8', light: '#087B87', pro: false },
+  { id: 'violet', name: 'Violet', dark: '#A594FF', light: '#5A47CF', pro: false },
+  { id: 'mint', name: 'Mint', dark: '#7EF0B8', light: '#167A50', pro: true },
+  { id: 'sky', name: 'Sky', dark: '#7CB8FF', light: '#255FBD', pro: true }
+];
+const AT_GLYPH = {
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z'
+};
+// Status pill sizes (§11.4): L kiosk, M tool, S popup / PiP / full embed, XS compact embed.
+const AT_PILL = {
+  L: { h: '48px', pad: '0 20px 0 16px', gap: '8px', fs: '20px', lh: '28px' },
+  M: { h: '38px', pad: '0 16px 0 12px', gap: '8px', fs: '15px', lh: '22px' },
+  S: { h: '32px', pad: '0 12px 0 8px', gap: '8px', fs: '14px', lh: '20px' },
+  XS: { h: '26px', pad: '0 8px', gap: '4px', fs: '13px', lh: '18px' }
+};
+function atRgba(hex, a) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atPill(o) {
+  const s = AT_PILL[o.size || 'M'];
+  return { label: o.label, h: s.h, pad: s.pad, gap: s.gap, fs: s.fs, lh: s.lh, tone: o.tone, glyph: o.glyph || AT_GLYPH.dot, fill: o.hollow ? 'transparent' : o.tone, stroke: o.stroke || '1.6', soft: atRgba(o.tone, 0.12), line: atRgba(o.tone, 0.38), glow: o.glow ? atRgba(o.tone, 0.8) : 'transparent', cls: 'at-fade' };
+}
+// Page chrome shared by every board: tokens, lamp, header, theme switch, card and footer metrics.
+function atChrome(o) {
+  const L = o.layout || 'phone';
+  const desk = L === 'desktop', tab = L === 'tablet', phone = !desk && !tab;
+  const theme = o.theme || 'auto';
+  const dark = theme === 'dark' || theme === 'oled' || (theme === 'auto' && o.sysDark !== false);
+  const t = theme === 'oled' ? AT_OLED : dark ? AT_DARK : AT_LIGHT;
+  const def = AT_LAMPS.find((l) => l.id === o.lamp) || AT_LAMPS[0];
+  const lamp = dark ? def.dark : def.light;
+  const set = (id) => () => { if (o.set) o.set(id); };
+  const ink = (id) => (theme === id ? t.ink : t.ink2);
+  return {
+    t, dark, lamp, lampText: lamp, lampInk: dark ? '#04232A' : '#FFFFFF', bead: lamp,
+    lampSoft: atRgba(lamp, 0.14), lampLine: atRgba(lamp, 0.45), lampGlow: atRgba(lamp, 0.55), lampFaint: atRgba(lamp, 0.08), lampTag: atRgba(lamp, 0.12),
+    halo: 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(lamp, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(lamp, 0) + ' 100%)',
+    isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone,
+    hdrH: phone ? '60px' : '68px', gutter: desk ? '80px' : tab ? '32px' : '16px', secGap: desk ? '96px' : tab ? '64px' : '48px',
+    cardPad: phone ? '20px' : '24px', cardShadow: t.shadow, footPad: phone ? '24px 16px 32px' : desk ? '24px 80px' : '24px 32px',
+    themeX: (theme === 'light' ? 0 : theme === 'dark' ? 44 : 88) + 'px',
+    themeLight: theme === 'light', themeDark: theme === 'dark', themeAuto: theme === 'auto',
+    themeLightInk: ink('light'), themeDarkInk: ink('dark'), themeAutoInk: ink('auto'),
+    setLight: set('light'), setDark: set('dark'), setAuto: set('auto')
+  };
+}
+
+const C = 2 * Math.PI * 56;
+// The version the "New in" chip announces comes from the manifest at build time.
+const NEXT_VERSION = '1.1';
+const CHIPS = [['p15', '15 min', 900], ['p30', '30 min', 1800], ['p45', '45 min', 2700], ['p60', '1 h', 3600], ['p120', '2 h', 7200], ['p240', '4 h', 14400], ['pinf', '∞', 0]];
+const ICON_SCREEN = 'M3 5h18v11H3zM9 20h6M12 16v4';
+const ICON_SYSTEM = 'M5 4h14v12H5zM3 20h18M9 10h6';
+const ICON_CAL = 'M4 6.5h16v13H4zM4 10.5h16M8.5 3.5v5M15.5 3.5v5';
+const ICON_POWER = 'M12 3v8M6.4 6.6a8 8 0 1 0 11.2 0';
+const EDGES = ['scheduled', 'autostart', 'prolocked', 'error', 'timesup', 'update', 'incognito', 'firstopen'];
+let uid = 0;
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.gid = 'eeGlow' + (++uid);
+    this.state = Object.assign({ theme: props.theme ?? 'auto', sysDark: this.sys() }, this.seed(props.edge, props.error));
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  // Narrative clock: every edge is shown at 2:41 PM today so schedule and "since" times read naturally.
+  base() { const d = new Date(); d.setHours(14, 41, 22, 0); return d.getTime(); }
+  at(h, m) { const d = new Date(this.base()); d.setHours(h, m, 0, 0); return d.getTime(); }
+  seed(edgeIn, errIn) {
+    const edge = EDGES.includes(edgeIn) ? edgeIn : 'scheduled';
+    const err = errIn === 'unsupported' ? 'unsupported' : 'denied';
+    const now = this.base();
+    const s = { edge, err, now, mounted: Date.now(), level: 'display', preset: 'p60', total: 0, left: 0, el: 0, startedAt: now, endedAt: now, stopped: false, offer: false, proOpen: false, tips: false, chip: false, retrying: false, levelSaved: false, ignitedAt: 0, offAt: 0 };
+    if (edge === 'scheduled') Object.assign(s, { mode: 'held', preset: 'until', total: Math.round((this.at(18, 0) - this.at(9, 0)) / 1000), left: Math.round((this.at(18, 0) - now) / 1000), startedAt: this.at(9, 0) });
+    if (edge === 'autostart') Object.assign(s, { mode: 'held', preset: 'pinf', el: Math.round((now - this.at(8, 2)) / 1000), startedAt: this.at(8, 2) });
+    if (edge === 'prolocked') Object.assign(s, { mode: 'ready', preset: 'p60', proOpen: true });
+    if (edge === 'error') Object.assign(s, { mode: err });
+    if (edge === 'timesup') Object.assign(s, { mode: 'ended', preset: 'p30', offer: true, endedAt: now - 22000, startedAt: now - 22000 - 1800000 });
+    if (edge === 'update') Object.assign(s, { mode: 'ready', preset: 'p60', chip: true });
+    if (edge === 'incognito') Object.assign(s, { mode: 'held', preset: 'p60', total: 3600, left: 2658, startedAt: now - 942000 });
+    if (edge === 'firstopen') Object.assign(s, { mode: 'ready', preset: 'p60', tips: true });
+    return s;
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => this.tick(), 1000);
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    clearTimeout(this.boot);
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+  }
+  componentDidUpdate(prev) {
+    const p = this.props;
+    if (prev.edge !== p.edge || prev.error !== p.error) this.setState(this.seed(p.edge, p.error));
+    if (prev.theme !== p.theme && p.theme) this.setState({ theme: p.theme });
+  }
+  tick() {
+    const s = this.state;
+    const next = { now: s.now + 1000 };
+    if (s.mode === 'held') {
+      if (s.total === 0) next.el = s.el + 1;
+      else if (s.left <= 1) Object.assign(next, { left: 0, mode: 'ended', offer: s.edge !== 'scheduled', endedAt: next.now, offAt: Date.now() });
+      else next.left = s.left - 1;
+    }
+    this.setState(next);
+  }
+  hm(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }); }
+  span(a, b) {
+    const x = this.hm(a), y = this.hm(b);
+    return (x.slice(-2) === y.slice(-2) ? x.slice(0, -3) : x) + ' to ' + y;
+  }
+  split(sec) {
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+    const p = (n) => String(n).padStart(2, '0');
+    return h ? [h + ':' + p(m), ':' + p(s)] : [p(m), ':' + p(s)];
+  }
+  words(sec) {
+    if (!sec) return 'no limit';
+    const h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60);
+    if (h && m) return h + ' h ' + m + ' min';
+    if (h) return h + ' h';
+    return m + ' min';
+  }
+  secsFor(preset) { const f = CHIPS.find((c) => c[0] === preset); return f ? f[2] : 0; }
+  nextWindow() {
+    const d = new Date(this.state.now);
+    const day = d.getDay();
+    if (day >= 1 && day <= 4) return 'tomorrow';
+    return 'Monday';
+  }
+  // Ignition only on a real grant (starting -> held); a refusal re-patterns the ring with no flourish.
+  begin(preset, secs) {
+    const s = this.state;
+    if (s.mode === 'unsupported') return;
+    const sec = secs ?? this.secsFor(preset);
+    clearTimeout(this.boot);
+    const failing = s.edge === 'error' && s.err === 'denied';
+    this.setState({ mode: 'starting', preset, total: sec, left: sec, el: 0, startedAt: s.now, offer: false, proOpen: false, retrying: failing, stopped: false, offAt: 0 });
+    this.boot = setTimeout(() => this.setState(failing ? { mode: 'denied', retrying: false } : { mode: 'held', ignitedAt: Date.now() }), failing ? 1100 : 700);
+  }
+  renderVals() {
+    const s = this.state;
+    const b = atChrome({ theme: s.theme, sysDark: s.sysDark, layout: 'phone' });
+    const t = b.t, lamp = b.lamp, dark = b.dark;
+    const edge = s.edge;
+    const mode = s.mode;
+    const held = mode === 'held';
+    const starting = mode === 'starting';
+    const live = held || starting;
+    const denied = mode === 'denied';
+    // The extension has no video fallback: a missing power API is shown as Blocked with the fix.
+    const unsupported = mode === 'unsupported';
+    const blocked = denied || unsupported;
+    const ended = mode === 'ended';
+    const sysLvl = s.level === 'system';
+    const idleTotal = this.secsFor(s.preset);
+    const total = live ? s.total : idleTotal;
+    const noLimit = total === 0;
+    const left = live ? s.left : (ended ? 0 : total);
+    const nowMs = Date.now();
+    const off = !live && s.offAt && nowMs - s.offAt < 900;
+    const igniting = held && s.ignitedAt && nowMs - s.ignitedAt < 1200;
+    const p = ended || off ? 0 : noLimit ? 1 : left / total;
+
+    let tone = live ? lamp : t.muted;
+    if (blocked) tone = t.bad;
+    const tone2 = mode === 'ready' ? lamp : tone;
+
+    const shown = blocked ? null : noLimit ? (live ? s.el : null) : left;
+    let [bigA, bigB] = shown === null ? ['∞', ''] : this.split(shown);
+    if (blocked) { bigA = '--:--'; bigB = ''; }
+    const endMs = Math.round((s.now + left * 1000) / 60000) * 60000;
+
+    let statusLabel = 'Ready';
+    if (starting) statusLabel = 'Starting…';
+    if (held) statusLabel = sysLvl ? 'System awake' : 'Screen awake';
+    if (blocked) statusLabel = "Blocked — here's the fix";
+
+    let caption = noLimit ? 'until you stop' : 'ends ' + this.hm(endMs);
+    if (live) caption = noLimit ? 'Elapsed' : 'Until ' + this.hm(endMs);
+    if (starting) caption = 'Starting';
+    if (ended) caption = 'Session complete';
+    if (blocked) caption = 'Not running';
+
+    let meta = "Works while Chrome is running, even with the tab hidden or the window minimised. It can't stop sleep when you close the lid."; // ext.popup.limits
+    let meta2 = '';
+    if (starting) meta = 'Asking Chrome…';
+    if (held) meta = (noLimit ? 'Since ' : 'Started ') + this.hm(s.startedAt);
+    if (held && edge === 'scheduled' && s.preset === 'until') { meta = 'Scheduled until 6:00 PM'; meta2 = 'Weekdays'; }
+    if (ended) { meta = "Time's up. Keep going?"; meta2 = 'Held ' + this.span(s.startedAt, s.endedAt); }
+    if (!live && edge === 'scheduled' && s.stopped) { meta = 'Stopped for today.'; }
+    if (denied) { meta = 'Chrome refused the request.'; meta2 = s.retrying ? 'Asking again…' : 'Nothing is keeping this device awake.'; }
+    if (unsupported) { meta = 'No power API in this browser.'; meta2 = 'Nothing is keeping this device awake.'; }
+
+    let originText = '';
+    let originIcon = ICON_CAL;
+    if (held && edge === 'scheduled' && s.preset === 'until') originText = 'Started by your schedule';
+    if (held && edge === 'autostart' && s.preset === 'pinf' && s.el > 0 && s.startedAt < this.base()) { originText = 'Started when Chrome opened'; originIcon = ICON_POWER; }
+    if (held && sysLvl) { originText = 'Screen may dim or lock'; originIcon = 'M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z'; }
+
+    const extendOpts = [[900, '+15 min', 'Add 15 minutes'], [1800, '+30 min', 'Add 30 minutes'], [3600, '+1 h', 'Add 1 hour']].map(([sec, label, aria]) => ({
+      label, aria, pick: () => this.begin('custom', sec)
+    }));
+
+    const sel = (on) => ({ weight: on ? 600 : 500, color: on ? t.ink : t.ink2 });
+    const chipsOff = blocked;
+    const chips = CHIPS.map(([id, label]) => {
+      const on = s.preset === id && live;
+      return Object.assign({
+        label,
+        aria: id === 'pinf' ? 'Until I stop' : 'Keep awake for ' + label,
+        sel: on ? 'true' : 'false',
+        ring: on ? b.lampLine : t.line, bg: on ? b.lampSoft : 'transparent',
+        pick: () => this.begin(id)
+      }, sel(on));
+    });
+
+    const levels = [['display', 'Screen', ICON_SCREEN], ['system', 'System', ICON_SYSTEM]].map(([id, label, icon]) => Object.assign({
+      label, icon, sel: s.level === id ? 'true' : 'false',
+      pick: () => {
+        if (this.state.edge === 'scheduled' && this.state.mode === 'held') this.setState({ levelSaved: id !== 'display' });
+        else this.setState({ level: id });
+      }
+    }, sel(s.level === id)));
+
+    let levelHelp = sysLvl ? 'Keeps the computer awake. The screen may still dim or turn off.' : 'Keeps the screen on and the computer awake.';
+    if (edge === 'scheduled' && held) levelHelp = s.levelSaved ? 'Saved for sessions you start yourself. This schedule keeps Screen.' : 'This schedule sets the level. A change here applies to sessions you start yourself.';
+
+    // Which blocks show, per edge.
+    const isSched = edge === 'scheduled';
+    const showStop = live;
+    const showStart = !live && !blocked && !(ended && s.offer);
+    let stopLabel = 'Stop';
+    if (isSched && s.preset === 'until' && live) stopLabel = 'Stop for today';
+    let note = '';
+    let noteLink = '';
+    if (isSched && live && s.preset === 'until') note = 'Skips the rest of this window. It starts again ' + this.nextWindow() + ' at 9:00 AM.';
+    if (isSched && !live && s.stopped) note = 'Your schedule starts again ' + this.nextWindow() + ' at 9:00 AM.';
+    if (edge === 'autostart' && live && s.preset === 'pinf' && s.startedAt < this.base()) { note = 'Auto-start runs this whenever Chrome opens.'; noteLink = 'Change'; }
+
+    const showPrivate = edge === 'incognito';
+    const showExtendCard = ended && s.offer;
+    const showErrorCard = blocked;
+    const showSchedCard = isSched;
+    const showProPanel = edge === 'prolocked' && s.proOpen && !live;
+    const showProRow = edge === 'prolocked' && !showProPanel;
+    const showTips = edge === 'firstopen' && s.tips;
+    const showLevel = !showProPanel && !showErrorCard;
+    const showLevelHelp = !showPrivate && !showTips && !showExtendCard;
+    const showChips = !isSched && !showProPanel && !showErrorCard && !showExtendCard; // the time's-up card already offers the next length
+    const compact = showPrivate || showTips || edge === 'prolocked' || edge === 'autostart' || showExtendCard;
+
+    const errTitle = denied ? 'Your browser or organisation blocked keeping this device awake.' : "This browser doesn't give extensions the power API.";
+    const errBody = denied
+      ? "On a work or school computer this is usually a policy your IT team sets, and AwakeTab can't get around it. The web tool asks the browser a different way and may still work."
+      : 'Open AwakeTab in a tab instead. The tab keeps the screen awake while it stays visible.';
+
+    return Object.assign(b, {
+      tone, tone2, bead: tone, gid: this.gid,
+      toneFaint: atRgba(tone2, dark ? 0.16 : 0.12),
+      aura: atRgba(tone2, live ? (dark ? 0.18 : 0.12) : blocked ? 0.08 : 0.06),
+      pl: Object.assign(atPill({ size: 'S', label: statusLabel, tone, glyph: blocked ? AT_GLYPH.tri : held && sysLvl ? AT_GLYPH.half : AT_GLYPH.dot, hollow: !held, glow: held, stroke: held && sysLvl ? '0' : '1.6' }), { cls: igniting ? 'at-fade at-ignite' : 'at-fade' }),
+      statusLabel, caption, meta, meta2,
+      showMeta: true, showMeta2: Boolean(meta2), metaCls: ended ? 'at-rise' : '',
+      metaWeight: ended || blocked ? 600 : 500, metaColor: ended || blocked ? t.ink : t.ink2,
+      showOrigin: Boolean(originText), originText, originIcon,
+      held, bigA, bigB,
+      // Nothing is running when blocked, so the ring shrinks to its red dotted pattern and the pill gets the room.
+      ringBox: blocked ? '72px' : '124px', ringScale: blocked ? 0.5806 : 1, ringText: blocked ? 'none' : 'flex',
+      digitSize: shown !== null && shown >= 3600 ? '24px' : '28px',
+      numColor: held ? t.ink : t.ink2,
+      timerAria: shown === null ? (blocked ? 'Not running' : 'No limit') : bigA + bigB + (live && noLimit ? ' awake so far' : ' left'),
+      arcDash: blocked ? '1 13' : p <= 0 ? '0.01 ' + C.toFixed(1) : (C * p).toFixed(1) + ' ' + C.toFixed(1),
+      arcWidth: blocked ? 5.5 : 5,
+      arcCls: live ? 'at-arc' : off ? 'at-off' : 'at-fade',
+      arcOp: mode === 'ready' && !off ? 0.45 : ended || off ? 0 : 1, glowOp: held ? 0.5 : 0,
+      tipDeg: (360 * p).toFixed(2) + 'deg', tipOp: held && !noLimit && p > 0 ? 1 : 0,
+      tipCls: igniting ? 'at-ignite' : '', igniteOn: igniting,
+      showNewChip: edge === 'update' && s.chip, newLabel: 'New in ' + NEXT_VERSION, newAria: "What's new in version " + NEXT_VERSION + ', opens the changelog',
+      showPrivate,
+      showExtendCard, extendOpts,
+      extendNote: 'The screen can sleep again now. Add time to keep it awake. Offered until ' + this.hm(s.endedAt + 300000) + '.',
+      dismiss: () => this.setState({ offer: false, mode: 'ready' }),
+      showErrorCard, errRole: denied ? 'alert' : 'status', errSoft: atRgba(t.bad, 0.08), errLine: atRgba(t.bad, 0.32), errTone: t.bad, errGlyph: AT_GLYPH.tri, errTitle, errBody,
+      showPrimary: true,
+      showStop, stopLabel,
+      showStart,
+      startLabel: 'Start · ' + this.words(this.secsFor(s.preset === 'custom' || s.preset === 'until' ? 'p60' : s.preset)),
+      start: () => this.begin(s.preset === 'custom' || s.preset === 'until' ? 'p60' : s.preset),
+      stop: () => { clearTimeout(this.boot); this.setState({ mode: 'ready', stopped: isSched && s.preset === 'until', preset: isSched ? 'p60' : s.preset, offAt: Date.now() }); },
+      showRetry: denied, retry: () => this.begin('p60'), retryBusy: s.retrying ? 'true' : 'false', retryLabel: s.retrying ? 'Retrying…' : 'Retry',
+      showOpenTab: unsupported,
+      showNote: Boolean(note), note, showNoteLink: Boolean(noteLink), noteLink,
+      showLevel, showLevelHelp, levels, levelX: sysLvl ? '100%' : '0%', levelHelp,
+      showChips, chips, chipsOff,
+      showSchedCard,
+      showProRow, showProPanel,
+      openPro: () => this.setState({ proOpen: true }),
+      closePro: () => this.setState({ proOpen: false }),
+      showTips, closeTips: () => this.setState({ tips: false }),
+      keyCaps: ['Alt', 'Shift', 'A'],
+      showFooter: !showTips && !showPrivate && !showErrorCard, showLimits: false, /* the limits line lives in the Ready status column (same as ExtPopup) */
+      noop: () => {}
+    });
+  }
+}
+</script>
+</body>
+</html>

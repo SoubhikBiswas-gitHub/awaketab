@@ -1,6 +1,7 @@
 ---
 title: AwakeTab for Chrome — the browser extension
 date: 2026-09-26
+type: new
 ---
 
 A web page can only keep the screen awake while its tab is visible. AwakeTab for Chrome asks Chrome itself to keep the display — or just the computer — awake, so it keeps working when the tab is hidden or the window is minimised, for as long as Chrome is running. It still can't stop sleep when you close a laptop lid, and it never fakes keyboard or mouse input.

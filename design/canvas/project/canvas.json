@@ -1,0 +1,4179 @@
+{
+  "v": 3,
+  "attachments": {},
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-09-26T21:05:00Z"
+  },
+  "title": "AwakeTab redesign directions",
+  "launch": {
+    "view": "canvas",
+    "page": "tool1"
+  },
+  "pages": [
+    {
+      "id": "tool1",
+      "name": "1 · Tool 1/5 · phone · dark"
+    },
+    {
+      "id": "tool2",
+      "name": "1 · Tool 2/5 · phone · light"
+    },
+    {
+      "id": "tool3",
+      "name": "1 · Tool 3/5 · tablet, settings, stats, time's up"
+    },
+    {
+      "id": "tool4",
+      "name": "1 · Tool 4/5 · desktop"
+    },
+    {
+      "id": "tool5",
+      "name": "1 · Tool 5/5 · more screen sizes"
+    },
+    {
+      "id": "states1",
+      "name": "2 · Tool states 1/4 · edge states"
+    },
+    {
+      "id": "states2",
+      "name": "2 · Tool states 2/4 · edge states"
+    },
+    {
+      "id": "states3",
+      "name": "2 · Tool states 3/4 · banners, prompts, overlays"
+    },
+    {
+      "id": "states4",
+      "name": "2 · Tool states 4/4 · shortcuts, share, toasts"
+    },
+    {
+      "id": "ambient1",
+      "name": "3 · Ambient & floating window 1/2 · floating window"
+    },
+    {
+      "id": "ambient2",
+      "name": "3 · Ambient & floating window 2/2 · minimal, message, cook"
+    },
+    {
+      "id": "content1",
+      "name": "4 · Content & guides 1/3 · /for/cooking article"
+    },
+    {
+      "id": "content2",
+      "name": "4 · Content & guides 2/3 · /on /vs /guides /learn"
+    },
+    {
+      "id": "content3",
+      "name": "4 · Content & guides 3/3 · /vs comparison"
+    },
+    {
+      "id": "site1",
+      "name": "5 · Site pages 1/2 · Preset page /30m and /until/07-30"
+    },
+    {
+      "id": "site2",
+      "name": "5 · Site pages 2/2 · Extension landing, about, changelog"
+    },
+    {
+      "id": "pro1",
+      "name": "6 · Pro & checkout 1/2 · /pro"
+    },
+    {
+      "id": "pro2",
+      "name": "6 · Pro & checkout 2/2 · browser tabs, Pro lapsed"
+    },
+    {
+      "id": "extension1",
+      "name": "7 · Chrome extension 1/2 · popup and badges"
+    },
+    {
+      "id": "extension2",
+      "name": "7 · Chrome extension 2/2 · popup edge states"
+    },
+    {
+      "id": "embed1",
+      "name": "8 · Embed, kiosk & library 1/2 · Embed widget"
+    },
+    {
+      "id": "embed2",
+      "name": "8 · Embed, kiosk & library 2/2 · free, dashboard, portrait"
+    },
+    {
+      "id": "growth1",
+      "name": "9 · Growth moments 1/4 · first visit: proof in 5 seconds"
+    },
+    {
+      "id": "growth2",
+      "name": "9 · Growth moments 2/4 · back from a hidden tab"
+    },
+    {
+      "id": "growth3",
+      "name": "9 · Growth moments 3/4 · which plan fits"
+    },
+    {
+      "id": "growth4",
+      "name": "9 · Growth moments 4/4 · business entry points in articles"
+    },
+    {
+      "id": "a11y1",
+      "name": "10 · Languages & accessibility 1/2 · Languages"
+    },
+    {
+      "id": "a11y2",
+      "name": "10 · Languages & accessibility 2/2 · reduced motion, no JS p"
+    },
+    {
+      "id": "brand",
+      "name": "11 · Brand & share images"
+    },
+    {
+      "id": "components",
+      "name": "12 · Components (all props)"
+    }
+  ],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "▶ Play me · follows your system",
+      "page": "tool1",
+      "is_interactive": true
+    },
+    "RingDark.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Dark · Ring · awake",
+      "page": "tool1",
+      "is_interactive": true
+    },
+    "BoldDark.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Dark · Bold · awake",
+      "page": "tool1",
+      "is_interactive": true
+    },
+    "HorizonDark.dc.html": {
+      "x": 1410,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Dark · Horizon · night sky",
+      "page": "tool1",
+      "is_interactive": true
+    },
+    "TideDark.dc.html": {
+      "x": 1880,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Dark · Tide · awake",
+      "page": "tool1",
+      "is_interactive": true
+    },
+    "PausedDark.dc.html": {
+      "x": 0,
+      "y": 964,
+      "w": 390,
+      "h": 844,
+      "title": "Dark · Paused — tab hidden",
+      "page": "tool1",
+      "is_interactive": true
+    },
+    "BlockedDark.dc.html": {
+      "x": 470,
+      "y": 964,
+      "w": 390,
+      "h": 844,
+      "title": "Dark · Blocked — here's the fix",
+      "page": "tool1",
+      "is_interactive": true
+    },
+    "DoneDark.dc.html": {
+      "x": 940,
+      "y": 964,
+      "w": 390,
+      "h": 844,
+      "title": "Dark · Session complete",
+      "page": "tool1",
+      "is_interactive": true
+    },
+    "UntilDark.dc.html": {
+      "x": 1410,
+      "y": 964,
+      "w": 390,
+      "h": 844,
+      "title": "Dark · Until a time · inline",
+      "page": "tool1",
+      "is_interactive": true
+    },
+    "RingLight.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Light · Ring · awake",
+      "page": "tool2",
+      "is_interactive": true
+    },
+    "BoldLight.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Light · Bold · awake",
+      "page": "tool2",
+      "is_interactive": true
+    },
+    "HorizonLight.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Light · Horizon · day sky",
+      "page": "tool2",
+      "is_interactive": true
+    },
+    "TideLight.dc.html": {
+      "x": 1410,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Light · Tide · awake",
+      "page": "tool2",
+      "is_interactive": true
+    },
+    "PausedLight.dc.html": {
+      "x": 1880,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Light · Paused — tab hidden",
+      "page": "tool2",
+      "is_interactive": true
+    },
+    "BlockedLight.dc.html": {
+      "x": 0,
+      "y": 964,
+      "w": 390,
+      "h": 844,
+      "title": "Light · Blocked — here's the fix",
+      "page": "tool2",
+      "is_interactive": true
+    },
+    "DoneLight.dc.html": {
+      "x": 470,
+      "y": 964,
+      "w": 390,
+      "h": 844,
+      "title": "Light · Session complete",
+      "page": "tool2",
+      "is_interactive": true
+    },
+    "UntilLight.dc.html": {
+      "x": 940,
+      "y": 964,
+      "w": 390,
+      "h": 844,
+      "title": "Light · Until a time · inline",
+      "page": "tool2",
+      "is_interactive": true
+    },
+    "ToolTabletDark.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 820,
+      "h": 1180,
+      "title": "Dark · Tablet · Ring",
+      "page": "tool3",
+      "is_interactive": true
+    },
+    "ToolTabletLight.dc.html": {
+      "x": 900,
+      "y": 0,
+      "w": 820,
+      "h": 1180,
+      "title": "Light · Tablet · Ring",
+      "page": "tool3",
+      "is_interactive": true
+    },
+    "ToolSettingsDark.dc.html": {
+      "x": 1800,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Dark · Settings + lamp colour",
+      "page": "tool3",
+      "is_interactive": true
+    },
+    "ToolSettingsLight.dc.html": {
+      "x": 2270,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Light · Settings + lamp colour",
+      "page": "tool3",
+      "is_interactive": true
+    },
+    "ToolStats.dc.html": {
+      "x": 2740,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Dark · Stats (sample data)",
+      "page": "tool3",
+      "is_interactive": true
+    },
+    "ToolTimesUp.dc.html": {
+      "x": 3210,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Dark · Time's up",
+      "page": "tool3",
+      "is_interactive": true
+    },
+    "ToolTimesUpLight.dc.html": {
+      "x": 0,
+      "y": 1300,
+      "w": 390,
+      "h": 844,
+      "title": "Light · Time's up",
+      "page": "tool3",
+      "is_interactive": true
+    },
+    "ToolStatsTablet.dc.html": {
+      "x": 470,
+      "y": 1300,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Stats · dark",
+      "page": "tool3",
+      "is_interactive": true
+    },
+    "ToolSettingsTablet.dc.html": {
+      "x": 1370,
+      "y": 1300,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Settings · language list open · light",
+      "page": "tool3",
+      "is_interactive": true
+    },
+    "ToolTabletBlockedDark.dc.html": {
+      "x": 2270,
+      "y": 1300,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Blocked, with the fix · dark · Ring",
+      "page": "tool3",
+      "is_interactive": true
+    },
+    "ToolTabletTimesUpLight.dc.html": {
+      "x": 0,
+      "y": 2600,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Time's up · light · Horizon",
+      "page": "tool3",
+      "is_interactive": true
+    },
+    "DeskRingDark.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "Dark · Desktop · Ring",
+      "page": "tool4",
+      "is_interactive": true
+    },
+    "DeskHorizonDark.dc.html": {
+      "x": 1360,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "Dark · Desktop · Horizon",
+      "page": "tool4",
+      "is_interactive": true
+    },
+    "DeskTideDark.dc.html": {
+      "x": 2720,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "Dark · Desktop · Tide",
+      "page": "tool4",
+      "is_interactive": true
+    },
+    "ToolSettingsDesk.dc.html": {
+      "x": 0,
+      "y": 920,
+      "w": 1280,
+      "h": 800,
+      "title": "Light · Desktop · Settings side sheet",
+      "page": "tool4",
+      "is_interactive": true
+    },
+    "ToolStatsDesk.dc.html": {
+      "x": 1360,
+      "y": 920,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Stats · light",
+      "page": "tool4",
+      "is_interactive": true
+    },
+    "DeskBlockedLight.dc.html": {
+      "x": 2720,
+      "y": 920,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Blocked, with the fix · light · Tide",
+      "page": "tool4",
+      "is_interactive": true
+    },
+    "DeskTimesUpDark.dc.html": {
+      "x": 0,
+      "y": 1840,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Time's up · dark · Bold",
+      "page": "tool4",
+      "is_interactive": true
+    },
+    "DeskRingLight.dc.html": {
+      "x": 0,
+      "y": 3130,
+      "w": 1280,
+      "h": 800,
+      "title": "Light · Desktop · Ring",
+      "page": "tool4",
+      "is_interactive": true
+    },
+    "DeskHorizonLight.dc.html": {
+      "x": 1360,
+      "y": 3130,
+      "w": 1280,
+      "h": 800,
+      "title": "Light · Desktop · Horizon",
+      "page": "tool4",
+      "is_interactive": true
+    },
+    "DeskTideLight.dc.html": {
+      "x": 2720,
+      "y": 3130,
+      "w": 1280,
+      "h": 800,
+      "title": "Light · Desktop · Tide",
+      "page": "tool4",
+      "is_interactive": true
+    },
+    "SizeSmallDark.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 320,
+      "h": 568,
+      "title": "Small 320 · dark · awake",
+      "page": "tool5",
+      "is_interactive": true
+    },
+    "SizeSmallLight.dc.html": {
+      "x": 400,
+      "y": 0,
+      "w": 320,
+      "h": 568,
+      "title": "Small 320 · light · ready",
+      "page": "tool5",
+      "is_interactive": true
+    },
+    "SizeLandscape.dc.html": {
+      "x": 800,
+      "y": 0,
+      "w": 844,
+      "h": 390,
+      "title": "Phone landscape · dark · Bold",
+      "page": "tool5",
+      "is_interactive": true
+    },
+    "SizeLandscapeLight.dc.html": {
+      "x": 1724,
+      "y": 0,
+      "w": 844,
+      "h": 390,
+      "title": "Phone landscape · light · Tide",
+      "page": "tool5",
+      "is_interactive": true
+    },
+    "SizeTabletLandscape.dc.html": {
+      "x": 2648,
+      "y": 0,
+      "w": 1180,
+      "h": 820,
+      "title": "Tablet landscape · light · Horizon",
+      "page": "tool5",
+      "is_interactive": true
+    },
+    "SizeTabletSmallDark.dc.html": {
+      "x": 0,
+      "y": 940,
+      "w": 600,
+      "h": 960,
+      "title": "Small tablet 600 · dark · awake · Ring",
+      "page": "tool5",
+      "is_interactive": true
+    },
+    "SizeTabletSmallLight.dc.html": {
+      "x": 680,
+      "y": 940,
+      "w": 600,
+      "h": 960,
+      "title": "Small tablet 600 · light · ready · Tide",
+      "page": "tool5",
+      "is_interactive": true
+    },
+    "SizeDeskSmallDark.dc.html": {
+      "x": 1360,
+      "y": 940,
+      "w": 1024,
+      "h": 768,
+      "title": "Small desktop 1024 · dark · awake · Bold",
+      "page": "tool5",
+      "is_interactive": true
+    },
+    "SizeDeskSmallLight.dc.html": {
+      "x": 2464,
+      "y": 940,
+      "w": 1024,
+      "h": 768,
+      "title": "Small desktop 1024 · light · ready · Horizon",
+      "page": "tool5",
+      "is_interactive": true
+    },
+    "SizeXL.dc.html": {
+      "x": 0,
+      "y": 2390,
+      "w": 1920,
+      "h": 1080,
+      "title": "Large display · dark · Ring",
+      "page": "tool5",
+      "is_interactive": true
+    },
+    "SizeXLLight.dc.html": {
+      "x": 2000,
+      "y": 2390,
+      "w": 1920,
+      "h": 1080,
+      "title": "Large display · light · Tide",
+      "page": "tool5",
+      "is_interactive": true
+    },
+    "EdgeLastMinute.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Final minute · dark",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeMultiDay.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "1 day 2 h session · light",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeUntilPassed.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Time already passed · dark",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeDeferred.dc.html": {
+      "x": 1410,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Opened in background · dark",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeOffline.dc.html": {
+      "x": 1880,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Offline · light",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeLowBattery.dc.html": {
+      "x": 2350,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Stopped at 15% battery · dark",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeOled.dc.html": {
+      "x": 2820,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "OLED black",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeDeferredTabletLight.dc.html": {
+      "x": 3290,
+      "y": 0,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Deferred start · light",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeLastminuteTabletLight.dc.html": {
+      "x": 0,
+      "y": 1300,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Last minute · light",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeLowbatteryTabletLight.dc.html": {
+      "x": 900,
+      "y": 1300,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Low battery · light",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeMultidayTabletLight.dc.html": {
+      "x": 1800,
+      "y": 1300,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Multi-day · light",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeOfflineTabletLight.dc.html": {
+      "x": 2700,
+      "y": 1300,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Offline · light",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeUntilpassedTabletLight.dc.html": {
+      "x": 3600,
+      "y": 1300,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Until time passed · light",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeLongnolimitPhoneDark.dc.html": {
+      "x": 0,
+      "y": 2600,
+      "w": 390,
+      "h": 844,
+      "title": "Phone · Long, no limit · dark",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeLongnolimitTabletLight.dc.html": {
+      "x": 470,
+      "y": 2600,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Long, no limit · light",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeHiddenreturnPhoneDark.dc.html": {
+      "x": 1370,
+      "y": 2600,
+      "w": 390,
+      "h": 844,
+      "title": "Phone · Back from hidden tab · dark",
+      "page": "states1",
+      "is_interactive": true
+    },
+    "EdgeHiddenreturnTabletLight.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Back from hidden tab · light",
+      "page": "states2",
+      "is_interactive": true
+    },
+    "EdgeOledTablet.dc.html": {
+      "x": 900,
+      "y": 0,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · OLED black · awake",
+      "page": "states2",
+      "is_interactive": true
+    },
+    "EdgeLongNoLimit.dc.html": {
+      "x": 0,
+      "y": 1670,
+      "w": 1280,
+      "h": 800,
+      "title": "No limit, 27 h · desktop light",
+      "page": "states2",
+      "is_interactive": true
+    },
+    "EdgeReturn.dc.html": {
+      "x": 1360,
+      "y": 1670,
+      "w": 1280,
+      "h": 800,
+      "title": "Back from hidden tab · desktop light",
+      "page": "states2",
+      "is_interactive": true
+    },
+    "EdgeDeferredDeskDark.dc.html": {
+      "x": 2720,
+      "y": 1670,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Deferred start · dark",
+      "page": "states2",
+      "is_interactive": true
+    },
+    "EdgeLastminuteDeskDark.dc.html": {
+      "x": 0,
+      "y": 2590,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Last minute · dark",
+      "page": "states2",
+      "is_interactive": true
+    },
+    "EdgeLowbatteryDeskDark.dc.html": {
+      "x": 1360,
+      "y": 2590,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Low battery · dark",
+      "page": "states2",
+      "is_interactive": true
+    },
+    "EdgeMultidayDeskDark.dc.html": {
+      "x": 2720,
+      "y": 2590,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Multi-day · dark",
+      "page": "states2",
+      "is_interactive": true
+    },
+    "EdgeOfflineDeskDark.dc.html": {
+      "x": 0,
+      "y": 3510,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Offline · dark",
+      "page": "states2",
+      "is_interactive": true
+    },
+    "EdgeUntilpassedDeskDark.dc.html": {
+      "x": 1360,
+      "y": 3510,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Until time passed · dark",
+      "page": "states2",
+      "is_interactive": true
+    },
+    "EdgeOledDesk.dc.html": {
+      "x": 2720,
+      "y": 3510,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · OLED black · awake",
+      "page": "states2",
+      "is_interactive": true
+    },
+    "Extras.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "▶ Tool overlays · play me",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasSecondTab.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Second tab banner · phone light",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasInstall.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Install prompt · phone dark",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasDenied.dc.html": {
+      "x": 1410,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Blocked notice · phone light",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasRating.dc.html": {
+      "x": 1880,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Rating prompt · phone dark",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasTabletRating.dc.html": {
+      "x": 2350,
+      "y": 0,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Rating prompt · light",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasInstallTabletLight.dc.html": {
+      "x": 3250,
+      "y": 0,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Install prompt · light",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasInstallDeskDark.dc.html": {
+      "x": 0,
+      "y": 1300,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Install prompt · dark",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasRatingDeskDark.dc.html": {
+      "x": 1360,
+      "y": 1300,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Rating prompt · dark",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasSecondtabTabletDark.dc.html": {
+      "x": 2720,
+      "y": 1300,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Second tab · dark",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasSecondtabDeskLight.dc.html": {
+      "x": 0,
+      "y": 2600,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Second tab · light",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasDeniedTabletDark.dc.html": {
+      "x": 1360,
+      "y": 2600,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Denied, with the fix · dark",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasDeniedDeskLight.dc.html": {
+      "x": 2260,
+      "y": 2600,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Denied, with the fix · light",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasResumeTabletLight.dc.html": {
+      "x": 3620,
+      "y": 2600,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Resume after reload · light",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasResumeDeskDark.dc.html": {
+      "x": 0,
+      "y": 3900,
+      "w": 1280,
+      "h": 800,
+      "title": "Desktop · Resume after reload · dark",
+      "page": "states3",
+      "is_interactive": true
+    },
+    "ExtrasShortcutsDesk.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "Keyboard shortcuts · desktop dark",
+      "page": "states4",
+      "is_interactive": true
+    },
+    "ExtrasShareDesk.dc.html": {
+      "x": 1360,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "Share · desktop light",
+      "page": "states4",
+      "is_interactive": true
+    },
+    "ExtrasToasts.dc.html": {
+      "x": 2720,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "Toasts · desktop dark",
+      "page": "states4",
+      "is_interactive": true
+    },
+    "ExtrasSharePhoneDark.dc.html": {
+      "x": 0,
+      "y": 920,
+      "w": 390,
+      "h": 844,
+      "title": "Phone · Share · dark",
+      "page": "states4",
+      "is_interactive": true
+    },
+    "ExtrasShareTabletLight.dc.html": {
+      "x": 470,
+      "y": 920,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Share · light",
+      "page": "states4",
+      "is_interactive": true
+    },
+    "ExtrasToastPhoneLight.dc.html": {
+      "x": 1370,
+      "y": 920,
+      "w": 390,
+      "h": 844,
+      "title": "Phone · Toasts · light",
+      "page": "states4",
+      "is_interactive": true
+    },
+    "ExtrasToastTabletDark.dc.html": {
+      "x": 1840,
+      "y": 920,
+      "w": 820,
+      "h": 1180,
+      "title": "Tablet · Toasts · dark",
+      "page": "states4",
+      "is_interactive": true
+    },
+    "Sys.dc.html": {
+      "x": 0,
+      "y": 2590,
+      "w": 390,
+      "h": 844,
+      "title": "▶ System states (all kinds)",
+      "page": "states4",
+      "is_interactive": true
+    },
+    "SysOfflineDesk.dc.html": {
+      "x": 470,
+      "y": 2590,
+      "w": 1280,
+      "h": 888,
+      "title": "Offline · desktop",
+      "page": "states4"
+    },
+    "SysNotify.dc.html": {
+      "x": 1830,
+      "y": 2590,
+      "w": 1280,
+      "h": 900,
+      "title": "Time's up notifications",
+      "page": "states4"
+    },
+    "Ambient.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "▶ Ambient · all modes (play me)",
+      "page": "ambient1",
+      "is_interactive": true
+    },
+    "AmbientClockDesk.dc.html": {
+      "x": 1360,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "Ambient · Clock · desktop dark",
+      "page": "ambient1",
+      "is_interactive": true
+    },
+    "AmbientClockPhone.dc.html": {
+      "x": 2720,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Ambient · Clock · phone light",
+      "page": "ambient1",
+      "is_interactive": true
+    },
+    "AmbientNightPhone.dc.html": {
+      "x": 3190,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Ambient · Night · phone OLED",
+      "page": "ambient1",
+      "is_interactive": true
+    },
+    "AmbientFocusDesk.dc.html": {
+      "x": 0,
+      "y": 964,
+      "w": 1280,
+      "h": 800,
+      "title": "Ambient · Focus · cycle 2 of 4",
+      "page": "ambient1",
+      "is_interactive": true
+    },
+    "AmbientClockTablet.dc.html": {
+      "x": 1360,
+      "y": 964,
+      "w": 1180,
+      "h": 820,
+      "title": "Ambient · Clock · tablet · dark",
+      "page": "ambient1",
+      "is_interactive": true
+    },
+    "AmbientFocusPhoneLight.dc.html": {
+      "x": 2620,
+      "y": 964,
+      "w": 390,
+      "h": 844,
+      "title": "Ambient · Focus · phone · light",
+      "page": "ambient1",
+      "is_interactive": true
+    },
+    "AmbientFocusTabletDark.dc.html": {
+      "x": 0,
+      "y": 1928,
+      "w": 1180,
+      "h": 820,
+      "title": "Ambient · Focus · tablet · dark",
+      "page": "ambient1",
+      "is_interactive": true
+    },
+    "AmbientNightTabletDark.dc.html": {
+      "x": 1260,
+      "y": 1928,
+      "w": 1180,
+      "h": 820,
+      "title": "Ambient · Night · tablet · dark",
+      "page": "ambient1",
+      "is_interactive": true
+    },
+    "AmbientNightDeskDark.dc.html": {
+      "x": 2520,
+      "y": 1928,
+      "w": 1280,
+      "h": 800,
+      "title": "Ambient · Night · desktop · dark",
+      "page": "ambient1",
+      "is_interactive": true
+    },
+    "AmbientMinimalDesk.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "Ambient · Minimal (bar auto-hides)",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "AmbientMessageDesk.dc.html": {
+      "x": 1360,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "Ambient · Message · free preview · light",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "AmbientCookTablet.dc.html": {
+      "x": 2720,
+      "y": 0,
+      "w": 1180,
+      "h": 820,
+      "title": "Ambient · Cook · 3 timers · tablet light",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "AmbientCookTabletDark.dc.html": {
+      "x": 0,
+      "y": 940,
+      "w": 1180,
+      "h": 820,
+      "title": "Ambient · Cook · quick add · tablet dark",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "AmbientMinimalPhoneLight.dc.html": {
+      "x": 1260,
+      "y": 940,
+      "w": 390,
+      "h": 844,
+      "title": "Ambient · Minimal · phone · light",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "AmbientMinimalTabletDark.dc.html": {
+      "x": 1730,
+      "y": 940,
+      "w": 1180,
+      "h": 820,
+      "title": "Ambient · Minimal · tablet · dark",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "AmbientMessagePhoneDark.dc.html": {
+      "x": 2990,
+      "y": 940,
+      "w": 390,
+      "h": 844,
+      "title": "Ambient · Message · phone · dark",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "AmbientMessageTabletLight.dc.html": {
+      "x": 0,
+      "y": 1904,
+      "w": 1180,
+      "h": 820,
+      "title": "Ambient · Message · tablet · light",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "AmbientCookPhoneLight.dc.html": {
+      "x": 1260,
+      "y": 1904,
+      "w": 390,
+      "h": 844,
+      "title": "Ambient · Cook · phone · light",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "AmbientCookDeskDark.dc.html": {
+      "x": 1730,
+      "y": 1904,
+      "w": 1280,
+      "h": 800,
+      "title": "Ambient · Cook · desktop · dark",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "PipDark.dc.html": {
+      "x": 0,
+      "y": 3238,
+      "w": 632,
+      "h": 236,
+      "title": "Floating window · dark · free and Pro",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "PipLight.dc.html": {
+      "x": 712,
+      "y": 3238,
+      "w": 632,
+      "h": 236,
+      "title": "Floating window · light · free and Pro",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "PipWindow.dc.html": {
+      "x": 1424,
+      "y": 3238,
+      "w": 280,
+      "h": 120,
+      "title": "Floating window · free",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "PipOverDesk.dc.html": {
+      "x": 1784,
+      "y": 3238,
+      "w": 1280,
+      "h": 800,
+      "title": "Floating window over a spreadsheet",
+      "page": "ambient2",
+      "is_interactive": true
+    },
+    "ContentArticle.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 5344,
+      "title": "▶ Article · play me · follows your system",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "ContentArticlePhoneLight.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 5344,
+      "title": "/for/cooking · phone · light · awake",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "ContentArticleTablet.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 820,
+      "h": 4724,
+      "title": "/for/cooking · tablet · light",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "ContentArticleDeskDark.dc.html": {
+      "x": 1840,
+      "y": 0,
+      "w": 1280,
+      "h": 4534,
+      "title": "/for/cooking · desktop · dark · awake",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "ContentArticleDeskLight.dc.html": {
+      "x": 3200,
+      "y": 0,
+      "w": 1280,
+      "h": 4534,
+      "title": "/for/cooking · desktop · light",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "HubFor.dc.html": {
+      "x": 0,
+      "y": 5834,
+      "w": 390,
+      "h": 3803,
+      "title": "▶ /for hub · play me",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "HubForPhone.dc.html": {
+      "x": 470,
+      "y": 5834,
+      "w": 390,
+      "h": 3803,
+      "title": "/for hub · phone · light",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "HubForDesk.dc.html": {
+      "x": 940,
+      "y": 5834,
+      "w": 1280,
+      "h": 2491,
+      "title": "/for hub · desktop · light",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "HomeBelow.dc.html": {
+      "x": 2300,
+      "y": 5834,
+      "w": 390,
+      "h": 7908,
+      "title": "▶ Home below the tool · play me",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "HomeBelowPhone.dc.html": {
+      "x": 2770,
+      "y": 5834,
+      "w": 390,
+      "h": 7908,
+      "title": "Home below the tool · phone · light",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "HomeBelowDesk.dc.html": {
+      "x": 3240,
+      "y": 5834,
+      "w": 1280,
+      "h": 6028,
+      "title": "Home below the tool · desktop · light",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "HubForTablet.dc.html": {
+      "x": 4600,
+      "y": 5834,
+      "w": 820,
+      "h": 3073,
+      "title": "/for hub · tablet · dark",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "HubForDeskDark.dc.html": {
+      "x": 5500,
+      "y": 5834,
+      "w": 1280,
+      "h": 2491,
+      "title": "/for hub · desktop · dark",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "HomeBelowTablet.dc.html": {
+      "x": 6860,
+      "y": 5834,
+      "w": 820,
+      "h": 6048,
+      "title": "Home below the tool · tablet · dark",
+      "page": "content1",
+      "is_interactive": true
+    },
+    "HubOnPhoneDark.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 3664,
+      "title": "/on hub · phone · dark",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "HubOnDeskLight.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 1280,
+      "h": 2232,
+      "title": "/on hub · desktop · light",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "HubVsPhoneLight.dc.html": {
+      "x": 1830,
+      "y": 0,
+      "w": 390,
+      "h": 2812,
+      "title": "/vs hub · phone · light",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "HubVsDeskDark.dc.html": {
+      "x": 2300,
+      "y": 0,
+      "w": 1280,
+      "h": 1708,
+      "title": "/vs hub · desktop · dark",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "HubGuidesPhoneDark.dc.html": {
+      "x": 3660,
+      "y": 0,
+      "w": 390,
+      "h": 2772,
+      "title": "/guides hub · phone · dark",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "HubGuidesDeskLight.dc.html": {
+      "x": 4130,
+      "y": 0,
+      "w": 1280,
+      "h": 1684,
+      "title": "/guides hub · desktop · light",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "HubLearnPhoneLight.dc.html": {
+      "x": 5490,
+      "y": 0,
+      "w": 390,
+      "h": 2560,
+      "title": "/learn hub · phone · light",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "HubLearnDeskDark.dc.html": {
+      "x": 5960,
+      "y": 0,
+      "w": 1280,
+      "h": 1432,
+      "title": "/learn hub · desktop · dark",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "HubOnTablet.dc.html": {
+      "x": 7320,
+      "y": 0,
+      "w": 820,
+      "h": 2988,
+      "title": "/on hub · tablet · light",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "HubVsTablet.dc.html": {
+      "x": 0,
+      "y": 3784,
+      "w": 820,
+      "h": 2420,
+      "title": "/vs hub · tablet · dark",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "HubGuidesTablet.dc.html": {
+      "x": 900,
+      "y": 3784,
+      "w": 820,
+      "h": 2400,
+      "title": "/guides hub · tablet · light",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "HubLearnTablet.dc.html": {
+      "x": 1800,
+      "y": 3784,
+      "w": 820,
+      "h": 2156,
+      "title": "/learn hub · tablet · dark",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "GuideOn.dc.html": {
+      "x": 0,
+      "y": 6694,
+      "w": 390,
+      "h": 6910,
+      "title": "▶ /on/iphone-safari · follows your system",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "GuideOnStalePhone.dc.html": {
+      "x": 470,
+      "y": 6694,
+      "w": 390,
+      "h": 6910,
+      "title": "/on · phone · light · stale badge",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "GuideOnDeskLight.dc.html": {
+      "x": 940,
+      "y": 6694,
+      "w": 1280,
+      "h": 6180,
+      "title": "/on · desktop · light",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "GuideOnTablet.dc.html": {
+      "x": 2300,
+      "y": 6694,
+      "w": 820,
+      "h": 6160,
+      "title": "/on · tablet · dark",
+      "page": "content2",
+      "is_interactive": true
+    },
+    "GuideVs.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 6350,
+      "title": "▶ /vs/nosleep-page · follows your system",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideVsPhoneLight.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 6350,
+      "title": "/vs · phone · light",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideVsDeskDark.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 1280,
+      "h": 4840,
+      "title": "/vs · desktop · dark",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideVsTablet.dc.html": {
+      "x": 2300,
+      "y": 0,
+      "w": 820,
+      "h": 4780,
+      "title": "/vs · tablet · light",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideLearn.dc.html": {
+      "x": 0,
+      "y": 6840,
+      "w": 390,
+      "h": 3976,
+      "title": "▶ /learn · follows your system",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideLearnPhoneLight.dc.html": {
+      "x": 470,
+      "y": 6840,
+      "w": 390,
+      "h": 3976,
+      "title": "/learn · phone · light · top",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideLearnDeskDark.dc.html": {
+      "x": 940,
+      "y": 6840,
+      "w": 1280,
+      "h": 6910,
+      "title": "/learn · desktop · dark",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideLearnTablet.dc.html": {
+      "x": 2300,
+      "y": 6840,
+      "w": 820,
+      "h": 6620,
+      "title": "/learn · tablet · light",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideLearnPhoneLightBottom.dc.html": {
+      "x": 3200,
+      "y": 6840,
+      "w": 390,
+      "h": 4094,
+      "title": "/learn · phone · light · bottom",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideGuides.dc.html": {
+      "x": 0,
+      "y": 14240,
+      "w": 390,
+      "h": 5180,
+      "title": "▶ /guides · follows your system",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideGuidesPhoneLight.dc.html": {
+      "x": 470,
+      "y": 14240,
+      "w": 390,
+      "h": 5180,
+      "title": "/guides · phone · light",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideGuidesDeskLight.dc.html": {
+      "x": 940,
+      "y": 14240,
+      "w": 1280,
+      "h": 4350,
+      "title": "/guides · desktop · light",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideGuidesTablet.dc.html": {
+      "x": 2300,
+      "y": 14240,
+      "w": 820,
+      "h": 4320,
+      "title": "/guides · tablet · dark",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "GuideGuidesDeskDark.dc.html": {
+      "x": 3200,
+      "y": 14240,
+      "w": 1280,
+      "h": 4350,
+      "title": "/guides · desktop · dark",
+      "page": "content3",
+      "is_interactive": true
+    },
+    "PresetPage.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 2552,
+      "title": "▶ /30m · follows your system",
+      "page": "site1",
+      "is_interactive": true
+    },
+    "PresetPhoneLight.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 2552,
+      "title": "/30m · phone · light",
+      "page": "site1",
+      "is_interactive": true
+    },
+    "PresetTablet.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 820,
+      "h": 2420,
+      "title": "/30m · tablet · dark",
+      "page": "site1",
+      "is_interactive": true
+    },
+    "PresetDeskLight.dc.html": {
+      "x": 1840,
+      "y": 0,
+      "w": 1280,
+      "h": 2080,
+      "title": "/30m · desktop · light",
+      "page": "site1",
+      "is_interactive": true
+    },
+    "UntilPage.dc.html": {
+      "x": 3200,
+      "y": 0,
+      "w": 390,
+      "h": 2224,
+      "title": "▶ /until/07-30 · follows your system",
+      "page": "site1",
+      "is_interactive": true
+    },
+    "UntilPhoneLight.dc.html": {
+      "x": 3670,
+      "y": 0,
+      "w": 390,
+      "h": 2224,
+      "title": "/until · phone · light · ends tomorrow",
+      "page": "site1",
+      "is_interactive": true
+    },
+    "UntilDeskDark.dc.html": {
+      "x": 0,
+      "y": 2672,
+      "w": 1280,
+      "h": 1856,
+      "title": "/until · desktop · dark · ends today",
+      "page": "site1",
+      "is_interactive": true
+    },
+    "UntilTablet.dc.html": {
+      "x": 1360,
+      "y": 2672,
+      "w": 820,
+      "h": 2248,
+      "title": "/until/07-30 · tablet · dark · awake",
+      "page": "site1",
+      "is_interactive": true
+    },
+    "PageExtensionDesk.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 3545,
+      "title": "Extension · desktop light",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "PageExtensionPhone.dc.html": {
+      "x": 1360,
+      "y": 0,
+      "w": 390,
+      "h": 5624,
+      "title": "Extension · phone dark",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "PageAboutDesk.dc.html": {
+      "x": 1830,
+      "y": 0,
+      "w": 1280,
+      "h": 2066,
+      "title": "About · desktop light",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "PageChangelogPhone.dc.html": {
+      "x": 3190,
+      "y": 0,
+      "w": 390,
+      "h": 7894,
+      "title": "Changelog · phone light",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "PageExtensionTablet.dc.html": {
+      "x": 3660,
+      "y": 0,
+      "w": 820,
+      "h": 4583,
+      "title": "Extension · tablet light",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "PageAboutTablet.dc.html": {
+      "x": 4560,
+      "y": 0,
+      "w": 820,
+      "h": 2348,
+      "title": "About · tablet dark",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "PageAboutPhoneDark.dc.html": {
+      "x": 5460,
+      "y": 0,
+      "w": 390,
+      "h": 3156,
+      "title": "About · phone dark",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "PageChangelogTablet.dc.html": {
+      "x": 5930,
+      "y": 0,
+      "w": 820,
+      "h": 5877,
+      "title": "Changelog · tablet light",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "PageChangelogDeskLight.dc.html": {
+      "x": 6830,
+      "y": 0,
+      "w": 1280,
+      "h": 5945,
+      "title": "Changelog · desktop light",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "PagePrivacyDesk.dc.html": {
+      "x": 0,
+      "y": 8384,
+      "w": 1280,
+      "h": 4311,
+      "title": "Privacy · desktop light",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "PageTermsPhone.dc.html": {
+      "x": 1360,
+      "y": 8384,
+      "w": 390,
+      "h": 2286,
+      "title": "Terms · phone dark",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "Page404Phone.dc.html": {
+      "x": 1830,
+      "y": 8384,
+      "w": 390,
+      "h": 1588,
+      "title": "404 · phone light · mini tool",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "Page404Desk.dc.html": {
+      "x": 2300,
+      "y": 8384,
+      "w": 1280,
+      "h": 1039,
+      "title": "404 · desktop light",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "PageLegalTablet.dc.html": {
+      "x": 3660,
+      "y": 8384,
+      "w": 820,
+      "h": 4733,
+      "title": "Privacy · tablet dark",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "Page404Tablet.dc.html": {
+      "x": 4560,
+      "y": 8384,
+      "w": 820,
+      "h": 1702,
+      "title": "404 · tablet light",
+      "page": "site2",
+      "is_interactive": true
+    },
+    "Pro.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 6257,
+      "title": "▶ Pro · play me · follows your system",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProPhoneLight.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 6257,
+      "title": "Pro · phone · light",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProTablet.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 820,
+      "h": 4616,
+      "title": "Pro · tablet · light",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProDeskDark.dc.html": {
+      "x": 1840,
+      "y": 0,
+      "w": 1280,
+      "h": 4148,
+      "title": "Pro · desktop · dark",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProDeskLight.dc.html": {
+      "x": 3200,
+      "y": 0,
+      "w": 1280,
+      "h": 4148,
+      "title": "Pro · desktop · light",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProActivate.dc.html": {
+      "x": 0,
+      "y": 6747,
+      "w": 390,
+      "h": 1704,
+      "title": "▶ Activate · try the flow",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProActivatePhone.dc.html": {
+      "x": 470,
+      "y": 6747,
+      "w": 390,
+      "h": 1170,
+      "title": "Activate · phone · dark · success",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProActivateDesk.dc.html": {
+      "x": 940,
+      "y": 6747,
+      "w": 1280,
+      "h": 984,
+      "title": "Activate · desktop · light · error",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProManage.dc.html": {
+      "x": 2300,
+      "y": 6747,
+      "w": 390,
+      "h": 1175,
+      "title": "▶ Manage devices · phone",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProManageDesk.dc.html": {
+      "x": 2770,
+      "y": 6747,
+      "w": 1280,
+      "h": 1026,
+      "title": "Manage devices · desktop · dark",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProManagePhoneEmpty.dc.html": {
+      "x": 4130,
+      "y": 6747,
+      "w": 390,
+      "h": 1009,
+      "title": "Manage devices · phone · light · empty",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProActivateTablet.dc.html": {
+      "x": 4600,
+      "y": 6747,
+      "w": 820,
+      "h": 1602,
+      "title": "Activate · tablet · dark · activation limit",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "ProManageTablet.dc.html": {
+      "x": 5500,
+      "y": 6747,
+      "w": 820,
+      "h": 1104,
+      "title": "Manage devices · tablet · light",
+      "page": "pro1",
+      "is_interactive": true
+    },
+    "SysTabsLight.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 1088,
+      "title": "Tab strip · light",
+      "page": "pro2"
+    },
+    "SysTabsDark.dc.html": {
+      "x": 1360,
+      "y": 0,
+      "w": 1280,
+      "h": 1088,
+      "title": "Tab strip · dark",
+      "page": "pro2"
+    },
+    "SysProLapsed.dc.html": {
+      "x": 2720,
+      "y": 0,
+      "w": 1280,
+      "h": 2055,
+      "title": "Pro lapsed · tool + manage",
+      "page": "pro2",
+      "is_interactive": true
+    },
+    "SysProLapsedPhone.dc.html": {
+      "x": 4080,
+      "y": 0,
+      "w": 390,
+      "h": 2966,
+      "title": "Pro lapsed · phone · dark",
+      "page": "pro2",
+      "is_interactive": true
+    },
+    "SysProLapsedTablet.dc.html": {
+      "x": 4550,
+      "y": 0,
+      "w": 820,
+      "h": 2912,
+      "title": "Pro lapsed · tablet · light",
+      "page": "pro2",
+      "is_interactive": true
+    },
+    "SysCheckoutSuccess.dc.html": {
+      "x": 0,
+      "y": 3456,
+      "w": 1280,
+      "h": 948,
+      "title": "Checkout · success",
+      "page": "pro2",
+      "is_interactive": true
+    },
+    "SysCheckoutFailed.dc.html": {
+      "x": 1360,
+      "y": 3456,
+      "w": 1280,
+      "h": 912,
+      "title": "Checkout · payment failed",
+      "page": "pro2"
+    },
+    "SysUpdate.dc.html": {
+      "x": 2720,
+      "y": 3456,
+      "w": 1280,
+      "h": 860,
+      "title": "PWA update waits",
+      "page": "pro2",
+      "is_interactive": true
+    },
+    "SysInstalledDesk.dc.html": {
+      "x": 4080,
+      "y": 3456,
+      "w": 1280,
+      "h": 800,
+      "title": "Installed · desktop window",
+      "page": "pro2"
+    },
+    "SysInstalledPhone.dc.html": {
+      "x": 0,
+      "y": 4524,
+      "w": 1280,
+      "h": 1084,
+      "title": "Installed · phone launch",
+      "page": "pro2"
+    },
+    "SysCheckoutSuccessPhone.dc.html": {
+      "x": 1360,
+      "y": 4524,
+      "w": 390,
+      "h": 1659,
+      "title": "Checkout success · phone · dark",
+      "page": "pro2",
+      "is_interactive": true
+    },
+    "SysCheckoutFailedPhone.dc.html": {
+      "x": 1830,
+      "y": 4524,
+      "w": 390,
+      "h": 1413,
+      "title": "Checkout failed · phone · light",
+      "page": "pro2",
+      "is_interactive": true
+    },
+    "SysCheckoutSuccessTablet.dc.html": {
+      "x": 2300,
+      "y": 4524,
+      "w": 820,
+      "h": 1445,
+      "title": "Checkout success · tablet · light",
+      "page": "pro2",
+      "is_interactive": true
+    },
+    "SysCheckoutFailedTablet.dc.html": {
+      "x": 3200,
+      "y": 4524,
+      "w": 820,
+      "h": 1115,
+      "title": "Checkout failed · tablet · dark",
+      "page": "pro2",
+      "is_interactive": true
+    },
+    "ExtPopup.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "▶ Extension popup · play me",
+      "page": "extension1",
+      "is_interactive": true
+    },
+    "ExtPopupAwakeLight.dc.html": {
+      "x": 440,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · Screen awake · light",
+      "page": "extension1",
+      "is_interactive": true
+    },
+    "ExtPopupReady.dc.html": {
+      "x": 880,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · Ready",
+      "page": "extension1",
+      "is_interactive": true
+    },
+    "ExtPopupSystem.dc.html": {
+      "x": 1320,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · System awake",
+      "page": "extension1",
+      "is_interactive": true
+    },
+    "ExtPopupLong2h.dc.html": {
+      "x": 1760,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · 2 h session (H:MM:SS) · dark",
+      "page": "extension1",
+      "is_interactive": true
+    },
+    "ExtPopupOvernight.dc.html": {
+      "x": 2200,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · ends after midnight (tomorrow) · dark",
+      "page": "extension1",
+      "is_interactive": true
+    },
+    "ExtPopupMultiDay.dc.html": {
+      "x": 2640,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · multi-day session · light",
+      "page": "extension1",
+      "is_interactive": true
+    },
+    "ExtPopupUnlimited.dc.html": {
+      "x": 3080,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · no limit (∞, counts up) · dark",
+      "page": "extension1",
+      "is_interactive": true
+    },
+    "ExtBadges.dc.html": {
+      "x": 3520,
+      "y": 0,
+      "w": 1280,
+      "h": 400,
+      "title": "Toolbar icon and badge states",
+      "page": "extension1"
+    },
+    "ExtOptions.dc.html": {
+      "x": 0,
+      "y": 1090,
+      "w": 1280,
+      "h": 3892,
+      "title": "▶ Extension settings · play me",
+      "page": "extension1",
+      "is_interactive": true
+    },
+    "ExtOptionsDark.dc.html": {
+      "x": 1360,
+      "y": 1090,
+      "w": 1280,
+      "h": 3892,
+      "title": "Extension settings · dark · Pro",
+      "page": "extension1",
+      "is_interactive": true
+    },
+    "ExtOptionsLight.dc.html": {
+      "x": 2720,
+      "y": 1090,
+      "w": 1280,
+      "h": 4144,
+      "title": "Extension settings · light · no Pro",
+      "page": "extension1",
+      "is_interactive": true
+    },
+    "ExtEdge.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "▶ Popup edge states (all)",
+      "page": "extension2",
+      "is_interactive": true
+    },
+    "ExtEdgeAutostart.dc.html": {
+      "x": 440,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · auto-start",
+      "page": "extension2",
+      "is_interactive": true
+    },
+    "ExtEdgeProLocked.dc.html": {
+      "x": 880,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · Pro locked",
+      "page": "extension2",
+      "is_interactive": true
+    },
+    "ExtEdgeError.dc.html": {
+      "x": 1320,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · blocked",
+      "page": "extension2",
+      "is_interactive": true
+    },
+    "ExtEdgeTimesUp.dc.html": {
+      "x": 1760,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · time's up",
+      "page": "extension2",
+      "is_interactive": true
+    },
+    "ExtEdgeUpdate.dc.html": {
+      "x": 2200,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · updated",
+      "page": "extension2"
+    },
+    "ExtEdgeFirstOpen.dc.html": {
+      "x": 2640,
+      "y": 0,
+      "w": 360,
+      "h": 600,
+      "title": "Popup · first open",
+      "page": "extension2",
+      "is_interactive": true
+    },
+    "WelcomeLight.dc.html": {
+      "x": 0,
+      "y": 1090,
+      "w": 1280,
+      "h": 2760,
+      "title": "Welcome · light",
+      "page": "extension2",
+      "is_interactive": true
+    },
+    "StoreShot2.dc.html": {
+      "x": 0,
+      "y": 4340,
+      "w": 1280,
+      "h": 800,
+      "title": "Store 2 · schedule editor",
+      "page": "extension2"
+    },
+    "StoreShot3.dc.html": {
+      "x": 1360,
+      "y": 4340,
+      "w": 1280,
+      "h": 800,
+      "title": "Store 3 · badge states",
+      "page": "extension2"
+    },
+    "StoreShot4.dc.html": {
+      "x": 2720,
+      "y": 4340,
+      "w": 1280,
+      "h": 800,
+      "title": "Store 4 · Screen vs System",
+      "page": "extension2"
+    },
+    "StoreShot5.dc.html": {
+      "x": 0,
+      "y": 5260,
+      "w": 1280,
+      "h": 800,
+      "title": "Store 5 · Pro auto-start",
+      "page": "extension2"
+    },
+    "StorePromoSmall.dc.html": {
+      "x": 0,
+      "y": 6550,
+      "w": 440,
+      "h": 280,
+      "title": "Store · small promo tile",
+      "page": "extension2"
+    },
+    "StoreMarquee.dc.html": {
+      "x": 520,
+      "y": 6550,
+      "w": 1400,
+      "h": 560,
+      "title": "Store · marquee",
+      "page": "extension2"
+    },
+    "IconSet.dc.html": {
+      "x": 2000,
+      "y": 6550,
+      "w": 1280,
+      "h": 900,
+      "title": "Icons · app, maskable, themed, favicon states, PWA splash",
+      "page": "extension2"
+    },
+    "EmbedCompactLight.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 320,
+      "h": 104,
+      "title": "Embed · Compact 320 × 104 · light",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "EmbedFullDark.dc.html": {
+      "x": 400,
+      "y": 0,
+      "w": 720,
+      "h": 240,
+      "title": "Embed · Full width · dark · kitchen timers",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "EmbedWidget.dc.html": {
+      "x": 1200,
+      "y": 0,
+      "w": 720,
+      "h": 240,
+      "title": "▶ Embed widget · play me",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "EmbedShowcase.dc.html": {
+      "x": 2000,
+      "y": 0,
+      "w": 1280,
+      "h": 1552,
+      "title": "Embed · on a recipe page + snippet builder",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "EmbedShowcasePhone.dc.html": {
+      "x": 3360,
+      "y": 0,
+      "w": 390,
+      "h": 2961,
+      "title": "Embed page · phone · dark",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "EmbedShowcaseTablet.dc.html": {
+      "x": 3830,
+      "y": 0,
+      "w": 820,
+      "h": 2456,
+      "title": "Embed page · tablet · light",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "PageKioskDesk.dc.html": {
+      "x": 0,
+      "y": 3451,
+      "w": 1280,
+      "h": 2983,
+      "title": "Kiosk · desktop light · URL builder",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "PageKioskPhone.dc.html": {
+      "x": 1360,
+      "y": 3451,
+      "w": 390,
+      "h": 4353,
+      "title": "Kiosk · phone light",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "PageLibraryDesk.dc.html": {
+      "x": 1830,
+      "y": 3451,
+      "w": 1280,
+      "h": 3128,
+      "title": "Library · desktop light · live state machine",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "PageKioskTablet.dc.html": {
+      "x": 3190,
+      "y": 3451,
+      "w": 820,
+      "h": 3598,
+      "title": "Kiosk · tablet light",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "PageLibraryTablet.dc.html": {
+      "x": 4090,
+      "y": 3451,
+      "w": 820,
+      "h": 3483,
+      "title": "Library · tablet dark",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "PageLibraryPhoneLight.dc.html": {
+      "x": 4990,
+      "y": 3451,
+      "w": 390,
+      "h": 4470,
+      "title": "Library · phone light",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "KioskScreen.dc.html": {
+      "x": 0,
+      "y": 8411,
+      "w": 1920,
+      "h": 1080,
+      "title": "▶ Kiosk · source (tweak size, mode, licence)",
+      "page": "embed1",
+      "is_interactive": true
+    },
+    "KioskTvClock.dc.html": {
+      "x": 2000,
+      "y": 8411,
+      "w": 1920,
+      "h": 1080,
+      "title": "Kiosk TV · Clock · licensed",
+      "page": "embed1"
+    },
+    "KioskTvMessage.dc.html": {
+      "x": 4000,
+      "y": 8411,
+      "w": 1920,
+      "h": 1080,
+      "title": "Kiosk TV · Message · licensed",
+      "page": "embed1"
+    },
+    "KioskTvUnlicensed.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1920,
+      "h": 1080,
+      "title": "Kiosk TV · free: wordmark + message preview",
+      "page": "embed2"
+    },
+    "KioskTvDashboard.dc.html": {
+      "x": 2000,
+      "y": 0,
+      "w": 1920,
+      "h": 1080,
+      "title": "Kiosk TV · dashboard with docked widget · light",
+      "page": "embed2",
+      "is_interactive": true
+    },
+    "KioskPortraitLogo.dc.html": {
+      "x": 0,
+      "y": 1200,
+      "w": 1080,
+      "h": 1920,
+      "title": "Kiosk portrait · Your logo · licensed",
+      "page": "embed2"
+    },
+    "EmbedEdge.dc.html": {
+      "x": 0,
+      "y": 3610,
+      "w": 1280,
+      "h": 800,
+      "title": "▶ Embed edge states · source",
+      "page": "embed2",
+      "is_interactive": true
+    },
+    "EmbedEdgeSidebar.dc.html": {
+      "x": 1360,
+      "y": 3610,
+      "w": 1280,
+      "h": 800,
+      "title": "Embed · 280 px sidebar · dark host",
+      "page": "embed2",
+      "is_interactive": true
+    },
+    "EmbedEdgeLicensed.dc.html": {
+      "x": 2720,
+      "y": 3610,
+      "w": 1280,
+      "h": 800,
+      "title": "Embed · licensed, no attribution",
+      "page": "embed2",
+      "is_interactive": true
+    },
+    "EmbedEdgeUnsupportedTablet.dc.html": {
+      "x": 0,
+      "y": 4900,
+      "w": 820,
+      "h": 1100,
+      "title": "Embed · unsupported browser · tablet",
+      "page": "embed2",
+      "is_interactive": true
+    },
+    "EmbedEdgeBatteryPhone.dc.html": {
+      "x": 900,
+      "y": 4900,
+      "w": 390,
+      "h": 1120,
+      "title": "Embed · refused · phone dark",
+      "page": "embed2",
+      "is_interactive": true
+    },
+    "EmbedCook.dc.html": {
+      "x": 1370,
+      "y": 4900,
+      "w": 720,
+      "h": 240,
+      "title": "▶ /embed/cook · source",
+      "page": "embed2",
+      "is_interactive": true
+    },
+    "EmbedCookCompact.dc.html": {
+      "x": 2170,
+      "y": 4900,
+      "w": 320,
+      "h": 104,
+      "title": "/embed/cook · 320×104 running",
+      "page": "embed2",
+      "is_interactive": true
+    },
+    "EmbedCookFull.dc.html": {
+      "x": 2570,
+      "y": 4900,
+      "w": 720,
+      "h": 240,
+      "title": "/embed/cook · timer done",
+      "page": "embed2",
+      "is_interactive": true
+    },
+    "GrowthFirstVisit.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "▶ First visit · proof in 5 seconds · play me",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthFirstVisitPhoneLight.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "First visit · phone · light · proof shown",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthFirstVisitTabletDark.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 820,
+      "h": 1180,
+      "title": "First visit · tablet · dark · auto-start",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthFirstVisitDeskDark.dc.html": {
+      "x": 1840,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "First visit · desktop · dark · proof shown",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthFirstVisitDeskLight.dc.html": {
+      "x": 3200,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "First visit · desktop · light · tap to start",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthTrust.dc.html": {
+      "x": 0,
+      "y": 1670,
+      "w": 390,
+      "h": 844,
+      "title": "▶ Trust panel · how AwakeTab knows · play me",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthTrustPhoneLight.dc.html": {
+      "x": 470,
+      "y": 1670,
+      "w": 390,
+      "h": 844,
+      "title": "Trust panel · phone · light · paused",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthTrustDeskDark.dc.html": {
+      "x": 940,
+      "y": 1670,
+      "w": 1280,
+      "h": 800,
+      "title": "Trust panel · desktop · dark · fallback",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthTrustDeskLight.dc.html": {
+      "x": 2300,
+      "y": 1670,
+      "w": 1280,
+      "h": 800,
+      "title": "Trust panel · desktop · light · blocked",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthTrustTabletDark.dc.html": {
+      "x": 3660,
+      "y": 1670,
+      "w": 820,
+      "h": 1180,
+      "title": "Trust panel · blocked · tablet · dark",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthDone.dc.html": {
+      "x": 0,
+      "y": 3340,
+      "w": 390,
+      "h": 844,
+      "title": "▶ Session done · one gentle next step · play me",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthDoneIosPhoneLight.dc.html": {
+      "x": 470,
+      "y": 3340,
+      "w": 390,
+      "h": 844,
+      "title": "Done · iPhone Home Screen steps · phone · light",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthDoneExtensionDeskDark.dc.html": {
+      "x": 940,
+      "y": 3340,
+      "w": 1280,
+      "h": 800,
+      "title": "Done · hidden 3 times · extension · desktop · dark",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthDoneProDeskLight.dc.html": {
+      "x": 2300,
+      "y": 3340,
+      "w": 1280,
+      "h": 800,
+      "title": "Done · one Pro line · desktop · light",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthDoneNonePhoneLight.dc.html": {
+      "x": 3660,
+      "y": 3340,
+      "w": 390,
+      "h": 844,
+      "title": "Done · nothing to suggest · phone · light",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthDoneTabletDark.dc.html": {
+      "x": 0,
+      "y": 4304,
+      "w": 820,
+      "h": 1180,
+      "title": "Session done · tablet · dark",
+      "page": "growth1",
+      "is_interactive": true
+    },
+    "GrowthPaused.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "▶ Back from a hidden tab · honest options · play me",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthPausedDeskDark.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "Back from hidden · 3rd time · Chrome · desktop · dark",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthPausedDeskLight.dc.html": {
+      "x": 1830,
+      "y": 0,
+      "w": 1280,
+      "h": 800,
+      "title": "Back from hidden · 3rd time · Firefox · desktop · light",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthPausedPhoneDark.dc.html": {
+      "x": 3190,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Back from hidden · 1st time · quiet · phone · dark",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthPausedPhoneLight.dc.html": {
+      "x": 3660,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Back from hidden · 3rd time · phone · light",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthPausedTabletLight.dc.html": {
+      "x": 0,
+      "y": 964,
+      "w": 820,
+      "h": 1180,
+      "title": "Back from a hidden tab · tablet · light",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthProMoment.dc.html": {
+      "x": 0,
+      "y": 2634,
+      "w": 390,
+      "h": 844,
+      "title": "▶ Pro moments · informative, never pushy · play me",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthProLampDeskLight.dc.html": {
+      "x": 470,
+      "y": 2634,
+      "w": 1280,
+      "h": 800,
+      "title": "Pro moment · previewing a Pro lamp · desktop · light",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthProMessageDeskDark.dc.html": {
+      "x": 1830,
+      "y": 2634,
+      "w": 1280,
+      "h": 800,
+      "title": "Pro moment · end of the 60 s Message preview · desktop · dark",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthProMessagePhoneLight.dc.html": {
+      "x": 3190,
+      "y": 2634,
+      "w": 390,
+      "h": 844,
+      "title": "Pro moment · end of the 60 s Message preview · phone · light",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthProStatsPhoneLight.dc.html": {
+      "x": 3660,
+      "y": 2634,
+      "w": 390,
+      "h": 844,
+      "title": "Pro moment · day 8 of stats · phone · light",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthProStatsDeskDark.dc.html": {
+      "x": 0,
+      "y": 3598,
+      "w": 1280,
+      "h": 800,
+      "title": "Pro moment · day 8 of stats · desktop · dark",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthProMomentTabletDark.dc.html": {
+      "x": 1360,
+      "y": 3598,
+      "w": 820,
+      "h": 1180,
+      "title": "Pro moment · lamp · tablet · dark",
+      "page": "growth2",
+      "is_interactive": true
+    },
+    "GrowthPlanHelper.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 2151,
+      "title": "▶ Which plan fits · /pro helper · play me",
+      "page": "growth3",
+      "is_interactive": true
+    },
+    "GrowthPlanPhoneLight.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 2151,
+      "title": "Which plan fits · pay once · phone · light",
+      "page": "growth3",
+      "is_interactive": true
+    },
+    "GrowthPlanTabletLight.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 820,
+      "h": 1635,
+      "title": "Which plan fits · kiosk · tablet · light",
+      "page": "growth3",
+      "is_interactive": true
+    },
+    "GrowthPlanDeskDark.dc.html": {
+      "x": 1840,
+      "y": 0,
+      "w": 1280,
+      "h": 1100,
+      "title": "Which plan fits · yearly · desktop · dark",
+      "page": "growth3",
+      "is_interactive": true
+    },
+    "GrowthPlanDeskLight.dc.html": {
+      "x": 0,
+      "y": 2271,
+      "w": 1280,
+      "h": 1100,
+      "title": "Which plan fits · recipe site · desktop · light",
+      "page": "growth3",
+      "is_interactive": true
+    },
+    "GrowthShare.dc.html": {
+      "x": 0,
+      "y": 3861,
+      "w": 390,
+      "h": 844,
+      "title": "▶ Tell a friend · share a setup · no referral codes · play me",
+      "page": "growth3",
+      "is_interactive": true
+    },
+    "GrowthShareLowPhoneLight.dc.html": {
+      "x": 470,
+      "y": 3861,
+      "w": 390,
+      "h": 844,
+      "title": "Low rating · ask what to fix, no share · phone · light",
+      "page": "growth3",
+      "is_interactive": true
+    },
+    "GrowthSharePresetDeskLight.dc.html": {
+      "x": 940,
+      "y": 3861,
+      "w": 1280,
+      "h": 800,
+      "title": "Share a setup · link preview · desktop · light",
+      "page": "growth3",
+      "is_interactive": true
+    },
+    "GrowthSharePresetPhoneDark.dc.html": {
+      "x": 2300,
+      "y": 3861,
+      "w": 390,
+      "h": 844,
+      "title": "Share a setup · link preview · phone · dark",
+      "page": "growth3",
+      "is_interactive": true
+    },
+    "GrowthShareTellDeskDark.dc.html": {
+      "x": 2770,
+      "y": 3861,
+      "w": 1280,
+      "h": 800,
+      "title": "Tell a friend · after 5 stars · desktop · dark",
+      "page": "growth3",
+      "is_interactive": true
+    },
+    "GrowthShareTabletLight.dc.html": {
+      "x": 0,
+      "y": 4825,
+      "w": 820,
+      "h": 1180,
+      "title": "Share a setup · tablet · light",
+      "page": "growth3",
+      "is_interactive": true
+    },
+    "GrowthB2B.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 1742,
+      "title": "▶ Business entry points inside a use-case article · play me",
+      "page": "growth4",
+      "is_interactive": true
+    },
+    "GrowthB2BRecipePhoneLight.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 1742,
+      "title": "B2B entry · recipe sites · /for/cooking · phone · light",
+      "page": "growth4",
+      "is_interactive": true
+    },
+    "GrowthB2BRecipeDeskDark.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 1280,
+      "h": 1280,
+      "title": "B2B entry · recipe sites · /for/cooking · desktop · dark",
+      "page": "growth4",
+      "is_interactive": true
+    },
+    "GrowthB2BKioskPhoneDark.dc.html": {
+      "x": 2300,
+      "y": 0,
+      "w": 390,
+      "h": 1742,
+      "title": "B2B entry · kiosks · /for/dashboards · phone · dark",
+      "page": "growth4",
+      "is_interactive": true
+    },
+    "GrowthB2BKioskDeskLight.dc.html": {
+      "x": 0,
+      "y": 1862,
+      "w": 1280,
+      "h": 1280,
+      "title": "B2B entry · kiosks · /for/dashboards · desktop · light",
+      "page": "growth4",
+      "is_interactive": true
+    },
+    "GrowthB2BTabletLight.dc.html": {
+      "x": 1360,
+      "y": 1862,
+      "w": 820,
+      "h": 1662,
+      "title": "Business entry · recipe · tablet · light",
+      "page": "growth4",
+      "is_interactive": true
+    },
+    "Intl.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "▶ Languages · QA view (missing keys outlined)",
+      "page": "a11y1",
+      "is_interactive": true
+    },
+    "IntlDePhone.dc.html": {
+      "x": 470,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Deutsch · phone dark",
+      "page": "a11y1",
+      "is_interactive": true
+    },
+    "IntlJaPhone.dc.html": {
+      "x": 940,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "日本語 · phone light",
+      "page": "a11y1",
+      "is_interactive": true
+    },
+    "IntlHiPhone.dc.html": {
+      "x": 1410,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "हिन्दी · phone dark · blocked",
+      "page": "a11y1",
+      "is_interactive": true
+    },
+    "IntlFrPhone.dc.html": {
+      "x": 1880,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Français · phone light · tap to start",
+      "page": "a11y1",
+      "is_interactive": true
+    },
+    "IntlPtPhone.dc.html": {
+      "x": 2350,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "title": "Português · phone dark · fallback",
+      "page": "a11y1",
+      "is_interactive": true
+    },
+    "IntlArticleDe.dc.html": {
+      "x": 2820,
+      "y": 0,
+      "w": 390,
+      "h": 1296,
+      "title": "Deutsch article · translation badge",
+      "page": "a11y1"
+    },
+    "IntlJaTablet.dc.html": {
+      "x": 3290,
+      "y": 0,
+      "w": 820,
+      "h": 1180,
+      "title": "日本語 · tablet light · awake · review banner",
+      "page": "a11y1",
+      "is_interactive": true
+    },
+    "IntlZhDesk.dc.html": {
+      "x": 0,
+      "y": 1786,
+      "w": 1280,
+      "h": 800,
+      "title": "简体中文 · desktop light",
+      "page": "a11y1",
+      "is_interactive": true
+    },
+    "IntlEsDesk.dc.html": {
+      "x": 1360,
+      "y": 1786,
+      "w": 1280,
+      "h": 800,
+      "title": "Español · desktop dark · paused",
+      "page": "a11y1",
+      "is_interactive": true
+    },
+    "A11yKeyboardDesk.dc.html": {
+      "x": 0,
+      "y": 3076,
+      "w": 1760,
+      "h": 800,
+      "title": "Keyboard focus order",
+      "page": "a11y1",
+      "is_interactive": true
+    },
+    "A11yNoJsDesk.dc.html": {
+      "x": 1840,
+      "y": 3076,
+      "w": 1760,
+      "h": 800,
+      "title": "Before JavaScript · desktop",
+      "page": "a11y1"
+    },
+    "A11yForcedDark.dc.html": {
+      "x": 0,
+      "y": 4366,
+      "w": 870,
+      "h": 844,
+      "title": "Forced colours · High Contrast Black",
+      "page": "a11y1"
+    },
+    "A11yForcedLight.dc.html": {
+      "x": 950,
+      "y": 4366,
+      "w": 870,
+      "h": 844,
+      "title": "Forced colours · High Contrast White",
+      "page": "a11y1"
+    },
+    "A11yZoomPhone.dc.html": {
+      "x": 1900,
+      "y": 4366,
+      "w": 870,
+      "h": 1532,
+      "title": "Text 200% on phone",
+      "page": "a11y1"
+    },
+    "A11yReflow320.dc.html": {
+      "x": 2850,
+      "y": 4366,
+      "w": 800,
+      "h": 832,
+      "title": "Reflow 320 px at 400% zoom",
+      "page": "a11y1"
+    },
+    "A11yReducedPhone.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 870,
+      "h": 844,
+      "title": "Reduced motion",
+      "page": "a11y2"
+    },
+    "A11yNoJsPhone.dc.html": {
+      "x": 950,
+      "y": 0,
+      "w": 870,
+      "h": 844,
+      "title": "Before JavaScript · phone",
+      "page": "a11y2"
+    },
+    "A11yScreenReader.dc.html": {
+      "x": 1900,
+      "y": 0,
+      "w": 870,
+      "h": 844,
+      "title": "Screen reader announcements",
+      "page": "a11y2",
+      "is_interactive": true
+    },
+    "A11yReducedTablet.dc.html": {
+      "x": 0,
+      "y": 964,
+      "w": 1300,
+      "h": 1180,
+      "title": "Reduced motion · tablet",
+      "page": "a11y2"
+    },
+    "LangSwitcherPhoneDark.dc.html": {
+      "x": 0,
+      "y": 2634,
+      "w": 390,
+      "h": 844,
+      "title": "Language switcher · phone · dark · sheet open",
+      "page": "a11y2",
+      "is_interactive": true
+    },
+    "LangSwitcherDeskLight.dc.html": {
+      "x": 470,
+      "y": 2634,
+      "w": 1280,
+      "h": 800,
+      "title": "Language switcher · desktop · light · list open",
+      "page": "a11y2",
+      "is_interactive": true
+    },
+    "OgArticle.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1200,
+      "h": 630,
+      "title": "OG · /for/cooking",
+      "page": "brand"
+    },
+    "OgDevice.dc.html": {
+      "x": 1280,
+      "y": 0,
+      "w": 1200,
+      "h": 630,
+      "title": "OG · /on/ipad",
+      "page": "brand"
+    },
+    "OgVs.dc.html": {
+      "x": 0,
+      "y": 750,
+      "w": 1200,
+      "h": 630,
+      "title": "OG · /vs/mouse-jigglers",
+      "page": "brand"
+    },
+    "OgPro.dc.html": {
+      "x": 1280,
+      "y": 750,
+      "w": 1200,
+      "h": 630,
+      "title": "OG · /pro",
+      "page": "brand"
+    },
+    "OgPreset.dc.html": {
+      "x": 0,
+      "y": 1500,
+      "w": 1200,
+      "h": 630,
+      "title": "OG · /30m",
+      "page": "brand"
+    },
+    "Brand.dc.html": {
+      "x": 0,
+      "y": 2620,
+      "w": 1280,
+      "h": 1470,
+      "title": "Logo, colour, type",
+      "page": "brand"
+    },
+    "PageKiosk.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 2983,
+      "title": "▶ Kiosk page",
+      "page": "components",
+      "is_interactive": true
+    },
+    "PageLibrary.dc.html": {
+      "x": 1360,
+      "y": 0,
+      "w": 1280,
+      "h": 3128,
+      "title": "▶ Library page",
+      "page": "components",
+      "is_interactive": true
+    },
+    "PageExtension.dc.html": {
+      "x": 2720,
+      "y": 0,
+      "w": 1280,
+      "h": 3545,
+      "title": "▶ Extension page",
+      "page": "components",
+      "is_interactive": true
+    },
+    "PageAbout.dc.html": {
+      "x": 4080,
+      "y": 0,
+      "w": 1280,
+      "h": 2066,
+      "title": "▶ About page",
+      "page": "components",
+      "is_interactive": true
+    },
+    "PageLegal.dc.html": {
+      "x": 5440,
+      "y": 0,
+      "w": 1280,
+      "h": 4311,
+      "title": "▶ Privacy / Terms page",
+      "page": "components",
+      "is_interactive": true
+    },
+    "PageChangelog.dc.html": {
+      "x": 6800,
+      "y": 0,
+      "w": 390,
+      "h": 7894,
+      "title": "▶ Changelog page",
+      "page": "components",
+      "is_interactive": true
+    },
+    "Page404.dc.html": {
+      "x": 0,
+      "y": 8014,
+      "w": 390,
+      "h": 1588,
+      "title": "▶ 404 page",
+      "page": "components",
+      "is_interactive": true
+    },
+    "OgCards.dc.html": {
+      "x": 470,
+      "y": 8014,
+      "w": 1200,
+      "h": 630,
+      "title": "▶ OG · home (switch kind for the others)",
+      "page": "components",
+      "is_interactive": true
+    },
+    "StoreAssets.dc.html": {
+      "x": 1750,
+      "y": 8014,
+      "w": 1280,
+      "h": 800,
+      "title": "▶ Store 1 · popup over a page (switch kind)",
+      "page": "components",
+      "is_interactive": true
+    },
+    "Welcome.dc.html": {
+      "x": 3110,
+      "y": 8014,
+      "w": 1280,
+      "h": 2760,
+      "title": "▶ Extension welcome page",
+      "page": "components",
+      "is_interactive": true
+    },
+    "A11y.dc.html": {
+      "x": 4470,
+      "y": 8014,
+      "w": 870,
+      "h": 844,
+      "title": "▶ Accessibility source (mode)",
+      "page": "components",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "RingDark.dc.html",
+    "BoldDark.dc.html",
+    "HorizonDark.dc.html",
+    "TideDark.dc.html",
+    "PausedDark.dc.html",
+    "BlockedDark.dc.html",
+    "DoneDark.dc.html",
+    "UntilDark.dc.html",
+    "RingLight.dc.html",
+    "BoldLight.dc.html",
+    "HorizonLight.dc.html",
+    "TideLight.dc.html",
+    "PausedLight.dc.html",
+    "BlockedLight.dc.html",
+    "DoneLight.dc.html",
+    "UntilLight.dc.html",
+    "ToolTabletDark.dc.html",
+    "ToolTabletLight.dc.html",
+    "ToolSettingsDark.dc.html",
+    "ToolSettingsLight.dc.html",
+    "ToolStats.dc.html",
+    "ToolTimesUp.dc.html",
+    "ToolTimesUpLight.dc.html",
+    "ToolStatsTablet.dc.html",
+    "ToolSettingsTablet.dc.html",
+    "ToolTabletBlockedDark.dc.html",
+    "ToolTabletTimesUpLight.dc.html",
+    "DeskRingDark.dc.html",
+    "DeskHorizonDark.dc.html",
+    "DeskTideDark.dc.html",
+    "ToolSettingsDesk.dc.html",
+    "ToolStatsDesk.dc.html",
+    "DeskBlockedLight.dc.html",
+    "DeskTimesUpDark.dc.html",
+    "DeskRingLight.dc.html",
+    "DeskHorizonLight.dc.html",
+    "DeskTideLight.dc.html",
+    "SizeSmallDark.dc.html",
+    "SizeSmallLight.dc.html",
+    "SizeLandscape.dc.html",
+    "SizeLandscapeLight.dc.html",
+    "SizeTabletLandscape.dc.html",
+    "SizeTabletSmallDark.dc.html",
+    "SizeTabletSmallLight.dc.html",
+    "SizeDeskSmallDark.dc.html",
+    "SizeDeskSmallLight.dc.html",
+    "SizeXL.dc.html",
+    "SizeXLLight.dc.html",
+    "EdgeLastMinute.dc.html",
+    "EdgeMultiDay.dc.html",
+    "EdgeUntilPassed.dc.html",
+    "EdgeDeferred.dc.html",
+    "EdgeOffline.dc.html",
+    "EdgeLowBattery.dc.html",
+    "EdgeOled.dc.html",
+    "EdgeDeferredTabletLight.dc.html",
+    "EdgeLastminuteTabletLight.dc.html",
+    "EdgeLowbatteryTabletLight.dc.html",
+    "EdgeMultidayTabletLight.dc.html",
+    "EdgeOfflineTabletLight.dc.html",
+    "EdgeUntilpassedTabletLight.dc.html",
+    "EdgeLongnolimitPhoneDark.dc.html",
+    "EdgeLongnolimitTabletLight.dc.html",
+    "EdgeHiddenreturnPhoneDark.dc.html",
+    "EdgeHiddenreturnTabletLight.dc.html",
+    "EdgeOledTablet.dc.html",
+    "EdgeLongNoLimit.dc.html",
+    "EdgeReturn.dc.html",
+    "EdgeDeferredDeskDark.dc.html",
+    "EdgeLastminuteDeskDark.dc.html",
+    "EdgeLowbatteryDeskDark.dc.html",
+    "EdgeMultidayDeskDark.dc.html",
+    "EdgeOfflineDeskDark.dc.html",
+    "EdgeUntilpassedDeskDark.dc.html",
+    "EdgeOledDesk.dc.html",
+    "Extras.dc.html",
+    "ExtrasSecondTab.dc.html",
+    "ExtrasInstall.dc.html",
+    "ExtrasDenied.dc.html",
+    "ExtrasRating.dc.html",
+    "ExtrasTabletRating.dc.html",
+    "ExtrasInstallTabletLight.dc.html",
+    "ExtrasInstallDeskDark.dc.html",
+    "ExtrasRatingDeskDark.dc.html",
+    "ExtrasSecondtabTabletDark.dc.html",
+    "ExtrasSecondtabDeskLight.dc.html",
+    "ExtrasDeniedTabletDark.dc.html",
+    "ExtrasDeniedDeskLight.dc.html",
+    "ExtrasResumeTabletLight.dc.html",
+    "ExtrasResumeDeskDark.dc.html",
+    "ExtrasShortcutsDesk.dc.html",
+    "ExtrasShareDesk.dc.html",
+    "ExtrasToasts.dc.html",
+    "ExtrasSharePhoneDark.dc.html",
+    "ExtrasShareTabletLight.dc.html",
+    "ExtrasToastPhoneLight.dc.html",
+    "ExtrasToastTabletDark.dc.html",
+    "Sys.dc.html",
+    "SysOfflineDesk.dc.html",
+    "SysNotify.dc.html",
+    "Ambient.dc.html",
+    "AmbientClockDesk.dc.html",
+    "AmbientClockPhone.dc.html",
+    "AmbientNightPhone.dc.html",
+    "AmbientFocusDesk.dc.html",
+    "AmbientClockTablet.dc.html",
+    "AmbientFocusPhoneLight.dc.html",
+    "AmbientFocusTabletDark.dc.html",
+    "AmbientNightTabletDark.dc.html",
+    "AmbientNightDeskDark.dc.html",
+    "AmbientMinimalDesk.dc.html",
+    "AmbientMessageDesk.dc.html",
+    "AmbientCookTablet.dc.html",
+    "AmbientCookTabletDark.dc.html",
+    "AmbientMinimalPhoneLight.dc.html",
+    "AmbientMinimalTabletDark.dc.html",
+    "AmbientMessagePhoneDark.dc.html",
+    "AmbientMessageTabletLight.dc.html",
+    "AmbientCookPhoneLight.dc.html",
+    "AmbientCookDeskDark.dc.html",
+    "PipDark.dc.html",
+    "PipLight.dc.html",
+    "PipWindow.dc.html",
+    "PipOverDesk.dc.html",
+    "ContentArticle.dc.html",
+    "ContentArticlePhoneLight.dc.html",
+    "ContentArticleTablet.dc.html",
+    "ContentArticleDeskDark.dc.html",
+    "ContentArticleDeskLight.dc.html",
+    "HubFor.dc.html",
+    "HubForPhone.dc.html",
+    "HubForDesk.dc.html",
+    "HomeBelow.dc.html",
+    "HomeBelowPhone.dc.html",
+    "HomeBelowDesk.dc.html",
+    "HubForTablet.dc.html",
+    "HubForDeskDark.dc.html",
+    "HomeBelowTablet.dc.html",
+    "HubOnPhoneDark.dc.html",
+    "HubOnDeskLight.dc.html",
+    "HubVsPhoneLight.dc.html",
+    "HubVsDeskDark.dc.html",
+    "HubGuidesPhoneDark.dc.html",
+    "HubGuidesDeskLight.dc.html",
+    "HubLearnPhoneLight.dc.html",
+    "HubLearnDeskDark.dc.html",
+    "HubOnTablet.dc.html",
+    "HubVsTablet.dc.html",
+    "HubGuidesTablet.dc.html",
+    "HubLearnTablet.dc.html",
+    "GuideOn.dc.html",
+    "GuideOnStalePhone.dc.html",
+    "GuideOnDeskLight.dc.html",
+    "GuideOnTablet.dc.html",
+    "GuideVs.dc.html",
+    "GuideVsPhoneLight.dc.html",
+    "GuideVsDeskDark.dc.html",
+    "GuideVsTablet.dc.html",
+    "GuideLearn.dc.html",
+    "GuideLearnPhoneLight.dc.html",
+    "GuideLearnDeskDark.dc.html",
+    "GuideLearnTablet.dc.html",
+    "GuideLearnPhoneLightBottom.dc.html",
+    "GuideGuides.dc.html",
+    "GuideGuidesPhoneLight.dc.html",
+    "GuideGuidesDeskLight.dc.html",
+    "GuideGuidesTablet.dc.html",
+    "GuideGuidesDeskDark.dc.html",
+    "PresetPage.dc.html",
+    "PresetPhoneLight.dc.html",
+    "PresetTablet.dc.html",
+    "PresetDeskLight.dc.html",
+    "UntilPage.dc.html",
+    "UntilPhoneLight.dc.html",
+    "UntilDeskDark.dc.html",
+    "UntilTablet.dc.html",
+    "PageExtensionDesk.dc.html",
+    "PageExtensionPhone.dc.html",
+    "PageAboutDesk.dc.html",
+    "PageChangelogPhone.dc.html",
+    "PageExtensionTablet.dc.html",
+    "PageAboutTablet.dc.html",
+    "PageAboutPhoneDark.dc.html",
+    "PageChangelogTablet.dc.html",
+    "PageChangelogDeskLight.dc.html",
+    "PagePrivacyDesk.dc.html",
+    "PageTermsPhone.dc.html",
+    "Page404Phone.dc.html",
+    "Page404Desk.dc.html",
+    "PageLegalTablet.dc.html",
+    "Page404Tablet.dc.html",
+    "Pro.dc.html",
+    "ProPhoneLight.dc.html",
+    "ProTablet.dc.html",
+    "ProDeskDark.dc.html",
+    "ProDeskLight.dc.html",
+    "ProActivate.dc.html",
+    "ProActivatePhone.dc.html",
+    "ProActivateDesk.dc.html",
+    "ProManage.dc.html",
+    "ProManageDesk.dc.html",
+    "ProManagePhoneEmpty.dc.html",
+    "ProActivateTablet.dc.html",
+    "ProManageTablet.dc.html",
+    "SysTabsLight.dc.html",
+    "SysTabsDark.dc.html",
+    "SysProLapsed.dc.html",
+    "SysProLapsedPhone.dc.html",
+    "SysProLapsedTablet.dc.html",
+    "SysCheckoutSuccess.dc.html",
+    "SysCheckoutFailed.dc.html",
+    "SysUpdate.dc.html",
+    "SysInstalledDesk.dc.html",
+    "SysInstalledPhone.dc.html",
+    "SysCheckoutSuccessPhone.dc.html",
+    "SysCheckoutFailedPhone.dc.html",
+    "SysCheckoutSuccessTablet.dc.html",
+    "SysCheckoutFailedTablet.dc.html",
+    "ExtPopup.dc.html",
+    "ExtPopupAwakeLight.dc.html",
+    "ExtPopupReady.dc.html",
+    "ExtPopupSystem.dc.html",
+    "ExtPopupLong2h.dc.html",
+    "ExtPopupOvernight.dc.html",
+    "ExtPopupMultiDay.dc.html",
+    "ExtPopupUnlimited.dc.html",
+    "ExtBadges.dc.html",
+    "ExtOptions.dc.html",
+    "ExtOptionsDark.dc.html",
+    "ExtOptionsLight.dc.html",
+    "ExtEdge.dc.html",
+    "ExtEdgeAutostart.dc.html",
+    "ExtEdgeProLocked.dc.html",
+    "ExtEdgeError.dc.html",
+    "ExtEdgeTimesUp.dc.html",
+    "ExtEdgeUpdate.dc.html",
+    "ExtEdgeFirstOpen.dc.html",
+    "WelcomeLight.dc.html",
+    "StoreShot2.dc.html",
+    "StoreShot3.dc.html",
+    "StoreShot4.dc.html",
+    "StoreShot5.dc.html",
+    "StorePromoSmall.dc.html",
+    "StoreMarquee.dc.html",
+    "IconSet.dc.html",
+    "EmbedCompactLight.dc.html",
+    "EmbedFullDark.dc.html",
+    "EmbedWidget.dc.html",
+    "EmbedShowcase.dc.html",
+    "EmbedShowcasePhone.dc.html",
+    "EmbedShowcaseTablet.dc.html",
+    "PageKioskDesk.dc.html",
+    "PageKioskPhone.dc.html",
+    "PageLibraryDesk.dc.html",
+    "PageKioskTablet.dc.html",
+    "PageLibraryTablet.dc.html",
+    "PageLibraryPhoneLight.dc.html",
+    "KioskScreen.dc.html",
+    "KioskTvClock.dc.html",
+    "KioskTvMessage.dc.html",
+    "KioskTvUnlicensed.dc.html",
+    "KioskTvDashboard.dc.html",
+    "KioskPortraitLogo.dc.html",
+    "EmbedEdge.dc.html",
+    "EmbedEdgeSidebar.dc.html",
+    "EmbedEdgeLicensed.dc.html",
+    "EmbedEdgeUnsupportedTablet.dc.html",
+    "EmbedEdgeBatteryPhone.dc.html",
+    "EmbedCook.dc.html",
+    "EmbedCookCompact.dc.html",
+    "EmbedCookFull.dc.html",
+    "GrowthFirstVisit.dc.html",
+    "GrowthFirstVisitPhoneLight.dc.html",
+    "GrowthFirstVisitTabletDark.dc.html",
+    "GrowthFirstVisitDeskDark.dc.html",
+    "GrowthFirstVisitDeskLight.dc.html",
+    "GrowthTrust.dc.html",
+    "GrowthTrustPhoneLight.dc.html",
+    "GrowthTrustDeskDark.dc.html",
+    "GrowthTrustDeskLight.dc.html",
+    "GrowthTrustTabletDark.dc.html",
+    "GrowthDone.dc.html",
+    "GrowthDoneIosPhoneLight.dc.html",
+    "GrowthDoneExtensionDeskDark.dc.html",
+    "GrowthDoneProDeskLight.dc.html",
+    "GrowthDoneNonePhoneLight.dc.html",
+    "GrowthDoneTabletDark.dc.html",
+    "GrowthPaused.dc.html",
+    "GrowthPausedDeskDark.dc.html",
+    "GrowthPausedDeskLight.dc.html",
+    "GrowthPausedPhoneDark.dc.html",
+    "GrowthPausedPhoneLight.dc.html",
+    "GrowthPausedTabletLight.dc.html",
+    "GrowthProMoment.dc.html",
+    "GrowthProLampDeskLight.dc.html",
+    "GrowthProMessageDeskDark.dc.html",
+    "GrowthProMessagePhoneLight.dc.html",
+    "GrowthProStatsPhoneLight.dc.html",
+    "GrowthProStatsDeskDark.dc.html",
+    "GrowthProMomentTabletDark.dc.html",
+    "GrowthPlanHelper.dc.html",
+    "GrowthPlanPhoneLight.dc.html",
+    "GrowthPlanTabletLight.dc.html",
+    "GrowthPlanDeskDark.dc.html",
+    "GrowthPlanDeskLight.dc.html",
+    "GrowthShare.dc.html",
+    "GrowthShareLowPhoneLight.dc.html",
+    "GrowthSharePresetDeskLight.dc.html",
+    "GrowthSharePresetPhoneDark.dc.html",
+    "GrowthShareTellDeskDark.dc.html",
+    "GrowthShareTabletLight.dc.html",
+    "GrowthB2B.dc.html",
+    "GrowthB2BRecipePhoneLight.dc.html",
+    "GrowthB2BRecipeDeskDark.dc.html",
+    "GrowthB2BKioskPhoneDark.dc.html",
+    "GrowthB2BKioskDeskLight.dc.html",
+    "GrowthB2BTabletLight.dc.html",
+    "Intl.dc.html",
+    "IntlDePhone.dc.html",
+    "IntlJaPhone.dc.html",
+    "IntlHiPhone.dc.html",
+    "IntlFrPhone.dc.html",
+    "IntlPtPhone.dc.html",
+    "IntlArticleDe.dc.html",
+    "IntlJaTablet.dc.html",
+    "IntlZhDesk.dc.html",
+    "IntlEsDesk.dc.html",
+    "A11yKeyboardDesk.dc.html",
+    "A11yNoJsDesk.dc.html",
+    "A11yForcedDark.dc.html",
+    "A11yForcedLight.dc.html",
+    "A11yZoomPhone.dc.html",
+    "A11yReflow320.dc.html",
+    "A11yReducedPhone.dc.html",
+    "A11yNoJsPhone.dc.html",
+    "A11yScreenReader.dc.html",
+    "A11yReducedTablet.dc.html",
+    "LangSwitcherPhoneDark.dc.html",
+    "LangSwitcherDeskLight.dc.html",
+    "OgArticle.dc.html",
+    "OgDevice.dc.html",
+    "OgVs.dc.html",
+    "OgPro.dc.html",
+    "OgPreset.dc.html",
+    "Brand.dc.html",
+    "PageKiosk.dc.html",
+    "PageLibrary.dc.html",
+    "PageExtension.dc.html",
+    "PageAbout.dc.html",
+    "PageLegal.dc.html",
+    "PageChangelog.dc.html",
+    "Page404.dc.html",
+    "OgCards.dc.html",
+    "StoreAssets.dc.html",
+    "Welcome.dc.html",
+    "A11y.dc.html"
+  ],
+  "notes": {
+    "noteD": {
+      "x": -560,
+      "y": -320,
+      "w": 390,
+      "fill": "teal",
+      "text": "Both modes, everywhere\n• Header switch: Light · Dark · Auto. Auto follows your phone or computer setting and flips live at sunset if your system does.\n• Every face and state is shown in both rows.\n• Horizon shows a night sky in dark and a day sky in light; in Auto it follows the real time of day.\n• Press Play on any board: countdown, faces, presets and the theme switch all work.",
+      "page": "tool1"
+    },
+    "noteMotion": {
+      "x": -560,
+      "y": 200,
+      "w": 390,
+      "fill": "blue",
+      "text": "Motion\n• Ring: glowing tip travels back, soft light sweep.\n• Bold: bar drains with slow shimmer.\n• Horizon: sun sets as the session ends; clouds, stars, glinting water.\n• Tide: water drains with waves and bubbles.\n• Tabs, presets and the theme switch slide. Reduced motion turns it all off.",
+      "page": "tool1"
+    },
+    "noteTime": {
+      "x": -560,
+      "y": 720,
+      "w": 390,
+      "text": "Time you can read at a glance\n• Saturday, 26 September 2026 · 10:00 PM at the top.\n• All times in AM/PM. Times past midnight say tomorrow.\n• Ready shows when it would end before you start.",
+      "page": "tool1"
+    },
+    "status": {
+      "x": -1100,
+      "y": -320,
+      "w": 480,
+      "fill": "yellow",
+      "text": "BUILD STATUS · updated 12:45 PM\n\nCanvas design  ·  Real app (new design)\n\nA · Tool\n1. Tool phone + desktop · 4 faces · all states · dark/light  —  ✅ on canvas  ·  app ⬜\n2. Tool on tablet  —  ✅ on canvas  ·  app ⬜\n3. Settings + lamp colour picker  —  ✅ on canvas  ·  app ⬜\n4. Stats (12-week heatmap)  —  ✅ on canvas  ·  app ⬜\n5. Time's up prompt  —  ✅ on canvas  ·  app ⬜\n6. Ambient: Clock, Focus, Minimal, Night, Message, Cook  —  ✅ on canvas  ·  app ⬜\n7. Floating window (PiP)  —  ✅ on canvas  ·  app ⬜\n8. Banners: resume, second tab, install  —  ✅ on canvas  ·  app ⬜\n9. Rating, shortcuts, share, toasts  —  ✅ on canvas  ·  app ⬜\n10. Logo, colour, type  —  ✅ on canvas  ·  app ⬜\n\nB · Content\n11. Home below the tool  —  ✅ on canvas  ·  app ⬜\n12. Article page (51 pages)  —  ✅ on canvas  ·  app ⬜\n13. Hub pages (5)  —  ✅ on canvas  ·  app ⬜\n\nC · Pro & business\n14. /pro  —  ✅ on canvas  ·  app ⬜\n15. /pro/activate  —  ✅ on canvas  ·  app ⬜\n16. /pro/manage  —  ✅ on canvas  ·  app ⬜\n17. Embed widget + builder  —  ✅ on canvas  ·  app ⬜\n18. /kiosk  —  ✅ on canvas  ·  app ⬜\n19. /library  —  ✅ on canvas  ·  app ⬜\n\nD · Extension\n20. Popup  —  ✅ on canvas  ·  app ⬜\n21. Options + schedule editor  —  ✅ on canvas  ·  app ⬜\n22. Toolbar icon + badges  —  ✅ on canvas  ·  app ⬜\n\nE · Other\n23. /extension landing  —  ✅ on canvas  ·  app ⬜\n24. About, Changelog  —  ✅ on canvas  ·  app ⬜\n25. Privacy, Terms  —  ✅ on canvas  ·  app ⬜\n26. 404  —  ✅ on canvas  ·  app ⬜\n\nF · Edge cases, sizes, languages, assets\n27. Tool: more sizes (small phone, landscape, tablet landscape, 1920 desktop, TV)  —  ✅ on canvas  ·  app ⬜\n28. Tool edge states (last minute, multi-day, deferred, offline, low battery, OLED)  —  ✅ on canvas  ·  app ⬜\n29. Languages: de, es, ja, zh, hi + translated badges  —  ✅ on canvas  ·  app ⬜\n30. Accessibility: keyboard focus, high contrast, 200% zoom, reduced motion, no-JS  —  ✅ on canvas  ·  app ⬜\n31. Guide types: /on device, /vs comparison, /learn, /guides  —  ✅ on canvas  ·  app ⬜\n32. Preset page /30m and /until/HH-MM page  —  ✅ on canvas  ·  app ⬜\n33. Kiosk wall screens (TV, portrait signage)  —  ✅ on canvas  ·  app ⬜\n34. Embed edge states + /embed/cook  —  ✅ on canvas  ·  app ⬜\n35. Social share images (OG)  —  ✅ on canvas  ·  app ⬜\n36. Store listing, app icons, PWA splash  —  ✅ on canvas  ·  app ⬜\n37. Extension edge states + welcome page  —  ✅ on canvas  ·  app ⬜\n38. System: offline, notifications, tab/favicon states, Pro lapsed, checkout errors  —  ✅ on canvas  ·  app ⬜\n\nG · Research (saved in repo docs/research/)\n39. Content verification: all product text (content-audit.md)  —  ✅ on canvas  ·  app ⬜\n40. Market + competitor research (market.md)  —  ✅ on canvas  ·  app ⬜\n41. Growth, retention, conversion (growth-conversion.md)  —  ✅ on canvas  ·  app ⬜\n42. Design gaps + new boards to drive use and purchase (design-gaps.md)  —  ✅ on canvas  ·  app ⬜\n\nH · Audits\n43. Audit A: tool, ambient, PiP, banners, content (overflow, contrast, targets)  —  ✅ on canvas  ·  app ⬜\n44. Audit B: Pro, extension, embed, brand + cross-board consistency  —  ✅ on canvas  ·  app ⬜\n46. Design director critique + system drift report (design-critique.md)  —  ✅ on canvas  ·  app ⬜\n47. Apply strict system §11 + critique fixes, batch 1 (tool, content, edge)  —  ✅ on canvas  ·  app ⬜\n48. Apply strict system §11 + critique fixes, batch 2 (Pro, ext, embed, pages, assets)  —  ✅ on canvas  ·  app ⬜\n45. Final audit: every board (docs/research/final-audit.md)  —  ✅ on canvas  ·  app ⬜\n\nI · Marketing audit (senior marketing leads, docs/research/marketing-*.md)\n49. Positioning + messaging + page copy rewrites  —  ✅ on canvas  ·  app ⬜\n50. SEO + content strategy + 90-day content plan  —  ✅ on canvas  ·  app ⬜\n51. Pricing, packaging, /pro sales page, CRO copy  —  ✅ on canvas  ·  app ⬜\n52. Go-to-market + launch plan + channel copy  —  ✅ on canvas  ·  app ⬜\n\nJ · Owner review fixes and gap closing (27 Sep)\n53. Stop and strong buttons follow the theme (D-R20) on every board  —  ✅ on canvas  ·  app ⬜\n54. Tablet views and missing themes for every page  —  ✅ on canvas  ·  app ⬜\n55. Language switcher (footer + Settings) and the /on, /vs, /guides, /learn hubs  —  ✅ on canvas  ·  app ⬜\n56. /embed page on phone and tablet; stats and settings on tablet/desktop  —  ✅ on canvas  ·  app ⬜\n57. Real-runtime render check of every board + compact canvas layout (D-R21)  —  ✅ on canvas  ·  app ⬜\n58. Popup spacing and padding (owner comments)  —  ✅ on canvas  ·  app ⬜\n59. Runtime bug: styles starting with a {{hole}} were dropped; fixed on every board, and the scanner now catches it  —  ✅ on canvas  ·  app ⬜\n60. Design system tokens (DESIGN §12, D-R23) + real-runtime §11 audit: 0 violations on all 300 boards  —  ✅ on canvas  ·  app ⬜\n61. Responsive contract (D-R22) + tool boards at the 600 and 1024 breakpoint edges  —  ✅ on canvas  ·  app ⬜\n62. /for hub cut to 14 (OD-3), embed 320×104 + credit outside the widget, docs updated  —  ✅ on canvas  ·  app ⬜\n63. Coverage check: tablet for the /on /vs /guides /learn hubs, checkout failed and Pro lapsed; blocked and time's up at desktop and tablet  —  ✅ on canvas  ·  app ⬜\n\nCanvas: 63 done · 0 building · 0 not started (of 63)\nReal app: 0 of 26 (starts after your approval)"
+    },
+    "sec_tool1_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Tool · phone · dark",
+      "kind": "title1",
+      "maxW": 2554,
+      "page": "tool1"
+    },
+    "sec_tool2_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Tool · phone · light",
+      "kind": "title1",
+      "maxW": 2408,
+      "page": "tool2"
+    },
+    "sec_tool3_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Tool · tablet, settings, stats, time's up",
+      "kind": "title1",
+      "maxW": 3854,
+      "page": "tool3"
+    },
+    "sec_tool4_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Tool · desktop",
+      "kind": "title1",
+      "maxW": 4474,
+      "page": "tool4"
+    },
+    "sec_tool4_1": {
+      "x": 0,
+      "y": 2900,
+      "text": "Tool · desktop · light",
+      "kind": "title1",
+      "maxW": 4474,
+      "page": "tool4"
+    },
+    "sec_tool5_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Tool · more screen sizes (320, 600, 1024, landscape, tablet landscape)",
+      "kind": "title1",
+      "maxW": 4177,
+      "page": "tool5"
+    },
+    "sec_tool5_1": {
+      "x": 0,
+      "y": 2160,
+      "text": "Tool · large displays (1920)",
+      "kind": "title1",
+      "maxW": 4177,
+      "page": "tool5"
+    },
+    "sec_states1_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Tool · edge states (1)",
+      "kind": "title1",
+      "maxW": 4430,
+      "page": "states1"
+    },
+    "sec_states2_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Tool · edge states (2)",
+      "kind": "title1",
+      "maxW": 4664,
+      "page": "states2"
+    },
+    "sec_states2_1": {
+      "x": 0,
+      "y": 1440,
+      "text": "Tool · edge states on desktop",
+      "kind": "title1",
+      "maxW": 4664,
+      "page": "states2"
+    },
+    "sec_states3_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Tool · banners, prompts, overlays",
+      "kind": "title1",
+      "maxW": 4795,
+      "page": "states3"
+    },
+    "sec_states4_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Tool · shortcuts, share, toasts",
+      "kind": "title1",
+      "maxW": 4041,
+      "page": "states4"
+    },
+    "sec_states4_1": {
+      "x": 0,
+      "y": 2360,
+      "text": "System · offline, notifications, tab states",
+      "kind": "title1",
+      "maxW": 4041,
+      "page": "states4"
+    },
+    "sec_ambient1_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Ambient modes · floating window",
+      "kind": "title1",
+      "maxW": 3983,
+      "page": "ambient1"
+    },
+    "sec_ambient2_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Ambient · minimal, message, cook",
+      "kind": "title1",
+      "maxW": 4325,
+      "page": "ambient2"
+    },
+    "sec_ambient2_1": {
+      "x": 0,
+      "y": 3008,
+      "text": "Floating window (PiP)",
+      "kind": "title1",
+      "maxW": 4325,
+      "page": "ambient2"
+    },
+    "sec_content1_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Content · /for/cooking article (51 pages use this)",
+      "kind": "title1",
+      "maxW": 9573,
+      "page": "content1"
+    },
+    "sec_content1_1": {
+      "x": 0,
+      "y": 5604,
+      "text": "Content · hub and home below the tool",
+      "kind": "title1",
+      "maxW": 9573,
+      "page": "content1"
+    },
+    "sec_content2_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Hubs · /on /vs /guides /learn",
+      "kind": "title1",
+      "maxW": 8602,
+      "page": "content2"
+    },
+    "sec_content2_1": {
+      "x": 0,
+      "y": 6464,
+      "text": "Guide types · /on device page",
+      "kind": "title1",
+      "maxW": 8602,
+      "page": "content2"
+    },
+    "sec_content3_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Guide types · /vs comparison",
+      "kind": "title1",
+      "maxW": 9784,
+      "page": "content3"
+    },
+    "sec_content3_1": {
+      "x": 0,
+      "y": 6610,
+      "text": "Guide types · /learn with code",
+      "kind": "title1",
+      "maxW": 9784,
+      "page": "content3"
+    },
+    "sec_content3_2": {
+      "x": 0,
+      "y": 14010,
+      "text": "Guide types · /guides how-to",
+      "kind": "title1",
+      "maxW": 9784,
+      "page": "content3"
+    },
+    "sec_site1_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Preset page /30m and /until/07-30",
+      "kind": "title1",
+      "maxW": 4868,
+      "page": "site1"
+    },
+    "sec_site2_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Extension landing, about, changelog",
+      "kind": "title1",
+      "maxW": 9086,
+      "page": "site2"
+    },
+    "sec_site2_1": {
+      "x": 0,
+      "y": 8154,
+      "text": "Privacy, terms, 404",
+      "kind": "title1",
+      "maxW": 9086,
+      "page": "site2"
+    },
+    "sec_pro1_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Pro · /pro",
+      "kind": "title1",
+      "maxW": 6948,
+      "page": "pro1"
+    },
+    "sec_pro1_1": {
+      "x": 0,
+      "y": 6517,
+      "text": "Pro · activate and manage devices",
+      "kind": "title1",
+      "maxW": 6948,
+      "page": "pro1"
+    },
+    "sec_pro2_0": {
+      "x": 0,
+      "y": -230,
+      "text": "System · browser tabs, Pro lapsed",
+      "kind": "title1",
+      "maxW": 5875,
+      "page": "pro2"
+    },
+    "sec_pro2_1": {
+      "x": 0,
+      "y": 3226,
+      "text": "System · checkout, update, installed app",
+      "kind": "title1",
+      "maxW": 5875,
+      "page": "pro2"
+    },
+    "sec_extension1_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Chrome extension · popup and badges",
+      "kind": "title1",
+      "maxW": 5650,
+      "page": "extension1"
+    },
+    "sec_extension1_1": {
+      "x": 0,
+      "y": 860,
+      "text": "Chrome extension · settings",
+      "kind": "title1",
+      "maxW": 5650,
+      "page": "extension1"
+    },
+    "sec_extension2_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Extension · popup edge states",
+      "kind": "title1",
+      "maxW": 4688,
+      "page": "extension2"
+    },
+    "sec_extension2_1": {
+      "x": 0,
+      "y": 860,
+      "text": "Extension · welcome page after install",
+      "kind": "title1",
+      "maxW": 4688,
+      "page": "extension2"
+    },
+    "sec_extension2_2": {
+      "x": 0,
+      "y": 4110,
+      "text": "Chrome Web Store listing",
+      "kind": "title1",
+      "maxW": 4688,
+      "page": "extension2"
+    },
+    "sec_extension2_3": {
+      "x": 0,
+      "y": 6320,
+      "text": "Store promo tiles, icons",
+      "kind": "title1",
+      "maxW": 4688,
+      "page": "extension2"
+    },
+    "sec_embed1_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Embed widget",
+      "kind": "title1",
+      "maxW": 7309,
+      "page": "embed1"
+    },
+    "sec_embed1_1": {
+      "x": 0,
+      "y": 3221,
+      "text": "Kiosk and library",
+      "kind": "title1",
+      "maxW": 7309,
+      "page": "embed1"
+    },
+    "sec_embed1_2": {
+      "x": 0,
+      "y": 8181,
+      "text": "Kiosk wall screens",
+      "kind": "title1",
+      "maxW": 7309,
+      "page": "embed1"
+    },
+    "sec_embed2_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Kiosk · free, dashboard, portrait",
+      "kind": "title1",
+      "maxW": 4607,
+      "page": "embed2"
+    },
+    "sec_embed2_1": {
+      "x": 0,
+      "y": 3380,
+      "text": "Embed edge states",
+      "kind": "title1",
+      "maxW": 4607,
+      "page": "embed2"
+    },
+    "sec_embed2_2": {
+      "x": 0,
+      "y": 4670,
+      "text": "Embed · tablet, phone, /embed/cook",
+      "kind": "title1",
+      "maxW": 4607,
+      "page": "embed2"
+    },
+    "sec_growth1_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Growth · first visit: proof in 5 seconds",
+      "kind": "title1",
+      "maxW": 4764,
+      "page": "growth1"
+    },
+    "sec_growth1_1": {
+      "x": 0,
+      "y": 1440,
+      "text": "Growth · trust panel: how AwakeTab knows",
+      "kind": "title1",
+      "maxW": 4764,
+      "page": "growth1"
+    },
+    "sec_growth1_2": {
+      "x": 0,
+      "y": 3110,
+      "text": "Growth · session done: one gentle next step",
+      "kind": "title1",
+      "maxW": 4764,
+      "page": "growth1"
+    },
+    "sec_growth2_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Growth · back from a hidden tab",
+      "kind": "title1",
+      "maxW": 4254,
+      "page": "growth2"
+    },
+    "sec_growth2_1": {
+      "x": 0,
+      "y": 2404,
+      "text": "Growth · Pro moments (informative, never pushy)",
+      "kind": "title1",
+      "maxW": 4254,
+      "page": "growth2"
+    },
+    "sec_growth3_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Growth · which plan fits (/pro helper)",
+      "kind": "title1",
+      "maxW": 4393,
+      "page": "growth3"
+    },
+    "sec_growth3_1": {
+      "x": 0,
+      "y": 3631,
+      "text": "Growth · tell a friend, share a setup",
+      "kind": "title1",
+      "maxW": 4393,
+      "page": "growth3"
+    },
+    "sec_growth4_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Growth · business entry points in articles",
+      "kind": "title1",
+      "maxW": 3586,
+      "page": "growth4"
+    },
+    "sec_a11y1_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Languages (real translations, 7 locales)",
+      "kind": "title1",
+      "maxW": 4846,
+      "page": "a11y1"
+    },
+    "sec_a11y1_1": {
+      "x": 0,
+      "y": 1556,
+      "text": "Languages · desktop",
+      "kind": "title1",
+      "maxW": 4846,
+      "page": "a11y1"
+    },
+    "sec_a11y1_2": {
+      "x": 0,
+      "y": 2846,
+      "text": "Accessibility · keyboard, before JavaScript",
+      "kind": "title1",
+      "maxW": 4846,
+      "page": "a11y1"
+    },
+    "sec_a11y1_3": {
+      "x": 0,
+      "y": 4136,
+      "text": "Accessibility · high contrast, zoom, reduced motion, screen reader",
+      "kind": "title1",
+      "maxW": 4846,
+      "page": "a11y1"
+    },
+    "sec_a11y2_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Accessibility · reduced motion, no JS phone, screen reader",
+      "kind": "title1",
+      "maxW": 3161,
+      "page": "a11y2"
+    },
+    "sec_a11y2_1": {
+      "x": 0,
+      "y": 2404,
+      "text": "Language switcher",
+      "kind": "title1",
+      "maxW": 3161,
+      "page": "a11y2"
+    },
+    "sec_brand_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Social share images (1200×630)",
+      "kind": "title1",
+      "maxW": 3337,
+      "page": "brand"
+    },
+    "sec_brand_1": {
+      "x": 0,
+      "y": 2390,
+      "text": "Brand",
+      "kind": "title1",
+      "maxW": 3337,
+      "page": "brand"
+    },
+    "sec_components_0": {
+      "x": 0,
+      "y": -230,
+      "text": "Page components · play with all props (Tweaks)",
+      "kind": "title1",
+      "maxW": 7400,
+      "page": "components"
+    }
+  },
+  "designSystems": []
+}

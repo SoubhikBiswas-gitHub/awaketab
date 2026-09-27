@@ -1,9 +1,48 @@
 ---
+// 404 (B6, canvas board Page404): "Error 404", the heading, the real tool (ToolIsland, as on every tool page; its
+// look is the tool's own, milestone B3), a link to the full tool and the popular guides. From 1024 the guides sit
+// in a second column. It is a tool page (CSS budget, docs/00 §11), so it loads styles/page-404.css only, not
+// pages.css. noindex; no ads.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ToolIsland from '../components/ToolIsland.astro';
+import '../styles/page-404.css';
 import { t } from '../i18n/load';
+
+const guides = [
+  ['Keep your screen on while cooking', '/for/cooking'],
+  ['Keep the screen on while presenting', '/for/presentations'],
+  ['Keep the screen on while downloading', '/for/downloads'],
+  ['Keep iPhone on in Safari', '/on/iphone-safari'],
+  ['iPhone Auto-Lock Never is greyed out', '/guides/iphone-auto-lock-never-greyed-out'],
+  ['Windows 11 screen off after 1 minute', '/guides/windows-11-screen-turns-off-after-1-minute'],
+] as const;
 ---
 
-<BaseLayout title={t('page.404.title')} description={t('page.home.description')} noindex>
-  <ToolIsland heading={t('page.404.h1')} autostart="0" />
+<BaseLayout title={t('page.404.title')} description={t('page.home.description')} noindex header={false}>
+  <div class="at-404">
+    <ToolIsland heading={t('page.404.h1')} kicker="Error 404" autostart="0">
+      <a class="at-404-full" href="/">More lengths and clock faces on the full tool<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <nav class="at-404-guides" aria-labelledby="nf-guides">
+        <h2 id="nf-guides">Popular guides</h2>
+        <ul>
+          {
+            guides.map(([title, path]) => (
+              <li>
+                <a href={path}>
+                  <span class="at-404-text">
+                    <span class="at-404-title">{title}</span>
+                    <span class="at-404-path">{path}</span>
+                  </span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" />
+                  </svg>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <a class="at-404-all" href="/guides">All guides</a>
+      </nav>
+    </ToolIsland>
+  </div>
 </BaseLayout>

@@ -1,0 +1,30 @@
+---
+description: AwakeTab UI/UX design system (Clear Night, version D). Apply to any UI, styling, copy or layout change in apps/web, apps/extension or the embed.
+globs: apps/web/src/**/*.{astro,ts,tsx,css},apps/extension/**/*.{ts,tsx,html,css},DESIGN.md,PRODUCT.md
+alwaysApply: false
+---
+
+# AwakeTab design rules
+
+Start at `docs/redesign/README.md` (status, DECISIONS.md, briefs, research). Source of truth: `DESIGN.md` for the design system, `PRODUCT.md` for users, principles and anti-references, and `docs/05-frontend-spec.md` for the current component spec. Read the relevant section before editing UI.
+
+- **Strict system (DESIGN.md §11):** spacing 4·8·12·16·20·24·32·40·48·64·96 only; 1 px borders (dashed only for choose/add); radii 8·12·16·20·28·999; control heights 44/48/52/60/64; type scale tokens only, weights 400/500/600; one primary action; no nested cards.
+- **Pill strings are a contract; never change them:** Ready · Starting… · Screen awake · Paused — tab hidden · Blocked — here's the fix · Tap to use the fallback · Awake via video fallback.
+- **State:** show it with pill text + glyph + ring pattern + logo bead together. Amber means paused and red means blocked, always.
+- **Lamp colours:** aqua (default), violet, mint and sky only. Keep contrast at AA or better (≥ 3:1 for UI, ≥ 4.5:1 for text).
+- **Themes:** light, dark and auto. Auto follows `prefers-color-scheme` live.
+- **Screen sizes:** design for phone (360–599), tablet (600–1023) and desktop (≥ 1024). On phones, +15 min · Stop (or the lamp CTA) sits at the very bottom, with the length block 20 px above it.
+- **Time:** 12-hour AM/PM for `en`, a full date line, "tomorrow" past midnight, and the end time shown before starting.
+- **Motion:**
+  - CSS only, ease-out `cubic-bezier(.22,1,.36,1)`, no bounce;
+  - animate transform, opacity, clip-path and stroke-dasharray only;
+  - everything stops under `prefers-reduced-motion`.
+- **Markup and CSS:**
+  - Zero hydration; shadcn is build-time only.
+  - System fonts on tool pages; use `--at-*` tokens and never hard-code colours.
+  - Logical CSS properties only.
+  - Real buttons and links; targets ≥ 44 px.
+  - Inline panels before modals.
+- **Budgets:** tool JS ≤ 15 KB critical / 40 KB total gz (almost no headroom), CSS ≤ 20 KB gz, CLS 0, LCP ≤ 1.2 s.
+- **Copy:** plain, honest, no em dashes in new copy, and no ads on the awake screen.
+- **Before any push:** keep all gates green (`pnpm test`, `pnpm test:e2e`, `pnpm build && pnpm test:seo`). `main` auto-deploys.

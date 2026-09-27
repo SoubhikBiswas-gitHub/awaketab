@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Activate AwakeTab Pro</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease),opacity .45s var(--ease)}
+button:active{transform:scale(.96)}
+button:disabled,input:disabled,select:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+a{transition:color .45s var(--ease),background-color .45s var(--ease),border-color .45s var(--ease)}
+h1,h2,h3,h4,p,figure,blockquote{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+.at-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.at-num{font-family:Geist,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"zero" 0}
+.at-kick{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.2s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-fade{transition:background-color .6s var(--ease),border-color .6s var(--ease),opacity .6s var(--ease),fill .6s var(--ease),stroke .6s var(--ease)}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-breathe{animation:at-breathe 3.4s var(--ease) infinite alternate}
+.at-ignite{transform-box:fill-box;transform-origin:center;animation:at-ignite .6s var(--ease) .3s both}
+.at-travel{animation:at-travel .6s var(--ease) both}
+.at-off{transition:stroke-dasharray .9s var(--ease),stroke-opacity .9s var(--ease),opacity .9s var(--ease),fill .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-breathe{from{opacity:.55}to{opacity:1}}
+@keyframes at-ignite{0%{transform:scale(.6);opacity:.4}55%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes at-travel{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--at-tx,0),var(--at-ty,0)) scale(.5);opacity:0}}
+.at-chev{transition:transform .6s var(--ease)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+<style>
+.at-busy{transform-origin:center;animation:at-spin 1.1s linear infinite}
+</style>
+</helmet>
+<div class="at-root" style="--at-focus: {{lamp}}; width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; left: -25%; top: 0; width: 150%; height: 70%; background: radial-gradient(45% 45% at 50% 30%, {{aura}} 0%, transparent 70%); pointer-events: none; transition: background .8s"></div>
+
+  <header style="position: relative; height: {{hdrH}}; flex-shrink: 0; box-sizing: border-box; padding: 0 {{gutter}}; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+    <a href="Main.dc.html" aria-label="AwakeTab, open the tool" style="display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; color: {{t.ink}}; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{bead}}" style="transition: fill .6s"></circle></svg>AwakeTab</a>
+    <sc-if value="{{isDesk}}" hint-placeholder-val="{{false}}"><nav aria-label="Main" style="display: flex; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 500"><a href="#" style="padding: 0 12px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Use cases</a><a href="#" style="padding: 0 12px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Devices</a><a href="#" style="padding: 0 12px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: {{t.ink2}}; text-decoration: none">Extension</a><a href="#" aria-current="page" style="padding: 0 12px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; color: {{t.ink}}; font-weight: 600; text-decoration: none"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 999px; background: {{lamp}}"></span>Pro</a></nav></sc-if>
+    <div role="radiogroup" aria-label="Theme" style="position: relative; flex-shrink: 0; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}"><div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{themeX}})"></div><button role="radio" aria-checked="{{themeLight}}" aria-label="Light" title="Light" onClick="{{setLight}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeLightInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button><button role="radio" aria-checked="{{themeDark}}" aria-label="Dark" title="Dark" onClick="{{setDark}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeDarkInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button><button role="radio" aria-checked="{{themeAuto}}" aria-label="Auto, follows your system" title="Auto: follows your system" onClick="{{setAuto}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeAutoInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button></div>
+  </header>
+
+  <main style="{{mainStyle}}">
+    <div style="display: flex; flex-direction: column; gap: 24px; min-width: 0">
+      <a href="Pro.dc.html" style="align-self: flex-start; min-height: 44px; display: inline-flex; align-items: center; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 500; color: {{t.ink2}}; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>AwakeTab Pro</a>
+      <div class="at-in" style="display: flex; flex-direction: column; gap: 12px">
+        <h1 style="font-size: {{h1Size}}; line-height: {{h1LH}}; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance">Activate Pro</h1>
+        <p style="font-size: 18px; line-height: 28px; color: {{t.ink2}}; text-wrap: pretty">{{lead}}</p>
+      </div>
+
+      <sc-if value="{{showForm}}" hint-placeholder-val="{{true}}">
+        <form aria-busy="{{busy}}" onSubmit="{{submit}}" class="at-rise" style="box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; padding: {{cardPad}}; box-shadow: {{cardShadow}}; display: flex; flex-direction: column; gap: 12px; border-color: {{formLine}}">
+          <label for="licence-key" style="font-size: 15px; line-height: 22px; font-weight: 600">Enter licence key</label>
+          <input id="licence-key" name="key" type="text" value="{{key}}" onChange="{{setKey}}" readOnly="{{busy}}" autoComplete="off" spellCheck="false" minLength="20" maxLength="80" aria-invalid="{{isErrorStr}}" aria-describedby="key-hint activate-msg" placeholder="Paste the key from your receipt" style="height: 48px; box-sizing: border-box; padding: 0 16px; border-radius: 8px; border: 1px solid {{fieldLine}}; background: {{t.sunken}}; color: {{t.ink}}; font-family: 'Geist Mono', ui-monospace, monospace; font-size: {{keySize}}; letter-spacing: 0.01em">
+          <p id="key-hint" style="font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{hint}}</p>
+          <button type="button" onClick="{{submit}}" aria-disabled="{{busy}}" style="height: 60px; border-radius: 20px; border: 0; background: {{btnBg}}; color: {{btnInk}}; font-size: 17px; line-height: 24px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{btnGlow}}">
+            <sc-if value="{{isChecking}}" hint-placeholder-val="{{false}}">
+              <svg class="at-busy" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity="0.3" stroke-width="2.4"></circle><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path></svg>
+            </sc-if>
+            <sc-if value="{{notChecking}}" hint-placeholder-val="{{true}}">
+              <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>
+            </sc-if>
+            {{btnLabel}}
+          </button>
+        </form>
+      </sc-if>
+
+      <div id="activate-msg" aria-live="polite" style="display: flex; flex-direction: column; gap: 24px">
+        <sc-if value="{{isChecking}}" hint-placeholder-val="{{false}}">
+          <p role="status" class="at-in" style="font-size: 15px; line-height: 22px; color: {{t.ink2}}">Checking your key with Polar. This usually takes a second or two.</p>
+        </sc-if>
+
+        <sc-if value="{{isError}}" hint-placeholder-val="{{false}}">
+          <div role="alert" class="at-rise" style="display: flex; flex-direction: column; gap: 12px; padding: {{cardPad}}; border-radius: 16px; background: {{errSoft}}; border: 1px solid {{errLine}}">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 24px; font-weight: 600">
+              <svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible"><path d="{{errGlyph}}" fill="{{errTone}}" stroke="{{errTone}}" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+              {{errTitle}}
+            </div>
+            <p style="font-size: 15px; line-height: 22px; color: {{t.ink2}}">{{errText}}</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; padding-top: 4px">
+              <button type="button" onClick="{{retry}}" style="height: 52px; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; color: {{t.primaryInk}}; font-size: 15px; line-height: 22px; font-weight: 600">Retry</button>
+              <sc-if value="{{errManage}}" hint-placeholder-val="{{false}}">
+                <a href="ProManage.dc.html" style="height: 52px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px">Manage devices</a>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{isSuccessWeb}}" hint-placeholder-val="{{false}}">
+          <div role="status" class="at-rise" style="box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; padding: {{cardPad}}; box-shadow: {{cardShadow}}; display: flex; flex-direction: column; gap: 20px; border-color: {{lampLine}}">
+            <div style="display: flex; align-items: center; gap: 16px">
+              <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true" style="flex-shrink: 0; overflow: visible"><circle cx="24" cy="24" r="20" fill="none" stroke="{{t.track}}" stroke-width="3"></circle><circle cx="24" cy="24" r="20" fill="none" stroke="{{lamp}}" stroke-width="3" stroke-linecap="round" transform="rotate(-90 24 24)"></circle><circle class="at-halo" cx="24" cy="4" r="3.5" fill="{{lamp}}"></circle><circle cx="24" cy="4" r="3" fill="{{t.ink}}"></circle><path d="M16.5 24.5l5 5 10-10.5" fill="none" stroke="{{lamp}}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <div style="display: flex; flex-direction: column; gap: 4px">
+                <h2 style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">Pro is active on this device</h2>
+                <p style="font-size: 14px; line-height: 20px; color: {{t.muted}}">Key ending {{keyTail}} · this device uses one of your five activations.</p>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 20px; border-top: 1px solid {{t.line}}">
+              <h3 style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Unlocked here</h3>
+              <ul style="display: grid; grid-template-columns: {{unlockCols}}; gap: 8px 24px">
+                <sc-for list="{{unlocked}}" as="u" hint-placeholder-count="6">
+                  <li style="display: flex; gap: 8px; align-items: flex-start; font-size: 15px; line-height: 22px; color: {{t.ink2}}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{lamp}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                    {{u}}
+                  </li>
+                </sc-for>
+              </ul>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+              <a href="Main.dc.html" style="height: 60px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}; flex: 1 1 200px"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>Open AwakeTab</a>
+              <a href="ProManage.dc.html" style="height: 52px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1 1 160px">Manage devices</a>
+            </div>
+            <button type="button" onClick="{{reset}}" style="align-self: flex-start; min-height: 44px; border: 0; background: transparent; color: {{t.ink2}}; font-size: 14px; line-height: 20px; font-weight: 500; text-decoration: underline; text-underline-offset: 4px">Use a different key</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{isSuccessExt}}" hint-placeholder-val="{{false}}">
+          <div role="status" class="at-rise" style="display: flex; flex-direction: column; gap: 16px; padding: {{cardPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{lampLine}}">
+            <h2 id="ext-title" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">Your licence key</h2>
+            <p id="ext-copy" style="font-size: 15px; line-height: 22px; color: {{t.ink2}}">Copy this key and paste it in the AwakeTab for Chrome options page. There is no automatic hand-off.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <input type="text" readOnly="{{true}}" value="{{key}}" aria-labelledby="ext-title" aria-describedby="ext-copy" style="flex: 1 1 220px; min-width: 0; height: 48px; box-sizing: border-box; padding: 0 16px; border-radius: 8px; border: 1px solid {{t.inputBorder}}; background: {{t.sunken}}; color: {{t.ink}}; font-family: 'Geist Mono', ui-monospace, monospace; font-size: {{keySize}}">
+              <button type="button" onClick="{{copy}}" style="height: 52px; flex: 0 0 auto; min-width: 104px; padding: 0 20px; border-radius: 20px; border: 0; background: {{lamp}}; color: {{lampInk}}; font-size: 15px; line-height: 22px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{copyIcon}}"></path></svg>
+                <span aria-live="polite">{{copyLabel}}</span>
+              </button>
+            </div>
+            <p style="font-size: 14px; line-height: 20px; color: {{t.muted}}">This browser stays unactivated, so the extension uses one of your five activations, not two.</p>
+            <button type="button" onClick="{{reset}}" style="align-self: flex-start; min-height: 44px; border: 0; background: transparent; color: {{t.ink2}}; font-size: 14px; line-height: 20px; font-weight: 500; text-decoration: underline; text-underline-offset: 4px">Use a different key</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <sc-if value="{{showAside}}" hint-placeholder-val="{{true}}">
+    <aside aria-labelledby="fails-h" style="display: flex; flex-direction: column; gap: 16px; min-width: 0; padding-top: {{asideTop}}">
+      <h2 id="fails-h" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">If activation fails</h2>
+      <ul style="display: flex; flex-direction: column; border-top: 1px solid {{t.line}}">
+        <sc-for list="{{fails}}" as="f" hint-placeholder-count="6">
+          <li aria-current="{{f.current}}" style="display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; margin-inline: -16px; border-radius: {{f.radius}}; border-bottom: 1px solid {{f.line}}; background: {{f.bg}}">
+            <code style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; color: {{t.muted}}">{{f.code}}</code>
+            <span style="font-size: 15px; line-height: 22px; color: {{f.ink}}">{{f.text}}</span>
+          </li>
+        </sc-for>
+      </ul>
+      <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 4px">
+        <a href="ProManage.dc.html" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; font-weight: 600; color: {{t.ink}}; text-decoration: underline; text-decoration-color: {{t.line2}}; text-underline-offset: 4px">Manage devices</a>
+        <a href="Pro.dc.html" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; color: {{t.ink2}}; text-decoration: underline; text-decoration-color: {{t.line2}}; text-underline-offset: 4px">No key yet? See the Pro plans</a>
+      </div>
+    </aside>
+    </sc-if>
+  </main>
+  <footer style="position: relative; flex-shrink: 0; box-sizing: border-box; width: 100%; padding: {{footPad}}; border-top: 1px solid {{t.line}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px"><p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p><nav aria-label="Site" style="display: flex; flex-wrap: wrap; column-gap: 16px"><a href="PagePrivacyDesk.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Privacy</a><a href="PageTermsPhone.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Terms</a><a href="PageChangelog.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Changelog</a><a href="PageAbout.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">About</a><a href="#" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a></nav><div onKeyDown="{{lang.key}}" style="{{lang.wrapStyle}}">
+      <button type="button" id="{{lang.btnId}}" aria-expanded="{{lang.expanded}}" aria-controls="{{lang.listId}}" aria-label="{{lang.aria}}" onClick="{{lang.toggle}}" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"></path></svg>{{lang.label}}<svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: {{lang.chev}}"><path d="M6 9l6 6 6-6"></path></svg></button>
+      <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+        <div aria-hidden="true" onClick="{{lang.close}}" style="position: fixed; inset: 0; z-index: 29; background: rgba(4,7,12,.55)"></div>
+      </sc-if>
+      <sc-if value="{{lang.open}}" hint-placeholder-val="{{false}}">
+        <div id="{{lang.listId}}" role="{{lang.role}}" aria-modal="{{lang.modal}}" aria-labelledby="{{lang.headId}}" class="at-in" style="{{lang.panelStyle}}">
+          <sc-if value="{{lang.sheet}}" hint-placeholder-val="{{false}}">
+            <div aria-hidden="true" style="width: 36px; height: 4px; margin: 0 auto 8px; border-radius: 999px; background: {{t.line2}}"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 8px 4px">
+              <h2 id="{{lang.headId}}" style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; color: {{t.ink}}">{{lang.title}}</h2>
+              <button type="button" aria-label="{{lang.closeLabel}}" onClick="{{lang.close}}" style="width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+            </div>
+          </sc-if>
+          <sc-if value="{{lang.pop}}" hint-placeholder-val="{{true}}">
+            <p id="{{lang.headId}}" style="margin: 0; padding: 8px 12px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{lang.title}}</p>
+          </sc-if>
+          <ul role="list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px">
+            <sc-for list="{{lang.rows}}" as="r" hint-placeholder-count="8">
+              <li style="display: flex">
+                <a href="{{r.href}}" lang="{{r.lang}}" hreflang="{{r.hreflang}}" aria-current="{{r.cur}}" style="flex: 1; min-width: 0; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 48px; padding: 0 12px; box-sizing: border-box; border-radius: 12px; border: 1px solid {{r.border}}; background: {{r.bg}}; color: {{t.ink}}; text-decoration: none"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="{{r.ring}}" stroke-width="1.8"></circle><circle cx="10" cy="10" r="4" fill="{{r.dot}}"></circle></svg><span style="font-size: 15px; line-height: 22px; font-weight: {{r.weight}}">{{r.name}}</span><span lang="{{lang.pageLang}}" style="font-size: 13px; line-height: 18px; color: {{r.noteInk}}; text-align: end">{{r.note}}</span></a>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-if>
+    </div></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"state":{"editor":"enum","options":["idle","checking","success","error"],"default":"idle"},"error":{"editor":"enum","options":["invalid_key","activation_limit","revoked","polar_unavailable","offline","bad_token"],"default":"invalid_key"},"ext":{"editor":"boolean","default":false},"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"language":{"editor":"enum","options":["closed","open"],"default":"closed"},"$preview":{"width":390,"height":1704}}'>
+// AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
+const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C', shadow: 'none' };
+const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA', shadow: '0 1px 2px rgba(14,23,38,.06)' };
+const AT_OLED = Object.assign({}, AT_DARK, { bg: '#000000', ground: '#000000', surface: '#0A0A0A' });
+const AT_LAMPS = [
+  { id: 'aqua', name: 'Aqua', dark: '#5BE0E8', light: '#087B87', pro: false },
+  { id: 'violet', name: 'Violet', dark: '#A594FF', light: '#5A47CF', pro: false },
+  { id: 'mint', name: 'Mint', dark: '#7EF0B8', light: '#167A50', pro: true },
+  { id: 'sky', name: 'Sky', dark: '#7CB8FF', light: '#255FBD', pro: true }
+];
+const AT_GLYPH = {
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z'
+};
+// Status pill sizes (§11.4): L kiosk, M tool, S popup / PiP / full embed, XS compact embed.
+const AT_PILL = {
+  L: { h: '48px', pad: '0 20px 0 16px', gap: '8px', fs: '20px', lh: '28px' },
+  M: { h: '38px', pad: '0 16px 0 12px', gap: '8px', fs: '15px', lh: '22px' },
+  S: { h: '32px', pad: '0 12px 0 8px', gap: '8px', fs: '14px', lh: '20px' },
+  XS: { h: '26px', pad: '0 8px', gap: '4px', fs: '13px', lh: '18px' }
+};
+function atRgba(hex, a) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atPill(o) {
+  const s = AT_PILL[o.size || 'M'];
+  return { label: o.label, h: s.h, pad: s.pad, gap: s.gap, fs: s.fs, lh: s.lh, tone: o.tone, glyph: o.glyph || AT_GLYPH.dot, fill: o.hollow ? 'transparent' : o.tone, stroke: o.stroke || '1.6', soft: atRgba(o.tone, 0.12), line: atRgba(o.tone, 0.38), glow: o.glow ? atRgba(o.tone, 0.8) : 'transparent', cls: 'at-fade' };
+}
+// Page chrome shared by every board: tokens, lamp, header, theme switch, card and footer metrics.
+function atChrome(o) {
+  const L = o.layout || 'phone';
+  const desk = L === 'desktop', tab = L === 'tablet', phone = !desk && !tab;
+  const theme = o.theme || 'auto';
+  const dark = theme === 'dark' || theme === 'oled' || (theme === 'auto' && o.sysDark !== false);
+  const t = theme === 'oled' ? AT_OLED : dark ? AT_DARK : AT_LIGHT;
+  const def = AT_LAMPS.find((l) => l.id === o.lamp) || AT_LAMPS[0];
+  const lamp = dark ? def.dark : def.light;
+  const set = (id) => () => { if (o.set) o.set(id); };
+  const ink = (id) => (theme === id ? t.ink : t.ink2);
+  return {
+    t, dark, lamp, lampText: lamp, lampInk: dark ? '#04232A' : '#FFFFFF', bead: lamp,
+    lampSoft: atRgba(lamp, 0.14), lampLine: atRgba(lamp, 0.45), lampGlow: atRgba(lamp, 0.55), lampFaint: atRgba(lamp, 0.08), lampTag: atRgba(lamp, 0.12),
+    halo: 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(lamp, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(lamp, 0) + ' 100%)',
+    isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone,
+    hdrH: phone ? '60px' : '68px', gutter: desk ? '80px' : tab ? '32px' : '16px', secGap: desk ? '96px' : tab ? '64px' : '48px',
+    cardPad: phone ? '20px' : '24px', cardShadow: t.shadow, footPad: phone ? '24px 16px 32px' : desk ? '24px 80px' : '24px 32px',
+    themeX: (theme === 'light' ? 0 : theme === 'dark' ? 44 : 88) + 'px',
+    themeLight: theme === 'light', themeDark: theme === 'dark', themeAuto: theme === 'auto',
+    themeLightInk: ink('light'), themeDarkInk: ink('dark'), themeAutoInk: ink('auto'),
+    setLight: set('light'), setDark: set('dark'), setAuto: set('auto')
+  };
+}
+
+// docs/09 §2.10: API error code → exact copy (license.* strings in en.json).
+const ERRORS = [
+  ['invalid_key', "That key doesn't match a purchase. Check the receipt email.", 'bad'],
+  ['activation_limit', 'This key is already active on 5 devices. Remove one in Manage devices.', 'bad'],
+  ['revoked', 'This key was refunded or cancelled.', 'bad'],
+  ['polar_unavailable', 'Your purchase is still syncing — retry in a minute', 'warn'],
+  ['offline', "You're offline — try again when connected.", 'warn'],
+  ['bad_token', 'This device needs to re-activate.', 'warn']
+];
+const TITLES = { invalid_key: "Activation didn't work", activation_limit: 'All five devices are in use', revoked: 'This key is no longer active', polar_unavailable: 'Not ready yet', offline: 'No connection', bad_token: 'Activate this device again' };
+const SAMPLE_KEY = '7C1E94B2-5A0D-4F63-9E28-B31D6CA04F7A';
+const UNLOCKED = ['Mint and Sky lamp colours', 'Message mode on the awake screen', '12 weeks of stats and CSV export', 'A taller floating window', 'Schedules and auto-start in AwakeTab for Chrome', 'No ads on the guides'];
+const TRI = 'M6 1L11.2 10.5H.8z';
+const PAUSE = 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z';
+// Natural heights, measured with the static render (ProShot.mjs), max across states.
+const HEIGHTS = { phone: [1704, 1170], tablet: [1602, 952], desktop: [984, 972] };
+
+// AT-LANG v1 (language switcher; PRIMITIVES.md P-LANG). Keep identical across files.
+const AT_LOCALES = [
+  ['en', '', 'en', 'English', true], ['es', '/es', 'es', 'Español', false], ['pt-br', '/pt-br', 'pt-BR', 'Português (Brasil)', false],
+  ['de', '/de', 'de', 'Deutsch', false], ['fr', '/fr', 'fr', 'Français', false], ['ja', '/ja', 'ja', '日本語', false],
+  ['zh', '/zh', 'zh-Hans', '简体中文', false], ['hi', '/hi', 'hi', 'हिन्दी', false]
+];
+const AT_LANG_COPY = { title: 'Language', current: 'Current', review: 'Translation in review', close: 'Close' };
+// o = { layout, t, lamp, open, toggle, close, cur: 'en', path: '/', variant: 'footer' | 'settings' }
+function atLang(o) {
+  const t = o.t, cur = o.cur || 'en', path = o.path || '/', settings = o.variant === 'settings', open = !!o.open;
+  const id = settings ? 'at-lang-set' : 'at-lang', sheet = !settings && o.layout === 'phone';
+  const a = (hex, x) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + x + ')'; };
+  const here = AT_LOCALES.find((l) => l[0] === cur) || AT_LOCALES[0];
+  const panel = 'box-sizing: border-box; display: flex; flex-direction: column; background: ' + t.surface + '; border: 1px solid ' + t.line + '; box-shadow: 0 24px 64px -24px rgba(0,0,0,.45); ';
+  return {
+    open, sheet: sheet && open, pop: !sheet && !settings, btnId: id + '-btn', listId: id + '-list', headId: id + '-h',
+    label: here[3], aria: AT_LANG_COPY.title + ': ' + here[3], title: AT_LANG_COPY.title, closeLabel: AT_LANG_COPY.close, pageLang: here[2],
+    expanded: open ? 'true' : 'false', chev: open ? 'rotate(180deg)' : 'none', role: sheet ? 'dialog' : 'group', modal: sheet ? 'true' : 'false',
+    wrapStyle: sheet ? 'display: flex' : 'position: relative; display: flex; margin-inline-start: auto',
+    panelStyle: sheet
+      ? panel + 'position: fixed; inset-inline: 0; bottom: 0; z-index: 30; padding: 8px 16px 32px; border-radius: 28px 28px 0 0; border-bottom: 0'
+      : panel + 'position: absolute; inset-inline-end: 0; bottom: calc(100% + 8px); z-index: 30; width: 360px; padding: 4px; border-radius: 16px',
+    toggle: () => {
+      o.toggle();
+      if (!open) setTimeout(() => { try { document.querySelector('#' + id + '-list a[aria-current="true"]').focus(); } catch (e) {} }, 60);
+    },
+    close: () => o.close(),
+    key: (e) => {
+      const k = e && e.key, box = (e && e.currentTarget) || document;
+      if (k === 'Escape' && open) {
+        if (e.preventDefault) e.preventDefault();
+        o.close();
+        try { box.querySelector('button[aria-controls]').focus(); } catch (x) {}
+        return;
+      }
+      const step = { ArrowDown: 1, ArrowUp: -1, Home: 'home', End: 'end' }[k];
+      if (!step || !open) return;
+      let rows = [];
+      try { rows = Array.from(box.querySelectorAll('a[hreflang]')); } catch (x) {}
+      if (!rows.length) return;
+      if (e.preventDefault) e.preventDefault();
+      const i = rows.indexOf(document.activeElement), n = rows.length;
+      rows[step === 'home' ? 0 : step === 'end' ? n - 1 : i < 0 ? (step > 0 ? 0 : n - 1) : (i + step + n) % n].focus();
+    },
+    rows: AT_LOCALES.map(([lid, prefix, lang, name, reviewed]) => {
+      const on = lid === cur;
+      return {
+        href: prefix + path, lang, hreflang: lang, name, cur: on ? 'true' : 'false',
+        border: on ? a(o.lamp, 0.45) : 'transparent', bg: on ? a(o.lamp, 0.14) : 'transparent', weight: on ? 600 : 500,
+        ring: on ? o.lamp : t.inputBorder, dot: on ? o.lamp : 'transparent',
+        note: on ? AT_LANG_COPY.current : reviewed ? '' : AT_LANG_COPY.review, noteInk: on ? t.ink2 : t.muted
+      };
+    })
+  };
+}
+// P-LANG: this page has no translations yet, so every other locale links to its home (PRIMITIVES.md P-LANG).
+function atLangHome(v) { v.rows.forEach((r, i) => { if (i) r.href = r.href.replace(/^(\/[a-z-]+)\/.+$/, '$1/'); }); return v; }
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = Object.assign({ theme: props.theme ?? 'auto', langOpen: props.language === 'open', sysDark: this.sys(), copied: false }, this.seed(props.state ?? 'idle', props.error));
+  }
+  seed(st, err) { return { st, err: err ?? 'invalid_key', key: st === 'idle' ? '' : SAMPLE_KEY, copied: false }; }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() {
+    clearTimeout(this.pending); clearTimeout(this.copyT);
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+  }
+  componentDidUpdate(prev) {
+    const p = this.props;
+    if (prev.theme !== p.theme && p.theme) this.setState({ theme: p.theme });
+    if (prev.state !== p.state || prev.error !== p.error) this.setState(this.seed(p.state ?? 'idle', p.error));
+  }
+  rgba(hex, a) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  // Prototype check: keys under 20 characters fail as invalid_key (the real form has minlength 20);
+  // anything else succeeds after a short wait, standing in for the Polar round trip.
+  submit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (this.state.st === 'checking') return;
+    clearTimeout(this.pending);
+    this.setState({ st: 'checking', copied: false });
+    this.pending = setTimeout(() => {
+      const k = String(this.state.key || '').replace(/\s/g, '');
+      this.setState(k.length >= 20 ? { st: 'success' } : { st: 'error', err: 'invalid_key' });
+    }, 1400);
+  }
+  renderVals() {
+    const s = this.state;
+    const L = this.props.layout ?? 'phone';
+    const desk = L === 'desktop', tab = L === 'tablet';
+    const ext = !!this.props.ext;
+    const b = atChrome({ theme: s.theme, sysDark: s.sysDark, layout: L, set: (id) => this.setState({ theme: id }) });
+    b.lang = atLangHome(atLang({ layout: L, t: b.t, lamp: b.lamp, path: '/pro/activate', open: this.state.langOpen, toggle: () => this.setState({ langOpen: !this.state.langOpen }), close: () => this.setState({ langOpen: false }) }));
+    const t = b.t, dark = b.dark, lamp = b.lamp;
+    const amber = t.warn, red = t.bad;
+    const st = s.st;
+    const checking = st === 'checking', error = st === 'error', success = st === 'success';
+    const errRow = ERRORS.find((r) => r[0] === s.err) ?? ERRORS[0];
+    const errTone = errRow[2] === 'warn' ? amber : red;
+    const tail = String(s.key || '').replace(/\s/g, '').slice(-4).toUpperCase() || '····';
+    return Object.assign(b, {
+      W: desk ? '1280px' : tab ? '820px' : '390px', H: HEIGHTS[L][this.props.state === "success" ? 1 : 0] + "px", isDesk: desk,
+      aura: success ? this.rgba(lamp, dark ? 0.16 : 0.12) : error ? this.rgba(errTone, 0.06) : this.rgba(lamp, 0.06),
+      mainStyle: desk
+        ? 'position: relative; flex-grow: 1; box-sizing: border-box; width: 100%; max-width: 1280px; margin: 0 auto; padding: 48px 80px 96px; display: grid; grid-template-columns: minmax(0, 620px) minmax(0, 1fr); column-gap: 96px; align-items: start'
+        : 'position: relative; flex-grow: 1; box-sizing: border-box; width: 100%; max-width: ' + (tab ? '640px' : '100%') + '; margin: 0 auto; padding: ' + (tab ? '40px 0 64px' : '24px 16px 48px') + '; display: flex; flex-direction: column; gap: 48px',
+      showAside: !success || desk, asideTop: desk ? '64px' : '0',
+      h1Size: desk || tab ? '48px' : '34px', h1LH: desk || tab ? '56px' : '42px',
+      keySize: desk || tab ? '16px' : '14px', unlockCols: desk || tab ? 'repeat(2, minmax(0, 1fr))' : 'minmax(0, 1fr)',
+      lead: ext
+        ? 'Enter your key here to copy it into AwakeTab for Chrome. This browser is not activated: the extension activates itself, so it uses one of your five activations, not two.'
+        : 'Your key is in the email from Polar and on the receipt page. This device counts as one of five activations.',
+      showForm: !success, key: s.key, busy: checking, isChecking: checking, notChecking: !checking,
+      isError: error, isErrorStr: error ? 'true' : 'false', isSuccessWeb: success && !ext, isSuccessExt: success && ext,
+      hint: ext ? 'Nothing is activated in this browser.' : 'Polar sends the key by email right after checkout.',
+      formLine: error ? this.rgba(errTone, 0.38) : t.line, fieldLine: error ? errTone : t.inputBorder,
+      btnBg: checking ? t.track : lamp, btnInk: checking ? t.ink2 : (dark ? '#04232A' : '#FFFFFF'), btnGlow: checking ? 'transparent' : this.rgba(lamp, 0.55),
+      btnLabel: checking ? 'Checking your key…' : ext ? 'Show key for the extension' : 'Activate on this device',
+      errTone, errSoft: this.rgba(errTone, 0.08), errLine: this.rgba(errTone, 0.32), errGlyph: errRow[2] === 'warn' ? PAUSE : TRI,
+      errTitle: TITLES[errRow[0]], errText: errRow[1], errManage: errRow[0] === 'activation_limit',
+      keyTail: tail, unlocked: UNLOCKED,
+      copyLabel: s.copied ? 'Copied' : 'Copy', copyIcon: s.copied ? 'M5 12.5l4.5 4.5L19 7.5' : 'M9 9h10v10H9zM5 15V5h10',
+      fails: ERRORS.map(([code, text, tone]) => {
+        const cur = error && code === errRow[0];
+        const c = tone === 'warn' ? amber : red;
+        return { code, text, current: cur ? 'true' : 'false', radius: cur ? '16px' : '0', bg: cur ? this.rgba(c, 0.08) : 'transparent', line: cur ? 'transparent' : t.line, ink: cur ? t.ink : t.ink2 };
+      }),
+      setKey: (e) => this.setState({ key: String((e && e.target && e.target.value) ?? ''), st: s.st === 'error' ? 'idle' : s.st }),
+      submit: (e) => this.submit(e), retry: () => this.submit(),
+      reset: () => { clearTimeout(this.pending); this.setState({ st: 'idle', key: '', copied: false }); },
+      copy: () => {
+        try { navigator.clipboard.writeText(s.key); } catch (e) {}
+        clearTimeout(this.copyT);
+        this.setState({ copied: true });
+        this.copyT = setTimeout(() => this.setState({ copied: false }), 2000);
+      }
+
+    });
+  }
+}
+</script>
+</body>
+</html>

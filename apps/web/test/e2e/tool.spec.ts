@@ -24,6 +24,7 @@ test('journey 1 autostart shows Screen awake', async ({ page }) => {
 
 test('journey 2 preset 2 h writes a duration session', async ({ page }) => {
   await page.goto('/');
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
   await page.getByRole('button', { name: '2 h', exact: true }).click();
   await expect(page.locator('[data-timer-digits]')).toHaveText(/0[12]:\d{2}:\d{2}/);
   const session = await page.evaluate(() => localStorage.getItem('at.v1.session'));
@@ -32,6 +33,7 @@ test('journey 2 preset 2 h writes a duration session', async ({ page }) => {
 
 test('journey 3 until picker shows Tomorrow when past', async ({ page }) => {
   await page.goto('/');
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
   await page.getByRole('button', { name: 'Until…' }).click();
   const dlg = page.locator('dialog[data-dialog="until"]');
   await expect(dlg).toBeVisible();
@@ -93,6 +95,7 @@ test('journey 6 timer end chimes, flashes the title and opens extend', async ({ 
   });
   await page.clock.install();
   await page.goto('/?autostart=0');
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
   // A pointerdown on the island primes the AudioContext (docs/04 §10).
   await page.locator('#awaketab-tool h1').click();
   await page.getByRole('button', { name: 'Custom…' }).click();
@@ -183,6 +186,9 @@ test('journey 9 mocked Pro activation shows the badge then revokes', async ({ pa
   await page.goto('/pro/activate');
   await page.locator('input[name="key"]').fill('ATAB-TEST-KEY-1234567890');
   await page.locator('[data-activate] button[type="submit"]').click();
+  // B7 / O-26: activation ends on "Pro is active on this device" (no redirect); its lamp action opens the tool.
+  await expect(page.locator('[data-ok]')).toBeVisible();
+  await page.locator('[data-ok-open]').click();
   await page.waitForURL('**/');
   await expect(page.locator('[data-pro-badge]')).toBeVisible();
   await firstValidate;

@@ -1,0 +1,8 @@
+<div onKeyDown="{{lang.key}}" style="display: flex; flex-direction: column">
+      <button type="button" id="{{lang.btnId}}" aria-expanded="{{lang.expanded}}" aria-controls="{{lang.listId}}" onClick="{{lang.toggle}}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; padding: 16px 0; box-sizing: border-box; border: 0; border-bottom: 1px solid {{t.line}}; background: transparent; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 500; text-align: start"><span>{{lang.title}}</span><span style="display: inline-flex; align-items: center; gap: 8px; color: {{t.ink2}}">{{lang.label}}<svg class="at-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="transform: {{lang.chev}}"><path d="M6 9l6 6 6-6"></path></svg></span></button>
+      <sc-if value="{{lang.open}}" hint-placeholder-val="{{false}}">
+        <ul id="{{lang.listId}}" role="list" aria-label="{{lang.title}}" style="margin: 0; padding: 8px 0; list-style: none; display: flex; flex-direction: column; gap: 4px; border-bottom: 1px solid {{t.line}}">
+          <!-- the same <sc-for list="{{lang.rows}}" as="r"> … </sc-for> rows as the footer panel -->
+        </ul>
+      </sc-if>
+    </div>

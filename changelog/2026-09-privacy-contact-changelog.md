@@ -1,6 +1,7 @@
 ---
 title: A contact address, a fuller privacy policy and a readable changelog
 date: 2026-09-26
+type: changed
 ---
 
 The [About](/about) page now lists a contact address, support@awaketab.com, for support, refunds, bug reports and data requests.

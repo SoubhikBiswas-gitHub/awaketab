@@ -1,8 +1,10 @@
 /**
- * `/embed/cook` — the AwakeTab Embed iframe app (docs/11 §2–§3, E12-T01). A trimmed island: the real
- * @awaketab/wake lock and @awaketab/core session engine, the seven-state pill, a big timer, Start/Stop, cook
- * mode's tap-to-pause (clock paused, lock kept) and — in the `full` size — up to three kitchen timers. The pill
- * is a projection of the lock state only; a running timer shows only while the lock is `held` or `fallback`.
+ * `/embed/cook` — the AwakeTab Embed iframe app (docs/11 §2–§3, E12-T01; Clear Night boards EmbedWidget,
+ * EmbedCook, EmbedEdge). A trimmed island: the real @awaketab/wake lock and @awaketab/core session engine, the
+ * seven-state pill (XS in compact, S in full), big digits, Start/Stop (Retry after a denial), cook mode's
+ * tap-to-pause (clock paused, lock kept) and — in the `full` size — up to three kitchen timers. The pill is a
+ * projection of the lock state only; a running timer shows only while the lock is `held` or `fallback`. The credit
+ * line is not in this frame: the loader puts it in the host page (O-47).
  */
 import { textDirection } from '../../i18n/locales';
 import {
@@ -21,20 +23,23 @@ import { createWakeLock, type TAdviceCode } from '@awaketab/wake';
 import { activeElapsed } from '../ambient/logic.js';
 import { everySecond } from '../ambient/tick.js';
 import type { IToolCtx } from '../ctx.js';
-import { formatHms, remainingOf } from '../format.js';
+import { remainingOf } from '../format.js';
 import { setCatalog, t } from '../i18n.js';
 import { chime } from '../signal.js';
 import type { IStore } from '../store.js';
 import { applyTheme } from '../theme.js';
 import { createBridge, type IBridge } from './bridge.js';
+import { formatClock } from './clock.js';
 import { applyBranding, fetchEmbedConfig } from './config.js';
 import { embedAdvice, inIframe, wakeLockPolicy } from './policy.js';
 import {
+  EMBED_NARROW,
   EMBED_PATH,
   EMBED_VERSION,
   parseEmbedQuery,
   type IEmbedParams,
   type IEmbedState,
+  type TEmbedTheme,
   type TPageMessage,
 } from './protocol.js';
 import { readEmbedSettings, safeLocalStorage, writeEmbedSettings } from './settings.js';
@@ -44,6 +49,17 @@ export const EMBED_FIX_URL = 'https://awaketab.com/embed#allow';
 
 const RUNNING = new Set(['held', 'fallback']);
 const HTML_LANG: Record<string, string> = { 'pt-br': 'pt-BR', zh: 'zh-Hans' };
+
+/**
+ * Pill glyphs, 12 × 12 (DESIGN.md §2.3): the shape carries the state, never colour alone. Idle and requesting
+ * draw the dot hollow (embed.css).
+ */
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+export const PILL_GLYPH: Record<string, string> = {
+  lost: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  denied: 'M6 1L11.2 10.5H.8z',
+  fallback: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+};
 
 // One widget per embedding page: cross-tab lock election (BroadcastChannel('awaketab')) belongs to the app, not
 // to widgets on unrelated sites that happen to share the iframe origin's partition.
@@ -70,6 +86,9 @@ export function planFor(params: Pick<IEmbedParams, 'preset' | 'until'>, cmd?: Ex
   return { plan: planFromPreset(preset), presetId: preset };
 }
 
+const wallTime = (locale: string, at: number) =>
+  new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(at);
+
 /** What the big digits show. Only `held`/`fallback` may show a *running* session timer (docs/00 §5.1). */
 export function digitsFor(input: {
   mode: IEmbedParams['mode'];
@@ -80,17 +99,14 @@ export function digitsFor(input: {
   locale: string;
 }): { text: string; muted: boolean } {
   const { session, now } = input;
-  if (input.mode === 'clock') {
-    const text = new Intl.DateTimeFormat(input.locale, { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(now);
-    return { text, muted: !RUNNING.has(input.lock) };
-  }
+  if (input.mode === 'clock') return { text: wallTime(input.locale, now), muted: !RUNNING.has(input.lock) };
   if (!isLive(session)) {
     const { plan } = planFor(input.params);
-    return { text: plan.type === 'duration' ? formatHms(plan.ms) : formatHms(0), muted: true };
+    return { text: formatClock(plan.type === 'duration' ? plan.ms : 0), muted: true };
   }
   const running = RUNNING.has(input.lock) && session.status === 'active';
   const ms = session.plan.type === 'indefinite' ? activeElapsed(session, now) : (remainingOf(session, now) ?? 0);
-  return { text: formatHms(ms), muted: !running };
+  return { text: formatClock(ms), muted: !running };
 }
 
 export interface IEmbedApp {
@@ -105,26 +121,42 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
   const catalogs = JSON.parse(root.querySelector('[data-embed-catalogs]')?.textContent ?? '{}') as Record<string, Record<string, string>>;
   setCatalog(catalogs.en ?? {});
   setCatalog(catalogs[params.lang] ?? {});
-  doc.documentElement.lang = HTML_LANG[params.lang] ?? params.lang;
-  doc.documentElement.dir = textDirection(doc.documentElement.lang);
+  const locale = HTML_LANG[params.lang] ?? params.lang;
+  doc.documentElement.lang = locale;
+  doc.documentElement.dir = textDirection(locale);
   doc.title = t('embed.frame.title');
   root.dataset.size = params.size;
   root.dataset.mode = params.mode;
   for (const node of root.querySelectorAll<HTMLElement>('[data-t]')) node.textContent = t(node.dataset.t ?? '');
-  applyTheme(params.theme);
+
+  // Theme: `auto` follows the reader's system live (DESIGN.md §9); a command or a licensed scheme can pin it.
+  let theme: TEmbedTheme = params.theme;
+  const dark = win.matchMedia('(prefers-color-scheme: dark)');
+  const onScheme = () => {
+    if (theme === 'auto') applyTheme('auto');
+  };
+  const setTheme = (next: TEmbedTheme) => {
+    theme = next;
+    applyTheme(next);
+  };
+  setTheme(theme);
+  dark.addEventListener('change', onScheme);
 
   const q = (sel: string) => root.querySelector<HTMLElement>(sel);
   const pill = q('[data-pill]');
   const pillText = q('[data-pill-text]');
+  const glyph = root.querySelector('[data-pill-glyph]');
   const toggle = root.querySelector<HTMLButtonElement>('[data-embed-toggle]');
+  const toggleText = q('[data-embed-toggle-text]');
   const clock = root.querySelector<HTMLButtonElement>('[data-embed-clock]');
   const digits = q('[data-embed-digits]');
+  const note = q('[data-embed-note]');
   const hint = q('[data-embed-hint]');
+  const foot = q('[data-embed-foot]');
   const notice = q('[data-embed-notice]');
   const noticeText = q('[data-embed-notice-text]');
   const noticeLink = root.querySelector<HTMLAnchorElement>('[data-embed-notice-link]');
   const live = q('[data-embed-live]');
-  const attribution = q('[data-embed-attrib]');
 
   const storage = safeLocalStorage(win);
   let telemetry = true;
@@ -175,9 +207,10 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
 
   let lastState = '';
   let lastHeight = 0;
+  let lastPill = '';
   const bridge = createBridge(win, params.host, (cmd) => {
     if (cmd.type === 'awaketab:stop') stop();
-    else if (cmd.type === 'awaketab:theme') applyTheme(cmd.theme);
+    else if (cmd.type === 'awaketab:theme') setTheme(cmd.theme);
     else void start(cmd);
   });
   // Analytics may use the loader-declared host; licensing only ever uses the verified one (bridge.host).
@@ -190,30 +223,80 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
     mode: params.mode,
   });
 
+  /**
+   * Compact (320 × 104): the pill shares its row with Start/Stop while it fits; a longer state (or a language
+   * with longer words) takes its own row and the frame asks for 116 (board EmbedEdge). Measured, not guessed,
+   * so every locale gets the right layout. Under 300 px (EMBED_NARROW) it always uses the two-row layout.
+   */
+  const fitPill = () => {
+    if (params.size !== 'compact' || !pill || !toggle) return;
+    const width = root.clientWidth;
+    const room = width - 2 * parseFloat(win.getComputedStyle(root).paddingInlineStart || '0') - toggle.offsetWidth - 12;
+    root.toggleAttribute('data-long', (width > 0 && width < EMBED_NARROW.compact[0]) || pill.scrollWidth > room);
+  };
+
   const render = () => {
     const now = Date.now();
     const s = engine.session;
     const lockState = lock.state;
-    if (pill) pill.dataset.lock = lockState;
-    if (pillText) pillText.textContent = t(`tool.pill.${lockState}`);
     const running = isLive(s);
-    if (toggle) {
-      toggle.setAttribute('aria-pressed', String(running));
-      toggle.textContent = running ? t('tool.ring.stop') : t('embed.start');
+    const busy = running || lockState === 'requesting';
+    const cook = params.mode === 'cook';
+    root.dataset.lock = lockState;
+    root.toggleAttribute('data-live', lockState === 'held' || lockState === 'requesting' || lockState === 'fallback');
+    if (pill) pill.dataset.lock = lockState;
+    const label = t(`tool.pill.${lockState}`);
+    if (pillText) pillText.textContent = label;
+    glyph?.setAttribute('d', PILL_GLYPH[lockState] ?? DOT);
+    if (label !== lastPill) {
+      lastPill = label;
+      fitPill();
     }
+    if (toggle && toggleText) {
+      const kind = busy ? 'stop' : lockState === 'denied' ? 'retry' : 'start';
+      toggle.dataset.kind = kind;
+      toggleText.textContent = kind === 'stop' ? t('tool.ring.stop') : kind === 'retry' ? t('tool.advice.retry') : t('embed.start');
+    }
+    const view = digitsFor({ mode: params.mode, lock: lockState, session: s, params, now, locale });
     if (digits) {
-      const view = digitsFor({ mode: params.mode, lock: lockState, session: s, params, now, locale: doc.documentElement.lang });
       digits.textContent = view.text;
       digits.classList.toggle('is-muted', view.muted);
     }
-    if (clock) clock.setAttribute('aria-pressed', String(s?.status === 'paused'));
+    const paused = s?.status === 'paused';
+    if (clock) {
+      clock.setAttribute('aria-pressed', String(paused));
+      const key =
+        params.mode === 'clock' ? 'embed.digits.clock' : cook && running ? (paused ? 'embed.digits.resume' : 'embed.digits.pause') : 'embed.digits.start';
+      clock.setAttribute('aria-label', t(key, { time: view.text }));
+    }
+    if (note) {
+      note.hidden = params.mode !== 'minimal';
+      note.textContent = t(busy ? (params.size === 'compact' ? 'embed.minimal.liveShort' : 'embed.minimal.live') : 'embed.minimal.idle');
+    }
     if (hint) {
-      hint.hidden = params.mode !== 'cook' || !running;
-      hint.textContent = s?.status === 'paused' ? t('ambient.cook.resume') : t('embed.cook.pause');
+      // Full size: the line under the digits. Compact keeps it for screen readers only (the digits' label says it).
+      // After a denial the notice below carries the fix and the button says Retry, so the line stays empty.
+      hint.textContent =
+        lockState === 'requesting'
+          ? t('embed.meta.requesting')
+          : lockState === 'denied' && !busy
+            ? ''
+            : !busy
+            ? t(params.mode === 'clock' ? 'embed.meta.clock' : 'embed.advice.tapToStart')
+            : cook
+              ? t(paused ? 'embed.cook.resume' : 'embed.cook.pause')
+              : t('embed.meta.since', { time: wallTime(locale, s?.startedAt ?? now) });
+    }
+    if (foot) {
+      foot.textContent =
+        params.mode === 'clock'
+          ? new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' }).format(now)
+          : t('embed.foot');
     }
     const advice = adviceNow();
     if (notice && noticeText && noticeLink) {
       notice.hidden = advice === null;
+      notice.dataset.tone = advice === 'iframe_no_allow' || lockState === 'denied' ? 'bad' : 'lamp';
       noticeText.textContent =
         advice === 'iframe_no_allow'
           ? t('embed.advice.iframe_no_allow')
@@ -262,9 +345,6 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
     else void start();
     render();
   });
-  attribution?.querySelector('a')?.addEventListener('click', () => {
-    track('share_click', { target: 'attribution' });
-  });
 
   const offs: Array<() => void> = [
     engine.on('lock', render),
@@ -274,6 +354,9 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
       render();
     }),
     everySecond(render),
+    () => {
+      dark.removeEventListener('change', onScheme);
+    },
   ];
 
   const section = q('[data-embed-timers]');
@@ -302,6 +385,7 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
   // The iframe never grows on its own: it asks, and the loader applies (docs/11 §2).
   if ('ResizeObserver' in win) {
     const ro = new ResizeObserver(() => {
+      fitPill();
       const height = Math.ceil(root.getBoundingClientRect().height);
       if (height > 0 && height !== lastHeight) {
         lastHeight = height;
@@ -315,8 +399,8 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
   }
 
   void fetchEmbedConfig(bridge.host).then((cfg) => {
-    applyBranding(root, attribution, cfg);
-    if (params.theme === 'auto' && cfg.scheme && cfg.scheme !== 'auto') applyTheme(cfg.scheme);
+    applyBranding(root, cfg);
+    if (params.theme === 'auto' && cfg.scheme && cfg.scheme !== 'auto') setTheme(cfg.scheme);
   });
 
   track('page_view', host ? { host } : {});

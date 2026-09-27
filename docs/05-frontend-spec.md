@@ -14,46 +14,72 @@ Tokens are CSS custom properties declared in `apps/web/src/styles/tokens.css` an
 
 ### 1.1 Colour
 
+Clear Night palette (`DESIGN.md` §2.1; redesign B1). Tinted neutrals plus one lamp colour for "awake"; amber and red keep their caution/alert meanings and are never a lamp.
+
 | Token | `light` | `dark` | `oled` | Use |
 |---|---|---|---|---|
-| `--at-ground` | `#FAF7F2` | `#14161C` | `#000000` | Page background; `<meta name="theme-color">` |
-| `--at-surface` | `#FFFFFF` | `#1C1F27` | `#0A0A0A` | Cards, sheets, dialogs, chips |
-| `--at-ink` | `#1A1A1A` | `#F2F2F2` | `#E6E6E6` | Primary text (contrast ≥ 12:1 on ground) |
-| `--at-muted` | `#5C5C5C` | `#A3A6AE` | `#8A8A8A` | Secondary text (≥ 4.5:1 on ground) |
-| `--at-line` | `#E3DED6` | `#2A2E38` | `#1F1F1F` | Borders, ring track |
-| `--at-accent` | `#B86E00` | `#FFB84D` | `#FFB84D` | Ring progress, held state, primary buttons, focus ring |
-| `--at-accent-text` | `#8A5200` | `#FFB84D` | `#FFB84D` | Accent-coloured *text* (light amber `#B86E00` is only 3.7:1 on ground — fine for the ring and borders, not for body-size text) |
-| `--at-on-accent` | `#FFFFFF` | `#1A1200` | `#1A1200` | Text on accent-filled buttons (dark: 11:1; light: use only at ≥ 18.66 px bold or with `--at-accent-text` background) |
-| `--at-night` | `#2B3A67` | `#9DB0FF` | `#9DB0FF` | Night mode digits and accents (in `night` ambient mode digits use `--at-night-digit` `#FF5A3C` on `oled`; see §3.13) |
+| `--at-ground` | `#F2F6FA` | `#0A0E16` | `#000000` | Page background; `<meta name="theme-color">` and manifest colours |
+| `--at-surface` | `#FFFFFF` | `#111826` | `#0A0A0A` | Cards, sheets, dialogs, chips |
+| `--at-line` | `#DCE3EC` | `#1F2940` | `#1F2940` | Borders, dividers, bars (ring track until B3 moves it to `--at-track`) |
+| `--at-line-strong` | `#C3CDDA` | `#33405C` | `#33405C` | Secondary button borders, dashed "choose / add" chips |
+| `--at-ink` | `#0E1726` | `#EAF0F7` | `#EAF0F7` | Primary text (≥ 16:1 on ground) |
+| `--at-ink-2` | `#3A4659` | `#B7C1D1` | `#B7C1D1` | Secondary text |
+| `--at-muted` | `#5B6779` | `#8E9AAE` | `#8E9AAE` | Captions, meta (≥ 4.5:1 on ground and surface) |
+| `--at-track` | `#E3E9F1` | `#1A2336` | `#1A2336` | Ring track, progress bar track |
+| `--at-tick` | `#CCD5E1` | `#2A3752` | `#2A3752` | Ring minute ticks |
+| `--at-raised` | `#E3E9F1` | `#26324B` | `#26324B` | Neutral selected segment, Stop and strong neutral buttons (D-R20) |
+| `--at-sunken` | `#F6F9FC` | `#0D131F` | `#0D131F` | Code blocks, timer wells, URL outputs, input fill |
+| `--at-input-border` | `#818C9C` | `#5A6781` | `#5A6781` | Input, select and textarea borders (≥ 3:1 on ground and surface, O-56) |
+| `--at-accent` | lamp light value | lamp dark value | lamp dark value | Ring progress, held state, primary buttons (§1.1a; default Aqua `#087B87` / `#5BE0E8`) |
+| `--at-accent-text` | lamp light value | lamp dark value | lamp dark value | Accent-coloured text (≥ 4.5:1 on ground and surface) and the filled primary button (`--primary`) |
+| `--at-on-accent` | `#FFFFFF` | `#04232A` | `#04232A` | Text on lamp-filled buttons (≥ 4.5:1 for every lamp) |
+| `--at-focus` | lamp light value | lamp dark value | lamp dark value | 2 px outline, ≥ 3:1 against the page |
+| `--at-night` | `#2B3A67` | `#9DB0FF` | `#9DB0FF` | Night indigo accents |
 | `--at-good` | `#1E7B4D` | `#5FD39A` | `#5FD39A` | Completed flash, success toasts |
-| `--at-warn` | `#A64B00` | `#FF9F6E` | `#FF9F6E` | `lost` pill, warnings |
-| `--at-bad` | `#B3261E` | `#FF8A80` | `#FF8A80` | `denied` pill, error toasts |
-| `--at-focus` | `#B86E00` | `#FFB84D` | `#FFB84D` | 2 px outline + 2 px offset, ≥ 3:1 against every adjacent colour |
+| `--at-warn` | `#98641A` | `#F2B34C` | `#F2B34C` | `lost` pill, warnings |
+| `--at-bad` | `#C63F3F` | `#FF7A7A` | `#FF7A7A` | `denied` pill, error text and toasts |
 
-State-tinted surfaces are derived, never hand-picked: `color-mix(in srgb, var(--at-accent) 12%, var(--at-surface))` for the `held` pill, `--at-warn` 12% for `lost`, `--at-bad` 12% for `denied`. Every text/background pair used in the island must be listed in `13-testing-strategy.md`'s contrast test fixture; CI fails below WCAG 2.2 AA (4.5:1 text, 3:1 UI/large text).
+Fonts: Geist and Geist Mono (© The Geist Project Authors) and Space Grotesk (© The Space Grotesk Project Authors), all SIL Open Font License 1.1; licence texts ship as `/fonts/OFL-Geist.txt` and `/fonts/OFL-SpaceGrotesk.txt`, no Reserved Font Name, so the subset keeps its name (§1.2).
 
-### 1.1a Accent palettes
+Theme-independent: `--at-horizon-ink` `#F6F2EA` (Horizon digits) · night mode `--at-night-digit` / `--at-night-ink` `#FF5A3C`, `--at-night-ink-2` `#E8563C`, `--at-night-muted` `#A89690`, `--at-night-line` `#3A2E2A` (ground `#000`) · `--at-scrim` `rgb(4 7 12 / 55%)`.
 
-`settings.accent` stores the light-theme hex (`08-data-storage.md` §2.1); `apps/web/src/tool/accent.ts` maps it to a palette id set as `data-accent` on `<html>` (amber, the default, sets no attribute), and `tokens.css` overrides four tokens per palette. the inline boot script (`src/boot/boot.js`, §11) mirrors the map so the accent is applied before first paint; the island re-checks pack palettes against the licence and falls back to amber when `ambient.packs` is missing or lapsed.
+`--at-warn`, `--at-bad` and `--at-input-border` in `light` are darker than the first `DESIGN.md` §2.1 draft (`#B7791F` 3.4:1, `#D14343` 4.2:1, `#8C98AA` 2.7:1 on ground) so tone text passes 4.5:1 and input borders 3:1.
 
-| Id | `settings.accent` | Gate | `light`: `--at-accent` · `--at-accent-text` · `--at-on-accent` · `--at-focus` | `dark` / `oled`: same four |
+Page ground (B2): `body` paints `radial-gradient(120% 70% at 50% 26%, var(--at-lift) 0%, var(--at-ground) 62%, var(--at-ground-end) 100%)` over `--at-ground` (`shell.css`). `--at-lift` `#FFFFFF` / `#13203A` / `#000000` · `--at-ground-end` `#EEF3F8` (O-57) / `#0A0E16` / `#000000` · `--at-elev` `0 1px 2px rgb(14 23 38 / 6%)` in `light`, `none` in `dark` and `oled` (cards). The status halo stays with the tool face (B3).
+
+State-tinted surfaces are derived, never hand-picked: `color-mix(in srgb, var(--at-accent) 12%, var(--at-surface))` for the `held` pill, `--at-warn` 12% for `lost`, `--at-bad` 12% for `denied`. Every text/background pair used in the island must be listed in `13-testing-strategy.md`'s contrast test fixture; CI fails below WCAG 2.2 AA (4.5:1 text, 3:1 UI/large text). `test/tool/accent.test.ts` checks every lamp in every theme and the neutral/tone text tokens.
+
+### 1.1a Lamp colours (accent)
+
+`settings.accent` stores the lamp's light-theme hex (`08-data-storage.md` §2.1); `apps/web/src/tool/accent.ts` maps it to a lamp id set as `data-accent` on `<html>` (Aqua, the default, sets no attribute), and `tokens.css` overrides four tokens per lamp. The inline boot script (`src/boot/boot.js`, §11) mirrors the map so the lamp is applied before first paint; the island re-checks pack lamps against the licence and falls back to Aqua when `ambient.packs` is missing or lapsed.
+
+| Id | `settings.accent` | Gate | `light`: `--at-accent` = `--at-accent-text` = `--at-focus` · `--at-on-accent` | `dark` / `oled`: same |
 |---|---|---|---|---|
-| `amber` | `#B86E00` (default) | free | `#B86E00` · `#8A5200` · `#FFFFFF` · `#B86E00` (§1.1) | `#FFB84D` · `#FFB84D` · `#1A1200` · `#FFB84D` |
-| `indigo` | `#4F46E5` | free | `#4F46E5` · `#4338CA` · `#FFFFFF` · `#4F46E5` | `#A5B4FC` · `#A5B4FC` · `#0F1233` · `#A5B4FC` |
-| `teal` | `#0F766E` | `ambient.packs` | `#0F766E` · `#0F766E` · `#FFFFFF` · `#0F766E` | `#5EEAD4` · `#5EEAD4` · `#042F2E` · `#5EEAD4` |
-| `rose` | `#BE123C` | `ambient.packs` | `#BE123C` · `#BE123C` · `#FFFFFF` · `#BE123C` | `#FDA4AF` · `#FDA4AF` · `#3F0613` · `#FDA4AF` |
+| `aqua` | `#087B87` (default) | free | `#087B87` · `#FFFFFF` (§1.1) | `#5BE0E8` · `#04232A` |
+| `violet` | `#5A47CF` | free | `#5A47CF` · `#FFFFFF` | `#A594FF` · `#04232A` |
+| `mint` | `#167A50` | `ambient.packs` | `#167A50` · `#FFFFFF` | `#7EF0B8` · `#04232A` |
+| `sky` | `#255FBD` | `ambient.packs` | `#255FBD` · `#FFFFFF` | `#7CB8FF` · `#04232A` |
 
-Teal and Rose are the first `ambient.packs` palette pack. Contrast rules per pair: accent ≥ 3:1 on ground, accent-text ≥ 4.5:1 on ground and surface, on-accent ≥ 4.5:1 on accent-text. The state tints and shadcn aliases (§1.5) follow the accent automatically because they are derived from `--at-accent`.
+Legacy values (the pre-redesign palettes) migrate on read without rewriting storage: `#B86E00` amber → Aqua, `#4F46E5` indigo → Violet, `#0F766E` teal → Mint, `#BE123C` rose → Sky, anything else → Aqua (`LEGACY_ACCENTS`, `accentHex()`; the boot script maps the same hexes). Contrast rules per lamp: accent ≥ 3:1 on ground, accent-text ≥ 4.5:1 on ground and surface, on-accent ≥ 4.5:1 on the fill. Lamp hues stay in the blue–green–violet band. The state tints and shadcn aliases (§1.5) follow the lamp automatically because they are derived from `--at-accent`.
 
 ### 1.2 Type
 
-System stack only — tool pages load no web fonts (`00-conventions.md` §3):
+Self-hosted fonts (redesign decision D-R26, `DESIGN.md` §3), declared with `@font-face` in `tokens.css` and served from `apps/web/public/fonts/` (same origin; CSP `font-src 'self'`):
+
+| File | Font | Bytes | Loading |
+|---|---|---|---|
+| `geist-latin-wght-normal.woff2` | Geist variable 100–900, Latin | 29,400 | `<link rel="preload">` in `BaseLayout` |
+| `geist-mono-latin-wght-normal.woff2` | Geist Mono variable 100–900, Latin | 23,128 | on use (code, keys, URLs) |
+| `space-grotesk-digits-600.woff2` | Space Grotesk 600, digits subset (0–9 : . , space d h m) | 2,760 | on use (Bold face only) |
 
 ```css
---at-font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Ubuntu, Cantarell,
-           "Noto Sans JP", "Noto Sans SC", "Noto Sans Devanagari", sans-serif;
---at-font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace; /* code blocks on /learn only */
+--at-font: "Geist", "Geist Fallback", system-ui, -apple-system, "Segoe UI", "Roboto", "Noto Sans", "Ubuntu",
+  "Cantarell", "Noto Sans JP", "Noto Sans SC", "Noto Sans Devanagari", sans-serif;
+--at-font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, "SF Mono", menlo, consolas, monospace;
+--at-font-display: "Space Grotesk", "Space Grotesk Fallback", var(--at-font);
 ```
+
+All faces use `font-display: swap`. The `… Fallback` faces are `local()` Arial / Courier New with `size-adjust`, `ascent-override`, `descent-override` and `line-gap-override` measured from the font files, so the swap does not move layout (CLS 0). ja, zh and hi text falls through to the system stack. Tailwind `font-sans` / `font-mono` map to `--at-font` / `--at-font-mono`. The extension keeps the system stack until B9 (its token import excludes the `@font-face` rules).
 
 | Token | Size / line | Use |
 |---|---|---|
@@ -61,7 +87,7 @@ System stack only — tool pages load no web fonts (`00-conventions.md` §3):
 | `--at-t-sm` | 14 / 20 | Chips, pill, captions |
 | `--at-t-md` | 16 / 24 | Body |
 | `--at-t-lg` | 18 / 28 | Lead paragraphs, dialog titles |
-| `--at-t-xl` | 22 / 30 | Section headings (h2) |
+| `--at-t-xl` | 20 / 28 (was 22; `DESIGN.md` §12.5) | Card titles (h3), section headings |
 | `--at-t-2xl` | 28 / 36 | Page h1 (mobile) |
 | `--at-t-3xl` | 40 / 48 | Page h1 (≥ md) |
 | `--at-t-timer` | `clamp(40px, 12vw, 64px)` / 1 | The `Timer`; always `font-variant-numeric: tabular-nums` |
@@ -69,13 +95,21 @@ System stack only — tool pages load no web fonts (`00-conventions.md` §3):
 
 Weights: 400 body, 600 headings and pill, 700 timer. Letter-spacing 0 except the timer (`-0.02em`).
 
+Type roles (`DESIGN.md` §12.5): `--at-type-kicker` 12/16 600 · `--at-type-caption` 13/18 400 · `--at-type-small` 14/20 400 · `--at-type-ui` 15/22 500 · `--at-type-action` 17/24 600 · `--at-type-body` 16/26 400 · `--at-type-lead` 18/28 400 · `--at-type-h3` 20/28 600 · `--at-type-h2` 24/32 → 28/36 · `--at-type-h1` 34/42 → 48/56 · `--at-type-price` 40/48 → 48/56 (the larger step from 600 px). Each is a `font` shorthand in rem over `--at-font`: use `font: var(--at-type-body)`; kicker adds `letter-spacing: .14em; text-transform: uppercase`, h1 adds `letter-spacing: -.02em`. New components use these roles; the `--at-t-*` sizes stay for existing CSS.
+
 ### 1.3 Spacing, radii, elevation
 
-4 px base grid: `--at-s-1: 4px` · `-2: 8` · `-3: 12` · `-4: 16` · `-6: 24` · `-8: 32` · `-12: 48` · `-16: 64`. Radii: `--at-r-sm: 6px` (inputs) · `--at-r-md: 10px` (cards) · `--at-r-lg: 16px` (sheets, dialogs) · `--at-r-pill: 999px` (pill, chips). Elevation is a 1 px `--at-line` border plus, in `light` only, `0 1px 2px rgb(0 0 0 / 6%)`; `dark`/`oled` use borders only.
+Token system: `DESIGN.md` §12 (names, never raw numbers). 4 px base grid: `--at-s-N` = N × 4 px for N in 1 2 3 4 5 6 8 10 12 16 20 24 30. Semantic spacing (phone → ≥ 600 → ≥ 1024 → ≥ 1600): `--at-gutter` 16 / 32 / 80 / 120 · `--at-section` 48 / 64 / 96 / 96 · `--at-card-pad` 20 / 24 / 24 / 24 · fixed `--at-edge-min` 16 · `--at-dock-bottom` 20 · `--at-gap-tight` 8 · `--at-gap-item` 12 · `--at-gap-group` 20 · `--at-gap-group-lg` 24 · `--at-content-max` 1200px · `--at-measure` 68ch. Breakpoint values change on `:root` at `(width >= 600px)`, `(width >= 1024px)` and `(width >= 1600px)` only.
+
+Radii (`DESIGN.md` §11.3): `--at-r-xs: 4px` (inline code, swatches) · `--at-r-sm: 8px` (inputs, code blocks, kbd; was 6) · `--at-r-md: 12px` (icon and small buttons, small tiles; was 10) · `--at-r-lg: 16px` (cards, inline panels) · `--at-r-xl: 20px` (large buttons) · `--at-r-2xl: 28px` (clock faces, sheets, hero panels) · `--at-r-pill: 999px` (pill, chips, segmented bars). Stylelint rejects raw `border-radius` values outside `tokens.css`.
+
+Controls and icons (`DESIGN.md` §12.6): `--at-h-control` 44 · `--at-h-input` 48 · `--at-h-button` 52 · `--at-h-primary` 60 (52 at height ≤ 568) · `--at-h-cook` 64 · `--at-h-header` 60 / 68 from 600 · `--at-h-row` 56 · `--at-icon-sm` 16 · `--at-icon-md` 20 · `--at-icon-lg` 24 · `--at-border` 1px. Added in B2 (`DESIGN.md` §11.4 values that had no name): `--at-h-tag` 24 (tag, kbd) · `--at-h-pill-l` 48 · `--at-h-pill-m` 38 · `--at-h-pill-s` 32 · `--at-h-pill-xs` 26 · `--at-icon-xs` 12 (pill glyph) · `--at-sheet-inline` 26rem (side sheet) · `--at-panel-inline` 360px (language panel) · `--at-shadow-float` `0 24px 64px -24px rgb(0 0 0 / 45%)` (sheets, floating panels).
+
+Elevation is a 1 px `--at-line` border plus, in `light` only, `--at-elev` (`0 1px 2px rgb(14 23 38 / 6%)`); `dark`/`oled` use borders only. Sheets and floating panels add `--at-shadow-float` over the `--at-scrim`.
 
 ### 1.4 Motion
 
-`--at-d-fast: 120ms` · `--at-d-base: 200ms` · `--at-d-slow: 320ms`; easing `cubic-bezier(.2,.7,.2,1)`. Ring progress uses `transition: stroke-dashoffset 1s linear` so one-second ticks look continuous. Under `@media (prefers-reduced-motion: reduce)` all transitions and animations are set to `1ms` (not removed, so `transitionend` handlers still fire), the held-dot pulse is disabled, indeterminate spinners become a static three-dot glyph, and toasts appear without slide. The burn-in pixel shift (§3.14) remains active under reduced motion because it is a hardware-protection feature, but it moves instantly instead of easing.
+`--at-d-fast: 120ms` · `--at-d-base: 200ms` · `--at-d-slow: 320ms` · `--at-d-slide: 600ms` (sliding indicators, chevrons, sheets) · `--at-d-rise: 700ms` (panels rising in); easing `--at-ease` `cubic-bezier(.22,1,.36,1)` (`DESIGN.md` §8: ease-out, no bounce). Colour never animates (an unlayered `transition-property` list in `tool.css` leaves colours out), so a theme switch repaints at once; transforms and opacity ease. Ring progress uses `transition: stroke-dashoffset 1s linear` so one-second ticks look continuous. Under `@media (prefers-reduced-motion: reduce)` all transitions and animations are set to `1ms` (not removed, so `transitionend` handlers still fire), the held-dot pulse is disabled, indeterminate spinners become a static three-dot glyph, and toasts appear without slide. The burn-in pixel shift (§3.14) remains active under reduced motion because it is a hardware-protection feature, but it moves instantly instead of easing.
 
 ### 1.5 shadcn/ui theme bridge
 
@@ -92,12 +126,13 @@ Shared UI chrome — buttons, badges, cards, tables, alerts, breadcrumbs, form f
 | `--accent` | `color-mix(in srgb, var(--at-accent) 12%, var(--at-surface))` | The §1.1 state-tint rule; `--accent-foreground` → `--at-ink` |
 | `--destructive` | `--at-bad` | `--destructive-foreground` `#fff` |
 | `--success` · `--warning` · `--night` | `--at-good` · `--at-warn` · `--at-night` | Custom (not in stock shadcn); foregrounds `#fff` |
-| `--border` · `--input` | `--at-line` | `@layer base` applies `border-border outline-ring/50` to `*` |
+| `--border` | `--at-line` | `@layer base` applies `border-border outline-ring/50` to `*` |
+| `--input` | `--at-input-border` | Was `--at-line` until B2; form borders need ≥ 3:1 (decision O-56). Outline buttons in `dark` (`dark:border-input`, `dark:bg-input/30`) follow it |
 | `--ring` | `--at-focus` | |
 | `--radius` | `--at-r-md` | |
-| `--font-sans` | `--at-font` | System stack; still no web fonts on tool pages |
+| `--font-sans` · `--font-mono` | `--at-font` · `--at-font-mono` | Self-hosted Geist / Geist Mono (§1.2) |
 
-Radius scale (Tailwind `rounded-*` → `--at-r-*`): `--radius-sm` 4 px (not a token; badges only) · `--radius-md` → `--at-r-sm` (6, inputs and buttons) · `--radius-lg` and `--radius-xl` → `--at-r-md` (10, cards and alerts) · `--radius-2xl` and above → `--at-r-lg` (16, dialogs and sheets). `--at-r-pill` stays the pill's and chips' radius.
+Radius scale (Tailwind `rounded-*` → `--at-r-*`): `--radius-sm` → `--at-r-xs` (4, badges) · `--radius-md` → `--at-r-sm` (8, inputs and buttons) · `--radius-lg` → `--at-r-md` (12, alerts, small tiles) · `--radius-xl` → `--at-r-lg` (16, cards) · `--radius-2xl` → `--at-r-xl` (20) · `--radius-3xl` and `--radius-4xl` → `--at-r-2xl` (28, sheets and hero panels). `--at-r-pill` stays the pill's and chips' radius.
 
 Theme plumbing: `@custom-variant dark` matches `[data-theme="dark"]`, `[data-theme="oled"]`, and `prefers-color-scheme: dark` when no `data-theme` is set, so shadcn's `dark:` utilities follow §11 without a second theme switch. `tw-animate-css` is imported for the entrance/exit keyframes shadcn classes reference; every animation still collapses to 1 ms under reduced motion (§1.4).
 
@@ -105,20 +140,19 @@ Variant map (which shadcn variant styles which surface; the component sections i
 
 | Surface | shadcn source | How it is applied |
 |---|---|---|
-| Header icon buttons (Stats, Share, Settings, Install, theme, PiP), `LocaleNav` links | `buttonVariants({ variant: 'ghost' })` (icon size for the header) | Class helper on plain `<button>`/`<a>` in `.astro` frontmatter |
+| Header, footer, theme switch, language switcher, status pill, preset chips, Stop, keycaps (B2) | *none* — Clear Night primitives in `shell.css` (§3.25–§3.30) | Build-time markup from `src/components/shell/*.astro`; tokens only |
 | Primary actions (Start, Resume, Retry, Use video fallback, Pro checkout) | `Button` `default` | `<Button>` in `.astro` or `buttonVariants()` on `<button>`; `--primary` = `--at-accent-text` |
-| Stop, Dismiss, Cancel, Maybe later | `Button` `secondary` / `outline` | Same |
+| Dismiss, Cancel, Maybe later | `Button` `secondary` / `outline` | Same (Stop moved to the raised `Button` primitive, §3.12) |
 | Link buttons in content and footer | `buttonVariants({ variant: 'link' })` | On `<a>` |
-| Preset chips | `toggleVariants({ variant: 'outline' })` | On `<button aria-pressed>`; the pressed look is keyed on `[aria-pressed="true"]`, not on Radix state |
-| Pro badge in the header, "Sponsored" label, plan labels | `Badge` `secondary` / `outline` | `<Badge>` or `badgeVariants()` |
+| "Sponsored" label, plan labels | `Badge` `secondary` / `outline` | `<Badge>` or `badgeVariants()` (the header Pro badge is the `.at-tag` primitive) |
 | `ResumeBanner`, `SecondTabWarning`, `FallbackConsent`, `ProCard`, `SponsorCard`, plan cards on `/pro`, seven-state list, content card grids, FAQ `<details>` | `Card` (`CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`) | `<Card>` in `.astro`; `<details>` gets the Card classes directly |
 | `CapabilityNotice`, honest-limits callouts, banners on tool and content pages | `Alert` | `<Alert>` with `AlertTitle`/`AlertDescription` |
 | Support matrix, `/pro/activate` error table, `/pro/manage` activations | `Table` | `<Table>`; `/pro/manage` rows are cloned from a `<template>` by the small client script |
 | `/pro/activate`, `/pro/manage` forms | `Input`, `Label`, `Button` | Plain `<form>` posting to `/api/license/*` |
-| `ShortcutsOverlay` key caps | `Kbd` | Inside the `<dl>` |
+| `ShortcutsOverlay` key caps, prose keys | `Kbd` | Emits the `.at-kbd` keycap (§3.29) |
 | Content breadcrumbs | `Breadcrumb` | `BreadcrumbList` JSON-LD unchanged |
-| Footer section dividers | `Separator` | Radix Separator, build time only |
-| `CustomDurationDialog`, `UntilTimePicker`, `ExtendPrompt`, `SettingsSheet`, `ShortcutsOverlay`, `RatingPrompt`, `ShareSheet` | *none* — native `<dialog>` styled to match shadcn `Dialog` | `showModal()`; classes in `tool.css`; no Radix Dialog or Sheet |
+| `CustomDurationDialog`, `UntilTimePicker`, `ExtendPrompt`, `ShortcutsOverlay`, `RatingPrompt`, `ShareSheet` | *none* — native `<dialog>` styled to match shadcn `Dialog` | `showModal()`; classes in `tool.css`; no Radix Dialog or Sheet |
+| `SettingsSheet`, `StatsPanel` | *none* — native `<dialog class="at-sheet">` (§3.30) | Bottom sheet on phones, side sheet from 600 |
 | `Toast` | *none* — `@apply` rules in `tool.css` reproduce the `Card` surface and `Button` `ghost` close | Nodes are created by the island at runtime, so no `.tsx` is involved |
 
 ---
@@ -177,23 +211,23 @@ Below 360 px viewport width the ring scales to 160 px via `width: clamp(160px, 5
 
 ### 3.2 `StatusPill`
 
-A rounded pill (height 44 px, padding 0 16 px) directly under the ring. Contains a 16 px state glyph (inline SVG symbol, never emoji), the state text, and for `held`/`fallback` a subtle end time ("until 17:30") when the plan is not indefinite. The pill is `<output aria-live="polite" aria-atomic="true">` so state changes are announced once, in full. Colour is never the only cue: glyph shape and text differ per state.
+Clear Night pill (`DESIGN.md` §2.3, §11.4; `PRIMITIVES.md` P-PILL; B2): `src/components/shell/StatusPill.astro`, styled by `.at-pill` in `shell.css`. It holds one of the seven exact state strings, alone, after a 12 px shape glyph; the tone tints it (tone 12 % fill, tone 38 % border, `--at-ink` text 600). Colour is never the only cue: glyph shape and text differ per state. One inline SVG carries all four glyph shapes (`.at-g-dot`, `.at-g-pause`, `.at-g-tri`, `.at-g-ring`) and CSS shows the one for `data-lock`, so the island only writes `data-lock` and the text (`src/tool/ui/pill.ts`, unchanged).
 
-| Lock state | Text (en) | Glyph | Tokens (border / tint / text) | Interactive? |
-|---|---|---|---|---|
-| `idle` | Ready | hollow circle | `--at-line` / none / `--at-ink` | No |
-| `requesting` | Starting… | three dots | `--at-line` / none / `--at-muted` | No |
-| `held` | Screen awake | filled dot with glow | `--at-accent` / accent 12% / `--at-ink` | No |
-| `lost` | Paused — tab hidden | pause bars | `--at-warn` / warn 12% / `--at-ink` | No |
-| `denied` | Blocked — here's the fix | cross in circle | `--at-bad` / bad 12% / `--at-ink` | Yes → opens `CapabilityNotice` |
-| `unsupported` | Tap to use the fallback | question mark | `--at-line` / none / `--at-ink` | Yes → opens `FallbackConsent` |
-| `fallback` | Awake via video fallback | small play triangle | `--at-accent` at 60% / accent 8% / `--at-muted` | No |
+| Lock state | Text (en) | Tone | Glyph |
+|---|---|---|---|
+| `idle` | Ready | `--at-muted` | hollow circle |
+| `requesting` | Starting… | `--at-accent` | hollow circle |
+| `held` | Screen awake | `--at-accent` | filled dot with glow |
+| `lost` | Paused — tab hidden | `--at-warn` | two pause bars |
+| `denied` | Blocked — here's the fix | `--at-bad` | triangle |
+| `unsupported` | Tap to use the fallback | `--at-accent` | filled dot |
+| `fallback` | Awake via video fallback | `--at-accent` | dot in a ring |
 
-When interactive, the pill is rendered as a `<button>` wrapping the `<output>` text; the button has `aria-describedby` pointing at the notice it opens. The pill must reflect the engine state within one frame of the store update — it never shows "Screen awake" from a click handler (the nosleep.page defect the blueprint calls trust-breaking).
+Sizes: **M** 38 (tool; `--at-type-ui` 600, padding 0 16 0 12, gap 8; may wrap to two lines in long locales with radius 20, decision O-62) · **S** 32 (`.at-pill-s`: popup, `/pip`, full embed; 14/20) · **XS** 26 (`.at-pill-xs`: compact embed; 13/18, gap 4) · **L** 48 (`.at-pill-l`: kiosk, xl; 20/28, 16 px glyph). The pill is `<output aria-live="polite">`. On the tool it is a `<button>` wrapping the `<output>` (interactive in `denied` → opens `CapabilityNotice`, and `unsupported` → `FallbackConsent`); it draws 38 px and a transparent `::after` extends the target to 44. `[data-pill-extra]` ("until 17:30", `.at-pill-extra`, ink-2 500) sits after the exact string until B3 moves it out of the pill. The pill must reflect the engine state within one frame of the store update — it never shows "Screen awake" from a click handler (the nosleep.page defect the blueprint calls trust-breaking).
 
 ### 3.3 `PresetChips`
 
-A `<div role="group" aria-label="Duration">` of `<button aria-pressed>` chips: `p15` "15 min" · `p30` "30 min" · `p45` "45 min" · `p60` "1 h" · `p120` "2 h" · `p240` "4 h" · `pinf` "∞" (visible) with `<span class="sr-only">Until I stop</span>` · `custom` "Custom…" · `until` "Until…". Layout: `grid-template-columns: repeat(auto-fit, minmax(72px, 1fr))` — at 320 px this yields two rows; nothing is ever hidden at any width (nosleep.page hides "1 hr" on phones). Chip min size 44 × 44, gap 8. Pressing a chip in `idle` starts a session with that plan; pressing a different chip while `active` switches the plan in place (lock stays held, timer restarts, toast "Switched to 2 hours"). Pressing the pressed chip does nothing (stopping is `Space`/the stop button, never an accidental chip tap). `custom` and `until` open their dialogs. Keyboard `1`–`6`, `0`, `U` map to the chips (§7). The default pressed chip in `idle` is `settings.defaultPreset` or the route's preset (§11). Styling: `toggleVariants({ variant: 'outline' })` applied to each `<button>` at build time; the pressed state is selected on `[aria-pressed="true"]` (never on Radix `data-state`, which does not exist here) and tints with `--accent` (§1.5).
+A `<div role="group" aria-label="Duration">` of `<button aria-pressed>` chips: `p15` "15 min" · `p30` "30 min" · `p45` "45 min" · `p60` "1 h" · `p120` "2 h" · `p240` "4 h" · `pinf` "∞" (visible) with `<span class="sr-only">Until I stop</span>` · `custom` "Custom…" · `until` "Until…". Layout: `grid-template-columns: repeat(auto-fit, minmax(80px, 1fr))` (72 until B2; "Custom…" broke mid-word) — at 320 px this yields three rows; nothing is ever hidden at any width (nosleep.page hides "1 hr" on phones). Chip min size 44 × 44, gap 8. Pressing a chip in `idle` starts a session with that plan; pressing a different chip while `active` switches the plan in place (lock stays held, timer restarts, toast "Switched to 2 hours"). Pressing the pressed chip does nothing (stopping is `Space`/the stop button, never an accidental chip tap). `custom` and `until` open their dialogs. Keyboard `1`–`6`, `0`, `U` map to the chips (§7). The default pressed chip in `idle` is `settings.defaultPreset` or the route's preset (§11). Styling (B2): the `.at-chip` primitive (§3.28; 44, r999, `--at-type-ui`); the pressed state is selected on `[aria-pressed="true"]` (never on Radix `data-state`) with the selected-item rule, 1 px lamp 45 % border + lamp 14 % fill, ink 600. `custom` and `until` add `.at-chip-choose` (dashed `--at-line-strong`, the "choose" affordance).
 
 ### 3.4 `CustomDurationDialog`
 
@@ -229,7 +263,7 @@ Shown for `unsupported` (and offered under `denied` when the advice code is `uns
 
 ### 3.12 Stop control
 
-A full-width secondary button "Stop" under the chips while `active`/`paused`; hidden in `idle`. `Space` toggles the same intent. Stopping ends the session with reason `user`, releases the lock, and returns to `idle` with no confirmation dialog. Styling: `Button` `secondary`, full width.
+A full-width "Stop" under the chips while `active`/`paused`; hidden in `idle`. `Space` toggles the same intent. Stopping ends the session with reason `user`, releases the lock, and returns to `idle` with no confirmation dialog. Styling (B2, decision D-R20): the `Button` primitive `variant="stop"` (§3.28): `--at-raised` fill, 1 px `--at-line-strong`, `--at-ink` text, 60 px, r20; it follows the theme and never inverts. Its slot (`.at-stop-slot`) reserves `--at-h-primary` so the page does not move when it appears.
 
 ### 3.13 `AmbientShell`
 
@@ -326,7 +360,84 @@ Shown once, after the fifth *counted* session — reason `completed` and ≥ 5 m
 
 ### 3.24 `InstallPrompt`
 
-Captures `beforeinstallprompt`, calls `preventDefault()`, and shows a small "Install" header button once `at.v1.meta.sessionCount ≥ 2` or when Settings opens. Clicking calls `prompt()`; `appinstalled` fires `pwa_install`. On iOS (no event) the button opens a sheet: "Add AwakeTab to your Home Screen: tap Share, then Add to Home Screen. Installed, it can notify you when a session ends and run full screen." Hidden when `display-mode: standalone` matches.
+Captures `beforeinstallprompt`, calls `preventDefault()`, and shows a small "Install" button (the last cell of the tool's action row, §3.25) once `at.v1.meta.sessionCount ≥ 2` or when Settings opens. Clicking calls `prompt()`; `appinstalled` fires `pwa_install`. On iOS (no event) the button opens a sheet: "Add AwakeTab to your Home Screen: tap Share, then Add to Home Screen. Installed, it can notify you when a session ends and run full screen." Hidden when `display-mode: standalone` matches.
+
+### 3.25 `SiteHeader` (B2)
+
+`src/components/shell/SiteHeader.astro`; `DESIGN.md` §6, §11.6; `PRIMITIVES.md` P-HEADER. One header on every product surface: `BaseLayout` renders it on every page except tool pages (`header={false}`: `/`, `/{lang}/`, preset routes, `/until/*`, 404), where `ToolIsland` renders the same component inside `#awaketab-tool` so `main.ts` binds its actions with `root.querySelector()`. `/pip` (`bare`) has none.
+
+- `.at-site-header`: `--at-h-header` tall (60 phone, 68 from 600), `padding-inline: var(--at-gutter)` (header gutter = page gutter), flex with `space-between`, gap 12. It is an inline-size container (`at-header`).
+- Logo lockup `a.at-logo` (also `.at-wordmark`, which `[data-kiosk]` hides): 26 px ring mark + "AwakeTab" (`--at-type-action`, −0.01em), gap 8, 44 px target, `aria-label` = `header.home` ("AwakeTab home"), links to the locale home. The mark's bead (`.at-logo-bead` + `.at-logo-halo` at 28 %) takes `--at-bead`: `--at-muted` by default; `body:has([data-pill][data-lock=…])` switches it to the lock state's tone (lamp for requesting / held / unsupported / fallback, warn for lost, bad for denied), CSS only.
+- Site nav `nav.at-nav` (`aria-label` `header.nav`), shown from 1024: Use cases `/for` · Devices `/on` · Extension `/extension` · Pro `/pro` (`header.nav.*`; English routes in every locale). Items `.at-nav-link`: 15/22 500 ink-2, padding 0 12, 44 × 44 minimum, gap 8; the current section (first path segment after the locale) gets `aria-current="page"`, ink 600 and a 6 px lamp dot, never a stripe.
+- `.at-header-end`: `ThemeSwitch` (§3.26) then the page's actions (slot). The tool passes the Pro tag (`[data-pro-badge]`, hidden until licensed), Stats (`[data-open-stats]`, `.at-phone-hide`: from 600) and Settings (`[data-open-settings]`), all `.at-icon-button` (44 × 44, r12, ink-2, 20 px canvas icons, `aria-haspopup="dialog"`).
+- Tool actions that left the header: Share, floating window, keyboard shortcuts, Stats on phones and Install now sit in `.at-tool-more`, a fixed five-column row of icon buttons under the tool (so Install appearing moves nothing, CLS 0) until B3/B4 place them.
+
+### 3.26 `ThemeSwitch` (B2)
+
+`src/components/shell/ThemeSwitch.astro`; `DESIGN.md` §9, §11.4; `PRIMITIVES.md` P-THEME; decision O-85. A neutral segmented bar `div.at-seg.at-theme[role=radiogroup]` (`aria-label` `settings.theme`) of three 44 px items, Light · Dark · Auto (`label.at-theme-item[data-v]` around a visually hidden native `<input type="radio" name="at-theme">`, `aria-label` Light / Dark / "Auto, follows your system", `title` on the item). Native radios give one Tab stop and arrow keys that move and select. The indicator `.at-seg-ind` (`--at-raised`, no border) slides with `transform` over `--at-d-slide` / `--at-ease`; its index comes from `<html data-theme-pref>` (OLED shows as Dark), set by the boot script before first paint, so a reload never slides it. Selected item ink, others ink-2.
+
+Behaviour lives in `src/boot/boot.js` (the page's only inline script, so it works on every page, with or without the island): `change` on `at-theme` → write `theme` into `at.v1.settings` (merged; `{ v: 1, theme }` when empty) → apply (`data-theme`, `data-theme-pref`, `color-scheme`, the media-less `theme-color` meta) → dispatch `at-theme` (`CustomEvent<TTheme>`) on `document`. The island listens for `at-theme` and runs `cycleTheme(ctx, theme)` so its store's settings stay in step (the `D` shortcut and the Settings sheet keep working through `applyTheme()`, which also sets `data-theme-pref`). A `MutationObserver` on `data-theme-pref` keeps the radios checked whoever changed it. Auto follows `prefers-color-scheme` live (a `matchMedia` change listener; night mode's forced OLED is left alone).
+
+`compact` (tool header only): below 360 px wide (the canvas "small" layout; `@container at-header (width < 328px)`, i.e. the header's content box at the phone gutter) the bar gives way to one `.at-icon-button[data-theme-cycle]` that cycles Light → Dark → Auto. Its accessible name is "Theme: {current}. Change theme", built from `sr-only` spans that CSS shows by `data-theme-pref`.
+
+### 3.27 `SiteFooter` and `LangSwitch` (B2)
+
+`src/components/shell/SiteFooter.astro`; `DESIGN.md` §11.7; `PRIMITIVES.md` P-FOOTER. On every page (not `/pip`): `footer.at-site-footer`, 1 px `--at-line` top border, `margin-block-start: var(--at-section)`, padding 24 / gutter (32 at the bottom on phones), wrapping flex, gap 12 × 24. Children: the honest line `p.at-footer-line` (`footer.honest` "No ads on the awake screen, now or later.", caption, muted) · `nav.at-footer-nav` (`aria-label` `footer.nav`; Privacy · Terms · Changelog · About · Buy me a coffee in that order; caption 500 ink-2, 44 × 44 minimum, column gap 16) · `LangSwitch`.
+
+`src/components/shell/LangSwitch.astro`; `PRIMITIVES.md` P-LANG; `07-i18n.md` §2 (never redirects, stores nothing). Replaces `LocaleNav`.
+- Trigger `button#at-lang-btn.at-lang-btn` (44, r12, padding 0 12, 1 px line-strong, surface, 14/20 500): globe, the current locale's native name, chevron (`.at-lang-chev`, rotates 180° over `--at-d-slide`). `aria-label` "{footer.language}: {native name}", `aria-expanded`, `aria-controls="at-lang-list"`. From 600 it sits at the end of the footer row (`margin-inline-start: auto`); on phones on its own line at the start.
+- Panel `div#at-lang-list.at-lang-panel[data-lang-panel]` (hidden until opened; rises in with `at-rise`): heading `h2#at-lang-h` (`footer.language`), a Close button (`footer.language.close`, phone only), and `ul.at-lang-list` of eight rows `a.at-lang-row` in `LOCALES` order, each a real link with `lang` and `hreflang` (`LOCALE_META`), to the page's translation (`localeLinks`) or that locale's home. Row: min 48, padding 0 12, r12, grid `20px 1fr auto` gap 12; a 20 px radio mark (input-border ring; lamp ring + 8 px lamp dot on the current row); the native name 15/22 500 (600 current); a note in the page's language (`footer.language.current` "Current", ink-2; `footer.language.review` "Translation in review" for `reviewed: false`, muted). The current row has `aria-current="true"` and the selected-item rule.
+- Below 600: a bottom sheet (fixed, full width, r28 top corners, padding 8 16 32, 36 × 4 handle, title 20/28) over `.at-lang-scrim` (`--at-scrim`); `role="dialog"`, `aria-modal="true"`, focus trapped. From 600: an anchored panel above the trigger's end edge (`bottom: calc(100% + 8px)`, 360 wide, padding 4, r16, `--at-shadow-float`, kicker title), `role="group"`, no scrim; the page stays live.
+- Keyboard and pointer (boot script): opening focuses the current row; ↓/↑ move between rows and wrap; Home/End jump to the ends; Esc closes and returns focus to the trigger (and never reaches the island's "Esc stops the session"); Tab moves on normally from the panel (and closes it), cycles inside the sheet; an outside click, the scrim, Close or focus leaving closes it.
+
+### 3.28 Buttons, chips and tags (B2)
+
+`shell.css`; `DESIGN.md` §6, §11.4, §11.7; `PRIMITIVES.md` P-CTA, P-TAG; decision D-R20. `src/components/shell/Button.astro` renders them (`<button>`, or `<a>` with `href`):
+- `.at-button` base: inline-flex, gap 8, `--at-type-ui` 600, 1 px border, `--at-h-button` 52 and r20 (md). Sizes `.at-button-sm` 44 r12 · `.at-button-lg` 60 (label `--at-type-action`) · `.at-button-cook` 64.
+- `.at-button-primary`: the one lamp-filled action per screen (`--at-accent` fill, `--at-on-accent` text, soft lamp shadow) with the logo glyph (`LogoGlyph.astro`, `.at-button-glyph`).
+- `.at-button-stop`: `--at-raised` + 1 px `--at-line-strong` + `--at-ink`; every strong neutral action (Stop, Retry, Send, Install, Exit).
+- Secondary (the base): `--at-surface` + 1 px `--at-line-strong`. `.at-button-quiet`: transparent, ink-2, 500.
+- `.at-icon-button`: 44 × 44, r12, transparent, ink-2; hover `--at-raised`.
+- `.at-chip`: 44, r999, padding 0 8, `--at-line` border, surface, ink-2; `[aria-pressed|aria-checked|aria-selected="true"]` = lamp 45 % border + lamp 14 % fill + ink 600; `.at-chip-choose` = dashed `--at-line-strong` (choose / add only).
+- `.at-tag`: non-interactive, `--at-h-tag` 24, padding 0 8, r999, 12/16 600, 1 px line-strong, ink-2; `.at-tag-tone` = tone 12 % fill (`--at-tone`).
+
+### 3.29 Segmented bar and keyboard hint (B2)
+
+- `.at-seg`: surface, 1 px line, 4 px padding, r999, `--at-seg-n` equal columns of 44 px items (`.at-seg-item`: `--at-type-ui`, ink-2; selected ink 600). One indicator `.at-seg-ind` (lamp 14 % fill + lamp 45 % border; neutral `--at-raised` for the theme switch) moves by `translateX(index × 100%)` over `--at-d-slide` / `--at-ease` (mirrored under `dir="rtl"`). The index comes from CSS alone: `:has()` finds the item with `aria-pressed`, `aria-checked` or `aria-selected="true"`, or a checked radio inside (items 1–7). No script moves it.
+- `.at-kbd` (P-KBD): one theme keycap everywhere: 24 high, min 24 wide, padding 0 8, r8, `--at-font-mono` 12/16 500, `--at-raised` fill, 1 px line-strong plus a 1 px inset bottom line, ink. `Kbd` (`components/ui/kbd.tsx`) emits it. On buttons it goes inside `span.at-kbd-hint[aria-hidden]` (the button carries `aria-keyshortcuts`), shown only with `(hover: hover) and (pointer: fine)` and not under `<html data-hints="off">` (the Settings toggle wires this in B3).
+
+### 3.30 Surfaces, fields and sheets (B2)
+
+- `.at-card`: surface, 1 px line, r16, padding `--at-card-pad`, `--at-elev`; never nested. `.at-panel`: the same box used in place of a modal (rises in with `at-rise`). `.at-row`: list row, min 56, padding 16 0, 1 px line below, gap 12.
+- `.at-input` (inputs, selects, textareas): 48 (`--at-h-input`), r8, 1 px `--at-input-border` (≥ 3:1), `--at-sunken` fill, `--at-type-body` (16 px, so iOS never zooms); focus draws a 2 px `--at-focus` outline on `:focus-within`.
+- `dialog.at-sheet`: a bottom sheet on phones (full width, r28 top corners, padding 8 16 32, a 36 × 4 handle, slides up over `--at-d-slide`), a side sheet from 600 (`--at-sheet-inline` wide at the end edge, full height, 1 px line on its leading edge only, rises in). The native modal `<dialog>` supplies the scrim (`::backdrop` = `--at-scrim`), focus trap and Esc. `.at-scrim` is the same scrim for non-dialog overlays.
+
+### 3.31 Content pages: article, hub, home below the tool (B5)
+
+Canvas: `ContentArticle` (`/for`), `GuideOn` / `GuideVs` / `GuideGuides` / `GuideLearn`, `HubFor` (`hub` = for · on · vs · guides · learn), `HomeBelow`. Styles in `content.css` (layer `content`, scoped `.at-cp`); home styles scoped in `HomeBelow.astro`. Build-time markup; the only script is `lib/content-nav.ts` (~1 KB).
+
+- **Article grid** (`ContentLayout`). Phone/tablet one column: head → tool card → body (32 / 40 apart); `/guides` and `/learn` put the tool after the body (head → body → tool → tail, `--at-section` apart), as docs/06 §2.6–§2.7 ask. Desktop (≥ 1024): `200 | 680 | 160` with 40 gaps, centred: a sticky "On this page" list (the article's h2s, then Honest limit, Related on `/for`, Questions, Try it) with a "Back to the tool" card that mirrors the tool's pill and digits; the tool card spans the main and rail columns; the rail holds the 160 × 600 ad. Page top padding 8 (phone) / 24.
+- **Head.** Breadcrumb (14/20 muted, links ink-2, 44 px rows, a `›` chevron that mirrors in RTL; the current page drops on phones), h1 (`--at-type-h1`, −0.02em), then the meta line: "Sources checked {date}" with a lamp check, the stale notice (warn tone chip), the translation-pending chip and "By Soubhik Biswas". The guide boards draw "Sources checked" as a 32 px chip.
+- **Tool card.** r28 hero panel, surface, 1 px line, a slow radial aura (26 s); while the lock is held (`[data-lock="held"|"fallback"]` anywhere inside) the border turns lamp 38 % with a lamp shadow. Padding 20 phone, 24 × 32 (guides) / 24 (articles) tablet, 32 desktop. The panel inside is `ToolIsland embed` (B3 owns its content).
+- **Body.** Markdown in `.at-md`: h2 `--at-type-h2` with `--at-gap-article` above, body 16/26 ink-2, the first paragraph as the lead (18/28 ink), inline code 14 px r4 sunken, code blocks a sunken r8 well with token colours from Shiki's css-variables theme, tables as the board's matrix card (r16, sunken kicker header, 1 px row lines), blockquotes as a card (no side stripes).
+- **Notes and tail.** Honest limit: a surface card, info glyph, "Honest limit" kicker (an h2), the text in ink (no side stripe). FAQ: `<details>` rows, 56 px questions (16/24 600), a plus in a 32 px ring (guide boards: bare plus) that turns 45° when open; the first is open. Related: `/for` shows 56 px rows with a sliding arrow and a 52 px secondary "Start this session" with the lamp glyph; the guide boards show an h2, a lamp-tinted 44 px "Start this session" pill and inline links. Author card: 48 px lamp-tinted "SB" avatar, name, role, About link.
+- **Ads.** `AdSlot` renders a labelled box: "Advertisement" kicker above a hatch-patterned r12 box of the reserved size (inline 300 × 250 → 336 × 280 from 600, after the prose; rail 320 × 50 below 1024, else 160 × 600 sticky in the rail column). Never touching the tool card or the honest limit.
+- **Hub.** Desktop `360 | 664`, 96 apart; the intro column is sticky: breadcrumb, h1, lead (18/28 ink-2), an optional honest note (14/20 muted), the "Try it now" card (static Ready pill and 00:00, the lamp action "Keep awake · ∞" opening `/?preset=pinf&autostart=1`, a note, "Open the full tool →"), and the jump bar (segmented, lamp indicator follows the group in view). Groups: h2 + count ("4 guides"), a muted one-liner, then rows (title 20/28, line 15/22 ink-2, meta 13/18 muted: preset · mode on `/for`), 48 / 64 apart.
+- **Home below the tool** (`HomeBelow.astro`): a band (a 1 px lamp line and the floating "How it works, limits and support" link), then sections with a 1 px line on top, `--at-section` padding, and on desktop a sticky 300 px heading column beside the content: what AwakeTab does (lead + two paragraphs) · how it works (three numbered steps with key hints, then the seven pill states as S pills with their meanings, two columns from 600) · honest limits (two columns from 600) · browser and device support (a table card from `support-matrix.json`, "Sources checked", link to the matrix page) · guides and devices · comparisons and fixes (row lists, two columns from 600, hub links with live counts) · eight FAQs · "How AwakeTab is checked" author card.
+
+### 3.32 Site pages (B6)
+
+`/about`, `/changelog`, `/privacy`, `/terms`, the 404 body, `/extension`, `/kiosk`, `/library` and `/embed`, rebuilt to the canvas boards PageAbout, PageChangelog, PageLegal, Page404, PageExtension, PageKiosk, PageLibrary and EmbedShowcase. English only (no `[lang]` variants), zero hydration, no ads (docs/00 §8.3). Styles: `src/styles/pages.css`, imported by these pages only (never by `/`, so the tool's CSS budget is untouched); stylelint's strict token override (§12.8) covers it, with its few off-scale sizes named once as `--at-pg-*` and the three drawings (kiosk screen, host recipe page, state diagram) in marked blocks.
+
+- **Frame.** Each page is a `main.at-page` inside `.at-shell` (the shell's top padding is dropped; the page sets 12 phone / 32 from 600, or 24 / 32 / 40 on the product pages `.at-prod`). The site pages use the canvas "page" ground: a 1400 × 900 lift above the top edge fading into `--at-ground` (`body:has(.at-page)`); `/embed` keeps the shell ground. Shared pieces: `components/pages/Crumbs.astro` (breadcrumb, 14/20 muted, 44 px home link), `components/pages/SegRadio.astro` (a `.at-seg` of native radios; `.at-pg-seg` moves the indicator for `:checked`, since `:has()` cannot nest inside shell.css's aria-state rule; `small` 14 px labels, `compactPhone` 13 px on phones; optional counts), `.at-pg-*` type roles, comparison tables drawn as rows (`role="table"`, with a `<dl>` variant below 600), the warn note (`.at-pg-note`, warn 8 % / 32 %), related-link chips and form fields over `.at-input`.
+- **`/about`.** Intro, an author card (`aside`, 320 wide beside the text from 1024), "How AwakeTab is checked" with the seven lock states as tiles (glyph + id + exact pill string) and the journeys as tags, the principles as a numbered list, contact (`#contact`).
+- **`/changelog`.** The release fragment (`release:` front matter) is a hero card: numeral, Release tag, long date, its first paragraph, and every later `Heading: text` paragraph as a two-column list (`lib/changelog.ts` `releaseParts`). The other fragments are grouped by date (`h2 > time`), each an `li[data-changelog-entry][data-date][data-type]` with a New / Fixed / Changed tag from the fragment's `type:` front matter (default New) and its Markdown body. Filter: `SegRadio name="cl-filter"` (All · New · Fixed · Changed with counts); CSS `:has()` hides other types, emptied dates and (for Fixed / Changed) the release card, so it works without script.
+- **`/privacy`, `/terms`.** `components/pages/LegalDoc.astro` + `LegalSection.astro`: title, "Last updated" tag and effective date (full month names), lede, "On this page" (a card below 1024, a sticky 232 px column from 1024; the section in view gets `aria-current="location"` and a lamp dot from a few lines of script), then sections with an "In short" panel (lamp 6 % / 26 %) and the full text; key/value lists are `dl.at-legal-dl` (190 px term column from 600). Section ids are link targets and stay stable (`#browser`, `#telemetry`, `#extension`, `#server-data`, `#delete`, `#network`, `#ads`, `#contact`; `#guarantee`, `#use`, `#licences`).
+- **404.** `ToolIsland` with `kicker="Error 404"` (the only change to the tool component: an optional eyebrow above its `<h1>`); the full-tool link and the popular guides go in its slot, and from 1024 `.at-404` sets the tool's `main.at-shell` as a two-column grid (tool 540 · guides). The tool itself keeps its own look (B3).
+- **`/extension`.** Hero with the store buttons (`[data-store]`, hidden where the extension cannot exist, `extension_click`) and an `aria-hidden`, `inert` drawing of the popup's awake state (360 × 600 plus its border, narrowing with the column on phones). "What the extension adds" table; Screen or System (`SegRadio name="ext-level"`) drives the popup drawing, a laptop figure and the toolbar badge (ON / SYS) with CSS `:has()`; Pro schedules and auto-start mock; honest limits; permissions table; privacy; Firefox / Safari card (`/on/firefox`); "Open AwakeTab".
+- **`/kiosk`.** Builder form (`[data-kiosk-form]`: Mode, Theme, Duration as `SegRadio`s, Start automatically as a switch checkbox, Message with a counter, Logo URL and Licence token with inline hints that turn warn when a value is left out), a live preview of the kiosk screen (message, clock, minimal, standard ring, night; the chosen kiosk theme, not the page's; logo chip and wordmark by licence state) drawn on a 640 × 360 grid in container units, and the link (`[data-kiosk-url]`, coloured parts, Copy with "Link copied" in `role=status`). Script: `lib/kiosk-page.ts` (builder URL from `snippet.ts` `kioskUrl`). Then the Free / Kiosk licence table, prices and checkout, the honest-limit note and related links.
+- **`/library`.** Intro with the install line ("npm package coming soon"); the live state machine card: scenario select, the status pill (`[data-demo-pill]`, exact strings), `state:` readout, advice chip, Request · Release · Simulate tab hidden / visible, a scenario note, the state diagram (seven `li[data-state]` pills on a 3 × 3 grid, arrows `[data-edge="from-to"]`; the last transition lights in its target's tone, visited states stay lit) and the transition log (time, from → to, reason and advice; newest first, last 12). Then "Use it" tabs (ESM · CDN · React · Preact · Vue, ARIA tabs, `lib/code-tabs.ts`, highlighted at build time by `lib/library-code.ts`), the NoSleep.js comparison, the honest note and related links.
+- **`/embed`.** Intro, a placeholder recipe page with the live widget (the real loader tag; the builder remounts it), "Install: one line" with the coloured tag (`[data-snippet]`, Copy), the builder card (Mode, Theme, Size as `SegRadio`s; Language and start length selects; the mode note), "Free, or licensed for your brand" with "Licences open soon" (decision O-29: no checkout yet), then `#allow`, the JavaScript API and related links. Script: `lib/embed-page.ts`.
 
 ---
 
@@ -334,7 +445,7 @@ Captures `beforeinstallprompt`, calls `preventDefault()`, and shows a small "Ins
 
 ### 4.1 Tool pages (`/`, preset routes, `/for/*`, `/on/*`, etc.)
 
-The tool occupies the first viewport on every tool page, including a 320 × 568 phone: header 56 px → `Ring` 192 (160 at < 360) → `StatusPill` 44 → `Timer` 64 → `PresetChips` 2 × 44 + 8 → Stop/ResumeBanner slot 48 (reserved) — 520 px in total. Header: wordmark (ring motif + "AwakeTab"), then right-aligned Install, Stats, Share, Theme, Settings icon buttons (44 × 44, `aria-label`ed, `keyboardHints` add `<kbd>` badges). The `<h1>` is the first element under the header and is visually `--at-t-2xl`; on `/` it reads "Keep your screen awake" and on content pages it matches the page intent (`06-content-seo-spec.md`).
+The tool occupies the first viewport on every tool page. Header (§3.25): 60 px on phones, 68 from 600 — logo lockup, the site nav from 1024, the theme switch, Stats (from 600) and Settings; Share, floating window, shortcuts, Stats on phones and Install sit in the action row under the tool until B3. Then `Ring` 192 (160 at < 360) → `StatusPill` 38 → `Timer` 64 → `PresetChips` → Stop/ResumeBanner slot 60 (reserved). The whole page body sits in `.at-shell` (`padding-inline: var(--at-gutter)`, max `--at-content-max` + gutters) between the shared header and footer. The `<h1>` is the first element under the header and is visually `--at-t-2xl`; on `/` it reads "Keep your screen awake" and on content pages it matches the page intent (`06-content-seo-spec.md`).
 
 **Layout stability on autostart (M9, CLS 0 in Lighthouse).** Everything that changes when a session starts keeps its box: `[data-pip-slot]` spans the panel (`justify-self: stretch`) so a wider caption never re-centres it; the pill is at least ring-wide (`min-inline-size: 12rem`, text centred in a full-width `<output>`) so Ready → Starting… → Screen awake changes words, not geometry (the widest of those three in any locale is 168 px, German); the timer spans the slot and its caption line is reserved (`min-block-size: 1lh`); Stop sits in `.at-stop-slot`, whose 44 px row is reserved on the full tool (not in the embedded tool, which only starts on a click that CLS already excludes); the header action row fills its line and packs to the end, so the Install button or Pro badge appearing at its start moves nothing; and the one-time language suggestion (`07-i18n.md` §2) is a fixed banner at the bottom of the viewport instead of an in-flow block above the chips. Longer pill states (lost, denied, fallback) may still widen the pill; they never happen during load.
 
@@ -352,6 +463,8 @@ The tool occupies the first viewport on every tool page, including a 320 × 568 
 10. Author box → `/about`, changelog link, footer (privacy, terms, shortcuts, language switcher).
 
 Each section is `content-visibility: auto; contain-intrinsic-size: auto 480px` and lazily hydrates nothing — sections are static HTML.
+
+As built in B5 (§3.31, canvas `HomeBelow`): what AwakeTab does → how it works (steps, then the seven pill states) → honest limits → support table → guides and devices → comparisons and fixes → eight FAQs → how AwakeTab is checked. The Pro strip and product cards are not on the canvas and wait for B10. Sections reserve `contain-intrinsic-size: auto 720px`.
 
 ### 4.3 Breakpoints
 
@@ -376,7 +489,7 @@ From `00-conventions.md` §5.3, active on web and `/pip`:
 | `Esc` | Close the innermost layer: an open dialog/overlay, else leave the ambient mode, else stop the session | always |
 | `?` | Toggle `ShortcutsOverlay` | not in inputs |
 
-Rules: shortcuts are letters, so they are disabled while `event.target` is an input, textarea, select or `contenteditable`; they ignore events with `ctrl`/`meta`/`alt` held; they use `event.key` compared case-insensitively so `Shift+/` (`?`) works on every layout. Focus: dialogs use native `<dialog>` focus trapping; on close, focus returns to the element that opened them. Starting a session from a chip keeps focus on that chip; a toast never steals focus; the `ExtendPrompt` moves focus to "Stop". A visible skip link "Skip to content" precedes the header for content pages. Focus is always visible (`:focus-visible` outline `2px solid var(--at-focus)`, offset 2 px), never removed.
+Rules: shortcuts are letters, so they are disabled while `event.target` is an input, textarea, select or `contenteditable`; they ignore events with `ctrl`/`meta`/`alt` held; they use `event.key` compared case-insensitively so `Shift+/` (`?`) works on every layout. Focus: dialogs use native `<dialog>` focus trapping; on close, focus returns to the element that opened them. Starting a session from a chip keeps focus on that chip; a toast never steals focus; the `ExtendPrompt` moves focus to "Stop". A visible skip link "Skip to content" precedes the header on every page (`tool.skip`): tool pages target the `<h1 id="content">`; other pages target `.at-shell#content` (`tabindex="-1"`). Focus is always visible (`:focus-visible` outline `2px solid var(--at-focus)`, offset 2 px), never removed.
 
 ---
 
@@ -525,7 +638,7 @@ Routes: `/15m` → `p15`, `/30m` → `p30`, `/45m` → `p45`, `/1h` → `p60`, `
 - `<html data-theme="light|dark|oled">`; `auto` is resolved at boot by an inline script in `<head>` that reads `at.v1.settings.theme` and `prefers-color-scheme` before first paint (no flash), and by a `matchMedia` listener afterwards. **As built:** `apps/web/src/boot/boot.js`, inlined by `BaseLayout` and `/embed/cook` with `set:html` (the file is the single source; `public/theme-boot.js` is gone) and allowed by a CSP `sha256-` hash that `scripts/headers.mjs` computes from the same file (`BOOT_HASH`; never `'unsafe-inline'`; `test/seo/security.test.ts` hashes the built pages' inline scripts against `_headers`). The same script starts the tool island: `scripts/defer-main.mjs` (post-build) moves the entry `<script type="module">` onto `#awaketab-tool[data-main]`, and `boot.js` imports it on the first-contentful-paint entry (PerformanceObserver `paint`), capped at 150 ms after `DOMContentLoaded` so the wake lock is still requested within 300 ms (asserted in e2e journey 1). `#awaketab-tool[data-booted]` marks the island interactive.
 - `color-scheme: light` or `dark` is set on `:root` per theme (`oled` → `dark`) so form controls and scrollbars match.
 - Three `<meta name="theme-color">` tags: `media="(prefers-color-scheme: light)"` `#FAF7F2`, `media="(prefers-color-scheme: dark)"` `#14161C`, and one without `media` that JS rewrites to the active ground (`#000000` for `oled`).
-- `D` cycles and persists `settings.theme`; `theme=` param overrides for the view only.
+- `D` cycles and persists `settings.theme`; `theme=` param overrides for the view only. The header `ThemeSwitch` (§3.26) is run by the same boot script: it persists and applies a pick, sets `data-theme-pref` (the preference, `auto` included; `applyTheme()` sets it too), follows `prefers-color-scheme` live while on Auto, and announces the pick to the island with the `at-theme` event.
 - `night` ambient mode forces the `oled` palette while active and restores the previous theme on exit.
 
 ---

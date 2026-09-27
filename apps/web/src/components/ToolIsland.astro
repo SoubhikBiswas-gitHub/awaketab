@@ -2,9 +2,7 @@
 import { createT } from '../i18n/load';
 import type { TLocale } from '../i18n/locales';
 import ToolPanel from './ToolPanel.astro';
-import { badgeVariants } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
-import { ChartColumn, CircleHelp, Download, PictureInPicture2, Settings, Share2, SunMoon } from 'lucide-react';
+import SiteHeader from './shell/SiteHeader.astro';
 
 interface Props {
   heading: string;
@@ -14,15 +12,22 @@ interface Props {
   mode?: string | undefined;
   locale?: TLocale;
   embed?: boolean;
+  /** Eyebrow above the heading (the 404 page's "Error 404", B6). */
+  kicker?: string | undefined;
 }
 
-const { heading, autostart, pip = false, preset, mode, locale = 'en', embed = false } = Astro.props;
+const { heading, autostart, pip = false, preset, mode, locale = 'en', embed = false, kicker } = Astro.props;
 const t = createT(locale);
 
-// shadcn/ui renders at build time only (docs/03 ADR-013): cva class strings on plain elements, no React runtime.
-// `icon-lg` is 40 px; min-h/min-w-11 lift every header control to the 44 px target (docs/00 §11).
-const iconBtn = [buttonVariants({ variant: 'ghost', size: 'icon-lg' }), 'at-icon-btn min-h-11 min-w-11 text-base'];
-const proBadge = badgeVariants({ variant: 'secondary' });
+// Icons (DESIGN.md §11.4: 20 px, stroke 1.8, round caps), drawn as on the canvas boards (Main, Extras).
+const ICON = {
+  stats: 'M5 20V11M12 20V5M19 20v-7',
+  settings: 'M4 7h10M18 7h2M4 17h4M12 17h8',
+  share: 'M12 15V4M8 8l4-4 4 4M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5',
+  pip: 'M4 6h16v12H4zM12 12h6v4h-6z',
+  keys: 'M3 7h18v10H3zM7 11h.01M11 11h.01M15 11h.01M8 14h8',
+  install: 'M12 4v11M8 11l4 4 4-4M5 20h14',
+} as const;
 ---
 
 {!embed && <a class="at-skip" href="#content">{t('tool.skip')}</a>}
@@ -39,46 +44,56 @@ const proBadge = badgeVariants({ variant: 'secondary' });
   {
     embed ? (
       <section aria-label={t('app.name')}>
-        <div class="at-header-actions">
-          <span class:list={[proBadge, 'at-pro-badge']} data-pro-badge hidden>{t('pro.badge')}</span>
-          <button class:list={iconBtn} type="button" data-open-settings aria-label={t('tool.header.settings')}>
-            <Settings aria-hidden="true" className="size-5" />
+        <div class="at-tool-embed-bar">
+          <span class="at-tag at-pro-badge" data-pro-badge hidden>{t('pro.badge')}</span>
+          <button class="at-icon-button" type="button" data-open-settings aria-label={t('tool.header.settings')} aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d={ICON.settings} /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" />
+            </svg>
           </button>
         </div>
         <ToolPanel locale={locale} />
       </section>
     ) : (
       <>
-        <header class="at-header">
-          <a class="at-wordmark" href="/">{t('app.name')}</a>
-          <div class="at-header-actions">
-            <span class:list={[proBadge, 'at-pro-badge']} data-pro-badge hidden>{t('pro.badge')}</span>
-            <button class:list={iconBtn} type="button" data-install hidden aria-label={t('tool.header.install')}>
-              <Download aria-hidden="true" className="size-5" />
-            </button>
-            <button class:list={iconBtn} type="button" data-open-stats aria-label={t('stats.open')}>
-              <ChartColumn aria-hidden="true" className="size-5" />
-            </button>
-            <button class:list={iconBtn} type="button" data-open-share aria-label={t('tool.header.share')}>
-              <Share2 aria-hidden="true" className="size-5" />
-            </button>
-            <button class:list={iconBtn} type="button" data-open-pip aria-label={t('tool.header.pip')}>
-              <PictureInPicture2 aria-hidden="true" className="size-5" />
-            </button>
-            <button class:list={iconBtn} type="button" data-cycle-theme aria-label={t('tool.header.theme')}>
-              <SunMoon aria-hidden="true" className="size-5" />
-            </button>
-            <button class:list={iconBtn} type="button" data-open-shortcuts aria-label={t('tool.header.shortcuts')}>
-              <CircleHelp aria-hidden="true" className="size-5" />
-            </button>
-            <button class:list={iconBtn} type="button" data-open-settings aria-label={t('tool.header.settings')}>
-              <Settings aria-hidden="true" className="size-5" />
-            </button>
-          </div>
-        </header>
-        <main>
+        <SiteHeader locale={locale} tool>
+          <span class="at-tag at-pro-badge" data-pro-badge hidden>{t('pro.badge')}</span>
+          <button class="at-icon-button at-phone-hide" type="button" data-open-stats aria-label={t('stats.open')} aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d={ICON.stats} />
+            </svg>
+          </button>
+          <button class="at-icon-button" type="button" data-open-settings aria-label={t('tool.header.settings')} aria-haspopup="dialog">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d={ICON.settings} /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" />
+            </svg>
+          </button>
+        </SiteHeader>
+        <main class="at-shell">
+          {kicker && <p class="at-tool-kicker">{kicker}</p>}
           <h1 class="at-h1" id="content">{heading}</h1>
           <ToolPanel locale={locale} />
+          {/* Tool actions that left the header in B2 (header = logo · nav · theme · Stats · Settings, DESIGN.md §6).
+              Interim home until the tool dock (B3) and the floating window (B4) place them. A fixed five-column
+              grid, so the Install button appearing after load moves nothing (CLS 0); Stats is here on phones only,
+              where the header has no room for it (the canvas puts it in Settings there). */}
+          <div class="at-tool-more">
+            <button class="at-icon-button" type="button" data-open-share aria-label={t('tool.header.share')} title={t('tool.header.share')}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={ICON.share} /></svg>
+            </button>
+            <button class="at-icon-button" type="button" data-open-pip aria-label={t('tool.header.pip')} title={t('tool.header.pip')}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={ICON.pip} /></svg>
+            </button>
+            <button class="at-icon-button" type="button" data-open-shortcuts aria-label={t('tool.header.shortcuts')} title={t('tool.header.shortcuts')} aria-haspopup="dialog">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={ICON.keys} /></svg>
+            </button>
+            <button class="at-icon-button at-phone-only" type="button" data-open-stats aria-label={t('stats.open')} title={t('stats.open')} aria-haspopup="dialog">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d={ICON.stats} /></svg>
+            </button>
+            <button class="at-icon-button" type="button" data-install hidden aria-label={t('tool.header.install')} title={t('tool.header.install')}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={ICON.install} /></svg>
+            </button>
+          </div>
           <slot />
         </main>
       </>

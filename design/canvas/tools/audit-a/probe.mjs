@@ -1,0 +1,15 @@
+import { readFileSync, readdirSync } from 'node:fs';
+import { createRequire } from 'node:module';
+const require = createRequire('/home/user/awaketab/package.json');
+const { chromium } = require('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright');
+const DIR = '/home/user/awaketab/design/canvas/project/';
+const [file, props, W, H, sel] = process.argv.slice(2);
+const files = {}; for (const f of readdirSync(DIR)) if (f.endsWith('.dc.html')) files[f.replace('.dc.html', '')] = readFileSync(DIR + f, 'utf8');
+const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: +W, height: +H } });
+await p.setContent('<!doctype html><html><head></head><body style="margin:0"></body></html>');
+await p.addScriptTag({ content: readFileSync(new URL('./inpage.js', import.meta.url), 'utf8') });
+await p.evaluate(({ files, n, pr }) => window.__render(files, n, pr), { files, n: file, pr: JSON.parse(props) });
+await p.addStyleTag({ content: '*{animation:none!important;transition:none!important}' });
+await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(300);
+console.log(await p.evaluate((sel) => [...document.querySelectorAll(sel)].map((e) => Math.round(e.getBoundingClientRect().top) + ' ' + e.tagName + ' ' + e.textContent.trim().slice(0, 50)).join('\n'), sel));
+await b.close();

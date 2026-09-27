@@ -131,6 +131,7 @@ test('stats panel shows today, a 7-row heatmap and the free-tier limits', async 
     );
   });
   await page.goto('/?autostart=0');
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
   await page.getByRole('button', { name: 'Stats', exact: true }).click();
   const dlg = page.locator('dialog[data-dialog="stats"]');
   await expect(dlg).toBeVisible();
@@ -171,6 +172,7 @@ test('rating prompt after the 5th counted session, once only', async ({ page }) 
   const rating = page.locator('dialog[data-dialog="rating"]');
   const runFiveMinutes = async () => {
     await page.goto('/?autostart=0');
+    await page.locator('#awaketab-tool[data-booted]').waitFor();
     await page.getByRole('button', { name: 'Custom…' }).click();
     const dlg = page.locator('dialog[data-dialog="custom"]');
     await dlg.locator('input[name="days"]').fill('0');
@@ -225,6 +227,7 @@ test('the /pip popup opens in the page language and mirrors the owner there', as
     Object.defineProperty(window, 'documentPictureInPicture', { configurable: true, value: undefined });
   });
   await page.goto('/es/');
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
   await page.locator('[data-preset="p30"]').click();
   await expect(pillText(page)).toHaveText('Pantalla despierta', { timeout: 4000 });
 
@@ -307,6 +310,7 @@ test.describe('axe on M6 surfaces', () => {
 
     test(`stats dialog, ${theme}`, async ({ page }) => {
       await page.goto(`/?autostart=0&theme=${theme}`);
+      await page.locator('#awaketab-tool[data-booted]').waitFor();
       await page.getByRole('button', { name: 'Stats', exact: true }).click();
       await expect(page.locator('dialog[data-dialog="stats"] tbody tr')).toHaveCount(7);
       const results = await new AxeBuilder({ page }).analyze();
@@ -315,6 +319,7 @@ test.describe('axe on M6 surfaces', () => {
 
     test(`settings dialog, ${theme}`, async ({ page }) => {
       await page.goto(`/?autostart=0&theme=${theme}`);
+      await page.locator('#awaketab-tool[data-booted]').waitFor();
       await page.getByRole('button', { name: 'Settings', exact: true }).click();
       await expect(page.locator('dialog[data-dialog="settings"]')).toBeVisible();
       const results = await new AxeBuilder({ page }).analyze();
@@ -326,6 +331,8 @@ test.describe('axe on M6 surfaces', () => {
 test('content page scenario mode waits for a session instead of covering the article', async ({ page }) => {
   await page.goto('/for/cooking');
   await expect(page.locator('h1').first()).toBeVisible();
+  // The island must have booted (and chosen not to open the scenario mode) before this means anything.
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
   await expect(page.locator('dialog[data-ambient]')).toBeHidden();
   await page.locator('#awaketab-tool [data-chips] button[data-preset="pinf"]').click();
   await expect(page.locator('dialog[data-ambient]')).toBeVisible();

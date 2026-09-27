@@ -1,8 +1,8 @@
 import type { TTheme } from '@awaketab/core';
 
 const GROUND: Record<'light' | 'dark' | 'oled', string> = {
-  light: '#FAF7F2',
-  dark: '#14161C',
+  light: '#F2F6FA',
+  dark: '#0A0E16',
   oled: '#000000',
 };
 
@@ -15,6 +15,8 @@ export function applyTheme(theme: TTheme, nightForceOled = false): 'light' | 'da
   const darkPref = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const resolved = nightForceOled ? 'oled' : resolveTheme(theme, darkPref);
   document.documentElement.dataset.theme = resolved;
+  // The header theme switch reads the preference (not the resolved theme); boot.js syncs its radios.
+  document.documentElement.dataset.themePref = theme;
   document.documentElement.style.colorScheme = resolved === 'light' ? 'light' : 'dark';
   const meta = document.querySelector('meta[name="theme-color"]:not([media])');
   if (meta) meta.setAttribute('content', GROUND[resolved]);

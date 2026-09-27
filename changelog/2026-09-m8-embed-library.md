@@ -1,6 +1,7 @@
 ---
 title: Embed widget, kiosk links, and the wake lock library
 date: 2026-09-26
+type: new
 ---
 
 Sites can now add a "keep my screen on" button with one line: `<script async src="https://awaketab.com/embed.js" data-mode="cook"></script>`. The widget is the real AwakeTab in a small frame — the same honest status in eight languages, Start/Stop, tap the timer to pause while the screen stays on, and up to three kitchen timers in the full-width size. If a site pastes the frame without permission to keep the screen on, the widget says "Ask the site owner" instead of pretending. The new [/embed](/embed) page has a snippet generator and live demos; a free widget carries a small credit link, and the Embed licence removes it and applies your brand colour.

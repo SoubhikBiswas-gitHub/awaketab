@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · welcome after install</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease),opacity .45s var(--ease)}
+button:active{transform:scale(.96)}
+button:disabled,input:disabled,select:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+a{transition:color .45s var(--ease),background-color .45s var(--ease),border-color .45s var(--ease)}
+h1,h2,h3,h4,p,figure,blockquote{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+.at-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.at-num{font-family:Geist,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"zero" 0}
+.at-kick{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.2s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-fade{transition:background-color .6s var(--ease),border-color .6s var(--ease),opacity .6s var(--ease),fill .6s var(--ease),stroke .6s var(--ease)}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-breathe{animation:at-breathe 3.4s var(--ease) infinite alternate}
+.at-ignite{transform-box:fill-box;transform-origin:center;animation:at-ignite .6s var(--ease) .3s both}
+.at-travel{animation:at-travel .6s var(--ease) both}
+.at-off{transition:stroke-dasharray .9s var(--ease),stroke-opacity .9s var(--ease),opacity .9s var(--ease),fill .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-breathe{from{opacity:.55}to{opacity:1}}
+@keyframes at-ignite{0%{transform:scale(.6);opacity:.4}55%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes at-travel{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--at-tx,0),var(--at-ty,0)) scale(.5);opacity:0}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+<style>
+.at-float{animation:at-float 3.8s var(--ease) infinite alternate}
+.at-ping{animation:at-ping 2.6s var(--ease) infinite}
+@keyframes at-float{from{transform:translate(0,0)}to{transform:translate(-5px,-4px)}}
+@keyframes at-ping{0%{box-shadow:0 0 0 0 var(--ping)}70%,100%{box-shadow:0 0 0 12px transparent}}
+</style>
+</helmet>
+<div class="at-root" style="width: 1280px; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.ground}}; color: {{t.ink}}; display: flex; flex-direction: column">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; left: -10%; top: -380px; width: 120%; height: 1100px; background: radial-gradient(40% 40% at 60% 50%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
+
+  <header style="position: relative; height: {{hdrH}}; flex-shrink: 0; box-sizing: border-box; padding: 0 {{gutter}}; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+    <div style="display: flex; align-items: center; gap: 8px; min-height: 44px; color: {{t.ink}}; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em"><svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{bead}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{bead}}" style="transition: fill .6s"></circle></svg>AwakeTab<span style="font-weight: 500; color: {{t.muted}}">for Chrome</span></div>
+    <div style="display: flex; align-items: center; gap: 24px">
+      <nav aria-label="Welcome" style="display: flex; align-items: center; gap: 24px">
+        <a href="ExtOptions.dc.html" style="min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; text-decoration: none">Settings</a>
+        <a href="https://awaketab.com/?source=ext" target="_blank" rel="noopener" style="min-height: 44px; display: inline-flex; align-items: center; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 600; color: {{lampText}}; text-decoration: none">Open AwakeTab<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+      </nav>
+      <div role="radiogroup" aria-label="Theme" style="position: relative; flex-shrink: 0; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}"><div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{themeX}})"></div><button role="radio" aria-checked="{{themeLight}}" aria-label="Light" title="Light" onClick="{{setLight}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeLightInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button><button role="radio" aria-checked="{{themeDark}}" aria-label="Dark" title="Dark" onClick="{{setDark}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeDarkInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button><button role="radio" aria-checked="{{themeAuto}}" aria-label="Auto, follows your system" title="Auto: follows your system" onClick="{{setAuto}}" style="position: relative; width: 44px; height: 44px; border: 0; background: transparent; border-radius: 999px; color: {{themeAutoInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button></div>
+    </div>
+  </header>
+
+  <main style="position: relative; flex-grow: 1; display: flex; flex-direction: column">
+
+    <section aria-labelledby="w-h1" style="padding: 96px 80px 96px; display: grid; grid-template-columns: minmax(0, 1fr) 540px; column-gap: 64px; align-items: center">
+      <div class="at-in" style="display: flex; flex-direction: column; gap: 24px">
+        <p style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">
+          <span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: {{lamp}}; box-shadow: 0 0 10px {{lampGlow}}"></span>
+          Installed · version 1.0.0
+        </p>
+        <h1 id="w-h1" style="font-size: 48px; line-height: 56px; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance">AwakeTab is ready. Pin it where you can see it.</h1>
+        <p style="font-size: 18px; line-height: 28px; color: {{t.ink2}}; text-wrap: pretty; max-width: 34em">It keeps your screen, or your whole computer, awake for as long as you choose, and it says plainly whether that is working. Pinned, its icon shows the time left at a glance.</p>
+        <ol style="display: flex; flex-direction: column; gap: 12px; padding-top: 8px">
+          <sc-for list="{{pinSteps}}" as="p" hint-placeholder-count="2">
+            <li style="display: flex; align-items: center; gap: 12px; font-size: 16px; line-height: 24px; color: {{t.ink}}">
+              <span aria-hidden="true" style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 999px; display: grid; place-items: center; font-size: 14px; font-weight: 600; background: {{p.bg}}; color: {{p.ink}}; border: 1px solid {{p.line}}">{{p.n}}</span>
+              <span>{{p.text}}</span>
+            </li>
+          </sc-for>
+        </ol>
+      </div>
+
+      <figure class="at-rise" aria-label="Chrome toolbar showing where to pin AwakeTab" style="margin: 0; position: relative; height: 400px">
+        <div data-placeholder="Chrome window" style="position: absolute; inset: 0; border-radius: 28px; background: {{t.surface}}; border: 1px solid {{t.line}}; overflow: hidden; box-shadow: {{cardShadow}}">
+          <div style="height: 56px; box-sizing: border-box; padding: 0 16px; display: flex; align-items: center; gap: 12px; background: {{bar.bg}}; border-bottom: 1px solid {{bar.line}}">
+            <span aria-hidden="true" style="display: flex; gap: 8px"><span style="width: 11px; height: 11px; border-radius: 50%; background: {{bar.ghost}}"></span><span style="width: 11px; height: 11px; border-radius: 50%; background: {{bar.ghost}}"></span><span style="width: 11px; height: 11px; border-radius: 50%; background: {{bar.ghost}}"></span></span>
+            <div aria-hidden="true" style="flex-grow: 1; height: 34px; border-radius: 999px; background: {{bar.field}}; display: flex; align-items: center; padding: 0 16px; font-size: 13px; color: {{bar.muted}}">awaketab.com</div>
+            <sc-if value="{{pinned}}" hint-placeholder-val="{{false}}">
+              <span class="at-in" style="position: relative; width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: {{bar.hover}}">
+                <svg width="22" height="22" viewBox="0 0 48 48" aria-label="AwakeTab, pinned"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{bar.ring}}" stroke-width="5.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="5.2" fill="{{bar.lamp}}"></circle></svg>
+                <span aria-hidden="true" style="position: absolute; right: -6px; bottom: -3px; height: 15px; padding: 0 4px; border-radius: 8px; background: #087B87; color: #FFFFFF; font-size: 12px; font-weight: 600; line-height: 15px; box-shadow: 0 0 0 1.5px {{bar.bg}}">25m</span>
+              </span>
+            </sc-if>
+            <sc-if value="{{notPinned}}" hint-placeholder-val="{{true}}">
+              <span aria-hidden="true" style="width: 34px; height: 34px; box-sizing: border-box; border-radius: 12px; border: 1px dashed {{bar.dash}}"></span>
+            </sc-if>
+            <span style="--ping: {{lampPing}}; position: relative; width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; background: {{puzzleBg}}; color: {{bar.ring}}" class="{{puzzleClass}}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-label="Extensions"><path d="M9 4.5a2 2 0 0 1 4 0V6h4v4h-1.5a2 2 0 0 0 0 4H17v4h-4v-1.5a2 2 0 0 0-4 0V18H5v-4h1.5a2 2 0 0 0 0-4H5V6h4z"></path></svg>
+              <span aria-hidden="true" style="position: absolute; top: -9px; right: -9px; width: 20px; height: 20px; border-radius: 50%; background: {{lamp}}; color: {{lampInk}}; font-size: 12px; font-weight: 600; display: grid; place-items: center; opacity: {{markOp}}">1</span>
+            </span>
+            <span aria-hidden="true" style="width: 22px; height: 22px; border-radius: 50%; background: {{bar.ghost}}"></span>
+          </div>
+
+          <div aria-hidden="true" style="position: absolute; left: 24px; right: 24px; top: 92px; display: flex; flex-direction: column; gap: 12px; opacity: 0.55">
+            <span style="height: 12px; width: 62%; border-radius: 8px; background: {{t.track}}"></span>
+            <span style="height: 12px; width: 80%; border-radius: 8px; background: {{t.track}}"></span>
+            <span style="height: 12px; width: 48%; border-radius: 8px; background: {{t.track}}"></span>
+          </div>
+
+          <div class="at-in" style="position: absolute; right: 18px; top: 64px; width: 330px; border-radius: 16px; background: {{bar.panel}}; border: 1px solid {{bar.line}}; box-shadow: {{panelShadow}}; padding: 12px 8px 8px" data-placeholder="Chrome extensions menu">
+            <div style="padding: 0 8px 8px; font-size: 13px; line-height: 18px; font-weight: 600; color: {{bar.ink}}">Extensions</div>
+            <div style="display: flex; align-items: center; gap: 12px; padding: 4px 4px 4px 8px; border-radius: 12px; background: {{rowBg}}">
+              <span style="width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(160deg,#16213A 0%,#0B0F17 100%); display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#EAF0F7" stroke-width="4.6" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="#5BE0E8"></circle></svg></span>
+              <span style="flex-grow: 1; font-size: 14px; line-height: 20px; color: {{bar.ink}}">AwakeTab: Keep Screen Awake</span>
+              <button onClick="{{togglePin}}" aria-pressed="{{pinnedStr}}" aria-label="{{pinAria}}" style="--ping: {{lampPing}}; position: relative; width: 44px; height: 44px; border-radius: 12px; border: 1px solid {{pinLine}}; background: {{pinBg}}; color: {{pinInk}}; display: grid; place-items: center" class="{{pinClass}}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="{{pinFill}}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3.5h6l-1 5 3.5 3.5h-11L10 8.5zM12 12v8.5"></path></svg>
+                <span aria-hidden="true" style="position: absolute; top: -9px; right: -9px; width: 20px; height: 20px; border-radius: 50%; background: {{lamp}}; color: {{lampInk}}; font-size: 12px; font-weight: 600; display: grid; place-items: center; opacity: {{markOp}}">2</span>
+              </button>
+            </div>
+            <div aria-hidden="true" style="display: flex; align-items: center; gap: 12px; padding: 12px 8px 4px; opacity: 0.6">
+              <span style="width: 28px; height: 28px; border-radius: 8px; background: {{bar.ghost}}"></span>
+              <span style="height: 10px; width: 120px; border-radius: 8px; background: {{bar.ghost}}"></span>
+            </div>
+            <div style="margin-top: 8px; padding: 8px 8px 4px; border-top: 1px solid {{bar.line}}; font-size: 13px; line-height: 18px; color: {{bar.muted}}">Manage extensions</div>
+          </div>
+
+          <svg class="at-float" width="30" height="34" viewBox="0 0 30 34" aria-hidden="true" style="position: absolute; right: 22px; top: 150px; opacity: {{pointerOp}}; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.35))"><path d="M4 2l20 16-9 1.5 5.5 11-4 2-5.5-11L4 27z" fill="#FFFFFF" stroke="#0E1726" stroke-width="1.6" stroke-linejoin="round"></path></svg>
+
+          <div style="position: absolute; left: 24px; right: 24px; bottom: 22px; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+            <p aria-live="polite" style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; max-width: 330px">{{pinCaption}}</p>
+            <button onClick="{{togglePin}}" style="height: 44px; box-sizing: border-box; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap">{{pinButton}}</button>
+          </div>
+        </div>
+      </figure>
+    </section>
+
+    <section aria-labelledby="w-how" style="padding: 0 80px 96px; display: flex; flex-direction: column; gap: 40px">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 24px">
+        <h2 id="w-how" style="font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em">What happens when you use it</h2>
+        <p style="font-size: 15px; line-height: 22px; color: {{t.muted}}">Three moments, start to finish.</p>
+      </div>
+      <div style="position: relative">
+      <div aria-hidden="true" style="position: absolute; left: 18px; right: 18px; top: 17px; height: 2px; background: repeating-linear-gradient(90deg, {{t.line2}} 0 6px, transparent 6px 12px)"></div>
+      <ol style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px">
+
+        <li style="position: relative; display: flex; flex-direction: column; gap: 16px">
+          <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 999px; background: {{t.ground}}; border: 1px solid {{lamp}}; color: {{t.ink}}; display: grid; place-items: center; font-weight: 600; font-size: 15px">1</span>
+          <div aria-hidden="true" style="height: 148px; box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; padding: 20px; display: flex; flex-direction: column; justify-content: center; gap: 8px">
+            <div style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.sunken}}; border: 1px solid {{t.line}}">
+              <span style="position: absolute; left: calc(4px + (100% - 8px) / 2); top: 4px; width: calc((100% - 8px) / 4); height: 36px; box-sizing: border-box; border-radius: 999px; background: {{lampSoft}}; border: 1px solid {{lampLine}}"></span>
+              <span style="position: relative; height: 36px; display: grid; place-items: center; font-size: 14px; color: {{t.ink2}}">15 min</span>
+              <span style="position: relative; height: 36px; display: grid; place-items: center; font-size: 14px; color: {{t.ink2}}">30 min</span>
+              <span style="position: relative; height: 36px; display: grid; place-items: center; font-size: 14px; font-weight: 600; color: {{t.ink}}">1 h</span>
+              <span style="position: relative; height: 36px; display: grid; place-items: center; font-size: 14px; color: {{t.ink2}}">∞</span>
+            </div>
+            <div style="height: 36px; border-radius: 999px; border: 1px dashed {{t.line2}}; display: grid; place-items: center; font-size: 14px; color: {{t.ink2}}">Until 6:00 PM</div>
+          </div>
+          <h3 style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">Pick how long</h3>
+          <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Click the icon and choose a length, or an end time like 6:00 PM. Start uses your default length.</p>
+        </li>
+
+        <li style="position: relative; display: flex; flex-direction: column; gap: 16px">
+          <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 999px; background: {{t.ground}}; border: 1px solid {{lamp}}; color: {{t.ink}}; display: grid; place-items: center; font-weight: 600; font-size: 15px">2</span>
+          <div aria-hidden="true" style="height: 148px; box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; padding: 0 24px; display: flex; align-items: center; gap: 24px">
+            <span data-placeholder="Chrome toolbar" style="position: relative; width: 64px; height: 64px; border-radius: 20px; background: {{bar.bg}}; border: 1px solid {{bar.line}}; display: grid; place-items: center; flex-shrink: 0">
+              <svg width="34" height="34" viewBox="0 0 48 48"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{bar.ring}}" stroke-width="5.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="5.2" fill="{{bar.lamp}}"></circle></svg>
+              <span style="position: absolute; right: -10px; bottom: 4px; height: 20px; padding: 0 6px; border-radius: 8px; background: #087B87; color: #FFFFFF; font-size: 13px; font-weight: 600; line-height: 20px; box-shadow: 0 0 0 2px {{t.surface}}" data-placeholder="Chrome badge">25m</span>
+            </span>
+            <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+              <span style="display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; height: 32px; padding: 0 12px 0 8px; box-sizing: border-box; border-radius: 999px; background: {{lampTag}}; border: 1px solid {{lampLine}}; font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap"><svg width="12" height="12" viewBox="0 0 12 12" style="overflow: visible; filter: drop-shadow(0 0 5px {{lampGlow}})"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z" fill="{{lamp}}"></path></svg>Screen awake</span>
+              <span style="font-size: 13px; line-height: 18px; color: {{t.muted}}">Tab hidden · window minimised</span>
+            </div>
+          </div>
+          <h3 style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">It holds while you work</h3>
+          <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Switch tabs, hide the window, minimise Chrome. The badge counts down, and it only appears while the device is really being kept awake.</p>
+        </li>
+
+        <li style="position: relative; display: flex; flex-direction: column; gap: 16px">
+          <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 999px; background: {{t.ground}}; border: 1px solid {{lamp}}; color: {{t.ink}}; display: grid; place-items: center; font-weight: 600; font-size: 15px">3</span>
+          <div aria-hidden="true" style="height: 148px; box-sizing: border-box; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; padding: 0 24px; display: flex; align-items: center">
+            <div data-placeholder="system notification" style="width: 100%; border-radius: 12px; background: {{t.sunken}}; border: 1px solid {{t.line}}; padding: 12px 16px; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 4px 12px">
+              <span style="grid-row: span 2; width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(160deg,#16213A 0%,#0B0F17 100%); display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 48 48"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#EAF0F7" stroke-width="4.6" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="#5BE0E8"></circle></svg></span>
+              <span style="font-size: 14px; font-weight: 600">AwakeTab</span>
+              <span style="font-size: 14px; color: {{t.ink2}}">Your 1 h session is done</span>
+              <span style="grid-column: 2; display: flex; gap: 8px; padding-top: 8px"><span style="height: 28px; padding: 0 12px; border-radius: 8px; border: 1px solid {{t.line2}}; font-size: 13px; font-weight: 600; display: grid; place-items: center">+30 min</span><span style="height: 28px; padding: 0 12px; border-radius: 8px; border: 1px solid {{t.line2}}; font-size: 13px; font-weight: 600; display: grid; place-items: center">Stop</span></span>
+            </div>
+          </div>
+          <h3 style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">It tells you when time is up</h3>
+          <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}; text-wrap: pretty">Turn on notifications in Settings and Chrome shows one when the session ends, with +30 min and Stop. The popup also offers more time for five minutes.</p>
+        </li>
+      </ol>
+      </div>
+    </section>
+
+    <section aria-labelledby="w-level" style="padding: 0 80px 96px; display: flex; flex-direction: column; gap: 32px">
+      <div style="display: flex; flex-direction: column; gap: 8px; max-width: 720px">
+        <h2 id="w-level" style="font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em">Screen or System</h2>
+        <p style="font-size: 18px; line-height: 28px; color: {{t.ink2}}; text-wrap: pretty">The popup has one switch for how awake to keep things. Screen is the default. You can change it any time, even mid-session.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: 28px; background: {{t.surface}}; border: 1px solid {{t.line}}; overflow: hidden">
+        <sc-for list="{{levels}}" as="l" hint-placeholder-count="2">
+          <article aria-labelledby="{{l.id}}" style="padding: 40px; display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 32px; align-items: center; border-inline-start: {{l.divider}}">
+            <div aria-hidden="true" data-placeholder="laptop illustration" style="position: relative; width: 180px; height: 132px">
+              <div style="position: absolute; left: 14px; top: 0; width: 152px; height: 100px; box-sizing: border-box; border-radius: 12px; border: 5px solid {{bezel}}; background: {{l.screen}}; overflow: hidden; display: grid; place-items: center; box-shadow: {{l.screenGlow}}">
+                <svg width="46" height="46" viewBox="0 0 48 48" style="opacity: {{l.logoOp}}"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{l.logoInk}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.4" fill="{{l.logoBead}}"></circle></svg>
+              </div>
+              <div style="position: absolute; left: 0; top: 102px; width: 180px; height: 12px; border-radius: 3px 3px 10px 10px; background: {{bezel}}"></div>
+              <span style="position: absolute; left: 76px; top: 122px; width: 28px; height: 5px; border-radius: 8px; background: {{l.cpu}}; box-shadow: {{l.cpuGlow}}"></span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+                <h3 id="{{l.id}}" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">{{l.name}}</h3>
+                <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; background: {{l.badge}}; color: #FFFFFF; font-size: 12px; line-height: 16px; font-weight: 600">{{l.badgeText}}</span>
+              </div>
+              <p style="font-size: 16px; line-height: 26px; color: {{t.ink}}; text-wrap: pretty">{{l.help}}</p>
+              <p style="font-size: 15px; line-height: 22px; color: {{t.ink2}}">{{l.good}}</p>
+              <p style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; color: {{t.muted}}">Pill reads
+                <span style="display: inline-flex; align-items: center; gap: 4px; height: 26px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; background: {{lampTag}}; border: 1px solid {{lampLine}}; font-weight: 600; color: {{t.ink}}"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="{{l.glyph}}" fill="{{lamp}}" fill-rule="evenodd"></path></svg>{{l.pill}}</span>
+              </p>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+
+    <section aria-labelledby="w-key" style="margin: 0 80px 96px; padding: 40px 48px; border-radius: 28px; border: 1px solid {{t.line}}; background: {{t.sunken}}; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 48px; align-items: center">
+      <div aria-hidden="true" style="display: flex; align-items: center; gap: 8px">
+        <sc-for list="{{keyCaps}}" as="k" hint-placeholder-count="3">
+          <span style="display: flex; align-items: center; gap: 8px">
+            <kbd style="display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; box-shadow: inset 0 -1px 0 {{t.line2}}; background: {{t.raised}}; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}; white-space: nowrap">{{k.cap}}</kbd>
+            <sc-if value="{{k.plus}}" hint-placeholder-val="{{true}}"><span style="font-size: 15px; line-height: 22px; color: {{t.muted}}">+</span></sc-if>
+          </span>
+        </sc-for>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <h2 id="w-key" style="font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -0.01em">Alt+Shift+A starts or stops from any tab</h2>
+        <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}">It uses your default length. On a Mac, Alt is the Option key.</p>
+      </div>
+      <button onClick="{{noop}}" style="height: 44px; box-sizing: border-box; padding: 0 16px; border-radius: 12px; border: 1px solid {{t.line2}}; background: transparent; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap">Change shortcut</button>
+    </section>
+
+    <section aria-label="Limits and privacy" style="padding: 0 80px 96px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 64px">
+      <div style="display: flex; flex-direction: column; gap: 24px">
+        <h2 style="font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em">What it can't do</h2>
+        <ul style="display: flex; flex-direction: column; border-top: 1px solid {{t.line}}">
+          <sc-for list="{{limits}}" as="x" hint-placeholder-count="3">
+            <li style="display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-bottom: 1px solid {{t.line}}; font-size: 16px; line-height: 24px; color: {{t.ink2}}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{t.muted}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 2px"><path d="{{x.icon}}"></path></svg>
+              <span>{{x.text}}</span>
+            </li>
+          </sc-for>
+        </ul>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 24px">
+        <h2 style="font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em">What it can see</h2>
+        <ul style="display: flex; flex-direction: column; border-top: 1px solid {{t.line}}">
+          <sc-for list="{{privacy}}" as="x" hint-placeholder-count="3">
+            <li style="display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-bottom: 1px solid {{t.line}}; font-size: 16px; line-height: 24px; color: {{t.ink2}}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{lamp}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 2px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+              <span>{{x}}</span>
+            </li>
+          </sc-for>
+        </ul>
+        <a href="https://awaketab.com/privacy#extension" target="_blank" rel="noopener" style="align-self: flex-start; min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; font-weight: 600; color: {{lampText}}">Privacy policy</a>
+      </div>
+    </section>
+
+    <section aria-labelledby="w-next" style="margin: 0 80px 96px; padding-top: 48px; border-top: 1px solid {{t.line}}; display: flex; align-items: center; justify-content: space-between; gap: 40px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <h2 id="w-next" style="font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em">Set your defaults, then close this tab</h2>
+        <p style="font-size: 16px; line-height: 26px; color: {{t.ink2}}">Level, default length, notifications and language live in Settings. AwakeTab itself lives in your toolbar.</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0">
+        <a href="ExtOptions.dc.html" style="height: 60px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; color: {{t.primaryInk}}; font-size: 17px; line-height: 24px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; height: 52px">Open settings</a>
+        <a href="https://awaketab.com/?source=ext" target="_blank" rel="noopener" style="height: 52px; box-sizing: border-box; padding: 0 24px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px">Open AwakeTab<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+      </div>
+    </section>
+  </main>
+  <footer style="position: relative; flex-shrink: 0; box-sizing: border-box; width: 100%; padding: {{footPad}}; border-top: 1px solid {{t.line}}; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px"><p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">No ads on the awake screen, now or later.</p><nav aria-label="Site" style="display: flex; flex-wrap: wrap; column-gap: 16px"><a href="PagePrivacyDesk.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Privacy</a><a href="PageTermsPhone.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Terms</a><a href="PageChangelog.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Changelog</a><a href="PageAbout.dc.html" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">About</a><a href="#" style="display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; font-size: 13px; line-height: 18px; font-weight: 500; color: {{t.ink2}}; text-decoration: none">Buy me a coffee</a></nav></footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["desktop"],"default":"desktop"},"$preview":{"width":1280,"height":2760}}'>
+// AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
+const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C', shadow: 'none' };
+const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA', shadow: '0 1px 2px rgba(14,23,38,.06)' };
+const AT_OLED = Object.assign({}, AT_DARK, { bg: '#000000', ground: '#000000', surface: '#0A0A0A' });
+const AT_LAMPS = [
+  { id: 'aqua', name: 'Aqua', dark: '#5BE0E8', light: '#087B87', pro: false },
+  { id: 'violet', name: 'Violet', dark: '#A594FF', light: '#5A47CF', pro: false },
+  { id: 'mint', name: 'Mint', dark: '#7EF0B8', light: '#167A50', pro: true },
+  { id: 'sky', name: 'Sky', dark: '#7CB8FF', light: '#255FBD', pro: true }
+];
+const AT_GLYPH = {
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z'
+};
+// Status pill sizes (§11.4): L kiosk, M tool, S popup / PiP / full embed, XS compact embed.
+const AT_PILL = {
+  L: { h: '48px', pad: '0 20px 0 16px', gap: '8px', fs: '20px', lh: '28px' },
+  M: { h: '38px', pad: '0 16px 0 12px', gap: '8px', fs: '15px', lh: '22px' },
+  S: { h: '32px', pad: '0 12px 0 8px', gap: '8px', fs: '14px', lh: '20px' },
+  XS: { h: '26px', pad: '0 8px', gap: '4px', fs: '13px', lh: '18px' }
+};
+function atRgba(hex, a) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atPill(o) {
+  const s = AT_PILL[o.size || 'M'];
+  return { label: o.label, h: s.h, pad: s.pad, gap: s.gap, fs: s.fs, lh: s.lh, tone: o.tone, glyph: o.glyph || AT_GLYPH.dot, fill: o.hollow ? 'transparent' : o.tone, stroke: o.stroke || '1.6', soft: atRgba(o.tone, 0.12), line: atRgba(o.tone, 0.38), glow: o.glow ? atRgba(o.tone, 0.8) : 'transparent', cls: 'at-fade' };
+}
+// Page chrome shared by every board: tokens, lamp, header, theme switch, card and footer metrics.
+function atChrome(o) {
+  const L = o.layout || 'phone';
+  const desk = L === 'desktop', tab = L === 'tablet', phone = !desk && !tab;
+  const theme = o.theme || 'auto';
+  const dark = theme === 'dark' || theme === 'oled' || (theme === 'auto' && o.sysDark !== false);
+  const t = theme === 'oled' ? AT_OLED : dark ? AT_DARK : AT_LIGHT;
+  const def = AT_LAMPS.find((l) => l.id === o.lamp) || AT_LAMPS[0];
+  const lamp = dark ? def.dark : def.light;
+  const set = (id) => () => { if (o.set) o.set(id); };
+  const ink = (id) => (theme === id ? t.ink : t.ink2);
+  return {
+    t, dark, lamp, lampText: lamp, lampInk: dark ? '#04232A' : '#FFFFFF', bead: lamp,
+    lampSoft: atRgba(lamp, 0.14), lampLine: atRgba(lamp, 0.45), lampGlow: atRgba(lamp, 0.55), lampFaint: atRgba(lamp, 0.08), lampTag: atRgba(lamp, 0.12),
+    halo: 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(lamp, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(lamp, 0) + ' 100%)',
+    isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone,
+    hdrH: phone ? '60px' : '68px', gutter: desk ? '80px' : tab ? '32px' : '16px', secGap: desk ? '96px' : tab ? '64px' : '48px',
+    cardPad: phone ? '20px' : '24px', cardShadow: t.shadow, footPad: phone ? '24px 16px 32px' : desk ? '24px 80px' : '24px 32px',
+    themeX: (theme === 'light' ? 0 : theme === 'dark' ? 44 : 88) + 'px',
+    themeLight: theme === 'light', themeDark: theme === 'dark', themeAuto: theme === 'auto',
+    themeLightInk: ink('light'), themeDarkInk: ink('dark'), themeAutoInk: ink('auto'),
+    setLight: set('light'), setDark: set('dark'), setAuto: set('auto')
+  };
+}
+
+// Browser chrome placeholders (same values as ExtBadges' toolbars).
+const BAR_LIGHT = { bg: '#F1F3F6', line: '#DADFE6', ring: '#1F2733', ghost: '#D5DAE1', lamp: '#087B87', field: '#FFFFFF', muted: '#5F6B7A', ink: '#1F2733', panel: '#FFFFFF', hover: '#E3E7EC', dash: '#9AA5B4' };
+const BAR_DARK = { bg: '#2A2D33', line: '#3A3E46', ring: '#E8ECF2', ghost: '#40454E', lamp: '#5BE0E8', field: '#1F2126', muted: '#A7AFBB', ink: '#E8ECF2', panel: '#303338', hover: '#3A3E46', dash: '#6B7280' };
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const HALF = 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z';
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { theme: props.theme ?? 'auto', sysDark: this.sys(), pinned: false };
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() { if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  componentDidUpdate(prev) { if (prev.theme !== this.props.theme && this.props.theme) this.setState({ theme: this.props.theme }); }
+  rgba(hex, a) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  renderVals() {
+    const s = this.state;
+    const b = atChrome({ theme: s.theme, sysDark: s.sysDark, layout: 'desktop', set: (id) => this.setState({ theme: id }) });
+    const t = b.t, dark = b.dark, lamp = b.lamp;
+    const bar = dark ? BAR_DARK : BAR_LIGHT;
+    const pinned = s.pinned;
+    const step = (n, text, done) => ({
+      n: done ? '✓' : String(n), text,
+      bg: done ? this.rgba(lamp, 0.16) : 'transparent', line: done ? this.rgba(lamp, 0.5) : t.line2, ink: done ? lamp : t.ink
+    });
+    return Object.assign(b, {
+      bar, W: '1280px', H: '2760px',
+      lampPing: this.rgba(lamp, 0.55),
+      aura: this.rgba(lamp, dark ? 0.12 : 0.1),
+      cardShadow: dark ? '0 40px 90px -50px rgba(0,0,0,0.9)' : '0 40px 90px -50px rgba(14,23,38,0.35)',
+      panelShadow: dark ? '0 18px 40px -12px rgba(0,0,0,0.7)' : '0 18px 40px -14px rgba(14,23,38,0.28)',
+      pinSteps: [
+        step(1, "Click the puzzle piece at the right of Chrome's toolbar.", pinned),
+        step(2, 'Click the pin next to AwakeTab: Keep Screen Awake.', pinned)
+      ],
+      pinned, notPinned: !pinned, pinnedStr: pinned ? 'true' : 'false',
+      pinAria: pinned ? 'Unpin AwakeTab: Keep Screen Awake' : 'Pin AwakeTab: Keep Screen Awake',
+      pinBg: pinned ? this.rgba(lamp, 0.16) : 'transparent', pinLine: pinned ? this.rgba(lamp, 0.6) : lamp, pinInk: pinned ? lamp : bar.ink, pinFill: pinned ? 'currentColor' : 'none',
+      pinClass: pinned ? '' : 'at-ping', puzzleClass: pinned ? '' : 'at-ping', puzzleBg: pinned ? 'transparent' : bar.hover,
+      markOp: pinned ? 0 : 1, pointerOp: pinned ? 0 : 1, rowBg: bar.hover,
+      pinCaption: pinned ? 'Pinned. The icon stays in view, and its badge shows the minutes left while a session runs.' : 'Try it here: click the pin. In Chrome, the icon then stays next to the address bar.',
+      pinButton: pinned ? 'Show again' : 'Pin it',
+      togglePin: () => this.setState({ pinned: !this.state.pinned }),
+      bezel: dark ? '#2E3A52' : '#9AA7B8',
+      levels: [
+        {
+          id: 'lv-screen', name: 'Screen', badge: '#087B87', badgeText: 'ON', pill: 'Screen awake', glyph: DOT, divider: '0',
+          help: 'Keeps the screen on and the computer awake.',
+          good: 'For reading, recipes, dashboards and slides: anything you watch.',
+          screen: dark ? 'radial-gradient(90% 90% at 50% 40%, #16304A 0%, #0D1726 100%)' : 'radial-gradient(90% 90% at 50% 40%, #FFFFFF 0%, #E6F2F4 100%)',
+          screenGlow: '0 0 36px -6px ' + this.rgba(lamp, dark ? 0.55 : 0.45), logoOp: 1, logoInk: dark ? '#EAF0F7' : '#0E1726', logoBead: lamp,
+          cpu: lamp, cpuGlow: '0 0 10px ' + this.rgba(lamp, 0.8)
+        },
+        {
+          id: 'lv-system', name: 'System', badge: '#2B3A67', badgeText: 'SYS', pill: 'System awake', glyph: HALF, divider: '1px solid ' + t.line,
+          help: 'Keeps the computer awake. The screen may still dim or turn off.',
+          good: 'For downloads, uploads, builds and long exports: anything that runs on its own.',
+          screen: dark ? '#05070B' : '#2A3342', screenGlow: 'none', logoOp: 0.18, logoInk: '#8E9AAE', logoBead: '#8E9AAE',
+          cpu: lamp, cpuGlow: '0 0 10px ' + this.rgba(lamp, 0.8)
+        }
+      ],
+      keyCaps: [{ cap: 'Alt', plus: true }, { cap: 'Shift', plus: true }, { cap: 'A', plus: false }],
+      limits: [
+        { icon: 'M4 6h16v10H4zM2 19h20', text: "It can't stop sleep when you close the lid. It works while Chrome is running, even with the tab hidden or the window minimised." },
+        { icon: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM5.6 5.6l12.8 12.8', text: "It doesn't keep you \"Available\" in Teams, Slack or Zoom. Those follow your typing, and AwakeTab never fakes input." },
+        { icon: 'M6 4h12v16H6zM9 8h6M9 12h6', text: 'It works only while Chrome is running. With Chrome closed, nothing keeps the device awake.' }
+      ],
+      privacy: [
+        'No account, no ads, and nothing to sign in to.',
+        'It asks for power, storage and alarms. Notifications only if you turn them on; site access only for auto-start sites you add, one at a time.',
+        'Anonymous usage data is off unless you turn it on, and never includes URLs, tab titles or site names.'
+      ],
+      noop: () => {}
+    });
+  }
+}
+</script>
+</body>
+</html>

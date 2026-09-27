@@ -1,0 +1,12 @@
+import { writeFileSync } from 'node:fs';
+const D = '/home/user/awaketab/design/canvas/';
+const { load, toHtml } = await import(D + 'ProLib.mjs');
+const { chromium } = await import('/home/user/awaketab/node_modules/.pnpm/playwright@1.63.0/node_modules/playwright/index.mjs');
+const [f, layout, theme, out] = process.argv.slice(2);
+const w = { phone: 390, tablet: 820, desktop: 1280 }[layout];
+const { Component } = load(f + '.dc.html');
+const vals = new Component({ layout, theme }).renderVals();
+const tmp = new URL('./.s.html', import.meta.url); writeFileSync(tmp, toHtml(f + '.dc.html', vals));
+const b = await chromium.launch(); const pg = await b.newPage({ viewport: { width: w, height: 900 } });
+await pg.goto(tmp.href); await pg.evaluate(() => document.fonts.ready); await pg.waitForTimeout(300);
+const H = await pg.evaluate(() => document.body.scrollHeight); const n = Math.ceil(H / 2700); await pg.setViewportSize({ width: w, height: H }); for (let i = 0; i < n; i++) await pg.screenshot({ path: out + i + ".png", clip: { x: 0, y: i * 2700, width: w, height: Math.min(2700, H - i * 2700) } }); console.log(H, n); await b.close();

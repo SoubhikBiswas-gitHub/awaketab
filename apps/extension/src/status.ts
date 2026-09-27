@@ -9,7 +9,7 @@ import type { TPowerLevel } from './api';
  * dim or lock"). The web tool is unaffected.
  */
 
-export const BADGE_COLORS: Record<TPowerLevel, string> = { display: '#B86E00', system: '#2B3A67' };
+export const BADGE_COLORS: Record<TPowerLevel, string> = { display: '#087B87', system: '#2B3A67' };
 export const BADGE_TEXT_COLOR = '#FFFFFF';
 
 export type TOrigin = 'user' | 'command' | 'schedule' | 'autostart' | 'startup';
@@ -20,9 +20,13 @@ export function pillKey(lock: TLockState): `tool.pill.${TLockState}` {
 
 /**
  * The popup pill's primary text for a lock state at a level: `ext.pill.systemHeld` for a held system-level
- * lock, otherwise the shared `tool.pill.<state>` copy (docs/00 §5.1).
+ * lock, otherwise the shared `tool.pill.<state>` copy (docs/00 §5.1). The extension has no video fallback,
+ * so `unsupported` (no `chrome.power`) reads as Blocked with the fix instead of the web's fallback offer
+ * (`tool.pill.unsupported`), which would promise something that does not exist here (ExtEdge canvas, docs/10 §3). `data-lock` keeps the
+ * real state.
  */
 export function pillTextKey(lock: TLockState, level: TPowerLevel | null): `tool.pill.${TLockState}` | 'ext.pill.systemHeld' {
+  if (lock === 'unsupported') return pillKey('denied');
   return lock === 'held' && level === 'system' ? 'ext.pill.systemHeld' : pillKey(lock);
 }
 

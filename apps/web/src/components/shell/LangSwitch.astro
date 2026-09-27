@@ -1,0 +1,83 @@
+---
+import { createT } from '../../i18n/load';
+import { LOCALE_META, LOCALES, localePath, type TLocale } from '../../i18n/locales';
+
+/*
+ * Language switcher, footer placement (PRIMITIVES.md P-LANG; docs/07 §2): a trigger with the current language's
+ * native name, and a list of the eight locales in their native names. Rows are real links to this page in that
+ * locale (`links`, from the page's translations) or, without a translation, to that locale's home; each carries
+ * `lang` and `hreflang`. It never redirects and stores nothing: the URL is the state.
+ * Phones: a bottom sheet (role=dialog, aria-modal, scrim, focus trapped). From 600: a non-modal panel anchored
+ * above the trigger (role=group). Behaviour lives in src/boot/boot.js: open/close, focus to the current row,
+ * ↑/↓ (wrapping), Home/End, Esc (focus back to the trigger), outside click and focus leaving close it.
+ */
+interface Props {
+  locale: TLocale;
+  /** The page's translations by locale; a locale without one links to its home (docs/07 §8). */
+  links?: Partial<Record<TLocale, string>> | undefined;
+}
+
+const { locale, links = {} } = Astro.props;
+const t = createT(locale);
+const here = LOCALE_META[locale];
+const pageLang = here.htmlLang;
+---
+
+<div class="at-lang" data-lang>
+  <button
+    class="at-lang-btn"
+    type="button"
+    id="at-lang-btn"
+    aria-expanded="false"
+    aria-controls="at-lang-list"
+    aria-label={`${t('footer.language')}: ${here.label}`}
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"></path>
+    </svg>
+    {here.label}
+    <svg class="at-lang-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <path d="M6 9l6 6 6-6"></path>
+    </svg>
+  </button>
+  <div class="at-lang-scrim" data-lang-close aria-hidden="true"></div>
+  <div class="at-lang-panel" id="at-lang-list" role="group" aria-labelledby="at-lang-h" data-lang-panel hidden>
+    <div class="at-lang-handle" aria-hidden="true"></div>
+    <div class="at-lang-head">
+      <h2 class="at-lang-title" id="at-lang-h">{t('footer.language')}</h2>
+      <button class="at-icon-button at-lang-close" type="button" data-lang-close aria-label={t('footer.language.close')}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+    </div>
+    <ul class="at-lang-list" role="list">
+      {
+        LOCALES.map((code) => {
+          const meta = LOCALE_META[code];
+          const current = code === locale;
+          const note = current ? t('footer.language.current') : meta.reviewed ? '' : t('footer.language.review');
+          return (
+            <li>
+              <a
+                class="at-lang-row"
+                href={links[code] ?? localePath(code, '/')}
+                lang={meta.htmlLang}
+                hreflang={meta.hreflang}
+                aria-current={current ? 'true' : undefined}
+              >
+                <svg class="at-lang-mark" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                  <circle class="at-lang-ring" cx="10" cy="10" r="8" />
+                  <circle class="at-lang-dot" cx="10" cy="10" r="4" />
+                </svg>
+                <span class="at-lang-name">{meta.label}</span>
+                <span class="at-lang-note" lang={pageLang}>{note}</span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</div>

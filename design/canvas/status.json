@@ -1,0 +1,367 @@
+[
+ [
+  "A · Tool",
+  [
+   [
+    1,
+    "Tool phone + desktop · 4 faces · all states · dark/light",
+    "done"
+   ],
+   [
+    2,
+    "Tool on tablet",
+    "done"
+   ],
+   [
+    3,
+    "Settings + lamp colour picker",
+    "done"
+   ],
+   [
+    4,
+    "Stats (12-week heatmap)",
+    "done"
+   ],
+   [
+    5,
+    "Time's up prompt",
+    "done"
+   ],
+   [
+    6,
+    "Ambient: Clock, Focus, Minimal, Night, Message, Cook",
+    "done"
+   ],
+   [
+    7,
+    "Floating window (PiP)",
+    "done"
+   ],
+   [
+    8,
+    "Banners: resume, second tab, install",
+    "done"
+   ],
+   [
+    9,
+    "Rating, shortcuts, share, toasts",
+    "done"
+   ],
+   [
+    10,
+    "Logo, colour, type",
+    "done"
+   ]
+  ]
+ ],
+ [
+  "B · Content",
+  [
+   [
+    11,
+    "Home below the tool",
+    "done"
+   ],
+   [
+    12,
+    "Article page (51 pages)",
+    "done"
+   ],
+   [
+    13,
+    "Hub pages (5)",
+    "done"
+   ]
+  ]
+ ],
+ [
+  "C · Pro & business",
+  [
+   [
+    14,
+    "/pro",
+    "done"
+   ],
+   [
+    15,
+    "/pro/activate",
+    "done"
+   ],
+   [
+    16,
+    "/pro/manage",
+    "done"
+   ],
+   [
+    17,
+    "Embed widget + builder",
+    "done"
+   ],
+   [
+    18,
+    "/kiosk",
+    "done"
+   ],
+   [
+    19,
+    "/library",
+    "done"
+   ]
+  ]
+ ],
+ [
+  "D · Extension",
+  [
+   [
+    20,
+    "Popup",
+    "done"
+   ],
+   [
+    21,
+    "Options + schedule editor",
+    "done"
+   ],
+   [
+    22,
+    "Toolbar icon + badges",
+    "done"
+   ]
+  ]
+ ],
+ [
+  "E · Other",
+  [
+   [
+    23,
+    "/extension landing",
+    "done"
+   ],
+   [
+    24,
+    "About, Changelog",
+    "done"
+   ],
+   [
+    25,
+    "Privacy, Terms",
+    "done"
+   ],
+   [
+    26,
+    "404",
+    "done"
+   ]
+  ]
+ ],
+ [
+  "F · Edge cases, sizes, languages, assets",
+  [
+   [
+    27,
+    "Tool: more sizes (small phone, landscape, tablet landscape, 1920 desktop, TV)",
+    "done"
+   ],
+   [
+    28,
+    "Tool edge states (last minute, multi-day, deferred, offline, low battery, OLED)",
+    "done"
+   ],
+   [
+    29,
+    "Languages: de, es, ja, zh, hi + translated badges",
+    "done"
+   ],
+   [
+    30,
+    "Accessibility: keyboard focus, high contrast, 200% zoom, reduced motion, no-JS",
+    "done"
+   ],
+   [
+    31,
+    "Guide types: /on device, /vs comparison, /learn, /guides",
+    "done"
+   ],
+   [
+    32,
+    "Preset page /30m and /until/HH-MM page",
+    "done"
+   ],
+   [
+    33,
+    "Kiosk wall screens (TV, portrait signage)",
+    "done"
+   ],
+   [
+    34,
+    "Embed edge states + /embed/cook",
+    "done"
+   ],
+   [
+    35,
+    "Social share images (OG)",
+    "done"
+   ],
+   [
+    36,
+    "Store listing, app icons, PWA splash",
+    "done"
+   ],
+   [
+    37,
+    "Extension edge states + welcome page",
+    "done"
+   ],
+   [
+    38,
+    "System: offline, notifications, tab/favicon states, Pro lapsed, checkout errors",
+    "done"
+   ]
+  ]
+ ],
+ [
+  "G · Research (saved in repo docs/research/)",
+  [
+   [
+    39,
+    "Content verification: all product text (content-audit.md)",
+    "done"
+   ],
+   [
+    40,
+    "Market + competitor research (market.md)",
+    "done"
+   ],
+   [
+    41,
+    "Growth, retention, conversion (growth-conversion.md)",
+    "done"
+   ],
+   [
+    42,
+    "Design gaps + new boards to drive use and purchase (design-gaps.md)",
+    "done"
+   ]
+  ]
+ ],
+ [
+  "H · Audits",
+  [
+   [
+    43,
+    "Audit A: tool, ambient, PiP, banners, content (overflow, contrast, targets)",
+    "done"
+   ],
+   [
+    44,
+    "Audit B: Pro, extension, embed, brand + cross-board consistency",
+    "done"
+   ],
+   [
+    46,
+    "Design director critique + system drift report (design-critique.md)",
+    "done"
+   ],
+   [
+    47,
+    "Apply strict system §11 + critique fixes, batch 1 (tool, content, edge)",
+    "done"
+   ],
+   [
+    48,
+    "Apply strict system §11 + critique fixes, batch 2 (Pro, ext, embed, pages, assets)",
+    "done"
+   ],
+   [
+    45,
+    "Final audit: every board (docs/research/final-audit.md)",
+    "done"
+   ]
+  ]
+ ],
+ [
+  "I · Marketing audit (senior marketing leads, docs/research/marketing-*.md)",
+  [
+   [
+    49,
+    "Positioning + messaging + page copy rewrites",
+    "done"
+   ],
+   [
+    50,
+    "SEO + content strategy + 90-day content plan",
+    "done"
+   ],
+   [
+    51,
+    "Pricing, packaging, /pro sales page, CRO copy",
+    "done"
+   ],
+   [
+    52,
+    "Go-to-market + launch plan + channel copy",
+    "done"
+   ]
+  ]
+ ],
+ [
+  "J · Owner review fixes and gap closing (27 Sep)",
+  [
+   [
+    53,
+    "Stop and strong buttons follow the theme (D-R20) on every board",
+    "done"
+   ],
+   [
+    54,
+    "Tablet views and missing themes for every page",
+    "done"
+   ],
+   [
+    55,
+    "Language switcher (footer + Settings) and the /on, /vs, /guides, /learn hubs",
+    "done"
+   ],
+   [
+    56,
+    "/embed page on phone and tablet; stats and settings on tablet/desktop",
+    "done"
+   ],
+   [
+    57,
+    "Real-runtime render check of every board + compact canvas layout (D-R21)",
+    "done"
+   ],
+   [
+    58,
+    "Popup spacing and padding (owner comments)",
+    "done"
+   ],
+   [
+    59,
+    "Runtime bug: styles starting with a {{hole}} were dropped; fixed on every board, and the scanner now catches it",
+    "done"
+   ],
+   [
+    60,
+    "Design system tokens (DESIGN §12, D-R23) + real-runtime §11 audit: 0 violations on all 300 boards",
+    "done"
+   ],
+   [
+    61,
+    "Responsive contract (D-R22) + tool boards at the 600 and 1024 breakpoint edges",
+    "done"
+   ],
+   [
+    62,
+    "/for hub cut to 14 (OD-3), embed 320×104 + credit outside the widget, docs updated",
+    "done"
+   ],
+   [
+    63,
+    "Coverage check: tablet for the /on /vs /guides /learn hubs, checkout failed and Pro lapsed; blocked and time's up at desktop and tablet",
+    "done"
+   ]
+  ]
+ ]
+]

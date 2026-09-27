@@ -1,0 +1,36 @@
+{
+ "drop": [
+  "ExtrasResume.dc.html",
+  "ContentArticlePhoneDark.dc.html",
+  "ExtPopupAwakeDark.dc.html",
+  "ExtEdgeScheduled.dc.html",
+  "WelcomeDark.dc.html",
+  "ProPhoneDark.dc.html",
+  "GuideOnPhoneDark.dc.html",
+  "EmbedEdgeNoAllow.dc.html",
+  "SysOfflinePhone.dc.html",
+  "GrowthFirstVisitPhoneDark.dc.html",
+  "GrowthTrustPhoneDark.dc.html",
+  "GrowthDoneInstallPhoneDark.dc.html",
+  "GrowthProLampPhoneDark.dc.html",
+  "GrowthPlanPhoneDark.dc.html",
+  "GrowthShareTellPhoneDark.dc.html",
+  "OgHome.dc.html",
+  "StoreShot1.dc.html",
+  "HomeBelowPhoneEnd.dc.html"
+ ],
+ "flip": [
+  "HubForPhone.dc.html",
+  "HomeBelowPhone.dc.html",
+  "GuideGuidesPhoneDark.dc.html",
+  "PresetPhoneDark.dc.html",
+  "PageKioskDesk.dc.html",
+  "PageLibraryDesk.dc.html",
+  "PageChangelogPhone.dc.html",
+  "Page404Phone.dc.html"
+ ],
+ "rename": {
+  "GuideGuidesPhoneDark.dc.html": "GuideGuidesPhoneLight.dc.html",
+  "PresetPhoneDark.dc.html": "PresetPhoneLight.dc.html"
+ }
+}

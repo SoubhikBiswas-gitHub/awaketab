@@ -1,33 +1,48 @@
 import type { IToolCtx } from '../ctx.js';
+import { t } from '../i18n.js';
+import { dateLong } from './fmt.js';
 import { el, everySecond } from './tick.js';
 
 /**
- * `clock` and `night` share one layout; night's red digits, hidden ring and dimming are CSS (docs/05 §3.13).
- * Seconds (settings.ambient.showSeconds) render smaller; 12/24 h follows the locale unless overridden.
+ * `clock` and `night` share one layout (Ambient canvas): big H:MM with AM/PM and seconds beside it (stacked on
+ * phones), a 60-tick seconds track with the lamp, and the long date. Night's red digits, the hidden track, the
+ * dimming note and the forced OLED palette are CSS (docs/05 §3.13). 12/24 h follows the locale unless set.
  */
 export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   const lang = document.documentElement.lang || 'en';
-  const digits = el('div', { class: 'at-ambient-digits', 'data-clock': '' });
-  const date = el('p', { class: 'at-ambient-sub' });
-  stage.append(digits, date);
-  const dateFmt = new Intl.DateTimeFormat(lang, { weekday: 'long', day: 'numeric', month: 'long' });
+  const h = el('span');
+  const m = el('span');
+  const ap = el('span', { class: 'at-am-ap' });
+  const sec = el('span', { class: 'at-am-sec' });
+  const suffix = el('span', { class: 'at-am-suffix' });
+  suffix.append(ap, sec);
+  const time = el('time', { class: 'at-am-clock', 'data-clock': '' });
+  time.append(h, el('span', { class: 'at-am-colon' }, ':'), m, suffix);
+  const track = el('div', { class: 'at-am-track', 'aria-hidden': 'true' });
+  for (let i = 0; i < 60; i += 1) track.append(el('i'));
+  track.append(el('b'));
+  const date = el('p', { class: 'at-am-date' });
+  const note = el('p', { class: 'at-am-nightnote' });
+  note.append(el('span', {}, t('ambient.night.dims')), el('span', {}, t('ambient.night.dimmed')));
+  stage.append(time, track, date, note);
 
   return everySecond((now) => {
     const { clock24h, showSeconds } = ctx.store.get().settings.ambient;
-    const d = new Date(now);
     const parts = new Intl.DateTimeFormat(lang, {
-      hour: '2-digit',
+      hour: 'numeric',
       minute: '2-digit',
-      ...(showSeconds ? { second: '2-digit' } : {}),
+      second: '2-digit',
       ...(clock24h === null ? {} : { hour12: !clock24h }),
       numberingSystem: 'latn',
-    }).formatToParts(d);
-    const nodes: Node[] = [];
-    for (const [i, part] of parts.entries()) {
-      const small = part.type === 'second' || (part.type === 'literal' && parts[i + 1]?.type === 'second');
-      nodes.push(small ? el('span', { class: 'at-ambient-seconds' }, part.value) : document.createTextNode(part.value));
-    }
-    digits.replaceChildren(...nodes);
-    date.textContent = dateFmt.format(d);
+    }).formatToParts(now);
+    const part = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
+    h.textContent = part('hour');
+    m.textContent = part('minute');
+    ap.textContent = part('dayPeriod');
+    sec.textContent = showSeconds ? part('second') : '';
+    const s = new Date(now).getSeconds();
+    track.style.setProperty('--s', String(s));
+    track.toggleAttribute('data-zero', s === 0);
+    date.textContent = dateLong(now);
   });
 }

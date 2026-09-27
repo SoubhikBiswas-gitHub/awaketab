@@ -1,30 +1,91 @@
 ---
+// /pro — AwakeTab Pro (docs/09 §2.11; canvas board Pro.dc.html; pricing decisions O-05, O-29, O-31, O-33, O-38, O-52,
+// D-R13 in docs/redesign/DECISIONS.md). Zero hydration (docs/03 ADR-013): the lamp preview and the history toggle
+// are native radios read by CSS (pro.css), the FAQ is <details name>, and one vanilla script (lib/pro-page.ts) runs
+// the plan helper, the message and schedule previews, the launch-price switch and opt-out-aware analytics.
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/shell/Button.astro';
+import StatusPill from '../components/shell/StatusPill.astro';
+import ProRefund from '../components/pro/ProRefund.astro';
+import ProLampRing from '../components/pro/ProLampRing.astro';
 import { t } from '../i18n/load';
 import { articleSchema } from '../lib/seo';
 import { CHECKOUT_LINKS } from '../lib/checkout';
-import { PLAN_PRICES, lifetimePrice } from '../lib/license';
-// shadcn/ui renders at build time only (docs/03-architecture.md ADR-013): no client:* directives here.
-import { cn } from 'cn';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { buttonVariants } from '@/components/ui/button';
-import { Card, CardAction, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { PLAN_PRICES, PRO_LAUNCH_END } from '../lib/license';
+import { LAMPS, heatLevels, usd } from '../lib/pro-common';
+import type { TLockState } from '@awaketab/wake';
+import '../styles/pro.css';
 
+const p = (key: string, vars?: Record<string, string | number>) => t(`page.pro.${key}`, vars);
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/pro`;
 const title = t('page.pro.title');
 const description = t('page.pro.description');
-const life = lifetimePrice();
-const yearlyPrice = t('pro.price.yearly', { price: `$${PLAN_PRICES.pro_yearly}` });
-const lifetimePriceLabel = t('pro.price.lifetime', { price: `$${life.current}` });
 
-// 44 px targets (docs/05 §7): shadcn's default h-9/h-10 is lifted with min-h-11 on real controls.
-const ctaClass = cn(buttonVariants({ size: 'lg' }), 'min-h-11 w-full text-base');
-const secondaryClass = cn(buttonVariants({ variant: 'outline' }), 'min-h-11');
-const navClass = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11');
-const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balance';
-const subheadingClass = 'mt-8 mb-3 text-xl font-semibold leading-tight';
+// D-R13 / O-52: the launch price is a runtime switch, never a strike-through. The build renders the side of
+// PRO_LAUNCH_END it was built on; pro-page.ts flips `data-launch` when the page is opened after the end.
+const launch = Date.now() < PRO_LAUNCH_END;
+const yearly = usd(PLAN_PRICES.pro_yearly);
+const lifeLaunch = usd(PLAN_PRICES.pro_lifetime_launch);
+const lifeFull = usd(PLAN_PRICES.pro_lifetime);
+
+const q1 = [
+  ['me', p('fit.q1.me')],
+  ['site', p('fit.q1.site')],
+  ['screens', p('fit.q1.screens')],
+] as const;
+const wants = [
+  ['none', p('fit.q2.none')],
+  ['look', p('fit.q2.look')],
+  ['sched', p('fit.q2.sched')],
+  ['stats', p('fit.q2.stats')],
+  ['ads', p('fit.q2.ads')],
+] as const;
+
+type TResult = {
+  id: string;
+  title: string;
+  price: string;
+  per: string;
+  why: string;
+  whyAfter?: string;
+  cta: string;
+  href: string;
+  plan?: string;
+  lamp: boolean;
+  note: string;
+  noteAfter?: string;
+  priceAfter?: string;
+};
+const results: TResult[] = [
+  { id: 'embed', title: p('res.embed.title'), price: usd(PLAN_PRICES.biz_embed_site_yearly), per: p('res.embed.per'), why: p('res.embed.why'), cta: p('res.embed.cta'), href: '/embed', lamp: false, note: p('res.embed.note') },
+  { id: 'embedfree', title: p('res.embedfree.title'), price: usd(0), per: p('res.embedfree.per'), why: p('res.embedfree.why'), cta: p('res.embedfree.cta'), href: '/embed', lamp: false, note: p('res.embedfree.note', { price: usd(PLAN_PRICES.biz_embed_site_yearly) }) },
+  { id: 'kiosk', title: p('res.kiosk.title'), price: usd(PLAN_PRICES.biz_kiosk_site), per: p('res.kiosk.per', { five: usd(PLAN_PRICES.biz_kiosk_5) }), why: p('res.kiosk.why'), cta: p('res.kiosk.cta'), href: '/kiosk', lamp: true, note: p('res.kiosk.note') },
+  { id: 'kioskfree', title: p('res.kioskfree.title'), price: usd(0), per: p('res.kioskfree.per'), why: p('res.kioskfree.why'), cta: p('res.kiosk.cta'), href: '/kiosk', lamp: false, note: p('res.kioskfree.note') },
+  { id: 'free', title: p('res.free.title'), price: usd(0), per: p('res.free.per'), why: p('res.free.why'), cta: p('res.free.cta'), href: '/', lamp: false, note: p('res.free.note', { price: yearly }) },
+  { id: 'yearly', title: p('res.yearly.title'), price: yearly, per: p('res.yearly.per'), why: p('res.yearly.why'), cta: p('res.yearly.cta'), href: CHECKOUT_LINKS.pro_yearly, plan: 'pro_yearly', lamp: true, note: p('res.yearly.note') },
+  {
+    id: 'lifetime',
+    title: p('res.lifetime.title'),
+    price: lifeLaunch,
+    priceAfter: lifeFull,
+    per: p('res.lifetime.per'),
+    why: p('res.lifetime.why.launch', { price: lifeFull }),
+    whyAfter: p('res.lifetime.why'),
+    cta: p('res.lifetime.cta'),
+    href: CHECKOUT_LINKS.pro_lifetime,
+    plan: 'pro_lifetime',
+    lamp: true,
+    note: p('res.lifetime.note.launch'),
+    noteAfter: p('res.lifetime.note'),
+  },
+];
+
+const days = [0, 1, 2, 3, 4, 5, 6].map((i) => ({ i, short: p(`sch.short.${i}`), full: p(`sch.day.${i}`), on: i < 5 }));
+const levels = heatLevels();
+const dayRows = [p('hist.mon'), '', p('hist.wed'), '', p('hist.fri'), '', ''];
+const pills: TLockState[] = ['idle', 'requesting', 'held', 'lost', 'denied', 'unsupported', 'fallback'];
+const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }));
 ---
 
 <BaseLayout
@@ -44,65 +105,407 @@ const subheadingClass = 'mt-8 mb-3 text-xl font-semibold leading-tight';
     ],
   })}
 >
-  <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
-  <main class="mx-auto mt-8 max-w-[45rem] leading-normal">
-    <h1 class={headingClass}>{t('page.pro.h1')}</h1>
-    <p class="mt-3 text-lg">{t('page.pro.lead')}</p>
-    <p class="mt-2 text-sm text-muted-foreground">{t('page.pro.tax')}</p>
+  <div class="at-pro at-pro-page" data-pro-root data-launch={launch ? 'on' : 'off'} data-launch-end={String(PRO_LAUNCH_END)}>
+    <div class="at-pro-aura" aria-hidden="true"></div>
+    <main id="top" class="at-pro-main">
+      <section class="at-pro-hero" aria-labelledby="pro-h1">
+        <div class="at-pro-hero-text">
+          <p class="at-pro-kicker">{p('kicker')}</p>
+          <h1 id="pro-h1" class="at-pro-h1">{p('hero.h1')}</h1>
+          <p class="at-pro-lead at-pro-hero-lead">{p('hero.lead')}</p>
+          <ul class="at-pro-glance" aria-label={p('hero.glance')}>
+            <li>{p('hero.devices')}</li>
+            <li>{p('hero.account')}</li>
+            <li>{p('hero.refund')}</li>
+          </ul>
+          <div class="at-pro-hero-actions">
+            <Button variant="primary" href="#plans">{p('hero.cta')}</Button>
+            <a class="at-pro-link" href="/pro/activate">{t('pro.activate')}</a>
+          </div>
+        </div>
 
-    <section aria-labelledby="pro-plans">
-      <h2 id="pro-plans" class={subheadingClass}>{t('pro.title')}</h2>
-      <div class="grid gap-4 sm:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle id="plan-yearly" className="text-2xl">{yearlyPrice}</CardTitle>
-            <CardAction>
-              <Badge variant="secondary">{t('page.pro.devices')}</Badge>
-            </CardAction>
-          </CardHeader>
-          <CardFooter>
-            <a class={ctaClass} href={CHECKOUT_LINKS.pro_yearly} rel="noopener" data-plan="pro_yearly" aria-describedby="plan-yearly">
-              {t('pro.cta')}
-            </a>
-          </CardFooter>
-        </Card>
+        <figure class="at-pro-lamp" aria-labelledby="lamp-cap">
+          <ProLampRing>
+            <p class="at-pro-kicker">{p('lamp.kicker')}</p>
+            <p class="at-pro-lamp-name">
+              {LAMPS.map((l) => <span data-for-lamp={l.id}>{p(`lamp.${l.id}`)}</span>)}
+            </p>
+            <span class="at-tag at-pro-tag-lamp" data-for-lamp="pro">{p('lamp.pro')}</span>
+            <span class="at-tag at-pro-tag-plain" data-for-lamp="free">{p('lamp.free')}</span>
+          </ProLampRing>
+          <div class="at-pro-swatches" role="radiogroup" aria-label={p('lamp.group')}>
+            {
+              LAMPS.map((l) => (
+                <label class="at-pro-swatch" data-lamp-id={l.id}>
+                  <input
+                    class="at-pro-sr"
+                    type="radio"
+                    name="pro-lamp"
+                    id={`pro-lamp-${l.id}`}
+                    value={l.id}
+                    checked={l.id === 'mint'}
+                    aria-label={p(l.pro ? 'lamp.aria.pro' : 'lamp.aria.free', { name: p(`lamp.${l.id}`) })}
+                  />
+                  <span class="at-pro-swatch-dot" aria-hidden="true" />
+                  <span aria-hidden="true">{p(`lamp.${l.id}`)}</span>
+                </label>
+              ))
+            }
+          </div>
+          <figcaption id="lamp-cap" class="at-pro-lamp-cap">{p('lamp.caption')}</figcaption>
+        </figure>
+      </section>
 
-        <Card>
-          <CardHeader>
-            <CardTitle id="plan-lifetime" className="text-2xl">
-              {lifetimePriceLabel}
-              {life.strike ? <s class="ms-2 text-base font-normal text-muted-foreground">${life.strike}</s> : null}
-            </CardTitle>
-            <CardAction>
-              <Badge variant="secondary">{t('page.pro.devices')}</Badge>
-            </CardAction>
-          </CardHeader>
-          <CardFooter>
-            <a class={ctaClass} href={CHECKOUT_LINKS.pro_lifetime} rel="noopener" data-plan="pro_lifetime" aria-describedby="plan-lifetime">
-              {t('pro.cta')}
-            </a>
-          </CardFooter>
-        </Card>
+      <section class="at-pro-helper" aria-labelledby="fit-h" data-helper>
+        <div class="at-pro-helper-q">
+          <div class="at-pro-head">
+            <h2 id="fit-h" class="at-pro-h2">{p('fit.h2')}</h2>
+            <p class="at-pro-body">{p('fit.lead')}</p>
+          </div>
+          <fieldset class="at-pro-q">
+            <legend>{p('fit.q1')}</legend>
+            <div class="at-pro-chips">
+              {
+                q1.map(([id, label]) => (
+                  <label class="at-chip at-pro-chip">
+                    <input class="at-pro-sr" type="radio" name="use" value={id} checked={id === 'me'} />
+                    {label}
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+          <fieldset class="at-pro-q" data-q2="me">
+            <legend>{p('fit.q2.me')}</legend>
+            <div class="at-pro-chips">
+              {
+                wants.map(([id, label]) => (
+                  <label class="at-chip at-pro-chip">
+                    <input class="at-pro-sr" type="checkbox" name="want" value={id} checked={id === 'look'} />
+                    {label}
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+          <fieldset class="at-pro-q" data-q2="site" hidden>
+            <legend>{p('fit.q2.site')}</legend>
+            <div class="at-pro-chips">
+              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="credit" value="fine" checked />{p('fit.q2.fine')}</label>
+              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="credit" value="remove" />{p('fit.q2.remove')}</label>
+            </div>
+          </fieldset>
+          <fieldset class="at-pro-q" data-q2="screens" hidden>
+            <legend>{p('fit.q2.screens')}</legend>
+            <div class="at-pro-chips">
+              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="logo" value="no" checked />{p('fit.q2.nologo')}</label>
+              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="logo" value="yes" />{p('fit.q2.logo')}</label>
+            </div>
+          </fieldset>
+          <fieldset class="at-pro-q" data-q3>
+            <legend>{p('fit.q3')}</legend>
+            <div class="at-pro-chips">
+              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="pay" value="once" checked />{p('fit.q3.once')}</label>
+              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="pay" value="year" />{p('fit.q3.year')}</label>
+            </div>
+          </fieldset>
+        </div>
+        <aside class="at-card at-pro-result" aria-labelledby="res-h" aria-live="polite" data-result="lifetime">
+          <p class="at-pro-kicker">{p('fit.kicker')}</p>
+          {
+            results.map((r) => (
+              <div class="at-pro-result-body" data-res={r.id} data-lamp-cta={r.lamp ? '' : undefined} hidden={r.id !== 'lifetime'}>
+                <div class="at-pro-result-top">
+                  <h3 id={r.id === 'lifetime' ? 'res-h' : undefined} data-res-title>
+                    {r.title}
+                  </h3>
+                  <p class="at-pro-result-price at-pro-num">
+                    {r.priceAfter ? (
+                      <>
+                        <span class="at-pro-figure" data-launch-only>
+                          {r.price}
+                        </span>
+                        <span class="at-pro-figure" data-after-only>
+                          {r.priceAfter}
+                        </span>
+                      </>
+                    ) : (
+                      <span class="at-pro-figure">{r.price}</span>
+                    )}
+                    <span class="at-pro-small">{r.per}</span>
+                  </p>
+                </div>
+                <p class="at-pro-small at-pro-ink2">
+                  {r.whyAfter ? (
+                    <>
+                      <span data-launch-only>{r.why}</span>
+                      <span data-after-only>{r.whyAfter}</span>
+                    </>
+                  ) : (
+                    r.why
+                  )}
+                </p>
+                {r.lamp ? (
+                  <Button variant="primary" href={r.href} data-plan={r.plan} class="at-pro-wide">
+                    {r.cta}
+                  </Button>
+                ) : (
+                  <Button variant="secondary" href={r.href} class="at-pro-wide">
+                    {r.cta}
+                  </Button>
+                )}
+                <p class="at-pro-caption">
+                  {r.noteAfter ? (
+                    <>
+                      <span data-launch-only>{r.note}</span>
+                      <span data-after-only>{r.noteAfter}</span>
+                    </>
+                  ) : (
+                    r.note
+                  )}
+                </p>
+              </div>
+            ))
+          }
+        </aside>
+      </section>
+
+      <section class="at-pro-evening" aria-labelledby="eve-h">
+        <div class="at-pro-head at-pro-head-narrow">
+          <h2 id="eve-h" class="at-pro-h2">{p('eve.h2')}</h2>
+          <p class="at-pro-body">{p('eve.lead')}</p>
+        </div>
+
+        <article class="at-pro-moment" aria-labelledby="f-msg">
+          <div class="at-pro-moment-text">
+            <p class="at-pro-time">{p('msg.time')}</p>
+            <h3 id="f-msg" class="at-pro-h3">{p('msg.h3')}</h3>
+            <p class="at-pro-body">{p('msg.body')}</p>
+          </div>
+          <figure class="at-pro-fig" aria-labelledby="msg-cap" data-msg>
+            <div class="at-pro-screen" role="img" aria-label={p('msg.aria', { text: p('msg.default') })} data-msg-screen data-len="s" data-aria-tpl={p('msg.aria')}>
+              <div class="at-pro-screen-top">
+                <span>{p('msg.kicker')}</span>
+                <span class="at-pro-num at-pro-clock" data-msg-clock>{p('msg.clock')}</span>
+              </div>
+              <div class="at-pro-screen-msg" data-msg-text data-empty-text={p('msg.empty')}>{p('msg.default')}</div>
+              <div class="at-pro-screen-bar"><span></span></div>
+            </div>
+            <div class="at-pro-field">
+              <div class="at-pro-field-head">
+                <label for="pro-msg">{p('msg.label')}</label>
+                <span class="at-pro-num at-pro-caption" aria-live="polite" data-msg-count data-tpl={p('msg.count')}>
+                  {p('msg.count', { n: p('msg.default').length })}
+                </span>
+              </div>
+              <input id="pro-msg" class="at-input at-pro-input" type="text" value={p('msg.default')} maxlength="80" autocomplete="off" data-msg-input />
+            </div>
+            <figcaption id="msg-cap" class="at-pro-sr">{p('msg.caption')}</figcaption>
+          </figure>
+        </article>
+
+        <div class="at-pro-pair">
+          <article class="at-pro-moment-text at-pro-railed" aria-labelledby="f-cook">
+            <p class="at-pro-time">{p('cook.time')}</p>
+            <h3 id="f-cook" class="at-pro-h3">{p('cook.h3')}</h3>
+            <p class="at-pro-body">{p('cook.body')}</p>
+          </article>
+          <article class="at-pro-moment-text at-pro-railed" aria-labelledby="f-lamp">
+            <p class="at-pro-time">{p('night.time')}</p>
+            <h3 id="f-lamp" class="at-pro-h3">{p('night.h3')}</h3>
+            <p class="at-pro-body">
+              {
+                LAMPS.map((l) => (
+                  <span data-for-lamp={l.id}>{p(l.pro ? 'night.pro' : 'night.free', { name: p(`lamp.${l.id}`) })}</span>
+                ))
+              }{' '}
+              <a class="at-pro-lamplink" href="#top">{p('night.link')}</a>.
+            </p>
+          </article>
+        </div>
+
+        <article class="at-pro-moment" aria-labelledby="f-hist">
+          <div class="at-pro-moment-text">
+            <p class="at-pro-time">{p('hist.time')}</p>
+            <h3 id="f-hist" class="at-pro-h3">{p('hist.h3')}</h3>
+            <p class="at-pro-body">{p('hist.body')}</p>
+          </div>
+          <figure class="at-pro-fig at-pro-heat" aria-labelledby="heat-cap">
+            <div class="at-seg at-pro-seg" role="radiogroup" aria-label={p('hist.compare')} style="--at-seg-n: 2">
+              <span class="at-seg-ind" aria-hidden="true"></span>
+              <label class="at-seg-item"><input class="at-pro-sr" type="radio" name="pro-heat" id="pro-heat-free" value="free" />{p('hist.free')}</label>
+              <label class="at-seg-item"><input class="at-pro-sr" type="radio" name="pro-heat" id="pro-heat-pro" value="pro" checked />{p('hist.pro')}</label>
+            </div>
+            <div class="at-pro-heat-grid">
+              <div class="at-pro-heat-days" aria-hidden="true">
+                {dayRows.map((d) => <span>{d}</span>)}
+              </div>
+              <div class="at-pro-heat-cells" role="img" aria-label={p('hist.aria.pro')} data-aria-free={p('hist.aria.free')} data-aria-pro={p('hist.aria.pro')} data-heat-cells>
+                {levels.map((lv, i) => <span data-l={lv} data-old={i < 76 ? '' : undefined} />)}
+              </div>
+              <span class="at-tag at-pro-tag-surface at-pro-heat-lock">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+                {p('hist.locked')}
+              </span>
+            </div>
+            <div class="at-pro-heat-foot">
+              <p id="heat-cap" class="at-pro-caption">{p('hist.caption')}</p>
+              <span class="at-tag at-pro-heat-export">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>
+                {p('hist.export')}
+              </span>
+              <span class="at-tag at-pro-heat-export-locked">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"></path></svg>
+                {p('hist.export.locked')}
+              </span>
+            </div>
+          </figure>
+        </article>
+
+        <article class="at-pro-moment" aria-labelledby="f-wall">
+          <div class="at-pro-moment-text">
+            <p class="at-pro-time">{p('wall.time')}</p>
+            <h3 id="f-wall" class="at-pro-h3">{p('wall.h3')}</h3>
+            <p class="at-pro-body">{p('wall.body')}</p>
+          </div>
+          <figure class="at-pro-fig at-pro-sched" aria-labelledby="sch-cap" data-sched>
+            <div class="at-pro-sched-head">
+              <span>{p('sch.title')}</span>
+              <span class="at-tag">{p('sch.tag')}</span>
+            </div>
+            <div class="at-pro-days" role="group" aria-label={p('sch.days')}>
+              {
+                days.map((d) => (
+                  <button type="button" class="at-pro-day" aria-pressed={d.on ? 'true' : 'false'} aria-label={d.full} data-day={d.i} data-full={d.full}>
+                    {d.short}
+                  </button>
+                ))
+              }
+            </div>
+            <div class="at-pro-tiles">
+              <div><span>{p('sch.from')}</span><span class="at-pro-num">{p('sch.from.v')}</span></div>
+              <div><span>{p('sch.to')}</span><span class="at-pro-num">{p('sch.to.v')}</span></div>
+              <div><span>{p('sch.level')}</span><span>{p('sch.level.v')}</span></div>
+            </div>
+            <p
+              id="sch-cap"
+              class="at-pro-small at-pro-ink2"
+              aria-live="polite"
+              data-sched-line
+              data-none={p('sch.none')}
+              data-every={p('sch.every')}
+              data-line={p('sch.line')}
+              data-on={p('sch.on')}
+              data-range={p('sch.range')}
+              data-and={p('sch.and')}
+            >
+              {p('sch.line', { span: p('sch.range', { from: days[0]?.full ?? '', to: days[4]?.full ?? '' }) })}
+            </p>
+          </figure>
+        </article>
+      </section>
+
+      <section id="plans" class="at-pro-plans" aria-labelledby="plans-h">
+        <div class="at-pro-head at-pro-head-narrow">
+          <h2 id="plans-h" class="at-pro-h2">{p('plans.h2')}</h2>
+          <p class="at-pro-body">{p('plans.lead')}</p>
+        </div>
+        <div class="at-pro-plan-grid">
+          <article class="at-card at-pro-plan" aria-labelledby="plan-yearly">
+            <div class="at-pro-plan-top">
+              <p class="at-pro-kicker">{p('plans.yearly')}</p>
+              <span class="at-tag">{t('page.pro.devices')}</span>
+            </div>
+            <h3 id="plan-yearly" class="at-pro-price at-pro-num">
+              <span>{yearly}</span><span class="at-pro-per">{p('plans.per.year')}</span>
+            </h3>
+            <p class="at-pro-small at-pro-ink2 at-pro-grow">{p('plans.renews')}</p>
+            <Button variant="secondary" href={CHECKOUT_LINKS.pro_yearly} data-plan="pro_yearly" aria-describedby="plan-yearly" class="at-pro-wide">
+              {p('plans.cta.yearly')}
+            </Button>
+          </article>
+          <article class="at-card at-pro-plan at-pro-plan-lamp" aria-labelledby="plan-lifetime">
+            <div class="at-pro-plan-top">
+              <span class="at-pro-plan-name">
+                <span class="at-pro-kicker">{p('plans.lifetime')}</span>
+                <span class="at-tag at-pro-tag-lamp">{p('plans.once')}</span>
+              </span>
+              <span class="at-tag">{t('page.pro.devices')}</span>
+            </div>
+            <h3 id="plan-lifetime" class="at-pro-price at-pro-num">
+              <span data-launch-only>{lifeLaunch}</span><span data-after-only>{lifeFull}</span><span class="at-pro-per">{p('plans.per.once')}</span>
+            </h3>
+            <ul class="at-pro-plan-list at-pro-grow">
+              <li data-launch-only>{p('plans.launch', { price: lifeFull })}</li>
+              <li data-launch-only>{p('plans.launch.value')}</li>
+              <li data-after-only>{p('plans.after.value')}</li>
+              <li>{p('plans.norenewal')}</li>
+            </ul>
+            <Button variant="primary" href={CHECKOUT_LINKS.pro_lifetime} data-plan="pro_lifetime" aria-describedby="plan-lifetime" class="at-pro-wide">
+              {p('plans.cta.lifetime')}
+            </Button>
+          </article>
+        </div>
+        <div class="at-pro-plan-notes">
+          <ProRefund />
+          <p class="at-pro-caption">{p('plans.shutdown')}</p>
+          <p class="at-pro-caption">{p('plans.tax')}</p>
+        </div>
+      </section>
+
+      <div class="at-pro-duo">
+        <section class="at-pro-free" aria-labelledby="free-h">
+          <div class="at-pro-head at-pro-head-narrow">
+            <h2 id="free-h" class="at-pro-h2">{p('free.h2')}</h2>
+            <p class="at-pro-body">{p('free.lead')}</p>
+          </div>
+          <ul class="at-pro-pills at-pro-pills-xs" aria-label={p('free.pills')}>
+            {pills.map((s) => <li><StatusPill as="span" size="XS" state={s} label={t(`tool.pill.${s}`)} /></li>)}
+          </ul>
+          <ul class="at-pro-pills at-pro-pills-m" aria-label={p('free.pills')}>
+            {pills.map((s) => <li><StatusPill as="span" size="M" state={s} label={t(`tool.pill.${s}`)} /></li>)}
+          </ul>
+          <p class="at-pro-body at-pro-measure">{p('free.also')}</p>
+        </section>
+
+        <section class="at-pro-faq" aria-labelledby="faq-h">
+          <h2 id="faq-h" class="at-pro-h2">{p('faq.h2')}</h2>
+          <div class="at-pro-faq-list">
+            {
+              faq.map((q) => (
+                <details name="pro-faq" open={q.n === 1}>
+                  <summary>
+                    <h3>{q.q}</h3>
+                    <span class="at-pro-faq-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+                    </span>
+                  </summary>
+                  <p>{q.a}</p>
+                </details>
+              ))
+            }
+          </div>
+        </section>
       </div>
-      <p class="mt-6"><a class={secondaryClass} href="/pro/activate">{t('pro.activate')}</a></p>
-    </section>
 
-    <Alert role="note" className="mt-8">
-      <AlertDescription>{t('page.pro.refund')}</AlertDescription>
-    </Alert>
-
-    <nav aria-label="Related" class="mt-6 flex flex-wrap gap-2">
-      <a class={navClass} href="/">Open AwakeTab</a>
-      <a class={navClass} href="/about">{t('page.about.h1')}</a>
-    </nav>
-  </main>
+      <section class="at-pro-biz" aria-labelledby="biz-h">
+        <h2 id="biz-h" class="at-pro-kicker">{p('biz.h2')}</h2>
+        <div class="at-pro-biz-grid">
+          <a href="/embed">
+            <span class="at-pro-biz-top"><span>{p('biz.embed')}</span><span class="at-pro-num">{p('biz.embed.price', { price: usd(PLAN_PRICES.biz_embed_site_yearly) })}</span></span>
+            <span>{p('biz.embed.text')}</span>
+          </a>
+          <a href="/kiosk">
+            <span class="at-pro-biz-top"><span>{p('biz.kiosk')}</span><span class="at-pro-num">{p('biz.kiosk.price', { one: usd(PLAN_PRICES.biz_kiosk_site), five: usd(PLAN_PRICES.biz_kiosk_5) })}</span></span>
+            <span>{p('biz.kiosk.text')}</span>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
   <script>
-    import { track } from '../lib/analytics';
-    track('pro_view', {}, { telemetry: true, source: 'web', locale: 'en', path: '/pro' });
-    document.querySelectorAll<HTMLAnchorElement>('[data-plan]').forEach((link) => {
-      link.addEventListener('click', () => {
-        track('pro_checkout_click', { plan: link.dataset.plan ?? '' }, { telemetry: true, source: 'web', locale: 'en', path: '/pro' });
-      });
-    });
+    import { bootProPage } from '../lib/pro-page';
+    const root = document.querySelector<HTMLElement>('[data-pro-root]');
+    if (root) bootProPage(root);
   </script>
 </BaseLayout>

@@ -1,65 +1,93 @@
 ---
-title: "Fix a second monitor that turns off — AwakeTab"
-description: "If only the second panel dies, check cables, DisplayPort MST, and the monitor's own auto-off. A wake lock cannot repair a lost link. If both panels follow"
-h1: "Fix a second monitor that turns off"
+title: "Second monitor turns off? Causes and fixes — AwakeTab"
+description: "If only your second monitor turns off, check the cable, DisplayPort and the monitor's own auto-off. If both follow the OS timeout, a wake lock helps."
+h1: "Second monitor keeps turning off: how to fix it"
 intent: "second monitor turns off"
+secondaryQueries:
+  - "keep second monitor from turning off"
+  - "second monitor goes to sleep"
+  - "external monitor turns off randomly"
+  - "displayport monitor goes black"
+  - "second monitor no signal after sleep"
 preset: pinf
 mode: clock
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+lastVerified: 2026-09-26
+browsers:
+  - chrome
+  - edge
+os:
+  - windows
+  - macos
 faq:
-  - q: "Does fix a second monitor that turns off work in a hidden tab?"
-    a: "No. The second-monitor-turns-off flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "Signal-detection sleep, DisplayPort link drops and cables are outside any software's reach."
+  - q: "Why do my windows jump to the main screen when the second monitor sleeps?"
+    a: "Some DisplayPort monitors look unplugged to the computer once they sleep, so the system moves their windows to the screen that is left. Keeping the displays on stops that sleep. If windows jump while both screens are awake, the link is dropping: try another cable."
+  - q: "Can I give each monitor its own timeout?"
+    a: "Not in Windows or macOS settings. Both use one display timeout for every screen they drive. A monitor can still have its own auto-off or eco timer in its on-screen menu, and that one runs separately from the computer."
+  - q: "Does the AwakeTab tab have to be on the monitor that turns off?"
+    a: "No. The browser asks the system to keep the displays on, and the operating system applies that to every screen. Put the tab on whichever screen suits you, as long as it stays visible and nothing covers it."
+honestLimit: "AwakeTab can hold the operating system's display timeout for every screen, but not a monitor that powers itself down, a DisplayPort link that drops, or a faulty cable. Those need the checks on this page, not software."
 related:
-  - "/learn/how-we-tested"
-  - "/for/sheet-music"
-  - "/for/teleprompter"
+  - "/on/windows-11"
+  - "/on/macos"
+  - "/for/dashboards"
+  - "/for/presentations"
+  - "/guides/lock-screen-vs-sleep"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+If only the second monitor goes dark while the main screen stays on, the cause is usually the monitor or its connection: a loose cable, a DisplayPort link that drops, or the monitor's own power saving. If both screens go dark at the same moment, your operating system's display timeout is doing it, and a visible AwakeTab tab on either screen can hold that timeout.
 
-If only the second panel dies, check cables, DisplayPort MST, and the monitor's own auto-off. A wake lock cannot repair a lost link. If both panels follow the OS timeout, a visible AwakeTab tab can hold that timeout.
+## Which pattern do you have?
 
-## How the lock works on this page
+- **Only the second screen goes dark, at random times:** the cable, adapter or link.
+- **Only the second screen goes dark, after a steady delay:** the monitor's own auto-off or eco timer.
+- **The second screen shows "No signal" after the computer wakes:** DisplayPort re-detection or the monitor's automatic input search.
+- **Both screens go dark together:** the system display timeout.
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for second-monitor-turns-off.
+## When only the second monitor goes dark
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+The causes, most likely first:
 
-## Practical setup for Fix a second monitor that turns off
+1. **The cable or adapter.** A loose plug, a long or low-grade cable, or a USB-C adapter or dock in the chain.
+2. **The DisplayPort link.** DisplayPort connections can drop and reconnect, more often through docks or when monitors are daisy-chained (MST). A monitor that drops the link can look unplugged to the computer for a moment.
+3. **The monitor's own settings.** Many monitors have a power-saving, eco or auto power-off option, and an automatic input setting that scans for a signal and sleeps when it finds none. Names differ by maker.
+4. **The graphics driver.** An old driver can mishandle sleep and wake on external screens.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+## Fix it, one step at a time
 
-## Operating-system notes
+Change one thing, then wait long enough to know whether it helped.
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+1. Swap the cable for a known-good one. If you can, try the other port type, such as HDMI in place of DisplayPort.
+2. Connect the monitor straight to the computer, without the dock, adapter or daisy chain.
+3. In the monitor's on-screen menu, turn off power saving, eco mode and any auto power-off timer.
+4. Set the monitor's input to the port you use, not automatic. This often cures "No signal" after wake.
+5. Update the graphics driver. On Windows, check Settings > Windows Update > Advanced options > Optional updates, or the website of your PC or graphics card maker. On a Mac, drivers come with macOS updates.
 
-## What success looks like
+If the menu will not open or ignores changes, some monitors have a menu lock; the manual says how to release it.
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+## When both screens go dark together
 
-## Related paths
+Windows and macOS use one display timeout for all screens. To change it:
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no guides claim here that is missing from the matrix.
+- **Windows 11:** open Settings > System > Power & battery and expand the screen, sleep and hibernate timeouts.
+- **Mac:** System Settings > Lock Screen, then the two "Turn display off" choices.
 
-## A short checklist before you walk away
+On a work computer these may be greyed out because IT sets them. In that case, leave them as they are.
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For second-monitor-turns-off, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+## Hold the timeout from a tab
 
-## Why the pill is the product
+Rather than change the timeout, you can let the AwakeTab timer above hold it. It opens in clock mode and runs until you stop it, so it doubles as a wall clock on the spare screen. Kept visible in Chrome or Edge, it sends one request to keep the displays on, and that covers both screens.
 
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On second-monitor-turns-off, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
+Put it where nothing covers it. A tab in a minimised window counts as hidden, and one fully covered by another window can too; the pill then shows "Paused — tab hidden". A window that is visible but not focused is fine.
 
-## Battery, heat and overnight use
+For a wall screen running all day, see [keeping a dashboard screen on](/for/dashboards). If you present from a laptop onto the second screen, [presenting with AwakeTab](/for/presentations) explains the floating window. Browser setup for each system is on [the Windows 11 page](/on/windows-11) and [the Mac page](/on/macos).
 
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Fix a second monitor that turns off to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+## Confirm which cause it is
+
+1. Start AwakeTab and wait for "Screen awake".
+2. On Windows, run `powercfg /requests` in an administrator terminal and look for the browser under DISPLAY. On a Mac, run `pmset -g assertions` and look for a NoDisplaySleep entry.
+3. If the request is there and the second screen still goes dark, the timeout is not the cause. Go back to the cable and monitor steps.

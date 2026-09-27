@@ -1,80 +1,86 @@
 ---
 // /learn/how-we-tested research table (E12-T06), generated from docs/metrics/device-matrix.json. Until the owner
 // records the manual run, the matrix is `pending`: the page says "Results pending" and claims nothing.
-// Build-time only (docs/03 ADR-013): shadcn Table/Alert/Badge render to static HTML.
+// Build-time markup only (docs/03 ADR-013). Clear Night (redesign B5): the board's matrix card (r16, kicker header,
+// tone tags for verdicts, never colour alone: the verdict word is the tag text) and the honest-limit note shape.
 import raw from '../../../../docs/metrics/device-matrix.json';
 import { parseDeviceMatrix, type TDeviceVerdict } from '../lib/device-matrix';
 import support from '../data/support-matrix.json';
 import { t } from '../i18n/load';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const matrix = parseDeviceMatrix(raw);
 const names = new Map([...support.browsers, ...support.contexts].map((row) => [row.id, row.name]));
-const verdictVariant: Record<TDeviceVerdict, 'outline' | 'secondary' | 'destructive' | 'default'> = {
-  pending: 'outline',
-  pass: 'default',
-  partial: 'secondary',
-  fail: 'destructive',
+const verdictTone: Record<TDeviceVerdict, string | null> = {
+  pending: null,
+  pass: 'var(--at-accent)',
+  partial: 'var(--at-warn)',
+  fail: 'var(--at-bad)',
 };
 const updated = matrix.updatedAt
   ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${matrix.updatedAt}T00:00:00Z`))
   : null;
 ---
 
-<section aria-labelledby="device-matrix" class="mt-10" data-device-matrix data-status={matrix.status}>
-  <h2 id="device-matrix" class="text-xl font-semibold leading-tight">{t('research.title')}</h2>
+<section class="at-dm" data-device-matrix data-status={matrix.status}>
+  <h2 id="device-matrix">{t('research.title')}</h2>
   {
     matrix.status === 'pending' ? (
-      <Alert role="note" className="mt-4 border-s-4 border-s-warning" data-results-pending>
-        <AlertTitle>{t('research.pending')}</AlertTitle>
-        <AlertDescription>{t('research.pending.body')}</AlertDescription>
-      </Alert>
+      <div role="note" class="at-note" data-results-pending>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.01" /></svg>
+        <div>
+          <p class="at-kicker">{t('research.pending')}</p>
+          <p>{t('research.pending.body')}</p>
+        </div>
+      </div>
     ) : (
-      updated && <p class="mt-2 text-sm text-muted-foreground">{t('content.verified', { date: updated })}</p>
+      updated && <p class="at-dm-verified">{t('content.verified', { date: updated })}</p>
     )
   }
-  <ol class="mt-4 list-decimal space-y-2 ps-5 text-sm leading-relaxed">
+  <ol>
     {matrix.method.map((step) => <li>{step}</li>)}
   </ol>
-  <div class="mt-6 overflow-x-auto">
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{t('research.col.device')}</TableHead>
-          <TableHead>{t('research.col.browser')}</TableHead>
-          <TableHead>{t('research.col.case')}</TableHead>
-          <TableHead>{t('research.col.expected')}</TableHead>
-          <TableHead>{t('research.col.observed')}</TableHead>
-          <TableHead>{t('research.col.date')}</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
+  <div class="at-dm-scroll" tabindex="0" role="region" aria-labelledby="device-matrix">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">{t('research.col.device')}</th>
+          <th scope="col">{t('research.col.browser')}</th>
+          <th scope="col">{t('research.col.case')}</th>
+          <th scope="col">{t('research.col.expected')}</th>
+          <th scope="col">{t('research.col.observed')}</th>
+          <th scope="col">{t('research.col.date')}</th>
+        </tr>
+      </thead>
+      <tbody>
         {
           matrix.rows.map((row) => (
-            <TableRow data-row={row.id}>
-              <TableCell className="align-top whitespace-normal">
+            <tr data-row={row.id}>
+              <td>
                 {row.device}
                 <br />
-                <span class="text-muted-foreground">{row.os}</span>
-              </TableCell>
-              <TableCell className="align-top whitespace-normal">
+                <span class="at-muted">{row.os}</span>
+              </td>
+              <td>
                 {names.get(row.browser) ?? row.browser}
-                {row.version && <span class="text-muted-foreground"> {row.version}</span>}
-              </TableCell>
-              <TableCell className="align-top whitespace-normal">{row.case}</TableCell>
-              <TableCell className="align-top whitespace-normal">{row.expected}</TableCell>
-              <TableCell className="align-top whitespace-normal">
-                <Badge variant={verdictVariant[row.verdict]}>{t(`research.verdict.${row.verdict}`)}</Badge>
-                {row.observed && <p class="mt-1">{row.observed}</p>}
-                {row.evidence && <p class="mt-1 text-muted-foreground">{row.evidence}</p>}
-              </TableCell>
-              <TableCell className="align-top whitespace-nowrap">{row.date ?? '—'}</TableCell>
-            </TableRow>
+                {row.version && <span class="at-muted"> {row.version}</span>}
+              </td>
+              <td>{row.case}</td>
+              <td>{row.expected}</td>
+              <td>
+                <span
+                  class:list={['at-tag', verdictTone[row.verdict] && 'at-tag-tone']}
+                  style={verdictTone[row.verdict] ? `--at-tone: ${verdictTone[row.verdict]}` : undefined}
+                >
+                  {t(`research.verdict.${row.verdict}`)}
+                </span>
+                {row.observed && <p>{row.observed}</p>}
+                {row.evidence && <p class="at-muted">{row.evidence}</p>}
+              </td>
+              <td>{row.date ?? '—'}</td>
+            </tr>
           ))
         }
-      </TableBody>
-    </Table>
+      </tbody>
+    </table>
   </div>
 </section>

@@ -1,0 +1,182 @@
+/*
+ * 404 body (milestone B6, canvas board Page404). The 404 page is a tool page (docs/00 §11: tool pages CSS ≤ 20 KB
+ * gz), so it gets this small file instead of pages.css. The tool inside is ToolIsland as on every tool page (its
+ * look is milestone B3's); this only places the page heading, the full-tool link and the popular guides around it:
+ * one column on phones and tablets, the tool (540) and the guides side by side from 1024. Tokens only (stylelint's
+ * strict override covers this file).
+ */
+@layer properties, theme, base, components, utilities;
+
+@layer components {
+  /* The site pages' ground (canvas pageRoles): a 1400 × 900 lift above the top edge fading into the ground. */
+  body:has(.at-404) {
+    background-image: radial-gradient(1400px 900px at 50% -160px, var(--at-lift) 0%, color-mix(in srgb, var(--at-ground) 0%, transparent) 72%);
+  }
+
+  .at-404 main.at-shell {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .at-404 .at-tool-kicker {
+    margin-block: 0 calc(var(--at-s-3) - var(--at-s-4));
+    color: var(--at-muted);
+    font: var(--at-type-kicker);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .at-404 .at-h1 {
+    font: var(--at-type-h1);
+    letter-spacing: -0.02em;
+  }
+
+  .at-404-full {
+    display: inline-flex;
+    place-self: center;
+    align-items: center;
+    gap: var(--at-s-2);
+    min-block-size: var(--at-h-control);
+    margin-block-start: var(--at-s-4);
+    color: var(--at-ink-2);
+    font: var(--at-type-ui);
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .at-404-full:hover {
+    color: var(--at-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .at-404-full > svg,
+  .at-404-guides svg {
+    flex-shrink: 0;
+    fill: none;
+    stroke: var(--at-muted);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+  }
+
+  .at-404-full > svg {
+    inline-size: var(--at-icon-sm);
+    block-size: var(--at-icon-sm);
+  }
+
+  .at-404-guides {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-4);
+    min-inline-size: 0;
+    margin-block-start: var(--at-s-12);
+    padding-block-start: var(--at-s-2);
+  }
+
+  .at-404-guides h2 {
+    margin: 0;
+    color: var(--at-muted);
+    font: var(--at-type-kicker);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .at-404-guides ul {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    border-block-start: var(--at-border) solid var(--at-line);
+    list-style: none;
+  }
+
+  .at-404-guides li {
+    border-block-end: var(--at-border) solid var(--at-line);
+  }
+
+  .at-404-guides li > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--at-s-4);
+    min-block-size: var(--at-h-row);
+    padding-block: var(--at-s-4);
+    color: var(--at-ink);
+    text-decoration: none;
+  }
+
+  .at-404-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--at-s-1);
+    min-inline-size: 0;
+  }
+
+  .at-404-title {
+    font: var(--at-type-body);
+    font-weight: 500;
+  }
+
+  .at-404-guides li > a:hover .at-404-title {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .at-404-path {
+    color: var(--at-muted);
+    font: var(--at-type-caption);
+    font-family: var(--at-font-mono);
+    overflow-wrap: anywhere;
+  }
+
+  .at-404-guides li svg {
+    inline-size: var(--at-icon-md);
+    block-size: var(--at-icon-md);
+  }
+
+  .at-404-all {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    min-block-size: var(--at-h-control);
+    color: var(--at-accent-text);
+    font: var(--at-type-ui);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .at-404-all:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  @media (width >= 600px) {
+    .at-404 main.at-shell {
+      padding-block-start: var(--at-s-8);
+    }
+  }
+
+  @media (width >= 1024px) {
+    .at-404 main.at-shell {
+      display: grid;
+      grid-template-columns: 540px minmax(0, 1fr);
+      column-gap: var(--at-s-24);
+      align-content: start;
+      padding-block-start: var(--at-s-12);
+    }
+
+    .at-404 main.at-shell > * {
+      grid-column: 1;
+    }
+
+    .at-404 main.at-shell > .at-404-guides {
+      grid-row: 1 / span 20;
+      grid-column: 2;
+      align-self: start;
+      margin-block-start: 0;
+      padding-block-start: var(--at-s-16);
+    }
+  }
+}

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · toolbar badge</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease),opacity .45s var(--ease)}
+button:active{transform:scale(.96)}
+button:disabled,input:disabled,select:disabled{cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+a{transition:color .45s var(--ease),background-color .45s var(--ease),border-color .45s var(--ease)}
+h1,h2,h3,h4,p,figure,blockquote{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+.at-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.at-num{font-family:Geist,system-ui,sans-serif;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"zero" 0}
+.at-kick{font-size:12px;line-height:16px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-rise2{animation:at-in .9s var(--ease) both;animation-delay:.2s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),opacity .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-fade{transition:background-color .6s var(--ease),border-color .6s var(--ease),opacity .6s var(--ease),fill .6s var(--ease),stroke .6s var(--ease)}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-breathe{animation:at-breathe 3.4s var(--ease) infinite alternate}
+.at-ignite{transform-box:fill-box;transform-origin:center;animation:at-ignite .6s var(--ease) .3s both}
+.at-travel{animation:at-travel .6s var(--ease) both}
+.at-off{transition:stroke-dasharray .9s var(--ease),stroke-opacity .9s var(--ease),opacity .9s var(--ease),fill .9s var(--ease)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@keyframes at-breathe{from{opacity:.55}to{opacity:1}}
+@keyframes at-ignite{0%{transform:scale(.6);opacity:.4}55%{transform:scale(1.5);opacity:1}100%{transform:scale(1);opacity:1}}
+@keyframes at-travel{0%{transform:translate(0,0) scale(1);opacity:0}15%{opacity:1}100%{transform:translate(var(--at-tx,0),var(--at-ty,0)) scale(.5);opacity:0}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</helmet>
+<div style="width: 1280px; height: 400px; box-sizing: border-box; overflow: hidden; background: {{t.ground}}; color: {{t.ink}}; padding: 32px 40px; display: grid; grid-template-columns: minmax(0, 1fr) 452px; column-gap: 32px">
+
+  <section aria-label="Toolbar badge states" style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+      <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Toolbar badge · shown at 2×</div>
+      <div style="font-size: 13px; line-height: 18px; color: {{t.ink2}}">Blank unless the lock is really held. Never claims more than the pill.</div>
+    </div>
+    <sc-for list="{{bars}}" as="bar" hint-placeholder-count="2">
+      <div style="display: grid; grid-template-columns: 72px repeat(5, minmax(0, 1fr)); gap: 8px; align-items: stretch">
+        <div style="display: flex; align-items: center; font-size: 13px; line-height: 18px; font-weight: 600; color: {{t.ink2}}">{{bar.name}}</div>
+        <sc-for list="{{bar.cells}}" as="c" hint-placeholder-count="5">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div data-placeholder="Chrome toolbar" style="height: 64px; border-radius: 12px; background: {{bar.bg}}; border: 1px solid {{bar.line}}; display: flex; align-items: center; justify-content: center; gap: 16px">
+              <span aria-hidden="true" style="width: 20px; height: 20px; border-radius: 50%; background: {{bar.ghost}}"></span>
+              <span style="position: relative; width: 32px; height: 32px; display: grid; place-items: center">
+                <svg width="32" height="32" viewBox="0 0 48 48" aria-label="{{c.aria}}"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{bar.ring}}" stroke-width="5.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="5.2" fill="{{c.bead}}"></circle></svg>
+                <sc-if value="{{c.text}}" hint-placeholder-val="{{true}}">
+                  <span aria-hidden="true" data-placeholder="Chrome draws the badge at its own size" style="position: absolute; right: -12px; bottom: -8px; height: 16px; min-width: 16px; padding: 0 4px; box-sizing: border-box; border-radius: 4px; background: {{c.badge}}; color: #FFFFFF; font-size: 12px; font-weight: 600; line-height: 16px; text-align: center; box-shadow: 0 0 0 1px {{bar.bg}}">{{c.text}}</span>
+                </sc-if>
+              </span>
+              <span aria-hidden="true" style="width: 20px; height: 20px; border-radius: 50%; background: {{bar.ghost}}"></span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+    <div style="display: grid; grid-template-columns: 72px repeat(5, minmax(0, 1fr)); gap: 8px">
+      <span></span>
+      <sc-for list="{{captions}}" as="c" hint-placeholder-count="5">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span style="font-size: 14px; line-height: 20px; font-weight: 600">{{c.title}}</span>
+          <span style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{c.body}}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display: flex; gap: 24px; font-size: 13px; line-height: 18px; color: {{t.ink2}}">
+      <span style="display: inline-flex; align-items: center; gap: 8px"><span style="width: 18px; height: 12px; border-radius: 999px; background: #087B87"></span>Screen level · #087B87, white text 5.0:1</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px"><span style="width: 18px; height: 12px; border-radius: 999px; background: #2B3A67"></span>System level · #2B3A67, white text 11:1</span>
+    </div>
+  </section>
+
+  <section aria-label="Icon sizes" style="display: flex; flex-direction: column; gap: 12px">
+    <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Icon · 16 · 32 · 48 · 128 px</div>
+    <div style="flex-grow: 1; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; padding: 20px 24px; display: flex; flex-direction: column; justify-content: space-between">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 8px">
+        <sc-for list="{{sizes}}" as="z" hint-placeholder-count="4">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px">
+            <div data-placeholder="toolbar or store tile" style="width: {{z.box}}; height: {{z.box}}; border-radius: {{z.radius}}; background: {{z.tile}}; display: grid; place-items: center">
+              <svg width="{{z.px}}" height="{{z.px}}" viewBox="0 0 48 48" aria-label="{{z.aria}}"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{z.ring}}" stroke-width="{{z.stroke}}" stroke-linecap="round"></path><circle cx="24" cy="9" r="{{z.bead}}" fill="{{z.lamp}}"></circle></svg>
+            </div>
+            <span style="display: flex; flex-direction: column; align-items: center; font-size: 12px; line-height: 16px"><span class="at-num" style="color: {{t.ink2}}">{{z.label}}</span><span style="color: {{t.muted}}">{{z.sub}}</span></span>
+          </div>
+        </sc-for>
+      </div>
+      <p style="margin: 0; font-size: 13px; line-height: 18px; color: {{t.ink2}}; text-wrap: pretty">16 and 32 px sit bare on the toolbar with a heavier ring, dark or light to match it. 48 and 128 px (extensions page, store) sit on the night tile. The bead follows the state: grey when idle, lamp when held.</p>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"dark"},"layout":{"editor":"enum","options":["desktop"],"default":"desktop"},"$preview":{"width":1280,"height":400}}'>
+// AwakeTab shared primitives, fix batch 2a (DESIGN.md §2 tokens, §11 sizes). Keep byte-identical in every board.
+const AT_DARK = { bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%)', ground: '#0A0E16', surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', raised: '#26324B', sunken: '#0D131F', inputBorder: '#5A6781', warn: '#F2B34C', bad: '#FF7A7A', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C', shadow: 'none' };
+const AT_LIGHT = { bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, #EEF3F8 100%)', ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', raised: '#E3E9F1', sunken: '#F6F9FC', inputBorder: '#8C98AA', warn: '#B7791F', bad: '#D14343', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA', shadow: '0 1px 2px rgba(14,23,38,.06)' };
+const AT_OLED = Object.assign({}, AT_DARK, { bg: '#000000', ground: '#000000', surface: '#0A0A0A' });
+const AT_LAMPS = [
+  { id: 'aqua', name: 'Aqua', dark: '#5BE0E8', light: '#087B87', pro: false },
+  { id: 'violet', name: 'Violet', dark: '#A594FF', light: '#5A47CF', pro: false },
+  { id: 'mint', name: 'Mint', dark: '#7EF0B8', light: '#167A50', pro: true },
+  { id: 'sky', name: 'Sky', dark: '#7CB8FF', light: '#255FBD', pro: true }
+];
+const AT_GLYPH = {
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z'
+};
+// Status pill sizes (§11.4): L kiosk, M tool, S popup / PiP / full embed, XS compact embed.
+const AT_PILL = {
+  L: { h: '48px', pad: '0 20px 0 16px', gap: '8px', fs: '20px', lh: '28px' },
+  M: { h: '38px', pad: '0 16px 0 12px', gap: '8px', fs: '15px', lh: '22px' },
+  S: { h: '32px', pad: '0 12px 0 8px', gap: '8px', fs: '14px', lh: '20px' },
+  XS: { h: '26px', pad: '0 8px', gap: '4px', fs: '13px', lh: '18px' }
+};
+function atRgba(hex, a) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atPill(o) {
+  const s = AT_PILL[o.size || 'M'];
+  return { label: o.label, h: s.h, pad: s.pad, gap: s.gap, fs: s.fs, lh: s.lh, tone: o.tone, glyph: o.glyph || AT_GLYPH.dot, fill: o.hollow ? 'transparent' : o.tone, stroke: o.stroke || '1.6', soft: atRgba(o.tone, 0.12), line: atRgba(o.tone, 0.38), glow: o.glow ? atRgba(o.tone, 0.8) : 'transparent', cls: 'at-fade' };
+}
+// Page chrome shared by every board: tokens, lamp, header, theme switch, card and footer metrics.
+function atChrome(o) {
+  const L = o.layout || 'phone';
+  const desk = L === 'desktop', tab = L === 'tablet', phone = !desk && !tab;
+  const theme = o.theme || 'auto';
+  const dark = theme === 'dark' || theme === 'oled' || (theme === 'auto' && o.sysDark !== false);
+  const t = theme === 'oled' ? AT_OLED : dark ? AT_DARK : AT_LIGHT;
+  const def = AT_LAMPS.find((l) => l.id === o.lamp) || AT_LAMPS[0];
+  const lamp = dark ? def.dark : def.light;
+  const set = (id) => () => { if (o.set) o.set(id); };
+  const ink = (id) => (theme === id ? t.ink : t.ink2);
+  return {
+    t, dark, lamp, lampText: lamp, lampInk: dark ? '#04232A' : '#FFFFFF', bead: lamp,
+    lampSoft: atRgba(lamp, 0.14), lampLine: atRgba(lamp, 0.45), lampGlow: atRgba(lamp, 0.55), lampFaint: atRgba(lamp, 0.08), lampTag: atRgba(lamp, 0.12),
+    halo: 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(lamp, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(lamp, 0) + ' 100%)',
+    isDesk: desk, isTab: tab, isPhone: phone, notPhone: !phone,
+    hdrH: phone ? '60px' : '68px', gutter: desk ? '80px' : tab ? '32px' : '16px', secGap: desk ? '96px' : tab ? '64px' : '48px',
+    cardPad: phone ? '20px' : '24px', cardShadow: t.shadow, footPad: phone ? '24px 16px 32px' : desk ? '24px 80px' : '24px 32px',
+    themeX: (theme === 'light' ? 0 : theme === 'dark' ? 44 : 88) + 'px',
+    themeLight: theme === 'light', themeDark: theme === 'dark', themeAuto: theme === 'auto',
+    themeLightInk: ink('light'), themeDarkInk: ink('dark'), themeAutoInk: ink('auto'),
+    setLight: set('light'), setDark: set('dark'), setAuto: set('auto')
+  };
+}
+
+const DARK = { ground: '#0A0E16', surface: '#111826', line: '#1F2940', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE' };
+const LIGHT = { ground: '#F2F6FA', surface: '#FFFFFF', line: '#DCE3EC', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779' };
+const STATES = [
+  { text: '', bead: 'idle', badge: '', title: 'Idle', body: 'No badge. Grey bead.', aria: 'AwakeTab, ready' },
+  { text: '25m', bead: 'lamp', badge: '#087B87', title: '25m', body: 'Screen, minutes left under 100.', aria: 'AwakeTab, screen awake, 25 minutes left' },
+  { text: '3h', bead: 'lamp', badge: '#087B87', title: '3h', body: 'From 100 minutes up, whole hours.', aria: 'AwakeTab, screen awake, 3 hours left' },
+  { text: 'ON', bead: 'lamp', badge: '#087B87', title: 'ON', body: 'Screen level, no time limit.', aria: 'AwakeTab, screen awake, no limit' },
+  { text: 'SYS', bead: 'lamp', badge: '#2B3A67', title: 'SYS', body: 'System level, no time limit.', aria: 'AwakeTab, system awake, no limit' }
+];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sysDark: this.sys() };
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() { if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  renderVals() {
+    const theme = this.props.theme ?? 'dark';
+    const t = atChrome({ theme, sysDark: this.state.sysDark, layout: 'desktop' }).t;
+    const TOOLBARS = [
+      { name: 'Light toolbar', bg: '#F1F3F6', line: '#DADFE6', ring: '#1F2733', ghost: '#D5DAE1', idle: '#7A8597', lamp: '#087B87' },
+      { name: 'Dark toolbar', bg: '#2A2D33', line: '#3A3E46', ring: '#E8ECF2', ghost: '#40454E', idle: '#8E9AAE', lamp: '#5BE0E8' }
+    ];
+    const bars = TOOLBARS.map((b) => ({
+      name: b.name, bg: b.bg, line: b.line, ring: b.ring, ghost: b.ghost,
+      cells: STATES.map((s) => ({ text: s.text, badge: s.badge, aria: s.aria, bead: s.bead === 'idle' ? b.idle : b.lamp }))
+    }));
+    const NIGHT = 'linear-gradient(160deg, #13203A 0%, #0A0E16 100%)';
+    const sizes = [
+      [16, 5.8, 5.8, 'light'], [16, 5.8, 5.8, 'dark'], [32, 5.4, 5.4, 'light'], [32, 5.4, 5.4, 'dark'], [48, 4.6, 4.6, 'tile'], [128, 4.5, 4.4, 'tile']
+    ].map(([px, stroke, bead, kind]) => {
+      const bar = kind === 'light' ? TOOLBARS[0] : TOOLBARS[1];
+      const tile = kind === 'tile';
+      return {
+        px: tile ? Math.round(px * 0.72) : px, stroke, bead,
+        ring: kind === 'light' ? bar.ring : '#EAF0F7', lamp: kind === 'light' ? bar.lamp : '#5BE0E8',
+        label: px + ' px', sub: tile ? 'on tile' : kind, aria: 'AwakeTab icon, ' + px + ' pixels' + (tile ? '' : ', ' + kind + ' toolbar'),
+        box: (tile ? px : px + 16) + 'px', radius: tile ? (px >= 128 ? '28px' : '12px') : '8px', tile: tile ? NIGHT : bar.bg
+      };
+    });
+    return { t, bars, captions: STATES.map((s) => ({ title: s.title, body: s.body })), sizes };
+  }
+}
+</script>
+</body>
+</html>

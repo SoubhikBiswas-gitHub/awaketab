@@ -1,28 +1,44 @@
 /**
  * AwakeTab Embed loader — the one script tag a site pastes (docs/11 §1). Built by scripts/embed-loader.mjs into
  * `public/embed.js` (IIFE, ≤ 3 KB gz, no dependencies). It replaces its own `<script>` with a lazy, sandboxed
- * iframe of `/embed/cook` that carries `allow="screen-wake-lock"`, and exposes `window.AwakeTabEmbed` for the
- * postMessage API (docs/11 §3). Origin checks: messages are accepted only from an iframe this loader created
- * *and* only when their origin is the loader's own origin; commands are posted with that origin as the target.
+ * iframe of `/embed/cook` that carries `allow="screen-wake-lock"`, puts the "Keep awake by AwakeTab" credit
+ * right after it in the page's own HTML (O-47; removed for a licensed domain), and exposes `window.AwakeTabEmbed`
+ * for the postMessage API (docs/11 §3). Origin checks: messages are accepted only from an iframe this loader
+ * created *and* only when their origin is the loader's own origin; commands are posted with that origin as the
+ * target.
  */
 import {
   EMBED_BOX,
+  EMBED_CREDIT_CLASS,
+  EMBED_CREDIT_LINK_STYLE,
+  EMBED_CREDIT_STYLE,
+  EMBED_CREDIT_URL,
   EMBED_PATH,
   embedQuery,
+  isHostname,
   optionsFromDataset,
   parsePageMessage,
   parseWidgetMessage,
+  reservedHeight,
   type IEmbedState,
   type TEmbedTheme,
   type TPageMessage,
 } from './protocol.js';
 
 /**
- * `allow-popups-to-escape-sandbox` on top of docs/11 §7's three tokens: the attribution and "how to fix" links
- * open awaketab.com in a new tab, which would otherwise inherit this sandbox (no forms → no checkout).
+ * `allow-popups-to-escape-sandbox` on top of docs/11 §7's three tokens: the "How to fix" link opens
+ * awaketab.com in a new tab, which would otherwise inherit this sandbox (no forms → no checkout).
  * Decision under docs/19 C4; it widens nothing for the host page (docs/00 §13.10).
  */
 export const EMBED_SANDBOX = 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox';
+
+/** Localized strings the loader needs, inlined at build time (scripts/embed-loader.mjs), keyed by locale. */
+export interface ILoaderStrings {
+  /** `embed.frame.title`: the iframe's accessible name. */
+  titles: Record<string, string>;
+  /** `embed.attribution`: the host-page credit link text (O-47). */
+  credits: Record<string, string>;
+}
 
 export type TEmbedEvent = 'ready' | 'state';
 
@@ -116,12 +132,47 @@ export function createRegistry(win: Window): IEmbedRegistry {
   };
 }
 
-/** Replaces one loader `<script>` with the widget iframe. Returns the iframe, or null for an unusable tag. */
-export function mountFrame(
-  script: HTMLScriptElement,
-  registry: IEmbedRegistry,
-  titles: Record<string, string>,
-): HTMLIFrameElement | null {
+/**
+ * O-47 credit: a plain `nofollow` link in the host page's own HTML, directly after the iframe. Minimal, neutral
+ * inline styles (the host's font and colour, 13 px, underlined) on a fixed 24 px line, so it suits any site and
+ * never shifts the page. Class `awaketab-credit` (docs/11 §11.2).
+ */
+export function mountCredit(frame: HTMLIFrameElement, text: string): HTMLElement {
+  const doc = frame.ownerDocument;
+  const box = doc.createElement('div');
+  box.className = EMBED_CREDIT_CLASS;
+  box.style.cssText = EMBED_CREDIT_STYLE;
+  const link = doc.createElement('a');
+  link.href = EMBED_CREDIT_URL;
+  link.rel = 'nofollow';
+  link.style.cssText = EMBED_CREDIT_LINK_STYLE;
+  link.textContent = text;
+  box.append(link);
+  frame.after(box);
+  return box;
+}
+
+/**
+ * Whether the page keeps the credit: `false` only when `GET /api/embed/config?domain=<this page's hostname>`
+ * answers `{ licensed: true, attribution: false }`. An error, a non-JSON body or any other shape keeps it (free
+ * by default, docs/11 §11.4). One request per widget origin per page, however many widgets it holds.
+ */
+export function keepsCredit(win: Window, origin: string, cache: Record<string, Promise<boolean>> = {}): Promise<boolean> {
+  const host = win.location.hostname;
+  if (!isHostname(host)) return Promise.resolve(true);
+  cache[origin] ??= win
+    .fetch(`${origin}/api/embed/config?domain=${encodeURIComponent(host)}`)
+    .then((res) => (res.ok ? (res.json() as Promise<{ licensed?: unknown; attribution?: unknown } | null>) : null))
+    .then((d) => !(d?.licensed === true && d.attribution === false))
+    .catch(() => true);
+  return cache[origin];
+}
+
+/**
+ * Replaces one loader `<script>` with the widget iframe and the credit line after it. Returns the iframe, or
+ * null for an unusable tag.
+ */
+export function mountFrame(script: HTMLScriptElement, registry: IEmbedRegistry, strings: ILoaderStrings): HTMLIFrameElement | null {
   const doc = script.ownerDocument;
   let origin: string;
   try {
@@ -134,12 +185,13 @@ export function mountFrame(
   const box = EMBED_BOX[opts.size];
   const frame = doc.createElement('iframe');
   frame.src = `${origin}${EMBED_PATH}?${embedQuery(opts, doc.location.hostname)}`;
-  frame.title = titles[opts.lang] ?? titles.en ?? 'Keep screen awake';
+  // `en` is always present (the build fails without it).
+  frame.title = strings.titles[opts.lang] ?? (strings.titles.en as string);
   frame.setAttribute('allow', 'screen-wake-lock');
   frame.setAttribute('loading', 'lazy');
   frame.setAttribute('referrerpolicy', 'strict-origin');
   frame.setAttribute('sandbox', EMBED_SANDBOX);
-  frame.style.cssText = `width:${box.width};max-width:100%;height:${String(box.height)}px;border:0;border-radius:12px;color-scheme:light dark;display:block`;
+  frame.style.cssText = `width:${box.width};max-width:100%;height:${String(box.height)}px;border:0;border-radius:${String(box.radius)}px;color-scheme:light dark;display:block`;
   const parent = script.parentNode;
   if (parent && parent !== doc.head) parent.replaceChild(frame, script);
   else {
@@ -147,20 +199,32 @@ export function mountFrame(
     script.remove();
     doc.body.append(frame);
   }
-  registry.add(frame, origin, box.height);
+  // A narrow container (a sidebar, a phone column) reserves the taller layout's box now, not after load.
+  const height = reservedHeight(opts, frame.offsetWidth);
+  frame.style.height = `${String(height)}px`;
+  mountCredit(frame, strings.credits[opts.lang] ?? (strings.credits.en as string));
+  registry.add(frame, origin, height);
   return frame;
 }
 
 /** Entry point of the built loader. Idempotent across several tags on one page. */
-export function install(win: Window, current: HTMLScriptElement | null, titles: Record<string, string>): void {
+export function install(win: Window, current: HTMLScriptElement | null, strings: ILoaderStrings): void {
   const w = win as TWindow;
   w.AwakeTabEmbed ??= createRegistry(win);
   const registry = w.AwakeTabEmbed;
   const tags = current
     ? [current]
     : [...win.document.querySelectorAll<HTMLScriptElement>('script[src*="/embed.js"]')];
+  const lookups: Record<string, Promise<boolean>> = {};
   const run = () => {
-    for (const tag of tags) mountFrame(tag, registry, titles);
+    for (const tag of tags) {
+      const frame = mountFrame(tag, registry, strings);
+      const credit = frame?.nextElementSibling;
+      if (!frame || !credit) continue;
+      void keepsCredit(win, new URL(frame.src).origin, lookups).then((keep) => {
+        if (!keep) credit.remove();
+      });
+    }
   };
   // An async tag in <head> can run before <body> exists.
   if ((win.document.body as HTMLElement | null) !== null) run();

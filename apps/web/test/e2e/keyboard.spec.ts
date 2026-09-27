@@ -131,7 +131,7 @@ test('journey 1 (keyboard): autostart, skip link, and the whole page tabs throug
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/#content$/u);
 
-  // The last focusable element of the page (the footer's locale links), which Tab must reach.
+  // The last focusable element of the page (the footer's language switcher), which Tab must reach.
   const lastFocusable = await page.evaluate(() => {
     const els = [
       ...document.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, select, textarea, summary, [tabindex]'),
@@ -393,8 +393,9 @@ test('ambient mode (M): controls take focus with a visible ring, Tab stays in th
     expect(await outsideLayer()).toBe(false);
     if ((await focusInfo(page)) !== null) await expectVisibleFocus(page);
   }
-  // Firefox keeps focus on the last control of a modal when Tab has nowhere to go; walk back instead.
-  await tabTo(page, keys, '[data-ambient-next]', 6, true);
+  // The bar opens with the six mode buttons before Next mode (Ambient canvas), so five Tabs still land inside
+  // the mode bar and Next mode is ahead: walk forward (never past the last control, where Firefox would stick).
+  await tabTo(page, keys, '[data-ambient-next]', 6);
   // Controls never auto-hide under a keyboard user.
   await page.waitForTimeout(3500);
   await expect(layer).toHaveAttribute('data-controls', 'shown');

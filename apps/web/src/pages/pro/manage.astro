@@ -1,18 +1,29 @@
 ---
+// /pro/manage (docs/09 §2.6; canvas boards ProManage.dc.html and Sys.dc.html kind="prolapsed", the Manage part).
+// `data-state` on the root (lib/manage-page.ts): loading · list · empty, plus grace (a yearly renewal that did not
+// go through, inside the 7-day grace) and lapsed (Pro ended; the devices stay listed with "Pro off").
+// Rows are cloned from <template data-device-row> so no markup lives in client code (docs/03 ADR-013).
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../../components/shell/Button.astro';
+import ProRefund from '../../components/pro/ProRefund.astro';
 import { t } from '../../i18n/load';
 import { articleSchema } from '../../lib/seo';
-// shadcn/ui renders at build time only (docs/03-architecture.md ADR-013): no client:* directives here.
-import { cn } from 'cn';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { CHECKOUT_LINKS } from '../../lib/checkout';
+import { PLAN_PRICES, PRO_LAUNCH_END } from '../../lib/license';
+import { POLAR_PORTAL_URL, usd } from '../../lib/pro-common';
+import '../../styles/pro.css';
 
+const m = (key: string, vars?: Record<string, string | number>) => t(`page.pro.manage.${key}`, vars);
+const l = (key: string, vars?: Record<string, string | number>) => t(`page.pro.lapse.${key}`, vars);
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/pro/manage`;
-
-const secondaryClass = cn(buttonVariants({ variant: 'outline' }), 'min-h-11');
-const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balance';
+const launch = Date.now() < PRO_LAUNCH_END;
+const ICONS = {
+  laptop: 'M4 6h16v10H4zM2 19h20',
+  tablet: 'M6 3h12v18H6zM11 18h2',
+  phone: 'M8 3h8v18H8zM11 18h2',
+  ext: 'M9 4h6v4h4v6h-4v6H9v-6H5V8h4z',
+};
 ---
 
 <BaseLayout
@@ -34,48 +45,147 @@ const headingClass = 'text-3xl font-bold leading-tight tracking-tight text-balan
     ],
   })}
 >
-  <header class="at-page-header"><a class="at-wordmark" href="/">AwakeTab</a></header>
-  <main class="mx-auto mt-8 max-w-[45rem] leading-normal" data-manage-root>
-    <h1 id="manage-title" class={headingClass}>{t('page.pro.manage.h1')}</h1>
-    <p class="mt-3 text-lg">{t('page.pro.manage.lead')}</p>
+  <div class="at-pro at-pro-man" data-manage-root data-state="loading" data-launch={launch ? 'on' : 'off'} data-launch-end={String(PRO_LAUNCH_END)}>
+    <div class="at-pro-aura at-pro-aura-act" aria-hidden="true"></div>
+    <main class="at-pro-man-main">
+      <div class="at-pro-man-col">
+        <a class="at-pro-back" href="/pro">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="at-flip-rtl"><path d="M15 6l-6 6 6 6"></path></svg>
+          {t('page.pro.activate.back')}
+        </a>
 
-    <Alert role="status" data-manage-empty="" hidden className="mt-6">
-      <AlertDescription>{t('page.pro.manage.empty')}</AlertDescription>
-    </Alert>
+        <div class="at-pro-man-top">
+          <div class="at-pro-act-head">
+            <h1 id="manage-title" class="at-pro-h1">{t('page.pro.manage.h1')}</h1>
+            <p class="at-pro-lead at-pro-man-lead">{t('page.pro.manage.lead')}</p>
+          </div>
+          <div class="at-pro-meter-wrap" data-meter>
+            <div class="at-pro-meter-head">
+              <span id="meter-label" aria-live="polite" data-meter-label data-tpl={m('meter')}></span>
+              <span class="at-pro-small at-pro-muted" data-meter-left data-tpl={m('left')} data-one={m('left.one')} data-none={m('left.none')}></span>
+            </div>
+            <div role="meter" class="at-pro-meter" aria-labelledby="meter-label" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0" data-meter-bar>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
 
-    {/* manage-page.ts unhides this wrapper once the activation list has rows. */}
-    <div data-devices-wrap="" hidden class="mt-6">
-      <Table aria-labelledby="manage-title">
-        <TableHeader>
-          <TableRow>
-            <TableHead>{t('page.pro.manage.col.device')}</TableHead>
-            <TableHead>{t('page.pro.manage.col.activated')}</TableHead>
-            <TableHead><span class="sr-only">{t('page.pro.manage.remove')}</span></TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody data-devices=""></TableBody>
-      </Table>
-    </div>
+        <section class="at-card at-pro-lapse" aria-labelledby="lp-h" data-lapse>
+          <p class="at-pro-lapse-kicker">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg>
+            <span data-for-state="grace">{l('grace.kicker')}</span>
+            <span data-for-state="lapsed" data-lapse-fill data-tpl={l('ended.kicker')}></span>
+          </p>
+          <h2 id="lp-h" class="at-pro-h3">
+            <span data-for-state="grace" data-lapse-fill data-tpl={l('grace.title')}></span>
+            <span data-for-state="lapsed">{l('ended.title')}</span>
+          </h2>
+          <p class="at-pro-body at-pro-lapse-body">
+            <span data-for-state="grace" data-lapse-fill data-tpl={l('grace.body')}></span>
+            <span data-for-state="lapsed">{l('ended.body')}</span>
+          </p>
+          <div class="at-pro-lapse-actions" data-for-state="grace">
+            <Button variant="primary" href={POLAR_PORTAL_URL} glyph={false}>{l('grace.primary')}</Button>
+            <Button variant="secondary" href="mailto:support@awaketab.com">{l('grace.secondary')}</Button>
+          </div>
+          <div class="at-pro-lapse-actions" data-for-state="lapsed">
+            <Button variant="primary" href={CHECKOUT_LINKS.pro_yearly} glyph={false} data-plan="pro_yearly">
+              {l('ended.primary', { price: usd(PLAN_PRICES.pro_yearly) })}
+            </Button>
+            <Button variant="secondary" href={CHECKOUT_LINKS.pro_lifetime} data-plan="pro_lifetime">
+              <span data-launch-only>{l('ended.secondary', { price: usd(PLAN_PRICES.pro_lifetime_launch) })}</span>
+              <span data-after-only>{l('ended.secondary', { price: usd(PLAN_PRICES.pro_lifetime) })}</span>
+            </Button>
+            <span class="at-pro-caption" data-launch-only>{l('ended.note', { price: usd(PLAN_PRICES.pro_lifetime_launch) })}</span>
+          </div>
+        </section>
 
-    {/* Row prototype: manage-page.ts clones this per activation so the shadcn styling stays in Astro. */}
-    <template data-device-row>
-      <TableRow>
-        <TableCell data-device-label="" className="whitespace-normal font-medium"></TableCell>
-        <TableCell className="text-muted-foreground"><time data-device-at=""></time></TableCell>
-        <TableCell className="text-end">
-          <Button type="button" variant="destructive" size="sm" className="min-h-11" data-device-remove="">
-            {t('page.pro.manage.remove')}
-          </Button>
-        </TableCell>
-      </TableRow>
-    </template>
+        <div class="at-card at-pro-devices" data-devices-wrap hidden>
+          <div role="table" aria-labelledby="manage-title">
+            <div role="rowgroup">
+              <div role="row" class="at-pro-dev-head">
+                <div role="columnheader">{t('page.pro.manage.col.device')}</div>
+                <div role="columnheader" class="at-pro-dev-head-at">{t('page.pro.manage.col.activated')}</div>
+                <div role="columnheader"><span class="at-pro-sr">{t('page.pro.manage.remove')}</span></div>
+              </div>
+            </div>
+            <div role="rowgroup" class="at-pro-dev-body" data-devices></div>
+          </div>
+        </div>
 
-    <Alert role="note" className="mt-8">
-      <AlertDescription>{t('page.pro.refund')}</AlertDescription>
-    </Alert>
+        <template data-device-row>
+          <div role="row" class="at-pro-dev">
+            <div role="cell" class="at-pro-dev-name">
+              {
+                Object.entries(ICONS).map(([id, d]) => (
+                  <svg viewBox="0 0 24 24" aria-hidden="true" data-icon={id}>
+                    <path d={d} />
+                  </svg>
+                ))
+              }
+              <span class="at-pro-dev-label">
+                <span data-device-label></span>
+                <span class="at-tag at-pro-tag-lamp" data-device-here hidden>{m('here')}</span>
+                <span class="at-tag at-pro-tag-plain" data-device-off hidden>{m('off')}</span>
+              </span>
+            </div>
+            <div role="cell" class="at-pro-dev-at"><span class="at-pro-dev-at-label">{m('activated')} </span><time data-device-at></time></div>
+            <div role="cell" class="at-pro-dev-act">
+              <button type="button" class="at-pro-remove" data-device-remove>{t('page.pro.manage.remove')}</button>
+            </div>
+            <div role="cell" class="at-pro-dev-confirm" data-device-confirm hidden>
+              <span data-confirm-text></span>
+              <span class="at-pro-confirm-btns">
+                <button type="button" class="at-pro-keep" data-keep>{m('keep')}</button>
+                <button type="button" class="at-pro-confirm-remove" data-confirm-remove>{m('removeDevice')}</button>
+              </span>
+            </div>
+          </div>
+        </template>
+        <span hidden data-confirm-here>{m('confirm.here')}</span>
+        <span hidden data-confirm-other data-tpl={m('confirm.other')} data-aria={m('confirm.aria')}></span>
 
-    <p class="mt-6"><a class={secondaryClass} href="/pro/activate">{t('pro.activate')}</a></p>
-  </main>
+        <div role="status" class="at-card at-pro-empty" data-manage-empty hidden>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.2"></circle></svg>
+          <p>{t('page.pro.manage.empty')}</p>
+          <div class="at-pro-empty-actions">
+            <Button variant="primary" href="/pro/activate">{t('pro.activate')}</Button>
+            <Button variant="secondary" href="/pro">{m('plans')}</Button>
+          </div>
+        </div>
+
+        <div role="alert" class="at-card at-pro-empty" data-manage-offline hidden>
+          <p>{t('license.error.offline')}</p>
+          <div class="at-pro-empty-actions">
+            <Button variant="secondary" data-manage-retry>{t('page.pro.activate.retry')}</Button>
+          </div>
+        </div>
+
+        <ProRefund card />
+        <a class="at-pro-link at-pro-man-key" href="/pro/activate">{t('pro.activate')}</a>
+      </div>
+
+      <aside class="at-pro-lapse-aside" aria-labelledby="lp-q">
+        <h2 id="lp-q">{l('facts.h2')}</h2>
+        <ul data-for-state="grace">
+          <li><span data-lapse-fill data-tpl={l('grace.f1k')}></span><span>{l('grace.f1v')}</span></li>
+          <li><span>{l('grace.f2k')}</span><span>{l('grace.f2v')}</span></li>
+          <li><span>{l('grace.f3k')}</span><span>{l('grace.f3v')}</span></li>
+        </ul>
+        <ul data-for-state="lapsed">
+          {
+            [1, 2, 3, 4].map((n) => (
+              <li>
+                <span>{l(`ended.f${n}k`)}</span>
+                <span>{l(`ended.f${n}v`)}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <p>{t('page.pro.checkout.success.aside')}</p>
+      </aside>
+    </main>
+  </div>
   <script>
     import { bootManagePage } from '../../lib/manage-page';
     const root = document.querySelector<HTMLElement>('[data-manage-root]');

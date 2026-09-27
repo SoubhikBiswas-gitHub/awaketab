@@ -1,6 +1,8 @@
-// Single source for extension strings: the web catalogs in apps/web/src/i18n (docs/07 §2). Nothing here
-// holds copy — it only chooses which existing keys the extension ships, per locale, and writes the
-// `_locales/<lang>/messages.json` files Chrome needs for the manifest name, description and command.
+// Extension strings come from the web catalogs in apps/web/src/i18n (docs/07 §2) plus the extension's own
+// catalog in apps/extension/locales/<locale>.json, which holds only copy that exists nowhere on the web
+// (the Clear Night popup states, options help and the welcome page; `ext.*` keys, never a web key). This
+// module chooses which keys ship, per locale, merges the two, and writes the `_locales/<lang>/messages.json`
+// files Chrome needs for the manifest name, description and command.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -8,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const WEB_I18N = path.resolve(HERE, '../../web/src/i18n');
 export const WEB_TOKENS = path.resolve(HERE, '../../web/src/styles/tokens.css');
+export const EXT_I18N = path.resolve(HERE, '../locales');
 
 export const LOCALES = ['en', 'es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'];
 
@@ -16,7 +19,21 @@ export const CHROME_LOCALES = { en: 'en', es: 'es', 'pt-br': 'pt_BR', de: 'de', 
 
 /** Groups the popup and options page read from, plus single keys outside those groups. */
 export const PAGE_PREFIXES = ['ext.', 'tool.pill.', 'tool.preset.', 'tool.timer.', 'tool.until.', 'tool.extend.', 'settings.', 'license.', 'pro.'];
-export const PAGE_KEYS = ['app.name', 'tool.presets', 'tool.ring.start', 'tool.ring.stop', 'stats.minutes', 'stats.hours'];
+export const PAGE_KEYS = [
+  'app.name',
+  'tool.presets',
+  'tool.ring.start',
+  'tool.ring.stop',
+  'tool.advice.retry',
+  'stats.minutes',
+  'stats.hours',
+  'end.notify.title',
+  'end.notify.body',
+  'footer.privacy',
+  'footer.terms',
+  'footer.changelog',
+  'footer.donate',
+];
 
 /** What the service worker needs: notification text, badge tooltip and session labels. */
 export const BG_KEYS = [
@@ -56,12 +73,19 @@ export function readCatalog(locale) {
   return JSON.parse(readFileSync(path.join(WEB_I18N, `${locale}.json`), 'utf8'));
 }
 
+/** The extension's own strings for a locale (apps/extension/locales/<locale>.json). */
+export function readExtCatalog(locale) {
+  return JSON.parse(readFileSync(path.join(EXT_I18N, `${locale}.json`), 'utf8'));
+}
+
 function pick(catalog, keep) {
   return Object.fromEntries(Object.entries(catalog).filter(([key]) => keep(key)));
 }
 
 export function pageCatalog(locale) {
-  return pick(readCatalog(locale), (key) => PAGE_KEYS.includes(key) || PAGE_PREFIXES.some((prefix) => key.startsWith(prefix)));
+  const web = pick(readCatalog(locale), (key) => PAGE_KEYS.includes(key) || PAGE_PREFIXES.some((prefix) => key.startsWith(prefix)));
+  // Web keys win: the extension catalog may only add keys (a unit test keeps the two disjoint).
+  return { ...readExtCatalog(locale), ...web };
 }
 
 export function bgCatalogs() {
@@ -122,6 +146,7 @@ export function awaketabExtension() {
         const locale = id.slice(CATALOG.length + 1);
         if (!LOCALES.includes(locale)) throw new Error(`Unknown locale ${locale}`);
         this.addWatchFile(path.join(WEB_I18N, `${locale}.json`));
+        this.addWatchFile(path.join(EXT_I18N, `${locale}.json`));
         return `export default ${JSON.stringify(pageCatalog(locale))};`;
       }
       if (id === `\0${BG}`) {

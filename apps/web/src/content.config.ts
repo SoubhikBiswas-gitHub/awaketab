@@ -54,6 +54,8 @@ const changelog = z
     title: z.string().min(1).max(120),
     date: z.coerce.date(),
     release: z.string().optional(),
+    /** The /changelog filter tag (B6): New, Fixed or Changed. A fragment without one is listed as New. */
+    type: z.enum(['new', 'fixed', 'changed']).optional(),
   })
   .strict();
 

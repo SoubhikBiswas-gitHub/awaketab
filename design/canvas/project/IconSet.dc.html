@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · icon set</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+/* AwakeTab primitives v2 · fix batch 2b · keep byte-identical */
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.97)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-u{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.at-u:hover{text-decoration-thickness:2px}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 1280px; height: 900px; box-sizing: border-box; position: relative; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; padding: 32px 48px 40px; display: grid; grid-template-columns: 616px minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr); column-gap: 48px; row-gap: 24px">
+
+  <header style="grid-column: 1 / -1; display: flex; align-items: baseline; justify-content: space-between; gap: 24px">
+    <h1 style="margin: 0; font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.02em">Icon set</h1>
+    <p style="margin: 0; font-size: 14px; line-height: 20px; color: {{t.muted}}">Ring and lamp bead. The bead is the status light, so it keeps its tone at every size.</p>
+  </header>
+
+  <section aria-labelledby="is-app" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+    <h2 id="is-app" style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">App icon · dark tile and light tile</h2>
+    <sc-for list="{{rows}}" as="row" hint-placeholder-count="2">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px">
+        <sc-for list="{{row.items}}" as="z" hint-placeholder-count="6">
+          <figure style="margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px">
+            <div role="img" aria-label="{{z.aria}}" style="width: {{z.box}}; height: {{z.box}}; box-sizing: border-box; border-radius: {{z.radius}}; background: {{z.tile}}; border: 1px solid {{z.edge}}; display: grid; place-items: center">
+              <svg width="{{z.mark}}" height="{{z.mark}}" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{z.ring}}" stroke-width="{{z.stroke}}" stroke-linecap="round"></path><circle cx="24" cy="9" r="{{z.bead}}" fill="{{z.lamp}}"></circle></svg>
+            </div>
+            <figcaption style="display: flex; flex-direction: column; align-items: center; font-size: 13px; line-height: 18px"><span style="--dc: 0; {{digitFont}}; color: {{t.ink2}}">{{z.label}}</span><span style="color: {{t.muted}}">{{z.sub}}</span></figcaption>
+          </figure>
+        </sc-for>
+      </div>
+    </sc-for>
+  </section>
+
+  <section aria-labelledby="is-mask" style="display: grid; grid-template-columns: 176px minmax(0, 1fr); column-gap: 32px; row-gap: 16px; min-width: 0">
+    <h2 id="is-mask" style="grid-column: 1 / -1; margin: 0; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Maskable and themed</h2>
+    <figure style="margin: 0; display: flex; flex-direction: column; gap: 8px">
+      <div role="img" aria-label="Maskable icon, 512 pixels shown at 176, with the safe zone circle" data-placeholder="platform crop" style="position: relative; width: 176px; height: 176px; background: {{nightTile}}; display: grid; place-items: center">
+        <svg width="88" height="88" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#EAF0F7" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.2" fill="#5BE0E8"></circle></svg>
+        <svg aria-hidden="true" width="176" height="176" viewBox="0 0 176 176" style="position: absolute; inset: 0"><circle cx="88" cy="88" r="70" fill="none" stroke="{{safeZone}}" stroke-width="1" stroke-dasharray="4 4"></circle></svg>
+      </div>
+      <figcaption style="font-size: 13px; line-height: 18px; color: {{t.muted}}">512 maskable, full bleed. Dashed circle: 80% safe zone.</figcaption>
+    </figure>
+    <div style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+      <div style="display: flex; gap: 16px">
+        <sc-for list="{{masks}}" as="m" hint-placeholder-count="3">
+          <figure style="margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px">
+            <div role="img" aria-label="{{m.aria}}" style="width: 72px; height: 72px; border-radius: {{m.radius}}; background: {{nightTile}}; display: grid; place-items: center; overflow: hidden">
+              <svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#EAF0F7" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.2" fill="#5BE0E8"></circle></svg>
+            </div>
+            <figcaption style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{m.name}}</figcaption>
+          </figure>
+        </sc-for>
+      </div>
+      <div style="display: flex; gap: 16px">
+        <sc-for list="{{themed}}" as="m" hint-placeholder-count="3">
+          <figure style="margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px">
+            <div role="img" aria-label="{{m.aria}}" style="width: 72px; height: 72px; box-sizing: border-box; border-radius: 50%; background: {{m.bg}}; border: 1px solid {{m.edge}}; display: grid; place-items: center">
+              <svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{m.fg}}" stroke-width="4.8" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="{{m.fg}}"></circle></svg>
+            </div>
+            <figcaption style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{m.name}}</figcaption>
+          </figure>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="is-fav" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+    <h2 id="is-fav" style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Favicon states · 16 px, shown at 3× above the tabs</h2>
+    <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px">
+      <sc-for list="{{favs}}" as="f" hint-placeholder-count="5">
+        <figure style="margin: 0; display: flex; flex-direction: column; gap: 8px">
+          <div data-placeholder="browser tab" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: 12px; overflow: hidden; border: 1px solid {{t.line}}">
+            <div style="height: 64px; background: {{tabs.light.tab}}; display: grid; place-items: center">
+              <svg width="48" height="48" viewBox="0 0 48 48" aria-label="{{f.aria}}, light tab" style="overflow: visible"><path d="{{f.ringD}}" fill="none" stroke="{{f.l.ring}}" stroke-width="5.8" stroke-linecap="round"></path><path d="{{f.markD}}" fill="{{f.l.fill}}" stroke="{{f.l.stroke}}" stroke-width="{{f.markW}}" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <div style="height: 64px; background: {{tabs.dark.tab}}; display: grid; place-items: center">
+              <svg width="48" height="48" viewBox="0 0 48 48" aria-label="{{f.aria}}, dark tab" style="overflow: visible"><path d="{{f.ringD}}" fill="none" stroke="{{f.d.ring}}" stroke-width="5.8" stroke-linecap="round"></path><path d="{{f.markD}}" fill="{{f.d.fill}}" stroke="{{f.d.stroke}}" stroke-width="{{f.markW}}" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+          </div>
+          <figcaption style="display: flex; flex-direction: column; font-size: 13px; line-height: 18px"><span style="font-weight: 600; color: {{t.ink}}">{{f.name}}</span><span style="color: {{t.muted}}">{{f.note}}</span></figcaption>
+        </figure>
+      </sc-for>
+    </div>
+    <sc-for list="{{strips}}" as="st" hint-placeholder-count="2">
+      <div role="img" aria-label="{{st.aria}}" data-placeholder="browser tab strip" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: {{st.strip}}">
+        <sc-for list="{{st.items}}" as="it" hint-placeholder-count="5">
+          <div style="height: 36px; box-sizing: border-box; padding: 0 8px; border-radius: 8px; background: {{st.tab}}; display: flex; align-items: center; gap: 8px; min-width: 0">
+            <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true" style="flex-shrink: 0; overflow: visible"><path d="{{it.ringD}}" fill="none" stroke="{{it.ring}}" stroke-width="5.8" stroke-linecap="round"></path><path d="{{it.markD}}" fill="{{it.fill}}" stroke="{{it.stroke}}" stroke-width="{{it.markW}}" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <span style="font-size: 13px; line-height: 18px; color: {{st.ink}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.title}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+  </section>
+
+  <section aria-labelledby="is-splash" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+    <h2 id="is-splash" style="margin: 0; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">PWA splash · installed app launch</h2>
+    <div style="display: flex; align-items: flex-end; gap: 24px">
+      <sc-for list="{{splashes}}" as="sp" hint-placeholder-count="3">
+        <figure style="margin: 0; display: flex; flex-direction: column; gap: 8px">
+          <div role="img" aria-label="{{sp.aria}}" style="width: {{sp.w}}; height: {{sp.h}}; box-sizing: border-box; border-radius: {{sp.radius}}; background: {{sp.bg}}; border: 1px solid {{t.line2}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px">
+            <div style="width: 56px; height: 56px; box-sizing: border-box; border-radius: 12px; background: {{sp.tile}}; border: 1px solid {{sp.edge}}; display: grid; place-items: center">
+              <svg width="36" height="36" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{sp.ring}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.2" fill="{{sp.lamp}}"></circle></svg>
+            </div>
+            <span style="font-size: 13px; line-height: 18px; font-weight: 600; color: {{sp.ink}}">AwakeTab</span>
+          </div>
+          <figcaption style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{sp.label}}</figcaption>
+        </figure>
+      </sc-for>
+    </div>
+    <p style="margin: 0; font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">A manifest has one background_color: night #0A0E16 (decision O-19), replacing today's #FAF7F2. The light splash shows what a light-only theme would give.</p>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["auto","light","dark"],"default":"dark"},"layout":{"editor":null,"default":"desktop"},"$preview":{"width":1280,"height":900}}'>
+/* ── AwakeTab primitives v2 · fix batch 2b · DESIGN.md §2, §3, §11. Byte-identical in every file of the batch; edit prims/prims.js and rebuild, never one copy. ── */
+const AT_TOK = {
+  dark: { ground: '#0A0E16', lift: '#13203A', surface: '#111826', raised: '#26324B', sunken: '#0D131F', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', warn: '#F2B34C', bad: '#FF7A7A', lamp: '#5BE0E8', onLamp: '#04232A', stopBg: '#26324B', stopInk: '#EAF0F7', stopLine: '#33405C', horizonInk: '#F6F2EA', violet: '#A594FF', inputLine: '#5A6781', groundEnd: '#0A0E16', elev: 'none' },
+  light: { ground: '#F2F6FA', lift: '#FFFFFF', surface: '#FFFFFF', raised: '#E3E9F1', sunken: '#F6F9FC', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', warn: '#B7791F', bad: '#D14343', lamp: '#087B87', onLamp: '#FFFFFF', stopBg: '#E3E9F1', stopInk: '#0E1726', stopLine: '#C3CDDA', horizonInk: '#F6F2EA', violet: '#5A47CF', inputLine: '#8C98AA', groundEnd: '#EEF3F8', elev: '0 1px 2px rgba(14,23,38,0.06)' }
+};
+AT_TOK.oled = Object.assign({}, AT_TOK.dark, { ground: '#000000', lift: '#000000', groundEnd: '#000000', surface: '#0A0A0A' });
+const AT_NIGHT = { ground: '#000000', ink: '#FF5A3C', ink2: '#E8563C', muted: '#A89690', line: '#3A2E2A' };
+const AT_SCRIM = 'rgba(4,7,12,0.55)';
+const AT_FLOAT = '0 24px 64px -24px rgba(0,0,0,0.45)';
+// Display digits: system-ui (Geist in mocks) 200–300, tabular, plain zero. Mono only for code, keys, file names and URLs.
+const AT_DIGITS = "font-family: Geist, system-ui, sans-serif; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1, 'zero' 0";
+const AT_MONO = "font-family: 'Geist Mono', ui-monospace, monospace";
+const AT_GUTTER = { phone: 16, tablet: 32, desktop: 80, xl: 120 };
+const AT_SECTION = { phone: 48, tablet: 64, desktop: 96 };
+const AT_TYPE = {
+  kicker: 'font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase',
+  caption: 'font-size: 13px; line-height: 18px',
+  small: 'font-size: 14px; line-height: 20px',
+  ui: 'font-size: 15px; line-height: 22px',
+  body: 'font-size: 16px; line-height: 26px',
+  lead: 'font-size: 18px; line-height: 28px',
+  h3: 'font-size: 20px; line-height: 28px; font-weight: 600',
+  h2: 'font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em',
+  h2Phone: 'font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em',
+  h1: 'font-size: 48px; line-height: 56px; font-weight: 600; letter-spacing: -0.02em',
+  h1Phone: 'font-size: 34px; line-height: 42px; font-weight: 600; letter-spacing: -0.02em',
+  price: 'font-size: 48px; line-height: 56px; font-weight: 600; letter-spacing: -0.02em',
+  pricePhone: 'font-size: 40px; line-height: 48px; font-weight: 600; letter-spacing: -0.02em'
+};
+// State glyphs (12 × 12): shape carries the state, never colour alone.
+const AT_GLYPH = {
+  ring: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z'
+};
+// The seven contract pill strings (docs/04, docs/05). Exact, and alone inside the pill.
+const AT_PILL_TEXT = { idle: 'Ready', requesting: 'Starting…', held: 'Screen awake', lost: 'Paused — tab hidden', denied: "Blocked — here's the fix", unsupported: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
+// Status pill sizes (§11.4): height, text, padding, gap, glyph.
+const AT_PILL = { L: [48, 20, '0 20px 0 16px', 8, 16], M: [38, 15, '0 16px 0 12px', 8, 12], S: [32, 14, '0 12px 0 8px', 8, 12], XS: [26, 13, '0 8px', 4, 12] };
+
+function atRgba(hex, a) {
+  const n = parseInt(String(hex).replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atTheme(theme, sysDark) {
+  const dark = theme === 'dark' || theme === 'oled' || (theme !== 'light' && sysDark);
+  return { dark, t: theme === 'oled' ? AT_TOK.oled : dark ? AT_TOK.dark : AT_TOK.light };
+}
+// Ground: the night lift fades into the ground token, and the one status halo (--at-halo) sits behind the status element.
+function atGround(t) { return 'radial-gradient(120% 70% at 50% 26%, ' + t.lift + ' 0%, ' + t.ground + ' 62%, ' + t.groundEnd + ' 100%)'; }
+function atHalo(tone, dark) { return 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(tone, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(tone, 0) + ' 70%)'; }
+// Status pill for a lock state. size: L | M | S | XS.
+function atPill(size, state, t, extra) {
+  const [h, fs, pad, gap, g] = AT_PILL[size];
+  const tone = state === 'idle' ? t.muted : state === 'lost' ? t.warn : state === 'denied' ? t.bad : t.lamp;
+  const d = state === 'lost' ? AT_GLYPH.pause : state === 'denied' ? AT_GLYPH.tri : state === 'fallback' ? AT_GLYPH.ringDot : AT_GLYPH.dot;
+  const hollow = state === 'idle' || state === 'requesting';
+  return {
+    label: (extra && extra.label) || AT_PILL_TEXT[state] || AT_PILL_TEXT.idle, tone, d, g,
+    fill: hollow ? 'transparent' : tone,
+    gStyle: 'flex-shrink: 0; overflow: visible; filter: drop-shadow(0 0 4px ' + (state === 'held' ? atRgba(tone, 0.8) : 'transparent') + ')',
+    // M may wrap to two lines (O-62): min-height 38, radius 20, balanced wrap. L, S and XS stay on one line.
+    style: 'display: inline-flex; align-items: center; gap: ' + gap + 'px; ' + (size === 'M' ? 'min-height: 38px; padding: 8px 16px 8px 12px; border-radius: 20px; line-height: 20px; text-wrap: balance' : 'height: ' + h + 'px; padding: ' + pad + '; border-radius: 999px; line-height: 1; white-space: nowrap') + '; box-sizing: border-box; background: ' + atRgba(tone, 0.12) + '; border: 1px solid ' + atRgba(tone, 0.38) + '; color: ' + t.ink + '; font-size: ' + fs + 'px; font-weight: 600'
+  };
+}
+// Buttons (§11.4): primary 60 r20 · cook 64 r20 · stop 60 ink fill · medium 52 r20 · small 44 r12.
+function atBtn(kind, t) {
+  const base = 'box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; white-space: nowrap; font-weight: 600; ';
+  if (kind === 'primary' || kind === 'cook') return base + 'height: ' + (kind === 'cook' ? 64 : 60) + 'px; padding: 0 24px; border-radius: 20px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 17px; line-height: 24px; box-shadow: 0 10px 28px -12px ' + atRgba(t.lamp, 0.6);
+  if (kind === 'stop') return base + 'height: 60px; padding: 0 24px; border-radius: 20px; border: 1px solid ' + t.stopLine + '; background: ' + t.stopBg + '; color: ' + t.stopInk + '; font-size: 17px; line-height: 24px';
+  if (kind === 'medium') return base + 'height: 52px; padding: 0 20px; border-radius: 20px; border: 1px solid ' + t.line2 + '; background: ' + t.surface + '; color: ' + t.ink + '; font-size: 15px; line-height: 22px';
+  if (kind === 'mediumLamp') return base + 'height: 52px; padding: 0 20px; border-radius: 20px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 15px; line-height: 22px';
+  if (kind === 'smallLamp') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 15px; line-height: 22px';
+  if (kind === 'smallStop') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid ' + t.stopLine + '; background: ' + t.stopBg + '; color: ' + t.stopInk + '; font-size: 15px; line-height: 22px';
+  if (kind === 'quiet') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: transparent; color: ' + t.ink2 + '; font-size: 15px; line-height: 22px; font-weight: 500';
+  return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid ' + t.line2 + '; background: ' + t.surface + '; color: ' + t.ink + '; font-size: 15px; line-height: 22px';
+}
+// Card (§11.6): surface, 1 px line, r16, padding 20 phone / 24.
+function atCard(t, phone) { return 'box-sizing: border-box; background: ' + t.surface + '; border: 1px solid ' + t.line + '; border-radius: 16px; padding: ' + (phone ? 20 : 24) + 'px; box-shadow: ' + t.elev; }
+// Tag (§11.4): 24 high, 12/16 600, r999, padding 0 8, 1 px line-strong (or a tone at 12 %).
+function atTag(t, tone) {
+  return 'display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; color: ' + t.ink + '; ' +
+    (tone ? 'background: ' + atRgba(tone, 0.12) + '; border: 1px solid ' + atRgba(tone, 0.38) : 'background: transparent; border: 1px solid ' + t.line2);
+}
+// Keyboard hint (§11.4): one theme keycap everywhere, never inherits the button it sits on.
+function atKbd(t) { return 'display: inline-flex; align-items: center; justify-content: center; height: 24px; min-width: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid ' + t.line2 + '; box-shadow: inset 0 -1px 0 ' + t.line2 + '; background: ' + t.raised + '; font-family: ui-monospace, \'Geist Mono\', monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: ' + t.ink + '; vertical-align: middle'; }
+function atCode(t) { return AT_MONO + '; font-size: 14px; padding: 0 4px; border-radius: 4px; background: ' + t.sunken + '; color: ' + t.ink + '; overflow-wrap: anywhere'; }
+// Segmented bar (§11.4): 1 px border + 4 px padding + 44 px items = 54. Selected = lamp 14 % + 1 px lamp 45 % (or raised for neutral switches).
+function atSeg(options, current, onPick, t, opts) {
+  const o = opts || {};
+  const n = options.length;
+  const i = Math.max(0, options.findIndex((x) => x[0] === current));
+  return {
+    bar: 'position: relative; display: grid; grid-template-columns: repeat(' + n + ', minmax(0, 1fr)); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line + (o.max ? '; max-width: ' + o.max : ''),
+    ind: 'position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / ' + n + '); height: 44px; box-sizing: border-box; border-radius: 999px; transform: translateX(' + i * 100 + '%); ' + (o.neutral ? 'background: ' + t.raised + '; border: 0' : 'background: ' + atRgba(t.lamp, 0.14) + '; border: 1px solid ' + atRgba(t.lamp, 0.45)),
+    items: options.map(([id, label, aria]) => ({
+      id, label, aria: aria || label, sel: id === current ? 'true' : 'false', pick: () => onPick(id),
+      style: 'position: relative; min-width: 0; height: 44px; padding: 0 8px; border: 0; background: transparent; border-radius: 999px; font-size: ' + (o.fs || 15) + 'px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2) + '; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+    }))
+  };
+}
+// Header (§11.6): 60 phone / 68 ≥ tablet, gutter = page gutter, logo 26 + wordmark 17 with gap 8, nav on desktop, theme switch as a segmented bar.
+const AT_NAV = [['Use cases', '#', 'for'], ['Devices', '#', 'on'], ['Extension', 'PageExtensionDesk.dc.html', 'extension'], ['Pro', 'Pro.dc.html', 'pro']];
+const AT_THEME_ICON = {
+  light: ['M12 8a4 4 0 1 1 0 8a4 4 0 1 1 0-8zM12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4', ''],
+  dark: ['M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z', ''],
+  auto: ['M12 4a8 8 0 1 1 0 16a8 8 0 1 1 0-16z', 'M12 4a8 8 0 0 1 0 16z']
+};
+function atHeader(c, t, layout, current, bead) {
+  const theme = c.state.theme === 'light' || c.state.theme === 'dark' ? c.state.theme : 'auto';
+  const order = ['light', 'dark', 'auto'];
+  return {
+    style: 'position: relative; height: ' + (layout === 'phone' ? 60 : 68) + 'px; flex-shrink: 0; box-sizing: border-box; padding-inline: ' + AT_GUTTER[layout] + 'px; display: flex; align-items: center; justify-content: space-between; gap: 16px',
+    logo: 'display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; color: ' + t.ink + '; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em',
+    ink: t.ink, bead: bead || t.muted,
+    showNav: layout === 'desktop',
+    navStyle: 'display: flex; align-items: center; gap: 8px',
+    nav: AT_NAV.map(([label, href, id]) => ({
+      label, href, cur: id === current ? 'page' : 'false',
+      style: 'display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 0 12px; box-sizing: border-box; text-decoration: none; font-size: 15px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2),
+      dot: id === current ? 'width: 6px; height: 6px; border-radius: 999px; background: ' + t.lamp : 'display: none'
+    })),
+    bar: 'position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line,
+    ind: 'position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: ' + t.raised + '; transform: translateX(' + order.indexOf(theme) * 44 + 'px)',
+    themes: order.map((id) => ({
+      sel: id === theme ? 'true' : 'false', aria: id === 'auto' ? 'Auto, follows your system' : id === 'light' ? 'Light' : 'Dark', title: id === 'auto' ? 'Auto: follows your system' : id === 'light' ? 'Light' : 'Dark',
+      icon: AT_THEME_ICON[id][0], icon2: AT_THEME_ICON[id][1],
+      pick: () => c.setState({ theme: id }),
+      style: 'position: relative; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; display: grid; place-items: center; color: ' + (id === theme ? t.ink : t.ink2)
+    }))
+  };
+}
+// Footer (§11.7): 1 px line top, padding 24 (phone 32 bottom), honest line left in caption muted, links right.
+const AT_FOOT_LINKS = [['Privacy', 'PagePrivacyDesk.dc.html'], ['Terms', 'PageTermsPhone.dc.html'], ['Changelog', 'PageChangelogPhone.dc.html'], ['About', 'PageAboutDesk.dc.html'], ['Buy me a coffee', 'https://buymeacoffee.com/awaketab']];
+function atFooter(t, layout) {
+  const g = AT_GUTTER[layout];
+  return {
+    style: 'flex-shrink: 0; margin-top: ' + AT_SECTION[layout] + 'px; box-sizing: border-box; padding: 24px ' + g + 'px ' + (layout === 'phone' ? 32 : 24) + 'px; border-top: 1px solid ' + t.line + '; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px',
+    line: 'margin: 0; font-size: 13px; line-height: 18px; color: ' + t.muted,
+    nav: 'display: flex; flex-wrap: wrap; column-gap: 16px',
+    link: 'min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; font-size: 13px; line-height: 18px; font-weight: 500; color: ' + t.ink2 + '; text-decoration: none',
+    links: AT_FOOT_LINKS.map(([label, href]) => ({ label, href }))
+  };
+}
+/* ── end primitives ── */
+
+// Icon tiles use platform-derived radii (22 % of the tile, maskable crops); they are art (role="img"), exempt from §11.3.
+const DARK = Object.assign({ bg: atGround(AT_TOK.dark) }, AT_TOK.dark);
+const LIGHT = Object.assign({ bg: atGround(AT_TOK.light) }, AT_TOK.light);
+const NIGHT_TILE = 'linear-gradient(160deg, ' + AT_TOK.dark.lift + ' 0%, ' + AT_TOK.dark.ground + ' 100%)';
+const RING = 'M32.8 11.4A16 16 0 1 1 15.2 11.4';
+const FULL_RING = 'M24 8a16 16 0 1 1 0 32a16 16 0 1 1 0-32z';
+// Neutral browser tab colours (not any one browser's).
+const TABS = {
+  light: { strip: '#E4E8EE', tab: '#FFFFFF', ink: '#1C2330', ring: '#1C2330' },
+  dark: { strip: '#141922', tab: AT_TOK.dark.raised, ink: '#E6EAF0', ring: '#E6EAF0' }
+};
+// Favicon marks at the bead position (24, 9). Shape changes with state so colour is never the only cue.
+const MARKS = {
+  idle: { d: 'M24 5a4 4 0 1 1 0 8a4 4 0 1 1 0-8z', w: 2.6, filled: false },
+  awake: { d: 'M24 3.6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8z', w: 0.1, filled: true },
+  paused: { d: 'M19 3h4v12h-4zM25 3h4v12h-4z', w: 0.1, filled: true },
+  blocked: { d: 'M24 1.5L31 15H17z', w: 0.1, filled: true },
+  done: { d: 'M16.5 24.5l5 5 10-10.5', w: 4.4, filled: false }
+};
+const FAVS = [
+  ['idle', 'Idle', 'Hollow bead, soft ring', 'AwakeTab', 'AwakeTab favicon, idle'],
+  ['awake', 'Awake', 'Lamp bead', '● 24:18 left', 'AwakeTab favicon, screen awake'],
+  ['paused', 'Paused', 'Amber pause bars', 'Paused · 24:18 left', 'AwakeTab favicon, paused'],
+  ['blocked', 'Blocked', 'Red triangle', 'Blocked · AwakeTab', 'AwakeTab favicon, blocked'],
+  ['done', 'Done', 'Closed ring and a tick', 'Done · AwakeTab', 'AwakeTab favicon, session done']
+];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sysDark: this.sys() };
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() { if (this.mq) this.mq.removeEventListener('change', this.onMq); }
+  tone(state, dark) {
+    const lamp = dark ? '#5BE0E8' : '#087B87';
+    const warn = dark ? '#F2B34C' : '#B7791F';
+    const bad = dark ? '#FF7A7A' : '#D14343';
+    const muted = dark ? '#8E9AAE' : '#5B6779';
+    const ink = dark ? TABS.dark.ring : TABS.light.ring;
+    const c = { idle: muted, awake: lamp, paused: warn, blocked: bad, done: ink }[state];
+    const m = MARKS[state];
+    return { ring: state === 'idle' ? muted : ink, fill: m.filled ? c : 'none', stroke: c };
+  }
+  renderVals() {
+    const theme = this.props.theme ?? 'dark';
+    const dark = theme === 'dark' || (theme === 'auto' && this.state.sysDark);
+    const t = dark ? DARK : LIGHT;
+    // Size, mark scale, ring stroke, bead radius, halo radius. Small sizes get a bigger, heavier mark.
+    const SPEC = [[16, 1, 16, 0.94, 6.2, 5.8, 0], [32, 1, 32, 0.84, 5.6, 5.4, 0], [48, 1, 48, 0.66, 4.8, 4.6, 7], [128, 1, 128, 0.62, 4.5, 4.2, 7.5], [192, 0.5, 96, 0.62, 4.5, 4.2, 7.5], [512, 0.25, 128, 0.62, 4.5, 4.2, 7.5]];
+    const tile = (kind) => SPEC.map(([px, scale, box, mk, stroke, bead, halo]) => ({
+      box: box + 'px', mark: Math.round(box * mk), radius: Math.round(box * 0.22) + 'px', stroke, bead,
+      tile: kind === 'dark' ? NIGHT_TILE : AT_TOK.light.surface, edge: kind === 'dark' ? AT_TOK.dark.line2 : AT_TOK.light.line,
+      ring: kind === 'dark' ? '#EAF0F7' : '#0E1726', lamp: kind === 'dark' ? '#5BE0E8' : '#087B87',
+      label: px + ' px', sub: scale === 1 ? (kind === 'dark' ? 'dark tile' : 'light tile') : 'shown at ' + scale * 100 + '%',
+      aria: 'AwakeTab app icon, ' + px + ' pixels, ' + kind + ' tile'
+    }));
+    const favs = FAVS.map(([id, name, note, title, aria]) => {
+      const l = this.tone(id, false), d = this.tone(id, true);
+      return { name, note, title, aria, l, d, ringD: id === 'done' ? FULL_RING : RING, markD: MARKS[id].d, markW: MARKS[id].w };
+    });
+    const strip = (kind) => ({
+      strip: TABS[kind].strip, tab: TABS[kind].tab, ink: TABS[kind].ink, ring: TABS[kind].ring,
+      aria: (kind === 'dark' ? 'Dark' : 'Light') + ' browser tabs showing each favicon state and tab title'
+    });
+    return {
+      t, nightTile: NIGHT_TILE, tabs: TABS, digitFont: AT_DIGITS, safeZone: AT_TOK.dark.bad,
+      rows: [{ items: tile('dark') }, { items: tile('light') }],
+      masks: [['Circle', '50%'], ['Squircle', '22px'], ['Rounded square', '12px']].map(([name, radius]) => ({ name, radius, aria: 'Maskable icon cropped to a ' + name.toLowerCase() })),
+      themed: [
+        { name: 'Monochrome', bg: 'transparent', fg: t.ink, edge: t.line2, border: 'solid', aria: 'Monochrome icon layer, one colour' },
+        { name: 'Themed, light', bg: '#DCE8F2', fg: '#1E3A52', edge: '#DCE8F2', border: 'solid', aria: 'Android themed icon, light wallpaper' },
+        { name: 'Themed, dark', bg: '#1C2A38', fg: '#BFD6EA', edge: '#1C2A38', border: 'solid', aria: 'Android themed icon, dark wallpaper' }
+      ],
+      favs,
+      strips: ['light', 'dark'].map((k) => {
+        const s = strip(k);
+        s.items = favs.map((f) => { const c = k === 'dark' ? f.d : f.l; return { title: f.title, ringD: f.ringD, markD: f.markD, markW: f.markW, ring: c.ring, fill: c.fill, stroke: c.stroke }; });
+        return s;
+      }),
+      splashes: [
+        { label: 'Phone 390 × 844 · dark', w: '102px', h: '220px', radius: '16px', bg: '#0A0E16', tile: NIGHT_TILE, edge: AT_TOK.dark.line2, ring: '#EAF0F7', lamp: '#5BE0E8', ink: '#EAF0F7', aria: 'Phone splash screen, dark' },
+        { label: 'Phone · light', w: '102px', h: '220px', radius: '16px', bg: '#F2F6FA', tile: '#FFFFFF', edge: '#DCE3EC', ring: '#0E1726', lamp: '#087B87', ink: '#0E1726', aria: 'Phone splash screen, light' },
+        { label: 'Tablet 820 × 1180 · dark', w: '153px', h: '220px', radius: '16px', bg: '#0A0E16', tile: NIGHT_TILE, edge: AT_TOK.dark.line2, ring: '#EAF0F7', lamp: '#5BE0E8', ink: '#EAF0F7', aria: 'Tablet splash screen, dark' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

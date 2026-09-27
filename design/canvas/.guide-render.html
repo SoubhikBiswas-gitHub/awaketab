@@ -1,0 +1,192 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.96)}
+button:focus-visible,a:focus-visible{outline:2px solid #5BE0E8;outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,opacity 1s linear}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-prose a{text-decoration-thickness:1px;text-underline-offset:4px;transition:text-decoration-thickness .3s var(--ease)}
+.at-row{transition:background-color .45s var(--ease),border-color .45s var(--ease)}
+.at-row:hover{background-color:rgba(127,140,160,0.08)}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+<style>.at-root{height:auto!important} *{animation:none!important;transition:none!important}</style></head><body>
+<div class="at-root" style="width: 1280px; height: 1600px; box-sizing: border-box; position: relative; overflow: hidden; background: linear-gradient(180deg, #070A11 0px, #0A0E16 360px), #0A0E16; color: #EAF0F7; display: flex; flex-direction: column">
+
+  <div style="position: relative; flex-shrink: 0; height: 800px; overflow: hidden; background: radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%, #070A11 100%); display: flex; flex-direction: column">
+    <div aria-hidden="true" class="at-aura" style="position: absolute; left: -25%; top: 4%; width: 150%; height: 70%; background: radial-gradient(45% 45% at 50% 50%, rgba(91,224,232,0.06) 0%, transparent 70%); pointer-events: none"></div>
+
+    <header style="position: relative; height: 60px; flex-shrink: 0; box-sizing: border-box; padding: 0 32px 0 36px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <a href="Main.dc.html" aria-label="AwakeTab home" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #EAF0F7; font-weight: 600; font-size: 17px; letter-spacing: -0.01em; min-height: 44px">
+        <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="#EAF0F7" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="#8E9AAE" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="#8E9AAE" style="transition: fill .6s"></circle></svg>
+        AwakeTab
+      </a>
+      
+        <nav aria-label="Main" style="display: flex; gap: 32px; font-size: 15px; font-weight: 500">
+          <a href="#" style="color: #B7C1D1; text-decoration: none; min-height: 44px; display: flex; align-items: center">Use cases</a>
+          <a href="#" style="color: #B7C1D1; text-decoration: none; min-height: 44px; display: flex; align-items: center">Devices</a>
+          <a href="#" style="color: #B7C1D1; text-decoration: none; min-height: 44px; display: flex; align-items: center">Extension</a>
+          <a href="#" style="color: #B7C1D1; text-decoration: none; min-height: 44px; display: flex; align-items: center">Pro</a>
+        </nav>
+      
+      <div role="radiogroup" aria-label="Theme" style="position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 3px; border-radius: 999px; background: #111826; border: 1px solid #1F2940">
+        <div aria-hidden="true" class="at-slide" style="position: absolute; left: 3px; top: 3px; width: 44px; height: 44px; border-radius: 999px; background: #26324B; box-shadow: 0 1px 3px rgba(0,0,0,0.4); transform: translateX(44px)"></div>
+        <button role="radio" aria-checked="false" aria-label="Light" title="Light" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #8E9AAE; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button>
+        <button role="radio" aria-checked="true" aria-label="Dark" title="Dark" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #EAF0F7; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button>
+        <button role="radio" aria-checked="false" aria-label="Auto, follows your system" title="Auto: follows your system" style="position: relative; height: 44px; border: 0; background: transparent; border-radius: 999px; color: #8E9AAE; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button>
+      </div>
+    </header>
+
+    <div style="position: relative; flex-shrink: 0; padding: 0 36px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+      <time style="font-size: 15px; color: #B7C1D1">Saturday, 26 September 2026</time>
+      <time style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 15px; color: #EAF0F7; font-variant-numeric: tabular-nums">10:18 PM</time>
+    </div>
+
+    <div style="position: relative; flex-grow: 1; display: grid; grid-template-columns: 620px minmax(0, 1fr); grid-template-rows: 1fr auto auto auto 1fr; grid-template-areas: 'face .' 'face pill' 'face note' 'face dock' 'face .'; column-gap: 64px; row-gap: 20px; padding: 8px 96px 40px 72px">
+      <div style="grid-area: pill; justify-self: start">
+        <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: 10px; height: 38px; padding: 0 17px 0 13px; box-sizing: border-box; border-radius: 999px; background: rgba(142,154,174,0.12); border: 1px solid rgba(142,154,174,0.38); font-size: 15px; font-weight: 600; color: #EAF0F7">
+          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 0 5px transparent)"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z" fill="transparent" stroke="#8E9AAE" stroke-width="1.6"></path></svg>
+          Ready
+        </output>
+      </div>
+
+      <div style="grid-area: face; display: flex; align-items: center; justify-content: center">
+        <div style="position: relative; width: 555px; height: 527px">
+          <div style="position: absolute; left: 0; top: 0; width: 358px; height: 340px; transform: scale(1.55); transform-origin: 0 0">
+            <div class="at-in" style="position: absolute; inset: 0; display: grid; place-items: center">
+              <div style="position: relative; width: 320px; height: 320px">
+                <div aria-hidden="true" style="position: absolute; inset: 0; border-radius: 50%; background: repeating-conic-gradient(from -0.6deg, #2A3752 0deg 1.2deg, transparent 1.2deg 6deg); -webkit-mask: radial-gradient(circle, transparent 125px, #000 126px, #000 132px, transparent 133px); mask: radial-gradient(circle, transparent 125px, #000 126px, #000 132px, transparent 133px)"></div>
+                
+                <svg width="320" height="320" viewBox="0 0 320 320" aria-hidden="true" style="position: absolute; inset: 0; overflow: visible">
+                  <defs><filter id="untilGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"></feGaussianBlur></filter></defs>
+                  <circle cx="160" cy="160" r="146" fill="none" stroke="#1A2336" stroke-width="6"></circle>
+                  <g transform="rotate(-90 160 160)">
+                    <circle class="at-arc" cx="160" cy="160" r="146" fill="none" stroke="#5BE0E8" stroke-opacity="0" stroke-width="14" stroke-linecap="round" filter="url(#untilGlow)" style="stroke-dasharray: 917.3 917.3"></circle>
+                    <circle class="at-arc" cx="160" cy="160" r="146" fill="none" stroke="#5BE0E8" stroke-opacity="0.45" stroke-width="6" stroke-linecap="round" style="stroke-dasharray: 917.3 917.3"></circle>
+                  </g>
+                  <g class="at-lin" style="transform: rotate(360.00deg); transform-origin: 160px 160px; opacity: 0">
+                    <circle class="at-halo" cx="160" cy="14" r="7" fill="#5BE0E8"></circle>
+                    <circle cx="160" cy="14" r="5.5" fill="#EAF0F7"></circle>
+                  </g>
+                </svg>
+                <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px">
+                  <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8E9AAE">Keeps awake for</div>
+                  <div role="timer" aria-label="9:12:00 left, until 7:30 AM tomorrow" style="font-family: 'Geist Mono', ui-monospace, monospace; font-weight: 300; font-size: 60px; line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; color: #B7C1D1; transition: color .6s">9:12<span style="color: #8E9AAE">:00</span></div>
+                  <div style="font-size: 15px; color: #8E9AAE">ends at <span style="color: #EAF0F7; font-weight: 500">7:30 AM tomorrow</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="grid-area: note; display: flex; flex-direction: column; align-items: start; gap: 6px; text-align: start">
+        
+          <p class="at-rise" style="margin: 0; display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 500; line-height: 1.45; color: #EAF0F7; text-wrap: pretty">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7C1D1" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="flex-shrink: 0"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg>
+            
+            7:30 AM is tomorrow, 9 h 12 min from now.
+          </p>
+        
+        <p class="at-rise" style="margin: 0; font-size: 14px; line-height: 1.5; color: #8E9AAE; text-wrap: pretty">Keep this tab in front all night and plug in.</p>
+      </div>
+
+      <div style="grid-area: dock; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; justify-content: flex-start; flex-wrap: wrap; gap: 8px">
+          <a href="#times" aria-label="Ends at 7:30 AM tomorrow. Change the time" style="display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 13px; box-sizing: border-box; border-radius: 999px; border: 1px dashed #5BE0E8; background: rgba(91,224,232,0.12); font-size: 14px; font-weight: 600; color: #EAF0F7; text-decoration: none; white-space: nowrap"><span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 50%; background: #5BE0E8"></span>Until 7:30 AM tomorrow</a>
+          <a href="Main.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 16px; box-sizing: border-box; border-radius: 999px; border: 1px dashed #33405C; font-size: 14px; font-weight: 500; color: #B7C1D1; text-decoration: none; white-space: nowrap">Pick a length</a>
+        </div>
+        
+          <button class="at-rise" style="height: 60px; border-radius: 20px; border: 0; background: #5BE0E8; color: #04232A; font-size: 17px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 30px -8px rgba(91,224,232,0.55)">
+            <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>
+            Keep awake until 7:30 AM
+          </button>
+        
+        
+      </div>
+    </div>
+  </div>
+
+  <main class="at-prose" style="position: relative; flex-shrink: 0; box-sizing: border-box; width: 100%; max-width: 760px; margin-inline: auto; padding: 56px 0 0; display: flex; flex-direction: column; gap: 44px">
+    <section aria-labelledby="h-until" style="display: flex; flex-direction: column; gap: 16px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8E9AAE">About this page</span>
+      <h1 id="h-until" style="margin: 0; font-size: 40px; line-height: 1.12; font-weight: 600; letter-spacing: -0.03em; color: #EAF0F7; text-wrap: balance">Keep the screen awake until 7:30 AM</h1>
+      <p style="margin: 0; font-size: 20px; line-height: 1.6; color: #EAF0F7; text-wrap: pretty">Tap Keep awake and AwakeTab works out the length from your device clock, then counts down to 7:30 AM. If 7:30 AM has already passed today, the session ends at 7:30 AM tomorrow, and the tool says so before you start.</p>
+      <p style="margin: 0; font-size: 18px; line-height: 1.7; color: #B7C1D1; text-wrap: pretty">The end time stays fixed while the session runs. +15 min moves it 15 minutes later, and Stop ends it now. The pill still decides what is true: it says Screen awake only while the browser holds the lock.</p>
+      <div role="note" style="display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 14px; row-gap: 4px; padding: 18px 20px; border-radius: 20px; background: #111826; border: 1px solid #1F2940">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B7C1D1" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" style="margin-top: 1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
+        <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+          <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: #8E9AAE">Honest limit</span>
+          <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #EAF0F7; text-wrap: pretty">An overnight session needs this tab in front for the whole night. A hidden tab, a closed lid or another app in front lets the display sleep. Plug in so the battery lasts until morning.</p>
+        </div>
+      </div>
+    </section>
+
+    <nav id="times" aria-labelledby="h-times" style="display: flex; flex-direction: column; gap: 14px">
+      <h2 id="h-times" style="margin: 0; font-size: 24px; line-height: 1.25; font-weight: 600; letter-spacing: -0.02em; color: #EAF0F7">Nearby times</h2>
+      <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px">
+        
+          <li style="display: flex">
+            <a href="#" aria-label="Keep awake until 7:00 AM tomorrow" class="at-row" style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; min-height: 88px; padding: 14px 16px; box-sizing: border-box; border-radius: 20px; background: #111826; border: 1px solid #1F2940; text-decoration: none; color: #EAF0F7">
+              <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 22px; font-weight: 400; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">7:00 AM</span>
+              <span style="font-size: 13px; color: #B7C1D1">tomorrow</span>
+              <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; color: #8E9AAE">/until/07-00</span>
+            </a>
+          </li>
+        
+          <li style="display: flex">
+            <a href="#" aria-label="Keep awake until 7:15 AM tomorrow" class="at-row" style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; min-height: 88px; padding: 14px 16px; box-sizing: border-box; border-radius: 20px; background: #111826; border: 1px solid #1F2940; text-decoration: none; color: #EAF0F7">
+              <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 22px; font-weight: 400; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">7:15 AM</span>
+              <span style="font-size: 13px; color: #B7C1D1">tomorrow</span>
+              <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; color: #8E9AAE">/until/07-15</span>
+            </a>
+          </li>
+        
+          <li style="display: flex">
+            <a href="#" aria-label="Keep awake until 7:45 AM tomorrow" class="at-row" style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; min-height: 88px; padding: 14px 16px; box-sizing: border-box; border-radius: 20px; background: #111826; border: 1px solid #1F2940; text-decoration: none; color: #EAF0F7">
+              <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 22px; font-weight: 400; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">7:45 AM</span>
+              <span style="font-size: 13px; color: #B7C1D1">tomorrow</span>
+              <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; color: #8E9AAE">/until/07-45</span>
+            </a>
+          </li>
+        
+          <li style="display: flex">
+            <a href="#" aria-label="Keep awake until 8:00 AM tomorrow" class="at-row" style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; min-height: 88px; padding: 14px 16px; box-sizing: border-box; border-radius: 20px; background: #111826; border: 1px solid #1F2940; text-decoration: none; color: #EAF0F7">
+              <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 22px; font-weight: 400; letter-spacing: -0.03em; font-variant-numeric: tabular-nums">8:00 AM</span>
+              <span style="font-size: 13px; color: #B7C1D1">tomorrow</span>
+              <span style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; color: #8E9AAE">/until/08-00</span>
+            </a>
+          </li>
+        
+      </ul>
+      <a href="Main.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; font-size: 16px; color: #5BE0E8">Any other time: open the tool and pick Until a time…</a>
+    </nav>
+  </main>
+
+  <div style="flex-grow: 1"></div>
+
+  <footer style="flex-shrink: 0; margin-top: 56px; padding: 24px 56px 32px; border-top: 1px solid #1F2940; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; font-size: 14px; color: #8E9AAE">
+    <span>No ads on the awake screen, now or later.</span>
+    <div style="display: flex; flex-wrap: wrap; column-gap: 20px">
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #B7C1D1; text-decoration: none">Privacy</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #B7C1D1; text-decoration: none">Terms</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #B7C1D1; text-decoration: none">Changelog</a>
+      <a href="#" style="min-height: 44px; display: inline-flex; align-items: center; color: #B7C1D1; text-decoration: none">Buy me a coffee</a>
+    </div>
+  </footer>
+</div>
+</body></html>

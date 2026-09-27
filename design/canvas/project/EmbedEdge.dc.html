@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · embed edge states</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+/* AwakeTab primitives v2 · fix batch 2b · keep byte-identical */
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease)}
+button:active{transform:scale(.97)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--at-focus,#5BE0E8);outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.at-u{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.at-u:hover{text-decoration-thickness:2px}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.ee-host{transition:background-color .6s var(--ease),color .6s var(--ease),border-color .6s var(--ease)}
+</style>
+</helmet>
+<div class="at-root ee" style="--at-focus: {{t.lamp}}; width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; background: {{bg}}; color: {{t.ink}}; padding: {{pad}}; display: grid; grid-template-columns: {{cols}}; grid-auto-rows: min-content; gap: {{gap}}">
+  <div aria-hidden="true" class="at-aura" style="position: absolute; left: -25%; top: 4%; width: 150%; height: 70%; background: radial-gradient(45% 45% at 50% 50%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
+
+  <figure style="position: relative; margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+    <div class="ee-host" data-placeholder="host page" style="height: {{frameH}}; box-sizing: border-box; border-radius: 16px; overflow: hidden; background: {{h.bg}}; border: 1px solid {{h.frame}}; color: {{h.ink}}; display: flex; flex-direction: column">
+      <div style="height: 56px; flex-shrink: 0; box-sizing: border-box; padding: 0 16px; display: flex; align-items: center; gap: 8px; background: {{h.bar}}; border-bottom: 1px solid {{h.line}}">
+        <div style="flex-grow: 1; min-width: 0; height: 32px; border-radius: 999px; background: {{h.field}}; display: flex; align-items: center; gap: 8px; padding: 0 16px; font-size: 13px; color: {{h.muted}}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+          <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{hostUrl}}</span>
+        </div>
+      </div>
+
+      <div style="flex-grow: 1; min-height: 0; overflow: hidden; box-sizing: border-box; padding: {{hostPad}}; display: flex; flex-direction: column; gap: 24px">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+          <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 20px; font-weight: 600; color: {{h.brand}}">Your site</span>
+          <sc-if value="{{hostNav}}" hint-placeholder-val="{{true}}">
+            <span aria-hidden="true" style="display: flex; gap: 16px"><span style="width: 52px; height: 8px; border-radius: 4px; background: {{h.block}}"></span><span style="width: 64px; height: 8px; border-radius: 4px; background: {{h.block}}"></span><span style="width: 44px; height: 8px; border-radius: 4px; background: {{h.block}}"></span></span>
+          </sc-if>
+        </div>
+
+        <div style="display: grid; grid-template-columns: {{hostCols}}; gap: 32px; align-items: start">
+          <article style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+            <span aria-hidden="true" style="width: 90px; height: 8px; border-radius: 4px; background: {{h.block}}"></span>
+            <h1 style="margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: {{h1Size}}; line-height: 1.15; font-weight: 600; letter-spacing: -0.01em; color: {{h.ink}}">Lemon and thyme roast chicken</h1>
+            <span aria-hidden="true" style="width: 180px; height: 8px; border-radius: 4px; background: {{h.block}}"></span>
+
+            <sc-if value="{{widgetInArticle}}" hint-placeholder-val="{{true}}">
+              <div style="width: {{wW}}; max-width: 100%">
+                <div role="region" aria-label="Keep screen awake" class="at-slide" style="--at-focus: {{w.lamp}}; position: relative; box-sizing: border-box; min-height: 104px; border-radius: 16px; overflow: hidden; background: {{w.surface}}; border: 1px solid {{w.line}}; color: {{w.ink}}; padding: 16px; display: flex; flex-direction: column; gap: 8px; font-family: Geist, system-ui, sans-serif">
+                  <div aria-hidden="true" style="position: absolute; left: -20%; top: -60%; width: 90%; height: 180%; background: radial-gradient(45% 45% at 50% 50%, {{wAura}} 0%, transparent 70%); pointer-events: none"></div>
+                  <div style="{{wGrid}}">
+                    <div style="grid-area: pill; height: 26px; display: flex; align-items: center; min-width: 0">
+                      <output aria-live="polite" class="at-slide" style="{{pill.style}}"><svg width="{{pill.g}}" height="{{pill.g}}" viewBox="0 0 12 12" aria-hidden="true" style="{{pill.gStyle}}"><path d="{{pill.d}}" fill="{{pill.fill}}" stroke="{{pill.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pill.label}}</output>
+                    </div>
+                    <span role="timer" aria-label="{{digitsAria}}" style="grid-area: dig; align-self: start; height: 44px; display: flex; align-items: center; {{digitFont}}; font-weight: 300; font-size: 28px; line-height: 1; letter-spacing: -0.02em; color: {{digitColor}}; white-space: nowrap">{{digits}}</span>
+                    <button onClick="{{primary}}" style="grid-area: btn; align-self: end; {{btn}}">{{btnLabel}}</button>
+                  </div>
+                  <sc-if value="{{showNotice}}" hint-placeholder-val="{{false}}">
+                    <div class="at-in" role="note" style="position: relative; margin: 0 -16px -16px; padding: 16px 16px 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; background: {{noticeBg}}; font-size: 13px; line-height: 18px; color: {{w.ink}}">
+                      <span style="text-wrap: pretty">{{noticeText}}</span>
+                      <sc-if value="{{noticeLink}}" hint-placeholder-val="{{false}}">
+                        <a href="https://awaketab.com/embed#allow" target="_blank" rel="noopener" class="at-u" style="display: inline-flex; align-items: center; min-height: 24px; color: {{w.ink}}; font-weight: 600">How to fix</a>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+              <sc-if value="{{showAttrib}}" hint-placeholder-val="{{true}}">
+                <p style="margin: 0; font-size: 13px; line-height: 18px"><a href="https://awaketab.com/?ref=embed" rel="nofollow" style="display: inline-flex; align-items: center; min-height: 24px; color: {{h.ink}}; text-decoration: underline; text-underline-offset: 3px">Keep awake by AwakeTab</a></p>
+              </sc-if>
+            </sc-if>
+
+            <div aria-hidden="true" style="display: flex; flex-direction: column; gap: 12px">
+              <sc-for list="{{bars}}" as="b" hint-placeholder-count="6">
+                <span style="width: {{b.w}}; height: 8px; border-radius: 4px; background: {{h.block}}"></span>
+              </sc-for>
+            </div>
+          </article>
+
+          <sc-if value="{{isSidebar}}" hint-placeholder-val="{{false}}">
+            <aside aria-label="Sidebar" style="display: flex; flex-direction: column; gap: 16px; min-width: 0">
+              <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 16px; font-weight: 600; color: {{h.ink}}">Cook mode</span>
+              <div style="width: 280px; max-width: 100%">
+                <div role="region" aria-label="Keep screen awake" class="at-slide" style="--at-focus: {{w.lamp}}; position: relative; box-sizing: border-box; min-height: 128px; border-radius: 16px; overflow: hidden; background: {{w.surface}}; border: 1px solid {{w.line}}; color: {{w.ink}}; padding: 16px; display: flex; flex-direction: column; gap: 8px; font-family: Geist, system-ui, sans-serif">
+                  <div aria-hidden="true" style="position: absolute; left: -20%; top: -60%; width: 90%; height: 180%; background: radial-gradient(45% 45% at 50% 50%, {{wAura}} 0%, transparent 70%); pointer-events: none"></div>
+                  <output aria-live="polite" class="at-slide" style="position: relative; align-self: flex-start; {{pill.style}}"><svg width="{{pill.g}}" height="{{pill.g}}" viewBox="0 0 12 12" aria-hidden="true" style="{{pill.gStyle}}"><path d="{{pill.d}}" fill="{{pill.fill}}" stroke="{{pill.tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>{{pill.label}}</output>
+                  <div style="position: relative; height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+                    <span role="timer" aria-label="{{digitsAria}}" style="margin: 0; {{digitFont}}; font-weight: 300; font-size: 28px; line-height: 1; letter-spacing: -0.02em; color: {{digitColor}}; white-space: nowrap">{{digits}}</span>
+                    <button onClick="{{primary}}" style="{{btn}}">{{btnLabel}}</button>
+                  </div>
+                </div>
+              </div>
+              <sc-if value="{{showAttrib}}" hint-placeholder-val="{{true}}">
+                <p style="margin: 0; font-size: 13px; line-height: 18px"><a href="https://awaketab.com/?ref=embed" rel="nofollow" style="display: inline-flex; align-items: center; min-height: 24px; color: {{h.ink}}; text-decoration: underline; text-underline-offset: 3px">Keep awake by AwakeTab</a></p>
+              </sc-if>
+              <div aria-hidden="true" style="display: flex; flex-direction: column; gap: 12px; padding-top: 8px">
+                <span style="width: 70%; height: 8px; border-radius: 4px; background: {{h.block}}"></span>
+                <span style="width: 100%; height: 88px; border-radius: 12px; background: {{h.block}}"></span>
+                <span style="width: 86%; height: 8px; border-radius: 4px; background: {{h.block}}"></span>
+                <span style="width: 60%; height: 8px; border-radius: 4px; background: {{h.block}}"></span>
+              </div>
+            </aside>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+    <figcaption style="font-size: 13px; line-height: 18px; color: {{t.muted}}">{{caption}}</figcaption>
+  </figure>
+
+  <section aria-labelledby="ee-title" style="position: relative; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+    <div style="margin: 0; {{type.kicker}}; color: {{t.muted}}">Embed · edge case</div>
+    <h2 id="ee-title" style="margin: 0; {{h2}}; text-wrap: balance">{{title}}</h2>
+
+    <sc-for list="{{paras}}" as="para" hint-placeholder-count="1">
+      <p style="margin: 0; {{type.body}}; color: {{t.ink2}}; text-wrap: pretty">{{para}}</p>
+    </sc-for>
+
+    <sc-if value="{{showSnippet}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+          <span style="font-size: 14px; line-height: 20px; font-weight: 600">{{snippetTitle}}</span>
+          <button onClick="{{copy}}" aria-label="{{copyAria}}" style="{{btnCopy}}">{{copyLabel}}</button>
+        </div>
+        <pre style="margin: 0; padding: 12px 0; border-radius: 8px; background: {{t.sunken}}; border: 1px solid {{t.line}}; {{mono}}; font-size: 13px; line-height: 20px; color: {{t.ink2}}; white-space: pre-wrap; word-break: break-word; overflow: hidden"><sc-for list="{{snippet}}" as="ln" hint-placeholder-count="6"><span style="display: block; padding: 0 16px; background: {{ln.bg}}; color: {{ln.ink}}; font-weight: {{ln.weight}}">{{ln.text}}</span></sc-for></pre>
+        <p style="margin: 0; font-size: 13px; line-height: 18px; color: {{t.muted}}; text-wrap: pretty">{{snippetNote}}</p>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isRunning}}" hint-placeholder-val="{{false}}">
+      <p style="margin: 0; {{type.body}}; color: {{t.ink2}}; text-wrap: pretty">{{attribText}}</p>
+    </sc-if>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: auto; padding-top: 8px">
+      <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 12px">
+        <span id="{{hostLid}}" style="font-size: 14px; line-height: 20px; color: {{t.ink2}}">Host page</span>
+        <div role="radiogroup" aria-labelledby="{{hostLid}}" style="{{hostSeg.bar}}">
+          <div aria-hidden="true" class="at-slide" style="{{hostSeg.ind}}"></div>
+          <sc-for list="{{hostSeg.items}}" as="o" hint-placeholder-count="2">
+            <button role="radio" aria-checked="{{o.sel}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: center; gap: 12px">
+        <span id="{{licLid}}" style="font-size: 14px; line-height: 20px; color: {{t.ink2}}">Licence</span>
+        <div role="radiogroup" aria-labelledby="{{licLid}}" style="{{licSeg.bar}}">
+          <div aria-hidden="true" class="at-slide" style="{{licSeg.ind}}"></div>
+          <sc-for list="{{licSeg.items}}" as="o" hint-placeholder-count="2">
+            <button role="radio" aria-checked="{{o.sel}}" onClick="{{o.pick}}" style="{{o.style}}">{{o.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"edge":{"editor":"enum","options":["noallow","unsupported","battery","sidebar","running"],"default":"noallow"},"host":{"editor":"enum","options":["light","dark"],"default":"light"},"licensed":{"editor":"boolean","default":false},"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"desktop"},"$preview":{"width":1280,"height":800}}'>
+/* ── AwakeTab primitives v2 · fix batch 2b · DESIGN.md §2, §3, §11. Byte-identical in every file of the batch; edit prims/prims.js and rebuild, never one copy. ── */
+const AT_TOK = {
+  dark: { ground: '#0A0E16', lift: '#13203A', surface: '#111826', raised: '#26324B', sunken: '#0D131F', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE', track: '#1A2336', tick: '#2A3752', warn: '#F2B34C', bad: '#FF7A7A', lamp: '#5BE0E8', onLamp: '#04232A', stopBg: '#26324B', stopInk: '#EAF0F7', stopLine: '#33405C', horizonInk: '#F6F2EA', violet: '#A594FF', inputLine: '#5A6781', groundEnd: '#0A0E16', elev: 'none' },
+  light: { ground: '#F2F6FA', lift: '#FFFFFF', surface: '#FFFFFF', raised: '#E3E9F1', sunken: '#F6F9FC', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779', track: '#E3E9F1', tick: '#CCD5E1', warn: '#B7791F', bad: '#D14343', lamp: '#087B87', onLamp: '#FFFFFF', stopBg: '#E3E9F1', stopInk: '#0E1726', stopLine: '#C3CDDA', horizonInk: '#F6F2EA', violet: '#5A47CF', inputLine: '#8C98AA', groundEnd: '#EEF3F8', elev: '0 1px 2px rgba(14,23,38,0.06)' }
+};
+AT_TOK.oled = Object.assign({}, AT_TOK.dark, { ground: '#000000', lift: '#000000', groundEnd: '#000000', surface: '#0A0A0A' });
+const AT_NIGHT = { ground: '#000000', ink: '#FF5A3C', ink2: '#E8563C', muted: '#A89690', line: '#3A2E2A' };
+const AT_SCRIM = 'rgba(4,7,12,0.55)';
+const AT_FLOAT = '0 24px 64px -24px rgba(0,0,0,0.45)';
+// Display digits: system-ui (Geist in mocks) 200–300, tabular, plain zero. Mono only for code, keys, file names and URLs.
+const AT_DIGITS = "font-family: Geist, system-ui, sans-serif; font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1, 'zero' 0";
+const AT_MONO = "font-family: 'Geist Mono', ui-monospace, monospace";
+const AT_GUTTER = { phone: 16, tablet: 32, desktop: 80, xl: 120 };
+const AT_SECTION = { phone: 48, tablet: 64, desktop: 96 };
+const AT_TYPE = {
+  kicker: 'font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase',
+  caption: 'font-size: 13px; line-height: 18px',
+  small: 'font-size: 14px; line-height: 20px',
+  ui: 'font-size: 15px; line-height: 22px',
+  body: 'font-size: 16px; line-height: 26px',
+  lead: 'font-size: 18px; line-height: 28px',
+  h3: 'font-size: 20px; line-height: 28px; font-weight: 600',
+  h2: 'font-size: 28px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em',
+  h2Phone: 'font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em',
+  h1: 'font-size: 48px; line-height: 56px; font-weight: 600; letter-spacing: -0.02em',
+  h1Phone: 'font-size: 34px; line-height: 42px; font-weight: 600; letter-spacing: -0.02em',
+  price: 'font-size: 48px; line-height: 56px; font-weight: 600; letter-spacing: -0.02em',
+  pricePhone: 'font-size: 40px; line-height: 48px; font-weight: 600; letter-spacing: -0.02em'
+};
+// State glyphs (12 × 12): shape carries the state, never colour alone.
+const AT_GLYPH = {
+  ring: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  dot: 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z',
+  pause: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z',
+  tri: 'M6 1L11.2 10.5H.8z',
+  ringDot: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z'
+};
+// The seven contract pill strings (docs/04, docs/05). Exact, and alone inside the pill.
+const AT_PILL_TEXT = { idle: 'Ready', requesting: 'Starting…', held: 'Screen awake', lost: 'Paused — tab hidden', denied: "Blocked — here's the fix", unsupported: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
+// Status pill sizes (§11.4): height, text, padding, gap, glyph.
+const AT_PILL = { L: [48, 20, '0 20px 0 16px', 8, 16], M: [38, 15, '0 16px 0 12px', 8, 12], S: [32, 14, '0 12px 0 8px', 8, 12], XS: [26, 13, '0 8px', 4, 12] };
+
+function atRgba(hex, a) {
+  const n = parseInt(String(hex).replace('#', ''), 16);
+  return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+}
+function atTheme(theme, sysDark) {
+  const dark = theme === 'dark' || theme === 'oled' || (theme !== 'light' && sysDark);
+  return { dark, t: theme === 'oled' ? AT_TOK.oled : dark ? AT_TOK.dark : AT_TOK.light };
+}
+// Ground: the night lift fades into the ground token, and the one status halo (--at-halo) sits behind the status element.
+function atGround(t) { return 'radial-gradient(120% 70% at 50% 26%, ' + t.lift + ' 0%, ' + t.ground + ' 62%, ' + t.groundEnd + ' 100%)'; }
+function atHalo(tone, dark) { return 'radial-gradient(50% 50% at 50% 26%, ' + atRgba(tone, dark ? 0.18 : 0.1) + ' 0%, ' + atRgba(tone, 0) + ' 70%)'; }
+// Status pill for a lock state. size: L | M | S | XS.
+function atPill(size, state, t, extra) {
+  const [h, fs, pad, gap, g] = AT_PILL[size];
+  const tone = state === 'idle' ? t.muted : state === 'lost' ? t.warn : state === 'denied' ? t.bad : t.lamp;
+  const d = state === 'lost' ? AT_GLYPH.pause : state === 'denied' ? AT_GLYPH.tri : state === 'fallback' ? AT_GLYPH.ringDot : AT_GLYPH.dot;
+  const hollow = state === 'idle' || state === 'requesting';
+  return {
+    label: (extra && extra.label) || AT_PILL_TEXT[state] || AT_PILL_TEXT.idle, tone, d, g,
+    fill: hollow ? 'transparent' : tone,
+    gStyle: 'flex-shrink: 0; overflow: visible; filter: drop-shadow(0 0 4px ' + (state === 'held' ? atRgba(tone, 0.8) : 'transparent') + ')',
+    // M may wrap to two lines (O-62): min-height 38, radius 20, balanced wrap. L, S and XS stay on one line.
+    style: 'display: inline-flex; align-items: center; gap: ' + gap + 'px; ' + (size === 'M' ? 'min-height: 38px; padding: 8px 16px 8px 12px; border-radius: 20px; line-height: 20px; text-wrap: balance' : 'height: ' + h + 'px; padding: ' + pad + '; border-radius: 999px; line-height: 1; white-space: nowrap') + '; box-sizing: border-box; background: ' + atRgba(tone, 0.12) + '; border: 1px solid ' + atRgba(tone, 0.38) + '; color: ' + t.ink + '; font-size: ' + fs + 'px; font-weight: 600'
+  };
+}
+// Buttons (§11.4): primary 60 r20 · cook 64 r20 · stop 60 ink fill · medium 52 r20 · small 44 r12.
+function atBtn(kind, t) {
+  const base = 'box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; white-space: nowrap; font-weight: 600; ';
+  if (kind === 'primary' || kind === 'cook') return base + 'height: ' + (kind === 'cook' ? 64 : 60) + 'px; padding: 0 24px; border-radius: 20px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 17px; line-height: 24px; box-shadow: 0 10px 28px -12px ' + atRgba(t.lamp, 0.6);
+  if (kind === 'stop') return base + 'height: 60px; padding: 0 24px; border-radius: 20px; border: 1px solid ' + t.stopLine + '; background: ' + t.stopBg + '; color: ' + t.stopInk + '; font-size: 17px; line-height: 24px';
+  if (kind === 'medium') return base + 'height: 52px; padding: 0 20px; border-radius: 20px; border: 1px solid ' + t.line2 + '; background: ' + t.surface + '; color: ' + t.ink + '; font-size: 15px; line-height: 22px';
+  if (kind === 'mediumLamp') return base + 'height: 52px; padding: 0 20px; border-radius: 20px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 15px; line-height: 22px';
+  if (kind === 'smallLamp') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: ' + t.lamp + '; color: ' + t.onLamp + '; font-size: 15px; line-height: 22px';
+  if (kind === 'smallStop') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid ' + t.stopLine + '; background: ' + t.stopBg + '; color: ' + t.stopInk + '; font-size: 15px; line-height: 22px';
+  if (kind === 'quiet') return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 0; background: transparent; color: ' + t.ink2 + '; font-size: 15px; line-height: 22px; font-weight: 500';
+  return base + 'height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid ' + t.line2 + '; background: ' + t.surface + '; color: ' + t.ink + '; font-size: 15px; line-height: 22px';
+}
+// Card (§11.6): surface, 1 px line, r16, padding 20 phone / 24.
+function atCard(t, phone) { return 'box-sizing: border-box; background: ' + t.surface + '; border: 1px solid ' + t.line + '; border-radius: 16px; padding: ' + (phone ? 20 : 24) + 'px; box-shadow: ' + t.elev; }
+// Tag (§11.4): 24 high, 12/16 600, r999, padding 0 8, 1 px line-strong (or a tone at 12 %).
+function atTag(t, tone) {
+  return 'display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap; color: ' + t.ink + '; ' +
+    (tone ? 'background: ' + atRgba(tone, 0.12) + '; border: 1px solid ' + atRgba(tone, 0.38) : 'background: transparent; border: 1px solid ' + t.line2);
+}
+// Keyboard hint (§11.4): one theme keycap everywhere, never inherits the button it sits on.
+function atKbd(t) { return 'display: inline-flex; align-items: center; justify-content: center; height: 24px; min-width: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid ' + t.line2 + '; box-shadow: inset 0 -1px 0 ' + t.line2 + '; background: ' + t.raised + '; font-family: ui-monospace, \'Geist Mono\', monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: ' + t.ink + '; vertical-align: middle'; }
+function atCode(t) { return AT_MONO + '; font-size: 14px; padding: 0 4px; border-radius: 4px; background: ' + t.sunken + '; color: ' + t.ink + '; overflow-wrap: anywhere'; }
+// Segmented bar (§11.4): 1 px border + 4 px padding + 44 px items = 54. Selected = lamp 14 % + 1 px lamp 45 % (or raised for neutral switches).
+function atSeg(options, current, onPick, t, opts) {
+  const o = opts || {};
+  const n = options.length;
+  const i = Math.max(0, options.findIndex((x) => x[0] === current));
+  return {
+    bar: 'position: relative; display: grid; grid-template-columns: repeat(' + n + ', minmax(0, 1fr)); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line + (o.max ? '; max-width: ' + o.max : ''),
+    ind: 'position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / ' + n + '); height: 44px; box-sizing: border-box; border-radius: 999px; transform: translateX(' + i * 100 + '%); ' + (o.neutral ? 'background: ' + t.raised + '; border: 0' : 'background: ' + atRgba(t.lamp, 0.14) + '; border: 1px solid ' + atRgba(t.lamp, 0.45)),
+    items: options.map(([id, label, aria]) => ({
+      id, label, aria: aria || label, sel: id === current ? 'true' : 'false', pick: () => onPick(id),
+      style: 'position: relative; min-width: 0; height: 44px; padding: 0 8px; border: 0; background: transparent; border-radius: 999px; font-size: ' + (o.fs || 15) + 'px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2) + '; white-space: nowrap; overflow: hidden; text-overflow: ellipsis'
+    }))
+  };
+}
+// Header (§11.6): 60 phone / 68 ≥ tablet, gutter = page gutter, logo 26 + wordmark 17 with gap 8, nav on desktop, theme switch as a segmented bar.
+const AT_NAV = [['Use cases', '#', 'for'], ['Devices', '#', 'on'], ['Extension', 'PageExtensionDesk.dc.html', 'extension'], ['Pro', 'Pro.dc.html', 'pro']];
+const AT_THEME_ICON = {
+  light: ['M12 8a4 4 0 1 1 0 8a4 4 0 1 1 0-8zM12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4', ''],
+  dark: ['M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z', ''],
+  auto: ['M12 4a8 8 0 1 1 0 16a8 8 0 1 1 0-16z', 'M12 4a8 8 0 0 1 0 16z']
+};
+function atHeader(c, t, layout, current, bead) {
+  const theme = c.state.theme === 'light' || c.state.theme === 'dark' ? c.state.theme : 'auto';
+  const order = ['light', 'dark', 'auto'];
+  return {
+    style: 'position: relative; height: ' + (layout === 'phone' ? 60 : 68) + 'px; flex-shrink: 0; box-sizing: border-box; padding-inline: ' + AT_GUTTER[layout] + 'px; display: flex; align-items: center; justify-content: space-between; gap: 16px',
+    logo: 'display: flex; align-items: center; gap: 8px; min-height: 44px; text-decoration: none; color: ' + t.ink + '; font-size: 17px; line-height: 24px; font-weight: 600; letter-spacing: -0.01em',
+    ink: t.ink, bead: bead || t.muted,
+    showNav: layout === 'desktop',
+    navStyle: 'display: flex; align-items: center; gap: 8px',
+    nav: AT_NAV.map(([label, href, id]) => ({
+      label, href, cur: id === current ? 'page' : 'false',
+      style: 'display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 0 12px; box-sizing: border-box; text-decoration: none; font-size: 15px; line-height: 22px; font-weight: ' + (id === current ? 600 : 500) + '; color: ' + (id === current ? t.ink : t.ink2),
+      dot: id === current ? 'width: 6px; height: 6px; border-radius: 999px; background: ' + t.lamp : 'display: none'
+    })),
+    bar: 'position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; box-sizing: border-box; border-radius: 999px; background: ' + t.surface + '; border: 1px solid ' + t.line,
+    ind: 'position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: ' + t.raised + '; transform: translateX(' + order.indexOf(theme) * 44 + 'px)',
+    themes: order.map((id) => ({
+      sel: id === theme ? 'true' : 'false', aria: id === 'auto' ? 'Auto, follows your system' : id === 'light' ? 'Light' : 'Dark', title: id === 'auto' ? 'Auto: follows your system' : id === 'light' ? 'Light' : 'Dark',
+      icon: AT_THEME_ICON[id][0], icon2: AT_THEME_ICON[id][1],
+      pick: () => c.setState({ theme: id }),
+      style: 'position: relative; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; display: grid; place-items: center; color: ' + (id === theme ? t.ink : t.ink2)
+    }))
+  };
+}
+// Footer (§11.7): 1 px line top, padding 24 (phone 32 bottom), honest line left in caption muted, links right.
+const AT_FOOT_LINKS = [['Privacy', 'PagePrivacyDesk.dc.html'], ['Terms', 'PageTermsPhone.dc.html'], ['Changelog', 'PageChangelogPhone.dc.html'], ['About', 'PageAboutDesk.dc.html'], ['Buy me a coffee', 'https://buymeacoffee.com/awaketab']];
+function atFooter(t, layout) {
+  const g = AT_GUTTER[layout];
+  return {
+    style: 'flex-shrink: 0; margin-top: ' + AT_SECTION[layout] + 'px; box-sizing: border-box; padding: 24px ' + g + 'px ' + (layout === 'phone' ? 32 : 24) + 'px; border-top: 1px solid ' + t.line + '; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px',
+    line: 'margin: 0; font-size: 13px; line-height: 18px; color: ' + t.muted,
+    nav: 'display: flex; flex-wrap: wrap; column-gap: 16px',
+    link: 'min-height: 44px; min-width: 44px; justify-content: center; display: inline-flex; align-items: center; font-size: 13px; line-height: 18px; font-weight: 500; color: ' + t.ink2 + '; text-decoration: none',
+    links: AT_FOOT_LINKS.map(([label, href]) => ({ label, href }))
+  };
+}
+/* ── end primitives ── */
+
+// Someone else's site: neutral greys and a serif, so the widget reads as a guest on the page (placeholder colours).
+const HOSTS = {
+  light: { bg: '#FFFFFF', bar: '#F4F4F5', field: '#FFFFFF', frame: '#D4D4D8', line: '#E4E4E7', ink: '#1C1C1F', muted: '#6B6B73', block: '#E7E7EA', brand: '#A63F1B', brandInk: '#FFFFFF' },
+  dark: { bg: '#161618', bar: '#1F1F22', field: '#101012', frame: '#34343A', line: '#2A2A2F', ink: '#F1F1F3', muted: '#A1A1A9', block: '#2A2A30', brand: '#F08A5D', brandInk: '#1E0E06' }
+};
+// Refusal advice per cause (fact-check 26 Sep 2026): never blame battery saver or Low Power Mode.
+const ADVICE = {
+  noallow: 'Ask the site owner to allow screen wake lock for this widget.',
+  unsupported: "Your browser doesn't support wake locks. Tap Start to use the video fallback. It needs this tab visible and uses a little more battery.",
+  battery: 'Battery is very low. Plug in, then tap Retry.'
+};
+const TITLES = {
+  noallow: 'The page left out the permission',
+  unsupported: 'No wake lock in this browser',
+  battery: 'Your browser said no',
+  sidebar: 'A 280 px sidebar',
+  running: 'Light page, dark page, your brand'
+};
+const PARAS = {
+  noallow: ['Browsers let an iframe keep the screen awake only when the host page allows it. The widget can see the permission is missing, so it says so instead of pretending.'],
+  unsupported: ['This browser has no wake lock, so the widget offers the video fallback. It needs a real tap: the page\'s JavaScript API cannot start it alone.', 'Tap Start in the widget. The pill then reads Awake via video fallback, never Screen awake.'],
+  battery: ['The permission is there, so the widget does not blame the site. Firefox refuses the wake lock at 5 % battery or less while the device is not charging, so the reader gets the one fix only they can make. In Safari the same spot says it needs one tap to start.'],
+  sidebar: ['Below 300 px the pill takes its own line so no state gets cut off, and the widget asks the page for 24 px more height. Start and Stop stay at least 44 px.'],
+  running: ['Set data-theme to match the page. With auto, the widget follows the reader\'s system, which can clash with a page that has only one look.']
+};
+const SEED = { noallow: 'denied', unsupported: 'unsupported', battery: 'denied', sidebar: 'held', running: 'held' };
+const SIZES = {
+  desktop: { W: 1280, H: 800, pad: '40px', gap: '40px', cols: 'minmax(0, 1fr) 380px', frameH: '688px', hostPad: '24px 32px', h1: '28px' },
+  tablet: { W: 820, H: 1180, pad: '40px 32px', gap: '32px', cols: 'minmax(0, 1fr)', frameH: '620px', hostPad: '24px 32px', h1: '28px' },
+  phone: { W: 390, H: 1300, pad: '24px 16px', gap: '32px', cols: 'minmax(0, 1fr)', frameH: '600px', hostPad: '16px', h1: '24px' }
+};
+// Stacked layouts: natural height per edge (desktop is always 1280 × 800).
+const STACK_H = { phone: { noallow: 1390, unsupported: 1114, battery: 1120, sidebar: 1068, running: 1430 }, tablet: { noallow: 1306, unsupported: 1100, battery: 1080, sidebar: 1054, running: 1338 } };
+let eid = 0;
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.gid = 'ee' + (++eid);
+    this.state = Object.assign({ theme: props.theme ?? 'auto', sysDark: this.sys(), host: props.host === 'dark' ? 'dark' : 'light', licensed: props.licensed === true || props.licensed === 'true', copied: false, now: Date.now() }, this.seed(props.edge));
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  seed(edge) {
+    const e = SEED[edge] ? edge : 'noallow';
+    return { lock: SEED[e], startedAt: Date.now() - 754000 };
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState({ now: Date.now() }), 1000);
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    clearTimeout(this.boot);
+    clearTimeout(this.copyT);
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+  }
+  componentDidUpdate(prev) {
+    const p = this.props;
+    if (prev.theme !== p.theme && p.theme) this.setState({ theme: p.theme });
+    if (prev.edge !== p.edge) this.setState(this.seed(p.edge));
+    if (prev.host !== p.host && p.host) this.setState({ host: p.host === 'dark' ? 'dark' : 'light' });
+    if (prev.licensed !== p.licensed) this.setState({ licensed: p.licensed === true || p.licensed === 'true' });
+  }
+  hms(sec) {
+    const v = Math.max(0, Math.floor(sec));
+    const p = (n) => String(n).padStart(2, '0');
+    const d = Math.floor(v / 86400), h = Math.floor((v % 86400) / 3600), hms = p(Math.floor((v % 3600) / 60)) + ':' + p(v % 60);
+    // DESIGN.md §4 on every surface: MM:SS under 1 h, H:MM:SS from 1 h, "1d 02:15:00" from 24 h
+    return d ? d + 'd ' + p(h) + ':' + hms : h ? h + ':' + hms : hms;
+  }
+  press(edge) {
+    const s = this.state;
+    clearTimeout(this.boot);
+    if (s.lock === 'held' || s.lock === 'fallback' || s.lock === 'requesting') {
+      this.setState({ lock: edge === 'unsupported' ? 'unsupported' : 'idle' });
+      return;
+    }
+    if (edge === 'unsupported') { this.setState({ lock: 'fallback', startedAt: Date.now() }); return; }
+    this.setState({ lock: 'requesting', startedAt: Date.now() });
+    this.boot = setTimeout(() => this.setState({ lock: edge === 'noallow' || edge === 'battery' ? 'denied' : 'held' }), 700);
+  }
+  renderVals() {
+    const s = this.state;
+    const p = this.props;
+    const edge = SEED[p.edge] ? p.edge : 'noallow';
+    const layout = SIZES[p.layout] ? p.layout : 'desktop';
+    const z = SIZES[layout];
+    const { dark, t } = atTheme(s.theme, s.sysDark);
+    const h = HOSTS[s.host];
+    const w = AT_TOK[s.host === 'dark' ? 'dark' : 'light'];
+    const lock = s.lock;
+    const live = lock === 'held' || lock === 'fallback';
+    const busy = live || lock === 'requesting';
+    const brand = s.licensed;
+    let noticeText = '';
+    if (lock === 'denied' || (lock === 'requesting' && edge !== 'sidebar' && edge !== 'running')) noticeText = ADVICE[edge] ?? '';
+    if (lock === 'unsupported') noticeText = ADVICE.unsupported;
+    if (edge === 'noallow' && lock !== 'held') noticeText = ADVICE.noallow;
+    const isErr = lock === 'denied' || edge === 'noallow';
+    const digits = live ? this.hms((s.now - s.startedAt) / 1000) : '00:00';
+    const btnBase = busy ? atBtn('smallStop', w) : atBtn('smallLamp', w) + (brand ? '; background: ' + h.brand + '; color: ' + h.brandInk : '');
+
+    const hostSnippet = [
+      { text: '<script async src="https://awaketab.com/embed.js"', hl: false },
+      { text: '  data-mode="cook"', hl: false },
+      { text: '  data-theme="' + s.host + '"', hl: true },
+      { text: '  data-size="compact"><\/script>', hl: false }
+    ];
+    const allowSnippet = [
+      { text: '<iframe', hl: false },
+      { text: '  src="https://awaketab.com/embed/cook?mode=cook&size=compact"', hl: false },
+      { text: '  title="Keep screen awake"', hl: false },
+      { text: '  allow="screen-wake-lock"', hl: true },
+      { text: '  loading="lazy"', hl: false },
+      { text: '  sandbox="…" style="…"></iframe>', hl: false }
+    ];
+    const lines = (edge === 'noallow' ? allowSnippet : hostSnippet).map((l) => ({ text: l.text, bg: l.hl ? atRgba(t.lamp, dark ? 0.14 : 0.1) : 'transparent', ink: l.hl ? t.ink : t.ink2, weight: l.hl ? 600 : 400 }));
+    const deskLike = layout !== 'phone';
+    const bars = [100, 96, 88, 100, 72, 0, 94, 100, 64].map((n) => ({ w: n ? n + '%' : '0px' }));
+    const stateLabel = { idle: 'Ready', requesting: 'Starting', held: 'Screen awake', denied: 'Blocked', unsupported: 'Tap to use the fallback', fallback: 'Awake via video fallback' };
+
+    return {
+      t, h, w, bg: atGround(t), type: AT_TYPE, mono: AT_MONO, digitFont: AT_DIGITS, h2: layout === 'phone' ? AT_TYPE.h2Phone : AT_TYPE.h2,
+      W: z.W + 'px', H: (layout === 'desktop' ? z.H : STACK_H[layout][edge]) + 'px', pad: z.pad, gap: z.gap, cols: z.cols, frameH: z.frameH, hostPad: z.hostPad, h1Size: z.h1,
+      aura: atRgba(t.lamp, dark ? 0.1 : 0.06),
+      hostUrl: 'yoursite.example/recipes/lemon-thyme-chicken',
+      hostNav: deskLike,
+      hostCols: edge === 'sidebar' && layout !== 'phone' ? 'minmax(0, 1fr) 280px' : 'minmax(0, 1fr)',
+      isSidebar: edge === 'sidebar', widgetInArticle: edge !== 'sidebar', isRunning: edge === 'running',
+      paras: PARAS[edge],
+      wW: '320px', bars,
+      wAura: atRgba(live ? w.lamp : w.muted, live ? (s.host === 'dark' ? 0.16 : 0.1) : 0.05),
+      pill: atPill('XS', lock, w), statusLabel: AT_PILL_TEXT[lock],
+      digits, digitColor: live ? w.ink : w.muted, digitsAria: live ? 'Awake for ' + digits : 'Not running, ' + stateLabel[lock],
+      btn: btnBase + '; width: 96px; padding: 0; margin-bottom: 4px',
+      btnLabel: busy ? 'Stop' : lock === 'denied' ? 'Retry' : 'Start',
+      primary: () => this.press(edge),
+      showNotice: !!noticeText, noticeText, noticeLink: edge === 'noallow',
+      noticeBg: isErr ? atRgba(w.bad, 0.08) : atRgba(w.lamp, 0.08),
+      // O-47: the credit is a visible nofollow link in the host page's own HTML, under the frame (licensed sites may drop it).
+      showAttrib: !s.licensed,
+      // 320 × 104 (O-58): pill above the digits, Start/Stop 20 px from the bottom edge. A long state takes the full width and the frame grows 12 px (116).
+      wGrid: 'position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; ' + (AT_PILL_TEXT[lock].length <= 13 ? 'grid-template-rows: 26px 44px; grid-template-areas: "pill btn" "dig btn"' : 'grid-template-rows: 26px 48px; row-gap: 8px; grid-template-areas: "pill pill" "dig btn"'),
+      caption: (s.host === 'dark' ? 'Dark' : 'Light') + ' host page · widget ' + (edge === 'sidebar' ? '280 px, in the sidebar, 24 px taller' : '320 × 104, grows for a notice or a long status') + ' · ' + (s.licensed ? 'Embed licence, no credit line' : 'free, credit line in the page\'s own HTML'),
+      title: TITLES[edge],
+      showSnippet: edge === 'noallow' || edge === 'running',
+      snippetTitle: edge === 'noallow' ? 'Fix for the site owner' : 'Match the page',
+      snippet: lines,
+      snippetNote: edge === 'noallow' ? 'The script tag adds this for you. It goes missing when a platform strips scripts and the iframe is pasted without it.' : 'Use dark on a dark page and light on a light one.',
+      btnCopy: atBtn('small', t),
+      copyLabel: s.copied ? 'Copied' : 'Copy', copyAria: s.copied ? 'Snippet copied' : 'Copy snippet',
+      copy: () => { clearTimeout(this.copyT); this.setState({ copied: true }); this.copyT = setTimeout(() => this.setState({ copied: false }), 1600); },
+      attribText: s.licensed ? 'Licensed (once licences open): the Keep awake by AwakeTab line is gone and Start uses your brand colour. The pill keeps its own colours so a state never changes meaning.' : 'Free widgets carry Keep awake by AwakeTab. An Embed licence ($29 a year per site, opening soon) will remove it and let Start use your brand colour.',
+      hostLid: this.gid + '-host', licLid: this.gid + '-lic',
+      hostSeg: atSeg([['light', 'Light'], ['dark', 'Dark']], s.host, (v) => this.setState({ host: v }), t),
+      get hostOpts() { return this.hostSeg.items; }, get licOpts() { return this.licSeg.items; },
+      licSeg: atSeg([['free', 'Free'], ['licensed', 'Licensed']], s.licensed ? 'licensed' : 'free', (v) => this.setState({ licensed: v === 'licensed' }), t)
+    };
+  }
+}
+</script>
+</body>
+</html>

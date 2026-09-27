@@ -27,6 +27,13 @@ async function expectNoViolations(page: Page, theme: TTheme): Promise<void> {
   if ((await html.getAttribute('data-theme')) !== 'oled' || theme === 'oled') {
     await expect(html).toHaveAttribute('data-theme', theme);
   }
+  // Entrance rises (0.7 s from opacity 0, DESIGN.md §8) must end first: mid-fade colours are not the resting
+  // colours axe must judge. Infinite loops (aura, halo) never end, so they are skipped.
+  await page.waitForFunction(() =>
+    document
+      .getAnimations()
+      .every((a) => !(a instanceof CSSAnimation) || a.effect?.getTiming().iterations === Infinity || a.playState === 'finished'),
+  );
   const results = await new AxeBuilder({ page }).analyze();
   const summary = results.violations.map((v) => ({
     id: v.id,
@@ -88,6 +95,13 @@ test.describe('page templates', () => {
 // Open-state surfaces of the tool. Each opener leaves the surface visible.
 const pill = (page: Page) => page.locator('#awaketab-tool [data-pill-text]').first();
 
+// Click only after the island has bound its handlers (it starts after first paint), as tool.spec.ts does;
+// a click before that is a race, not an accessibility result.
+async function openTool(page: Page, url: string): Promise<void> {
+  await page.goto(url);
+  await page.locator('#awaketab-tool[data-booted]').waitFor();
+}
+
 async function customMinute(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Custom…' }).click();
   const dlg = page.locator('dialog[data-dialog="custom"]');
@@ -102,7 +116,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
   {
     name: 'settings dialog',
     open: async (page) => {
-      await page.goto('/?autostart=0');
+      await openTool(page, '/?autostart=0');
       await page.locator('#awaketab-tool header [data-open-settings]').click();
       await expect(page.locator('dialog[data-dialog="settings"]')).toBeVisible();
     },
@@ -110,7 +124,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
   {
     name: 'Pro sheet',
     open: async (page) => {
-      await page.goto('/?autostart=0');
+      await openTool(page, '/?autostart=0');
       await page.locator('#awaketab-tool header [data-open-settings]').click();
       await page.locator('dialog[data-dialog="settings"] [data-open-pro]').click();
       await expect(page.locator('dialog[data-dialog="pro"]')).toBeVisible();
@@ -119,7 +133,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
   {
     name: 'stats dialog',
     open: async (page) => {
-      await page.goto('/?autostart=0');
+      await openTool(page, '/?autostart=0');
       await page.locator('#awaketab-tool header [data-open-stats]').click();
       await expect(page.locator('dialog[data-dialog="stats"] tbody tr')).toHaveCount(7);
     },
@@ -127,15 +141,15 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
   {
     name: 'shortcuts overlay',
     open: async (page) => {
-      await page.goto('/?autostart=0');
-      await page.locator('#awaketab-tool header [data-open-shortcuts]').click();
+      await openTool(page, '/?autostart=0');
+      await page.locator('#awaketab-tool [data-open-shortcuts]').click();
       await expect(page.locator('dialog[data-dialog="shortcuts"]')).toBeVisible();
     },
   },
   {
     name: 'custom dialog',
     open: async (page) => {
-      await page.goto('/?autostart=0');
+      await openTool(page, '/?autostart=0');
       await page.getByRole('button', { name: 'Custom…' }).click();
       await expect(page.locator('dialog[data-dialog="custom"]')).toBeVisible();
     },
@@ -143,7 +157,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
   {
     name: 'until dialog',
     open: async (page) => {
-      await page.goto('/?autostart=0');
+      await openTool(page, '/?autostart=0');
       await page.getByRole('button', { name: 'Until…' }).click();
       await expect(page.locator('dialog[data-dialog="until"] [data-until-summary]')).not.toHaveText('');
     },
@@ -151,8 +165,8 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
   {
     name: 'share dialog',
     open: async (page) => {
-      await page.goto('/?autostart=0');
-      await page.locator('#awaketab-tool header [data-open-share]').click();
+      await openTool(page, '/?autostart=0');
+      await page.locator('#awaketab-tool [data-open-share]').click();
       await expect(page.locator('dialog[data-dialog="share"] [data-share-url]')).toHaveValue(/^http/u);
     },
   },
@@ -160,7 +174,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     name: 'extend prompt',
     open: async (page) => {
       await page.clock.install();
-      await page.goto('/?autostart=0');
+      await openTool(page, '/?autostart=0');
       await customMinute(page);
       await page.clock.fastForward(61_000);
       await expect(page.locator('dialog[data-dialog="extend"]')).toBeVisible({ timeout: 4000 });
@@ -170,7 +184,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     name: 'rating prompt',
     open: async (page) => {
       await page.clock.install();
-      await page.goto('/?autostart=0');
+      await openTool(page, '/?autostart=0');
       await page.evaluate(() => {
         localStorage.setItem(
           'at.v1.meta',
@@ -185,7 +199,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
           }),
         );
       });
-      await page.goto('/?autostart=0');
+      await openTool(page, '/?autostart=0');
       await customMinute(page);
       await page.clock.runFor(61_000 + 3000);
       await expect(page.locator('dialog[data-dialog="rating"]')).toBeVisible({ timeout: 4000 });
@@ -194,7 +208,7 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
   {
     name: 'denied notice',
     open: async (page) => {
-      await page.goto('/?autostart=0');
+      await openTool(page, '/?autostart=0');
       await page.evaluate(() => {
         (window as Window & { __at: { rejectNext: string | null } }).__at.rejectNext = 'NotAllowedError';
       });
@@ -217,8 +231,15 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
       await page.goto(`/?mode=${mode}${mode === 'cook' ? '&autostart=0' : ''}`);
       const layer = page.locator('dialog[data-ambient]');
       await expect(layer).toHaveAttribute('data-mode', mode);
-      // Wait for the lazily loaded mode module to render its content.
-      await expect(layer.locator('[data-ambient-content] > *').first()).toBeVisible();
+      // Wait for the lazily loaded mode module to render its content (idle-only parts start hidden).
+      await expect(layer.locator('[data-ambient-content] > :not([hidden])').first()).toBeVisible();
+      // …and for its entrance (a 0.7 s rise from opacity 0, DESIGN.md §8): mid-fade colours are not the
+      // resting colours axe must judge. Infinite loops (aura, halo) and the per-second transitions never end.
+      await page.waitForFunction(() =>
+        document
+          .getAnimations()
+          .every((a) => !(a instanceof CSSAnimation) || a.effect?.getTiming().iterations === Infinity || a.playState === 'finished'),
+      );
     },
   })),
 ];

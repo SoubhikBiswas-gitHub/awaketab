@@ -20,7 +20,7 @@ Status: v1.4 · 26 Sep 2026 · Owner: Soubhik · Derived from `awaketab-blueprin
 | Embed product | **AwakeTab Embed** (first widget: Cook Mode) |
 | Business tier | **AwakeTab Business** (Embed licence, Kiosk licence) |
 | Paid tier | **AwakeTab Pro** |
-| Brand accent | Awake amber `#B86E00` (light UI) / `#FFB84D` (dark UI); night indigo `#2B3A67` / `#9DB0FF`; OLED black `#000000` |
+| Brand accent | The lamp (Clear Night, `DESIGN.md` §2.2): default Aqua `#087B87` (light UI) / `#5BE0E8` (dark UI); night indigo `#2B3A67` / `#9DB0FF`; OLED black `#000000`. Amber and red are reserved for the paused and blocked states, never the brand |
 | Favicon / icon motif | The ring (progress ring with a glowing dot at 12 o'clock) |
 | Author page | `/about` — real name, testing setup, contact |
 
@@ -61,7 +61,7 @@ Priority labels: `P0` (launch blocker), `P1` (launch), `P2` (post-launch, phase 
 |---|---|---|
 | Site framework | **Astro 5**, static output, content collections (MDX), built-in i18n routing | One vanilla-TypeScript island for the tool; React is a build-time renderer only (`03-architecture.md` ADR-013), never shipped |
 | Language | TypeScript, `strict: true`, ESM | Node 22 LTS, pnpm 9 workspaces |
-| Styling | Tailwind CSS v4 with design tokens as CSS variables; **shadcn/ui** components rendered at build time (no hydration) | System font stack (no web fonts on tool pages); shadcn's semantic variables alias the `--at-*` tokens (`05-frontend-spec.md` §1.5) |
+| Styling | Tailwind CSS v4 with design tokens as CSS variables; **shadcn/ui** components rendered at build time (no hydration) | Self-hosted fonts only (D-R26): Geist, Geist Mono, Space Grotesk digits from `/fonts`, metric-matched fallbacks, no third-party font request (`05-frontend-spec.md` §1.2); shadcn's semantic variables alias the `--at-*` tokens (`05-frontend-spec.md` §1.5) |
 | PWA | Workbox runtime modules (`workbox-precaching`, `-routing`, `-strategies`, `-expiration`) bundled by esbuild in a post-build step (`scripts/sw.mjs`) — not `@vite-pwa/astro` (`03-architecture.md` ADR-014) | Precache app shell + tool pages; runtime cache for content pages |
 | Hosting | **Cloudflare Pages** (+ Pages Functions for `/api/*`) | Preview deploy per PR; `_headers` and `_redirects` files |
 | Serverless state | Cloudflare **KV** (licences, embed configs), **Workers Analytics Engine** (events) | No database, no accounts |
@@ -114,11 +114,11 @@ awaketab/
 |---|---|---|---|
 | `idle` | No lock requested | "Ready" | neutral |
 | `requesting` | `navigator.wakeLock.request('screen')` in flight | "Starting…" | neutral |
-| `held` | Sentinel alive | "Screen awake" | accent (amber) |
+| `held` | Sentinel alive | "Screen awake" | accent (lamp) |
 | `lost` | Sentinel released by the browser (tab hidden, OS) — will re-request on `visibilitychange` | "Paused — tab hidden" | warn |
 | `denied` | Request rejected (`NotAllowedError`: battery saver, policy, hidden doc) | "Blocked — here's the fix" | bad |
 | `unsupported` | `navigator.wakeLock` absent | "Tap to use the fallback" | neutral |
-| `fallback` | Hidden 1-frame video loop active (user gesture given) | "Awake via video fallback" | accent (muted) |
+| `fallback` | Hidden 1-frame video loop active (user gesture given) | "Awake via video fallback" | accent (lamp, muted) |
 
 Only `held` and `fallback` may show a running timer. Transitions are specified in `04-engine-spec.md`.
 
@@ -166,11 +166,12 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 | `/` | The tool + full home content |
 | `/15m` `/30m` `/45m` `/1h` `/2h` `/4h` `/8h` | Preset deep links (indexable duration pages; canonical self) |
 | `/until/HH-MM` | Until-time deep link (noindex, canonical `/`) |
-| `/for/{slug}` | 18 scenario pages (tool embedded with scenario preset) |
-| `/on/{slug}` | 12 device/browser pages |
+| `/for/{slug}` | 14 scenario pages (tool embedded with scenario preset) |
+| `/on/{slug}` | 11 device/browser pages |
 | `/vs/{slug}` | 7 comparison pages |
-| `/guides/{slug}` | 8 OS how-to pages |
-| `/learn/{slug}` | 6 deep/dev pages |
+| `/guides/{slug}` | 7 OS how-to pages |
+| `/learn/{slug}` | 5 deep/dev pages |
+| Retired content URLs (OD-3, §13.20) | `/for/second-monitor` → `/guides/second-monitor-turns-off`, `/on/windows-10` → `/on/windows-11`, `/guides/modern-standby` → `/guides/lock-screen-vs-sleep`, `/learn/nosleep-js-vs-wake-lock` → `/vs/nosleep-js` (all 301, `_redirects`). Cut, no redirect (404): `/for/navigation`, `/for/live-streams`, `/for/exams-proctoring`, `/for/baby-monitor` |
 | `/pro` · `/pro/activate` · `/pro/manage` | Pricing, key entry, device list |
 | `/extension` · `/embed` · `/kiosk` · `/library` | Product landing pages |
 | `/embed/cook` | Iframe app for the Cook Mode widget (noindex) |
@@ -186,11 +187,11 @@ Query params (all optional): `autostart=1`, `mode=`, `msg=` (≤ 80 chars), `the
 Locales and folders: `en` (root), `es`, `pt-br`, `de`, `fr`, `ja`, `zh` (Simplified), `hi`. `x-default` → root. Phase 2 locales: `id`, `tr`, `ko`, `it`, `ru`, `vi`, `ar`.
 
 Content slugs (English canonical; translated slugs for the Latin-script locales `es`, `pt-br`, `de`, `fr` only, with hreflang linking; `ja`, `zh` and `hi` keep the English slug, e.g. `/ja/for/cooking` — `06-content-seo-spec.md` §5, decision D-03):
-- `/for/`: cooking · presentations · downloads · ai-agents · dashboards · kiosk · sheet-music · reading · night-clock · baby-monitor · navigation · video-calls · live-streams · teleprompter · workouts · second-monitor · work-laptop · exams-proctoring
-- `/on/`: iphone-safari · ios-home-screen · ipad · android-chrome · samsung-internet · chromebook · windows-11 · windows-10 · macos · linux · firefox · edge
+- `/for/`: cooking · presentations · downloads · ai-agents · dashboards · kiosk · sheet-music · reading · night-clock · video-calls · teleprompter · workouts · work-laptop · classroom
+- `/on/`: iphone-safari · ios-home-screen · ipad · android-chrome · samsung-internet · chromebook · windows-11 ("Windows 11 and 10") · macos · linux · firefox · edge
 - `/vs/`: caffeine · amphetamine · powertoys-awake · caffeinate-command · nosleep-page · nosleep-js · mouse-jigglers
-- `/guides/`: windows-11-screen-turns-off-after-1-minute · mac-prevent-sleep-lid-closed · iphone-auto-lock-never-greyed-out · chrome-energy-saver · android-screen-timeout-one-app · modern-standby · second-monitor-turns-off · lock-screen-vs-sleep
-- `/learn/`: screen-wake-lock-api-guide · nosleep-js-vs-wake-lock · does-a-wake-lock-keep-teams-green · low-power-mode-and-wake-locks · browser-support-matrix · how-we-tested
+- `/guides/`: windows-11-screen-turns-off-after-1-minute · mac-prevent-sleep-lid-closed · iphone-auto-lock-never-greyed-out · chrome-energy-saver · android-screen-timeout-one-app · second-monitor-turns-off · lock-screen-vs-sleep
+- `/learn/`: screen-wake-lock-api-guide · does-a-wake-lock-keep-teams-green · low-power-mode-and-wake-locks · browser-support-matrix · how-we-tested
 
 ---
 
@@ -299,7 +300,7 @@ The identifiers below were proposed while writing the other documents and are no
 | `ISession` extra fields | `pausedMs`, `endedAt`, `endReason`, `awakeSeconds` (seconds in `held` or `fallback`; feeds stats), `modeState` (per-mode data, e.g. `cookTimers[]`) |
 | `ISettings` extra fields | `keyboardShortcuts: boolean` (enables single-key shortcuts; WCAG 2.1.4) distinct from `keyboardHints: boolean` (shows hints); `lastCustomMs`; `ambient.message` |
 | `TTabMessage` | `{type:'hello'|'lock'|'state'|'intent'|'bye', tabId, ts, …}` on `BroadcastChannel('awaketab')`; `tabId` in `sessionStorage['at.tabId']`; `intent` and the `state` snapshot fields since v1.3 (§13.8) |
-| CSS token namespace | `--at-*` (e.g. `--at-accent`, `--at-accent-text` `#8A5200` light for AA text) |
+| CSS token namespace | `--at-*` (e.g. `--at-accent`, `--at-accent-text`: the lamp's light value, `#087B87` for Aqua, AA for text). Full list: `05-frontend-spec.md` §1.1–§1.3, new names in §13.18 |
 | `/8h` route | Maps to a `custom` plan of 480 min; there is no `p480` chip |
 
 ### 13.2 Routes and files
@@ -311,6 +312,7 @@ The identifiers below were proposed while writing the other documents and are no
 | `source=` query param | Same handling as `ref=` (PWA `start_url`, shortcuts) |
 | `logo=` query param (https URL) and `#lic=<token>` hash | Kiosk licence unlocks; hash verified offline, stored to `at.v1.license`, then stripped |
 | `/pro/activate?ext=1` | Hand-off from the extension (shows the key to copy; never activates this browser, §13.12) |
+| `/pro/activate?checkout=cancelled\|failed\|help` | B7 (O-26): our own checkout-return pages ("Checkout closed", "The payment didn't go through", "Where is my licence key?"). The `checkout_id` auto-fill lands on the same layout: success → "Pro is active", `invalid_key` → failed, still `polar_unavailable` after every retry → help. No request is made for `?checkout=` |
 | `src/i18n/slugs.json` | Translated slug map keyed by collection + EN slug; `es`, `pt-br`, `de`, `fr` keys only (`ja` / `zh` / `hi` use the EN slug) |
 | `src/data/support-matrix.json` | Single source for every browser/OS support claim (site, docs, tests) |
 | `data/ratings.json` | Build input for `aggregateRating` (≥ 25 real ratings); exported from KV by a scheduled Worker |
@@ -389,7 +391,7 @@ Accepted on 2026-09-26 with the M6 implementation; confirmed by owner decision D
 | `TDialogName` | Gains `'stats'` |
 | `TChime` (`signal.ts`) | `end` · `focus` · `timer` — Web Audio oscillator tones, no audio files |
 | Notification tags | `at-end` · `at-focus` · `at-cook-{timerId}` |
-| Accent palettes (`accent.ts`) | `amber` `#B86E00` (default, no attribute) · `indigo` `#4F46E5` · `teal` `#0F766E` · `rose` `#BE123C`. `settings.accent` stores the hex; the id goes on `<html data-accent>`; `teal` and `rose` are the first `ambient.packs` pack (`PACK_ACCENTS`) and fall back to amber without it. `public/theme-boot.js` mirrors the map so the accent paints before first frame |
+| Lamp colours (`accent.ts`, was "accent palettes") | `aqua` `#087B87` (default, no attribute) · `violet` `#5A47CF` · `mint` `#167A50` · `sky` `#255FBD` (`ACCENTS`, keyed by the light hex; `DEFAULT_ACCENT` = Aqua). `settings.accent` stores the hex; the id goes on `<html data-accent>`; `mint` and `sky` are the `ambient.packs` lamps (`PACK_ACCENTS`) and fall back to Aqua without it. `LEGACY_ACCENTS` + `accentHex()` migrate the old palette hexes (`08-data-storage.md` §2.1). The inline boot script `src/boot/boot.js` mirrors both maps so the lamp paints before first frame |
 | Ambient gating | Only `message` is gated (`MODE_GATES = { message: 'ambient.message' }`); `ambient.packs` gates palettes, never layouts. `05-frontend-spec.md` §3.13 wins over the E10-T01 wording in `15-implementation-plan.md` |
 | `ambient/logic.ts` constants | `AMBIENT_ORDER` (the `M` cycle) · `PIXEL_SHIFT_MS` 60,000 · `PIXEL_SHIFT_PX` 2 · `NIGHT_DIM_AFTER_MS` 30,000 · `BURNIN_DIM_AFTER_MS` 30 min · `MESSAGE_PREVIEW_MS` 60,000 · `FOCUS_LONG_BREAK_MIN` 15 · `COOK_MAX_TIMERS` 3 · `COOK_NAME_MAX` 20 · `COOK_MIN_MS` 1 min · `COOK_MAX_MS` 12 h · `COOK_FLASH_MS` 10,000 |
 | `end.ts` constants | `TITLE_FLASH_MS` 1000 · `TITLE_FLASH_MIN_MS` 3000 · `RATING_DELAY_MS` 2000 · `COUNTED_SESSION_S` 300 (a completed session counts toward `meta.sessionCount` only if ≥ 5 min awake) |
@@ -406,7 +408,7 @@ Accepted on 2026-09-26 with the M6 implementation; confirmed by owner decision D
 | `--at-t-ambient` | `clamp(4.5rem, 22vw, 15rem)` |
 | `--at-night-digit` | `#FF5A3C` (night-mode digits) |
 | `--at-d-slow` | `320ms` |
-| `[data-accent="indigo\|teal\|rose"]` blocks | Override `--at-accent`, `--at-accent-text`, `--at-on-accent`, `--at-focus` per accent, with `dark`/`oled` variants (`05-frontend-spec.md` §1.1a) |
+| `[data-accent="violet\|mint\|sky"]` blocks | Override `--at-accent`, `--at-accent-text`, `--at-on-accent`, `--at-focus` per lamp, with `dark`/`oled` variants (`05-frontend-spec.md` §1.1a) |
 
 **Build, PWA and budgets**
 
@@ -452,9 +454,14 @@ Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`), as written with
 | `STALE_NOTIFY_MS` | 5 min — a session that ended while the worker slept is announced only within this window |
 | `SYNC_DEBOUNCE_MS` | 2,000 |
 | Notification id | `at-end` (same tag as the web); buttons `+30 min` (index 0) / `Stop` (index 1) |
-| `BADGE_COLORS` | `display` `#B86E00` · `system` `#2B3A67`; text `#FFFFFF`; text `ON` / `SYS` / `<n>m` / `<n>h` |
+| `BADGE_COLORS` | `display` `#087B87` (Aqua light, 5.0:1 with white; amber means paused, `DESIGN.md` §2.1) · `system` `#2B3A67`; text `#FFFFFF`; text `ON` / `SYS` / `<n>m` / `<n>h` |
 | System-level pill (D-02) | `status.ts` `pillTextKey(lock, level)`: a held `system` lock → `ext.pill.systemHeld` "System awake" (never `tool.pill.held`), secondary line `pillExtraKey()` → `ext.pill.system` "Screen may dim or lock"; badge tooltip `AwakeTab — System awake · Screen may dim or lock`. Display copy only; the lock state stays `held` (§5.1) |
 | `EXT_KEYS` | `{ ext: 'at.v1.ext', device: 'at.v1.device' }` (`settings.ts`) |
+| Unsupported pill in the extension (B9) | `pillTextKey('unsupported', …)` → `tool.pill.denied` ("Blocked — here's the fix"): the extension has no video fallback, so it never offers one. `data-lock` stays `unsupported`; the seven states and their web copy are unchanged |
+| `extend {ms}` on a live session (B9) | Adds the time to the running session (`ISessionEngine.addTime`), except a `schedule` session, which keeps its window; after time is up it starts a new `custom` session of that length as before |
+| `WELCOME_PAGE` (B9, O-25) | `welcome.html`, opened once by `onInstalled('install')`, which also writes `at.v1.meta.lastSeenVersion`; an update from a build without it records `previousVersion` |
+| Popup UI state in existing keys (B9) | "New in {version}" chip: `at.v1.meta.lastSeenVersion` ≠ manifest version (opening the chip writes the version) · first-open tips: `ext-first-open` in `at.v1.onboarding.dismissedTips` · language: `at.v1.settings.locale` (`null` = browser language). No new storage key |
+| Popup states (B9) | `<main data-mode>`: `ready` · `starting` · `held` · `ended` (time's up, `IExtState.extend`) · `blocked` (`denied` or `unsupported`) |
 | `TExtRequest` | Popup → worker messages: `state` · `start {presetId}` · `until {wall}` · `stop` · `toggle` · `extend {ms}` · `dismiss` · `level {level}` |
 | `ISessionOptions.resumeIndefiniteMs` | `@awaketab/core`: how long an `indefinite` session stays resumable (default 12 h; the extension passes `Infinity`) |
 | `IStorageAdapter` | Now exported from `@awaketab/core` (docs/04 §16) |
@@ -463,9 +470,12 @@ Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`), as written with
 
 | Identifier | Decision |
 |---|---|
-| `AT_EXT_TEST` · `__AT_TEST__` | `AT_EXT_TEST=1` builds the Playwright flavour into `apps/extension/.output-test/` with `chrome.power` replaced by a recorder (`src/test-hooks.ts`, `chrome.storage.session['at.test.power']`) |
+| `AT_EXT_TEST` · `__AT_TEST__` | `AT_EXT_TEST=1` builds the Playwright flavour into `apps/extension/.output-test/` with `chrome.power` replaced by a recorder (`src/test-hooks.ts`, `chrome.storage.session['at.test.power']`); `chrome.storage.session['at.test.deny'] = true` makes requests throw like a policy block (`POWER_DENY_KEY`, B9) |
 | `AT_EXT_OUT` | Alternate WXT output directory (reproducibility check) |
-| `virtual:at-catalog/<locale>` · `virtual:at-catalogs-bg` · `virtual:at-tokens.css` | Build-time modules generated from `apps/web/src/i18n/*.json` and `apps/web/src/styles/tokens.css` (`apps/extension/scripts/i18n.mjs`) |
+| `virtual:at-catalog/<locale>` · `virtual:at-catalogs-bg` · `virtual:at-tokens.css` | Build-time modules generated from `apps/web/src/i18n/*.json` (+ `apps/extension/locales/<locale>.json`, B9) and `apps/web/src/styles/tokens.css` (`apps/extension/scripts/i18n.mjs`) |
+| `apps/extension/locales/<locale>.json` (B9) | The extension's own copy (Clear Night popup states, options help, welcome page): `ext.*` keys only, never a web key, same keys and placeholders in all 8 locales (unit test). Merged under the web keys; move them to `apps/web/src/i18n` when the web catalog is next edited |
+| `apps/extension/public/fonts/` (B9, D-R26) | `geist-latin-wght-normal.woff2`, `geist-mono-latin-wght-normal.woff2`, `OFL-Geist.txt` (copied from `apps/web/public/fonts`); `@font-face` + metric fallbacks in `src/styles/base.css`; no remote font request |
+| `--ext-*` (B9) | Extension-local CSS values tokens.css has no name for: `--ext-lift`, `--ext-lift-end` (ground radial lift), `--ext-halo`, `--ext-shadow`, `--ext-float`, `--ext-ease`, `--ext-lamp-{soft,line,tag,faint,glow}` (lamp at 14 / 45 / 12 / 8 / 55 %). Never a replacement for an `--at-*` token |
 | Scripts | `pnpm -F extension zip` → `.output/awaketab-chrome-<version>.zip` · `zip:check` · `store:assets` · `build:test`; root `pnpm test:e2e:ext` |
 | `support-matrix.json` → `extension` | `{ minimumChromeVersion, browsers, unsupported, notes }` — the manifest's `minimum_chrome_version` and `/extension` read it |
 
@@ -492,18 +502,21 @@ Accepted on 2026-09-26 with the M8 implementation; confirmed by owner decision D
 
 | Identifier | Decision |
 |---|---|
-| `protocol.ts` | The page ↔ widget contract shared by the loader and the iframe app: allow-lists `EMBED_MODES` (`cook` `standard` `clock` `minimal`) · `EMBED_THEMES` · `EMBED_SIZES` · `EMBED_PRESETS` (`p15`…`pinf`, `until`) · `EMBED_LOCALES`; `EMBED_BOX` (compact 320 × 96, full 100 % × 240); `EMBED_MIN_HEIGHT` 64 / `EMBED_MAX_HEIGHT` 640 (resize clamp); `EMBED_MAX_MS` 7 days (= `CUSTOM_MAX_MS`); `EMBED_PATH` `/embed/cook`; `EMBED_VERSION` `'1'` (sent in `awaketab:ready`) |
+| `protocol.ts` | The page ↔ widget contract shared by the loader and the iframe app: allow-lists `EMBED_MODES` (`cook` `standard` `clock` `minimal`) · `EMBED_THEMES` · `EMBED_SIZES` · `EMBED_PRESETS` (`p15`…`pinf`, `until`) · `EMBED_LOCALES`; `EMBED_BOX` (compact 320 × 104 radius 16 — O-58, B8; full 100 % × 240 radius 28); `EMBED_NARROW` (`compact: [300, 116]`, `full: [600, 420]`) and `reservedHeight(opts, width)` (the taller box for a compact frame under 300 px, or a full cook frame under 600 px); `EMBED_MIN_HEIGHT` 64 / `EMBED_MAX_HEIGHT` 640 (resize clamp); `EMBED_MAX_MS` 7 days (= `CUSTOM_MAX_MS`); `EMBED_PATH` `/embed/cook`; `EMBED_VERSION` `'1'` (sent in `awaketab:ready`); the O-47 credit: `EMBED_CREDIT_URL` `https://awaketab.com/?ref=embed&source=embed`, `EMBED_CREDIT_CLASS` `awaketab-credit`, `EMBED_CREDIT_STYLE` / `EMBED_CREDIT_LINK_STYLE` (inline styles, shared by the loader and the snippet) |
 | Loader attributes | `data-mode` `data-theme` `data-lang` (else the host page's `<html lang>`, BCP 47 → one of the 8 locales) `data-size` `data-preset`, plus `data-until="HH:MM"` with `data-preset="until"`. `data-license` from docs/11 §1 is not read: licensing is decided by the verified domain, and a key never travels in a URL |
 | Message shape | `{ type: 'awaketab:<name>', ...payload }` for all six messages of docs/11 §3; anything else is dropped on both sides |
 | Origin checks | Loader: accepts a message only when `event.source` is an iframe it created **and** `event.origin` is the loader's own origin (derived from the `<script src>`, so preview deployments work); posts with that origin as `targetOrigin`. Widget: accepts only from `window.parent`, only when `event.origin` equals the verified parent origin (`location.ancestorOrigins[0]`, else the referrer — the loader sets `referrerpolicy="strict-origin"`) **and** that hostname equals the declared `host=` param when one is present; posts to that exact origin, never `*` |
-| `EMBED_SANDBOX` | `allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox`. The fourth token (C4 decision) lets the attribution/"How to fix" links open awaketab.com as a normal tab rather than inheriting the sandbox; it widens nothing for the host page |
-| Resize rule | The loader applies `awaketab:resize` but never below the reserved box height, so a widget can grow (notice, timers) and never shift the host page by shrinking |
+| `EMBED_SANDBOX` | `allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox`. The fourth token (C4 decision) lets the "How to fix" link open awaketab.com as a normal tab rather than inheriting the sandbox; it widens nothing for the host page |
+| Resize rule | The loader applies `awaketab:resize` but never below the reserved box height (`reservedHeight()`, measured from the container once at mount), so a widget can grow (notice, timers) and never shift the host page by shrinking |
+| Host-page credit (O-47, B8) | `loader.ts` `mountCredit(frame, text)` inserts `<div class="awaketab-credit"><a href=EMBED_CREDIT_URL rel="nofollow">` right after the iframe: the host's font and colour, 13 px, underlined, one 24 px line 16 px below the widget. `keepsCredit(win, origin, cache)` asks `GET {origin}/api/embed/config?domain=<location.hostname>` once per origin and removes the line only for `{ licensed: true, attribution: false }`. `ILoaderStrings` `{ titles, credits }` (the 8 `embed.frame.title` / `embed.attribution` strings, build-time `__AT_FRAME_TITLES__` / `__AT_CREDITS__`). There is no credit inside the iframe any more; `snippet.ts` `creditSnippet(text?)` is the same line as plain HTML and `iframeSnippet(opts, title, origin?, credit?)` ends with it |
 | `at.v1.embed.settings` | `{ v: 1, cookTimers: ICookTimer[] }` (≤ 3, same shape as §13.8) — the widget's only persistent key. The widget's session engine runs on `memoryAdapter()` and a no-op `BroadcastChannel`, so it never writes `at.v1.session`/`at.v1.stats` or joins the app's tab election (`08-data-storage.md` §2.10) |
-| Licence lookup | `GET /api/embed/config?domain=<verified parent hostname>` only — never the `host=` param. Unknown/failed/timed-out (`EMBED_CONFIG_TIMEOUT_MS` 4000) → free rendering with attribution |
-| `--at-embed-brand` · `--at-embed-on-brand` | Private custom properties set on the widget root only for licensed sites: the Start button fill and its black/white label (`onAccent()` picks the higher-contrast one, ≥ 4.5:1 for any colour). Default = the AA primary pair `--at-accent-text` / `--at-on-accent` |
+| Licence lookup | Widget: `GET /api/embed/config?domain=<verified parent hostname>` only — never the `host=` param. Unknown/failed/timed-out (`EMBED_CONFIG_TIMEOUT_MS` 4000) → free rendering. Loader: the same endpoint with the page's `location.hostname`, for the credit line only (`keepsCredit()`) |
+| `--at-embed-brand` · `--at-embed-on-brand` | Private custom properties set on the widget root only for licensed sites (`config.ts` `applyBranding(root, cfg)`): the Start button fill and its black/white label (`onAccent()` picks the higher-contrast one, ≥ 4.5:1 for any colour). Default = the lamp pair `--at-accent` / `--at-on-accent`. B8: the brand no longer overrides `--at-accent`/`--at-focus`, so the pill and focus ring keep the state tones |
+| `--at-embed-*` (B8) | Widget-scoped custom properties in `embed.css` for values with no `--at-*` token yet: `--at-embed-pill-xs` 26 / `--at-embed-pill-s` 32 (DESIGN.md §11.4 pill XS/S), `--at-embed-h-primary` 60 (the frame is ≤ 568 tall, where `--at-h-primary` drops to 52), `--at-embed-compact` 104 / `-compact-long` 116 / `-full` 240 / `-full-stacked` 420, `--at-embed-aura` (10 % light, 16 % dark/OLED), `--at-embed-ease`, `--at-embed-digit` |
+| Widget markup hooks (B8) | Root `#awaketab-embed` carries `data-size`, `data-mode`, `data-lock` (the state tone), `data-live` (aura) and `data-long` (compact pill on its own row, set by `app.ts` `fitPill()`); `[data-embed-toggle][data-kind="start" \| "stop" \| "retry"]` (no `aria-pressed`: its label changes); `[data-pill-glyph]` path from `app.ts` `PILL_GLYPH`; `[data-embed-note]` (minimal), `[data-embed-hint]` (full meta line), `[data-embed-foot]`, `[data-embed-timers-empty]`, `.at-embed-add`, `.at-embed-timer-remove`. `clock.ts` `formatClock(ms)`: "MM:SS" · "H:MM:SS" · "1d 02:15:00" (DESIGN.md §4) for the digits and kitchen timers |
 | iframe_no_allow detection | `policy.ts`: `document.permissionsPolicy ?? document.featurePolicy` `.allowsFeature('screen-wake-lock')` → the "Ask the site owner" notice shows at load in a frame the policy blocks; `embedAdvice()` turns the library's `iframe_no_allow` into `battery_saver`/`low_power_ios` when the policy is known to allow the lock |
-| Catalog subset | `catalog.ts` `isEmbedKey()`: `/embed/cook` inlines only `embed.*`, `tool.pill.*`, `tool.advice.*` and a few `ambient.cook.*` keys for all 8 locales (one static page serves every `lang=`) |
-| `snippet.ts` | `loaderSnippet()` · `iframeSnippet()` · `kioskUrl()` · `kioskMsg()` — the /embed and /kiosk generators; `DEFAULT_SNIPPET` renders the tag documented in docs/11 §11 |
+| Catalog subset | `catalog.ts` `isEmbedKey()`: `/embed/cook` inlines only `embed.*`, `tool.pill.*`, `tool.advice.*` (incl. `tool.advice.retry`, the Retry label since B8) and a few `ambient.cook.timer.*` keys for all 8 locales (one static page serves every `lang=`) |
+| `snippet.ts` | `loaderSnippet()` · `iframeSnippet()` (ends with the credit line since B8) · `creditSnippet()` · `kioskUrl()` · `kioskMsg()` — the /embed and /kiosk generators; `DEFAULT_SNIPPET` renders the tag documented in docs/11 §11 |
 | `kiosk.ts` | Tool-side Kiosk licence unlocks (lazy, loaded by `main.ts` only when the URL has `#lic=` or `logo=`): `readLicHash` · `applyKioskHash` (offline verify with no device binding, kiosk plans only — `KIOSK_PLANS` `biz_kiosk_site` `biz_kiosk_5` — store to `at.v1.license` with `deviceId: ''`, `deviceLabel: 'kiosk'`, strip the hash first) · `parseLogo` (https, no credentials, ≤ `KIOSK_LOGO_MAX` 512 chars) · `applyKioskBranding` (`ambient.logo` → logo above the timer and in the ambient dialog; `kiosk.branding` → `<html data-kiosk>` hides the wordmark and `ui/rating.ts` never prompts) |
 | Kiosk plan features | `biz_kiosk_site` / `biz_kiosk_5` now include `ambient.message` (docs/09 §7.2 already said so; `PLAN_FEATURES` in `functions/_lib/license.ts` and `src/lib/license.ts` lacked it) |
 | Tool-route CSP `img-src` | `'self' data: https:` — the operator's `logo=` image is the only cross-origin resource a tool route may load, and only on a licensed kiosk URL. `script-src`, `connect-src`, `style-src`, `font-src` stay `'self'`; the zero-third-party budget still holds for every default tool page (C4 decision, accepted as shipped by owner decision D-01 on 2026-09-26; `test/e2e/security.spec.ts` asserts that every default tool route, a started session and an unlicensed `logo=` URL make no cross-origin request) |
@@ -512,7 +525,7 @@ Accepted on 2026-09-26 with the M8 implementation; confirmed by owner decision D
 
 | Identifier | Decision |
 |---|---|
-| `apps/web/scripts/embed-loader.mjs` | esbuild: `src/tool/embed/loader-entry.ts` → `public/embed.js` (IIFE, committed, `__AT_FRAME_TITLES__` = the 8 `embed.frame.title` strings) and `src/tool/embed/app.ts` → `public/embed/app.js` (ESM, git-ignored). First step of `pnpm -F web build` and `dev`; `--fingerprint` runs after `astro build` and ships the app as `/embed/assets/app.<hash>.js` (§13.12). The iframe app is **not** an Astro `<script>`: sharing `@awaketab/core`/`wake` with the tool entry made Rollup split shared chunks onto the tool's critical path (+900 B gz) |
+| `apps/web/scripts/embed-loader.mjs` | esbuild: `src/tool/embed/loader-entry.ts` → `public/embed.js` (IIFE, `es2020` since B8, committed, `__AT_FRAME_TITLES__` / `__AT_CREDITS__` = the 8 `embed.frame.title` / `embed.attribution` strings via `catalogStrings(key)`) and `src/tool/embed/app.ts` → `public/embed/app.js` (ESM, git-ignored). First step of `pnpm -F web build` and `dev`; `--fingerprint` runs after `astro build` and ships the app as `/embed/assets/app.<hash>.js` (§13.12). The iframe app is **not** an Astro `<script>`: sharing `@awaketab/core`/`wake` with the tool entry made Rollup split shared chunks onto the tool's critical path (+900 B gz) |
 | `apps/web/scripts/library.mjs` | Copies `packages/wake/dist/awaketab-wake.iife.js` (building the package if needed) to `public/library/` (git-ignored) for the `/library` demo |
 | `apps/web/scripts/support-matrix.mts` | The support-matrix update hook: `matrix:check` (build step) validates `docs/metrics/device-matrix.json` and that every row names a `support-matrix.json` id; `matrix:sync` writes `lastUpdated` and per-row `lastVerified` only when the run is `complete` |
 | `docs/metrics/device-matrix.json` | `{ version: 1, status: 'pending' \| 'complete', updatedAt, method[], rows[] }`; row = `{ id, device, os, browser (support-matrix id), version, power ('plugged' \| 'battery' \| 'battery-saver'), mode, case, expected, observed, evidence, date, verdict ('pending' \| 'pass' \| 'partial' \| 'fail') }`; validated by `src/lib/device-matrix.ts` `parseDeviceMatrix()` (a recorded verdict needs date, version, observed and evidence) |
@@ -535,10 +548,10 @@ Accepted on 2026-09-26 with the M8 implementation; confirmed by owner decision D
 |---|---|
 | `/embed`, `/kiosk`, `/library` | Indexable English landing pages on `BaseLayout` (no ads), in `sitemap-en.xml`, with OG images `embed-en.png` · `kiosk-en.png` · `library-en.png`. `/embed/cook` stays `noindex` |
 | `/learn/how-we-tested` | `ArticlePage` gains a named slot `after` (outside `.at-prose`, so it never counts toward the word band); the learn route fills it with `DeviceMatrix.astro` on this slug |
-| Embed analytics | Widget events carry `source: 'embed'`, `path: '/embed/cook'`. `page_view` from the widget sends `host` (hostname) → `blob6`; `share_click` sends `target: 'attribution'` → `blob7` (allow-listed in `functions/_lib/events.ts`) |
+| Embed analytics | Widget events carry `source: 'embed'`, `path: '/embed/cook'`. `page_view` from the widget sends `host` (hostname) → `blob6`. B8: the credit link lives in the host page (O-47), so the widget no longer sends `share_click { target: 'attribution' }`; the value stays allow-listed in `functions/_lib/events.ts` for cached old widgets, and credit clicks are counted by `?ref=embed&source=embed` on arrival |
 | `/api/embed/config` | Unknown domain → `{ licensed: false, attribution: true, theme: null, expiresAt: null }` (was `theme: 'auto'`). Looks up the host and each parent domain down to two labels (so `www.`/`staging.` resolve to `embed:{registrable domain}`), treats an expired `expiresAt` or a non-`active` `lic:{keyHash}` as unlicensed, and returns `theme` only as a validated `{ accent: '#rrggbb' \| null, scheme }`. Helpers in `functions/_lib/embed.ts` |
 
-**i18n** — 56 new keys in all 8 locales: `embed.*` (widget), `page.embed.*` · `page.kiosk.*` · `page.library.*`, `builder.*` (generators), `library.demo.*`, `research.*` (device matrix), `kiosk.license.invalid`.
+**i18n** — 56 new keys in all 8 locales: `embed.*` (widget), `page.embed.*` · `page.kiosk.*` · `page.library.*`, `builder.*` (generators), `library.demo.*`, `research.*` (device matrix), `kiosk.license.invalid`. B8 (Clear Night) adds 13 widget keys in all 8 locales: `embed.cook.resume` · `embed.meta.requesting` · `embed.meta.since` · `embed.meta.clock` · `embed.foot` · `embed.minimal.idle` · `embed.minimal.live` · `embed.minimal.liveShort` · `embed.timers.empty` · `embed.digits.pause` · `embed.digits.resume` · `embed.digits.start` · `embed.digits.clock`; `embed.attribution` is now the host-page credit text (inlined in the loader).
 ### 13.11 M6 follow-ups
 
 Accepted on 2026-09-26 with the M6 follow-up work; confirmed by owner decision D-04. Specs: `05-frontend-spec.md` §3.14, §3.17, §3.23, §9; `08-data-storage.md` §2.2, §2.3, §6; `04-engine-spec.md` §10, §13.
@@ -581,6 +594,10 @@ Accepted on 2026-09-26; confirmed by owner decision D-04. Specs: `09-monetizatio
 | `/pro/activate?ext=1` | Never activates the browser. A pasted key is normalised (`trim().toUpperCase()`) and checked against `^[A-Z0-9-]{20,80}$` client-side, then shown in `[data-ext-panel]`; with `checkout_id` the page calls the lookup above instead of activate. Without `ext=1` the page is unchanged (activates this browser; `checkout_id` auto-activates) |
 | `src/lib/license-lookup.ts` | `LICENSE_KEY_RE`, `normaliseLicenseKey()`, `lookupCheckoutKey()` — kept out of `license.ts`, whose chunk the tool page loads lazily (so `totalJs` does not pay for a page-only flow) |
 | `[data-activate-mode="web" \| "ext"]` | Mode-specific copy on `/pro/activate`, pre-rendered for both modes; `activate-page.ts` hides `web` and shows `ext` when `ext=1` |
+| `data-state` on `[data-activate-root]` | B7: `idle` · `checking` · `error` · `success` · `ext-success` (activation form) and `checkout-success` · `cancelled` · `failed` · `help` (checkout return); `activate-page.ts` sets it, `pro.css` shows the matching parts. Activation never redirects to `/` (O-26) |
+| `data-state` on `[data-manage-root]` | B7: `loading` · `list` · `empty` · `grace` (yearly token inside its last 7 days: renewal did not go through) · `lapsed` (token `exp` passed: devices listed with "Pro off"); `manage-page.ts`. Removing this browser's own row clears `at.v1.license` |
+| `data-launch="on\|off"` on the Pro page roots | B7 / O-52 / D-R13: `pro-common.ts` compares `Date.now()` with `PRO_LAUNCH_END` at run time; `[data-launch-only]` / `[data-after-only]` pairs swap the lifetime price and launch lines (never a strike-through) |
+| `src/lib/pro-common.ts` | Pro pages only: `deviceLabel()` ("Chrome · macOS", C5), `telemetryOn()` / `trackPro()` (honours `at.v1.settings.telemetry`, O-43), `applyLaunch()`, `POLAR_PORTAL_URL` (`https://polar.sh/awaketab/portal`, sandbox in non-production builds) |
 | `/embed/assets/app.<hash>.js` | The `/embed/cook` iframe app in production. `node scripts/embed-loader.mjs --fingerprint` (right after `astro build`) moves `dist/embed/app.js` to `/embed/assets/app.<first 10 hex of sha256>.js` and rewrites every built page that loaded `"/embed/app.js"`; it fails when no page does. `astro dev` still serves `/embed/app.js`. `/embed.js` (the host loader) is never hashed |
 | `_headers` `/embed/assets/*` | `Cache-Control: public, max-age=31536000, immutable` (detaches the `/*` value). `/embed/cook` and `/embed.js` keep their caches (`max-age=0, must-revalidate` and `max-age=3600`) |
 | SW `at-embed-assets` | `src/sw.ts` serves `/embed/assets/*` cache-first (4 entries, 30 d); other `/embed/*` stays network-first `at-embed`. Nothing under `/embed` is precached |
@@ -613,7 +630,9 @@ Accepted on 2026-09-26 (`LAUNCH-AUDIT.md`). Specs: `08-data-storage.md` §7, `09
 | Preview `noindex` | `PREVIEW_HOST_RULES` in `scripts/headers.mjs`: `_headers` rules `https://:project.pages.dev/*` and `https://:version.:project.pages.dev/*` → `X-Robots-Tag: noindex`, last in the file. `functions/api/_middleware.ts` sets `X-Robots-Tag: noindex` on every `/api/*` response, because Pages does not apply `_headers` to Functions. No root `functions/_middleware.ts`: it would run Functions for every static file |
 | `CONTACT_EMAIL` | `support@awaketab.com` in `src/lib/contact.ts` (with `CONTACT_MAILTO`). Used on `/about#contact`, `/privacy#delete` and `/privacy#contact` |
 | `/privacy` anchors | `#server-data` (events 90 days, ratings 2 years, licence record until `exp` + 1 year), `#delete`, `#ads` (the docs/09 §3.7 text, marked "not yet active"), `#contact`. `#extension` is unchanged |
-| `changelog` content collection | `src/content.config.ts`: `glob('*.md', base: '../../changelog')`, strict front matter `{ title, date, release? }`. `/changelog` renders each fragment with Astro's Markdown pipeline at build time. `sortChangelog()` (`src/lib/changelog.ts`): `date` descending, then fragments with `release` first, then entry id descending |
+| `changelog` content collection | `src/content.config.ts`: `glob('*.md', base: '../../changelog')`, strict front matter `{ title, date, release?, type? }` (`type`: `new` · `fixed` · `changed`, the /changelog filter tag, default `new`; added in B6). `/changelog` renders each fragment with Astro's Markdown pipeline at build time: the `release` fragment as the hero card (`releaseParts()`: lede + `Heading: text` paragraphs), the others as `li[data-changelog-entry][data-date][data-type]` grouped by date (`groupByDate()`). `sortChangelog()` (`src/lib/changelog.ts`): `date` descending, then fragments with `release` first, then entry id descending |
+| Site-page modules (B6) | `src/styles/pages.css` (site pages only; `--at-pg-*` page-scoped sizes and type roles) · `components/pages/Crumbs.astro` · `SegRadio.astro` · `LegalDoc.astro` · `LegalSection.astro` · `src/lib/page-glyphs.ts` (`LOCK_STATES`, `LOCK_GLYPH`) · `kiosk-page.ts` (`bindKiosk`, `readKioskForm`, `urlParts`, `kioskHints`, `kioskTimer`) · `embed-page.ts` (`bindEmbedPage`, `snippetParts`, `readSnippetForm`, `boxLabel`) · `library-code.ts` (`codeTabs`, `highlight`) · `code-tabs.ts` (`bindCodeTabs`). `ToolIsland` takes an optional `kicker` (the 404 page's "Error 404") |
+| Site-page hooks (B6) | `/kiosk`: `[data-kiosk-root]` · `[data-kiosk-form]` · `[data-kiosk-screen]` (`data-mode`, `data-ktheme`, `data-on`, `data-licensed`, `data-logo`) · `[data-kiosk-url]` (spans `data-part` = muted · key · value · hash) · `[data-kiosk-copy]` · `[data-kiosk-status]`. `/library`: `[data-wake-demo]` (`data-demo-state`, `data-scenario`) · `[data-demo-pill]` · `[data-demo-pill-text]` · `[data-demo-current]` · `[data-demo-advice]` · `li[data-state][data-pill]` (`aria-current="step"`, `data-visited`) · `[data-edge="from-to"]` (`data-on`) · `[data-demo-log]` · `[data-lib-tabs]`. `/embed`: `[data-embed-root]` · `[data-embed-demo]` · `[data-embed-box]` · `[data-snippet]` · `[data-snippet-form]` · `[data-snippet-copy]` · `[data-snippet-status]` · `[data-mode-note]`. `/changelog`: `input[name="cl-filter"]` |
 | `INDEXNOW_KEY` | Build variable (Cloudflare Pages, Production) and GitHub Actions secret, 8–128 characters of `[A-Za-z0-9-]`. Set: the build writes `dist/{key}.txt`, served at `/{key}.txt`. Unset: a build warning, no file, no ping |
 | `scripts/indexnow.mjs` | `write-key` (last web build step) and `ping` (`pnpm -F web indexnow [--base <ref>] [--all] [--from live\|dist] [--dry-run]`). URLs come from the sitemaps only and are filtered again by `selectUrls()`. It checks that `/{key}.txt` is live, then sends `POST https://api.indexnow.org/indexnow` in batches of 10,000. Never part of a build |
 | `.github/workflows/indexnow.yml` | Runs on a successful production `deployment_status` reported by Cloudflare Pages, or by hand (`all`). Skipped with a notice when the secret is unset |
@@ -668,9 +687,70 @@ Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`). They were liste
 | `apps/web/scripts/translations.mjs` | `alternatesFor` · `isIndexable` · `contentPath` · `publicSlug` · `ogImagePath` · `readContentIndex` · `frontmatterScalars` (hreflang and sitemap alternates share `alternatesFor`) |
 | `apps/web/src/lib/content-i18n.ts` | Content-collection helpers for translated pages: `splitEntryId` · `contentIndex` · `pagePath` · `pageSlug` · `pageOgImage` · `pageIndexable` · `pageAlternates` · `pageTranslations` |
 | `RTL_LANGUAGES` · `textDirection()` · `TTextDirection` | `src/i18n/locales.ts`: `ar` `fa` `he` `ur`; `textDirection(htmlLang)` → `ltr` \| `rtl` sets `<html dir>` in `BaseLayout.astro` |
-| `localeLinks` · `ogImageAlt` | Props: `localeLinks` on `BaseLayout` / `ContentLayout` / `ArticlePage` (per-locale URLs for `LocaleNav`), `ogImageAlt` on `BaseLayout` / `ContentLayout` / `ArticlePage` / `SeoHead` |
+| `localeLinks` · `ogImageAlt` | Props: `localeLinks` on `BaseLayout` / `ContentLayout` / `ArticlePage` (per-locale URLs for the footer language switcher, `LocaleNav` until B2, `LangSwitch` since), `ogImageAlt` on `BaseLayout` / `ContentLayout` / `ArticlePage` / `SeoHead` |
 | `.at-flip-rtl` | `tokens.css`: mirrors a direction-implying icon under `[dir="rtl"]` |
 | i18n keys | `content.breadcrumb` · `content.translation.pending` · `content.translation.original` |
+
+### 13.18 Clear Night foundation (redesign B1)
+
+Accepted on 2026-09-27 with milestone B1 (`docs/redesign/BUILD-PLAN.md`). Values: `DESIGN.md` §2 (colour) and §12 (token system); the full token tables are in `05-frontend-spec.md` §1.1–§1.3. Existing `--at-*` names and their shadcn aliases stay; everything below is an addition, except the three value changes noted.
+
+| Identifier | Decision |
+|---|---|
+| Colour tokens (new) | `--at-line-strong` · `--at-ink-2` · `--at-track` · `--at-tick` · `--at-raised` · `--at-sunken` · `--at-input-border` (per theme); `--at-horizon-ink` · `--at-night-ink` · `--at-night-ink-2` · `--at-night-muted` · `--at-night-line` · `--at-scrim` (theme-independent) |
+| Spacing | Primitives `--at-s-N` = N × 4 px for N in 1 2 3 4 5 6 8 10 12 16 20 24 30. Semantic: `--at-gutter` (16 / 32 / 80 / 120) · `--at-section` (48 / 64 / 96 / 96) · `--at-card-pad` (20 / 24) · `--at-edge-min` 16 · `--at-dock-bottom` 20 · `--at-gap-tight` 8 · `--at-gap-item` 12 · `--at-gap-group` 20 · `--at-gap-group-lg` 24 · `--at-content-max` 1200px · `--at-measure` 68ch |
+| Radius | `--at-r-xs` 4 · `--at-r-sm` **8** (was 6) · `--at-r-md` **12** (was 10) · `--at-r-lg` 16 · `--at-r-xl` 20 · `--at-r-2xl` 28 · `--at-r-pill` 999 |
+| Type roles | `--at-type-kicker` · `-caption` · `-small` · `-ui` · `-action` · `-body` · `-lead` · `-h3` · `-h2` · `-h1` · `-price`: one `font` shorthand each, in rem; `h2`, `h1` and `price` take the larger step from 600 px. `--at-t-xl` **20px** (was 22) |
+| Controls and icons | `--at-h-control` 44 · `--at-h-input` 48 · `--at-h-button` 52 · `--at-h-primary` 60 (52 at height ≤ 568) · `--at-h-cook` 64 · `--at-h-header` 60 / 68 from 600 · `--at-h-row` 56 · `--at-icon-sm` 16 · `--at-icon-md` 20 · `--at-icon-lg` 24 · `--at-border` 1px |
+| Fonts (D-R26) | `--at-font` (Geist → "Geist Fallback" → system stack) · `--at-font-mono` (Geist Mono) · `--at-font-display` (Space Grotesk 600 digits, Bold face only). Files in `apps/web/public/fonts/`: `geist-latin-wght-normal.woff2` (preloaded), `geist-mono-latin-wght-normal.woff2`, `space-grotesk-digits-600.woff2`, plus `OFL-Geist.txt` and `OFL-SpaceGrotesk.txt` (SIL OFL 1.1). Same origin only; fonts do not count toward the JS/CSS budgets (§11), CLS stays 0 |
+| Breakpoints | `tokens.css` changes semantic tokens on `:root` at `(width >= 600px)`, `(width >= 1024px)`, `(width >= 1600px)` only (plus `(height <= 568px)` for `--at-h-primary`) |
+| Stylelint radius guard | `stylelint.config.mjs`: `declaration-property-value-allowed-list` lets `border-*radius` take only `0`, `50%`, `var(--at-r-*)` or `calc()` over them; `tokens.css` is exempt |
+| `apps/web/test/e2e/responsive.spec.ts` | Responsive sweep (`DESIGN.md` §5 Gate): `/`, `/30m`, `/until/07-30`, `/for/cooking`, `/pro`, `/embed`, `/extension`, `/about` at every 40 px from 320 to 2560 (Chromium); fails on horizontal page scroll. Known overflow runs as `test.fixme` and is listed in `docs/redesign/B1-token-debt.md` |
+
+### 13.19 Clear Night shared shell (redesign B2)
+
+Accepted on 2026-09-27 with milestone B2 (`docs/redesign/BUILD-PLAN.md`). Specs: `05-frontend-spec.md` §3.2, §3.25–§3.30; values: `DESIGN.md` §6, §11, §12 and `design/canvas/PRIMITIVES.md`. All additions; no contract (lock states and pill copy, storage keys, routes, ad rules, budgets, `--at-*` names) changes.
+
+| Identifier | Decision |
+|---|---|
+| Components (`apps/web/src/components/shell/`) | `SiteHeader.astro` (props `locale`, `tool`) · `ThemeSwitch.astro` (`locale`, `compact`) · `SiteFooter.astro` (`locale`, `links`) · `LangSwitch.astro` (`locale`, `links`; replaces `components/LocaleNav.astro`, deleted) · `StatusPill.astro` (`state`, `size` L/M/S/XS, `as` output/button/span, `label`) · `Button.astro` (`variant` primary/stop/secondary/quiet, `size` sm/md/lg/cook, `href`, `kbd`, `glyph`) · `LogoGlyph.astro` |
+| Stylesheet | `apps/web/src/styles/shell.css`, imported by `BaseLayout` after `tool.css`; `@layer components` (plus the page ground in `@layer base`) |
+| Layout props | `BaseLayout` `header` (default `true`; `false` on tool pages, whose `ToolIsland` renders `SiteHeader` inside `#awaketab-tool` and wraps its `<main>` in `.at-shell`); `BaseLayout` `footer` prop removed (the footer reads `createT(locale)`); `ContentLayout` named slot `header` removed |
+| Classes | Header `.at-site-header` · `.at-logo` (+ `.at-wordmark`) · `.at-logo-mark` · `.at-logo-ring` · `.at-logo-halo` · `.at-logo-bead` · `.at-nav` · `.at-nav-link` · `.at-header-end` · `.at-icon-button` · `.at-phone-hide` · `.at-phone-only`. Theme `.at-seg` · `.at-seg-ind` · `.at-seg-item` · `.at-theme` · `.at-theme-item` · `.at-theme-cycle`. Footer `.at-site-footer` · `.at-footer-line` · `.at-footer-nav` · `.at-lang` · `.at-lang-btn` · `.at-lang-chev` · `.at-lang-scrim` · `.at-lang-panel` · `.at-lang-handle` · `.at-lang-head` · `.at-lang-title` · `.at-lang-close` · `.at-lang-list` · `.at-lang-row` · `.at-lang-mark` · `.at-lang-ring` · `.at-lang-dot` · `.at-lang-name` · `.at-lang-note`. Primitives `.at-pill` (+ `.at-pill-s` · `.at-pill-xs` · `.at-pill-l` · `.at-pill-glyph` · `.at-g-dot` · `.at-g-pause` · `.at-g-tri` · `.at-g-ring` · `.at-pill-extra`) · `.at-button` (+ `-primary` · `-stop` · `-quiet` · `-sm` · `-lg` · `-cook` · `.at-button-glyph`) · `.at-chip` (+ `.at-chip-choose`) · `.at-tag` (+ `.at-tag-tone`) · `.at-kbd` · `.at-kbd-hint` · `.at-card` · `.at-panel` · `.at-row` · `.at-input` (restyled) · `dialog.at-sheet` · `.at-scrim`. Tool: `.at-tool-more`, `.at-tool-embed-bar`. Removed: `.at-header`, `.at-page-header`, `.at-header-actions`, `.at-footer`, `.at-locales`, `.at-icon-btn` |
+| Custom properties set by CSS | `--at-bead` (logo bead tone) · `--at-tone` (pill, tag) · `--at-seg-n` · `--at-seg-i` · `--at-seg-dir` (segmented bar); container name `at-header` |
+| Tokens (`tokens.css`) | Per theme `--at-lift` · `--at-ground-end` · `--at-elev`; `--at-h-tag` 24 · `--at-h-pill-l` 48 · `--at-h-pill-m` 38 · `--at-h-pill-s` 32 · `--at-h-pill-xs` 26 · `--at-icon-xs` 12 · `--at-d-slide` 600ms · `--at-d-rise` 700ms · `--at-ease` `cubic-bezier(.22,1,.36,1)` · `--at-shadow-float` · `--at-sheet-inline` 26rem · `--at-panel-inline` 360px. Alias change: `--input` → `var(--at-input-border)` (was `--at-line`; O-56) |
+| Attributes and events | `<html data-theme-pref="auto|light|dark|oled">` (the stored preference; set by `boot.js` and `applyTheme()`) · radio group name `at-theme` · `[data-theme-cycle]` · `[data-lang]` · `[data-lang-panel]` · `[data-lang-close]` · ids `at-lang-btn`, `at-lang-list`, `at-lang-h` · `document` event `at-theme` (`CustomEvent<TTheme>`, boot script → island) · `<html data-hints="off">` hides button keycaps (wired in B3) |
+| i18n keys | `header.home` · `header.nav` · `header.nav.for` · `header.nav.on` · `header.nav.extension` · `header.nav.pro` · `header.theme.auto` · `header.theme.autoTitle` · `header.theme.change` · `footer.honest` · `footer.about` · `footer.nav` · `footer.language` · `footer.language.current` · `footer.language.review` · `footer.language.close` (all eight locales) |
+| Stylelint | `stylelint.config.mjs` override for `**/styles/shell.css`: padding, margin, gap, `font`, `font-size`, `line-height` and block/inline sizes take tokens only (DESIGN.md §12.8), besides the radius guard |
+| Tests | `apps/web/test/e2e/shell.spec.ts` (header, footer, theme switch, language switcher keyboard and axe, pill and bead, Stop); `responsive.spec.ts` also fails on header or footer controls under 44 × 44 or within 16 px of a side edge |
+
+### 13.20 Content routes and the draft gate (redesign B11, OD-3)
+
+Accepted on 2026-09-27 with milestone B11 (`docs/redesign/BUILD-PLAN.md`), applying owner decisions OD-3, OD-2 / O-45 and O-23 (`docs/redesign/DECISIONS.md`, `docs/research/marketing-seo-content.md` §5.3). Spec: `06-content-seo-spec.md` §20.
+
+| Identifier | Decision |
+|---|---|
+| `/for` hub | 14 scenarios. Cut: `navigation`, `live-streams`, `exams-proctoring`, `baby-monitor` (never indexed; no redirect, 404). New: `/for/classroom` (English only; translated slugs reserved in `slugs.json`: `aula`, `sala-de-aula`, `klassenzimmer`, `salle-de-classe`) |
+| 301 merges | `/for/second-monitor` → `/guides/second-monitor-turns-off` · `/on/windows-10` → `/on/windows-11` (retitled "Windows 11 and 10") · `/guides/modern-standby` → `/guides/lock-screen-vs-sleep` · `/learn/nosleep-js-vs-wake-lock` → `/vs/nosleep-js`. Source: `CONTENT_REDIRECTS` in `apps/web/scripts/headers.mjs` (written to `public/_redirects` by the build). No locale redirects: none of these pages had a translation |
+| Content counts | 44 English pages: 14 `/for`, 11 `/on`, 7 `/vs`, 7 `/guides`, 5 `/learn` |
+| Draft gate | The existing frontmatter field `noindex: true` marks a draft: live, `noindex, follow`, no hreflang, out of the sitemaps and IndexNow. 25 rewritten English pages are indexable; the other 19 are drafts until rewritten (list: `06-content-seo-spec.md` §20). No new schema field |
+| `test/lib/content.test.ts` | Source-level guard: the route set above, slug map, redirect targets, the launch set, and the fact-check claims (battery saver refusing the lock, unrecorded testing, em dashes in English prose) never coming back |
+
+### 13.21 Clear Night content pages (redesign B5)
+
+Accepted on 2026-09-27 with milestone B5 (`docs/redesign/BUILD-PLAN.md`). Specs: `05-frontend-spec.md` §3.31, §4.2; `06-content-seo-spec.md` §21; canvas `ContentArticle`, `GuideOn`, `GuideVs`, `GuideGuides`, `GuideLearn`, `HubFor` (`hub` prop), `HomeBelow`. Routes, slugs, storage keys, lock states, budgets and the ad placement rules do not change; the badge copy follows decision O-46.
+
+| Identifier | Decision |
+|---|---|
+| Components | `ArticlePage.astro` (props unchanged; `after` slot kept) · `HubPage.astro` (prop `kind`) · `HomeBelow.astro` (new; the home page below the tool, rendered inside `ToolIsland`'s slot by `pages/index.astro`) · `DeviceMatrix.astro` (restyled) · `AdSlot.astro` (adds the visible "Advertisement" label; `data-ad-slot` / `data-size` / `data-size-sm` unchanged). `SupportMatrix.tsx` deleted (the home support table is plain markup in `HomeBelow.astro`) |
+| `ContentLayout.astro` | Owns the article grid and the ad slots. New props `toolAt` (`top` for `/for`, `/on`, `/vs`; `after` for `/guides`, `/learn`) and `variant` (`article` for `/for`, `guide` otherwise). Named slots `toc` · `head` · `tool` · default (Markdown) · `notes` (honest limit and FAQ, always inside `.at-prose`) · `tail` · `after` (page data outside the word band) |
+| Modules | `src/lib/hubs.ts` (`HUBS` intro copy and groups per hub, `EXTRA`, `PRESET_LABEL`, `MODE_LABEL`) · `src/lib/content-nav.ts` (`initContentNav()`: "On this page" and hub jump-bar scroll spy, "Back to the tool" pill mirror) |
+| Stylesheet | `src/styles/content.css` in its own cascade layer `content`, declared after `utilities` (`@layer properties, theme, base, components, utilities, content`), scoped under `.at-cp`; the stylelint token override now covers `content.css` as well as `shell.css`. Local roles: `--at-type-row` (500 16/24), `--at-type-count` (300 24/32), `--at-type-count-l` (300 28/36), `--at-type-code` (mono 14/22); geometry `--at-col-toc` 200 · `--at-col-main` 680 · `--at-col-rail` 160 · `--at-col-intro` 360 · `--at-col-list` 664; `--at-gap-article` (48 / 64, guides and learn 96 on desktop); ad boxes `--at-ad-w` / `--at-ad-h` (300 × 250 → 336 × 280 from 600) and `--at-rail-w` / `--at-rail-h` (320 × 50 → 160 × 600 from 1024) |
+| Classes | Page `.at-cp` · `.at-art` (`data-tool-at`, `data-variant`) · `.at-head` · `.at-body` · `.at-tail` · `.at-md` · `.at-crumbs` · `.at-crumb-sep` · `.at-h1-page` · `.at-lead` · `.at-kicker` · `.at-meta` (+ `-verified` · `-stale` · `-pending` · `-by`) · `.at-toc` (+ `-list` · `-dot` · `-card` · `-digits` · `-back`) · `.at-pill-bare` · `.at-tool-card` · `.at-tool-area` · `.at-limit-note` · `.at-note` · `.at-related-sec` · `.at-rows` · `.at-link-row` · `.at-go` · `.at-start` · `.at-related-links` · `.at-start-pill` · `.at-faq-sec` · `.at-faq` · `.at-faq-icon` · `.at-author` (+ `-name` · `-role`) · `.at-avatar` · `.at-ad` (+ `-inline` · `-rail` · `-label` · `-box`). Hub `.at-hub` (+ `-intro` · `-note` · `-groups` · `-group` · `-group-head` · `-count` · `-list` · `-item` · `-title` · `-line` · `-meta`) · `.at-try` (+ `-top` · `-digits` · `-cta` · `-note` · `-link`) · `.at-jump` · `.at-jump-ind`. Device matrix `.at-dm` (+ `-verified` · `-scroll`). Home `.at-hb*` (component-scoped). The `.at-article` name stays tool.css's prose class for trust pages |
+| Attributes and custom properties | `[data-spy]` (nav whose `#` links follow the section in view, `aria-current="location"`) · `[data-tool-mirror]` · `[data-mirror-pill]` · `[data-mirror-text]` · `[data-mirror-digits]` · `--at-n` / `--at-i` (jump bar count and index) · `--at-aura` (tool card glow while the lock is held) · Shiki `--astro-code-*` (code colours mapped to Clear Night tokens) |
+| Markdown code blocks | `astro.config.mjs` `markdown.shikiConfig.theme: 'css-variables'`; colours come from `content.css`, so both themes keep AA contrast on the sunken well |
+| i18n keys | New in all 8 locales: `content.toc` · `content.backToTool` · `content.limit` · `content.ad` · `content.byline` · `content.try.title` · `content.try.body` · `content.skip.title` · `content.skip.body`. Changed (O-46): `content.verified` → "Sources checked {date}" (all locales), `content.stale` (en). English copy: `page.hub.{on,vs,guides,learn}.h1` and `page.hub.{on,guides,learn}.description` follow the canvas and the fact-check; `content.author.role` "Builds AwakeTab." |
+| Responsive sweep | `responsive.spec.ts` also sweeps `/for` and `/guides/iphone-auto-lock-never-greyed-out` |
 
 ## 14. Writing conventions for these docs
 

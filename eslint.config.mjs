@@ -16,6 +16,8 @@ export default tseslint.config(
       'apps/web/public/**',
       // Agent/editor git worktrees are full repo copies; lint the checkout, not its clones.
       '.claude/**',
+      // Design-canvas prototypes and their render/audit scripts (docs/redesign); not shipped code.
+      'design/**',
     ],
   },
   eslint.configs.recommended,

@@ -8,6 +8,7 @@ import {
   APP_URL,
   buildApp,
   buildLoader,
+  creditTexts,
   fingerprintApp,
   frameTitles,
   HASHED_APP_RE,
@@ -34,13 +35,17 @@ describe('public/embed.js', () => {
     const code = await readFile(LOADER_OUT, 'utf8');
     expect(code).not.toMatch(/\bimport\s*\(|\bimport\s*["'{]|\bexport\b/u);
     const titles = await frameTitles();
+    const credits = await creditTexts();
     expect(Object.keys(titles)).toHaveLength(8);
-    // esbuild writes ASCII-only output, so compare the escaped form of every title.
+    expect(Object.keys(credits)).toHaveLength(8);
+    // esbuild writes ASCII-only output, so compare the escaped form of every title and credit text.
     const ascii = (s: string) => s.replace(/[^\x20-\x7e]/gu, (ch) => `\\u${(ch.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, '0')}`);
-    for (const title of Object.values(titles)) {
-      const escaped = ascii(title);
-      expect(code.includes(escaped) || code.includes(escaped.replace(/\\u00([0-9A-F]{2})/gu, '\\x$1')), title).toBe(true);
+    for (const text of [...Object.values(titles), ...Object.values(credits)]) {
+      const escaped = ascii(text);
+      expect(code.includes(escaped) || code.includes(escaped.replace(/\\u00([0-9A-F]{2})/gu, '\\x$1')), text).toBe(true);
     }
+    expect(code).toContain('awaketab-credit');
+    expect(code).toContain('nofollow');
     expect(code).toContain('screen-wake-lock');
     expect(code).toContain('AwakeTabEmbed');
   });

@@ -9,8 +9,8 @@
   "orientation": "any",
   "lang": "en",
   "dir": "ltr",
-  "background_color": "#FAF7F2",
-  "theme_color": "#FAF7F2",
+  "background_color": "#F2F6FA",
+  "theme_color": "#F2F6FA",
   "categories": ["utilities", "productivity"],
   "icons": [
     { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },

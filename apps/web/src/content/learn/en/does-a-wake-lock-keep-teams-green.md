@@ -1,65 +1,92 @@
 ---
-title: "Does a wake lock keep Teams green? — AwakeTab"
-description: "Microsoft Teams and Slack mark Available from input idle, not from a lit display. A wake lock does not synthesise keys. In our tests the status still went"
-h1: "Does a wake lock keep Teams green?"
+title: "Does keeping the screen on keep Teams green? — AwakeTab"
+description: "No. Teams shows Away after about 5 minutes without keyboard or mouse input, and Slack after 10, even with the screen on. Here is what sets your status."
+h1: "Does keeping your screen on keep Teams green? No. Here's why"
 intent: "does wake lock keep teams status green"
+secondaryQueries:
+  - "keep teams status green"
+  - "teams goes away after 5 minutes"
+  - "slack away after 10 minutes"
+  - "does keeping screen on keep teams active"
+  - "why does teams show me away"
 preset: p30
 mode: standard
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: []
-os: []
+os: ["windows", "macos"]
 faq:
-  - q: "Does does a wake lock keep Teams green? work in a hidden tab?"
-    a: "No. The does-a-wake-lock-keep-teams-green flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "No. Presence follows input idle in our tests; AwakeTab will not change your status."
+  - q: "Why did Teams show me Offline instead of Away?"
+    a: "Teams shows Offline when your computer goes to sleep, or when you're signed out of Teams everywhere. Away is the inactivity state. Keeping the screen on stops the computer idle-sleeping, so you would see Away rather than Offline after you step away."
+  - q: "Can I make Teams wait longer than 5 minutes before showing Away?"
+    a: "Microsoft's presence documentation (checked 26 September 2026) describes no user setting for the inactivity timer. The supported route is to set a status yourself, with a duration, and a status message that says where you are."
+  - q: "Does AwakeTab connect to Teams or Slack?"
+    a: "No. It has no connection to any chat app and sends no keyboard or mouse input. Your colleagues see whatever status Teams or Slack works out from your real activity, your calendar and anything you set by hand."
+  - q: "Does the Teams mobile app follow the same rules?"
+    a: "Not quite. Microsoft says a phone shows you Away whenever the Teams app is in the background, and Offline after 24 hours of inactivity. Keeping a browser tab awake on the same phone puts Teams in the background, so it can't help there either."
+honestLimit: "A lit screen is not activity. Whatever AwakeTab does for your display, Teams and Slack keep counting the minutes since your last key press or mouse movement, and your status follows that count."
 related:
-  - "/for/ai-agents"
-  - "/for/navigation"
-  - "/for/exams-proctoring"
+  - "/for/work-laptop"
+  - "/vs/mouse-jigglers"
+  - "/for/presentations"
+  - "/guides/lock-screen-vs-sleep"
+  - "/for/video-calls"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+No. Microsoft Teams sets you to Away after about five minutes without keyboard or mouse activity, and Slack after about ten, whether or not the screen is on. A wake lock only stops the display sleeping. It sends no input, so your status changes as it normally would. AwakeTab never fakes input.
 
-Microsoft Teams and Slack mark Available from input idle, not from a lit display. A wake lock does not synthesise keys. In our tests the status still went away without keyboard or mouse activity. AwakeTab will not claim otherwise.
+## How Teams decides you're Away
 
-## How the lock works on this page
+[Microsoft's admin documentation](https://learn.microsoft.com/en-us/microsoftteams/presence-admins) says that on a computer, your presence "becomes Away automatically if they're inactive for a few minutes or if the computer is locked; and it becomes Offline when the computer enters sleep mode". Its [troubleshooting article](https://learn.microsoft.com/en-us/troubleshoot/microsoftteams/teams-im-presence/presence-not-show-actual-status) puts the figure at more than five minutes of inactivity (Microsoft Learn, both checked 26 September 2026).
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for does-a-wake-lock-keep-teams-green.
+Three things feed that status. Activity: whether you have typed or moved the mouse recently. The Teams app: whether you are in a call or presenting. Your Outlook calendar: whether a meeting is booked. On a phone the rule is different again: Teams shows Away as soon as the app goes into the background.
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+## How Slack decides
 
-## Practical setup for Does a wake lock keep Teams green?
+[Slack Help](https://slack.com/help/articles/201864558) says you're set to away "after ten minutes of desktop inactivity or if you navigate away or close the app on your mobile device" (Slack Help, article 201864558, checked 26 September 2026). You can set yourself as away or active from your profile picture, and a status can clear itself after a time you choose.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+Other chat and meeting tools, Zoom and Google Chat among them, also work out presence from activity and meetings. Their help pages give their own rules; check them rather than assuming the Teams numbers apply.
 
-## Operating-system notes
+## Screen on is not the same as input
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+Your computer runs two separate clocks. One is the operating system's display timeout, which dims and then turns off the screen. The other is each chat app's own inactivity timer. A wake lock pauses the first and never touches the second.
 
-## What success looks like
+| What happens | Screen | Teams shows |
+|---|---|---|
+| You are typing or using the mouse | On | Available |
+| You stop for 5 minutes, AwakeTab tab visible | On | Away |
+| You lock the computer | Off after a while | Away |
+| The computer goes to sleep | Off | Offline |
+| You step away for an hour, AwakeTab holding | On, no idle sleep | Away |
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+The last row is the one thing a wake lock does change. While a browser keeps the display on, neither Windows nor macOS idle-sleeps, so you stay Away rather than dropping to Offline. That can matter if your team reads Offline as "not working today". It still isn't Available.
 
-## Related paths
+## When you're working and Teams disagrees
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no learn claim here that is missing from the matrix.
+- **You're reading, not typing.** A long document or a dashboard you only watch is exactly what the inactivity timer can't see. Nothing is wrong; the status can't tell reading from absence.
+- **You're signed in on two devices.** Microsoft says the device where you were active most recently decides your presence. Pick up your phone, put it down with Teams in the background, and that can be the device reporting you.
+- **You locked the computer.** Microsoft lists a locked computer as a reason for Away, whatever the screen does next.
 
-## A short checklist before you walk away
+## What actually keeps your status right
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For does-a-wake-lock-keep-teams-green, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+1. **Set your status yourself.** In Teams, choose Busy, Do not disturb or Be right back from your profile picture and give it a duration. Without one, Microsoft says a manual Busy or Do not disturb lasts a day and most others seven days. Its documentation also says you can only pick a status less available than the automatic one, so you can't pin Available over Away.
+2. **Write a status message.** "Reading the Q3 pack, back on chat at 2:30 PM" answers the question a grey or yellow dot raises.
+3. **Use your calendar.** A booked block shows as In a meeting in Teams, and focus time can show as Focusing. It tells people when you'll reply without anyone guessing.
+4. **In Slack, set a status with an end.** Pick "Clear after" so it doesn't linger after you're back.
+5. **Talk to your manager.** If long reading or thinking stretches keep making you look absent, agree how your team signals that. It is the only fix that works for everyone.
 
-## Why the pill is the product
+## Why AwakeTab refuses to fake input
 
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On does-a-wake-lock-keep-teams-green, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
+The loudest request in this category is "keep me green". Faking it would mean moving the pointer or sending key presses, which makes your status say something that isn't true, to people who rely on it. AwakeTab keeps the screen on so you can read, watch or present, and it says plainly when it can't. If the browser takes the lock back because you switched tabs, the pill reads "Paused — tab hidden" rather than pretending.
 
-## Battery, heat and overnight use
+## Mouse jigglers and policy risk
 
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Does a wake lock keep Teams green? to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+Mouse jigglers exist to change presence, and some employers treat that as misconduct. In June 2024, Bloomberg reported that more than a dozen Wells Fargo staff had been let go over simulated keyboard activity. [AwakeTab vs mouse jigglers](/vs/mouse-jigglers) sets out what each one does and when either makes sense, without tips for looking busy.
+
+## Where AwakeTab does help at work
+
+It keeps a report, a dashboard or your slides on screen while you read or talk, without changing settings or needing admin rights. Your IT team's sign-in and lock rules still apply. The guide to [keeping a work laptop display awake](/for/work-laptop) walks through the setup, and what to do when your organisation's lock rule is shorter than your reading.

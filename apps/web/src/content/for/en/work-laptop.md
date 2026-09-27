@@ -1,65 +1,79 @@
 ---
 title: "Keep a work laptop display awake — AwakeTab"
-description: "Managed laptops mix display timeout, lock policy, and smart cards. AwakeTab can only contest the display timeout while the tab is visible. Lid close, card"
+description: "No install, no admin rights: AwakeTab keeps a work laptop display on while its tab is visible. A lock policy, closing the lid and Teams Away still apply."
 h1: "Keep a work laptop display awake"
-intent: "keep work laptop from locking"
+intent: "keep work laptop screen on without admin rights"
+secondaryQueries:
+  - "keep laptop screen on without changing settings"
+  - "keep computer awake without software"
+  - "work laptop screen turns off too quickly"
+  - "screen timeout greyed out work computer"
 preset: p30
 mode: standard
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+lastVerified: 2026-09-26
+browsers: ["edge", "chrome", "firefox", "safari"]
+os: ["windows", "macos"]
 faq:
-  - q: "Does keep a work laptop display awake work in a hidden tab?"
-    a: "No. The work-laptop flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "Cannot override lid-close sleep, smart-card removal or a lock policy that is not the display timeout; will not show you as active in Teams."
+  - q: "Do I need admin rights or an install?"
+    a: "No. AwakeTab is a web page. It uses a feature built into Edge, Chrome, Firefox and Safari, and it changes no system setting. Close the tab and your laptop behaves exactly as it did before."
+  - q: "My laptop still locks after 15 minutes. Why?"
+    a: "Your organisation probably sets a lock after a period of inactivity, separate from the display timeout. AwakeTab keeps the display on but leaves that lock alone, so it still happens on schedule. If the time is too short for your work, ask IT whether it can change."
+  - q: "What happens when I close the lid to walk to a meeting?"
+    a: "The laptop sleeps as usual. When you open it and sign in, AwakeTab asks for the wake lock again as long as its tab is visible."
+  - q: "The pill says “Blocked — here's the fix”. What now?"
+    a: "The browser refused. On a managed laptop that often means an administrator has switched wake locks off for the browser. The pill explains the cause it can see. Nothing on the page can or should change an administrator’s choice; ask IT if you need the screen on longer."
+honestLimit: "AwakeTab holds off only the display timeout, and only while its tab is visible. A separate lock policy, removing a smart card or closing the lid still locks or sleeps the laptop, and Teams still shows Away."
 related:
-  - "/on/chromebook"
-  - "/vs/caffeine"
+  - "/guides/lock-screen-vs-sleep"
+  - "/learn/does-a-wake-lock-keep-teams-green"
+  - "/vs/mouse-jigglers"
+  - "/extension"
+  - "/on/windows-11"
   - "/guides/windows-11-screen-turns-off-after-1-minute"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+AwakeTab keeps a work laptop's display on from a browser tab, with nothing to install and no admin rights. It works while the tab is visible, and it holds off the display timeout only. It does not stop a separate lock policy, removing a smart card, or closing the lid from locking or sleeping the laptop, and it won't keep Teams from showing you as Away.
 
-Managed laptops mix display timeout, lock policy, and smart cards. AwakeTab can only contest the display timeout while the tab is visible. Lid close, card removal, and Teams presence are out of scope.
+## What it does on a managed laptop
 
-## How the lock works on this page
+The tab uses the Screen Wake Lock API, a standard browser feature, to ask the laptop to keep the display on, the same request a video player makes during a film. On Windows, Edge and Chrome pass that request to Windows, and while the display is on, Windows doesn't idle-sleep. A Mac behaves the same way in Chrome.
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for work-laptop.
+The tab has to stay visible, but not in front. A window snapped beside your report, or AwakeTab on a second monitor, is enough. Minimise it and the pill changes to "Paused — tab hidden".
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+## What it can't do
 
-## Practical setup for Keep a work laptop display awake
+- **A lock policy that isn't the display timeout.** Many organisations lock the screen after a set time without input. That timer still runs. To find out which kind your laptop has, see [Lock screen versus display sleep](/guides/lock-screen-vs-sleep).
+- **Smart-card removal.** Pull the card and the policy locks the laptop, as it should.
+- **Closing the lid.** The laptop sleeps.
+- **Your chat status.** Teams shows Away after about 5 minutes without keyboard or mouse input, and Slack after about 10, whether or not the screen is lit. [Does a wake lock keep Teams green?](/learn/does-a-wake-lock-keep-teams-green) has the detail from Microsoft's and Slack's own documentation.
+- **The minute after locking.** A locked Windows PC turns its monitor off after about 60 seconds, by design. A tab can't reach the lock screen. See [Windows 11 screen turns off after 1 minute](/guides/windows-11-screen-turns-off-after-1-minute).
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+## Set it up in Edge or Chrome
 
-## Operating-system notes
+1. Open AwakeTab in Edge, which comes with Windows, or Chrome.
+2. Pick 30 min, or tap "Until…" and choose when your day ends, such as 5:30 PM.
+3. Tap Start. You'll see "Starting…" briefly, then "Screen awake" once Edge or Chrome agrees.
+4. Snap the window to one side (Windows key + Left arrow) or drag it to your second monitor, and carry on working.
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+On a work phone, a management profile may cap Auto-Lock, and only its administrator can change that. Whether a Safari tab keeps the screen on past that cap is not yet device-tested; the result will go on our how-we-tested page when it is recorded.
 
-## What success looks like
+## Could this get me in trouble at work?
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+AwakeTab doesn't fake activity, doesn't change your status, and leaves sign-in and lock policies exactly as they are. It keeps the display on, the same way a video player does. If your employer has rules about screen locking, follow them.
 
-## Related paths
+## Is this allowed on my work laptop?
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no for claim here that is missing from the matrix.
+It uses a standard browser feature and installs nothing. It doesn't touch sign-in or lock policies. If your company has rules about screen locking, follow them.
 
-## A short checklist before you walk away
+A mouse jiggler is different: it sends fake input. [Mouse jigglers vs a wake-lock tab](/vs/mouse-jigglers) compares the two.
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For work-laptop, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+## For IT admins
 
-## Why the pill is the product
+AwakeTab uses the browser's Screen Wake Lock. An administrator can switch off the browser's wake-lock permission by policy. When that happens, the page can't keep the screen on, and the pill says "Blocked — here's the fix" rather than pretending. The page sets no cookies and needs no account.
 
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On work-laptop, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Keep a work laptop display awake to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+The optional extension, [AwakeTab for Chrome](/extension), asks for the power, storage and alarms permissions, plus notifications only if the user turns them on. It has no access to sites unless a user adds one for auto-start. Your usual extension allow and block lists apply to it like any other.

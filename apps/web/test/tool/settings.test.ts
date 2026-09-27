@@ -25,7 +25,7 @@ afterAll(() => {
   if (radioValue) Object.defineProperty(RadioNodeList.prototype, 'value', radioValue);
 });
 
-const ACCENTS = ['#B86E00', '#4F46E5', '#0F766E', '#BE123C'];
+const ACCENTS = ['#087B87', '#5A47CF', '#167A50', '#255FBD'];
 const MODES = ['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook'];
 
 // Mirrors the settings form in src/components/ToolPanel.astro (names, types, defaults and checked states).
@@ -39,7 +39,7 @@ const SETTINGS_HTML = `
         <label><input type="radio" name="theme" value="oled" /> OLED</label>
       </fieldset>
       <fieldset class="at-accents">
-        ${ACCENTS.map((hex) => `<label><input type="radio" name="accent" value="${hex}" ${hex === '#B86E00' ? 'checked' : ''} /></label>`).join('')}
+        ${ACCENTS.map((hex) => `<label><input type="radio" name="accent" value="${hex}" ${hex === '#087B87' ? 'checked' : ''} /></label>`).join('')}
         <p data-pack-gate></p>
       </fieldset>
       <select name="defaultPreset">
@@ -82,7 +82,7 @@ const input = (f: HTMLFormElement, name: string) => f.elements.namedItem(name) a
 const STORED: ISettings = {
   ...DEFAULT_SETTINGS,
   theme: 'oled',
-  accent: '#4F46E5',
+  accent: '#5A47CF',
   defaultPreset: 'p60',
   sound: { id: 'none', volume: 0.3 },
   notifications: true,
@@ -131,13 +131,28 @@ describe('fillSettings → readSettings', () => {
 describe('readSettings gates', () => {
   it('refuses a pack accent without ambient.packs', () => {
     const f = form();
-    const cur = { ...STORED, accent: '#B86E00' };
-    fillSettings(f, { ...cur, accent: '#0F766E' });
-    expect(readSettings(f, cur, NONE).accent).toBe('#B86E00');
-    expect(readSettings(f, cur, { packs: true, message: false }).accent).toBe('#0F766E');
-    // A free palette is always accepted.
-    fillSettings(f, { ...cur, accent: '#4F46E5' });
-    expect(readSettings(f, cur, NONE).accent).toBe('#4F46E5');
+    const cur = { ...STORED, accent: '#087B87' };
+    fillSettings(f, { ...cur, accent: '#167A50' });
+    expect(readSettings(f, cur, NONE).accent).toBe('#087B87');
+    expect(readSettings(f, cur, { packs: true, message: false }).accent).toBe('#167A50');
+    // A free lamp is always accepted.
+    fillSettings(f, { ...cur, accent: '#5A47CF' });
+    expect(readSettings(f, cur, NONE).accent).toBe('#5A47CF');
+  });
+
+  it('migrates a legacy palette hex to its lamp when the form is filled (docs/08 §2.1)', () => {
+    const f = form();
+    for (const [legacy, lamp] of [
+      ['#B86E00', '#087B87'],
+      ['#4f46e5', '#5A47CF'],
+      ['#0F766E', '#167A50'],
+      ['#BE123C', '#255FBD'],
+      ['#123456', '#087B87'],
+    ] as const) {
+      const cur = { ...STORED, accent: legacy };
+      fillSettings(f, cur);
+      expect(readSettings(f, cur, ALL).accent, legacy).toBe(lamp);
+    }
   });
 
   it('ignores the ambient message without ambient.message and sanitises it with it', () => {
@@ -220,11 +235,11 @@ describe('openSettings', () => {
     expect(storage.settings()).toEqual({ ...STORED, keyboardHints: true });
     expect(store.get().settings.theme).toBe('oled');
     expect(document.documentElement.dataset.theme).toBe('oled');
-    expect(document.documentElement.dataset.accent).toBe('indigo');
+    expect(document.documentElement.dataset.accent).toBe('violet');
 
-    // Pack palettes are disabled and the gates are shown without a licence.
-    const teal = f.querySelector<HTMLInputElement>('input[name="accent"][value="#0F766E"]');
-    expect(teal?.disabled).toBe(true);
+    // Pack lamps are disabled and the gates are shown without a licence.
+    const mint = f.querySelector<HTMLInputElement>('input[name="accent"][value="#167A50"]');
+    expect(mint?.disabled).toBe(true);
     expect(root.querySelector<HTMLElement>('[data-pack-gate]')?.hidden).toBe(false);
     expect(input(f, 'ambientMessage').disabled).toBe(true);
 

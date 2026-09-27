@@ -9,15 +9,11 @@
     "sheet-music": { "es": "partituras", "pt-br": "partituras", "de": "noten", "fr": "partitions" },
     "reading": { "es": "lectura", "pt-br": "leitura", "de": "lesen", "fr": "lecture" },
     "night-clock": { "es": "reloj-nocturno", "pt-br": "relogio-noturno", "de": "nachtuhr", "fr": "horloge-nuit" },
-    "baby-monitor": { "es": "monitor-bebe", "pt-br": "monitor-bebe", "de": "babyphone", "fr": "babyphone" },
-    "navigation": { "es": "navegacion", "pt-br": "navegacao", "de": "navigation", "fr": "navigation" },
     "video-calls": { "es": "videollamadas", "pt-br": "videochamadas", "de": "videoanrufe", "fr": "appels-video" },
-    "live-streams": { "es": "directos", "pt-br": "transmissao-ao-vivo", "de": "livestreams", "fr": "directs" },
     "teleprompter": { "es": "teleprompter", "pt-br": "teleprompter", "de": "teleprompter", "fr": "teleprompteur" },
     "workouts": { "es": "entrenos", "pt-br": "treinos", "de": "workouts", "fr": "seances" },
-    "second-monitor": { "es": "segundo-monitor", "pt-br": "segundo-monitor", "de": "zweitmonitor", "fr": "second-ecran" },
     "work-laptop": { "es": "portatil-trabajo", "pt-br": "notebook-trabalho", "de": "arbeitslaptop", "fr": "portable-travail" },
-    "exams-proctoring": { "es": "examenes", "pt-br": "provas", "de": "pruefungen", "fr": "examens" }
+    "classroom": { "es": "aula", "pt-br": "sala-de-aula", "de": "klassenzimmer", "fr": "salle-de-classe" }
   },
   "on": {
     "iphone-safari": { "es": "iphone-safari", "pt-br": "iphone-safari", "de": "iphone-safari", "fr": "iphone-safari" },
@@ -27,7 +23,6 @@
     "samsung-internet": { "es": "samsung-internet", "pt-br": "samsung-internet", "de": "samsung-internet", "fr": "samsung-internet" },
     "chromebook": { "es": "chromebook", "pt-br": "chromebook", "de": "chromebook", "fr": "chromebook" },
     "windows-11": { "es": "windows-11", "pt-br": "windows-11", "de": "windows-11", "fr": "windows-11" },
-    "windows-10": { "es": "windows-10", "pt-br": "windows-10", "de": "windows-10", "fr": "windows-10" },
     "macos": { "es": "macos", "pt-br": "macos", "de": "macos", "fr": "macos" },
     "linux": { "es": "linux", "pt-br": "linux", "de": "linux", "fr": "linux" },
     "firefox": { "es": "firefox", "pt-br": "firefox", "de": "firefox", "fr": "firefox" },
@@ -48,13 +43,11 @@
     "iphone-auto-lock-never-greyed-out": { "es": "iphone-bloqueo-automatico-nunca-gris", "pt-br": "iphone-bloqueio-automatico-nunca-cinza", "de": "iphone-automatische-sperre-nie-ausgegraut", "fr": "iphone-verrouillage-auto-jamais-gris" },
     "chrome-energy-saver": { "es": "chrome-ahorro-energia", "pt-br": "chrome-economia-energia", "de": "chrome-energiessparmodus", "fr": "chrome-economiseur-energie" },
     "android-screen-timeout-one-app": { "es": "android-tiempo-pantalla-una-app", "pt-br": "android-tempo-tela-um-app", "de": "android-bildschirm-timeout-eine-app", "fr": "android-delai-ecran-une-app" },
-    "modern-standby": { "es": "modern-standby", "pt-br": "modern-standby", "de": "modern-standby", "fr": "modern-standby" },
     "second-monitor-turns-off": { "es": "segundo-monitor-se-apaga", "pt-br": "segundo-monitor-desliga", "de": "zweitmonitor-schaltet-ab", "fr": "second-ecran-s-eteint" },
     "lock-screen-vs-sleep": { "es": "pantalla-bloqueo-vs-suspension", "pt-br": "tela-bloqueio-vs-sono", "de": "sperrbildschirm-vs-schlaf", "fr": "ecran-verrouillage-vs-veille" }
   },
   "learn": {
     "screen-wake-lock-api-guide": { "es": "guia-api-wake-lock", "pt-br": "guia-api-wake-lock", "de": "wake-lock-api-anleitung", "fr": "guide-api-wake-lock" },
-    "nosleep-js-vs-wake-lock": { "es": "nosleep-js-vs-wake-lock", "pt-br": "nosleep-js-vs-wake-lock", "de": "nosleep-js-vs-wake-lock", "fr": "nosleep-js-vs-wake-lock" },
     "does-a-wake-lock-keep-teams-green": { "es": "wake-lock-mantiene-teams-verde", "pt-br": "wake-lock-mantem-teams-verde", "de": "haelt-wake-lock-teams-gruen", "fr": "wake-lock-garde-teams-vert" },
     "low-power-mode-and-wake-locks": { "es": "modo-bajo-consumo-y-wake-locks", "pt-br": "modo-economia-e-wake-locks", "de": "stromsparmodus-und-wake-locks", "fr": "mode-economie-et-wake-locks" },
     "browser-support-matrix": { "es": "matriz-compatibilidad-navegadores", "pt-br": "matriz-suporte-navegadores", "de": "browser-support-matrix", "fr": "matrice-prise-en-charge" },

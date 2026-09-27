@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AwakeTab · accessibility</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600;700&amp;family=Geist+Mono:wght@200;300;400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+body{margin:0;font-family:Geist,system-ui,sans-serif}
+button{font-family:inherit;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .18s var(--ease),outline-color .3s var(--ease)}
+button:active{transform:scale(.96)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #5BE0E8;outline-offset:3px}
+.at-root{transition:background .9s var(--ease),color .9s var(--ease)}
+.at-in{animation:at-in .7s var(--ease) both}
+.at-rise{animation:at-in .9s var(--ease) both;animation-delay:.08s}
+.at-slide{transition:transform .6s var(--ease),background-color .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease)}
+.at-arc{transition:stroke-dasharray 1s linear,stroke .6s var(--ease),stroke-opacity .6s var(--ease)}
+.at-lin{transition:transform 1s linear,clip-path 1s linear,opacity 1s linear}
+.at-halo{transform-box:fill-box;transform-origin:center;animation:at-halo 3.4s var(--ease) infinite}
+.at-sweep{animation:at-spin 16s linear infinite}
+.at-aura{animation:at-aura 26s ease-in-out infinite alternate}
+.a-still,.a-still *{animation:none!important;transition:none!important}
+@keyframes at-in{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes at-halo{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.8);opacity:0}}
+@keyframes at-spin{to{transform:rotate(360deg)}}
+@keyframes at-aura{0%{transform:translate(-6%,-3%) scale(1)}100%{transform:translate(6%,4%) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div class="at-root" style="width: {{W}}; height: {{H}}; box-sizing: border-box; position: relative; overflow: hidden; display: flex; align-items: stretch; background: {{r.ground}}; color: {{r.ink}}">
+
+  <div class="{{S.cls}}" style="position: relative; flex-shrink: 0; width: {{S.w}}; height: {{S.h}}; box-sizing: border-box; overflow: hidden; background: {{t.bg}}; color: {{t.ink}}; display: flex; flex-direction: column">
+    <sc-if value="{{S.aura}}" hint-placeholder-val="{{true}}">
+      <div aria-hidden="true" class="{{S.auraCls}}" style="position: absolute; left: -25%; top: 4%; width: 150%; height: 70%; background: radial-gradient(45% 45% at 50% 50%, {{aura}} 0%, transparent 70%); pointer-events: none"></div>
+    </sc-if>
+
+    <sc-if value="{{skipOn}}" hint-placeholder-val="{{false}}">
+      <a href="#a-main" style="position: absolute; inset-inline-start: 50%; transform: translateX(-50%); top: 8px; z-index: 30; display: flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 12px; background: {{t.primaryBg}}; color: {{t.primaryInk}}; font-size: 15px; line-height: 22px; font-weight: 600; text-decoration: none; outline: {{f.skip.ring}}; outline-offset: 3px">Skip to content<span aria-hidden="true" style="position: absolute; top: -8px; inset-inline-end: -8px; {{f.skip.badge}}">{{f.skip.n}}</span></a>
+    </sc-if>
+
+    <sc-if value="{{hdrStd}}" hint-placeholder-val="{{true}}">
+    <header style="position: relative; height: {{hdr.h}}; flex-shrink: 0; box-sizing: border-box; padding: {{hdr.pad}}; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <span style="position: relative; display: flex; border-radius: 12px; outline: {{f.logo.ring}}; outline-offset: 3px">
+    <a href="#" aria-label="AwakeTab home" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: {{t.ink}}; font-weight: 600; font-size: 17px; line-height: 24px; letter-spacing: -0.01em; min-height: 44px">
+      <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{tone}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{tone}}" style="transition: fill .6s"></circle></svg>
+      AwakeTab
+    </a>
+        <sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -8px; inset-inline-start: -12px; {{f.logo.badge}}">{{f.logo.n}}</span></sc-if>
+      </span>
+      <sc-if value="{{S.desk}}" hint-placeholder-val="{{false}}">
+        <nav aria-label="Main" style="display: flex; gap: 8px; font-size: 15px; line-height: 22px; font-weight: 500">
+          <sc-for list="{{navs}}" as="n" hint-placeholder-count="4">
+            <a href="#" style="padding: 0 12px; box-sizing: border-box; position: relative; display: flex; align-items: center; min-height: 44px; color: {{n.color}}; text-decoration: none; border-radius: 8px; outline: {{n.ring}}; outline-offset: 3px">{{n.label}}<sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -8px; inset-inline-start: -16px; {{n.badge}}">{{n.n}}</span></sc-if></a>
+          </sc-for>
+        </nav>
+      </sc-if>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <sc-if value="{{S.themeFull}}" hint-placeholder-val="{{true}}">
+          <span style="position: relative; display: flex; border-radius: 999px; outline: {{f.theme.ring}}; outline-offset: 3px">
+          <div role="radiogroup" aria-label="Theme" style="position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+      <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{themeX}})"></div>
+      <button role="radio" aria-checked="{{themeLight}}" aria-label="Light" title="Light" onClick="{{setLight}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeLightInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button>
+      <button role="radio" aria-checked="{{themeDark}}" aria-label="Dark" title="Dark" onClick="{{setDark}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeDarkInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button>
+      <button role="radio" aria-checked="{{themeAuto}}" aria-label="Auto, follows your system" title="Auto: follows your system" onClick="{{setAuto}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeAutoInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button>
+    </div>
+            <sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -12px; inset-inline-start: -12px; {{f.theme.badge}}">{{f.theme.n}}</span></sc-if>
+          </span>
+        </sc-if>
+        <sc-if value="{{S.themeCycle}}" hint-placeholder-val="{{false}}">
+          <button aria-label="Cycle theme" title="Cycle theme" style="width: 44px; height: 44px; padding: 0; border: 1px solid {{t.line}}; background: {{t.surface}}; border-radius: 999px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button>
+        </sc-if>
+        <sc-if value="{{S.desk}}" hint-placeholder-val="{{false}}">
+          <button aria-label="Your stats" style="position: relative; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center; outline: {{f.stats.ring}}; outline-offset: 3px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-7"></path></svg><sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -12px; inset-inline-start: -8px; {{f.stats.badge}}">{{f.stats.n}}</span></sc-if></button>
+        </sc-if>
+        <button aria-label="Settings" style="position: relative; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center; outline: {{f.settings.ring}}; outline-offset: 3px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg><sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -12px; inset-inline-start: -8px; {{f.settings.badge}}">{{f.settings.n}}</span></sc-if></button>
+      </div>
+    </header>
+    </sc-if>
+
+    <sc-if value="{{text200}}" hint-placeholder-val="{{false}}">
+      <!-- Text 200% simulation: every text size doubles (exempt from the §11.5 scale); controls keep their 44 px geometry and the header wraps. -->
+      <header style="position: relative; min-height: 60px; flex-shrink: 0; box-sizing: border-box; padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; column-gap: 12px; row-gap: 4px">
+        <a href="#" aria-label="AwakeTab home" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: {{t.ink}}; font-weight: 600; font-size: 34px; line-height: 48px; letter-spacing: -0.01em; min-height: 44px">
+          <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="overflow: visible; flex-shrink: 0"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="{{t.ink}}" stroke-width="4.5" stroke-linecap="round"></path><circle cx="24" cy="9" r="7.5" fill="{{tone}}" opacity="0.28"></circle><circle cx="24" cy="9" r="4.2" fill="{{tone}}"></circle></svg>
+          AwakeTab
+        </a>
+        <div style="display: flex; align-items: center; gap: 8px; margin-inline-start: auto">
+          <div role="radiogroup" aria-label="Theme" style="position: relative; display: grid; grid-template-columns: repeat(3, 44px); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+      <div aria-hidden="true" class="at-slide" style="position: absolute; left: 4px; top: 4px; width: 44px; height: 44px; border-radius: 999px; background: {{t.raised}}; transform: translateX({{themeX}})"></div>
+      <button role="radio" aria-checked="{{themeLight}}" aria-label="Light" title="Light" onClick="{{setLight}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeLightInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"></path></svg></button>
+      <button role="radio" aria-checked="{{themeDark}}" aria-label="Dark" title="Dark" onClick="{{setDark}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeDarkInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"></path></svg></button>
+      <button role="radio" aria-checked="{{themeAuto}}" aria-label="Auto, follows your system" title="Auto: follows your system" onClick="{{setAuto}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; color: {{themeAutoInk}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path></svg></button>
+    </div>
+          <button aria-label="Settings" style="width: 44px; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 12px; color: {{t.ink2}}; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></button>
+        </div>
+      </header>
+    </sc-if>
+
+    <div style="position: relative; flex-shrink: 0; min-height: {{fz.dateLh}}; padding: {{S.linePad}}; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: 12px; row-gap: 4px">
+      <sc-if value="{{showClock}}" hint-placeholder-val="{{true}}">
+        <time style="font-size: {{fz.date}}; line-height: {{fz.dateLh}}; color: {{t.ink2}}">{{dateLong}}</time>
+        <time style="font-family: Geist, system-ui, sans-serif; font-size: {{fz.date}}; line-height: {{fz.dateLh}}; font-weight: 500; color: {{t.ink}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{nowTime}}</time>
+      </sc-if>
+      <sc-if value="{{isNojs}}" hint-placeholder-val="{{false}}">
+        <span aria-hidden="true" title="Height reserved for the date and time line" style="width: 100%; height: {{fz.dateLh}}; border-radius: 8px; border: 1px solid {{r.annot}}; background: {{sr.liveBg}}; box-sizing: border-box"></span>
+      </sc-if>
+    </div>
+
+    <main id="a-main" style="{{S.body}}">
+      <sc-if value="{{tabsTop}}" hint-placeholder-val="{{true}}">
+      <div style="grid-area: tabs; justify-self: {{S.align}}; width: {{S.tabsW}}; max-width: 100%">
+        <div role="tablist" aria-label="Clock face" style="position: relative; display: grid; grid-template-columns: repeat({{S.tabCols}}, minmax(0, 1fr)); padding: 4px; border-radius: {{S.tabsRadius}}; background: {{t.surface}}; border: 1px solid {{t.line}}; outline: {{f.tabs.ring}}; outline-offset: 3px">
+          <div aria-hidden="true" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / {{S.tabCols}}); height: {{fz.tabH}}; box-sizing: border-box; border-radius: 999px; background: {{selBg}}; border: 1px solid {{selLine}}"></div>
+          <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
+            <button role="tab" aria-selected="{{tb.sel}}" tabindex="{{tb.tabindex}}" style="position: relative; height: {{fz.tabH}}; padding: 0 4px; border: 0; background: transparent; border-radius: 999px; font-size: {{fz.tab}}; line-height: {{fz.tabLh}}; font-weight: {{tb.weight}}; color: {{tb.color}}">{{tb.label}}</button>
+          </sc-for>
+          <sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -12px; inset-inline-start: -12px; {{f.tabs.badge}}">{{f.tabs.n}}</span></sc-if>
+        </div>
+      </div>
+
+      </sc-if>
+
+      <div style="grid-area: pill; justify-self: {{S.align}}; max-width: 100%; position: relative">
+        <sc-if value="{{pillStd}}" hint-placeholder-val="{{true}}">
+          <div style="display: inline-flex; border-radius: 999px; outline: {{sr.pillRing}}; outline-offset: 4px">
+          <output aria-live="polite" class="at-slide" style="display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 16px 0 12px; box-sizing: border-box; border-radius: 999px; background: {{toneSoft}}; border: 1px solid {{toneLine}}; font-size: 15px; line-height: 22px; font-weight: 600; color: {{t.ink}}; white-space: nowrap">
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="overflow: visible; filter: drop-shadow(0 0 5px {{toneGlow}})"><path d="{{glyph}}" fill="{{glyphFill}}" stroke="{{tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+            {{statusLabel}}
+          </output>
+          </div>
+        </sc-if>
+        <sc-if value="{{text200}}" hint-placeholder-val="{{false}}">
+          <output aria-live="polite" style="display: inline-flex; align-items: center; gap: 8px; min-height: 38px; max-width: 100%; padding: 4px 24px 4px 16px; box-sizing: border-box; border-radius: 999px; background: {{toneSoft}}; border: 1px solid {{toneLine}}; font-size: 30px; line-height: 44px; font-weight: 600; color: {{t.ink}}">
+            <svg width="20" height="20" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0; overflow: visible"><path d="{{glyph}}" fill="{{glyphFill}}" stroke="{{tone}}" stroke-width="1.6" fill-rule="evenodd" stroke-linejoin="round"></path></svg>
+            {{statusLabel}}
+          </output>
+        </sc-if>
+        <sc-if value="{{isSr}}" hint-placeholder-val="{{false}}">
+          <span aria-hidden="true" style="position: absolute; top: -12px; inset-inline-end: -16px; display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; background: {{r.annot}}; color: {{r.annotInk}}; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap">live · polite</span>
+        </sc-if>
+      </div>
+
+      <div style="grid-area: face; min-height: 0; min-width: 0; display: grid; place-items: center">
+        <div class="{{S.inCls}}" style="position: relative; height: min(100%, {{S.ringMax}}); max-width: 100%; aspect-ratio: 1 / 1; container-type: size">
+          <sc-if value="{{S.ticks}}" hint-placeholder-val="{{true}}">
+            <div aria-hidden="true" style="position: absolute; inset: 0; border-radius: 50%; background: repeating-conic-gradient(from -0.6deg, {{t.tick}} 0deg 1.2deg, transparent 1.2deg 6deg); -webkit-mask: radial-gradient(circle closest-side, transparent 78.1%, #000 78.75%, #000 82.5%, transparent 83.1%); mask: radial-gradient(circle closest-side, transparent 78.1%, #000 78.75%, #000 82.5%, transparent 83.1%)"></div>
+          </sc-if>
+          <sc-if value="{{sweepOn}}" hint-placeholder-val="{{true}}">
+            <div aria-hidden="true" class="at-sweep" style="position: absolute; inset: 8.75%; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0deg 240deg, {{toneFaint}} 360deg)"></div>
+          </sc-if>
+          <svg width="100%" height="100%" viewBox="0 0 320 320" aria-hidden="true" style="position: absolute; inset: 0; overflow: visible">
+            <defs><filter id="aRingGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"></feGaussianBlur></filter></defs>
+            <circle cx="160" cy="160" r="146" fill="none" stroke="{{t.track}}" stroke-width="{{trackW}}" stroke-dasharray="{{trackDash}}"></circle>
+            <g transform="rotate(-90 160 160)">
+              <circle class="{{S.arcCls}}" cx="160" cy="160" r="146" fill="none" stroke="{{faceColor}}" stroke-opacity="{{glowOp}}" stroke-width="14" stroke-linecap="round" filter="url(#aRingGlow)" style="stroke-dasharray: {{arcDash}}"></circle>
+              <circle class="{{S.arcCls}}" cx="160" cy="160" r="146" fill="none" stroke="{{faceColor}}" stroke-opacity="{{arcOp}}" stroke-width="6" stroke-linecap="round" style="stroke-dasharray: {{arcDash}}"></circle>
+            </g>
+            <g class="{{S.linCls}}" style="transform: rotate({{tipDeg}}); transform-origin: 160px 160px; opacity: {{tipOp}}">
+              <sc-if value="{{haloOn}}" hint-placeholder-val="{{true}}"><circle class="at-halo" cx="160" cy="14" r="7" fill="{{faceColor}}"></circle></sc-if>
+              <circle cx="160" cy="14" r="5.5" fill="{{tipFill}}"></circle>
+            </g>
+          </svg>
+          <div style="position: absolute; inset: 14%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center">
+            <sc-if value="{{capIn}}" hint-placeholder-val="{{true}}">
+              <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{kicker}}</div>
+            </sc-if>
+            <div role="timer" aria-label="{{timerAria}}" style="font-family: Geist, system-ui, sans-serif; font-weight: 300; font-size: {{digitFs}}; line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; white-space: nowrap; color: {{numColor}}">{{bigA}}<span style="color: {{t.muted}}">{{bigB}}</span></div>
+            <sc-if value="{{capInMeta}}" hint-placeholder-val="{{true}}">
+              <div style="font-size: {{S.metaFs}}; line-height: {{S.metaLh}}; color: {{t.muted}}">{{metaA}} <span style="color: {{t.ink}}; font-weight: 500">{{metaB}}</span></div>
+            </sc-if>
+          </div>
+          <sc-if value="{{isSr}}" hint-placeholder-val="{{false}}">
+            <span aria-hidden="true" style="position: absolute; bottom: 6%; inset-inline-start: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{r.annot}}; background: {{t.surface}}; color: {{r.annotText}}; font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap">role timer · live off</span>
+          </sc-if>
+        </div>
+      </div>
+
+      <sc-if value="{{capOut}}" hint-placeholder-val="{{false}}">
+        <div style="grid-area: cap; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center">
+          <div style="font-size: {{fz.kicker}}; line-height: {{fz.kickerLh}}; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">{{kicker}}</div>
+          <div style="font-size: {{fz.meta}}; line-height: {{fz.metaLh}}; color: {{t.muted}}">{{metaA}} <span style="color: {{t.ink}}; font-weight: 500">{{metaB}}</span></div>
+        </div>
+      </sc-if>
+
+      <div style="grid-area: note; text-align: {{S.textAlign}}; min-width: 0; position: relative">
+        <sc-if value="{{showNote}}" hint-placeholder-val="{{true}}">
+          <p style="margin: 0; font-size: {{fz.note}}; line-height: {{fz.noteLh}}; color: {{t.muted}}; text-wrap: pretty">{{note}}</p>
+        </sc-if>
+        <sc-if value="{{isSr}}" hint-placeholder-val="{{false}}">
+          <div aria-hidden="true" style="margin-top: 8px; display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border-radius: 999px; border: 1px solid {{sr.liveLine}}; background: {{sr.liveBg}}; color: {{t.ink}}; font-size: 13px; line-height: 18px; font-weight: 500; outline: {{sr.liveRing}}; outline-offset: 3px">
+            <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; background: {{r.annot}}; color: {{r.annotInk}}; font-size: 12px; line-height: 16px; font-weight: 600">sr-only · polite</span>
+            <span>{{sr.liveText}}</span>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="grid-area: dock; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+        <sc-if value="{{showLength}}" hint-placeholder-val="{{true}}">
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <sc-if value="{{presetBar}}" hint-placeholder-val="{{true}}">
+              <div role="group" aria-label="Session length" style="position: relative; display: grid; grid-template-columns: repeat({{presetN}}, minmax(0, 1fr)); padding: 4px; border-radius: 999px; background: {{t.surface}}; border: 1px solid {{t.line}}">
+                <div aria-hidden="true" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / {{presetN}}); height: 44px; box-sizing: border-box; border-radius: 999px; background: {{selBg}}; border: 1px solid {{selLine}}; opacity: {{presetIndOp}}; transform: translateX({{presetX}})"></div>
+                <sc-for list="{{presets}}" as="c" hint-placeholder-count="5">
+                  <sc-if value="{{c.link}}" hint-placeholder-val="{{false}}">
+                    <a href="{{c.href}}" aria-current="{{c.cur}}" style="position: relative; height: 44px; border-radius: 999px; font-size: {{fz.preset}}; line-height: {{fz.presetLh}}; font-weight: {{c.weight}}; color: {{c.color}}; text-decoration: none; display: grid; place-items: center; white-space: nowrap">{{c.label}}</a>
+                  </sc-if>
+                  <sc-if value="{{c.btn}}" hint-placeholder-val="{{true}}">
+                    <button aria-pressed="{{c.sel}}" aria-label="{{c.aria}}" style="position: relative; height: 44px; padding: 0; border: 0; background: transparent; border-radius: 999px; font-size: {{fz.preset}}; line-height: {{fz.presetLh}}; font-weight: {{c.weight}}; color: {{c.color}}; white-space: nowrap; outline: {{c.ring}}; outline-offset: 3px">{{c.label}}<sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -12px; inset-inline-start: 50%; transform: translateX(-50%); {{c.badge}}">{{c.n}}</span></sc-if></button>
+                  </sc-if>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{presetGrid}}" hint-placeholder-val="{{false}}">
+              <div role="group" aria-label="Session length" style="display: grid; grid-template-columns: repeat({{S.gridCols}}, minmax(0, 1fr)); gap: 8px">
+                <sc-for list="{{presets}}" as="c" hint-placeholder-count="7">
+                  <sc-if value="{{c.link}}" hint-placeholder-val="{{false}}">
+                    <a href="{{c.href}}" aria-current="{{c.cur}}" style="min-height: {{fz.presetH}}; box-sizing: border-box; padding: {{fz.presetPad}}; border-radius: 999px; border: 1px solid {{c.line}}; background: {{c.bg}}; font-size: {{fz.preset}}; line-height: {{fz.presetLh}}; font-weight: {{c.weight}}; color: {{c.color}}; text-decoration: none; display: grid; place-items: center; white-space: nowrap; grid-column: {{c.span}}">{{c.label}}</a>
+                  </sc-if>
+                  <sc-if value="{{c.btn}}" hint-placeholder-val="{{true}}">
+                  <button aria-pressed="{{c.sel}}" aria-label="{{c.aria}}" style="position: relative; min-height: {{fz.presetH}}; padding: {{fz.presetPad}}; border-radius: 999px; border: 1px solid {{c.line}}; background: {{c.bg}}; font-size: {{fz.preset}}; line-height: {{fz.presetLh}}; font-weight: {{c.weight}}; color: {{c.color}}; white-space: nowrap; grid-column: {{c.span}}; outline: {{c.ring}}; outline-offset: 3px">{{c.label}}<sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -12px; inset-inline-start: 50%; transform: translateX(-50%); {{c.badge}}">{{c.n}}</span></sc-if></button>
+                  </sc-if>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="display: flex; flex-wrap: wrap; justify-content: {{S.chipJustify}}; gap: 8px">
+              <button style="position: relative; min-height: {{fz.chipH}}; padding: {{fz.chipPad}}; border-radius: 999px; border: 1px dashed {{untilLine}}; background: {{untilBg}}; font-size: {{fz.chip}}; line-height: {{fz.chipLh}}; font-weight: 500; color: {{t.ink2}}; outline: {{f.until.ring}}; outline-offset: 3px">{{untilLabel}}<sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -12px; inset-inline-start: -8px; {{f.until.badge}}">{{f.until.n}}</span></sc-if></button>
+              <button style="position: relative; min-height: {{fz.chipH}}; padding: {{fz.chipPad}}; border-radius: 999px; border: 1px dashed {{t.line2}}; background: transparent; font-size: {{fz.chip}}; line-height: {{fz.chipLh}}; font-weight: 500; color: {{t.ink2}}; outline: {{f.custom.ring}}; outline-offset: 3px">Custom…<sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -12px; inset-inline-start: -8px; {{f.custom.badge}}">{{f.custom.n}}</span></sc-if></button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ctaStd}}" hint-placeholder-val="{{true}}">
+          <div class="{{S.riseCls}}" style="position: relative; border-radius: 20px; outline: {{f.cta.ring}}; outline-offset: 3px">
+            <button aria-keyshortcuts="Space" style="width: 100%; height: 60px; padding: 0 16px; border-radius: 20px; border: 0; background: {{p.lampFill}}; color: {{p.lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}">
+              <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true" style="flex-shrink: 0"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>
+              {{ctaLabel}}
+              <sc-if value="{{S.desk}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="display: inline-flex"><kbd style="display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 8px; border: 1px solid {{t.line2}}; background: {{t.raised}}; box-shadow: inset 0 -1px 0 {{t.line2}}; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; font-weight: 500; color: {{t.ink}}">Space</kbd></span></sc-if>
+            </button>
+            <sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -12px; inset-inline-start: -8px; {{f.cta.badge}}">{{f.cta.n}}</span></sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ctaAlt}}" hint-placeholder-val="{{false}}">
+          <!-- Forced colours (1 px ButtonText border, system colours) and text 200% (doubled label) variants of the primary action. -->
+          <button style="width: 100%; min-height: 60px; padding: {{ctaAltPad}}; box-sizing: border-box; border-radius: 20px; border: {{ctaBorder}}; background: {{ctaBg}}; color: {{ctaInk}}; font-size: {{fz.cta}}; line-height: {{fz.ctaLh}}; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center">
+            <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true" style="flex-shrink: 0"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>
+            <span style="text-wrap: balance">{{ctaLabel}}</span>
+          </button>
+        </sc-if>
+
+        <sc-if value="{{dockRun}}" hint-placeholder-val="{{false}}">
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+            <button style="height: 60px; padding: 0 16px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.ink}}">+15 min</button>
+            <button style="height: 60px; padding: 0 16px; border-radius: 20px; border: {{stopBorder}}; background: {{t.primaryBg}}; font-size: 17px; line-height: 24px; font-weight: 600; color: {{t.primaryInk}}">Stop</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{dockAsk}}" hint-placeholder-val="{{false}}">
+          <div role="group" aria-labelledby="a-ask" style="display: flex; flex-direction: column; gap: 12px; padding: {{cardPad}}; border-radius: 16px; background: {{t.surface}}; border: 1px solid {{lampLine}}; outline: {{sr.askRing}}; outline-offset: 3px">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+              <p id="a-ask" role="status" style="margin: 0; font-size: 18px; line-height: 28px; font-weight: 600; color: {{t.ink}}">Time's up. Keep going?</p>
+              <span role="timer" style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; font-variant-numeric: tabular-nums; white-space: nowrap">Stops in 60 s</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+              <button style="height: 52px; padding: 0 12px; border-radius: 20px; border: 1px solid {{lampLine}}; background: {{lampSoft}}; font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}">+15 min</button>
+              <button style="height: 52px; padding: 0 12px; border-radius: 20px; border: 1px solid {{lampLine}}; background: {{lampSoft}}; font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}">+30 min</button>
+              <button style="height: 52px; padding: 0 12px; border-radius: 20px; border: 1px solid {{lampLine}}; background: {{lampSoft}}; font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}">+1 h</button>
+            </div>
+            <button style="height: 52px; padding: 0 16px; border-radius: 20px; border: 1px solid {{t.line2}}; background: transparent; font-size: 16px; line-height: 24px; font-weight: 600; color: {{t.ink}}">Stop</button>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{tabsEnd}}" hint-placeholder-val="{{false}}">
+      <div style="grid-area: tabs; justify-self: {{S.align}}; width: {{S.tabsW}}; max-width: 100%">
+        <div role="tablist" aria-label="Clock face" style="position: relative; display: grid; grid-template-columns: repeat({{S.tabCols}}, minmax(0, 1fr)); padding: 4px; border-radius: {{S.tabsRadius}}; background: {{t.surface}}; border: 1px solid {{t.line}}; outline: {{f.tabs.ring}}; outline-offset: 3px">
+          <div aria-hidden="true" style="position: absolute; left: 4px; top: 4px; width: calc((100% - 8px) / {{S.tabCols}}); height: {{fz.tabH}}; box-sizing: border-box; border-radius: 999px; background: {{selBg}}; border: 1px solid {{selLine}}"></div>
+          <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
+            <button role="tab" aria-selected="{{tb.sel}}" tabindex="{{tb.tabindex}}" style="position: relative; height: {{fz.tabH}}; padding: 0 4px; border: 0; background: transparent; border-radius: 999px; font-size: {{fz.tab}}; line-height: {{fz.tabLh}}; font-weight: {{tb.weight}}; color: {{tb.color}}">{{tb.label}}</button>
+          </sc-for>
+          <sc-if value="{{kb}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: absolute; top: -12px; inset-inline-start: -12px; {{f.tabs.badge}}">{{f.tabs.n}}</span></sc-if>
+        </div>
+      </div>
+
+      </sc-if>
+    </main>
+
+    <sc-if value="{{fold.on}}" hint-placeholder-val="{{false}}">
+      <div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: {{fold.y}}; height: 0; border-top: 1px solid {{r.annot}}; z-index: 25">
+      </div>
+    </sc-if>
+  </div>
+
+  <div aria-hidden="true" style="flex-shrink: 0; width: 1px; background: {{r.line}}"></div>
+
+  <aside aria-labelledby="a-rail-title" style="flex-grow: 1; min-width: 0; box-sizing: border-box; padding: 32px; background: {{r.surface}}; display: flex; flex-direction: column; gap: 24px; overflow: hidden">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{r.muted}}">Accessibility · {{railKicker}}</div>
+      <h2 id="a-rail-title" style="margin: 0; font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; color: {{r.ink}}">{{railTitle}}</h2>
+      <p style="margin: 0; font-size: 15px; line-height: 22px; color: {{r.ink2}}; text-wrap: pretty">{{railLead}}</p>
+    </div>
+
+    <sc-if value="{{kb}}" hint-placeholder-val="{{true}}">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <button onClick="{{kbPrev}}" aria-label="Previous stop (Shift+Tab)" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid {{r.line2}}; background: transparent; color: {{r.ink}}; font-size: 14px; line-height: 20px; font-weight: 500">Shift+Tab</button>
+        <button onClick="{{kbToggle}}" aria-pressed="{{kbPlayingStr}}" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid {{lampLine}}; background: {{lampSoft}}; color: {{r.ink}}; font-size: 14px; line-height: 20px; font-weight: 600">{{kbPlayLabel}}</button>
+        <button onClick="{{kbNext}}" aria-label="Next stop (Tab)" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid {{r.line2}}; background: transparent; color: {{r.ink}}; font-size: 14px; line-height: 20px; font-weight: 500">Tab</button>
+        <span role="status" style="margin-inline-start: auto; font-size: 13px; line-height: 18px; color: {{r.ink2}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{kbPos}}</span>
+      </div>
+      <ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column; grid-template-rows: repeat({{kbRows}}, auto); column-gap: 16px; row-gap: 4px">
+        <sc-for list="{{stops}}" as="st" hint-placeholder-count="20">
+          <li style="display: grid; grid-template-columns: 20px minmax(0, 1fr); align-items: center; column-gap: 8px; min-height: 28px; padding: 4px 8px; box-sizing: border-box; border-radius: 12px; background: {{st.bg}}">
+            <span style="width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; line-height: 16px; font-weight: 600; font-variant-numeric: tabular-nums; background: {{st.dotBg}}; color: {{st.dotInk}}">{{st.n}}</span>
+            <span style="font-size: 13px; line-height: 18px; font-weight: {{st.weight}}; color: {{r.ink}}">{{st.name}} <span style="font-size: 12px; line-height: 16px; font-weight: 400; color: {{r.muted}}">{{st.role}}</span></span>
+          </li>
+        </sc-for>
+      </ol>
+    </sc-if>
+
+    <sc-if value="{{isForced}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 12px">
+        <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{r.muted}}">State without colour</div>
+        <!-- Forced-colours specimens use the Windows system colours on purpose (exempt from the --at-* token rule). -->
+        <div data-forced-colours="true" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px; border-radius: 16px; background: {{t.bg}}; border: 1px solid {{t.line}}">
+          <sc-for list="{{specimens}}" as="sp" hint-placeholder-count="6">
+            <div style="display: flex; align-items: center; gap: 12px; min-height: 64px; color: {{t.ink}}">
+              <svg width="56" height="56" viewBox="0 0 64 64" aria-hidden="true" style="flex-shrink: 0">
+                <circle cx="32" cy="32" r="26" fill="none" stroke="{{t.ink}}" stroke-width="{{sp.trackW}}" stroke-dasharray="{{sp.trackDash}}"></circle>
+                <circle cx="32" cy="32" r="26" fill="none" stroke="{{t.ink}}" stroke-width="4" stroke-linecap="round" stroke-dasharray="{{sp.dash}}" transform="rotate(-90 32 32)"></circle>
+                <circle cx="{{sp.tipX}}" cy="{{sp.tipY}}" r="{{sp.tipR}}" fill="{{t.ink}}"></circle>
+              </svg>
+              <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+                <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; line-height: 18px; font-weight: 600"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" style="flex-shrink: 0; overflow: visible"><path d="{{sp.glyph}}" fill="{{sp.fill}}" stroke="{{t.ink}}" stroke-width="1.6" fill-rule="evenodd"></path></svg>{{sp.pill}}</span>
+                <span style="font-size: 12px; line-height: 16px">{{sp.pattern}}</span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{r.muted}}">System colours used</div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <sc-for list="{{swatches}}" as="sw" hint-placeholder-count="6">
+            <div style="display: flex; align-items: center; gap: 8px; min-width: 0">
+              <span aria-hidden="true" data-forced-colours="true" style="width: 24px; height: 24px; flex-shrink: 0; border-radius: 8px; background: {{sw.hex}}; border: 1px solid {{r.line2}}"></span>
+              <span style="display: flex; flex-direction: column; min-width: 0"><span style="font-size: 13px; line-height: 18px; font-weight: 500">{{sw.name}}</span><code style="font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; line-height: 16px; color: {{r.muted}}">{{sw.hex}}</code></span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isReduced}}" hint-placeholder-val="{{false}}">
+      <div role="table" aria-label="What reduced motion changes" style="display: flex; flex-direction: column; border-radius: 16px; border: 1px solid {{r.line}}; overflow: hidden">
+        <div role="row" style="display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; padding: 8px 16px; background: {{r.ground}}; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{r.muted}}">
+          <span role="columnheader">Element</span><span role="columnheader">Default</span><span role="columnheader">Reduced</span>
+        </div>
+        <sc-for list="{{motionRows}}" as="mr" hint-placeholder-count="8">
+          <div role="row" style="display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; padding: 8px 16px; border-top: 1px solid {{r.line}}; font-size: 13px; line-height: 18px">
+            <span role="cell" style="font-weight: 500; color: {{r.ink}}">{{mr.el}}</span><span role="cell" style="color: {{r.ink2}}">{{mr.from}}</span><span role="cell" style="color: {{r.ink}}">{{mr.to}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isNojs}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{r.muted}}">If JavaScript is off</div>
+        <p style="margin: 0; padding: 16px 20px; border-radius: 16px; background: {{r.ground}}; border: 1px solid {{r.line}}; font-size: 14px; line-height: 20px; color: {{r.ink}}">AwakeTab needs JavaScript to request a wake lock. Enable it, or see the manual steps for your device.</p>
+        <span style="font-size: 13px; line-height: 18px; color: {{r.muted}}">The existing tool.noscript string, inside a noscript element under the button.</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{isSr}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <button onClick="{{srReplay}}" style="height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid {{lampLine}}; background: {{lampSoft}}; color: {{r.ink}}; font-size: 14px; line-height: 20px; font-weight: 600">{{srPlayLabel}}</button>
+        <button onClick="{{srPrev}}" aria-label="Previous announcement" style="width: 44px; height: 44px; padding: 0; border-radius: 999px; border: 1px solid {{r.line2}}; background: transparent; color: {{r.ink}}; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></button>
+        <button onClick="{{srNext}}" aria-label="Next announcement" style="width: 44px; height: 44px; padding: 0; border-radius: 999px; border: 1px solid {{r.line2}}; background: transparent; color: {{r.ink}}; display: grid; place-items: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></button>
+        <span style="margin-inline-start: auto; font-size: 13px; line-height: 18px; color: {{r.ink2}}; font-variant-numeric: tabular-nums">Until 10:30 PM · 47 min</span>
+      </div>
+      <ol aria-label="Announcements" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0">
+        <sc-for list="{{srLog}}" as="lg" hint-placeholder-count="15">
+          <li style="display: grid; grid-template-columns: 88px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; min-height: 28px; padding: 0 12px; border-radius: 12px; background: {{lg.bg}}">
+            <time style="font-size: 13px; line-height: 18px; color: {{r.muted}}; font-variant-numeric: tabular-nums; white-space: nowrap">{{lg.at}}</time>
+            <span style="font-size: 14px; line-height: 20px; font-weight: {{lg.weight}}; color: {{lg.color}}">“{{lg.text}}”</span>
+            <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; box-sizing: border-box; border-radius: 999px; border: 1px solid {{t.line2}}; font-size: 12px; line-height: 16px; font-weight: 600; color: {{t.ink2}}; white-space: nowrap">{{lg.src}}</span>
+          </li>
+        </sc-for>
+      </ol>
+    </sc-if>
+
+    <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px">
+      <sc-for list="{{notes}}" as="nt" hint-placeholder-count="4">
+        <li style="display: grid; grid-template-columns: 16px minmax(0, 1fr); column-gap: 12px; font-size: 14px; line-height: 20px; color: {{r.ink2}}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{r.lampText}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-top: 2px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          <span style="text-wrap: pretty">{{nt.text}}</span>
+        </li>
+      </sc-for>
+    </ul>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["keyboard","forced","zoom","reduced","nojs","screenreader"],"default":"keyboard"},"theme":{"editor":"enum","options":["auto","light","dark"],"default":"auto"},"layout":{"editor":"enum","options":["phone","tablet","desktop"],"default":"phone"},"variant":{"editor":"enum","options":["text200","reflow320"],"default":"text200"},"$preview":{"width":870,"height":844}}'>
+const C = 2 * Math.PI * 146;
+// AT-PRIMITIVES v1 (fix batch 1b): DESIGN.md §2.1 tokens and §11 geometry. Keep identical across files.
+const AT_TOK = {
+  dark: { raised: '#26324B', sunken: '#0D131F', horizonInk: '#F6F2EA', line2: '#33405C', inputBorder: '#5A6781', groundEnd: '#070A11' },
+  light: { raised: '#E3E9F1', sunken: '#F6F9FC', horizonInk: '#F6F2EA', line2: '#C3CDDA', inputBorder: '#8C98AA', groundEnd: '#EEF3F8' }
+};
+const AT_NIGHT = { ground: '#000000', ink: '#FF5A3C', ink2: '#E8563C', muted: '#A89690', line: '#3A2E2A' };
+const AT_SCRIM = 'rgba(4,7,12,.55)';
+const AT_HDR = { phone: { h: '60px', pad: '0 16px' }, tablet: { h: '68px', pad: '0 32px' }, desktop: { h: '68px', pad: '0 80px' }, xl: { h: '68px', pad: '0 120px' } };
+const AT_FOOT = { phone: '24px 16px 32px', tablet: '24px 32px', desktop: '24px 80px', xl: '24px 120px' };
+const AT_CARD_PAD = { phone: '20px', tablet: '24px', desktop: '24px', xl: '24px' };
+const AT_TYPE = {
+  phone: { h1: '34px', h1lh: '42px', h2: '24px', h2lh: '32px', gutter: '16px', section: '48px' },
+  tablet: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '32px', section: '64px' },
+  desktop: { h1: '48px', h1lh: '56px', h2: '28px', h2lh: '36px', gutter: '80px', section: '96px' }
+};
+
+const DARK = {
+  bg: 'radial-gradient(120% 70% at 50% 26%, #13203A 0%, #0A0E16 58%, ' + AT_TOK.dark.groundEnd + ' 100%)', ground: '#0A0E16',
+  surface: '#111826', line: '#1F2940', line2: '#33405C', ink: '#EAF0F7', ink2: '#B7C1D1', muted: '#8E9AAE',
+  track: '#1A2336', tick: '#2A3752', primaryBg: '#26324B', primaryInk: '#EAF0F7', primaryLine: '#33405C', raised: AT_TOK.dark.raised, sunken: AT_TOK.dark.sunken
+};
+const LIGHT = {
+  bg: 'radial-gradient(120% 70% at 50% 26%, #FFFFFF 0%, #F2F6FA 60%, ' + AT_TOK.light.groundEnd + ' 100%)', ground: '#F2F6FA',
+  surface: '#FFFFFF', line: '#DCE3EC', line2: '#C3CDDA', ink: '#0E1726', ink2: '#3A4659', muted: '#5B6779',
+  track: '#E3E9F1', tick: '#CCD5E1', primaryBg: '#E3E9F1', primaryInk: '#0E1726', primaryLine: '#C3CDDA', raised: AT_TOK.light.raised, sunken: AT_TOK.light.sunken
+};
+// Windows High Contrast system colours (classic High Contrast Black / White schemes). Under forced colours the system
+// replaces every author colour, so these are intentionally off-token (exempt from the --at-* rule, DESIGN.md §11.2).
+const HC = {
+  dark: { name: 'High Contrast Black', Canvas: '#000000', CanvasText: '#FFFFFF', LinkText: '#FFFF00', GrayText: '#3FF23F', Highlight: '#1AEBFF', HighlightText: '#000000', ButtonFace: '#000000', ButtonText: '#FFFFFF' },
+  light: { name: 'High Contrast White', Canvas: '#FFFFFF', CanvasText: '#000000', LinkText: '#00009F', GrayText: '#600000', Highlight: '#37006E', HighlightText: '#FFFFFF', ButtonFace: '#FFFFFF', ButtonText: '#000000' }
+};
+// en.json labels (tool.preset.*); ∞ is named "Until I stop" (tool.preset.pinf.sr).
+const PRESETS = [['p15', '15 min', '15 min', 900, '/15m'], ['p30', '30 min', '30 min', 1800, '/30m'], ['p45', '45 min', '45 min', 2700, '/45m'], ['p60', '1 h', '1 h', 3600, '/1h'], ['p120', '2 h', '2 h', 7200, '/2h'], ['p240', '4 h', '4 h', 14400, '/4h'], ['pinf', '∞', 'Until I stop', 0, '']];
+const DOT = 'M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z';
+const GLYPH = { paused: 'M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z', blocked: 'M6 1L11.2 10.5H.8z', fallback: 'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z' };
+// Scripted announcement timeline: "Until 10:30 PM" started 9:43 PM (47 min). Shipped cadence (O-64): multiples of
+// 5 minutes left (45, 40 … 5), then 1 minute, then Time's up with the 60 s grace (O-08), then complete.
+const SR = [
+  ['9:43:00 PM', 'Starting…', 'Pill', 'starting', 2820],
+  ['9:43:01 PM', 'Screen awake', 'Pill', 'awake', 2819],
+  ['9:45:00 PM', '45 minutes left', 'Timer', 'awake', 2700],
+  ['9:50:00 PM', '40 minutes left', 'Timer', 'awake', 2400],
+  ['9:55:00 PM', '35 minutes left', 'Timer', 'awake', 2100],
+  ['10:00:00 PM', '30 minutes left', 'Timer', 'awake', 1800],
+  ['10:05:00 PM', '25 minutes left', 'Timer', 'awake', 1500],
+  ['10:10:00 PM', '20 minutes left', 'Timer', 'awake', 1200],
+  ['10:15:00 PM', '15 minutes left', 'Timer', 'awake', 900],
+  ['10:20:00 PM', '10 minutes left', 'Timer', 'awake', 600],
+  ['10:25:00 PM', '5 minutes left', 'Timer', 'awake', 300],
+  ['10:29:00 PM', '1 minute left', 'Timer', 'awake', 60],
+  ['10:30:00 PM', "Time's up. Keep going?", 'Prompt', 'timesup', 0],
+  ['10:31:00 PM', 'Session complete', 'Timer', 'ended', 0],
+  ['10:31:00 PM', 'Ready', 'Pill', 'ended', 0]
+];
+const ORDER = [
+  ['skip', 'Skip to content', 'link'], ['logo', 'AwakeTab home', 'link'],
+  ['nav0', 'Use cases', 'link'], ['nav1', 'Devices', 'link'], ['nav2', 'Extension', 'link'], ['nav3', 'Pro', 'link'],
+  ['theme', 'Theme', 'radio group, arrows'], ['stats', 'Your stats', 'button'], ['settings', 'Settings', 'button'],
+  ['p15', '15 min', 'toggle'], ['p30', '30 min', 'toggle, pressed'], ['p45', '45 min', 'toggle'], ['p60', '1 h', 'toggle'],
+  ['p120', '2 h', 'toggle'], ['p240', '4 h', 'toggle'], ['pinf', '∞ (Until I stop)', 'toggle'],
+  ['until', 'Until…', 'button, panel'], ['custom', 'Custom…', 'button, panel'],
+  ['cta', 'Keep awake · 30 min', 'button, Space'], ['tabs', 'Clock face', 'tab list, arrows']
+];
+// Phone: no nav or stats, and the clock face tabs sit first in the column, so DOM order and visual order agree.
+const ORDER_PHONE = ['skip', 'logo', 'theme', 'settings', 'tabs', 'p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf', 'until', 'custom', 'cta'].map((id) => ORDER.find((o) => o[0] === id));
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sysDark: this.sys(), now: Date.now(), left: 1458, step: 0, kbPlaying: true, srIdx: 2, srPlaying: false };
+  }
+  sys() { try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return true; } }
+  componentDidMount() {
+    this.clock = setInterval(() => this.setState({ now: Date.now(), left: Math.max(0, this.state.left - 1) }), 1000);
+    this.walk = setInterval(() => this.stepWalk(), 1400);
+    try {
+      this.mq = window.matchMedia('(prefers-color-scheme: dark)');
+      this.onMq = (e) => this.setState({ sysDark: e.matches });
+      this.mq.addEventListener('change', this.onMq);
+    } catch (e) {}
+  }
+  componentWillUnmount() {
+    clearInterval(this.clock);
+    clearInterval(this.walk);
+    if (this.mq) this.mq.removeEventListener('change', this.onMq);
+  }
+  order() { return this.props.layout === 'desktop' ? ORDER : ORDER_PHONE; }
+  stepWalk() {
+    const s = this.state;
+    const mode = this.props.mode ?? 'keyboard';
+    if (mode === 'keyboard' && s.kbPlaying) this.setState({ step: (s.step + 1) % this.order().length });
+    if (mode === 'screenreader' && s.srPlaying) {
+      if (s.srIdx >= SR.length - 1) this.setState({ srPlaying: false });
+      else this.setState({ srIdx: s.srIdx + 1 });
+    }
+  }
+  rgba(hex, a) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  hm(ms) { return new Date(ms).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }); }
+  dateLong(ms) {
+    const d = new Date(ms);
+    return d.toLocaleDateString('en-GB', { weekday: 'long' }) + ', ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  split(sec) {
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+    const p = (n) => String(n).padStart(2, '0');
+    return h ? [h + ':' + p(m), ':' + p(s)] : [p(m), ':' + p(s)];
+  }
+  renderVals() {
+    const st = this.state;
+    const mode = ['keyboard', 'forced', 'zoom', 'reduced', 'nojs', 'screenreader'].includes(this.props.mode) ? this.props.mode : 'keyboard';
+    const themeP = this.props.theme ?? 'auto';
+    const dark = themeP === 'dark' || (themeP === 'auto' && st.sysDark);
+    const r0 = dark ? DARK : LIGHT;
+    const kb = mode === 'keyboard', forced = mode === 'forced', zoom = mode === 'zoom', reduced = mode === 'reduced', nojs = mode === 'nojs', sr = mode === 'screenreader';
+    const reflow = zoom && this.props.variant === 'reflow320';
+    const text200 = zoom && !reflow;
+    const desk = (kb || nojs) && this.props.layout === 'desktop'; // a board's default layout matches its width (870 = phone + rail)
+    const tab = !desk && !zoom && this.props.layout === 'tablet'; // 820 × 1180 screen + rail (zoom boards stay phone-sized by definition)
+    const ORD = this.order();
+    const hc = HC[dark ? 'dark' : 'light'];
+    const lampN = dark ? '#5BE0E8' : '#087B87';
+
+    // Screen tokens: normal theme, or the forced-colours simulation.
+    const t = forced
+      ? { bg: hc.Canvas, ground: hc.Canvas, surface: hc.Canvas, line: hc.CanvasText, line2: hc.CanvasText, ink: hc.CanvasText, ink2: hc.CanvasText, muted: hc.CanvasText, track: hc.CanvasText, tick: 'transparent', primaryBg: hc.ButtonFace, primaryInk: hc.ButtonText, primaryLine: hc.ButtonText, raised: hc.Highlight, sunken: hc.Canvas }
+      : r0;
+    const lamp = forced ? hc.CanvasText : lampN;
+    const lampInk = dark ? '#04232A' : '#FFFFFF';
+    const focus = forced ? hc.Highlight : lampN;
+
+    // Scene state per mode.
+    let smode = 'ready', left = 1800, total = 1800, preset = 'p30';
+    if (forced || reduced) { smode = 'awake'; left = st.left; }
+    if (sr) { const e = SR[st.srIdx] || SR[2]; smode = e[3]; left = e[4]; total = 2820; preset = 'until'; }
+    const live = smode === 'awake' || smode === 'starting';
+    const ended = smode === 'ended';
+    const p = ended || smode === 'timesup' ? 0 : left / total;
+    const tone = smode === 'ready' || ended ? t.muted : lamp;
+    const faceColor = smode === 'ready' ? lamp : tone;
+    const [bigA, bigB] = this.split(left);
+    const endMs = Math.round((st.now + left * 1000) / 60000) * 60000;
+    const PILL = { ready: 'Ready', ended: 'Ready', starting: 'Starting…', awake: 'Screen awake', timesup: 'Screen awake' };
+    let kicker = 'Time left', metaA = 'until', metaB = sr ? '10:30 PM' : this.hm(endMs);
+    if (smode === 'ready') { kicker = 'Keeps awake for'; metaA = nojs ? 'for' : 'ends at'; metaB = nojs ? '30 minutes' : this.hm(endMs); }
+    if (smode === 'starting') kicker = 'Starting';
+    if (smode === 'timesup') { kicker = "Time's up"; metaA = 'reached zero at'; metaB = '10:30 PM'; }
+    if (ended) { kicker = 'Session complete'; metaA = 'ended at'; metaB = '10:31 PM'; }
+    const NOTE = {
+      ready: nojs ? 'Keeps this screen on while this tab stays visible.' : 'Keeps this screen on while this tab stays visible.',
+      starting: 'Asking your browser to keep the screen on…',
+      awake: 'Started ' + (sr ? '9:43 PM' : this.hm(st.now - (1800 - left) * 1000)) + ' · keep this tab visible',
+      timesup: 'The screen stays on while you decide.',
+      ended: 'Kept awake for 47 min. The screen can sleep now.'
+    };
+
+    // Type scale: text200 doubles every UI text size; digits are sized by the ring (container units).
+    const z = text200 ? 2 : 1;
+    const px = (n) => n * z + 'px';
+    // Sizes and line heights from DESIGN.md §11.5 (px, 4 px grid); at 200% text both double (a user setting, exempt from the scale).
+    const fz = {
+      date: px(15), dateLh: px(22), kicker: px(12), kickerLh: px(16), meta: px(15), metaLh: px(22), note: px(14), noteLh: px(20),
+      preset: px(desk ? 13 : 15), presetLh: px(desk ? 18 : 22), presetH: text200 ? '52px' : '44px', presetPad: text200 ? '0 8px' : '4px 8px',
+      chip: px(14), chipLh: px(20), chipH: text200 ? '52px' : '44px', chipPad: text200 ? '4px 16px' : '8px 16px',
+      cta: px(17), ctaLh: px(24), tab: px(14), tabLh: px(20), tabH: text200 ? '64px' : '44px'
+    };
+
+    // Screen geometry.
+    const W = desk ? 1280 : tab ? 820 : reflow ? 320 : 390;
+    const natural = text200 || reflow;
+    const SH = desk ? 800 : tab ? 1180 : text200 ? 1532 : reflow ? 832 : 844;
+    const capOut = text200;
+    const areas = capOut ? "'tabs' 'pill' 'face' 'cap' 'note' 'dock'" : "'tabs' 'pill' 'face' 'note' '.' 'dock'";
+    const body = desk
+      ? "position: relative; flex-grow: 1; display: grid; grid-template-columns: 620px minmax(0, 1fr); grid-template-rows: 1fr auto auto auto auto 1fr; grid-template-areas: 'face .' 'face pill' 'face note' 'face dock' 'face tabs' 'face .'; column-gap: 64px; row-gap: 20px; padding: 8px 80px 40px; min-height: 0"
+      : tab
+        ? "position: relative; flex-grow: 1; display: grid; grid-template-columns: minmax(0, 520px); justify-content: center; grid-template-rows: auto auto minmax(260px, 459px) auto 1fr auto; grid-template-areas: " + areas + "; row-gap: 20px; padding: 24px 32px 48px; min-height: 0"
+      : natural
+        ? "position: relative; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto " + (reflow ? '272px' : '340px') + " auto auto auto; grid-template-areas: " + areas + "; row-gap: " + (text200 ? '20px' : '12px') + "; padding: 12px 16px 40px"
+        : "position: relative; flex-grow: 1; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(160px, 340px) auto 1fr auto; grid-template-areas: " + areas + "; row-gap: 12px; padding: 12px 16px 20px; min-height: 0";
+    const still = reduced || nojs;
+    const S = {
+      w: W + 'px', h: SH + 'px', desk, cls: still ? 'a-still' : '',
+      aura: !forced && !reduced, auraCls: still ? '' : 'at-aura', inCls: still ? '' : 'at-in', riseCls: still ? '' : 'at-rise', slideCls: still ? '' : 'at-slide',
+      arcCls: still ? '' : 'at-arc', linCls: still ? '' : 'at-lin', ticks: !forced,
+      linePad: desk ? '0 80px' : tab ? '0 32px' : '0 16px',
+      themeFull: !reflow, themeCycle: reflow, body, align: desk ? 'start' : 'center', textAlign: desk ? 'start' : 'center',
+      tabsW: desk ? '360px' : tab ? '440px' : '100%', ringMax: desk ? '496px' : tab ? '432px' : '320px', metaFs: desk ? '20px' : tab ? '18px' : '15px', metaLh: desk || tab ? '28px' : '22px',
+      chipJustify: desk ? 'flex-start' : 'center', gridCols: text200 ? 2 : 4,
+      tabCols: text200 ? 2 : 4, clusterMs: text200 ? 'auto' : '0', tabsRadius: text200 ? '28px' : '999px'
+    };
+
+    // Focus order (keyboard board). Other modes keep the same objects with no ring.
+    const cur = kb ? (ORD[st.step % ORD.length] || ORD[0])[0] : null;
+    const badge = (on) => 'min-width: 20px; height: 20px; padding: 0 4px; box-sizing: border-box; border-radius: 999px; display: grid; place-items: center; font-size: 12px; line-height: 16px; font-weight: 600; font-variant-numeric: tabular-nums; background: ' + (on ? lampN : r0.ink) + '; color: ' + (on ? lampInk : r0.ground) + '; box-shadow: 0 0 0 2px ' + r0.ground + '; z-index: 5';
+    const f = {};
+    ORDER.forEach(([id]) => { const i = ORD.findIndex((o) => o[0] === id); const on = cur === id; f[id] = { n: i < 0 ? '' : i + 1, ring: on ? '2px solid ' + focus : '0px solid transparent', badge: badge(on) }; });
+    const navs = ['Use cases', 'Devices', 'Extension', 'Pro'].map((label, i) => Object.assign({ label, color: t.ink2, deco: 'none' }, f['nav' + i]));
+
+    // Presets: buttons, or real links to the preset routes before JavaScript runs.
+    // All seven presets on every size (D-R14): a bar on desktop, a 4-column grid on phones (2 columns at 200% text).
+    const rows = PRESETS;
+    const presetGrid = !desk && !tab;
+    const selBg = forced ? hc.Highlight : this.rgba(lampN, 0.14);
+    const selLine = forced ? hc.Highlight : this.rgba(lampN, 0.45);
+    const selInk = forced ? hc.HighlightText : t.ink;
+    const presets = rows.map(([id, label, aria, , href]) => {
+      const on = preset === id;
+      const link = nojs && !!href;
+      return Object.assign({
+        label, aria, href: href || '#', link, btn: !link, sel: on ? 'true' : 'false', cur: on ? 'page' : 'false',
+        weight: on ? 600 : 500, color: on ? selInk : t.ink2,
+        line: on ? selLine : t.line, bg: on ? selBg : t.surface, span: presetGrid && id === 'pinf' ? 'span 2' : 'auto'
+      }, f[id]);
+    });
+    const pi = rows.findIndex((x) => x[0] === preset);
+
+    const tabs = ['Ring', 'Bold', 'Horizon', 'Tide'].map((label, i) => ({ label, sel: i === 0 ? 'true' : 'false', tabindex: i === 0 ? '0' : '-1', weight: i === 0 ? 600 : 500, color: i === 0 ? selInk : t.ink2 }));
+
+    // Rail tokens (always the normal theme).
+    const annot = dark ? '#A594FF' : '#5A47CF';
+    const r = { ground: r0.ground, surface: r0.surface, line: r0.line, line2: r0.line2, ink: r0.ink, ink2: r0.ink2, muted: r0.muted, lampText: lampN, annot, annotInk: dark ? '#0A0E16' : '#FFFFFF', annotText: dark ? '#A594FF' : '#5A47CF' };
+
+    // Screen reader visualisation.
+    const srE = SR[st.srIdx] || SR[2];
+    const srLog = SR.map(([at, text, src], i) => ({ at, text, src, bg: i === st.srIdx ? this.rgba(annot, 0.16) : 'transparent', color: i > st.srIdx ? r0.muted : r0.ink, weight: i === st.srIdx ? 600 : 500 }));
+    const annRing = '2px solid ' + annot;
+    const srv = {
+      pillRing: sr && srE[2] === 'Pill' ? annRing : '0px solid transparent',
+      liveRing: sr && srE[2] === 'Timer' ? annRing : '0px solid transparent',
+      askRing: sr && srE[2] === 'Prompt' ? annRing : '0px solid transparent',
+      liveText: srE[2] === 'Timer' ? srE[1] : '(empty until the next multiple of 5 minutes left)',
+      liveLine: this.rgba(annot, 0.45), liveBg: this.rgba(annot, 0.1)
+    };
+
+    // Forced-colours specimens: state carried by glyph, text and ring pattern only.
+    const c26 = 2 * Math.PI * 26;
+    const tip = (fr) => { const a = 2 * Math.PI * fr - Math.PI / 2; return { tipX: (32 + 26 * Math.cos(a)).toFixed(1), tipY: (32 + 26 * Math.sin(a)).toFixed(1) }; };
+    const specimens = [
+      Object.assign({ pill: 'Ready', pattern: 'Full thin arc, hollow dot', glyph: DOT, fill: 'transparent', dash: c26.toFixed(1) + ' 0', trackW: 1, trackDash: 'none', tipR: 0 }, tip(0)),
+      Object.assign({ pill: 'Screen awake', pattern: 'Solid arc with a tip bead', glyph: DOT, fill: t.ink, dash: (c26 * 0.7).toFixed(1) + ' ' + c26.toFixed(1), trackW: 1, trackDash: 'none', tipR: 4 }, tip(0.7)),
+      Object.assign({ pill: 'Paused — tab hidden', pattern: 'Long dashes, no tip', glyph: GLYPH.paused, fill: t.ink, dash: '7 5', trackW: 0, trackDash: 'none', tipR: 0 }, tip(0)),
+      Object.assign({ pill: "Blocked — here's the fix", pattern: 'Dots, no tip', glyph: GLYPH.blocked, fill: t.ink, dash: '0.1 7', trackW: 0, trackDash: 'none', tipR: 0 }, tip(0)),
+      Object.assign({ pill: 'Awake via video fallback', pattern: 'Solid arc on a dashed track', glyph: GLYPH.fallback, fill: t.ink, dash: (c26 * 0.7).toFixed(1) + ' ' + c26.toFixed(1), trackW: 1.5, trackDash: '1.5 3.5', tipR: 4 }, tip(0.7)),
+      Object.assign({ pill: 'Tap to use the fallback', pattern: 'Full arc, button floats', glyph: DOT, fill: t.ink, dash: c26.toFixed(1) + ' 0', trackW: 1, trackDash: 'none', tipR: 0 }, tip(0))
+    ];
+    const swatches = ['Canvas', 'CanvasText', 'Highlight', 'HighlightText', 'ButtonText', 'LinkText'].map((name) => ({ name, hex: hc[name] }));
+
+    const motionRows = [
+      { el: 'Light sweep on the ring', from: '16 s loop', to: 'Removed' },
+      { el: 'Tip bead halo', from: '3.4 s pulse', to: 'Bead only, solid' },
+      { el: 'Background glow', from: '26 s drift', to: 'Removed' },
+      { el: 'Arc and digits', from: '1 s linear ease', to: 'Change in place' },
+      { el: 'State colour, pill', from: '450 to 600 ms fade', to: 'Instant' },
+      { el: 'Panels and sheets', from: '600 to 700 ms rise', to: 'Appear instantly' },
+      { el: 'Horizon sky', from: 'Clouds, stars, glint', to: 'Frozen; sun still tracks time' },
+      { el: 'Tide water', from: 'Waves, bubbles', to: 'Frozen; level still drops' },
+      { el: 'Burn-in pixel shift', from: 'Slow shift', to: 'Still runs, applied instantly' }
+    ];
+
+    const RAIL = {
+      keyboard: ['Keyboard', 'Focus order', 'Tab visits every control in the order you see it. The current stop wears the 2 px lamp outline at a 3 px offset.', [
+        'Composite widgets take one Tab stop: theme and clock face move with the arrow keys inside.',
+        'On desktop the clock face tabs sit last in the right column, so they come last in the markup too (O-65). On phones they lead the column, first in both.',
+        'Single-key shortcuts (Space, 1 to 6, 0, U, F, D, M, P, ?) can be turned off in Settings; nothing sticky ever covers the focused control.'
+      ]],
+      forced: ['Forced colours · ' + hc.name, 'Windows high contrast, simulated', 'The system replaces every colour. Glows, gradients, the sweep and shadows drop out; state still reads from the pill text, its glyph and the ring pattern.', [
+        'In forced-colors mode the ring SVG uses CanvasText strokes and keeps its dash patterns, so paused, blocked and fallback stay distinct.',
+        'Selected length and keyboard focus use Highlight and HighlightText; links use LinkText.',
+        'Buttons get a 1 px ButtonText border so the actions stay findable without their fills.',
+        'The logo bead keeps its shape but loses its tone; the pill carries the state.'
+      ]],
+      zoom: text200
+        ? ['Text 200%', 'Text doubled on a 390 px phone', 'Every UI string doubles. Nothing clips or overlaps; the page grows taller and scrolls, and the actions stay in the flow.', [
+          'The header wraps: logo on one row, theme and Settings on the next.',
+          'Kicker and end time move out of the ring and under it at full size. The digits are sized by the ring (container units) and already exceed double body size.',
+          'The seven presets become a two-column chip grid; Until… and Custom… wrap.',
+          'The dock stops being pinned to the bottom so it never hides focused content.'
+        ]]
+        : ['Reflow · 400% zoom', '320 CSS px wide, no horizontal scroll', 'A 1280 px window at 400% gives a 320 px wide, about 256 px tall viewport. Everything reflows into one column; nothing needs sideways scrolling.', [
+          'The three theme buttons collapse into the existing Cycle theme button (tool.header.theme).',
+          'All seven presets stay: a four-column chip grid, ∞ across two cells.',
+          'The ring scales to the column; its captions stay inside at normal size.',
+          'The date and time line wraps onto two lines when it needs to.'
+        ]],
+      reduced: ['Reduced motion', 'prefers-reduced-motion: reduce', 'The screen is the same, with nothing moving by itself. The ring still counts down and every state change is immediate.', [
+        'Only decorative loops are removed; information that moves with time (arc, digits, sun position, water level) still updates.',
+        'The whole switch is one CSS media query; the island writes the same --at-p and data-state either way.'
+      ]],
+      nojs: ['Before JavaScript', 'First paint: the HTML the server sends', 'The page is complete and stable before the island loads. What you see here is what renders with JavaScript still downloading.', [
+        'The pill says Ready, never Screen awake: nothing is held until the browser confirms the lock.',
+        'Durations are real links to /15m, /30m, /45m, /1h, /2h and /4h, so choosing one works with no script. ∞, Until… and Custom… are buttons that start working when the island binds.',
+        'The date, time and end-time line need the local clock, so the server leaves it empty with its height reserved (CLS 0).',
+        'Keep awake, theme and Settings are in their final place at first paint; nothing shifts when they come alive.'
+      ]],
+      screenreader: ['Screen reader', 'What gets announced, and when', 'Two polite live regions speak: the pill and a hidden timer line. The digits stay silent.', [
+        'Digits are role="timer" with aria-live="off"; the prompt is role="status" and its countdown is silent.',
+        'Cadence (O-64, as shipped): the timer line speaks on multiples of 5 minutes left (45, 40 … 5), then at 1 minute; Time\'s up and Session complete follow.'
+      ]]
+    };
+    const rail = RAIL[mode];
+    const railW = 480;
+    const H = Math.max(SH, 800);
+
+    return {
+      W: (W + railW) + 'px', H: H + 'px', S, t, r, fz, f, navs, tabs, presets, tabsTop: !desk, tabsEnd: desk,
+      // Shared primitives (fix batch 1b): P-HEADER, P-THEME (Auto selected, static on this board), P-PILL-M, P-CTA, P-KBD, P-TAG.
+      hdr: AT_HDR[desk ? 'desktop' : tab ? 'tablet' : 'phone'], hdrStd: !text200, text200, pillStd: !text200, cardPad: AT_CARD_PAD[tab ? 'tablet' : 'phone'],
+      themeX: '88px', themeLight: 'false', themeDark: 'false', themeAuto: 'true', setLight: () => {}, setDark: () => {}, setAuto: () => {},
+      themeLightInk: t.ink2, themeDarkInk: t.ink2, themeAutoInk: forced ? hc.HighlightText : t.ink,
+      p: { lampFill: lampN, lampInk }, lampGlow: this.rgba(lampN, 0.55),
+      ctaStd: (smode === 'ready' || ended) && !forced && !text200, ctaAlt: (smode === 'ready' || ended) && (forced || text200), ctaAltPad: text200 ? '8px 16px' : '0 16px',
+      kb, isForced: forced, isReduced: reduced, isNojs: nojs, isSr: sr,
+      skipOn: kb && cur === 'skip', showClock: !nojs,
+      dateLong: this.dateLong(st.now), nowTime: this.hm(st.now),
+      tone, faceColor, beadHalo: forced ? 0 : 0.28, aura: this.rgba(faceColor, live ? (dark ? 0.16 : 0.12) : 0.06),
+      toneSoft: forced ? hc.Canvas : this.rgba(tone, 0.12), toneLine: forced ? hc.CanvasText : this.rgba(tone, 0.38),
+      toneGlow: live && !forced ? this.rgba(tone, 0.8) : 'transparent', toneFaint: this.rgba(faceColor, dark ? 0.16 : 0.12),
+      glyph: DOT, glyphFill: smode === 'ready' || ended || smode === 'starting' ? 'transparent' : tone, pillText: PILL[smode] || 'Ready', statusLabel: PILL[smode] || 'Ready',
+      sweepOn: live && !forced && !reduced && !nojs, haloOn: !forced && !reduced, tipFill: forced ? hc.CanvasText : t.ink,
+      trackW: forced ? 1.5 : 6, trackDash: 'none',
+      arcDash: p <= 0 ? '0.01 ' + C : (C * p).toFixed(1) + ' ' + C.toFixed(1),
+      arcOp: smode === 'ready' ? (forced ? 1 : 0.45) : ended ? 0 : 1, glowOp: live && !forced ? 0.45 : 0,
+      tipDeg: (360 * p).toFixed(2) + 'deg', tipOp: live && p > 0 ? 1 : 0,
+      digitFs: '23.75cqw', bigA, bigB, numColor: live || smode === 'timesup' ? t.ink : t.ink2,
+      timerAria: bigA + bigB + ' left', kicker, metaA, metaB, capIn: !capOut, capInMeta: !capOut, capOut,
+      showNote: true, note: NOTE[smode] || '',
+      showLength: smode === 'ready' || smode === 'awake' || smode === 'starting' || ended,
+      presetBar: !presetGrid, presetGrid, presetN: rows.length, presetX: Math.max(0, pi) * 100 + '%', presetIndOp: pi < 0 ? 0 : 1,
+      untilLabel: sr ? 'Until 10:30 PM' : 'Until…', untilLine: sr ? lampN : t.line2, untilBg: sr ? this.rgba(lampN, 0.12) : 'transparent', selBg, selLine, selInk,
+      dockSetup: smode === 'ready' || ended, dockRun: live, dockAsk: smode === 'timesup',
+      ctaLabel: ended ? 'Again · until 10:30 PM' : 'Keep awake · 30 min',
+      ctaBg: forced ? hc.ButtonFace : lampN, ctaInk: forced ? hc.ButtonText : lampInk,
+      ctaBorder: forced ? '1px solid ' + hc.ButtonText : '0', stopBorder: '1px solid ' + (forced ? hc.ButtonText : t.primaryLine), ctaShadow: forced ? 'none' : '0 10px 30px -8px ' + this.rgba(lampN, 0.55),
+      lampSoft: forced ? hc.Canvas : this.rgba(lampN, 0.14), lampLine: forced ? hc.CanvasText : this.rgba(lampN, 0.45),
+      fold: text200 ? { on: true, y: '844px', label: 'First screen ends here (844 px)' } : reflow ? { on: true, y: '256px', label: 'Viewport at 400% zoom: 320 × 256' } : { on: false, y: '0px', label: '' },
+      railKicker: rail[0], railTitle: rail[1], railLead: rail[2], notes: (text200 ? ['Violet line: the first screen ends at 844 px; the rest scrolls.'] : reflow ? ['Violet line: the 320 × 256 viewport at 400% zoom; the rest scrolls vertically only.'] : []).concat(rail[3]).map((text) => ({ text })),
+      stops: ORD.map(([id, name, role], i) => ({ n: i + 1, name, role, bg: cur === id ? this.rgba(lampN, 0.14) : 'transparent', dotBg: cur === id ? lampN : r0.line, dotInk: cur === id ? lampInk : r0.ink, weight: cur === id ? 600 : 500 })),
+      kbPos: 'Stop ' + ((st.step % ORD.length) + 1) + ' of ' + ORD.length, kbRows: Math.ceil(ORD.length / 2), kbPlayLabel: st.kbPlaying ? 'Pause walk' : 'Play walk', kbPlayingStr: st.kbPlaying ? 'true' : 'false',
+      kbPrev: () => this.setState({ step: (this.state.step + ORD.length - 1) % ORD.length, kbPlaying: false }),
+      kbNext: () => this.setState({ step: (this.state.step + 1) % ORD.length, kbPlaying: false }),
+      kbToggle: () => this.setState({ kbPlaying: !this.state.kbPlaying }),
+      specimens, swatches, motionRows,
+      sr: srv, srLog, srPlayLabel: st.srPlaying ? 'Playing…' : 'Replay from start',
+      srReplay: () => this.setState({ srIdx: 0, srPlaying: true }),
+      srPrev: () => this.setState({ srIdx: Math.max(0, this.state.srIdx - 1), srPlaying: false }),
+      srNext: () => this.setState({ srIdx: Math.min(SR.length - 1, this.state.srIdx + 1), srPlaying: false })
+    };
+  }
+}
+</script>
+</body>
+</html>
