@@ -1,6 +1,8 @@
 const LOCAL = 'http://127.0.0.1:4321';
 const base = (process.env.LHCI_BASE_URL || LOCAL).replace(/\/+$/u, '');
 const remote = base !== LOCAL;
+// Every *.pages.dev host, the production alias included, sends `X-Robots-Tag: noindex` (docs/14 §1).
+const noindexHost = remote && /\.pages\.dev$/u.test(new URL(base).hostname);
 
 // docs/19 §E: /, /30m, one /for page, one /guides page, /es/.
 const PATHS = ['/', '/30m', '/for/cooking', '/guides/lock-screen-vs-sleep', '/es/'];
@@ -62,16 +64,20 @@ module.exports = {
             'cumulative-layout-shift': ['error', { maxNumericValue: 0 }],
           },
         },
+        ...(noindexHost
+          ? []
+          : [
+              {
+                // Indexable URLs: SEO 100.
+                matchingUrlPattern: '^(?!.*/es/$).*$',
+                assertions: {
+                  'categories:seo': ['error', { minScore: 1 }],
+                },
+              },
+            ]),
         {
-          // Indexable URLs: SEO 100.
-          matchingUrlPattern: '^(?!.*/es/$).*$',
-          assertions: {
-            'categories:seo': ['error', { minScore: 1 }],
-          },
-        },
-        {
-          // /es/ (noindex until native review): every SEO audit except is-crawlable.
-          matchingUrlPattern: '/es/$',
+          // /es/ (noindex until native review) and every URL on a noindex host: every SEO audit except is-crawlable.
+          matchingUrlPattern: noindexHost ? '.*' : '/es/$',
           assertions: Object.fromEntries(SEO_AUDITS_EXCEPT_CRAWLABLE.map((id) => [id, ['error', { minScore: 1 }]])),
         },
         {
