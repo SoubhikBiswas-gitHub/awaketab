@@ -15,6 +15,8 @@ export interface IHubGroup {
 }
 
 export interface IHub {
+  // The breadcrumb label (hub boards): the hub page's own crumb and the middle crumb of its articles.
+  crumb: string;
   lead: string;
   note?: string;
   jumpAria: string;
@@ -49,6 +51,7 @@ export const MODE_LABEL: Record<string, string> = {
 
 export const HUBS: Record<TContentKind, IHub> = {
   for: {
+    crumb: 'Keep your screen awake for a task',
     lead: 'Start with the task you need to finish. Each guide pairs a suitable timer preset with the limits that matter in that situation.',
     jumpAria: 'Jump to a situation',
     unit: ['guide', 'guides'],
@@ -133,6 +136,7 @@ export const HUBS: Record<TContentKind, IHub> = {
     ],
   },
   on: {
+    crumb: 'Devices and browsers',
     lead: 'Pick your phone, tablet, computer or browser. Each page gives the version that works, the steps, and the limits your system still sets.',
     note: HONEST,
     jumpAria: 'Jump to a kind of device',
@@ -228,6 +232,7 @@ export const HUBS: Record<TContentKind, IHub> = {
     ],
   },
   vs: {
+    crumb: 'Compare',
     lead: 'Some tools keep the whole computer awake, some fake input, and some are tabs like this one. Each comparison says plainly when the other tool is the better pick.',
     jumpAria: 'Jump to a kind of tool',
     unit: ['comparison', 'comparisons'],
@@ -302,6 +307,7 @@ export const HUBS: Record<TContentKind, IHub> = {
     ],
   },
   guides: {
+    crumb: 'Fixes',
     lead: 'Step-by-step fixes for timeouts, greyed-out options and screens that go dark, grouped by system. Each says what AwakeTab can change and what it cannot.',
     jumpAria: 'Jump to a system',
     unit: ['guide', 'guides'],
@@ -376,6 +382,7 @@ export const HUBS: Record<TContentKind, IHub> = {
     ],
   },
   learn: {
+    crumb: 'Learn',
     lead: 'The facts behind the pill: which browsers support a wake lock, what can refuse one, and what it cannot do.',
     note: HONEST,
     jumpAria: 'Jump to a topic',

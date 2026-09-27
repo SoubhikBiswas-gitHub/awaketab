@@ -61,9 +61,9 @@ const showAds = shouldRenderAdSlots();
   {showAds && <style is:inline slot="head" set:html={minifyCss(adSheet)} />}
   <main class="at-cp">
     <article class="at-art" data-tool-at={toolAt} data-variant={variant}>
-      <slot name="toc" />
       <div class="at-head"><slot name="head" /></div>
       {toolAt === 'top' && <slot name="tool" />}
+      <slot name="toc" />
       <div class="at-body">
         <div class="at-prose">
           <slot name="intro" />

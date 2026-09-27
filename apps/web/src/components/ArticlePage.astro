@@ -72,7 +72,7 @@ const canonical = `${site}${path}`;
 const indexable = pageIndexable({ locale, reviewed: data.reviewed, noindex: data.noindex });
 const alternates = indexable ? pageAlternates(index, kind, enSlug, locale, site) : undefined;
 const translations = pageTranslations(index, kind, enSlug);
-const hubH1 = t(`page.hub.${kind}.h1`);
+const hubCrumb = HUBS[kind].crumb;
 // Locale homes are the one page URL with a trailing slash, `/es/` (`es/index.html`, docs/14 §2.1).
 const homeHref = english ? '/' : `/${locale}/`;
 const published = data.published.toISOString().slice(0, 10);
@@ -101,7 +101,7 @@ const crumbLabel = data.crumb ?? data.h1;
 const breadcrumbs = english
   ? [
       { name: 'AwakeTab', url: site },
-      { name: hubH1, url: `${site}/${kind}` },
+      { name: hubCrumb, url: `${site}/${kind}` },
       { name: crumbLabel, url: canonical },
     ]
   : [
@@ -110,7 +110,7 @@ const breadcrumbs = english
     ];
 const crumbs: Array<{ href?: string; label: string }> = [
   { href: homeHref, label: t('app.name') },
-  ...(english ? [{ href: `/${kind}`, label: hubH1 }] : []),
+  ...(english ? [{ href: `/${kind}`, label: hubCrumb }] : []),
   { label: crumbLabel },
 ];
 
@@ -359,18 +359,16 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
     <nav class="at-crumbs" aria-label={english ? 'Breadcrumb' : t('content.breadcrumb')}>
       <ol>
         {
-          crumbs.map((crumb, i) =>
-            crumb.href ? (
-              <li>
-                <a href={crumb.href}>{crumb.label}</a>
+          crumbs.map((crumb, i) => (
+            <li aria-current={crumb.href ? undefined : 'page'} data-crumb={i}>
+              {i > 0 && (
                 <span class="at-crumb-sep" data-slot="breadcrumb-separator" aria-hidden="true">
                   <svg viewBox="0 0 16 16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
                 </span>
-              </li>
-            ) : (
-              <li aria-current="page" data-crumb={i}>{crumb.label}</li>
-            ),
-          )
+              )}
+              {crumb.href ? <a href={crumb.href}>{crumb.label}</a> : <span>{crumb.label}</span>}
+            </li>
+          ))
         }
       </ol>
     </nav>
