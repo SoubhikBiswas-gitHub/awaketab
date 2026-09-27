@@ -144,7 +144,7 @@ describe('cook mode (Ambient canvas)', () => {
     const off = mountCook(stage, ctx);
     const tap = stage.querySelector<HTMLButtonElement>('[data-cook-tap]') as HTMLButtonElement;
     expect(tap.hasAttribute('data-run')).toBe(false);
-    expect(stage.querySelector('[data-cook-hint]')?.textContent).toBe('Tap to start — the screen stays awake');
+    expect(stage.querySelector('[data-cook-hint]')?.textContent).toBe('Tap to start. The screen stays awake.');
     tap.click();
     await vi.waitFor(() => {
       expect(tap.hasAttribute('data-run')).toBe(true);

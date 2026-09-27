@@ -62,7 +62,7 @@ function mount(): HTMLElement {
           <div data-co-devices-row hidden><dd data-co-devices data-tpl="{n} of 5"></dd></div>
           <div data-co-tail-row hidden><dd data-co-tail data-tpl="ending {tail}"></dd></div>
         </dl>
-        <button type="button" aria-expanded="false" data-co-show data-show="Show my key" data-hide="Hide my key">Show my key</button>
+        <button type="button" aria-expanded="false" data-co-show data-show="Show my key" data-hide="Hide key">Show my key</button>
         <div data-co-key-panel hidden><code data-co-key></code></div>
       </main>
     </div>`;
