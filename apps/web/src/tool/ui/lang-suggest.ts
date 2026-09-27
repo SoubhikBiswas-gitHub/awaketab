@@ -18,7 +18,12 @@ export function mountLangSuggest(root: HTMLElement, storage: ReturnType<typeof c
   text.lang = accept.lang = row.lang;
   // The footer switcher links this same page in that language; the Settings row links its home.
   accept.href = document.querySelector<HTMLAnchorElement>(`footer [hreflang="${row.hreflang}"]`)?.href ?? row.href;
-  banner.hidden = false;
+  // Its styles are in the on-demand sheet; showing it earlier paints it unstyled.
+  void import('./more-css.js')
+    .then((m) => m.moreCss())
+    .then(() => {
+      banner.hidden = false;
+    });
   banner.querySelector('[data-lang-suggest-dismiss]')?.addEventListener('click', () => {
     banner.hidden = true;
     storage.writeOnboarding({

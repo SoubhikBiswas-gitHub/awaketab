@@ -113,6 +113,7 @@ M6 engagement-layer files (Vitest + happy-dom; `apps/web/test/tool/ctx-helper.ts
 | `apps/web/test/tool/stats.test.ts` | Heatmap 7 × 12 Monday-first, local-date keys (not UTC), future and locked cells, quartile levels, `summarise` |
 | `apps/web/test/tool/end.test.ts` | `onEnded` skips `user`/`denied`; completed → chime, notification, title flash, session count only ≥ 5 min; extend prompt and grace lock; `flashTitle` cadence and minimum |
 | `apps/web/test/tool/rating.test.ts` | `ratingEligible` (5 sessions, `later` re-arm at +10, `never`/`rated` final); `maybeShowRating` busy guards, events, `Esc` = later |
+| `apps/web/test/tool/toast.test.ts` | Toast queue (docs/05 §3.7): same id replaces, text as the default id, at most 3 with persistent notices kept longest, `dismiss` by id |
 | `apps/web/test/tool/pip-mirror.test.ts` | `PIP_ADD_MS` kept equal in `pip.ts` and `pip-mirror.ts`; `pickOwner`; `mirrorTime` for each plan type and pauses; `mountMirror` stale fallback and `intent` posting |
 | `apps/web/test/tool/accent.test.ts` | `accentId`/`applyAccent` incl. pack fallback; every palette in `tokens.css` meets the §1.1a contrast rules (AA) |
 | `apps/web/test/tool/settings.test.ts` | `fillSettings` → `readSettings` round trip; gated values (pack accents, message) keep stored values; `openSettings` |

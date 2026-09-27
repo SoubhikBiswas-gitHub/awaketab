@@ -1,34 +1,20 @@
 import type { IStore, IToastItem } from '../store.js';
 
-let seq = 0;
-const timers = new Map<string, ReturnType<typeof setTimeout>>();
-
+// The boot chunk only keeps the queue; timers, pausing and the DOM live in the lazy toast-view.ts.
 export function toast(store: IStore, item: Omit<IToastItem, 'id'> & { id?: string }): void {
-  const id = item.id ?? `t${String((seq += 1))}`;
-  const next: IToastItem = { ...item, id };
-  const list = store
-    .get()
-    .ui.toasts.filter((x) => x.id !== id)
-    .concat(next)
-    .slice(-3);
-  store.set({ ui: { toasts: list } });
-  const prev = timers.get(id);
-  if (prev) clearTimeout(prev);
-  if (item.kind !== 'error' && !item.sticky) {
-    timers.set(
-      id,
-      setTimeout(() => {
-        dismiss(store, id);
-      }, 6000),
-    );
-  }
+  const id = item.id ?? item.text;
+  const list = store.get().ui.toasts.filter((x) => x.id !== id);
+  // A fourth notice makes room by dropping the oldest one that would time out anyway.
+  const old =
+    list.length > 2
+      ? Math.max(
+          0,
+          list.findIndex((x) => x.kind !== 'error' && !x.sticky),
+        )
+      : -1;
+  store.set({ ui: { toasts: [...list.filter((_, i) => i !== old), { ...item, id }] } });
 }
 
 export function dismiss(store: IStore, id: string): void {
-  const prev = timers.get(id);
-  if (prev) clearTimeout(prev);
-  timers.delete(id);
-  store.set({
-    ui: { toasts: store.get().ui.toasts.filter((x) => x.id !== id) },
-  });
+  store.set({ ui: { toasts: store.get().ui.toasts.filter((x) => x.id !== id) } });
 }
