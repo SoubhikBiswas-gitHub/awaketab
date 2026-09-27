@@ -239,6 +239,11 @@ test('options: telemetry is off by default and free users see honest Pro gates',
   await expect(schedules.locator('[data-locked] a')).toHaveAttribute('href', 'https://awaketab.com/pro');
   await expect(schedules.locator('button[type="submit"]')).toBeDisabled();
   await expect(schedules.locator('.op-day').first()).toBeDisabled();
+  // Times read 12-hour with AM/PM in English, and the week axis names noon (ExtOptions board).
+  await expect(schedules.locator('[data-schedules-intro]')).toHaveText(
+    'Keep awake during weekly windows, such as weekdays 9:00 AM to 6:00 PM. Overlapping windows merge into one.',
+  );
+  await expect(schedules.locator('[data-axis] span')).toHaveText(['12 AM', '6 AM', 'Noon', '6 PM', '12 AM']);
   // No dead control: battery auto-stop cannot work in an MV3 worker (docs/10 §13), so none is offered.
   await expect(page.locator('input[name="batteryAutoStop"]')).toHaveCount(0);
   // Changing a default is saved to chrome.storage.local and reaches the popup.
@@ -298,6 +303,7 @@ test('licence activation against a mocked API: local only, never synced, unlocks
   await expect(page.locator('[data-gated="ext.schedules"] [data-locked]')).toBeHidden();
   await page.locator('[data-schedule-form] button[type="submit"]').click();
   await expect(page.locator('[data-schedules] li')).toHaveCount(1);
+  await expect(page.locator('[data-schedules] li .op-li-sub')).toHaveText('9:00 AM to 6:00 PM');
   // The worker mirrors settings to chrome.storage.sync after a short debounce; the licence never goes there.
   await expect.poll(async () => Object.keys(await syncStore(page)), { timeout: 8_000 }).toContain('at.v1.ext');
   const synced = await syncStore(page);

@@ -51,7 +51,7 @@
             <h2 id="h-defaults" data-i18n="ext.options.defaults"></h2>
             <div class="op-card">
               <div class="op-block" role="radiogroup" aria-labelledby="lbl-level">
-                <div class="op-label" id="lbl-level" data-i18n="ext.level.label"></div>
+                <div class="op-label op-tight" id="lbl-level" data-i18n="ext.level.label"></div>
                 <div class="op-levels">
                   <label class="op-levelcard">
                     <input class="at-sr" type="radio" name="level" value="display" />
@@ -69,8 +69,8 @@
               </div>
               <div class="op-block" role="radiogroup" aria-labelledby="lbl-dur" aria-describedby="help-dur">
                 <div class="op-text">
-                  <div class="op-label" id="lbl-dur" data-i18n="settings.defaultPreset"></div>
-                  <div class="op-help" id="help-dur" data-i18n="ext.options.duration.help"></div>
+                  <div class="op-label op-tight" id="lbl-dur" data-i18n="settings.defaultPreset"></div>
+                  <div class="op-help op-tight" id="help-dur" data-i18n="ext.options.duration.help"></div>
                 </div>
                 <div class="at-seg at-seg-sunken at-seg-lamp op-seg7" style="--n: 7">
                   <span class="at-seg-ind" aria-hidden="true"></span>
@@ -92,8 +92,8 @@
             <div class="op-card">
               <div class="op-row op-row-wide" role="radiogroup" aria-labelledby="lbl-endb" aria-describedby="help-endb">
                 <div class="op-text">
-                  <div class="op-label" id="lbl-endb" data-i18n="settings.endBehaviour"></div>
-                  <div class="op-help" id="help-endb" data-end-help></div>
+                  <div class="op-label op-tight" id="lbl-endb" data-i18n="settings.endBehaviour"></div>
+                  <div class="op-help op-tight" id="help-endb" data-end-help></div>
                 </div>
                 <div class="at-seg at-seg-sunken op-seg-end" style="--n: 2">
                   <span class="at-seg-ind" aria-hidden="true"></span>
@@ -103,16 +103,16 @@
               </div>
               <div class="op-row">
                 <div class="op-text">
-                  <label class="op-label" for="sw-notify" data-i18n="settings.notifications"></label>
-                  <div class="op-help" id="help-notify" data-i18n="ext.options.notifications.help"></div>
+                  <label class="op-label op-tight" for="sw-notify" data-i18n="settings.notifications"></label>
+                  <div class="op-help op-tight" id="help-notify" data-i18n="ext.options.notifications.help"></div>
                   <p class="at-error" data-notify-blocked hidden><span data-i18n="settings.notifications.blocked"></span></p>
                 </div>
                 <input class="at-switch" id="sw-notify" type="checkbox" role="switch" name="notifications" aria-describedby="help-notify" />
               </div>
               <div class="op-row op-row-select">
                 <div class="op-text">
-                  <label class="op-label" for="sel-sound" data-i18n="settings.sound"></label>
-                  <div class="op-help" id="help-sound" data-sound-help data-i18n="ext.options.sound.help"></div>
+                  <label class="op-label op-tight" for="sel-sound" data-i18n="settings.sound"></label>
+                  <div class="op-help op-tight" id="help-sound" data-sound-help data-i18n="ext.options.sound.help"></div>
                 </div>
                 <select class="at-input op-select" id="sel-sound" name="sound" aria-describedby="help-sound">
                   <option value="chime" data-i18n="settings.sound.chime"></option>
@@ -128,8 +128,8 @@
             <div class="op-card">
               <div class="op-row op-row-theme" role="radiogroup" aria-labelledby="lbl-theme" aria-describedby="help-theme">
                 <div class="op-text">
-                  <div class="op-label" id="lbl-theme" data-i18n="settings.theme"></div>
-                  <div class="op-help" id="help-theme" data-theme-help></div>
+                  <div class="op-label op-tight" id="lbl-theme" data-i18n="settings.theme"></div>
+                  <div class="op-help op-tight" id="help-theme" data-theme-help></div>
                 </div>
                 <div class="at-seg at-seg-sunken" style="--n: 4">
                   <span class="at-seg-ind" aria-hidden="true"></span>
@@ -161,7 +161,7 @@
             <div class="op-card">
               <div class="op-row">
                 <div class="op-text">
-                  <label class="op-label" for="sw-keys" data-i18n="settings.shortcuts"></label>
+                  <label class="op-label op-tight" for="sw-keys" data-i18n="settings.shortcuts"></label>
                   <div class="op-help" id="help-keys" data-i18n="ext.options.shortcuts.help"></div>
                 </div>
                 <input class="at-switch" id="sw-keys" type="checkbox" role="switch" name="keyboardShortcuts" aria-describedby="help-keys" />
@@ -179,7 +179,7 @@
               <h2 id="h-sched" data-i18n="ext.schedules.title"></h2>
               <span class="at-tag" data-i18n="pro.badge"></span>
             </div>
-            <p class="op-lead" data-i18n="ext.schedules.help"></p>
+            <p class="op-lead" data-schedules-intro></p>
             <p class="op-locked" data-locked hidden>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
               <span><span data-i18n="ext.pro.locked"></span> <span data-i18n="ext.options.lockedMore"></span></span>
@@ -238,7 +238,7 @@
                   </div>
                   <div class="op-new-actions">
                     <p class="at-error" data-schedule-error role="alert" hidden></p>
-                    <span class="op-help" data-schedule-note hidden></span>
+                    <span class="op-help op-tight" data-schedule-note hidden></span>
                     <button class="at-btn at-btn-lamp op-add" type="submit" data-i18n="ext.schedules.add"></button>
                   </div>
                 </div>
@@ -254,7 +254,7 @@
             </div>
             <div class="op-card">
               <div class="op-row">
-                <label class="op-label" for="sw-browser" data-i18n="ext.autostart.browser"></label>
+                <label class="op-label op-tight" for="sw-browser" data-i18n="ext.autostart.browser"></label>
                 <input class="at-switch" id="sw-browser" type="checkbox" role="switch" name="browserStart" />
               </div>
               <div class="op-sites">
@@ -296,7 +296,7 @@
                 <span class="op-licence-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
                 <div class="op-text">
                   <div class="op-label" data-i18n="pro.activated"></div>
-                  <div class="op-help" data-license-plan></div>
+                  <div class="op-help op-tight" data-license-plan></div>
                 </div>
                 <div class="op-licence-actions">
                   <button class="at-btn" type="button" data-license-remove data-i18n="ext.license.remove"></button>
@@ -313,7 +313,7 @@
                 <div class="op-licform-actions">
                   <button class="at-btn at-btn-stop at-btn-medium" type="submit" data-license-submit data-i18n="ext.license.activate"></button>
                   <a class="at-link op-pad-link" href="https://awaketab.com/pro/activate?ext=1" target="_blank" rel="noopener" data-i18n="ext.license.get"></a>
-                  <span class="op-help" data-license-status role="status" aria-live="polite"></span>
+                  <span class="op-help op-tight" data-license-status role="status" aria-live="polite"></span>
                 </div>
               </form>
             </div>
@@ -325,14 +325,14 @@
             <div class="op-card">
               <div class="op-row">
                 <div class="op-text">
-                  <label class="op-label" for="sw-tele" data-i18n="settings.telemetry"></label>
+                  <label class="op-label op-tight" for="sw-tele" data-i18n="settings.telemetry"></label>
                   <div class="op-help" id="telemetry-help" data-i18n="ext.privacy.telemetry.help"></div>
                 </div>
                 <input class="at-switch" id="sw-tele" type="checkbox" role="switch" name="telemetry" aria-describedby="telemetry-help" />
               </div>
               <div class="op-row op-row-stack">
                 <p class="op-body" data-i18n="ext.privacy.stored"></p>
-                <a class="at-link" href="https://awaketab.com/privacy#extension" target="_blank" rel="noopener" data-i18n="ext.privacy.policy"></a>
+                <a class="at-link at-link-underline" href="https://awaketab.com/privacy#extension" target="_blank" rel="noopener" data-i18n="ext.privacy.policy"></a>
               </div>
             </div>
           </section>
@@ -345,7 +345,7 @@
                 <div class="op-label" data-version></div>
                 <p class="op-help" data-i18n="ext.popup.limits"></p>
               </div>
-              <a class="at-link" href="https://awaketab.com/changelog" target="_blank" rel="noopener" data-i18n="ext.about.changelog"></a>
+              <a class="at-link at-link-underline" href="https://awaketab.com/changelog" target="_blank" rel="noopener" data-i18n="ext.about.changelog"></a>
             </div>
           </section>
         </main>

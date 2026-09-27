@@ -150,7 +150,7 @@
   gap: var(--at-s-6);
 }
 
-@media (width >= 720px) {
+@media (width >= 1024px) {
   .wl-nav {
     display: flex;
   }
@@ -816,7 +816,7 @@
   border-block-start: var(--at-border) solid var(--at-line);
 }
 
-@media (width >= 720px) {
+@media (width >= 600px) {
   .wl-levelcard {
     grid-template-columns: var(--at-ext-laptop-w) minmax(0, 1fr);
     padding: var(--at-s-10);

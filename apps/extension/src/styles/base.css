@@ -357,6 +357,10 @@ svg {
   text-decoration: none;
 }
 
+.at-link-underline {
+  text-decoration: underline;
+}
+
 .at-link-ink {
   color: var(--at-ink);
 }
