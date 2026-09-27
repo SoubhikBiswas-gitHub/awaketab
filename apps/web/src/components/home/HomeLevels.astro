@@ -1,0 +1,118 @@
+---
+import Button from '../shell/Button.astro';
+import { createT } from '../../i18n/load';
+import { LOCALE_META, type TLocale } from '../../i18n/locales';
+import { PLAN_PRICES } from '../../lib/license';
+import { usd } from '../../lib/pro-common';
+import matrix from '../../data/support-matrix.json';
+// A linked file, not a scoped <style>: every inline style on / counts against the tool CSS budget.
+import sheet from '../../styles/home-levels.css?url';
+
+interface Props {
+  locale?: TLocale;
+}
+const { locale = 'en' } = Astro.props;
+const t = createT(locale);
+const lang = LOCALE_META[locale].htmlLang;
+
+const support = matrix.extension;
+const stores = new Intl.ListFormat(lang, { style: 'long', type: 'conjunction' }).format(
+  support.browsers.filter((b) => b === 'Chrome' || b === 'Edge'),
+);
+const KEYS = ['Alt', 'Shift', 'A'];
+
+type TGain = string | { keys: [string, string] };
+interface ILevel {
+  id: 'web' | 'ext' | 'pro';
+  price: string;
+  per: string;
+  sub: string;
+  gains: TGain[];
+  cta: string;
+  href: string;
+  rec: boolean;
+}
+const g = (id: string, n: number): string => t(`page.home.levels.${id}.g${n}`);
+const shortcut = t('page.home.levels.ext.g4', { keys: '\u0000' }).split('\u0000');
+const levels: ILevel[] = [
+  {
+    id: 'web',
+    price: t('page.home.levels.free'),
+    per: t('page.home.levels.web.per'),
+    sub: t('page.home.levels.web.sub'),
+    gains: [g('web', 1), g('web', 2), g('web', 3), g('web', 4)],
+    cta: t('page.home.levels.web.cta'),
+    href: '#awaketab-tool',
+    rec: false,
+  },
+  {
+    id: 'ext',
+    price: t('page.home.levels.free'),
+    per: t('page.home.levels.ext.per'),
+    sub: t('page.home.levels.ext.sub', { browsers: stores, version: support.minimumChromeVersion }),
+    gains: [g('ext', 1), g('ext', 2), g('ext', 3), { keys: [shortcut[0] ?? '', shortcut[1] ?? ''] }],
+    cta: t('page.home.levels.ext.cta'),
+    href: '/extension',
+    rec: true,
+  },
+  {
+    id: 'pro',
+    price: usd(PLAN_PRICES.pro_yearly),
+    per: t('page.home.levels.pro.per'),
+    sub: t('page.home.levels.pro.sub'),
+    gains: [g('pro', 1), g('pro', 2), g('pro', 3), g('pro', 4)],
+    cta: t('page.home.levels.pro.cta'),
+    href: '/pro',
+    rec: false,
+  },
+];
+const CHECK = 'M5 12.5l4.2 4.2L19 7';
+---
+
+<section class="at-hl" aria-labelledby="home-levels-h">
+  <link rel="stylesheet" href={sheet} />
+  <div class="at-hl-head">
+    <h2 id="home-levels-h">{t('page.home.levels.title')}</h2>
+    <p class="at-hl-lead">{t('page.home.levels.lead')}</p>
+  </div>
+  <ul class="at-hl-grid">
+    {
+      levels.map((level) => (
+        <li class:list={['at-card', 'at-hl-card', level.rec && 'at-hl-rec']}>
+          <div class="at-hl-top">
+            <h3 id={`home-level-${level.id}`}>{t(`page.home.levels.${level.id}.name`)}</h3>
+            {level.rec && <span class="at-tag at-tag-tone">{t('page.home.levels.ext.tag')}</span>}
+          </div>
+          <div class="at-hl-price">
+            <p>
+              <span class="at-hl-figure">{level.price}</span>
+              <span class="at-hl-per">{level.per}</span>
+            </p>
+            <p class="at-hl-sub">{level.sub}</p>
+          </div>
+          <ul class="at-hl-gains">
+            {level.gains.map((gain) => (
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={CHECK} /></svg>
+                {typeof gain === 'string' ? (
+                  <span>{gain}</span>
+                ) : (
+                  <span>
+                    {gain.keys[0]}
+                    <span class="at-hl-keys">{KEYS.map((k, i) => <>{i > 0 && '+'}<kbd class="at-kbd">{k}</kbd></>)}</span>
+                    {gain.keys[1]}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+          <div class="at-hl-act">
+            <Button variant={level.rec ? 'primary' : 'secondary'} size="md" href={level.href} aria-describedby={`home-level-${level.id}`}>
+              {level.cta}
+            </Button>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</section>
