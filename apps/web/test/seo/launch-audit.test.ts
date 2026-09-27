@@ -69,7 +69,8 @@ describe('F-07 · /changelog renders Markdown and orders by date', () => {
     const html = await page('/changelog');
     const cards = html.slice(html.indexOf('data-changelog-entry'), html.lastIndexOf('</ol>'));
     expect(cards.length).toBeGreaterThan(1000);
-    expect(cards).toContain('<code>M</code>');
+    expect(cards).toContain('<code>PUBLIC_ADS_ENABLED=0</code>');
+    expect(cards).toContain('<kbd class="at-kbd">M</kbd>');
     expect(cards).toMatch(/<a href="\/embed">\/embed<\/a>/u);
     expect(text(cards)).not.toMatch(/`[^`\s]+`/u);
     expect(text(cards)).not.toMatch(/\]\(\//u);

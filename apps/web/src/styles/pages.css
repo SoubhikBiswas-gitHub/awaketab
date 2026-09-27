@@ -12,6 +12,8 @@
     --at-pg-type-mono-ui: 400 0.9375rem/1.375rem var(--at-font-mono);
     --at-pg-type-mono-small: 400 0.875rem/1.25rem var(--at-font-mono);
     --at-pg-type-mono-caption: 400 0.8125rem/1.125rem var(--at-font-mono);
+    --at-pg-type-mono-lead: 400 0.875rem/1.75rem var(--at-font-mono);
+    --at-pg-type-mono-label: 400 0.8125rem/1.375rem var(--at-font-mono);
     --at-pg-type-release: 200 4.5rem/0.82 var(--at-font);
     --at-pg-type-release-lg: 200 6.5rem/0.82 var(--at-font);
     --at-pg-filter: 520px;
@@ -228,6 +230,10 @@
     font-family: var(--at-font-mono);
   }
 
+  .at-pg-lead .at-pg-code {
+    font: var(--at-pg-type-mono-lead);
+  }
+
   .at-pg-digits {
     font-variant-numeric: tabular-nums;
     font-feature-settings:
@@ -397,7 +403,8 @@
   }
 
   .at-pg-seg-label {
-    min-inline-size: 0;
+    flex-shrink: 0;
+    max-inline-size: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -412,7 +419,7 @@
     font-weight: 500;
   }
 
-  :is(.at-pg-seg-sm, .at-pg-seg-xs) .at-seg-item:has(> input:checked) {
+  :is(.at-pg-seg-sm, .at-pg-seg-xs) .at-seg-item:is(:has(> input:checked), [aria-selected="true"]) {
     font-weight: 600;
   }
 
@@ -520,6 +527,10 @@
     color: var(--at-ink-2);
     font: var(--at-type-caption);
     font-weight: 600;
+  }
+
+  .at-pg-dl-label.at-pg-mono {
+    font: var(--at-pg-type-mono-label);
   }
 
   .at-pg-dl dd + dd .at-pg-dl-label {
@@ -692,7 +703,7 @@
     transform: translateX(calc(var(--at-seg-dir) * var(--at-s-5)));
   }
 
-  .at-pg-copy > svg {
+  .at-button.at-pg-copy > svg {
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
     fill: none;
@@ -759,8 +770,8 @@
     display: grid;
     flex-shrink: 0;
     place-items: center;
-    inline-size: var(--at-pg-avatar);
-    block-size: var(--at-pg-avatar);
+    inline-size: calc(var(--at-pg-avatar) + 2 * var(--at-border));
+    block-size: calc(var(--at-pg-avatar) + 2 * var(--at-border));
     border: var(--at-border) solid var(--at-line-strong);
     border-radius: 50%;
     background: var(--at-raised);
@@ -2191,6 +2202,11 @@
     cursor: pointer;
   }
 
+  .at-k-switch-text {
+    display: flex;
+    flex-direction: column;
+  }
+
   .at-k-switch:has(:focus-visible) {
     outline: 2px solid var(--at-focus);
     outline-offset: 3px;
@@ -2732,6 +2748,7 @@
 
   .at-lib-install {
     display: flex;
+    box-sizing: content-box;
     align-items: center;
     gap: var(--at-s-3);
     max-inline-size: var(--at-pg-install);
@@ -3467,6 +3484,7 @@
     background: #fff;
     color: #6b665c;
     font-size: 13px;
+    line-height: normal;
   }
 
   .at-host-url > span {

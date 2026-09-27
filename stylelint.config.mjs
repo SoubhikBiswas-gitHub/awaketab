@@ -5,9 +5,10 @@ const RADIUS_TOKENS = /^(?:0|50%|inherit|calc\(|var\(--at-r-[a-z0-9]+\)|[\s()+-]
 // DESIGN.md §12.8, from B2 on: rebuilt stylesheets (shell.css) take spacing, type and control heights by token only.
 // Allowed: 0, auto, percentages, 1px borders, the tokens and calc() over them.
 const SPACING_TOKENS =
-  /^(?:0|auto|-?\d+%|calc\(|var\(--at-(?:s|gutter|section|card-pad|edge-min|dock-bottom|gap|h|border|icon)[a-z0-9-]*\)|[\s()*/+-]|\d+(?:\.\d+)?(?![\w%]))+$/u;
-// --at-pg-type-* are pages.css's named off-scale roles (display numerals, code, the mocks), defined once at its top.
-const TYPE_TOKENS = /^(?:inherit|var\(--at-(?:pg-)?type-[a-z0-9-]+\))$/u;
+  /^(?:0|auto|-?\d+%|calc\(|var\(--at-(?:s|gutter|section|card-pad|edge-min|dock-bottom|gap|h|border|icon|am)[a-z0-9-]*\)|[\s()*/+-]|\d+(?:\.\d+)?(?![\w%]))+$/u;
+// --at-pg-type-* (pages.css), --at-am-type-* (ambient.css) and --at-embed-type-* (embed.css) are named off-scale
+// roles, each defined once in its file.
+const TYPE_TOKENS = /^(?:inherit|var\(--at-(?:pg-|am-|embed-)?type-[a-z0-9-]+\))$/u;
 
 export default {
   extends: ['stylelint-config-standard'],
@@ -34,9 +35,9 @@ export default {
   overrides: [
     { files: ['**/styles/tokens.css'], rules: { 'declaration-property-value-allowed-list': null } },
     {
-      // shell.css (B2), content.css (B5), pages.css (B6, the site pages) and pro.css (B7). pages.css names its few
-      // off-scale sizes once as --at-pg-* custom properties and uses them by name; its two illustrations (the kiosk
-      // screen, the host page) and the state diagram opt out in marked blocks, as DESIGN.md §11.2 exempts drawings and mocks.
+      // shell.css, content.css, the site pages, Pro, the embed page and the ambient modes. pages.css and ambient.css
+      // name their few off-scale sizes once as --at-pg-* / --at-am-* custom properties and use them by name. The
+      // pages.css drawings (kiosk screen, host page, state diagram) opt out in marked blocks (DESIGN.md §11.2).
       files: [
         '**/styles/shell.css',
         '**/styles/content.css',
@@ -46,6 +47,8 @@ export default {
         '**/styles/pages.css',
         '**/styles/page-404.css',
         '**/styles/pro.css',
+        '**/styles/ambient.css',
+        '**/styles/embed.css',
       ],
       rules: {
         'declaration-property-value-allowed-list': [

@@ -138,7 +138,7 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
               LAMPS.map((l) => (
                 <label class="at-pro-swatch" data-lamp-id={l.id}>
                   <input
-                    class="at-pro-sr"
+                    class="sr-only"
                     type="radio"
                     name="pro-lamp"
                     id={`pro-lamp-${l.id}`}
@@ -168,7 +168,7 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
               {
                 q1.map(([id, label]) => (
                   <label class="at-chip at-pro-chip">
-                    <input class="at-pro-sr" type="radio" name="use" value={id} checked={id === 'me'} />
+                    <input class="sr-only" type="radio" name="use" value={id} checked={id === 'me'} />
                     {label}
                   </label>
                 ))
@@ -181,7 +181,7 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
               {
                 wants.map(([id, label]) => (
                   <label class="at-chip at-pro-chip">
-                    <input class="at-pro-sr" type="checkbox" name="want" value={id} checked={id === 'look'} />
+                    <input class="sr-only" type="checkbox" name="want" value={id} checked={id === 'look'} />
                     {label}
                   </label>
                 ))
@@ -191,22 +191,22 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
           <fieldset class="at-pro-q" data-q2="site" hidden>
             <legend>{p('fit.q2.site')}</legend>
             <div class="at-pro-chips">
-              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="credit" value="fine" checked />{p('fit.q2.fine')}</label>
-              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="credit" value="remove" />{p('fit.q2.remove')}</label>
+              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="credit" value="fine" checked />{p('fit.q2.fine')}</label>
+              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="credit" value="remove" />{p('fit.q2.remove')}</label>
             </div>
           </fieldset>
           <fieldset class="at-pro-q" data-q2="screens" hidden>
             <legend>{p('fit.q2.screens')}</legend>
             <div class="at-pro-chips">
-              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="logo" value="no" checked />{p('fit.q2.nologo')}</label>
-              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="logo" value="yes" />{p('fit.q2.logo')}</label>
+              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="logo" value="no" checked />{p('fit.q2.nologo')}</label>
+              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="logo" value="yes" />{p('fit.q2.logo')}</label>
             </div>
           </fieldset>
           <fieldset class="at-pro-q" data-q3>
             <legend>{p('fit.q3')}</legend>
             <div class="at-pro-chips">
-              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="pay" value="once" checked />{p('fit.q3.once')}</label>
-              <label class="at-chip at-pro-chip"><input class="at-pro-sr" type="radio" name="pay" value="year" />{p('fit.q3.year')}</label>
+              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="pay" value="once" checked />{p('fit.q3.once')}</label>
+              <label class="at-chip at-pro-chip"><input class="sr-only" type="radio" name="pay" value="year" />{p('fit.q3.year')}</label>
             </div>
           </fieldset>
         </div>
@@ -300,7 +300,7 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
               </div>
               <input id="pro-msg" class="at-input at-pro-input" type="text" value={p('msg.default')} maxlength="80" autocomplete="off" data-msg-input />
             </div>
-            <figcaption id="msg-cap" class="at-pro-sr">{p('msg.caption')}</figcaption>
+            <figcaption id="msg-cap" class="sr-only">{p('msg.caption')}</figcaption>
           </figure>
         </article>
 
@@ -333,8 +333,8 @@ const faq = [1, 2, 3, 4].map((n) => ({ n, q: p(`faq.q${n}`), a: p(`faq.a${n}`) }
           <figure class="at-pro-fig at-pro-heat" aria-labelledby="heat-cap">
             <div class="at-seg at-pro-seg" role="radiogroup" aria-label={p('hist.compare')} style="--at-seg-n: 2">
               <span class="at-seg-ind" aria-hidden="true"></span>
-              <label class="at-seg-item"><input class="at-pro-sr" type="radio" name="pro-heat" id="pro-heat-free" value="free" />{p('hist.free')}</label>
-              <label class="at-seg-item"><input class="at-pro-sr" type="radio" name="pro-heat" id="pro-heat-pro" value="pro" checked />{p('hist.pro')}</label>
+              <label class="at-seg-item"><input class="sr-only" type="radio" name="pro-heat" id="pro-heat-free" value="free" />{p('hist.free')}</label>
+              <label class="at-seg-item"><input class="sr-only" type="radio" name="pro-heat" id="pro-heat-pro" value="pro" checked />{p('hist.pro')}</label>
             </div>
             <div class="at-pro-heat-grid">
               <div class="at-pro-heat-days" aria-hidden="true">

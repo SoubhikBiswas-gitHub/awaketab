@@ -158,18 +158,6 @@
     padding-block-start: calc(var(--at-s-6) - var(--at-s-4));
   }
 
-  .at-pro-sr {
-    position: absolute;
-    inline-size: var(--at-border);
-    block-size: var(--at-border);
-    margin: calc(-1 * var(--at-border));
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
-  }
-
   .at-pro-kicker {
     color: var(--at-muted);
     font: var(--at-type-kicker);
@@ -192,6 +180,10 @@
   .at-pro-h3 {
     font: var(--at-type-h3);
     letter-spacing: -0.01em;
+  }
+
+  :is(.at-pro-co, .at-pro-man) .at-pro-h3 {
+    letter-spacing: normal;
   }
 
   .at-pro-lead {
@@ -225,7 +217,7 @@
     font: var(--at-type-pro-figure);
   }
 
-  .at-pro-num {
+  .at-pro :is(.at-pro-num, .at-pro-num *) {
     font-variant-numeric: tabular-nums;
   }
 
@@ -2030,6 +2022,7 @@
   .at-pro-co-actions {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-start;
     gap: var(--at-gap-item);
   }
 
@@ -2370,38 +2363,26 @@
     grid-row: 1 / span 2;
   }
 
-  .at-pro-remove,
-  .at-pro-keep,
-  .at-pro-confirm-remove {
-    block-size: var(--at-h-control);
-    padding-block: 0;
-    padding-inline: var(--at-s-4);
-    border: var(--at-border) solid var(--at-line-strong);
-    border-radius: var(--at-r-md);
+  .at-button.at-pro-remove,
+  .at-button.at-pro-remove:hover {
     background: transparent;
     color: var(--at-bad);
-    font: var(--at-type-ui);
-    font-weight: 600;
-    cursor: pointer;
   }
 
-  .at-pro-keep {
-    background: var(--at-surface);
-    color: var(--at-ink);
-  }
-
-  .at-pro-confirm-remove {
+  .at-button.at-pro-confirm-remove,
+  .at-button.at-pro-confirm-remove:hover {
     border-color: transparent;
     background: var(--at-bad);
     color: var(--at-surface);
   }
 
-  :root:is([data-theme="dark"], [data-theme="oled"]) .at-pro-confirm-remove {
+  :root:is([data-theme="dark"], [data-theme="oled"])
+    :is(.at-button.at-pro-confirm-remove, .at-button.at-pro-confirm-remove:hover) {
     color: var(--at-ground);
   }
 
-  :is(.at-pro-remove, .at-pro-keep, .at-pro-confirm-remove):disabled {
-    opacity: 0.5;
+  .at-pro-dev-act .at-button:disabled,
+  .at-pro-confirm-btns .at-button:disabled {
     cursor: progress;
   }
 
@@ -2552,7 +2533,7 @@
     color: var(--at-ink-2);
   }
 
-  .at-pro-man:is([data-state="grace"], [data-state="lapsed"]) .at-pro-remove {
+  .at-pro-man:is([data-state="grace"], [data-state="lapsed"]) .at-button.at-pro-remove {
     border-color: color-mix(in srgb, var(--at-bad) 38%, transparent);
   }
 
@@ -2665,6 +2646,7 @@
     }
 
     .at-pro-dev {
+      gap: 0;
       min-block-size: var(--at-pro-dev-row);
       padding: 0;
     }

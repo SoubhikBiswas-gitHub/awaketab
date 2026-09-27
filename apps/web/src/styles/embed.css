@@ -1,7 +1,15 @@
 :root {
-  --at-embed-pill-xs: 26px;
-  --at-embed-pill-s: 32px;
   --at-embed-h-primary: 60px;
+  --at-embed-toggle-w: 96px;
+  --at-embed-toggle-w-full: 104px;
+  --at-embed-toggle-w-lg: 120px;
+  --at-embed-hint-h: 1.125rem;
+  --at-embed-foot-h: 1rem;
+  --at-embed-link-h: 24px;
+  --at-embed-type-pill: 600 0.8125rem/1 var(--at-font);
+  --at-embed-type-pill-s: 600 0.875rem/1 var(--at-font);
+  --at-embed-type-clock: 300 1.75rem/1 var(--at-font);
+  --at-embed-type-timer: 400 1.125rem/1.5rem var(--at-font);
   --at-embed-compact: 104px;
   --at-embed-compact-long: 116px;
   --at-embed-full: 240px;
@@ -90,7 +98,7 @@ body.at-embed-body {
   display: grid;
   flex-grow: 1;
   grid-template:
-    "pill btn" var(--at-embed-pill-xs)
+    "pill btn" var(--at-h-pill-xs)
     "dig btn" var(--at-h-control)
     / minmax(0, 1fr) auto;
   align-content: end;
@@ -113,7 +121,7 @@ body.at-embed-body {
   align-self: end;
   justify-content: center;
   gap: var(--at-s-2);
-  inline-size: 96px;
+  inline-size: var(--at-embed-toggle-w);
   block-size: var(--at-h-control);
   margin-block-end: var(--at-s-1);
   padding: 0;
@@ -121,7 +129,8 @@ body.at-embed-body {
   border-radius: var(--at-r-md);
   background: var(--at-embed-brand, var(--at-accent));
   color: var(--at-embed-on-brand, var(--at-on-accent));
-  font: 600 0.9375rem/1.375rem var(--at-font);
+  font: var(--at-type-ui);
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -160,13 +169,13 @@ body.at-embed-body {
   place-self: center start;
   align-items: center;
   gap: var(--at-s-1);
-  block-size: var(--at-embed-pill-xs);
+  block-size: var(--at-h-pill-xs);
   padding-inline: var(--at-s-2);
   border: var(--at-border) solid color-mix(in srgb, var(--tone) 38%, transparent);
   border-radius: var(--at-r-pill);
   background: color-mix(in srgb, var(--tone) 12%, transparent);
   color: var(--at-ink);
-  font: 600 0.8125rem/1 var(--at-font);
+  font: var(--at-embed-type-pill);
   white-space: nowrap;
 }
 
@@ -178,8 +187,8 @@ body.at-embed-body {
 
 .at-embed-glyph {
   flex-shrink: 0;
-  inline-size: 12px;
-  block-size: 12px;
+  inline-size: var(--at-icon-xs);
+  block-size: var(--at-icon-xs);
   overflow: visible;
 }
 
@@ -208,7 +217,7 @@ body.at-embed-body {
   border: 0;
   background: transparent;
   color: var(--at-ink);
-  font: 300 1.75rem/1 var(--at-font);
+  font: var(--at-embed-type-clock);
   font-feature-settings:
     "tnum" 1,
     "zero" 0;
@@ -246,7 +255,8 @@ body.at-embed-body {
   align-items: center;
   gap: var(--at-s-2);
   min-inline-size: 0;
-  font: 600 0.9375rem/1.375rem var(--at-font);
+  font: var(--at-type-ui);
+  font-weight: 600;
 }
 
 .at-embed-title {
@@ -278,17 +288,18 @@ body.at-embed-body {
 
 .at-embed-hint {
   display: none;
-  min-block-size: 1.125rem;
+  min-block-size: var(--at-embed-hint-h);
   color: var(--at-ink-2);
   font: var(--at-type-caption);
 }
 
 .at-embed-foot {
   display: none;
-  block-size: 1rem;
+  block-size: var(--at-embed-foot-h);
   overflow: hidden;
   color: var(--at-muted);
-  font: 400 0.75rem/1rem var(--at-font);
+  font: var(--at-type-kicker);
+  font-weight: 400;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -323,7 +334,7 @@ body.at-embed-body {
 .at-embed-notice a {
   display: inline-flex;
   align-items: center;
-  min-block-size: 24px;
+  min-block-size: var(--at-embed-link-h);
   color: var(--at-ink);
   font-weight: 600;
   text-decoration: underline;
@@ -391,14 +402,15 @@ body.at-embed-body {
 .at-embed-timer-name {
   overflow: hidden;
   color: var(--at-ink-2);
-  font: 500 0.875rem/1.25rem var(--at-font);
+  font: var(--at-type-small);
+  font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .at-embed-timer-left {
   color: var(--at-ink);
-  font: 400 1.125rem/1.5rem var(--at-font);
+  font: var(--at-embed-type-timer);
   font-feature-settings:
     "tnum" 1,
     "zero" 0;
@@ -449,7 +461,8 @@ body.at-embed-body {
   border-radius: var(--at-r-md);
   background: transparent;
   color: var(--at-ink);
-  font: 600 0.8125rem/1.125rem var(--at-font);
+  font: var(--at-type-caption);
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -493,9 +506,9 @@ body.at-embed-body {
 
 .at-embed[data-size="full"] .at-embed-pill {
   gap: var(--at-s-2);
-  block-size: var(--at-embed-pill-s);
+  block-size: var(--at-h-pill-s);
   padding-inline: var(--at-s-2) var(--at-s-3);
-  font-size: 0.875rem;
+  font: var(--at-embed-type-pill-s);
 }
 
 .at-embed[data-size="full"] .at-embed-row {
@@ -516,12 +529,17 @@ body.at-embed-body {
 
 .at-embed[data-size="full"] .at-embed-clock {
   --at-embed-digit: 1.75rem;
+  --at-embed-type-digit: 300 var(--at-embed-digit) / 1 var(--at-font);
 
   align-self: flex-start;
   block-size: auto;
   min-block-size: var(--at-h-control);
   margin: 0;
-  font-size: var(--at-embed-digit);
+  font: var(--at-embed-type-digit);
+  font-feature-settings:
+    "tnum" 1,
+    "zero" 0;
+  font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
 }
 
@@ -545,7 +563,7 @@ body.at-embed-body {
 .at-embed[data-size="full"] .at-embed-toggle {
   flex-shrink: 0;
   align-self: center;
-  inline-size: 104px;
+  inline-size: var(--at-embed-toggle-w-full);
   block-size: var(--at-embed-h-primary);
   margin: 0;
   border-radius: var(--at-r-xl);
@@ -610,7 +628,7 @@ body.at-embed-body {
 
 @media (width >= 600px) {
   .at-embed[data-size="full"] .at-embed-toggle {
-    inline-size: 120px;
+    inline-size: var(--at-embed-toggle-w-lg);
   }
 
   .at-embed[data-size="full"][data-mode="cook"] {
@@ -667,7 +685,7 @@ body.at-embed-body {
 
 .at-embed[data-size="compact"][data-long] .at-embed-grid {
   grid-template:
-    "pill pill" var(--at-embed-pill-xs)
+    "pill pill" var(--at-h-pill-xs)
     "dig btn" calc(var(--at-h-control) + var(--at-s-1))
     / minmax(0, 1fr) auto;
   row-gap: var(--at-s-2);
