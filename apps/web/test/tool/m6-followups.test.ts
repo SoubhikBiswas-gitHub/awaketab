@@ -1,9 +1,12 @@
 import { dayKey, DEFAULT_STATS } from '@awaketab/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mount as mountFocus } from '../../src/tool/ambient/focus.js';
-import { mirrorAmbient, PIP_PRO_SIZE, PIP_SIZE, pipPath, togglePip } from '../../src/tool/pip.js';
+import { mirrorAmbient, PIP_PRO_SIZE, PIP_SIZE, pipPath, togglePip } from '../../src/tool/ambient/pip-window.js';
 import { mountSponsor } from '../../src/tool/sponsor.js';
 import { license, makeCtx } from './ctx-helper.js';
+
+// The layer's lazily loaded stylesheet: a data URL, so the test DOM never fetches from a server.
+vi.mock('../../src/styles/ambient.css?url', () => ({ default: 'data:text/css,' }));
 
 const flush = () => new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -191,24 +194,30 @@ describe('pip.pro ambient layout (docs/05 §9)', () => {
     vi.unstubAllGlobals();
   });
 
-  it('clones the clock digits above the pill and hides the timer; standard falls back', async () => {
+  it('clones the clock digits under the pill with an AM/PM · date kicker; standard falls back', async () => {
     const { ctx, root, store } = makeCtx({ html: PIP_HTML });
     const content = root.querySelector<HTMLElement>('[data-ambient-content]');
-    if (content) content.innerHTML = '<div class="at-ambient-digits" data-clock>14:05</div><p class="at-ambient-sub">Monday</p>';
+    if (content) {
+      content.innerHTML =
+        '<time class="at-am-clock" data-clock><span>2</span><span class="at-am-colon">:</span><span data-m>05</span>' +
+        '<span class="at-am-suffix"><span class="at-am-ap">PM</span><span class="at-am-sec"></span></span></time>' +
+        '<p class="at-am-date">Monday, 28 September 2026</p>';
+    }
     const body = document.implementation.createHTMLDocument('pip').body;
     body.append(root.querySelector('[data-pill]') as Node, root.querySelector('[data-timer]') as Node);
     store.set({ ui: { mode: 'clock' } });
     const off = mirrorAmbient(ctx, body);
     const box = body.querySelector('.at-pip-ambient');
-    expect(box?.textContent).toBe('14:05');
+    expect(box?.querySelector('.at-pip-kick')?.textContent).toBe('PM · Monday, 28 September 2026');
+    expect(box?.querySelector('[data-clock]')?.textContent).toBe('2:05PM');
     expect(body.hasAttribute('data-ambient')).toBe(true);
     // The honest pill is still in the window.
     expect(body.querySelector('[data-pill]')).not.toBeNull();
 
-    const src = content?.querySelector('[data-clock]');
-    if (src) src.textContent = '14:06';
+    const src = content?.querySelector('[data-m]');
+    if (src) src.textContent = '06';
     await flush();
-    expect(box?.textContent).toBe('14:06');
+    expect(box?.querySelector('[data-clock]')?.textContent).toBe('2:06PM');
 
     store.set({ ui: { mode: 'standard' } });
     expect(box?.childElementCount).toBe(0);
@@ -221,7 +230,8 @@ describe('pip.pro ambient layout (docs/05 §9)', () => {
     const content = root.querySelector<HTMLElement>('[data-ambient-content]');
     if (content) {
       content.innerHTML =
-        '<p class="at-ambient-sub" data-focus-label hidden></p><div class="at-ambient-digits" data-focus-digits>25:00</div>';
+        '<div class="at-am-frow" data-focus-label hidden><span class="at-am-phase"></span><span class="at-am-cycle"></span>' +
+        '<span class="at-focus-dots"></span></div><div class="at-am-fdigits" data-focus-digits>25<span>:00</span></div>';
     }
     const body = document.implementation.createHTMLDocument('pip').body;
     store.set({ ui: { mode: 'focus' } });
@@ -231,10 +241,14 @@ describe('pip.pro ambient layout (docs/05 §9)', () => {
     const label = content?.querySelector<HTMLElement>('[data-focus-label]');
     if (label) {
       label.hidden = false;
-      label.textContent = 'Cycle 2 of 4';
+      const [phase, cycle] = label.children;
+      if (phase) phase.textContent = 'Focus';
+      if (cycle) cycle.textContent = 'Cycle 2 of 4';
     }
     store.set({ ui: { mode: 'focus' } });
-    expect(body.querySelector('.at-pip-ambient')?.textContent).toBe('Cycle 2 of 425:00');
+    // PipWindow canvas: "Focus · Cycle 2 of 4" kicker, then the interval digits with the dimmed seconds.
+    expect(body.querySelector('.at-pip-kick')?.textContent).toBe('Focus · Cycle 2 of 4');
+    expect(body.querySelector('.at-pip-ambient [data-focus-digits]')?.innerHTML).toBe('25<span>:00</span>');
     expect(body.hasAttribute('data-ambient')).toBe(true);
     off();
   });

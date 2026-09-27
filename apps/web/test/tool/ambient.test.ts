@@ -17,6 +17,9 @@ import {
 import { cycleMode, mountAmbient } from '../../src/tool/ambient/shell.js';
 import { license, makeCtx } from './ctx-helper.js';
 
+// The layer's lazily loaded stylesheet: a data URL, so the test DOM never fetches from a server.
+vi.mock('../../src/styles/ambient.css?url', () => ({ default: 'data:text/css,' }));
+
 const FOCUS = { workMin: 25, breakMin: 5, cycles: 4 };
 const none = () => false;
 const all = () => true;
@@ -125,6 +128,13 @@ const SHELL_HTML = `
     <div data-ambient-controls><button data-ambient-next>Next</button><button data-ambient-fullscreen>FS</button><button data-ambient-exit>Exit</button></div>
   </dialog>`;
 
+/** The layer opens only once its lazily loaded stylesheet is in; the test DOM never fetches it, so fire its load. */
+async function stylesheetLoaded(): Promise<void> {
+  for (const link of document.head.querySelectorAll('link[rel="stylesheet"]')) link.dispatchEvent(new Event('load'));
+  await Promise.resolve();
+  await Promise.resolve();
+}
+
 describe('AmbientShell DOM', () => {
   afterEach(() => {
     vi.useRealTimers();
@@ -134,13 +144,26 @@ describe('AmbientShell DOM', () => {
     vi.useFakeTimers();
     const { ctx, root, store } = makeCtx({ html: SHELL_HTML });
     const unmount = mountAmbient(ctx);
+    await stylesheetLoaded();
     const dialog = root.querySelector<HTMLDialogElement>('[data-ambient]');
     const slot = root.querySelector('[data-pip-slot]');
     store.set({ ui: { mode: 'minimal' } });
     expect(dialog?.open).toBe(true);
     expect(dialog?.dataset.mode).toBe('minimal');
-    expect(slot?.parentElement?.hasAttribute('data-ambient-stage')).toBe(true);
+    // The slot (ring, pill, timer) joins the layer's top row, before the stage (Ambient canvas).
+    const top = slot?.parentElement;
+    expect(top?.classList.contains('at-am-top')).toBe(true);
+    expect(top?.parentElement).toBe(dialog);
+    expect(top?.nextElementSibling?.hasAttribute('data-ambient-stage')).toBe(true);
     expect(root.querySelector('[data-toasts]')?.parentElement).toBe(dialog);
+    // The mode bar: one pressed button per mode, the current one pressed.
+    const bar = dialog?.querySelectorAll<HTMLButtonElement>('[data-ambient-controls] [data-am-mode]');
+    expect([...(bar ?? [])].map((b) => b.dataset.amMode)).toEqual(['clock', 'focus', 'minimal', 'night', 'message', 'cook']);
+    expect(dialog?.querySelector('[data-am-mode="minimal"]')?.getAttribute('aria-pressed')).toBe('true');
+    expect(dialog?.querySelector('[data-am-mode="clock"]')?.getAttribute('aria-pressed')).toBe('false');
+    dialog?.querySelector<HTMLButtonElement>('[data-am-mode="cook"]')?.click();
+    expect(store.get().ui.mode).toBe('cook');
+    store.set({ ui: { mode: 'minimal' } });
 
     await vi.advanceTimersByTimeAsync(3_000);
     expect(dialog?.dataset.controls).toBe('hidden');
@@ -166,6 +189,7 @@ describe('AmbientShell DOM', () => {
     vi.useFakeTimers();
     const { ctx, root, store } = makeCtx({ html: SHELL_HTML });
     const unmount = mountAmbient(ctx);
+    await stylesheetLoaded();
     store.set({ ui: { mode: 'minimal' } });
     await vi.advanceTimersByTimeAsync(60_000);
     const stage = root.querySelector<HTMLElement>('[data-ambient-stage]');
@@ -173,9 +197,10 @@ describe('AmbientShell DOM', () => {
     unmount();
   });
 
-  it('night forces the oled palette and restores the theme on exit', () => {
+  it('night forces the oled palette and restores the theme on exit', async () => {
     const { ctx, store } = makeCtx({ html: SHELL_HTML, settings: { theme: 'light' } });
     const unmount = mountAmbient(ctx);
+    await stylesheetLoaded();
     store.set({ ui: { mode: 'night' } });
     expect(document.documentElement.dataset.theme).toBe('oled');
     store.set({ ui: { mode: 'standard' } });

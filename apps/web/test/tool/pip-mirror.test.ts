@@ -2,7 +2,7 @@ import type { TTabMessage } from '@awaketab/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import en from '../../src/i18n/en.json';
 import { MIRROR_STALE_MS, mirrorTime, mountMirror, pickOwner, PIP_ADD_MS as MIRROR_ADD_MS } from '../../src/tool/pip-mirror.js';
-import { PIP_ADD_MS } from '../../src/tool/pip.js';
+import { PIP_ADD_MS } from '../../src/tool/ambient/pip-window.js';
 
 type TState = Extract<TTabMessage, { type: 'state' }>;
 
@@ -52,25 +52,25 @@ describe('pickOwner', () => {
 describe('mirrorTime', () => {
   it('duration plans count down and add paused time back', () => {
     const s = state({ planType: 'duration', startedAt: 0, endsAt: 600_000, pausedMs: 60_000 });
-    expect(mirrorTime(s, 300_000)).toBe('00:06:00');
+    expect(mirrorTime(s, 300_000)).toBe('06:00');
     const paused = { ...s, status: 'paused' as const, pausedAt: 300_000 };
     // Another 30 s of the current pause is added back as well.
-    expect(mirrorTime(paused, 330_000)).toBe('00:06:00');
+    expect(mirrorTime(paused, 330_000)).toBe('06:00');
   });
 
   it('until plans count to the wall target and ignore pauses', () => {
     const s = state({ planType: 'until', startedAt: 0, endsAt: 3_600_000, pausedMs: 60_000 });
-    expect(mirrorTime(s, 600_000)).toBe('00:50:00');
+    expect(mirrorTime(s, 600_000)).toBe('50:00');
   });
 
   it('indefinite plans count up without paused time', () => {
     const s = state({ planType: 'indefinite', startedAt: 0, endsAt: null, pausedMs: 30_000 });
-    expect(mirrorTime(s, 90_000)).toBe('00:01:00');
+    expect(mirrorTime(s, 90_000)).toBe('01:00');
     expect(mirrorTime(s, 30_000 + 86_400_000 + 61_000)).toBe('1d 00:01:01');
   });
 
   it('clamps at zero and shows the idle placeholder when not live', () => {
-    expect(mirrorTime(state({ planType: 'duration', endsAt: 1_000 }), 5_000)).toBe('00:00:00');
+    expect(mirrorTime(state({ planType: 'duration', endsAt: 1_000 }), 5_000)).toBe('00:00');
     const idle = state({ status: 'inactive', startedAt: null });
     expect(mirrorTime(idle, 0)).toBe(mirrorTime(idle, 99));
   });
@@ -128,7 +128,7 @@ describe('mountMirror', () => {
     ch.send(state({ ts: Date.now(), planType: 'duration', startedAt: Date.now(), endsAt: Date.now() + 1_800_000 }));
     expect(q('[data-pill-text]').textContent).toBe('Screen awake');
     expect(q('[data-pill]').dataset.lock).toBe('held');
-    expect(q('[data-timer-digits]').textContent).toBe('00:30:00');
+    expect(q('[data-timer-digits]').textContent).toBe('30:00');
     expect(q('[data-timer-digits]').classList.contains('is-muted')).toBe(false);
     expect(q('[data-pip-empty]').hidden).toBe(true);
     expect(q('[data-pip-stop]').hidden).toBe(false);
