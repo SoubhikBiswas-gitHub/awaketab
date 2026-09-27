@@ -11,6 +11,23 @@
       var(--at-ground-end) 100%
     );
   }
+
+  .at-install-slot > [data-install][hidden] {
+    display: inline-flex !important;
+    visibility: hidden;
+  }
+
+  @media (width < 600px) {
+    .at-install-slot > .at-phone-hide[hidden] {
+      display: none !important;
+    }
+  }
+
+  @media (width >= 600px) {
+    .at-install-slot > .at-phone-only[hidden] {
+      display: none !important;
+    }
+  }
 }
 
 @layer components {
@@ -151,6 +168,15 @@
 
   .at-phone-hide {
     display: none;
+  }
+
+  .at-install-slot {
+    display: inline-grid;
+    flex-shrink: 0;
+  }
+
+  .at-install-slot > * {
+    grid-area: 1 / 1;
   }
 
   .at-seg {
