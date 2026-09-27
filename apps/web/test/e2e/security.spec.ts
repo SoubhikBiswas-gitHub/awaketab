@@ -98,6 +98,27 @@ test.describe('no third-party requests on tool routes (D-01)', () => {
     });
   }
 
+  test('fonts are self-hosted: every font request is same-origin under /fonts/ (D-R26)', async ({ baseURL, page }) => {
+    const own = new URL(baseURL ?? 'http://127.0.0.1:4321').origin;
+    const fonts: string[] = [];
+    page.on('request', (req) => {
+      if (req.resourceType() === 'font') fonts.push(req.url());
+    });
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    const geistLoaded = await page.evaluate(async () => {
+      await document.fonts.ready;
+      return [...document.fonts].some((face) => face.family.replace(/"/gu, '') === 'Geist' && face.status === 'loaded');
+    });
+    expect(geistLoaded).toBe(true);
+    expect(fonts.length).toBeGreaterThan(0);
+    for (const url of fonts) {
+      const u = new URL(url);
+      expect(u.origin, url).toBe(own);
+      expect(u.pathname, url).toMatch(/^\/fonts\/[a-z0-9-]+\.woff2$/u);
+    }
+  });
+
   test('a started session with ambient and theme changes stays first-party', async ({ baseURL, page }) => {
     const requests: string[] = [];
     external(page, baseURL, requests);

@@ -131,7 +131,7 @@ export const PRESET_MS: Record<Exclude<TPresetId, 'pinf' | 'custom' | 'until'>, 
 export const DEFAULT_SETTINGS: ISettings = {
   v: 1,
   theme: 'auto',
-  accent: '#B86E00',
+  accent: '#087B87',
   defaultPreset: 'pinf',
   lastCustomMs: 90 * 60_000,
   lastUntilWall: null,

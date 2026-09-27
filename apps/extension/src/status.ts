@@ -9,7 +9,7 @@ import type { TPowerLevel } from './api';
  * dim or lock"). The web tool is unaffected.
  */
 
-export const BADGE_COLORS: Record<TPowerLevel, string> = { display: '#B86E00', system: '#2B3A67' };
+export const BADGE_COLORS: Record<TPowerLevel, string> = { display: '#087B87', system: '#2B3A67' };
 export const BADGE_TEXT_COLOR = '#FFFFFF';
 
 export type TOrigin = 'user' | 'command' | 'schedule' | 'autostart' | 'startup';

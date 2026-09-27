@@ -39,7 +39,7 @@ export function mountExtras(
     const s = store.get();
     const lic = s.license;
     if (proBadge) proBadge.hidden = !(lic?.features.includes('ads.free') || lic?.features.includes('ambient.packs'));
-    // Pack palettes need `ambient.packs`; a lapsed licence falls back to amber (theme-boot applied it pre-paint).
+    // Pack lamps need `ambient.packs`; a lapsed licence falls back to aqua (the boot script applied it pre-paint).
     applyAccent(s.settings.accent, lic?.features.includes('ambient.packs') ?? false);
   };
   syncPro();

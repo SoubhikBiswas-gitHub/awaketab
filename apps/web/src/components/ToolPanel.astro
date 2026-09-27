@@ -42,10 +42,10 @@ const proTag = cn(badgeVariants({ variant: 'secondary' }), 'ms-1');
 // SponsorCard slot (docs/05 §3.23): rendered only when the flag is on at build time, so CLS stays 0 when off.
 const sponsorEnabled = import.meta.env.PUBLIC_SPONSOR_ENABLED === '1';
 const accents = [
-  ['#B86E00', t('settings.accent.amber'), false],
-  ['#4F46E5', t('settings.accent.indigo'), false],
-  ['#0F766E', t('settings.accent.teal'), true],
-  ['#BE123C', t('settings.accent.rose'), true],
+  ['#087B87', t('settings.accent.aqua'), false],
+  ['#5A47CF', t('settings.accent.violet'), false],
+  ['#167A50', t('settings.accent.mint'), true],
+  ['#255FBD', t('settings.accent.sky'), true],
 ] as const;
 const modes = ['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook'] as const;
 const stars = [1, 2, 3, 4, 5] as const;
@@ -186,7 +186,7 @@ const shortcuts = [
         {
           accents.map(([hex, label, pack]) => (
             <label>
-              <input type="radio" name="accent" value={hex} checked={hex === '#B86E00'} />
+              <input type="radio" name="accent" value={hex} checked={hex === '#087B87'} />
               <span class="at-swatch" style={`--at-swatch:${hex}`} aria-hidden="true"></span>
               {label}
               {pack && <span class={proTag}>{t('pro.badge')}</span>}

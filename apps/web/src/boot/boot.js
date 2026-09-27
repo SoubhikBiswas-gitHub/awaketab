@@ -11,9 +11,10 @@
     let theme = 'auto';
     if (q && allowed.includes(q)) theme = q;
     else if (saved && typeof saved.theme === 'string' && allowed.includes(saved.theme)) theme = saved.theme;
-    // Mirror of src/tool/accent.ts ACCENTS; the island re-checks pack palettes against the licence.
+    // Mirror of src/tool/accent.ts ACCENTS + LEGACY_ACCENTS (aqua, the default, has no attribute); the island
+    // re-checks pack lamps against the licence.
     /** @type {Record<string, string>} */
-    const accents = { '#4F46E5': 'indigo', '#0F766E': 'teal', '#BE123C': 'rose' };
+    const accents = { '#5A47CF': 'violet', '#167A50': 'mint', '#255FBD': 'sky', '#4F46E5': 'violet', '#0F766E': 'mint', '#BE123C': 'sky' };
     const accent = saved && typeof saved.accent === 'string' ? accents[saved.accent.toUpperCase()] : undefined;
     if (accent) root.dataset.accent = accent;
     const resolved = theme === 'auto' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme;

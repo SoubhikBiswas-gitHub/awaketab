@@ -75,9 +75,9 @@ Updated Sunday, 27 September 2026 · 12:45 PM
 | 57 | Real-runtime render check of every board + compact canvas layout (D-R21) | ✅ on canvas | ⬜ |
 | 58 | Popup spacing and padding (owner comments) | ✅ on canvas | ⬜ |
 | 59 | Runtime bug: styles starting with a {{hole}} were dropped; fixed on every board, and the scanner now catches it | ✅ on canvas | ⬜ |
-| 60 | Design system tokens (DESIGN §12, D-R23) + real-runtime §11 audit: 0 violations on all 300 boards | ✅ on canvas | ⬜ |
-| 61 | Responsive contract (D-R22) + tool boards at the 600 and 1024 breakpoint edges | ✅ on canvas | ⬜ |
+| 60 | Design system tokens (DESIGN §12, D-R23) + real-runtime §11 audit: 0 violations on all 300 boards | ✅ on canvas | 🟨 B1: tokens live; lint guards radius only |
+| 61 | Responsive contract (D-R22) + tool boards at the 600 and 1024 breakpoint edges | ✅ on canvas | 🟨 B1: 320–2560 sweep in e2e (1 known debt) |
 | 62 | /for hub cut to 14 (OD-3), embed 320×104 + credit outside the widget, docs updated | ✅ on canvas | ⬜ |
 | 63 | Coverage check: tablet for the /on /vs /guides /learn hubs, checkout failed and Pro lapsed; blocked and time's up at desktop and tablet | ✅ on canvas | ⬜ |
 
-**Canvas:** 63 done · 0 building · 0 not started (of 63). **Real app:** 0 of 26, starts after owner approval.
+**Canvas:** 63 done · 0 building · 0 not started (of 63). **Real app:** B1 foundation done (27 Sep); screens start with B2.

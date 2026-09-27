@@ -358,7 +358,7 @@ Each flow lists the visible steps and the state or event changes that must occur
 
 | ID | Requirement | Verification |
 |---|---|---|
-| NFR-PERF-01 | Tool pages: JS ≤ 40 KB gz total, ≤ 15 KB in the critical path; CSS ≤ 20 KB gz with critical CSS inlined; 0 third-party requests; no web fonts. | Bundle size check and request count in CI (Playwright) |
+| NFR-PERF-01 | Tool pages: JS ≤ 40 KB gz total, ≤ 15 KB in the critical path; CSS ≤ 20 KB gz with critical CSS inlined; 0 third-party requests; fonts self-hosted only (Geist, Geist Mono, Space Grotesk digits; redesign decision D-R26), swap over metric-matched fallbacks, CLS 0. | Bundle size check and request count in CI (Playwright) |
 | NFR-PERF-02 | LCP ≤ 1.2 s lab (mobile emulation) and field p75 ≤ 2.0 s; INP field p75 ≤ 100 ms; CLS 0; Lighthouse mobile Performance ≥ 95, Accessibility 100, Best Practices 100, SEO 100. | Lighthouse CI on every PR; CrUX monthly |
 | NFR-PERF-03 | Wake lock time-to-request ≤ 300 ms after `DOMContentLoaded` when auto-start conditions hold. | Playwright performance mark |
 | NFR-PERF-04 | Content pages: total JS ≤ 60 KB before ads; ad scripts after LCP. | Lighthouse CI on `/for/cooking` |

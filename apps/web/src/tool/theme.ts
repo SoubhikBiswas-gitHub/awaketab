@@ -1,8 +1,8 @@
 import type { TTheme } from '@awaketab/core';
 
 const GROUND: Record<'light' | 'dark' | 'oled', string> = {
-  light: '#FAF7F2',
-  dark: '#14161C',
+  light: '#F2F6FA',
+  dark: '#0A0E16',
   oled: '#000000',
 };
 

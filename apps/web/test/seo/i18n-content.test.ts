@@ -157,6 +157,11 @@ describe('translated top-10 content pages (E6-T06)', () => {
         for (const match of html.matchAll(/href="(\/[^"#?]*)/gu)) {
           const href = match[1] ?? '';
           if (/^\/(?:api|og|icons)\//u.test(href) || /\.(?:webmanifest|svg|js|png)$/u.test(href)) continue;
+          // Self-hosted font preloads (D-R26) must point at a file that ships.
+          if (href.startsWith('/fonts/')) {
+            await expect(stat(path.join(distPath, href)), `${pathname} -> ${href}`).resolves.toBeTruthy();
+            continue;
+          }
           expect(existing.has(href), `${pathname} -> ${href}`).toBe(true);
         }
         // Links marked as English (related cards, the translation notice) only point at English pages
@@ -210,7 +215,7 @@ describe('localized chrome (E6-T05)', () => {
     }
   });
 
-  it('never ships OG fonts to the client', async () => {
+  it('ships only the self-hosted UI fonts (with their OFL licences), never the OG fonts', async () => {
     const all: string[] = [];
     const walk = async (directory: string): Promise<void> => {
       for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -220,7 +225,16 @@ describe('localized chrome (E6-T05)', () => {
       }
     };
     await walk(distPath);
-    expect(all.filter((file) => /\.(?:woff2?|ttf|otf)$/u.test(file))).toEqual([]);
+    const fonts = all.filter((file) => /\.(?:woff2?|ttf|otf)$/u.test(file)).map((file) => path.relative(distPath, file).split(path.sep).join('/'));
+    // D-R26: Geist, Geist Mono and the Space Grotesk digits subset, Latin woff2 only, all under /fonts.
+    expect(fonts.sort()).toEqual([
+      'fonts/geist-latin-wght-normal.woff2',
+      'fonts/geist-mono-latin-wght-normal.woff2',
+      'fonts/space-grotesk-digits-600.woff2',
+    ]);
+    const rel = all.map((file) => path.relative(distPath, file).split(path.sep).join('/'));
+    expect(rel).toContain('fonts/OFL-Geist.txt');
+    expect(rel).toContain('fonts/OFL-SpaceGrotesk.txt');
   });
 });
 

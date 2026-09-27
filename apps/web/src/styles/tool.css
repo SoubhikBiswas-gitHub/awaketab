@@ -665,9 +665,9 @@
   .at-prose code,
   .at-article code {
     padding-inline: var(--at-s-1);
-    border-radius: 4px;
+    border-radius: var(--at-r-xs);
     background: var(--muted);
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-family: var(--at-font-mono);
     font-size: 0.9em;
   }
 
@@ -1059,7 +1059,7 @@
     inline-size: 20px;
     block-size: 20px;
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: var(--at-r-xs);
     color: var(--at-ink);
     font-size: 8px;
     line-height: 1;

@@ -20,7 +20,7 @@ Status: v1.4 · 26 Sep 2026 · Owner: Soubhik · Derived from `awaketab-blueprin
 | Embed product | **AwakeTab Embed** (first widget: Cook Mode) |
 | Business tier | **AwakeTab Business** (Embed licence, Kiosk licence) |
 | Paid tier | **AwakeTab Pro** |
-| Brand accent | Awake amber `#B86E00` (light UI) / `#FFB84D` (dark UI); night indigo `#2B3A67` / `#9DB0FF`; OLED black `#000000` |
+| Brand accent | The lamp (Clear Night, `DESIGN.md` §2.2): default Aqua `#087B87` (light UI) / `#5BE0E8` (dark UI); night indigo `#2B3A67` / `#9DB0FF`; OLED black `#000000`. Amber and red are reserved for the paused and blocked states, never the brand |
 | Favicon / icon motif | The ring (progress ring with a glowing dot at 12 o'clock) |
 | Author page | `/about` — real name, testing setup, contact |
 
@@ -61,7 +61,7 @@ Priority labels: `P0` (launch blocker), `P1` (launch), `P2` (post-launch, phase 
 |---|---|---|
 | Site framework | **Astro 5**, static output, content collections (MDX), built-in i18n routing | One vanilla-TypeScript island for the tool; React is a build-time renderer only (`03-architecture.md` ADR-013), never shipped |
 | Language | TypeScript, `strict: true`, ESM | Node 22 LTS, pnpm 9 workspaces |
-| Styling | Tailwind CSS v4 with design tokens as CSS variables; **shadcn/ui** components rendered at build time (no hydration) | System font stack (no web fonts on tool pages); shadcn's semantic variables alias the `--at-*` tokens (`05-frontend-spec.md` §1.5) |
+| Styling | Tailwind CSS v4 with design tokens as CSS variables; **shadcn/ui** components rendered at build time (no hydration) | Self-hosted fonts only (D-R26): Geist, Geist Mono, Space Grotesk digits from `/fonts`, metric-matched fallbacks, no third-party font request (`05-frontend-spec.md` §1.2); shadcn's semantic variables alias the `--at-*` tokens (`05-frontend-spec.md` §1.5) |
 | PWA | Workbox runtime modules (`workbox-precaching`, `-routing`, `-strategies`, `-expiration`) bundled by esbuild in a post-build step (`scripts/sw.mjs`) — not `@vite-pwa/astro` (`03-architecture.md` ADR-014) | Precache app shell + tool pages; runtime cache for content pages |
 | Hosting | **Cloudflare Pages** (+ Pages Functions for `/api/*`) | Preview deploy per PR; `_headers` and `_redirects` files |
 | Serverless state | Cloudflare **KV** (licences, embed configs), **Workers Analytics Engine** (events) | No database, no accounts |
@@ -114,11 +114,11 @@ awaketab/
 |---|---|---|---|
 | `idle` | No lock requested | "Ready" | neutral |
 | `requesting` | `navigator.wakeLock.request('screen')` in flight | "Starting…" | neutral |
-| `held` | Sentinel alive | "Screen awake" | accent (amber) |
+| `held` | Sentinel alive | "Screen awake" | accent (lamp) |
 | `lost` | Sentinel released by the browser (tab hidden, OS) — will re-request on `visibilitychange` | "Paused — tab hidden" | warn |
 | `denied` | Request rejected (`NotAllowedError`: battery saver, policy, hidden doc) | "Blocked — here's the fix" | bad |
 | `unsupported` | `navigator.wakeLock` absent | "Tap to use the fallback" | neutral |
-| `fallback` | Hidden 1-frame video loop active (user gesture given) | "Awake via video fallback" | accent (muted) |
+| `fallback` | Hidden 1-frame video loop active (user gesture given) | "Awake via video fallback" | accent (lamp, muted) |
 
 Only `held` and `fallback` may show a running timer. Transitions are specified in `04-engine-spec.md`.
 
@@ -299,7 +299,7 @@ The identifiers below were proposed while writing the other documents and are no
 | `ISession` extra fields | `pausedMs`, `endedAt`, `endReason`, `awakeSeconds` (seconds in `held` or `fallback`; feeds stats), `modeState` (per-mode data, e.g. `cookTimers[]`) |
 | `ISettings` extra fields | `keyboardShortcuts: boolean` (enables single-key shortcuts; WCAG 2.1.4) distinct from `keyboardHints: boolean` (shows hints); `lastCustomMs`; `ambient.message` |
 | `TTabMessage` | `{type:'hello'|'lock'|'state'|'intent'|'bye', tabId, ts, …}` on `BroadcastChannel('awaketab')`; `tabId` in `sessionStorage['at.tabId']`; `intent` and the `state` snapshot fields since v1.3 (§13.8) |
-| CSS token namespace | `--at-*` (e.g. `--at-accent`, `--at-accent-text` `#8A5200` light for AA text) |
+| CSS token namespace | `--at-*` (e.g. `--at-accent`, `--at-accent-text`: the lamp's light value, `#087B87` for Aqua, AA for text). Full list: `05-frontend-spec.md` §1.1–§1.3, new names in §13.18 |
 | `/8h` route | Maps to a `custom` plan of 480 min; there is no `p480` chip |
 
 ### 13.2 Routes and files
@@ -389,7 +389,7 @@ Accepted on 2026-09-26 with the M6 implementation; confirmed by owner decision D
 | `TDialogName` | Gains `'stats'` |
 | `TChime` (`signal.ts`) | `end` · `focus` · `timer` — Web Audio oscillator tones, no audio files |
 | Notification tags | `at-end` · `at-focus` · `at-cook-{timerId}` |
-| Accent palettes (`accent.ts`) | `amber` `#B86E00` (default, no attribute) · `indigo` `#4F46E5` · `teal` `#0F766E` · `rose` `#BE123C`. `settings.accent` stores the hex; the id goes on `<html data-accent>`; `teal` and `rose` are the first `ambient.packs` pack (`PACK_ACCENTS`) and fall back to amber without it. `public/theme-boot.js` mirrors the map so the accent paints before first frame |
+| Lamp colours (`accent.ts`, was "accent palettes") | `aqua` `#087B87` (default, no attribute) · `violet` `#5A47CF` · `mint` `#167A50` · `sky` `#255FBD` (`ACCENTS`, keyed by the light hex; `DEFAULT_ACCENT` = Aqua). `settings.accent` stores the hex; the id goes on `<html data-accent>`; `mint` and `sky` are the `ambient.packs` lamps (`PACK_ACCENTS`) and fall back to Aqua without it. `LEGACY_ACCENTS` + `accentHex()` migrate the old palette hexes (`08-data-storage.md` §2.1). The inline boot script `src/boot/boot.js` mirrors both maps so the lamp paints before first frame |
 | Ambient gating | Only `message` is gated (`MODE_GATES = { message: 'ambient.message' }`); `ambient.packs` gates palettes, never layouts. `05-frontend-spec.md` §3.13 wins over the E10-T01 wording in `15-implementation-plan.md` |
 | `ambient/logic.ts` constants | `AMBIENT_ORDER` (the `M` cycle) · `PIXEL_SHIFT_MS` 60,000 · `PIXEL_SHIFT_PX` 2 · `NIGHT_DIM_AFTER_MS` 30,000 · `BURNIN_DIM_AFTER_MS` 30 min · `MESSAGE_PREVIEW_MS` 60,000 · `FOCUS_LONG_BREAK_MIN` 15 · `COOK_MAX_TIMERS` 3 · `COOK_NAME_MAX` 20 · `COOK_MIN_MS` 1 min · `COOK_MAX_MS` 12 h · `COOK_FLASH_MS` 10,000 |
 | `end.ts` constants | `TITLE_FLASH_MS` 1000 · `TITLE_FLASH_MIN_MS` 3000 · `RATING_DELAY_MS` 2000 · `COUNTED_SESSION_S` 300 (a completed session counts toward `meta.sessionCount` only if ≥ 5 min awake) |
@@ -406,7 +406,7 @@ Accepted on 2026-09-26 with the M6 implementation; confirmed by owner decision D
 | `--at-t-ambient` | `clamp(4.5rem, 22vw, 15rem)` |
 | `--at-night-digit` | `#FF5A3C` (night-mode digits) |
 | `--at-d-slow` | `320ms` |
-| `[data-accent="indigo\|teal\|rose"]` blocks | Override `--at-accent`, `--at-accent-text`, `--at-on-accent`, `--at-focus` per accent, with `dark`/`oled` variants (`05-frontend-spec.md` §1.1a) |
+| `[data-accent="violet\|mint\|sky"]` blocks | Override `--at-accent`, `--at-accent-text`, `--at-on-accent`, `--at-focus` per lamp, with `dark`/`oled` variants (`05-frontend-spec.md` §1.1a) |
 
 **Build, PWA and budgets**
 
@@ -452,7 +452,7 @@ Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`), as written with
 | `STALE_NOTIFY_MS` | 5 min — a session that ended while the worker slept is announced only within this window |
 | `SYNC_DEBOUNCE_MS` | 2,000 |
 | Notification id | `at-end` (same tag as the web); buttons `+30 min` (index 0) / `Stop` (index 1) |
-| `BADGE_COLORS` | `display` `#B86E00` · `system` `#2B3A67`; text `#FFFFFF`; text `ON` / `SYS` / `<n>m` / `<n>h` |
+| `BADGE_COLORS` | `display` `#087B87` (Aqua light, 5.0:1 with white; amber means paused, `DESIGN.md` §2.1) · `system` `#2B3A67`; text `#FFFFFF`; text `ON` / `SYS` / `<n>m` / `<n>h` |
 | System-level pill (D-02) | `status.ts` `pillTextKey(lock, level)`: a held `system` lock → `ext.pill.systemHeld` "System awake" (never `tool.pill.held`), secondary line `pillExtraKey()` → `ext.pill.system` "Screen may dim or lock"; badge tooltip `AwakeTab — System awake · Screen may dim or lock`. Display copy only; the lock state stays `held` (§5.1) |
 | `EXT_KEYS` | `{ ext: 'at.v1.ext', device: 'at.v1.device' }` (`settings.ts`) |
 | `TExtRequest` | Popup → worker messages: `state` · `start {presetId}` · `until {wall}` · `stop` · `toggle` · `extend {ms}` · `dismiss` · `level {level}` |
@@ -671,6 +671,22 @@ Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`). They were liste
 | `localeLinks` · `ogImageAlt` | Props: `localeLinks` on `BaseLayout` / `ContentLayout` / `ArticlePage` (per-locale URLs for `LocaleNav`), `ogImageAlt` on `BaseLayout` / `ContentLayout` / `ArticlePage` / `SeoHead` |
 | `.at-flip-rtl` | `tokens.css`: mirrors a direction-implying icon under `[dir="rtl"]` |
 | i18n keys | `content.breadcrumb` · `content.translation.pending` · `content.translation.original` |
+
+### 13.18 Clear Night foundation (redesign B1)
+
+Accepted on 2026-09-27 with milestone B1 (`docs/redesign/BUILD-PLAN.md`). Values: `DESIGN.md` §2 (colour) and §12 (token system); the full token tables are in `05-frontend-spec.md` §1.1–§1.3. Existing `--at-*` names and their shadcn aliases stay; everything below is an addition, except the three value changes noted.
+
+| Identifier | Decision |
+|---|---|
+| Colour tokens (new) | `--at-line-strong` · `--at-ink-2` · `--at-track` · `--at-tick` · `--at-raised` · `--at-sunken` · `--at-input-border` (per theme); `--at-horizon-ink` · `--at-night-ink` · `--at-night-ink-2` · `--at-night-muted` · `--at-night-line` · `--at-scrim` (theme-independent) |
+| Spacing | Primitives `--at-s-N` = N × 4 px for N in 1 2 3 4 5 6 8 10 12 16 20 24 30. Semantic: `--at-gutter` (16 / 32 / 80 / 120) · `--at-section` (48 / 64 / 96 / 96) · `--at-card-pad` (20 / 24) · `--at-edge-min` 16 · `--at-dock-bottom` 20 · `--at-gap-tight` 8 · `--at-gap-item` 12 · `--at-gap-group` 20 · `--at-gap-group-lg` 24 · `--at-content-max` 1200px · `--at-measure` 68ch |
+| Radius | `--at-r-xs` 4 · `--at-r-sm` **8** (was 6) · `--at-r-md` **12** (was 10) · `--at-r-lg` 16 · `--at-r-xl` 20 · `--at-r-2xl` 28 · `--at-r-pill` 999 |
+| Type roles | `--at-type-kicker` · `-caption` · `-small` · `-ui` · `-action` · `-body` · `-lead` · `-h3` · `-h2` · `-h1` · `-price`: one `font` shorthand each, in rem; `h2`, `h1` and `price` take the larger step from 600 px. `--at-t-xl` **20px** (was 22) |
+| Controls and icons | `--at-h-control` 44 · `--at-h-input` 48 · `--at-h-button` 52 · `--at-h-primary` 60 (52 at height ≤ 568) · `--at-h-cook` 64 · `--at-h-header` 60 / 68 from 600 · `--at-h-row` 56 · `--at-icon-sm` 16 · `--at-icon-md` 20 · `--at-icon-lg` 24 · `--at-border` 1px |
+| Fonts (D-R26) | `--at-font` (Geist → "Geist Fallback" → system stack) · `--at-font-mono` (Geist Mono) · `--at-font-display` (Space Grotesk 600 digits, Bold face only). Files in `apps/web/public/fonts/`: `geist-latin-wght-normal.woff2` (preloaded), `geist-mono-latin-wght-normal.woff2`, `space-grotesk-digits-600.woff2`, plus `OFL-Geist.txt` and `OFL-SpaceGrotesk.txt` (SIL OFL 1.1). Same origin only; fonts do not count toward the JS/CSS budgets (§11), CLS stays 0 |
+| Breakpoints | `tokens.css` changes semantic tokens on `:root` at `(width >= 600px)`, `(width >= 1024px)`, `(width >= 1600px)` only (plus `(height <= 568px)` for `--at-h-primary`) |
+| Stylelint radius guard | `stylelint.config.mjs`: `declaration-property-value-allowed-list` lets `border-*radius` take only `0`, `50%`, `var(--at-r-*)` or `calc()` over them; `tokens.css` is exempt |
+| `apps/web/test/e2e/responsive.spec.ts` | Responsive sweep (`DESIGN.md` §5 Gate): `/`, `/30m`, `/until/07-30`, `/for/cooking`, `/pro`, `/embed`, `/extension`, `/about` at every 40 px from 320 to 2560 (Chromium); fails on horizontal page scroll. Known overflow runs as `test.fixme` and is listed in `docs/redesign/B1-token-debt.md` |
 
 ## 14. Writing conventions for these docs
 

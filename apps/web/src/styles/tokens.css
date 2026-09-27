@@ -3,7 +3,7 @@
 
 /*
  * shadcn/ui theme bridge — docs/05-frontend-spec.md §1.5, docs/03-architecture.md ADR-013.
- * The `--at-*` tokens below stay the canonical palette (byte-identical to docs/05 §1.1).
+ * The `--at-*` tokens below stay the canonical palette (byte-identical to docs/05 §1.1; Clear Night, DESIGN.md §2 and §12).
  * shadcn's semantic variables alias them so every shadcn component follows the
  * light / dark / oled themes selected by `data-theme` on <html>.
  */
@@ -31,6 +31,7 @@
 
 @theme inline {
   --font-sans: var(--at-font);
+  --font-mono: var(--at-font-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -55,15 +56,81 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --radius-sm: 4px;
+  --radius-sm: var(--at-r-xs);
   --radius-md: var(--at-r-sm);
   --radius-lg: var(--at-r-md);
-  --radius-xl: var(--at-r-md);
-  --radius-2xl: var(--at-r-lg);
-  --radius-3xl: var(--at-r-lg);
-  --radius-4xl: var(--at-r-lg);
+  --radius-xl: var(--at-r-lg);
+  --radius-2xl: var(--at-r-xl);
+  --radius-3xl: var(--at-r-2xl);
+  --radius-4xl: var(--at-r-2xl);
 }
 
+
+/*
+ * Fonts (DESIGN.md §3, decision D-R26): Geist for UI text, Geist Mono for code, keys, file names and URLs,
+ * Space Grotesk 600 for Bold clock-face digits only. Self-hosted from /fonts (SIL OFL 1.1, licence files next
+ * to the woff2), Latin only; other scripts fall through to the system stack. Each face has a metric-matched
+ * local fallback (size-adjust and ascent/descent/line-gap overrides, measured against Arial / Courier New) so
+ * the swap does not shift layout (CLS 0). Only Geist is preloaded (BaseLayout). Sources: @fontsource-variable/
+ * geist and geist-mono 5.3.0 (latin wght files, copied as-is); space-grotesk-digits-600.woff2 is
+ * @fontsource/space-grotesk 5.3.0 latin-600 subset with fontTools: pyftsubset --unicodes=U+0020,U+002C,
+ * U+002E,U+0030-003A,U+0064,U+0068,U+006D --layout-features='*' --flavor=woff2.
+ */
+@font-face {
+  font-family: Geist;
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/geist-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/geist-mono-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-digits-600.woff2") format("woff2");
+  unicode-range: U+0020, U+002C, U+002E, U+0030-003A, U+0064, U+0068, U+006D;
+}
+
+@font-face {
+  font-family: "Geist Fallback";
+  src: local("Arial"), local("Helvetica"), local("Liberation Sans");
+  size-adjust: 105.5%;
+  ascent-override: 95.26%;
+  descent-override: 27.96%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Geist Mono Fallback";
+  src: local("Courier New"), local("Menlo"), local("Consolas");
+  size-adjust: 100%;
+  ascent-override: 100.5%;
+  descent-override: 29.5%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Space Grotesk Fallback";
+  src: local("Arial"), local("Helvetica"), local("Liberation Sans");
+  size-adjust: 109.7%;
+  ascent-override: 89.7%;
+  descent-override: 26.62%;
+  line-gap-override: 0%;
+}
 
 @layer base {
   * {
@@ -78,54 +145,76 @@
 :root,
 [data-theme="light"] {
   color-scheme: light;
-  --at-ground: #faf7f2;
+  --at-ground: #f2f6fa;
   --at-surface: #fff;
-  --at-ink: #1a1a1a;
-  --at-muted: #5c5c5c;
-  --at-line: #e3ded6;
-  --at-accent: #b86e00;
-  --at-accent-text: #8a5200;
+  --at-line: #dce3ec;
+  --at-line-strong: #c3cdda;
+  --at-ink: #0e1726;
+  --at-ink-2: #3a4659;
+  --at-muted: #5b6779;
+  --at-track: #e3e9f1;
+  --at-tick: #ccd5e1;
+  --at-raised: #e3e9f1;
+  --at-sunken: #f6f9fc;
+  --at-input-border: #818c9c;
+  --at-accent: #087b87;
+  --at-accent-text: #087b87;
   --at-on-accent: #fff;
   --at-night: #2b3a67;
   --at-good: #1e7b4d;
-  --at-warn: #a64b00;
-  --at-bad: #b3261e;
-  --at-focus: #b86e00;
+  --at-warn: #98641a;
+  --at-bad: #c63f3f;
+  --at-focus: #087b87;
   --at-text: var(--at-ink);
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --at-ground: #14161c;
-  --at-surface: #1c1f27;
-  --at-ink: #f2f2f2;
-  --at-muted: #a3a6ae;
-  --at-line: #2a2e38;
-  --at-accent: #ffb84d;
-  --at-accent-text: #ffb84d;
-  --at-on-accent: #1a1200;
+  --at-ground: #0a0e16;
+  --at-surface: #111826;
+  --at-line: #1f2940;
+  --at-line-strong: #33405c;
+  --at-ink: #eaf0f7;
+  --at-ink-2: #b7c1d1;
+  --at-muted: #8e9aae;
+  --at-track: #1a2336;
+  --at-tick: #2a3752;
+  --at-raised: #26324b;
+  --at-sunken: #0d131f;
+  --at-input-border: #5a6781;
+  --at-accent: #5be0e8;
+  --at-accent-text: #5be0e8;
+  --at-on-accent: #04232a;
   --at-night: #9db0ff;
   --at-good: #5fd39a;
-  --at-warn: #ff9f6e;
-  --at-bad: #ff8a80;
-  --at-focus: #ffb84d;
+  --at-warn: #f2b34c;
+  --at-bad: #ff7a7a;
+  --at-focus: #5be0e8;
 }
 
+/* OLED: pure black ground and #0a0a0a surface; every other value follows dark (DESIGN.md §2.1). */
 [data-theme="oled"] {
   color-scheme: dark;
   --at-ground: #000;
   --at-surface: #0a0a0a;
-  --at-ink: #e6e6e6;
-  --at-muted: #8a8a8a;
-  --at-line: #1f1f1f;
-  --at-accent: #ffb84d;
-  --at-accent-text: #ffb84d;
-  --at-on-accent: #1a1200;
+  --at-line: #1f2940;
+  --at-line-strong: #33405c;
+  --at-ink: #eaf0f7;
+  --at-ink-2: #b7c1d1;
+  --at-muted: #8e9aae;
+  --at-track: #1a2336;
+  --at-tick: #2a3752;
+  --at-raised: #26324b;
+  --at-sunken: #0d131f;
+  --at-input-border: #5a6781;
+  --at-accent: #5be0e8;
+  --at-accent-text: #5be0e8;
+  --at-on-accent: #04232a;
   --at-night: #9db0ff;
   --at-good: #5fd39a;
-  --at-warn: #ff9f6e;
-  --at-bad: #ff8a80;
-  --at-focus: #ffb84d;
+  --at-warn: #f2b34c;
+  --at-bad: #ff7a7a;
+  --at-focus: #5be0e8;
 }
 
 :root {
@@ -154,96 +243,205 @@
   --border: var(--at-line);
   --input: var(--at-line);
   --ring: var(--at-focus);
-  --at-font: system-ui, -apple-system, "Segoe UI", "Roboto", "Noto Sans", "Ubuntu", "Cantarell",
-    "Noto Sans JP", "Noto Sans SC", "Noto Sans Devanagari", sans-serif;
+  --at-font: "Geist", "Geist Fallback", system-ui, -apple-system, "Segoe UI", "Roboto", "Noto Sans", "Ubuntu",
+    "Cantarell", "Noto Sans JP", "Noto Sans SC", "Noto Sans Devanagari", sans-serif;
+  --at-font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, "SF Mono", menlo, consolas, monospace;
+  --at-font-display: "Space Grotesk", "Space Grotesk Fallback", var(--at-font);
+
+  /* Theme-independent colours (DESIGN.md §2.1): Horizon digits, night mode (OLED, red digits), scrim. */
+  --at-horizon-ink: #f6f2ea;
+  --at-night-digit: #ff5a3c;
+  --at-night-ink: #ff5a3c;
+  --at-night-ink-2: #e8563c;
+  --at-night-muted: #a89690;
+  --at-night-line: #3a2e2a;
+  --at-scrim: rgb(4 7 12 / 55%);
+
+  /* Type size primitives (docs/05 §1.2). */
   --at-t-xs: 0.75rem;
   --at-t-sm: 0.875rem;
   --at-t-md: 1rem;
   --at-t-lg: 1.125rem;
-  --at-t-xl: 1.375rem;
+  --at-t-xl: 1.25rem;
   --at-t-2xl: 1.75rem;
   --at-t-3xl: 2.5rem;
   --at-t-timer: clamp(2.5rem, 12vw, 4rem);
   --at-t-ambient: clamp(4.5rem, 22vw, 15rem);
-  --at-night-digit: #ff5a3c;
+
+  /* Type roles (DESIGN.md §12.5): one `font` shorthand each, in rem; h2, h1 and price grow at 600 px. */
+  --at-type-kicker: 600 0.75rem/1rem var(--at-font);
+  --at-type-caption: 400 0.8125rem/1.125rem var(--at-font);
+  --at-type-small: 400 0.875rem/1.25rem var(--at-font);
+  --at-type-ui: 500 0.9375rem/1.375rem var(--at-font);
+  --at-type-action: 600 1.0625rem/1.5rem var(--at-font);
+  --at-type-body: 400 1rem/1.625rem var(--at-font);
+  --at-type-lead: 400 1.125rem/1.75rem var(--at-font);
+  --at-type-h3: 600 1.25rem/1.75rem var(--at-font);
+  --at-type-h2: 600 1.5rem/2rem var(--at-font);
+  --at-type-h1: 600 2.125rem/2.625rem var(--at-font);
+  --at-type-price: 600 2.5rem/3rem var(--at-font);
+
+  /* Spacing primitives: --at-s-N = N × 4 px (DESIGN.md §12.3). */
   --at-s-1: 4px;
   --at-s-2: 8px;
   --at-s-3: 12px;
   --at-s-4: 16px;
+  --at-s-5: 20px;
   --at-s-6: 24px;
   --at-s-8: 32px;
-  --at-r-sm: 6px;
-  --at-r-md: 10px;
+  --at-s-10: 40px;
+  --at-s-12: 48px;
+  --at-s-16: 64px;
+  --at-s-20: 80px;
+  --at-s-24: 96px;
+  --at-s-30: 120px;
+
+  /* Spacing semantics (phone values; wider bands below). */
+  --at-gutter: var(--at-s-4);
+  --at-section: var(--at-s-12);
+  --at-card-pad: var(--at-s-5);
+  --at-edge-min: var(--at-s-4);
+  --at-dock-bottom: var(--at-s-5);
+  --at-gap-tight: var(--at-s-2);
+  --at-gap-item: var(--at-s-3);
+  --at-gap-group: var(--at-s-5);
+  --at-gap-group-lg: var(--at-s-6);
+  --at-content-max: 1200px;
+  --at-measure: 68ch;
+
+  /* Radius (DESIGN.md §11.3, §12.4); the same at every width. */
+  --at-r-xs: 4px;
+  --at-r-sm: 8px;
+  --at-r-md: 12px;
   --at-r-lg: 16px;
+  --at-r-xl: 20px;
+  --at-r-2xl: 28px;
   --at-r-pill: 999px;
+
+  /* Control sizes, icons, border (DESIGN.md §11.4, §12.6). Targets never go below 44 px. */
+  --at-h-control: 44px;
+  --at-h-input: 48px;
+  --at-h-button: 52px;
+  --at-h-primary: 60px;
+  --at-h-cook: 64px;
+  --at-h-header: 60px;
+  --at-h-row: 56px;
+  --at-icon-sm: 16px;
+  --at-icon-md: 20px;
+  --at-icon-lg: 24px;
+  --at-border: 1px;
+
+  /* Motion. */
   --at-d-fast: 120ms;
   --at-d-base: 200ms;
   --at-d-slow: 320ms;
 }
 
+/* Breakpoints (DESIGN.md §12.2): 600 tablet, 1024 desktop, 1600 xl. Only semantic tokens change. */
+@media (width >= 600px) {
+  :root {
+    --at-gutter: var(--at-s-8);
+    --at-section: var(--at-s-16);
+    --at-card-pad: var(--at-s-6);
+    --at-h-header: 68px;
+    --at-type-h2: 600 1.75rem/2.25rem var(--at-font);
+    --at-type-h1: 600 3rem/3.5rem var(--at-font);
+    --at-type-price: 600 3rem/3.5rem var(--at-font);
+  }
+}
+
+@media (width >= 1024px) {
+  :root {
+    --at-gutter: var(--at-s-20);
+    --at-section: var(--at-s-24);
+  }
+}
+
+@media (width >= 1600px) {
+  :root {
+    --at-gutter: var(--at-s-30);
+  }
+}
+
+/* Short screens and landscape phones (≤ 568 tall): the primary action drops to 52 (DESIGN.md §12.6). */
+@media (height <= 568px) {
+  :root {
+    --at-h-primary: 52px;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     color-scheme: dark;
-    --at-ground: #14161c;
-    --at-surface: #1c1f27;
-    --at-ink: #f2f2f2;
-    --at-muted: #a3a6ae;
-    --at-line: #2a2e38;
-    --at-accent: #ffb84d;
-    --at-accent-text: #ffb84d;
-    --at-on-accent: #1a1200;
-    --at-warn: #ff9f6e;
-    --at-bad: #ff8a80;
-    --at-focus: #ffb84d;
+    --at-ground: #0a0e16;
+    --at-surface: #111826;
+    --at-line: #1f2940;
+    --at-line-strong: #33405c;
+    --at-ink: #eaf0f7;
+    --at-ink-2: #b7c1d1;
+    --at-muted: #8e9aae;
+    --at-track: #1a2336;
+    --at-tick: #2a3752;
+    --at-raised: #26324b;
+    --at-sunken: #0d131f;
+    --at-input-border: #5a6781;
+    --at-accent: #5be0e8;
+    --at-accent-text: #5be0e8;
+    --at-on-accent: #04232a;
+    --at-night: #9db0ff;
+    --at-good: #5fd39a;
+    --at-warn: #f2b34c;
+    --at-bad: #ff7a7a;
+    --at-focus: #5be0e8;
   }
 }
 
 /*
- * Accent palettes (docs/05 §1.1a). Amber is the default above. `data-accent` goes on <html> next to
- * data-theme; the dark variants cover dark + oled. Every pair is AA-checked by test/tool/accent.test.ts
- * (accent ≥ 3:1 on ground, accent-text ≥ 4.5:1 on ground and surface, on-accent ≥ 4.5:1 on accent-text).
- * Teal and Rose are the first `ambient.packs` palettes.
+ * Lamp colours (DESIGN.md §2.2, docs/05 §1.1a). Aqua is the default above and sets no attribute.
+ * `data-accent` goes on <html> next to data-theme; the dark variants cover dark + oled. Every lamp is
+ * AA-checked by test/tool/accent.test.ts (accent ≥ 3:1 on ground, accent-text ≥ 4.5:1 on ground and surface,
+ * on-accent ≥ 4.5:1 on the filled button). Mint and Sky are the `ambient.packs` lamps.
  */
-[data-accent="indigo"] {
-  --at-accent: #4f46e5;
-  --at-accent-text: #4338ca;
+[data-accent="violet"] {
+  --at-accent: #5a47cf;
+  --at-accent-text: #5a47cf;
   --at-on-accent: #fff;
-  --at-focus: #4f46e5;
+  --at-focus: #5a47cf;
 }
 
-[data-accent="teal"] {
-  --at-accent: #0f766e;
-  --at-accent-text: #0f766e;
+[data-accent="mint"] {
+  --at-accent: #167a50;
+  --at-accent-text: #167a50;
   --at-on-accent: #fff;
-  --at-focus: #0f766e;
+  --at-focus: #167a50;
 }
 
-[data-accent="rose"] {
-  --at-accent: #be123c;
-  --at-accent-text: #be123c;
+[data-accent="sky"] {
+  --at-accent: #255fbd;
+  --at-accent-text: #255fbd;
   --at-on-accent: #fff;
-  --at-focus: #be123c;
+  --at-focus: #255fbd;
 }
 
-[data-accent="indigo"]:is([data-theme="dark"], [data-theme="oled"]) {
-  --at-accent: #a5b4fc;
-  --at-accent-text: #a5b4fc;
-  --at-on-accent: #0f1233;
-  --at-focus: #a5b4fc;
+[data-accent="violet"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #a594ff;
+  --at-accent-text: #a594ff;
+  --at-on-accent: #04232a;
+  --at-focus: #a594ff;
 }
 
-[data-accent="teal"]:is([data-theme="dark"], [data-theme="oled"]) {
-  --at-accent: #5eead4;
-  --at-accent-text: #5eead4;
-  --at-on-accent: #042f2e;
-  --at-focus: #5eead4;
+[data-accent="mint"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #7ef0b8;
+  --at-accent-text: #7ef0b8;
+  --at-on-accent: #04232a;
+  --at-focus: #7ef0b8;
 }
 
-[data-accent="rose"]:is([data-theme="dark"], [data-theme="oled"]) {
-  --at-accent: #fda4af;
-  --at-accent-text: #fda4af;
-  --at-on-accent: #3f0613;
-  --at-focus: #fda4af;
+[data-accent="sky"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #7cb8ff;
+  --at-accent-text: #7cb8ff;
+  --at-on-accent: #04232a;
+  --at-focus: #7cb8ff;
 }
 
 /* RTL readiness (docs/07 §6): icons that imply a direction mirror under <html dir="rtl">; every layout

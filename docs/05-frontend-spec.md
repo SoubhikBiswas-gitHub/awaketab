@@ -14,46 +14,70 @@ Tokens are CSS custom properties declared in `apps/web/src/styles/tokens.css` an
 
 ### 1.1 Colour
 
+Clear Night palette (`DESIGN.md` §2.1; redesign B1). Tinted neutrals plus one lamp colour for "awake"; amber and red keep their caution/alert meanings and are never a lamp.
+
 | Token | `light` | `dark` | `oled` | Use |
 |---|---|---|---|---|
-| `--at-ground` | `#FAF7F2` | `#14161C` | `#000000` | Page background; `<meta name="theme-color">` |
-| `--at-surface` | `#FFFFFF` | `#1C1F27` | `#0A0A0A` | Cards, sheets, dialogs, chips |
-| `--at-ink` | `#1A1A1A` | `#F2F2F2` | `#E6E6E6` | Primary text (contrast ≥ 12:1 on ground) |
-| `--at-muted` | `#5C5C5C` | `#A3A6AE` | `#8A8A8A` | Secondary text (≥ 4.5:1 on ground) |
-| `--at-line` | `#E3DED6` | `#2A2E38` | `#1F1F1F` | Borders, ring track |
-| `--at-accent` | `#B86E00` | `#FFB84D` | `#FFB84D` | Ring progress, held state, primary buttons, focus ring |
-| `--at-accent-text` | `#8A5200` | `#FFB84D` | `#FFB84D` | Accent-coloured *text* (light amber `#B86E00` is only 3.7:1 on ground — fine for the ring and borders, not for body-size text) |
-| `--at-on-accent` | `#FFFFFF` | `#1A1200` | `#1A1200` | Text on accent-filled buttons (dark: 11:1; light: use only at ≥ 18.66 px bold or with `--at-accent-text` background) |
-| `--at-night` | `#2B3A67` | `#9DB0FF` | `#9DB0FF` | Night mode digits and accents (in `night` ambient mode digits use `--at-night-digit` `#FF5A3C` on `oled`; see §3.13) |
+| `--at-ground` | `#F2F6FA` | `#0A0E16` | `#000000` | Page background; `<meta name="theme-color">` and manifest colours |
+| `--at-surface` | `#FFFFFF` | `#111826` | `#0A0A0A` | Cards, sheets, dialogs, chips |
+| `--at-line` | `#DCE3EC` | `#1F2940` | `#1F2940` | Borders, dividers, bars (ring track until B3 moves it to `--at-track`) |
+| `--at-line-strong` | `#C3CDDA` | `#33405C` | `#33405C` | Secondary button borders, dashed "choose / add" chips |
+| `--at-ink` | `#0E1726` | `#EAF0F7` | `#EAF0F7` | Primary text (≥ 16:1 on ground) |
+| `--at-ink-2` | `#3A4659` | `#B7C1D1` | `#B7C1D1` | Secondary text |
+| `--at-muted` | `#5B6779` | `#8E9AAE` | `#8E9AAE` | Captions, meta (≥ 4.5:1 on ground and surface) |
+| `--at-track` | `#E3E9F1` | `#1A2336` | `#1A2336` | Ring track, progress bar track |
+| `--at-tick` | `#CCD5E1` | `#2A3752` | `#2A3752` | Ring minute ticks |
+| `--at-raised` | `#E3E9F1` | `#26324B` | `#26324B` | Neutral selected segment, Stop and strong neutral buttons (D-R20) |
+| `--at-sunken` | `#F6F9FC` | `#0D131F` | `#0D131F` | Code blocks, timer wells, URL outputs, input fill |
+| `--at-input-border` | `#818C9C` | `#5A6781` | `#5A6781` | Input, select and textarea borders (≥ 3:1 on ground and surface, O-56) |
+| `--at-accent` | lamp light value | lamp dark value | lamp dark value | Ring progress, held state, primary buttons (§1.1a; default Aqua `#087B87` / `#5BE0E8`) |
+| `--at-accent-text` | lamp light value | lamp dark value | lamp dark value | Accent-coloured text (≥ 4.5:1 on ground and surface) and the filled primary button (`--primary`) |
+| `--at-on-accent` | `#FFFFFF` | `#04232A` | `#04232A` | Text on lamp-filled buttons (≥ 4.5:1 for every lamp) |
+| `--at-focus` | lamp light value | lamp dark value | lamp dark value | 2 px outline, ≥ 3:1 against the page |
+| `--at-night` | `#2B3A67` | `#9DB0FF` | `#9DB0FF` | Night indigo accents |
 | `--at-good` | `#1E7B4D` | `#5FD39A` | `#5FD39A` | Completed flash, success toasts |
-| `--at-warn` | `#A64B00` | `#FF9F6E` | `#FF9F6E` | `lost` pill, warnings |
-| `--at-bad` | `#B3261E` | `#FF8A80` | `#FF8A80` | `denied` pill, error toasts |
-| `--at-focus` | `#B86E00` | `#FFB84D` | `#FFB84D` | 2 px outline + 2 px offset, ≥ 3:1 against every adjacent colour |
+| `--at-warn` | `#98641A` | `#F2B34C` | `#F2B34C` | `lost` pill, warnings |
+| `--at-bad` | `#C63F3F` | `#FF7A7A` | `#FF7A7A` | `denied` pill, error text and toasts |
 
-State-tinted surfaces are derived, never hand-picked: `color-mix(in srgb, var(--at-accent) 12%, var(--at-surface))` for the `held` pill, `--at-warn` 12% for `lost`, `--at-bad` 12% for `denied`. Every text/background pair used in the island must be listed in `13-testing-strategy.md`'s contrast test fixture; CI fails below WCAG 2.2 AA (4.5:1 text, 3:1 UI/large text).
+Fonts: Geist and Geist Mono (© The Geist Project Authors) and Space Grotesk (© The Space Grotesk Project Authors), all SIL Open Font License 1.1; licence texts ship as `/fonts/OFL-Geist.txt` and `/fonts/OFL-SpaceGrotesk.txt`, no Reserved Font Name, so the subset keeps its name (§1.2).
 
-### 1.1a Accent palettes
+Theme-independent: `--at-horizon-ink` `#F6F2EA` (Horizon digits) · night mode `--at-night-digit` / `--at-night-ink` `#FF5A3C`, `--at-night-ink-2` `#E8563C`, `--at-night-muted` `#A89690`, `--at-night-line` `#3A2E2A` (ground `#000`) · `--at-scrim` `rgb(4 7 12 / 55%)`.
 
-`settings.accent` stores the light-theme hex (`08-data-storage.md` §2.1); `apps/web/src/tool/accent.ts` maps it to a palette id set as `data-accent` on `<html>` (amber, the default, sets no attribute), and `tokens.css` overrides four tokens per palette. the inline boot script (`src/boot/boot.js`, §11) mirrors the map so the accent is applied before first paint; the island re-checks pack palettes against the licence and falls back to amber when `ambient.packs` is missing or lapsed.
+`--at-warn`, `--at-bad` and `--at-input-border` in `light` are darker than the first `DESIGN.md` §2.1 draft (`#B7791F` 3.4:1, `#D14343` 4.2:1, `#8C98AA` 2.7:1 on ground) so tone text passes 4.5:1 and input borders 3:1. The ground's radial lift (`DESIGN.md` §2.1) and the status halo are page backgrounds, added with the shell in B2/B3.
 
-| Id | `settings.accent` | Gate | `light`: `--at-accent` · `--at-accent-text` · `--at-on-accent` · `--at-focus` | `dark` / `oled`: same four |
+State-tinted surfaces are derived, never hand-picked: `color-mix(in srgb, var(--at-accent) 12%, var(--at-surface))` for the `held` pill, `--at-warn` 12% for `lost`, `--at-bad` 12% for `denied`. Every text/background pair used in the island must be listed in `13-testing-strategy.md`'s contrast test fixture; CI fails below WCAG 2.2 AA (4.5:1 text, 3:1 UI/large text). `test/tool/accent.test.ts` checks every lamp in every theme and the neutral/tone text tokens.
+
+### 1.1a Lamp colours (accent)
+
+`settings.accent` stores the lamp's light-theme hex (`08-data-storage.md` §2.1); `apps/web/src/tool/accent.ts` maps it to a lamp id set as `data-accent` on `<html>` (Aqua, the default, sets no attribute), and `tokens.css` overrides four tokens per lamp. The inline boot script (`src/boot/boot.js`, §11) mirrors the map so the lamp is applied before first paint; the island re-checks pack lamps against the licence and falls back to Aqua when `ambient.packs` is missing or lapsed.
+
+| Id | `settings.accent` | Gate | `light`: `--at-accent` = `--at-accent-text` = `--at-focus` · `--at-on-accent` | `dark` / `oled`: same |
 |---|---|---|---|---|
-| `amber` | `#B86E00` (default) | free | `#B86E00` · `#8A5200` · `#FFFFFF` · `#B86E00` (§1.1) | `#FFB84D` · `#FFB84D` · `#1A1200` · `#FFB84D` |
-| `indigo` | `#4F46E5` | free | `#4F46E5` · `#4338CA` · `#FFFFFF` · `#4F46E5` | `#A5B4FC` · `#A5B4FC` · `#0F1233` · `#A5B4FC` |
-| `teal` | `#0F766E` | `ambient.packs` | `#0F766E` · `#0F766E` · `#FFFFFF` · `#0F766E` | `#5EEAD4` · `#5EEAD4` · `#042F2E` · `#5EEAD4` |
-| `rose` | `#BE123C` | `ambient.packs` | `#BE123C` · `#BE123C` · `#FFFFFF` · `#BE123C` | `#FDA4AF` · `#FDA4AF` · `#3F0613` · `#FDA4AF` |
+| `aqua` | `#087B87` (default) | free | `#087B87` · `#FFFFFF` (§1.1) | `#5BE0E8` · `#04232A` |
+| `violet` | `#5A47CF` | free | `#5A47CF` · `#FFFFFF` | `#A594FF` · `#04232A` |
+| `mint` | `#167A50` | `ambient.packs` | `#167A50` · `#FFFFFF` | `#7EF0B8` · `#04232A` |
+| `sky` | `#255FBD` | `ambient.packs` | `#255FBD` · `#FFFFFF` | `#7CB8FF` · `#04232A` |
 
-Teal and Rose are the first `ambient.packs` palette pack. Contrast rules per pair: accent ≥ 3:1 on ground, accent-text ≥ 4.5:1 on ground and surface, on-accent ≥ 4.5:1 on accent-text. The state tints and shadcn aliases (§1.5) follow the accent automatically because they are derived from `--at-accent`.
+Legacy values (the pre-redesign palettes) migrate on read without rewriting storage: `#B86E00` amber → Aqua, `#4F46E5` indigo → Violet, `#0F766E` teal → Mint, `#BE123C` rose → Sky, anything else → Aqua (`LEGACY_ACCENTS`, `accentHex()`; the boot script maps the same hexes). Contrast rules per lamp: accent ≥ 3:1 on ground, accent-text ≥ 4.5:1 on ground and surface, on-accent ≥ 4.5:1 on the fill. Lamp hues stay in the blue–green–violet band. The state tints and shadcn aliases (§1.5) follow the lamp automatically because they are derived from `--at-accent`.
 
 ### 1.2 Type
 
-System stack only — tool pages load no web fonts (`00-conventions.md` §3):
+Self-hosted fonts (redesign decision D-R26, `DESIGN.md` §3), declared with `@font-face` in `tokens.css` and served from `apps/web/public/fonts/` (same origin; CSP `font-src 'self'`):
+
+| File | Font | Bytes | Loading |
+|---|---|---|---|
+| `geist-latin-wght-normal.woff2` | Geist variable 100–900, Latin | 29,400 | `<link rel="preload">` in `BaseLayout` |
+| `geist-mono-latin-wght-normal.woff2` | Geist Mono variable 100–900, Latin | 23,128 | on use (code, keys, URLs) |
+| `space-grotesk-digits-600.woff2` | Space Grotesk 600, digits subset (0–9 : . , space d h m) | 2,760 | on use (Bold face only) |
 
 ```css
---at-font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Ubuntu, Cantarell,
-           "Noto Sans JP", "Noto Sans SC", "Noto Sans Devanagari", sans-serif;
---at-font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace; /* code blocks on /learn only */
+--at-font: "Geist", "Geist Fallback", system-ui, -apple-system, "Segoe UI", "Roboto", "Noto Sans", "Ubuntu",
+  "Cantarell", "Noto Sans JP", "Noto Sans SC", "Noto Sans Devanagari", sans-serif;
+--at-font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, "SF Mono", menlo, consolas, monospace;
+--at-font-display: "Space Grotesk", "Space Grotesk Fallback", var(--at-font);
 ```
+
+All faces use `font-display: swap`. The `… Fallback` faces are `local()` Arial / Courier New with `size-adjust`, `ascent-override`, `descent-override` and `line-gap-override` measured from the font files, so the swap does not move layout (CLS 0). ja, zh and hi text falls through to the system stack. Tailwind `font-sans` / `font-mono` map to `--at-font` / `--at-font-mono`. The extension keeps the system stack until B9 (its token import excludes the `@font-face` rules).
 
 | Token | Size / line | Use |
 |---|---|---|
@@ -61,7 +85,7 @@ System stack only — tool pages load no web fonts (`00-conventions.md` §3):
 | `--at-t-sm` | 14 / 20 | Chips, pill, captions |
 | `--at-t-md` | 16 / 24 | Body |
 | `--at-t-lg` | 18 / 28 | Lead paragraphs, dialog titles |
-| `--at-t-xl` | 22 / 30 | Section headings (h2) |
+| `--at-t-xl` | 20 / 28 (was 22; `DESIGN.md` §12.5) | Card titles (h3), section headings |
 | `--at-t-2xl` | 28 / 36 | Page h1 (mobile) |
 | `--at-t-3xl` | 40 / 48 | Page h1 (≥ md) |
 | `--at-t-timer` | `clamp(40px, 12vw, 64px)` / 1 | The `Timer`; always `font-variant-numeric: tabular-nums` |
@@ -69,9 +93,17 @@ System stack only — tool pages load no web fonts (`00-conventions.md` §3):
 
 Weights: 400 body, 600 headings and pill, 700 timer. Letter-spacing 0 except the timer (`-0.02em`).
 
+Type roles (`DESIGN.md` §12.5): `--at-type-kicker` 12/16 600 · `--at-type-caption` 13/18 400 · `--at-type-small` 14/20 400 · `--at-type-ui` 15/22 500 · `--at-type-action` 17/24 600 · `--at-type-body` 16/26 400 · `--at-type-lead` 18/28 400 · `--at-type-h3` 20/28 600 · `--at-type-h2` 24/32 → 28/36 · `--at-type-h1` 34/42 → 48/56 · `--at-type-price` 40/48 → 48/56 (the larger step from 600 px). Each is a `font` shorthand in rem over `--at-font`: use `font: var(--at-type-body)`; kicker adds `letter-spacing: .14em; text-transform: uppercase`, h1 adds `letter-spacing: -.02em`. New components use these roles; the `--at-t-*` sizes stay for existing CSS.
+
 ### 1.3 Spacing, radii, elevation
 
-4 px base grid: `--at-s-1: 4px` · `-2: 8` · `-3: 12` · `-4: 16` · `-6: 24` · `-8: 32` · `-12: 48` · `-16: 64`. Radii: `--at-r-sm: 6px` (inputs) · `--at-r-md: 10px` (cards) · `--at-r-lg: 16px` (sheets, dialogs) · `--at-r-pill: 999px` (pill, chips). Elevation is a 1 px `--at-line` border plus, in `light` only, `0 1px 2px rgb(0 0 0 / 6%)`; `dark`/`oled` use borders only.
+Token system: `DESIGN.md` §12 (names, never raw numbers). 4 px base grid: `--at-s-N` = N × 4 px for N in 1 2 3 4 5 6 8 10 12 16 20 24 30. Semantic spacing (phone → ≥ 600 → ≥ 1024 → ≥ 1600): `--at-gutter` 16 / 32 / 80 / 120 · `--at-section` 48 / 64 / 96 / 96 · `--at-card-pad` 20 / 24 / 24 / 24 · fixed `--at-edge-min` 16 · `--at-dock-bottom` 20 · `--at-gap-tight` 8 · `--at-gap-item` 12 · `--at-gap-group` 20 · `--at-gap-group-lg` 24 · `--at-content-max` 1200px · `--at-measure` 68ch. Breakpoint values change on `:root` at `(width >= 600px)`, `(width >= 1024px)` and `(width >= 1600px)` only.
+
+Radii (`DESIGN.md` §11.3): `--at-r-xs: 4px` (inline code, swatches) · `--at-r-sm: 8px` (inputs, code blocks, kbd; was 6) · `--at-r-md: 12px` (icon and small buttons, small tiles; was 10) · `--at-r-lg: 16px` (cards, inline panels) · `--at-r-xl: 20px` (large buttons) · `--at-r-2xl: 28px` (clock faces, sheets, hero panels) · `--at-r-pill: 999px` (pill, chips, segmented bars). Stylelint rejects raw `border-radius` values outside `tokens.css`.
+
+Controls and icons (`DESIGN.md` §12.6): `--at-h-control` 44 · `--at-h-input` 48 · `--at-h-button` 52 · `--at-h-primary` 60 (52 at height ≤ 568) · `--at-h-cook` 64 · `--at-h-header` 60 / 68 from 600 · `--at-h-row` 56 · `--at-icon-sm` 16 · `--at-icon-md` 20 · `--at-icon-lg` 24 · `--at-border` 1px.
+
+Elevation is a 1 px `--at-line` border plus, in `light` only, `0 1px 2px rgb(0 0 0 / 6%)`; `dark`/`oled` use borders only.
 
 ### 1.4 Motion
 
@@ -95,9 +127,9 @@ Shared UI chrome — buttons, badges, cards, tables, alerts, breadcrumbs, form f
 | `--border` · `--input` | `--at-line` | `@layer base` applies `border-border outline-ring/50` to `*` |
 | `--ring` | `--at-focus` | |
 | `--radius` | `--at-r-md` | |
-| `--font-sans` | `--at-font` | System stack; still no web fonts on tool pages |
+| `--font-sans` · `--font-mono` | `--at-font` · `--at-font-mono` | Self-hosted Geist / Geist Mono (§1.2) |
 
-Radius scale (Tailwind `rounded-*` → `--at-r-*`): `--radius-sm` 4 px (not a token; badges only) · `--radius-md` → `--at-r-sm` (6, inputs and buttons) · `--radius-lg` and `--radius-xl` → `--at-r-md` (10, cards and alerts) · `--radius-2xl` and above → `--at-r-lg` (16, dialogs and sheets). `--at-r-pill` stays the pill's and chips' radius.
+Radius scale (Tailwind `rounded-*` → `--at-r-*`): `--radius-sm` → `--at-r-xs` (4, badges) · `--radius-md` → `--at-r-sm` (8, inputs and buttons) · `--radius-lg` → `--at-r-md` (12, alerts, small tiles) · `--radius-xl` → `--at-r-lg` (16, cards) · `--radius-2xl` → `--at-r-xl` (20) · `--radius-3xl` and `--radius-4xl` → `--at-r-2xl` (28, sheets and hero panels). `--at-r-pill` stays the pill's and chips' radius.
 
 Theme plumbing: `@custom-variant dark` matches `[data-theme="dark"]`, `[data-theme="oled"]`, and `prefers-color-scheme: dark` when no `data-theme` is set, so shadcn's `dark:` utilities follow §11 without a second theme switch. `tw-animate-css` is imported for the entrance/exit keyframes shadcn classes reference; every animation still collapses to 1 ms under reduced motion (§1.4).
 

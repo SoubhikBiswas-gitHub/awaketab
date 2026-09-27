@@ -97,7 +97,7 @@ describe('i18n reuse (no duplicated English strings)', () => {
   it('takes the --at-* tokens from the web stylesheet without the Tailwind layer', () => {
     const css = tokensCss();
     expect(css.startsWith(':root,\n[data-theme="light"]')).toBe(true);
-    expect(css).toContain('--at-accent: #b86e00;');
+    expect(css).toContain('--at-accent: #087b87;');
     expect(css).toContain('[data-theme="oled"]');
     expect(css).not.toMatch(/@import|@theme|@apply|@layer/u);
   });

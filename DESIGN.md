@@ -2,7 +2,7 @@
 
 Status: **approved direction, not yet implemented.** The interactive source of truth is the design canvas (the 12 redesign canvases (docs/redesign/CANVASES.md), `Main.dc.html` holds the reference logic). When this file and `docs/05-frontend-spec.md` disagree, this file describes the target and docs/05 must be updated in the same PR that implements it (CLAUDE.md contracts rule). Product context lives in `PRODUCT.md`.
 
-Contracts that do **not** change: the seven lock states and their exact pill copy, storage keys `at.v1.*`, routes and slugs, ad placement rules, performance budgets, zero hydration, system fonts on tool pages, `--at-*` token names and their shadcn aliases.
+Contracts that do **not** change: the seven lock states and their exact pill copy, storage keys `at.v1.*`, routes and slugs, ad placement rules, performance budgets, zero hydration, self-hosted fonts only (no third-party font request; D-R26), `--at-*` token names and their shadcn aliases.
 
 ---
 
@@ -30,8 +30,8 @@ Strategy: **restrained**. Tinted neutrals plus one lamp colour for "awake". Ambe
 | `--at-muted` | `#8E9AAE` | `#5B6779` | Captions, meta (≥ 4.5:1 on ground) |
 | `--at-track` (new) | `#1A2336` | `#E3E9F1` | Ring track, progress bar track |
 | `--at-tick` (new) | `#2A3752` | `#CCD5E1` | Ring minute ticks |
-| `--at-warn` | `#F2B34C` | `#B7791F` | Paused (lost) |
-| `--at-bad` | `#FF7A7A` | `#D14343` | Blocked (denied) |
+| `--at-warn` | `#F2B34C` | `#98641A` | Paused (lost); light darkened from `#B7791F` (3.4:1) so warning text passes 4.5:1 (B1) |
+| `--at-bad` | `#FF7A7A` | `#C63F3F` | Blocked (denied); light darkened from `#D14343` (4.2:1 on ground) for 4.5:1 error text (B1) |
 | `--at-accent` | lamp, dark value | lamp, light value | Awake: ring, bead, primary CTA |
 | `--at-on-accent` | `#04232A` | `#FFFFFF` | Text on lamp-filled buttons |
 
@@ -43,7 +43,7 @@ Additional tokens (from the design critique, 27 Sep 2026):
 |---|---|---|---|
 | `--at-raised` | `#26324B` | `#E3E9F1` | Neutral selected segment (theme switch), raised tile |
 | `--at-sunken` | `#0D131F` | `#F6F9FC` | Code blocks, timer wells, URL outputs, input fill |
-| `--at-input-border` | `#5A6781` | `#8C98AA` | Input, select and textarea borders (≥ 3:1, decision O-56) |
+| `--at-input-border` | `#5A6781` | `#818C9C` | Input, select and textarea borders (≥ 3:1, decision O-56; light was `#8C98AA`, only 2.7:1 on ground, B1) |
 | `--at-horizon-ink` | `#F6F2EA` | `#F6F2EA` | Digits on the Horizon sky and water |
 | `--at-halo` | lamp 18 % → 0, radial 50 % 26 % | lamp 10 % → 0 | The single status halo behind pill/face on every surface |
 
@@ -78,15 +78,15 @@ The logo bead in the header takes the current tone, so the brand mark is itself 
 
 ## 3. Type
 
-Tool pages use **system fonts only** (contract). Canvas mocks use Geist / Geist Mono / Space Grotesk as stand-ins; implementation maps:
+The product uses the canvas's fonts (decision D-R26, replacing the earlier "system fonts only" rule). All three are SIL OFL 1.1 and **self-hosted** from `/fonts` (Latin woff2, licence files alongside); no third-party font request, `font-display: swap`, and a metric-matched local fallback face per font (size-adjust and ascent/descent/line-gap overrides) so the swap keeps CLS 0. Only Geist is preloaded. Scripts outside Latin (ja, zh, hi) fall through to the system stack.
 
-| Role | Implementation stack | Mock font |
+| Role | Token and font | Notes |
 |---|---|---|
-| UI | `system-ui` stack (`--at-font`) | Geist |
-| Display digits (Ring, Tide, Kiosk, OG, store, popup) | `system-ui` weight 200–300, `font-variant-numeric: tabular-nums`, no slashed zero | Geist 200–300 |
-| Bold face digits | `system-ui` weight 600, letter-spacing −0.06em, `tabular-nums` | Space Grotesk 600 |
-| Small counters (≤ 28 px: PiP, embed, extension badge text) | `ui-monospace` allowed, but only with a plain (unslashed) zero | Geist Mono |
-| Horizon / Tide digits | `system-ui` weight 200 | Geist 200 |
+| UI text | `--at-font`: Geist (variable 100–900), then "Geist Fallback", then the system stack | Every UI string |
+| Code, keys, file names, URLs, small counters (≤ 28 px: PiP, embed, extension badge text) | `--at-font-mono`: Geist Mono (variable), then fallback, then `ui-monospace` | Plain (unslashed) zero only |
+| Display digits (Ring, Tide, Kiosk, OG, store, popup) | Geist weight 200–300, `font-variant-numeric: tabular-nums`, no slashed zero | |
+| Bold face digits | `--at-font-display`: Space Grotesk 600 (digits-only subset: 0–9 : . , space d h m), letter-spacing −0.06em, `tabular-nums` | Used by the Bold face only |
+| Horizon / Tide digits | Geist weight 200 | |
 
 Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · button 15–17 · date/time line 15 · digits: ring 76 (60 with hours), bold 128 (96), horizon 64 (48), tide 84 (64); desktop scales the face ×1.55. Bold digits are capped to the face width (`min(128px, 34cqi)`, `min(96px, 22cqi)` with hours, `min(62px, 16cqi)` multi-day) so a wide system font never clips them.
 

@@ -42,7 +42,7 @@ body.at-embed-body {
   /* --at-embed-brand / --at-embed-on-brand are set only for licensed sites (config.ts applyBranding); the
      defaults are the AA-checked primary pair (--at-accent-text on --at-on-accent), as in tool.css. */
   border: 1px solid var(--at-embed-brand, var(--at-accent-text));
-  border-radius: 999px;
+  border-radius: var(--at-r-pill);
   background: var(--at-embed-brand, var(--at-accent-text));
   color: var(--at-embed-on-brand, var(--at-on-accent));
   font: inherit;
@@ -72,7 +72,7 @@ body.at-embed-body {
   min-block-size: 28px;
   padding-inline: var(--at-s-3);
   border: 1px solid var(--at-line);
-  border-radius: 999px;
+  border-radius: var(--at-r-pill);
   background: var(--at-surface);
   font-size: var(--at-t-xs);
   font-weight: 600;
@@ -147,7 +147,7 @@ body.at-embed-body {
   padding-block: var(--at-s-1);
   padding-inline: var(--at-s-2);
   border-inline-start: 3px solid var(--at-bad);
-  border-radius: 4px;
+  border-radius: var(--at-r-xs);
   background: color-mix(in srgb, var(--at-bad) 8%, var(--at-surface));
   font-size: var(--at-t-xs);
 }
@@ -185,7 +185,7 @@ body.at-embed-body {
   gap: var(--at-s-2);
   padding-inline: var(--at-s-2);
   border: 1px solid var(--at-line);
-  border-radius: 8px;
+  border-radius: var(--at-r-sm);
   background: var(--at-surface);
 }
 

@@ -1,4 +1,4 @@
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -170,6 +170,11 @@ describe('built site SEO', () => {
         const href = match[1] ?? '';
         if (href.startsWith('/api/') || href.startsWith('/og/') || href.startsWith('/icons/')) continue;
         if (href.endsWith('.webmanifest') || href.endsWith('.svg') || href.endsWith('.js')) continue;
+        // Self-hosted font preloads (D-R26) must point at a file that ships.
+        if (href.startsWith('/fonts/')) {
+          await expect(stat(new URL(`.${href}`, dist)), `${relative} -> ${href}`).resolves.toBeTruthy();
+          continue;
+        }
         expect(existing.has(href), `${relative} -> ${href}`).toBe(true);
       }
     }

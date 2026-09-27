@@ -27,7 +27,7 @@ All values are JSON. Sizes are well under 50 KB total; localStorage quota (≥ 5
 export interface ISettings {
   v: 1;
   theme: 'auto' | 'light' | 'dark' | 'oled';        // default 'auto'
-  accent: string;                                   // light-theme hex, default '#B86E00'; one of '#B86E00' (amber) · '#4F46E5' (indigo) · '#0F766E' (teal, ambient.packs) · '#BE123C' (rose, ambient.packs); unknown or unlicensed values render as amber — dark variants come from tokens.css (05-frontend-spec.md §1.1a)
+  accent: string;                                   // lamp light-theme hex, default '#087B87'; one of '#087B87' (aqua) · '#5A47CF' (violet) · '#167A50' (mint, ambient.packs) · '#255FBD' (sky, ambient.packs); legacy values migrate on read: '#B86E00' amber → aqua, '#4F46E5' indigo → violet, '#0F766E' teal → mint, '#BE123C' rose → sky; unknown or unlicensed values render as aqua; the next settings save writes the lamp hex — dark variants come from tokens.css (05-frontend-spec.md §1.1a)
   defaultPreset: TPresetId;                          // 'p15'|'p30'|'p45'|'p60'|'p120'|'p240'|'pinf'|'custom'|'until'; default 'pinf'
   lastCustomMs: number;                             // default 90 * 60_000
   lastUntilWall: string | null;                     // 'HH:MM', default null
