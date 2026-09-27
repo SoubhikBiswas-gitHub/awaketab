@@ -47,8 +47,8 @@
     --at-bead: var(--at-muted);
 
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
-    min-inline-size: 0;
     gap: var(--at-gap-tight);
     min-block-size: var(--at-h-control);
     border-radius: var(--at-r-sm);
@@ -368,6 +368,15 @@
 
     .at-site-header[data-tool] .at-theme-cycle {
       display: inline-grid;
+      border: var(--at-border) solid var(--at-line);
+      background: var(--at-surface);
+      color: var(--at-ink);
+    }
+  }
+
+  @container at-header (width < 1008px) {
+    .at-site-header[data-tool] .at-nav {
+      display: none;
     }
   }
 
@@ -376,11 +385,15 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--at-gap-tight) var(--at-gap-group-lg);
+    gap: var(--at-gap-item) var(--at-gap-group-lg);
     margin-block-start: var(--at-section);
     padding-block: var(--at-s-6) var(--at-s-8);
     padding-inline: var(--at-gutter);
     border-block-start: var(--at-border) solid var(--at-line);
+  }
+
+  .at-island + .at-site-footer {
+    margin-block-start: 0;
   }
 
   .at-footer-line {
@@ -910,7 +923,7 @@
 
   .at-input:focus-within {
     outline: 2px solid var(--at-focus);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
 
   textarea.at-input {
