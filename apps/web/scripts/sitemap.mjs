@@ -20,6 +20,7 @@ export const PAGE_SOURCES = {
   '/': ['src/pages/index.astro', 'src/components/HomeBelow.astro', ...TOOL],
   ...Object.fromEntries(PRESETS.map((p) => [p, ['src/pages/[preset].astro', ...TOOL]])),
   ...Object.fromEntries(HUBS.map((p) => [p, [`src/pages${p}.astro`, 'src/components/HubPage.astro']])),
+  '/learn': ['src/pages/learn.astro', 'src/components/DocsHub.astro', 'src/lib/docs-hub.ts'],
   '/about': ['src/pages/about.astro'],
   '/privacy': ['src/pages/privacy.astro', 'src/components/pages/LegalDoc.astro'],
   '/terms': ['src/pages/terms.astro', 'src/components/pages/LegalDoc.astro'],
