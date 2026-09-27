@@ -1,3 +1,5 @@
+@import "./tilt.css";
+
 @layer components {
   .at-hb {
     --at-hb-dir: 1;

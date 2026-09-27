@@ -26,10 +26,10 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
       const tags = supportTags(card.slug, card.browsers, card.os);
       const native = tags.length > 0 && tags.every((tag) => tag.native);
       return (
-        <li class="at-gal-card" style={`--at-k: ${String(i)}`}>
+        <li class="at-gal-card" style={`--at-k: ${String(i)}`} data-tilt>
           <a class="at-gal-link" href={card.href}>
             <span class="at-gal-top">
-              <span class="at-gal-icon">
+              <span class="at-gal-icon" data-tilt-z>
                 <DeviceIcon name={card.slug} />
               </span>
               {native && (

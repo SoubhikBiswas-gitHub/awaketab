@@ -7,23 +7,26 @@ interface Props {
 
 const { name, class: className, label } = Astro.props;
 
-const PHONE = '<rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/>';
-const MONITOR = '<rect x="2.5" y="3.5" width="19" height="13" rx="2"/><path d="M9 20.5h6M12 16.5v4"/>';
+// Named parts (at-ico-part-*) move in icon-motion.css; parts with opacity="0" only show while acting.
+const glow = (x: number, y: number, w: number, h: number): string =>
+  `<g class="at-ico-part-screen" opacity="0"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1" fill="currentColor" stroke="none"/></g>`;
+const PHONE = `${glow(8.5, 7, 7, 10.5)}<rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/>`;
+const MONITOR = `${glow(4.5, 5.5, 15, 9)}<rect x="2.5" y="3.5" width="19" height="13" rx="2"/><path d="M9 20.5h6M12 16.5v4"/>`;
 const WINDOW = '<rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 8.5h19M5.5 6.25h.01M8 6.25h.01"/>';
 const ICONS: Record<string, string> = {
-  'iphone-safari': `${PHONE}<path d="M10.5 5h3"/><circle cx="12" cy="12.5" r="3"/><path d="m13.4 11.1-.9 1.9-1.9.9.9-1.9z"/>`,
-  'ios-home-screen': `${PHONE}<path d="M10.5 5h3"/><rect x="8.75" y="8" width="2.75" height="2.75" rx=".6"/><rect x="12.5" y="8" width="2.75" height="2.75" rx=".6"/><rect x="8.75" y="11.75" width="2.75" height="2.75" rx=".6"/><rect x="12.5" y="11.75" width="2.75" height="2.75" rx=".6"/>`,
-  ipad: '<rect x="3.5" y="3" width="17" height="18" rx="2.5"/><path d="M12 5.5h.01M11 18h2"/>',
-  'android-chrome': `${PHONE}<path d="M12 5.2h.01M10 19h4"/><circle cx="12" cy="12" r="2.75"/>`,
-  'samsung-internet': `${PHONE}<path d="M10 19h4"/><circle cx="12" cy="11.5" r="2"/><ellipse cx="12" cy="11.5" rx="3.4" ry="1.2" transform="rotate(-25 12 11.5)"/>`,
+  'iphone-safari': `${PHONE}<path d="M10.5 5h3"/><circle cx="12" cy="12.5" r="3"/><g class="at-ico-part-needle"><path d="m13.4 11.1-.9 1.9-1.9.9.9-1.9z"/></g>`,
+  'ios-home-screen': `${PHONE}<path d="M10.5 5h3"/><g class="at-ico-part-apps"><rect x="8.75" y="8" width="2.75" height="2.75" rx=".6"/><rect x="12.5" y="8" width="2.75" height="2.75" rx=".6"/><rect x="8.75" y="11.75" width="2.75" height="2.75" rx=".6"/><rect x="12.5" y="11.75" width="2.75" height="2.75" rx=".6"/></g>`,
+  ipad: `${glow(5.5, 7.5, 13, 8.5)}<rect x="3.5" y="3" width="17" height="18" rx="2.5"/><path d="M12 5.5h.01M11 18h2"/>`,
+  'android-chrome': `${PHONE}<path d="M12 5.2h.01M10 19h4"/><g class="at-ico-part-logo"><circle cx="12" cy="12" r="2.75"/></g>`,
+  'samsung-internet': `${PHONE}<path d="M10 19h4"/><circle cx="12" cy="11.5" r="2"/><g class="at-ico-part-orbit"><ellipse cx="12" cy="11.5" rx="3.4" ry="1.2" transform="rotate(-25 12 11.5)"/></g>`,
   chromebook:
-    '<path d="M4.5 16V6.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2V16"/><path d="M2.5 16h19l-.8 2.3a1.5 1.5 0 0 1-1.4 1.2H4.7a1.5 1.5 0 0 1-1.4-1.2z"/><circle cx="8" cy="12.5" r="1.2"/>',
+    '<g class="at-ico-part-lid"><path d="M4.5 16V6.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2V16"/><circle cx="8" cy="12.5" r="1.2"/></g><path d="M2.5 16h19l-.8 2.3a1.5 1.5 0 0 1-1.4 1.2H4.7a1.5 1.5 0 0 1-1.4-1.2z"/>',
   macos:
-    '<path d="M4.5 16V6a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 6v10"/><path d="M10.5 4.5v.8a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7v-.8"/><path d="M2 16.5h20v.5a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 17z"/>',
-  'windows-11': `${MONITOR}<rect x="9" y="6.5" width="6" height="6" rx=".5"/><path d="M12 6.5v6M9 9.5h6"/>`,
-  linux: `${MONITOR}<path d="m7 8 2.5 2L7 12M11.5 12.5h4"/>`,
-  firefox: `${WINDOW}<path d="M12 17.5a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3-2.5-4.5-.3 1.3-1 2-2 2.5-.9.5-2.5 1.2-2.5 3a3.5 3.5 0 0 0 3.5 2.5z"/>`,
-  edge: `${WINDOW}<path d="M7 14.5c1.5-2 3-2 4.5 0s3 2 4.5 0"/>`,
+    '<g class="at-ico-part-lid"><path d="M4.5 16V6a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 6v10"/><path d="M10.5 4.5v.8a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7v-.8"/></g><path d="M2 16.5h20v.5a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 17z"/>',
+  'windows-11': `${MONITOR}<g class="at-ico-part-logo"><rect x="9" y="6.5" width="6" height="6" rx=".5"/><path d="M12 6.5v6M9 9.5h6"/></g>`,
+  linux: `${MONITOR}<path d="m7 8 2.5 2L7 12"/><g class="at-ico-part-type"><path d="M11.5 12.5h4" pathLength="1"/></g>`,
+  firefox: `${WINDOW}<g class="at-ico-part-flame"><path d="M12 17.5a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3-2.5-4.5-.3 1.3-1 2-2 2.5-.9.5-2.5 1.2-2.5 3a3.5 3.5 0 0 0 3.5 2.5z"/></g>`,
+  edge: `${WINDOW}<g class="at-ico-part-wave"><path d="M7 14.5c1.5-2 3-2 4.5 0s3 2 4.5 0" pathLength="1"/></g>`,
 };
 const body = ICONS[name] ?? MONITOR;
 ---
@@ -31,6 +34,8 @@ const body = ICONS[name] ?? MONITOR;
 <svg
   class:list={['at-icon', className]}
   viewBox="0 0 24 24"
+  width="24"
+  height="24"
   fill="none"
   stroke="currentColor"
   stroke-width="1.8"

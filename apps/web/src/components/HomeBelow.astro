@@ -75,8 +75,8 @@ const ARROW = 'M5 12h14M13 6l6 6-6 6';
     </div>
     <ul class="at-hb-uses">
       {cards.map((card) => (
-        <li class="at-hb-use">
-          <span class="at-hb-use-icon"><UseCaseIcon name={card.slug} /></span>
+        <li class="at-hb-use" data-tilt>
+          <span class="at-hb-use-icon" data-tilt-z><UseCaseIcon name={card.slug} /></span>
           <h3 id={`h-use-${card.slug}`}><a href={card.guide} hreflang={card.guideLang}>{t(`page.home.uses.${card.key}`)}</a></h3>
           <p>{t(`page.home.uses.${card.key}.body`)}</p>
           <a class="at-hb-use-go" href={card.start} hreflang={card.startLang} aria-describedby={`h-use-${card.slug}`}>

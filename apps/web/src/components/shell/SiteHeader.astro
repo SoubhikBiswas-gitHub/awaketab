@@ -1,5 +1,6 @@
 ---
 import headerCss from '../../styles/header-menus.css?raw';
+import iconCss from '../../styles/icon-motion.css?raw';
 import { createT } from '../../i18n/load';
 import { LOCALES, localePath, type TLocale } from '../../i18n/locales';
 import { minifyCss } from '../../lib/article-css';
@@ -32,7 +33,7 @@ const links = [
   ['pro', '/pro', t('header.nav.pro')],
 ] as const;
 // Tool pages get menu styles from the on-demand sheet, outside the critical CSS.
-const css = tool ? '' : minifyCss(headerCss);
+const css = tool ? '' : minifyCss(headerCss + iconCss);
 const themes = [
   ['auto', t('settings.theme.auto')],
   ['light', t('settings.theme.light')],

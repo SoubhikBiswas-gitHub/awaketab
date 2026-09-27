@@ -78,7 +78,7 @@ const CHECK = 'M5 12.5l4.2 4.2L19 7';
   <ul class="at-hl-grid">
     {
       levels.map((level) => (
-        <li class:list={['at-card', 'at-hl-card', level.rec && 'at-hl-rec']}>
+        <li class:list={['at-card', 'at-hl-card', level.rec && 'at-hl-rec']} data-tilt>
           <div class="at-hl-top">
             <h3 id={`home-level-${level.id}`}>{t(`page.home.levels.${level.id}.name`)}</h3>
             {level.rec && <span class="at-tag at-tag-tone">{t('page.home.levels.ext.tag')}</span>}
