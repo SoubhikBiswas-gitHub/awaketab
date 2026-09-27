@@ -111,22 +111,37 @@ export function bindDemo(root: HTMLElement, win: Window & { AwakeTabWake?: IWake
     show: root.querySelector<HTMLButtonElement>('[data-demo-show]'),
   };
   const states = [...root.querySelectorAll<HTMLElement>('[data-state]')];
+  // The status pill (B6): `data-lock` picks its tone and glyph; the label is the state's exact pill string.
+  const pill = q('[data-demo-pill]');
+  const pillText = q('[data-demo-pill-text]');
+  const edges = [...root.querySelectorAll('[data-edge]')];
+  const doc = win.document;
 
   let lock: IWakeLockHandle | null = null;
   let world: IDemoWorld | null = null;
   let off: (() => void) | null = null;
 
-  const paint = (state: TLockState) => {
+  const paint = (state: TLockState, from?: TLockState) => {
     root.dataset.demoState = state;
     if (current) current.textContent = state;
     for (const li of states) {
       const on = li.dataset.state === state;
       if (on) li.dataset.visited = '';
-      li.toggleAttribute('aria-current', on);
+      if (on) li.setAttribute('aria-current', 'step');
+      else li.removeAttribute('aria-current');
+      if (on && pillText) pillText.textContent = li.dataset.pill ?? state;
     }
+    pill?.setAttribute('data-lock', state);
+    // The last transition's arrow lights up in the tone of the state it entered.
+    for (const edge of edges) edge.toggleAttribute('data-on', from !== undefined && edge.getAttribute('data-edge') === `${from}-${state}`);
     if (advice) {
       const code = lock?.advice ?? null;
-      advice.textContent = code ? (advice.dataset.label ?? '{code}').replace('{code}', code) : '';
+      const [before = '', after = ''] = (advice.dataset.label ?? '{code}').split('{code}');
+      if (code) {
+        const el = doc.createElement('code');
+        el.textContent = code;
+        advice.replaceChildren(before, el, after);
+      } else advice.replaceChildren();
     }
   };
 
@@ -135,16 +150,27 @@ export function bindDemo(root: HTMLElement, win: Window & { AwakeTabWake?: IWake
     lock?.destroy();
     if (log) log.textContent = '';
     for (const li of states) delete li.dataset.visited;
+    root.dataset.scenario = scenario;
     world = demoWorld(scenario, win.navigator.userAgent);
     lock = lib.createWakeLock(world.options);
     off = lock.on('change', (e) => {
       if (log) {
-        const item = win.document.createElement('li');
-        item.textContent = formatChange(e);
+        // "3:22:01 PM  requesting → held (acquired)": the time, the change, and its reason and advice.
+        const item = doc.createElement('li');
+        const time = doc.createElement('time');
+        time.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+        const line = doc.createElement('span');
+        const to = doc.createElement('span');
+        to.dataset.lock = e.to;
+        to.textContent = e.to;
+        const why = doc.createElement('span');
+        why.textContent = `(${e.reason}${e.advice ? `, ${e.advice}` : ''})`;
+        line.append(`${e.from} → `, to, ' ', why);
+        item.append(time, line);
         log.prepend(item);
         while (log.children.length > LOG_MAX) log.lastElementChild?.remove();
       }
-      paint(e.to);
+      paint(e.to, e.from);
     });
     const simulated = scenario === 'simulated';
     if (btn.hide) btn.hide.disabled = !simulated;

@@ -1,0 +1,87 @@
+---
+/*
+ * /privacy and /terms frame (B6, canvas board PageLegal): breadcrumb, title, "Last updated" tag and effective
+ * date, lede, an "On this page" list (a card on phones and tablets, a sticky column from 1024) and the sections
+ * (LegalSection.astro) in the default slot. A few lines of script mark the section in view as the current one.
+ */
+import Crumbs from './Crumbs.astro';
+import { changelogLongDate } from '../../lib/changelog';
+
+interface Props {
+  title: string;
+  updated: string;
+  effective: string;
+  lede: string;
+  toc: ReadonlyArray<readonly [id: string, title: string]>;
+  other: readonly [label: string, href: string];
+  email: string;
+  mailto: string;
+}
+const { title, updated, effective, lede, toc, other, email, mailto } = Astro.props;
+---
+
+<main class="at-page at-legal">
+  <div class="at-pg-intro at-legal-head">
+    <Crumbs current={title} />
+    <h1 class="at-pg-h1">{title}</h1>
+    <div class="at-legal-dates">
+      <span class="at-tag at-pg-tag">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+        <span>Last updated <time datetime={updated}>{changelogLongDate(updated)}</time></span>
+      </span>
+      <span class="at-pg-small"><span>Effective <time datetime={effective}>{changelogLongDate(effective)}</time></span></span>
+    </div>
+    <p class="at-pg-lead at-legal-lede">{lede}</p>
+  </div>
+
+  <nav class="at-legal-toc" aria-label="On this page">
+    <span class="at-pg-kicker">On this page</span>
+    <ol>
+      {
+        toc.map(([id, label], i) => (
+          <li>
+            <a href={`#${id}`} aria-current={i === 0 ? 'location' : undefined}>
+              <span aria-hidden="true" />
+              {label}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+
+  <article class="at-legal-body">
+    <slot />
+    <p class="at-legal-foot">
+      Questions: <a class="at-pg-link" href={mailto}>{email}</a> · <a class="at-pg-link" href={other[1]}>{other[0]}</a>
+    </p>
+  </article>
+</main>
+
+<script>
+  // "On this page": the section nearest the top of the viewport is the current one (aria-current="location").
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.at-legal-toc a')];
+  const mark = (id: string) => {
+    for (const a of links) {
+      if (a.hash === `#${id}`) a.setAttribute('aria-current', 'location');
+      else a.removeAttribute('aria-current');
+    }
+  };
+  const sections = links.map((a) => document.getElementById(a.hash.slice(1))).filter((s): s is HTMLElement => s !== null);
+  if ('IntersectionObserver' in window && sections.length) {
+    const seen = new Set<string>();
+    const io = new IntersectionObserver(
+      (records) => {
+        for (const r of records) {
+          if (r.isIntersecting) seen.add(r.target.id);
+          else seen.delete(r.target.id);
+        }
+        const first = sections.find((s) => seen.has(s.id));
+        if (first) mark(first.id);
+      },
+      { rootMargin: '0px 0px -60% 0px' },
+    );
+    for (const s of sections) io.observe(s);
+  }
+  for (const a of links) a.addEventListener('click', () => mark(a.hash.slice(1)));
+</script>

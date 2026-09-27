@@ -4,13 +4,7 @@ Milestone B1 (27 Sep 2026) moved `tokens.css` to Clear Night (DESIGN.md §2, §1
 
 ## Responsive sweep (`apps/web/test/e2e/responsive.spec.ts`)
 
-All eight routes pass at every 40 px step from 320 to 2560, except:
-
-| Route | Width | Cause | Fix in |
-|---|---|---|---|
-| `/embed` | 320 | "Already bought? Activate your domain" link is `whitespace-nowrap` inside a 283 px card, page scrollWidth 324 | B8 (embed page) |
-
-That width runs as `test.fixme` (listed in the spec's `DEBT` map), so the suite is green and the debt stays visible. Since B2 the sweep also fails on header and footer controls under 44 × 44 or within 16 px of a side edge (the shared shell passes at every width). Still to add as the page bodies are rebuilt (B3–B7): the same target and edge rules for every control on the page, clipped text, phone landscape and 400 % zoom.
+All routes pass at every 40 px step from 320 to 2560. B6 rebuilt `/embed` (the 320 px overflow from the "Activate your domain" link is gone with the link, decision O-29), emptied the spec's `DEBT` map and added `/changelog`, `/privacy`, `/kiosk` and `/library` to the sweep. Since B2 the sweep also fails on header and footer controls under 44 × 44 or within 16 px of a side edge (the shared shell passes at every width). Still to add as the page bodies are rebuilt (B3–B7): the same target and edge rules for every control on the page, clipped text, phone landscape and 400 % zoom.
 
 ## Stylelint guard (DESIGN.md §12.8)
 
@@ -19,7 +13,7 @@ That width runs as `test.fixme` (listed in the spec's `DEBT` map), so the suite 
   - `content.css`: lines 15, 25, 31, 43 (rem margins and padding). B5.
   - `embed.css` (rebuilt in B8): control heights and spacing use tokens; the remaining raw values are the widget-scoped `--at-embed-*` sizes (pill 26/32, reserved heights, 60 px primary) at the top of the file, the Start/Stop widths (96 / 104 / 120 px), the 264 px timer column, the 12 px glyph box and the 24 px notice link height, plus the board's digit and meta font sizes in rem.
   - `tool.css` (B2 line numbers): 435 (dialog `max-block-size` 2rem inset), 549, 1004 (44 px control heights), 584, 588 (ad slot boxes), 794, 859 (ambient digits `clamp()` in rem), 818, 958, 1030, 1036, 1048, 1145 (ambient and stats sizes), 838, 846 (64 px cook targets), 962 (`font-size: 8px`, below the 12 px floor). B3/B4.
-  - Markup: shadcn/Tailwind utilities (`text-sm`, `px-4`, `h-9`, `rounded-md`, …) in `.astro`/`.tsx` bypass a CSS-only rule. The shared shell (header, footer, theme switch, language switcher, pill, chips, Stop, keycaps) uses `shell.css` classes on `--at-type-*`, `--at-h-*` and `--at-gap-*` since B2; page bodies still use the utilities until B3–B7.
+  - Markup: shadcn/Tailwind utilities (`text-sm`, `px-4`, `h-9`, `rounded-md`, …) in `.astro`/`.tsx` bypass a CSS-only rule. The shared shell (header, footer, theme switch, language switcher, pill, chips, Stop, keycaps) uses `shell.css` classes on `--at-type-*`, `--at-h-*` and `--at-gap-*` since B2; page bodies still use the utilities until B3–B7. B6: the site pages (`/about`, `/changelog`, `/privacy`, `/terms`, `/extension`, `/kiosk`, `/library`, `/embed`, the 404 body) no longer use any utility or shadcn component; `pages.css` is under the strict override, with its off-scale sizes named once as `--at-pg-*` and three drawings (kiosk screen, host recipe page, state diagram) exempt in marked blocks.
 
 ## Colour
 
@@ -30,7 +24,7 @@ That width runs as `test.fixme` (listed in the spec's `DEBT` map), so the suite 
 
 ## Type and fonts
 
-- Page bodies still use the `--at-t-*` sizes and Tailwind text utilities; since B2 the shared shell reads the `--at-type-*` roles. Each page moves over when B3–B7 rebuild it.
+- Page bodies still use the `--at-t-*` sizes and Tailwind text utilities; since B2 the shared shell reads the `--at-type-*` roles. Each page moves over when B3–B7 rebuild it (the B6 site pages have: `--at-type-*` only).
 - `--at-font-display` (Space Grotesk digits) is defined but unused until the Bold face lands (B3), so it downloads nothing yet.
 - The extension popup and options keep the system stack (their token import skips the `@font-face` rules); B9 decides whether the extension bundles the woff2 files.
 - The service worker does not precache `/fonts/*`; offline the tool falls back to the metric-matched system face. Add the Geist file to the precache in B3 if offline first paint should use it.

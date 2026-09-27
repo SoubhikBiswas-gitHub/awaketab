@@ -93,4 +93,36 @@ describe('bindDemo', () => {
     expect(root.querySelector<HTMLButtonElement>('[data-demo-hide]')?.disabled).toBe(true);
     delete win.AwakeTabWake;
   });
+
+  it('paints the pill, the last arrow, the advice code and a timed log line (B6 layout)', async () => {
+    document.body.innerHTML = `<section data-wake-demo>
+      <select data-demo-scenario><option value="real">r</option><option value="denied" selected>d</option></select>
+      <output data-demo-pill data-lock="idle"><span data-demo-pill-text></span></output>
+      <ol>${['idle', 'requesting', 'denied'].map((s) => `<li data-state="${s}" data-pill="pill ${s}"></li>`).join('')}</ol>
+      <svg><g data-edge="idle-requesting"></g><g data-edge="requesting-denied"></g></svg>
+      <span data-demo-current></span><span data-demo-advice data-label="Advice: {code}"></span>
+      <button data-demo-request disabled></button><button data-demo-release disabled></button>
+      <ol data-demo-log></ol></section>`;
+    const root = document.querySelector<HTMLElement>('[data-wake-demo]') as HTMLElement;
+    const win = window as Window & { AwakeTabWake?: typeof lib };
+    win.AwakeTabWake = lib;
+    bindDemo(root, win);
+    expect(root.dataset.scenario).toBe('denied');
+    expect(root.querySelector('[data-demo-pill-text]')?.textContent).toBe('pill idle');
+    root.querySelector<HTMLButtonElement>('[data-demo-request]')?.click();
+    await vi.waitFor(() => {
+      expect(root.querySelector('[data-demo-pill]')?.getAttribute('data-lock')).toBe('denied');
+    });
+    expect(root.querySelector('[data-demo-pill-text]')?.textContent).toBe('pill denied');
+    expect(root.querySelector('[data-state="denied"]')?.getAttribute('aria-current')).toBe('step');
+    expect(root.querySelector('[data-state="idle"]')?.hasAttribute('aria-current')).toBe(false);
+    expect(root.querySelector('[data-edge="requesting-denied"]')?.hasAttribute('data-on')).toBe(true);
+    expect(root.querySelector('[data-edge="idle-requesting"]')?.hasAttribute('data-on')).toBe(false);
+    expect(root.querySelector('[data-demo-advice] code')?.textContent).toBe('battery_saver');
+    const newest = root.querySelector('[data-demo-log] li');
+    expect(newest?.querySelector('time')?.textContent).toMatch(/^\d{1,2}:\d{2}:\d{2}\s?[AP]M$/u);
+    expect(newest?.querySelector('[data-lock="denied"]')?.textContent).toBe('denied');
+    expect(newest?.textContent).toContain('requesting → denied (denied, battery_saver)');
+    delete win.AwakeTabWake;
+  });
 });

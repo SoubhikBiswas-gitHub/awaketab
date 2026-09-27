@@ -7,14 +7,27 @@ import { installFakeWakeLock } from './fake-wakelock';
  * (layout is engine-independent enough here, and 57 widths × 8 routes × 3 engines would not pay for itself).
  */
 
-const ROUTES = ['/', '/30m', '/until/07-30', '/for/cooking', '/pro', '/embed', '/extension', '/about'] as const;
+const ROUTES = [
+  '/',
+  '/30m',
+  '/until/07-30',
+  '/for/cooking',
+  '/pro',
+  '/embed',
+  '/extension',
+  '/about',
+  // Site pages rebuilt in B6.
+  '/changelog',
+  '/privacy',
+  '/kiosk',
+  '/library',
+] as const;
 const WIDTHS = Array.from({ length: (2560 - 320) / 40 + 1 }, (_, i) => 320 + i * 40);
 
 // Known overflow on the current (pre-redesign) pages, listed in docs/redesign/B1-token-debt.md. These widths
 // run as test.fixme below so the debt stays visible; the milestone that rebuilds the page removes the entry.
-const DEBT: Partial<Record<(typeof ROUTES)[number], number[]>> = {
-  '/embed': [320], // B8: "Already bought? Activate your domain" is whitespace-nowrap in a 283 px card
-};
+// B6 rebuilt /embed and paid off its 320 px entry; none is open now.
+const DEBT: Partial<Record<(typeof ROUTES)[number], number[]>> = {};
 
 async function overflowingWidths(page: Page, widths: readonly number[]): Promise<string[]> {
   const bad: string[] = [];

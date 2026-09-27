@@ -1,0 +1,54 @@
+---
+/*
+ * Segmented bar of native radios (DESIGN.md §6, §11.4; shell.css `.at-seg`): 1 px line + 4 px padding + 44 px
+ * items, one sliding indicator that follows `:checked` with CSS alone. Arrow keys move and select, one Tab stop.
+ * Used by the site pages' filters and builders (changelog, kiosk, embed, extension). `small` is the 14 px label
+ * size the canvas uses for these bars (13 px on phones); `count` adds a muted tabular count after the label.
+ */
+interface IOption {
+  value: string;
+  label: string;
+  /** Accessible name when the visible label is short or carries a count. */
+  aria?: string | undefined;
+  count?: number | undefined;
+}
+interface Props {
+  name: string;
+  options: readonly IOption[];
+  checked: string;
+  /** Accessible name of the group (or pass `labelledby`). */
+  label?: string | undefined;
+  labelledby?: string | undefined;
+  small?: boolean;
+  /** 13 px labels on phones (the kiosk and library bars). */
+  compactPhone?: boolean;
+  class?: string | undefined;
+  /** Extra data attribute hook for page scripts. */
+  hook?: string | undefined;
+}
+const { name, options, checked, label, labelledby, small = false, compactPhone = false, class: className, hook } = Astro.props;
+---
+
+<div
+  class:list={['at-seg', 'at-pg-seg', small && 'at-pg-seg-sm', compactPhone && 'at-pg-seg-xs', className]}
+  role="radiogroup"
+  aria-label={labelledby ? undefined : label}
+  aria-labelledby={labelledby}
+  style={`--at-seg-n: ${String(options.length)}`}
+  data-seg={hook}
+>
+  <span class="at-seg-ind" aria-hidden="true"></span>
+  {
+    options.map((o) => (
+      <label class="at-seg-item">
+        <input class="sr-only" type="radio" name={name} value={o.value} checked={o.value === checked} aria-label={o.aria} />
+        <span class="at-pg-seg-label">{o.label}</span>
+        {o.count !== undefined && (
+          <span class="at-pg-seg-count" aria-hidden="true">
+            {o.count}
+          </span>
+        )}
+      </label>
+    ))
+  }
+</div>

@@ -1,0 +1,18 @@
+---
+/* One /privacy or /terms section (canvas PageLegal): heading, an "In short" summary panel, then the full text. */
+interface Props {
+  id: string;
+  title: string;
+  summary: string;
+}
+const { id, title, summary } = Astro.props;
+---
+
+<section id={id} aria-labelledby={`${id}-h`} class="at-legal-section">
+  <h2 id={`${id}-h`} class="at-pg-h2">{title}</h2>
+  <div class="at-legal-short">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7"></path></svg>
+    <p><strong>In short: </strong>{summary}</p>
+  </div>
+  <slot />
+</section>

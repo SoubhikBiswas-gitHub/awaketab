@@ -1,0 +1,17 @@
+---
+/*
+ * Breadcrumb for the site pages (B6; canvas boards PageAbout, PageChangelog, PageLegal, PageExtension): 14/20 muted,
+ * the home link in ink-2 on a 44 px target, "›" between. The BreadcrumbList schema comes from the page's JSON-LD.
+ */
+interface Props {
+  current: string;
+}
+const { current } = Astro.props;
+---
+
+<nav class="at-crumbs" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="/">AwakeTab</a><span aria-hidden="true">›</span></li>
+    <li aria-current="page">{current}</li>
+  </ol>
+</nav>
