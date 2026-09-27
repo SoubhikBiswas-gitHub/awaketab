@@ -159,7 +159,7 @@ ul,ol{margin:0;padding:0;list-style:none}
       <div aria-hidden="true" class="at-scrim" style="position: absolute; inset: 0; z-index: 20; background: {{scrim}}"></div>
     </sc-if>
     <section role="dialog" aria-modal="{{modalAria}}" aria-labelledby="pm-sheet" class="{{sheetClass}}" style="{{sheetStyle}}">
-      <sc-if value="{{isPhone}}" hint-placeholder-val="{{true}}">
+      <sc-if value="{{sheetUp}}" hint-placeholder-val="{{true}}">
         <div aria-hidden="true" style="width: 40px; height: 4px; border-radius: 999px; background: {{t.line2}}; margin: 12px auto 0"></div>
       </sc-if>
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: {{headPad}}">
@@ -185,7 +185,7 @@ ul,ol{margin:0;padding:0;list-style:none}
               <p style="font-size: 14px; line-height: 20px; color: {{t.ink2}}; text-wrap: pretty">Mint and Sky come with Pro. The preview lasts while Settings is open. Close Settings and the lamp goes back to {{keepName}}.</p>
               <p style="font-size: 13px; line-height: 18px; color: {{t.muted}}">Pro is $12 a year, or $19 once. Launch price for the first 90 days after launch, then $29. 5 devices, 14-day refund.</p>
               <div style="display: flex; flex-wrap: wrap; gap: 8px">
-                <button onClick="{{keepFree}}" style="height: 52px; box-sizing: border-box; padding: 0 20px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 15px; font-weight: 600; color: {{t.ink}}; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; white-space: nowrap">Keep {{keepName}}</button>
+                <button onClick="{{keepFree}}" style="height: 52px; box-sizing: border-box; padding: 0 20px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 15px; font-weight: 600; color: {{t.ink}}; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; white-space: nowrap"><span>Keep {{keepName}}</span></button>
                 <a href="Pro.dc.html" style="height: 52px; box-sizing: border-box; padding: 0 20px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; font-size: 15px; font-weight: 600; color: {{t.ink}}; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; white-space: nowrap">See what's in Pro</a>
               </div>
             </aside>
@@ -341,6 +341,9 @@ constructor(props) {
     }
     const week = MIN.slice(0, wd + 1).reduce((a, m) => a + m, 0);
     const figs = [{ label: 'Today', value: this.mins(MIN[0]) }, { label: 'This week', value: this.mins(week) }, { label: 'Days used this week', value: (wd + 1) + ' of 7' }, { label: 'All time', value: this.mins(MIN.reduce((a, m) => a + m, 0)) }];
+    // Tablet: the lamp moment previews the lamp on the face, so Settings rises as a content-height bottom sheet under a
+    // fully visible face. Stats is modal: a 400 px side sheet over the scrim, the tool left where it was (Main.dc.html).
+    const up = phone || (tab && moment === 'lamp');
     const sheetBase = 'box-sizing: border-box; z-index: 21; overflow-y: auto; overscroll-behavior: contain; background: ' + t.surface + '; color: ' + t.ink + '; ';
     const [lm, ls] = this.split(s.left);
     return {
@@ -348,12 +351,13 @@ constructor(props) {
       rootBg: moment === 'message' ? t.screen : t.bg,
       isMessage: moment === 'message', isSheet: moment !== 'message', isLamp: moment === 'lamp', isStats: moment === 'stats',
       scrimOn: moment === 'stats', modalAria: moment === 'stats' ? 'true' : 'false',
-      toolStyle: 'position: relative; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: ' + (phone ? 'flex-start' : 'center') + '; gap: 20px; padding: ' + (desk ? '0 520px 40px 40px' : tab ? '0 460px 40px 20px' : '8px 20px 0'),
-      sheetClass: phone ? 'at-sheet-body at-sheet-up' : 'at-sheet-body at-sheet-side',
-      sheetStyle: phone
-        ? sheetBase + 'position: absolute; left: 0; right: 0; bottom: 0; height: ' + (moment === 'lamp' ? '58%' : '82%') + '; border-radius: 28px 28px 0 0; border-top: 1px solid ' + t.line2 + '; box-shadow: ' + b.sheetShadow
-        : sheetBase + 'position: absolute; top: 0; bottom: 0; inset-inline-end: 0; width: ' + (tab ? 420 : 460) + 'px; border-start-start-radius: 28px; border-end-start-radius: 28px; border-inline-start: 1px solid ' + t.line2 + '; box-shadow: ' + b.sheetShadow,
-      headPad: phone ? '8px 12px 4px 20px' : '16px 12px 8px 20px',
+      toolStyle: 'position: relative; flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: ' + (up ? 'flex-start' : 'center') + '; gap: 20px; padding: ' + (desk ? '0 520px 40px 40px' : tab ? (up ? '96px 32px 0' : '0 32px 40px') : '8px 20px 0'),
+      sheetUp: up,
+      sheetClass: up ? 'at-sheet-body at-sheet-up' : 'at-sheet-body at-sheet-side',
+      sheetStyle: up
+        ? sheetBase + 'position: absolute; left: 0; right: 0; bottom: 0; ' + (tab ? 'max-height: 58%' : 'height: ' + (moment === 'lamp' ? '58%' : '82%')) + '; border-radius: 28px 28px 0 0; border-top: 1px solid ' + t.line2 + '; box-shadow: ' + b.sheetShadow
+        : sheetBase + 'position: absolute; top: 0; bottom: 0; inset-inline-end: 0; width: ' + (tab ? 400 : 460) + 'px; border-start-start-radius: 28px; border-end-start-radius: 28px; border-inline-start: 1px solid ' + t.line2 + '; box-shadow: ' + b.sheetShadow,
+      headPad: up ? '8px 12px 4px 20px' : '16px 12px 8px 20px',
       sheetTitle: moment === 'stats' ? 'Your stats' : 'Settings', closeAria: moment === 'stats' ? 'Close stats' : 'Close settings',
       closeSheet: () => this.setState({ lampId: s.keep }),
       lamps, previewing, notPreviewing: !previewing, prevName: row[1], keepName: keepRow[1],

@@ -332,7 +332,7 @@ constructor(props) {
       sheetClass: phone ? 'at-sheet-body at-sheet-up' : 'at-sheet-body at-sheet-side',
       sheetStyle: phone
         ? sheetBase + 'position: absolute; left: 0; right: 0; bottom: 0; height: 74%; border-radius: 28px 28px 0 0; border-top: 1px solid ' + t.line2 + '; box-shadow: ' + b.sheetShadow
-        : sheetBase + 'position: absolute; top: 0; bottom: 0; inset-inline-end: 0; width: ' + (tab ? 440 : 460) + 'px; border-start-start-radius: 28px; border-end-start-radius: 28px; border-inline-start: 1px solid ' + t.line2 + '; box-shadow: ' + b.sheetShadow,
+        : sheetBase + 'position: absolute; top: 0; bottom: 0; inset-inline-end: 0; width: ' + (tab ? 400 : 460) + 'px; border-start-start-radius: 28px; border-end-start-radius: 28px; border-inline-start: 1px solid ' + t.line2 + '; box-shadow: ' + b.sheetShadow,
       headPad: phone ? '8px 12px 8px 20px' : '16px 12px 8px 20px',
       teleOn: on ? 'true' : 'false',
       sw: { track: on ? b.lamp : t.track, line: on ? b.lamp : t.line2, knob: on ? b.lampInk : t.muted, x: on ? '20px' : '0px' },

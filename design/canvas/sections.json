@@ -428,6 +428,83 @@
     844,
     "OLED black",
     true
+   ],
+   [
+    "EdgeDeferredTabletLight.dc.html",
+    820,
+    1180,
+    "Tablet · Deferred start · light",
+    true
+   ],
+   [
+    "EdgeLastminuteTabletLight.dc.html",
+    820,
+    1180,
+    "Tablet · Last minute · light",
+    true
+   ],
+   [
+    "EdgeLowbatteryTabletLight.dc.html",
+    820,
+    1180,
+    "Tablet · Low battery · light",
+    true
+   ],
+   [
+    "EdgeMultidayTabletLight.dc.html",
+    820,
+    1180,
+    "Tablet · Multi-day · light",
+    true
+   ],
+   [
+    "EdgeOfflineTabletLight.dc.html",
+    820,
+    1180,
+    "Tablet · Offline · light",
+    true
+   ],
+   [
+    "EdgeUntilpassedTabletLight.dc.html",
+    820,
+    1180,
+    "Tablet · Until time passed · light",
+    true
+   ],
+   [
+    "EdgeLongnolimitPhoneDark.dc.html",
+    390,
+    844,
+    "Phone · Long, no limit · dark",
+    true
+   ],
+   [
+    "EdgeLongnolimitTabletLight.dc.html",
+    820,
+    1180,
+    "Tablet · Long, no limit · light",
+    true
+   ],
+   [
+    "EdgeHiddenreturnPhoneDark.dc.html",
+    390,
+    844,
+    "Phone · Back from hidden tab · dark",
+    true
+   ],
+   [
+    "EdgeHiddenreturnTabletLight.dc.html",
+    820,
+    1180,
+    "Tablet · Back from hidden tab · light",
+    true
+   ],
+   [
+    "EdgeOledTablet.dc.html",
+    820,
+    1180,
+    "Tablet · OLED black · awake",
+    true
    ]
   ]
  ],
@@ -446,6 +523,55 @@
     1280,
     800,
     "Back from hidden tab · desktop light",
+    true
+   ],
+   [
+    "EdgeDeferredDeskDark.dc.html",
+    1280,
+    800,
+    "Desktop · Deferred start · dark",
+    true
+   ],
+   [
+    "EdgeLastminuteDeskDark.dc.html",
+    1280,
+    800,
+    "Desktop · Last minute · dark",
+    true
+   ],
+   [
+    "EdgeLowbatteryDeskDark.dc.html",
+    1280,
+    800,
+    "Desktop · Low battery · dark",
+    true
+   ],
+   [
+    "EdgeMultidayDeskDark.dc.html",
+    1280,
+    800,
+    "Desktop · Multi-day · dark",
+    true
+   ],
+   [
+    "EdgeOfflineDeskDark.dc.html",
+    1280,
+    800,
+    "Desktop · Offline · dark",
+    true
+   ],
+   [
+    "EdgeUntilpassedDeskDark.dc.html",
+    1280,
+    800,
+    "Desktop · Until time passed · dark",
+    true
+   ],
+   [
+    "EdgeOledDesk.dc.html",
+    1280,
+    800,
+    "Desktop · OLED black · awake",
     true
    ]
   ]
@@ -659,6 +785,69 @@
     1180,
     "Tablet · Rating prompt · light",
     true
+   ],
+   [
+    "ExtrasInstallTabletLight.dc.html",
+    820,
+    1180,
+    "Tablet · Install prompt · light",
+    true
+   ],
+   [
+    "ExtrasInstallDeskDark.dc.html",
+    1280,
+    800,
+    "Desktop · Install prompt · dark",
+    true
+   ],
+   [
+    "ExtrasRatingDeskDark.dc.html",
+    1280,
+    800,
+    "Desktop · Rating prompt · dark",
+    true
+   ],
+   [
+    "ExtrasSecondtabTabletDark.dc.html",
+    820,
+    1180,
+    "Tablet · Second tab · dark",
+    true
+   ],
+   [
+    "ExtrasSecondtabDeskLight.dc.html",
+    1280,
+    800,
+    "Desktop · Second tab · light",
+    true
+   ],
+   [
+    "ExtrasDeniedTabletDark.dc.html",
+    820,
+    1180,
+    "Tablet · Denied, with the fix · dark",
+    true
+   ],
+   [
+    "ExtrasDeniedDeskLight.dc.html",
+    1280,
+    800,
+    "Desktop · Denied, with the fix · light",
+    true
+   ],
+   [
+    "ExtrasResumeTabletLight.dc.html",
+    820,
+    1180,
+    "Tablet · Resume after reload · light",
+    true
+   ],
+   [
+    "ExtrasResumeDeskDark.dc.html",
+    1280,
+    800,
+    "Desktop · Resume after reload · dark",
+    true
    ]
   ]
  ],
@@ -684,6 +873,34 @@
     1280,
     800,
     "Toasts · desktop dark",
+    true
+   ],
+   [
+    "ExtrasSharePhoneDark.dc.html",
+    390,
+    844,
+    "Phone · Share · dark",
+    true
+   ],
+   [
+    "ExtrasShareTabletLight.dc.html",
+    820,
+    1180,
+    "Tablet · Share · light",
+    true
+   ],
+   [
+    "ExtrasToastPhoneLight.dc.html",
+    390,
+    844,
+    "Phone · Toasts · light",
+    true
+   ],
+   [
+    "ExtrasToastTabletDark.dc.html",
+    820,
+    1180,
+    "Tablet · Toasts · dark",
     true
    ]
   ]
@@ -732,6 +949,34 @@
     820,
     "Ambient · Clock · tablet · dark",
     true
+   ],
+   [
+    "AmbientFocusPhoneLight.dc.html",
+    390,
+    844,
+    "Ambient · Focus · phone · light",
+    true
+   ],
+   [
+    "AmbientFocusTabletDark.dc.html",
+    1180,
+    820,
+    "Ambient · Focus · tablet · dark",
+    true
+   ],
+   [
+    "AmbientNightTabletDark.dc.html",
+    1180,
+    820,
+    "Ambient · Night · tablet · dark",
+    true
+   ],
+   [
+    "AmbientNightDeskDark.dc.html",
+    1280,
+    800,
+    "Ambient · Night · desktop · dark",
+    true
    ]
   ]
  ],
@@ -764,6 +1009,48 @@
     1180,
     820,
     "Ambient · Cook · quick add · tablet dark",
+    true
+   ],
+   [
+    "AmbientMinimalPhoneLight.dc.html",
+    390,
+    844,
+    "Ambient · Minimal · phone · light",
+    true
+   ],
+   [
+    "AmbientMinimalTabletDark.dc.html",
+    1180,
+    820,
+    "Ambient · Minimal · tablet · dark",
+    true
+   ],
+   [
+    "AmbientMessagePhoneDark.dc.html",
+    390,
+    844,
+    "Ambient · Message · phone · dark",
+    true
+   ],
+   [
+    "AmbientMessageTabletLight.dc.html",
+    1180,
+    820,
+    "Ambient · Message · tablet · light",
+    true
+   ],
+   [
+    "AmbientCookPhoneLight.dc.html",
+    390,
+    844,
+    "Ambient · Cook · phone · light",
+    true
+   ],
+   [
+    "AmbientCookDeskDark.dc.html",
+    1280,
+    800,
+    "Ambient · Cook · desktop · dark",
     true
    ]
   ]
@@ -2115,6 +2402,13 @@
     800,
     "Trust panel · desktop · light · blocked",
     true
+   ],
+   [
+    "GrowthTrustTabletDark.dc.html",
+    820,
+    1180,
+    "Trust panel · blocked · tablet · dark",
+    true
    ]
   ]
  ],
@@ -2155,6 +2449,13 @@
     844,
     "Done · nothing to suggest · phone · light",
     true
+   ],
+   [
+    "GrowthDoneTabletDark.dc.html",
+    820,
+    1180,
+    "Session done · tablet · dark",
+    true
    ]
   ]
  ],
@@ -2194,6 +2495,13 @@
     390,
     844,
     "Back from hidden · 3rd time · phone · light",
+    true
+   ],
+   [
+    "GrowthPausedTabletLight.dc.html",
+    820,
+    1180,
+    "Back from a hidden tab · tablet · light",
     true
    ]
   ]
@@ -2241,6 +2549,13 @@
     1280,
     800,
     "Pro moment · day 8 of stats · desktop · dark",
+    true
+   ],
+   [
+    "GrowthProMomentTabletDark.dc.html",
+    820,
+    1180,
+    "Pro moment · lamp · tablet · dark",
     true
    ]
   ]
@@ -2322,6 +2637,13 @@
     800,
     "Tell a friend · after 5 stars · desktop · dark",
     true
+   ],
+   [
+    "GrowthShareTabletLight.dc.html",
+    820,
+    1180,
+    "Share a setup · tablet · light",
+    true
    ]
   ]
  ],
@@ -2361,6 +2683,13 @@
     1280,
     1280,
     "B2B entry · kiosks · /for/dashboards · desktop · light",
+    true
+   ],
+   [
+    "GrowthB2BTabletLight.dc.html",
+    820,
+    1662,
+    "Business entry · recipe · tablet · light",
     true
    ]
   ]
