@@ -127,11 +127,6 @@ export function mountLate(ctx: IToolCtx): () => void {
     else act(ctx, id, root);
   });
   if (root.querySelector('[data-sponsor]')) void mountSponsor(ctx).then((u) => offs.push(u));
-  // The homepage cards below the tool tilt toward the pointer; the script stays off the critical path.
-  if (document.querySelector('[data-tilt]'))
-    void import('../lib/tilt.js').then((m) => {
-      m.initTilt();
-    });
   return () => {
     for (const off of offs) off();
   };
