@@ -804,6 +804,19 @@ Accepted on 2026-09-27. Spec: `05-frontend-spec.md` §3.33; canvas `Main`, `Extr
 | Advice codes | `TAdviceCode` drops `battery_saver` and `low_power_ios` (battery savers and Low Power Mode never refuse a wake lock; Chromium and WebKit have no such check). `classifyDenial()` returns `null` for a denial with no known cause; `advice` stays `null` and the blocked card lists the usual causes. `embedAdvice()` maps an allowed frame's `iframe_no_allow` to `null` (`tool.advice.unknown`) |
 | i18n keys | About 209 new keys in all 8 locales, in the groups `tool.face.*` · `tool.sky.*` · `tool.kicker.*` · `tool.meta.*` · `tool.when.*` · `tool.len.*` · `tool.note.*` · `tool.cta.*` · `tool.chip.*` · `tool.until.*` · `tool.slot.*` · `tool.custom.*` · `tool.blocked.*` · `tool.battery.*` · `tool.done.*` · `tool.why.*` · `tool.share.*` · `tool.card.*` · `settings.lamp.*` · `settings.clock.*` · `settings.battery.*` · `stats.heat.*` · `stats.unit.*` · `pwa.card.*`, plus `tool.advice.unknown`. Removed: `tool.advice.battery_saver`, `tool.advice.low_power_ios`. Changed: `pro.card` (no schedules), `library.demo.scenario.denied`, `tool.offline` |
 
+### Use case and device hub galleries
+
+Accepted on 2026-09-28. The `/for` and `/on` hubs show their entries as card galleries; `/vs`, `/guides` and `/learn` keep the list. Routes, slugs, schema, breadcrumbs, storage keys, lock states and the ad rules (no ads on hub pages) do not change.
+
+| Identifier | Decision |
+|---|---|
+| Components | `components/icons/UseCaseIcon.astro` (prop `name` = a `/for` slug) · `components/icons/DeviceIcon.astro` (prop `name` = an `/on` slug): inline 24 px line icons, `currentColor`, stroke 1.8, `aria-hidden` unless a `label` prop is given; an unknown name draws a plain screen. `components/hub/UseCaseGallery.astro` · `components/hub/DeviceGallery.astro`, rendered by `HubPage.astro` for `kind` `for` and `on` |
+| Start link | `startHref(preset, mode)` in `src/lib/hubs.ts`: the preset's tool route (`/15m` … `/4h`, `/8h`, `/` for `pinf` and `until`) plus `?mode=` when the entry's mode is not `standard` |
+| Support tags | `supportTags(slug, browsers, os)` in `src/lib/device-support.ts`: one tag per entry browser that `support-matrix.json` lists on one of the entry's systems ("Safari 16.4+"); `ios-home-screen` uses the `ios-pwa` context. "Native wake lock" shows only when every tag's mechanism is `native` |
+| Stylesheet | `src/styles/hub-gallery.css` (layer `content`, strict token lint), imported by `pages/for.astro` and `pages/on.astro` only |
+| Classes | `.at-gal` (+ `-uc`, `-dev`) · `.at-gal-card` · `.at-gal-top` · `.at-gal-icon` · `.at-gal-title` · `.at-gal-line` · `.at-gal-actions` · `.at-gal-start` · `.at-gal-read` · `.at-gal-link` · `.at-gal-native` · `.at-gal-browsers`; tags reuse `.at-tag` / `.at-tag-tone`. `--at-k` is the card index for the staggered rise |
+| i18n keys | New in all 8 locales (English values until translated): `page.hub.start` · `page.hub.readGuide` · `page.hub.native` |
+
 ## 14. Writing conventions for these docs
 
 - Requirements are testable sentences with "must/should/may"; every FR has at least one acceptance criterion in Given/When/Then form.
