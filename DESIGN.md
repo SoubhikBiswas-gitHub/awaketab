@@ -1,6 +1,6 @@
 # AwakeTab design system — "Clear Night" (version D)
 
-Status: **approved direction, not yet implemented.** The interactive source of truth is the design canvas (https://claude.ai/artifact/MArJ4zoZRiYmppEd9hXv5e, `Main.dc.html` holds the reference logic). When this file and `docs/05-frontend-spec.md` disagree, this file describes the target and docs/05 must be updated in the same PR that implements it (CLAUDE.md contracts rule). Product context lives in `PRODUCT.md`.
+Status: **approved direction, not yet implemented.** The interactive source of truth is the design canvas (the 12 redesign canvases (docs/redesign/CANVASES.md), `Main.dc.html` holds the reference logic). When this file and `docs/05-frontend-spec.md` disagree, this file describes the target and docs/05 must be updated in the same PR that implements it (CLAUDE.md contracts rule). Product context lives in `PRODUCT.md`.
 
 Contracts that do **not** change: the seven lock states and their exact pill copy, storage keys `at.v1.*`, routes and slugs, ad placement rules, performance budgets, zero hydration, system fonts on tool pages, `--at-*` token names and their shadcn aliases.
 

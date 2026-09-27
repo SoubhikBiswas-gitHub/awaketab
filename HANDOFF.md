@@ -29,7 +29,7 @@ You are taking over from a local Claude Code session (lead) that ran the redesig
 - **Decisions:** `docs/redesign/DECISIONS.md`. The Decided table plus "Decided under owner delegation". These are law.
 - **Briefs:** `docs/redesign/agent-brief.md` (canvas format, shared rules, **accuracy corrections**, **copy corrections**), `fix-batch-brief.md`, `audit-brief.md`, `research-brief.md`, `marketing-brief.md`, `ui-inventory.md`.
 - **Research and audits:** `docs/research/*.md` (22+ files: fact-check, editorial, content, copy, market, growth, design gaps, design critique, 4 marketing reports, audits A/B, i18n/a11y, fix batches).
-- **Design canvas (interactive prototype, about 265 boards):** https://claude.ai/artifact/MArJ4zoZRiYmppEd9hXv5e (Design type, private to the owner).
+- **Design canvas (interactive prototype, about 265 boards):** the 12 redesign canvases (docs/redesign/CANVASES.md) (Design type, private to the owner).
   - Source in the repo: `design/canvas/project/` (every `.dc.html` board plus `canvas.json`).
   - `design/canvas/tools/` holds the smoke tests, renderers and checkers.
   - `design/canvas/*.json|py` holds the layout scripts: `sections.json` + `layout.py` rebuild `canvas.json`; `status.json` + `status.py` rebuild the status note and `docs/redesign/STATUS.md`.
@@ -49,7 +49,7 @@ You are taking over from a local Claude Code session (lead) that ran the redesig
 At about 4:10 AM IST the lead **stopped all local agents mid-work**. `design/canvas/project/` is the exact state at that moment, and some boards in batches 1a, 2a and 2b are **partially edited**. Resume like this:
 1. **Fix the script paths first.** Scripts in `design/canvas/` and `design/canvas/tools/` still point at the old scratchpad. From the repo root, run:
    `OLD=/private/tmp/claude-501/-Users-soubhik-Work-github-awaketab/68604392-2b5c-4388-8fa5-e0e1d91d7184/scratchpad; grep -rl "$OLD" design/canvas | xargs sed -i.bak -e "s#$OLD/directions#$PWD/design/canvas#g" -e "s#$OLD/#$PWD/design/canvas/tools/#g"; find design/canvas -name '*.bak' -delete`
-   Also replace `/Users/soubhik/Work/github/awaketab` with `$PWD` where it appears. Install Playwright + Chromium for the renderers.
+   Also replace `/home/user/awaketab` with `$PWD` where it appears. Install Playwright + Chromium for the renderers.
 2. **Run every smoke test** (`design/canvas/*Smoke*.mjs`, `gen.mjs`, `tools/*/smoke*.mjs`, `tools/tool-backup/tool-smoke.mjs`) and the renderer/checker `tools/director/render-all.mjs` + `analyze.mjs`. Anything broken shows where each batch stopped.
 3. **Batch 1a (Main + its wrappers + Size*/Edge*/Tool*): barely started.**
    - Backups are in `tools/tool-backup/` (`Main.batch1.bak.html`, `Main.wave3.bak.html`). If Main fails its smoke test, restore from `Main.batch1.bak.html`.
@@ -87,7 +87,7 @@ At about 4:10 AM IST the lead **stopped all local agents mid-work**. `design/can
 5. **Last step (owner, later):** domain, accounts, stores, production checkout, GST/LUT, then launch (Show HN 17 Nov, Product Hunt 1 Dec, go/no-go 10 Nov).
 
 ## 5a. Always update the SAME canvas (owner rule)
-- The only canvas is https://claude.ai/artifact/MArJ4zoZRiYmppEd9hXv5e. **Never create a new artifact.**
+- The only canvas is the 12 redesign canvases (docs/redesign/CANVASES.md). **Never create a new artifact.**
 - Publish with the Artifact tool:
   - `url` = that link
   - `root` = `design/canvas`

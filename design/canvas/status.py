@@ -18,7 +18,7 @@ c['notes']['status'] = {'x': -1100, 'y': -320, 'w': 480, 'fill': 'yellow', 'text
 json.dump(c, open('project/canvas.json', 'w'), indent=2, ensure_ascii=False)
 print('\n'.join(lines))
 # Mirror the table into the repo (docs/redesign/STATUS.md)
-md = ['# Redesign build status', '', 'Auto-generated from the canvas status table. Canvas: https://claude.ai/artifact/MArJ4zoZRiYmppEd9hXv5e', '',
+md = ['# Redesign build status', '', 'Auto-generated from the canvas status table. Canvas: the 12 redesign canvases (docs/redesign/CANVASES.md)', '',
       'Updated ' + datetime.datetime.now().strftime('%A, %-d %B %Y · %-I:%M %p'), '',
       '| # | Item | Canvas design | Real app |', '|---|---|---|---|']
 for grp, rows in S:

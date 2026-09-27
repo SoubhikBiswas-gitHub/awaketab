@@ -5,7 +5,7 @@
 ## 1. What is happening
 AwakeTab is getting a full UI/UX redesign called **"Clear Night" (version D)**. It covers every product (web tool, content pages, Pro, Chrome extension, embed, kiosk, library), every screen size (320 px phone to 1920 px and TV), light and dark themes, every edge case, and 8 languages. The design is prototyped as interactive boards on a design canvas. After the owner approves, the real app is rebuilt with all gates green, then pushed (main auto-deploys).
 
-- Canvas (interactive prototype, 100+ boards): https://claude.ai/artifact/MArJ4zoZRiYmppEd9hXv5e
+- Canvas (interactive prototype, 100+ boards): the 12 redesign canvases (docs/redesign/CANVASES.md)
 - Live status table: [STATUS.md](STATUS.md) (auto-generated; mirrors the status note on the canvas)
 - Decisions made and open questions: [DECISIONS.md](DECISIONS.md)
 

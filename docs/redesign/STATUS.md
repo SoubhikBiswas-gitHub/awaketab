@@ -1,8 +1,8 @@
 # Redesign build status
 
-Auto-generated from the canvas status table. Canvas: https://claude.ai/artifact/MArJ4zoZRiYmppEd9hXv5e
+Auto-generated from the canvas status table. Canvas: the 12 redesign canvases (docs/redesign/CANVASES.md)
 
-Updated Sunday, 27 September 2026 · 12:35 PM
+Updated Sunday, 27 September 2026 · 12:45 PM
 
 | # | Item | Canvas design | Real app |
 |---|---|---|---|
