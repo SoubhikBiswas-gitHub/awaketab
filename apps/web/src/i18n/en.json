@@ -76,7 +76,7 @@
   "page.home.levels.ext.g4": "{keys} from any tab",
   "page.home.levels.ext.cta": "Add extension",
   "page.home.levels.pro.name": "Pro",
-  "page.home.levels.pro.per": "a year, or pay once",
+  "page.home.levels.pro.per": "a year, or {once} once",
   "page.home.levels.pro.sub": "5 devices, no account, 14-day refund.",
   "page.home.levels.pro.g1": "Your own message, up to 80 characters, on the awake screen",
   "page.home.levels.pro.g2": "Mint and Sky lamp colours",

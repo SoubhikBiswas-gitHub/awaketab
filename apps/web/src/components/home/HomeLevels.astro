@@ -42,7 +42,7 @@ const levels: ILevel[] = [
     sub: t('page.home.levels.web.sub'),
     gains: [g('web', 1), g('web', 2), g('web', 3), g('web', 4)],
     cta: t('page.home.levels.web.cta'),
-    href: '#awaketab-tool',
+    href: '#content',
     rec: false,
   },
   {
@@ -58,7 +58,7 @@ const levels: ILevel[] = [
   {
     id: 'pro',
     price: usd(PLAN_PRICES.pro_yearly),
-    per: t('page.home.levels.pro.per'),
+    per: t('page.home.levels.pro.per').replace('{once}', usd(PLAN_PRICES.pro_lifetime)),
     sub: t('page.home.levels.pro.sub'),
     gains: [g('pro', 1), g('pro', 2), g('pro', 3), g('pro', 4)],
     cta: t('page.home.levels.pro.cta'),
