@@ -5,9 +5,14 @@ export type TPlan =
 export type TSessionStatus = 'inactive' | 'active' | 'paused' | 'completed' | 'aborted';
 export type TEndReason = 'completed' | 'user' | 'lost_timeout' | 'denied' | 'battery' | 'error';
 export type TPresetId = 'p15' | 'p30' | 'p45' | 'p60' | 'p120' | 'p240' | 'pinf' | 'custom' | 'until';
-export type TAmbientMode = 'standard' | 'clock' | 'focus' | 'minimal' | 'night' | 'message' | 'cook';
+export type TAmbientMode = 'standard' | 'clock' | 'focus' | 'minimal' | 'night' | 'message' | 'cook' | 'breathe';
 export type TTheme = 'auto' | 'light' | 'dark' | 'oled';
-export type TFace = 'ring' | 'bold' | 'horizon' | 'tide';
+export type TFace =
+  'ring' | 'bold' | 'horizon' | 'tide' | 'flip' | 'rolling' | 'analog' | 'rings' | 'word' | 'nixie' | 'lcd' | 'matrix';
+export type TPalette =
+  'clear-night' | 'paper' | 'nord' | 'solarized' | 'midnight' | 'forest' | 'sunset' | 'mono' | 'contrast';
+export type TPattern = 'none' | 'grain' | 'dots' | 'grid' | 'topo' | 'waves' | 'aurora' | 'stars' | 'drift';
+export type TFocusSound = 'none' | 'brown' | 'pink' | 'white' | 'rain' | 'cafe' | 'fire' | 'lofi' | `track:${string}`;
 export type TEndBehaviour = 'stop' | 'prompt_extend';
 export type TSessionSource = 'web' | 'pwa' | 'pip' | 'ext' | 'embed';
 
@@ -56,7 +61,7 @@ export interface ISettings {
   lastUntilWall: string | null;
   autostart: boolean;
   sound: {
-    id: 'chime' | 'bell' | 'soft' | 'none' | `custom:${string}`;
+    id: 'chime' | 'bell' | 'soft' | 'digital' | 'birds' | 'none' | `custom:${string}`;
     volume: number;
   };
   notifications: boolean;
@@ -76,6 +81,15 @@ export interface ISettings {
   keyboardShortcuts: boolean;
   keyboardHints: boolean;
   reduceMotion: 'system' | 'on' | 'off';
+  faceStyles: Partial<Record<TFace, string>>;
+  palette: TPalette;
+  pattern: TPattern;
+  vibrate: boolean;
+  tick: boolean;
+  focusSound: { kind: TFocusSound; volume: number; mix: Partial<Record<TFocusSound, number>>; stopAtEnd: boolean };
+  intention: string;
+  worldClock: string | null;
+  pomodoro: { autoCycle: boolean; longBreakMin: number };
 }
 
 export interface IStats {
@@ -158,6 +172,15 @@ export const DEFAULT_SETTINGS: ISettings = {
   keyboardShortcuts: true,
   keyboardHints: true,
   reduceMotion: 'system',
+  faceStyles: {},
+  palette: 'clear-night',
+  pattern: 'none',
+  vibrate: true,
+  tick: false,
+  focusSound: { kind: 'none', volume: 0.5, mix: {}, stopAtEnd: true },
+  intention: '',
+  worldClock: null,
+  pomodoro: { autoCycle: false, longBreakMin: 15 },
 };
 
 export const DEFAULT_STATS: IStats = {

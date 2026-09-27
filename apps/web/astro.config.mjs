@@ -5,6 +5,18 @@ import { defineConfig } from 'astro/config';
 import { bootInline, BOOT_FILE } from './scripts/boot-inline.mjs';
 import { polarDefines } from './scripts/polar-server.mjs';
 
+// Libraries each feature pack owns; they never enter the tool's own chunks.
+const PACK_LIBS = [
+  [/\/node_modules\/.*(?:@pqina|number-flow|embla-carousel)/u, 'faces'],
+  [/\/node_modules\/.*\/(?:tone|howler|standardized-audio-context|automation-events)\//u, 'sound'],
+  [
+    /\/node_modules\/.*(?:@tiptap|prosemirror-|orderedmap|rope-sequence|w3c-keyname|linkifyjs|idb-keyval|annyang)/u,
+    'notes',
+  ],
+  [/\/node_modules\/.*(?:vanilla-colorful|@tsparticles|tsparticles)/u, 'themes'],
+  [/\/node_modules\/.*(?:dayjs|easytimer|hotkeys-js)/u, 'extras'],
+];
+
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL ?? 'https://awaketab.com',
   output: 'static',
@@ -79,6 +91,11 @@ export default defineConfig({
           // dozen small ones: every chunk repeats its import header and compresses alone, which cost more of the
           // 40 KB total budget than the code itself. It still loads only on first use, never on the boot path.
           manualChunks(id) {
+            // Feature packs (src/tool/packs/<name>/ and their libraries) load on first use under their own budgets.
+            const own = /\/src\/tool\/packs\/(faces|sound|notes|themes|extras)\//u.exec(id)?.[1];
+            if (own) return `pack-${own}`;
+            const lib = PACK_LIBS.find(([re]) => re.test(id));
+            if (lib) return `pack-${lib[1]}`;
             // The boot path's shared modules are named first, so the lazy chunk never pulls them in.
             if (
               /\/packages\/core\/src\/(?!license|capability)|\/packages\/wake\/src\/|\/src\/tool\/(?:main|format|i18n|store|params|ctx|ui\/(?:view|toast))\.ts/u.test(

@@ -54,6 +54,12 @@ export interface ISettings {
 }
 ```
 
+Additive fields (28 September 2026; still `v: 1`, missing fields read as their defaults): `faceStyles` (per-face style id, `{}`) · `palette` (`clear-night` | `paper` | `nord` | `solarized` | `midnight` | `forest` | `sunset` | `mono` | `contrast`, default `clear-night`) · `pattern` (`none` | `grain` | `dots` | `grid` | `topo` | `waves` | `aurora` | `stars` | `drift`, default `none`) · `vibrate` (`true`) · `tick` (`false`) · `focusSound { kind, volume 0.5, mix {}, stopAtEnd true }` (`kind`: `none` | `brown` | `pink` | `white` | `rain` | `cafe` | `fire` | `lofi` | `track:<id>`) · `intention` (≤ 80 chars, `''`) · `worldClock` (IANA zone or `null`) · `pomodoro { autoCycle false, longBreakMin 15 }`. `face` gains `flip` · `rolling` · `analog` · `rings` · `word` · `nixie` · `lcd` · `matrix`; `sound.id` gains `digital` · `birds`; `ambient.mode` gains `breathe`. A Pro item being previewed is never written here.
+
+### 2.1a `at.v1.notes` (IndexedDB)
+
+Notes live in IndexedDB (`idb-keyval`, database `awaketab`, store `notes`, key `at.v1.notes`), never in localStorage and never sent anywhere: `{ v: 1, notes: Array<{ id, title, doc (editor JSON), updatedAt }> }`. Free: one note; more with Pro (`ambient.packs`).
+
 ### 2.2 `at.v1.session`
 
 Written by `@awaketab/core` on every status change and at most once per 15 s while active (the tick does not write).
