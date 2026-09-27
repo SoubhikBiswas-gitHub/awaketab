@@ -10,7 +10,7 @@ mode: standard
 locale: fr
 reviewed: false
 translationOf: "macos"
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: ["chrome", "safari", "firefox"]
 os: ["macos"]
 crumb: "macOS"
@@ -38,7 +38,7 @@ steps:
     text: "Si vous travaillez dans d’autres apps, redimensionnez-la en petite fenêtre dans un coin au lieu de l’envoyer dans le Dock ; sous Chrome, Edge ou Firefox 151+, la « Fenêtre flottante » de l’en-tête fait le même travail."
     shot: "une petite fenêtre AwakeTab dans un coin"
 matrix:
-  label: "Navigateurs pris en charge sur macOS, matrice vérifiée le 9 septembre 2026"
+  label: "Navigateurs pris en charge sur macOS, matrice vérifiée le 26 septembre 2026"
   cols: ["Navigateur", "Résultat", "Mécanisme"]
   rows:
     - what: "Safari 16.4 et plus"
@@ -61,6 +61,14 @@ matrix:
       result: works
       label: "Pris en charge"
       text: "natif (base Chromium)"
+rows:
+  blockers:
+    - title: "Onglet masqué"
+      text: "La pastille passe à « En pause — onglet masqué » et le minuteur s’arrête jusqu’à ce que vous reveniez sur la page."
+    - title: "Refus du navigateur"
+      text: "Si la pastille affiche « Bloqué — voici la solution », la cause (par exemple un clic manquant dans Safari) est indiquée juste en dessous."
+    - title: "Capot fermé"
+      text: "Fermer le capot met le Mac en veille, sauf en mode clamshell (secteur et écran externe), et aucune page web ni extension ne peut l’en empêcher."
 faq:
   - q: "AwakeTab peut-il laisser mon Mac finir une tâche longue écran éteint ?"
     a: "Pas écran éteint. Tant qu’AwakeTab garde l’écran allumé, le Mac ne se met pas en veille pour inactivité (documentation IOKit d’Apple). Mais pour un rendu ou une sauvegarde sans écran, utilisez un outil natif comme la commande caffeinate -i."
@@ -89,7 +97,7 @@ updated: 2026-09-27
 
 ## Navigateurs pris en charge sur macOS
 
-Matrice vérifiée le 9 septembre 2026.
+Matrice vérifiée le 26 septembre 2026.
 
 ::matrix
 
@@ -99,7 +107,7 @@ macOS gère séparément l’extinction de l’écran et la mise en veille de l�
 
 ## Les réglages de macOS à connaître
 
-Les délais d’extinction se règlent dans Réglages Système → Écran verrouillé, et les options d’alimentation dans la section Énergie ou Batterie selon votre Mac. Sur un portable, le mode Économie d’énergie peut réduire la luminosité, mais Safari et Chrome ne refusent pas le verrou pour autant ; si la pastille affiche « Bloqué — voici la solution », la cause (par exemple un clic manquant dans Safari) est indiquée juste en dessous.
+Les délais d’extinction se règlent dans Réglages Système → Écran verrouillé, et les options d’alimentation dans la section Énergie ou Batterie selon votre Mac. Sur un portable, le mode Économie d’énergie peut réduire la luminosité, mais Safari et Chrome ne refusent pas le verrou pour autant.
 
 ## Capot fermé : aucune page web n’y peut rien
 
@@ -109,4 +117,6 @@ C’est la question qui revient le plus souvent. Un MacBook dont on rabat l’é
 
 AwakeTab considère le navigateur comme seule source de vérité. Tant que Safari, Chrome ou Firefox n’a pas confirmé le verrou, la pastille n’affiche pas « Écran allumé » et le minuteur ne tourne pas. Si l’écran s’éteint quand même, vous saurez pourquoi : onglet masqué, refus du navigateur, ou règle de verrouillage d’une autre nature.
 
-Dernière vérification : 9 septembre 2026.
+::rows blockers
+
+Dernière vérification : 26 septembre 2026.

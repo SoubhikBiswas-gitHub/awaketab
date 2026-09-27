@@ -20,6 +20,11 @@ toc:
   welche-browser-taugen-für-den-vortrag: "Welche Browser"
   grenzen-die-sie-kennen-sollten: "Grenzen"
   checkliste-fünf-minuten-vor-dem-vortrag: "Checkliste"
+steps:
+  - title: "Starten Sie die Sitzung und klicken Sie oben auf „Schwebendes Fenster“."
+    text: "Die kleine Statusanzeige liegt dann über den Folien."
+  - title: "Testen Sie Ihre Variante am besten schon bei der Probe im leeren Raum, nicht erst vor Publikum."
+    text: "Dann wissen Sie, ob Beamer, Kabel und Browser zusammenspielen."
 figures:
   - frame: phone
     label: "Handy-Screenshot"
@@ -64,13 +69,13 @@ updated: 2026-09-27
 
 ## Drei Wege, AwakeTab sichtbar zu halten
 
-**Schwebendes Fenster.** Starten Sie die Sitzung und klicken Sie oben auf „Schwebendes Fenster“. Die kleine Statusanzeige liegt dann über den Folien. Das klappt am Desktop in Chrome und Edge ab 116 sowie in Firefox ab 151; Safari öffnet stattdessen ein kleines Fenster. Ob der Lock hält, während der Tab selbst verdeckt ist, haben wir noch nicht auf einem Gerät geprüft.
+**Schwebendes Fenster.** Das klappt am Desktop in Chrome und Edge ab 116 sowie in Firefox ab 151; Safari öffnet stattdessen ein kleines Fenster. Ob der Lock hält, während der Tab selbst verdeckt ist, haben wir noch nicht auf einem Gerät geprüft.
 
 **Zweiter Bildschirm.** Mit Beamer oder externem Monitor läuft die Präsentation auf der Leinwand, AwakeTab bleibt auf dem Laptop-Display neben Ihren Notizen.
 
 **Referentenansicht.** Zeigt Ihr Kontrollmonitor den Browser-Tab weiter, bleibt der Lock ebenfalls bestehen.
 
-Testen Sie Ihre Variante am besten schon bei der Probe im leeren Raum, nicht erst vor Publikum. Dann wissen Sie, ob Beamer, Kabel und Browser zusammenspielen.
+::steps
 
 In allen drei Fällen gilt:
 

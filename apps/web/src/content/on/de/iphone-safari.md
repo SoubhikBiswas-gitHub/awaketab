@@ -9,7 +9,7 @@ mode: standard
 locale: de
 reviewed: false
 translationOf: "iphone-safari"
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: ["safari"]
 os: ["ios"]
 lead: "Seit Safari 16.4 kann das iPhone eine Webseite um einen nativen Bildschirm-Lock bitten, ganz ohne App aus dem App Store. AwakeTab nutzt genau das: Solange der Tab in Safari vorne ist, bleibt der Bildschirm an, unabhängig davon, was unter „Automatische Sperre“ eingestellt ist. Jeder Wechsel in eine andere App beendet den Lock. Und der Stromsparmodus stellt die automatische Sperre auf 30 Sekunden; ob ein Safari-Lock dagegen hält, haben wir noch nicht auf einem Gerät geprüft."
@@ -33,6 +33,26 @@ steps:
   - title: "Legen Sie das iPhone hin, ohne die App zu wechseln"
     text: "Sobald Sie eine andere App öffnen, ist der Lock weg."
     shot: "das iPhone mit Safari im Vordergrund"
+matrix:
+  label: "Browser auf dem iPhone, Support-Matrix vom 26. September 2026"
+  cols: ["Browser", "Ergebnis", "Hinweis"]
+  rows:
+    - what: "Safari ab 16.4"
+      result: works
+      label: "Unterstützt"
+      text: "Safari hält den nativen Lock, der Timer läuft."
+    - what: "Safari ohne vorheriges Tippen"
+      result: blocked
+      label: "Blockiert"
+      text: "Safari hat abgelehnt, meist weil vorher kein Tippen kam. Fehlte nur das Tippen, genügt ein Tipp auf Starten."
+    - what: "Web-App auf dem Home-Bildschirm ab iOS 18.4"
+      result: works
+      label: "Unterstützt"
+      text: "Ab iOS 18.4 erhalten Web-Apps auf dem Home-Bildschirm einen nativen Wake Lock. Auf älteren iOS-Versionen nutzen Sie AwakeTab besser direkt in Safari."
+    - what: "Safari vor iOS 16.4"
+      result: fallback
+      label: "Video-Ersatzlösung"
+      text: "Tippen Sie auf „Starten“, um die Video-Ersatzlösung zu verwenden."
 faq:
   - q: "Was passiert, wenn ich kurz zu Nachrichten oder zur Kamera wechsle?"
     a: "Dann gibt Safari den Wake Lock frei, und die Anzeige zeigt „Pausiert — Tab ausgeblendet“. Der Timer bleibt stehen. Öffnen Sie Safari wieder mit dem AwakeTab-Tab im Vordergrund und warten Sie, bis „Bildschirm bleibt an“ erscheint, bevor Sie das iPhone hinlegen."
@@ -81,4 +101,8 @@ Lesen Sie bei „Blockiert“ den Hinweis darunter. Fehlte nur das Tippen, genü
 
 ## Die Grenzen
 
-Nur Safari 16.4 und neuer bekommt den nativen Lock; unsere Angaben stammen aus der Support-Matrix vom 9. September 2026. Die Web-App auf dem Home-Bildschirm braucht iOS 18.4. Ein iPhone ist kein Babyfon und kein Sicherheitsmonitor, lassen Sie es also nicht unbeaufsichtigt als Wächter liegen. Ein hell leuchtendes Display kostet Akku; für lange Sitzungen gehört das iPhone ans Ladekabel. Auf OLED-Modellen reduziert die Pixelverschiebung im Nachtmodus das Einbrennen, beseitigt es aber nicht vollständig. Wenn Sie beim Kochen das Rezept im Blick behalten wollen, hilft die Seite [Bildschirm beim Kochen anlassen](/de/for/kochen).
+Nur Safari 16.4 und neuer bekommt den nativen Lock; unsere Angaben stammen aus der Support-Matrix vom 26. September 2026. Die Web-App auf dem Home-Bildschirm braucht iOS 18.4.
+
+::matrix
+
+Ein iPhone ist kein Babyfon und kein Sicherheitsmonitor, lassen Sie es also nicht unbeaufsichtigt als Wächter liegen. Ein hell leuchtendes Display kostet Akku; für lange Sitzungen gehört das iPhone ans Ladekabel. Auf OLED-Modellen reduziert die Pixelverschiebung im Nachtmodus das Einbrennen, beseitigt es aber nicht vollständig. Wenn Sie beim Kochen das Rezept im Blick behalten wollen, hilft die Seite [Bildschirm beim Kochen anlassen](/de/for/kochen).

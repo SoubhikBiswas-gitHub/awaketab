@@ -44,6 +44,10 @@ pills:
     text: "Le navigateur refuse la demande, par exemple parce que Safari attend un toucher ou que Firefox est à 5 % de batterie ou moins, et la pastille indique la cause. L’économiseur de batterie ne provoque pas ce refus. Hors toucher manquant, toucher Démarrer en boucle ne change rien."
   - state: fallback
     text: "Sur un navigateur sans prise en charge native, comme un ancien Firefox, un toucher lance la vidéo de secours. Cette méthode consomme davantage de batterie."
+checklist:
+  - "Pour un plat qui mijote longtemps, branchez l’appareil."
+  - "Attendez que la pastille affiche « Écran allumé »."
+  - "Ne laissez pas un téléphone sans surveillance en guise d’alarme près des plaques."
 faq:
   - q: "Je passe sur l’appli minuteur et l’écran s’éteint quand même. Pourquoi ?"
     a: "Dès que vous quittez l’onglet AwakeTab pour une autre application, le navigateur retire le verrou : un onglet masqué ne peut pas le conserver. Revenez sur la page, attendez que la pastille repasse à « Écran allumé », ou placez les deux applis côte à côte en écran partagé."
@@ -83,12 +87,14 @@ La pastille est le cœur de l’outil : elle n’annonce « Écran allumé » qu
 - **iPhone et iPad** : Réglages → Luminosité et affichage → Verrouillage automatique. Le mode Économie d’énergie règle le Verrouillage automatique sur 30 secondes et grise l’option Jamais. Safari ne refuse pas le verrou pour autant ; nous n’avons pas encore vérifié sur un appareil si l’écran reste allumé dans ce cas.
 - **Android** : Paramètres → Affichage → Mise en veille de l’écran (Pixel : « Display & touch »). L’économiseur de batterie peut raccourcir ce délai ou baisser la luminosité, sans refuser le verrou, et certaines surcouches de fabricants ferment le navigateur une fois que vous l’avez quitté.
 
+::checklist
+
 ## Les navigateurs qui conviennent
 
 D’après notre matrice du 9 septembre 2026, Safari à partir de 16.4, Chrome et Edge à partir de 84, Samsung Internet à partir de 14 et Firefox à partir de 126 accordent un verrou natif. Une recette enregistrée comme application sur l’écran d’accueil de l’iPhone demande iOS 18.4. Le détail par navigateur se trouve dans [la matrice de prise en charge](/fr/learn/matrice-prise-en-charge).
 
 ## Ce qu’AwakeTab ne fait pas en cuisine
 
-AwakeTab garde un écran allumé ; ce n’est ni une minuterie de sécurité ni un moniteur. Ne laissez pas un téléphone sans surveillance en guise d’alarme près des plaques. Un portable posé dans la cuisine se met en veille dès que vous fermez le capot, quoi que fasse l’onglet. Et sur un écran OLED, laisser la même image affichée des heures n’est jamais sans risque : le mode nuit décale légèrement les pixels, ce qui réduit le marquage sans le supprimer.
+AwakeTab garde un écran allumé ; ce n’est ni une minuterie de sécurité ni un moniteur. Un portable posé dans la cuisine se met en veille dès que vous fermez le capot, quoi que fasse l’onglet. Et sur un écran OLED, laisser la même image affichée des heures n’est jamais sans risque : le mode nuit décale légèrement les pixels, ce qui réduit le marquage sans le supprimer.
 
 ::limit

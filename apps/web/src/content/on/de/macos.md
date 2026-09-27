@@ -9,7 +9,7 @@ mode: standard
 locale: de
 reviewed: false
 translationOf: "macos"
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: ["chrome", "safari", "firefox"]
 os: ["macos"]
 crumb: "macOS"
@@ -37,7 +37,7 @@ steps:
     text: "Ein Fenster im Dock oder ein Tab im Hintergrund zählt als ausgeblendet."
     shot: "ein schmales AwakeTab-Fenster neben einer anderen App"
 matrix:
-  label: "Browser auf dem Mac, Support-Matrix vom 9. September 2026"
+  label: "Browser auf dem Mac, Support-Matrix vom 26. September 2026"
   cols: ["Browser", "Ergebnis", "Besonderheit"]
   rows:
     - what: "Safari ab 16.4"
@@ -52,6 +52,14 @@ matrix:
       result: works
       label: "Unterstützt"
       text: "davor Video-Ersatzlösung nach einem Klick; schwebendes Fenster ab 151"
+rows:
+  blockers:
+    - title: "Ein zugeklappter Deckel"
+      text: "Ein zugeklappter Deckel versetzt den Mac in den Ruhezustand, außer im Clamshell-Modus mit Netzteil und externem Monitor. Keine Webseite kann das ändern."
+    - title: "Ein Fenster im Dock oder ein Tab im Hintergrund"
+      text: "Der Browser gibt den Wake Lock frei, und die Anzeige zeigt „Pausiert — Tab ausgeblendet“. Holen Sie das Fenster zurück und warten Sie auf „Bildschirm bleibt an“."
+    - title: "Ein von der IT verwaltetes Profil"
+      text: "Dimmt das Display trotz „Bildschirm bleibt an“, steckt meist eine andere Regel dahinter, etwa ein von der IT verwaltetes Profil oder ein externer Monitor, der sich selbst abschaltet."
 faq:
   - q: "Läuft mein Mac im Hintergrund weiter, solange das Display an ist?"
     a: "Ja, solange das Display an bleibt. Laut Apples IOKit-Dokumentation schläft der Mac dann auch nicht bei Inaktivität ein; im Terminal zeigt pmset -g assertions die Zusicherung des Browsers. Soll ein Download oder Render-Job bei dunklem Bildschirm weiterlaufen, brauchen Sie ein natives Werkzeug wie den Terminal-Befehl caffeinate -i."
@@ -85,7 +93,7 @@ Typische Mac-Fälle sind ein Dashboard auf dem zweiten Monitor, eine Anleitung n
 
 ## Browser auf dem Mac
 
-Die Versionen stammen aus unserer Support-Matrix vom 9. September 2026. Edge 84+ und Opera 70+ funktionieren auf dem Mac ebenfalls nativ.
+Die Versionen stammen aus unserer Support-Matrix vom 26. September 2026. Edge 84+ und Opera 70+ funktionieren auf dem Mac ebenfalls nativ.
 
 ::matrix
 
@@ -95,7 +103,9 @@ macOS unterscheidet zwischen dem Abschalten des Bildschirms und dem Schlafen des
 
 ## Die macOS-Einstellungen dazu
 
-Wann der Bildschirm ausgeht, legen Sie unter Systemeinstellungen → Sperrbildschirm fest; Details zum Energieverhalten finden Sie unter Energie bzw. auf MacBooks unter Batterie. Der Stromsparmodus dort verhindert den Lock nicht, denn weder Safari noch Chrome prüfen ihn. „Blockiert — so beheben Sie es“ zeigt AwakeTab nur bei einer echten Ablehnung, etwa wenn Safari erst einen Klick braucht, und nennt dann die Ursache, statt einen Erfolg vorzutäuschen. Dimmt das Display trotz „Bildschirm bleibt an“, steckt meist eine andere Regel dahinter, etwa ein von der IT verwaltetes Profil oder ein externer Monitor, der sich selbst abschaltet.
+Wann der Bildschirm ausgeht, legen Sie unter Systemeinstellungen → Sperrbildschirm fest; Details zum Energieverhalten finden Sie unter Energie bzw. auf MacBooks unter Batterie. Der Stromsparmodus dort verhindert den Lock nicht, denn weder Safari noch Chrome prüfen ihn. „Blockiert — so beheben Sie es“ zeigt AwakeTab nur bei einer echten Ablehnung, etwa wenn Safari erst einen Klick braucht, und nennt dann die Ursache, statt einen Erfolg vorzutäuschen.
+
+::rows blockers
 
 ## Chat-Status, Akku und Nachtbetrieb
 

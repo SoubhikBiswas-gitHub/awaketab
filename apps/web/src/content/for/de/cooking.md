@@ -39,6 +39,10 @@ pills:
     text: "Eine Einbettung ohne Berechtigung für `screen-wake-lock`, Safari ohne vorheriges Tippen oder Firefox bei 5 % Akku oder weniger. Sie sehen nie ein vorgetäuschtes „gehalten“. Lesen Sie den Hinweis unter der Anzeige und beheben Sie genau diese Ursache. Nur wenn Safari ein Tippen vermisst hat, genügt ein neuer Tipp auf Starten."
   - state: unsupported
     text: "Ohne HTTPS gibt es gar keinen Lock."
+checklist:
+  - "Beim stundenlangen Schmoren lohnt sich das Ladekabel."
+  - "Tippen Sie auf „Bildschirm eingeschaltet lassen“ und schauen Sie auf die Statusanzeige. Erst wenn dort „Bildschirm bleibt an“ steht, hält der Browser den Lock wirklich."
+  - "Verlassen Sie sich nie darauf, dass ein unbeaufsichtigtes Gerät irgendetwas überwacht."
 faq:
   - q: "Bleibt der Bildschirm an, wenn ich zwischendurch zu WhatsApp oder in die Rezept-App wechsle?"
     a: "Nein. Sobald AwakeTab nicht mehr zu sehen ist, gibt der Browser den Wake Lock frei, und die Anzeige wechselt zu „Pausiert — Tab ausgeblendet“. Kehren Sie zum Tab zurück und warten Sie, bis wieder „Bildschirm bleibt an“ oder „Bildschirm bleibt per Video an“ erscheint."
@@ -88,4 +92,6 @@ Unter Android legen Sie die normale Abschaltzeit unter Einstellungen → Display
 
 ## Akku und Sicherheit am Herd
 
-Ein leuchtendes Display verbraucht Strom. Beim stundenlangen Schmoren lohnt sich das Ladekabel. In Chromium-Browsern kann AwakeTab bei einem von Ihnen festgelegten Akkustand selbst stoppen; andere Browser bieten das womöglich nicht. Ein Handy ersetzt keinen Blick in den Topf: Verlassen Sie sich nie darauf, dass ein unbeaufsichtigtes Gerät irgendetwas überwacht. Weitere Szenarien mit Rezeptbuch oder Noten finden Sie beim [Lesen am Bildschirm](/for/reading).
+Ein leuchtendes Display verbraucht Strom. In Chromium-Browsern kann AwakeTab bei einem von Ihnen festgelegten Akkustand selbst stoppen; andere Browser bieten das womöglich nicht. Ein Handy ersetzt keinen Blick in den Topf. Weitere Szenarien mit Rezeptbuch oder Noten finden Sie beim [Lesen am Bildschirm](/for/reading).
+
+::checklist

@@ -18,6 +18,7 @@ crumb: "„Nie“ ausgegraut"
 toc:
   wenn-nie-weiterhin-grau-bleibt: "Wenn „Nie“ grau bleibt"
   was-auch-ohne-stromsparmodus-nicht-klappt: "Was nicht klappt"
+  s-tool: "Oder Sie lassen die Einstellung, wie sie ist"
 steps:
   - title: "Schalten Sie den Stromsparmodus aus"
     short: "Stromsparmodus aus"

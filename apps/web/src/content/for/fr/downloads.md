@@ -10,7 +10,7 @@ mode: standard
 locale: fr
 reviewed: false
 translationOf: "downloads"
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: []
 os: []
 faq:

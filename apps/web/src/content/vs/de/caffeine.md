@@ -10,7 +10,7 @@ mode: standard
 locale: de
 reviewed: false
 translationOf: "caffeine"
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: []
 os: []
 lead: "Caffeine für macOS hält über eine Energiezusicherung von macOS das System wach, ohne Tastendrücke und auch, wenn kein Fenster zu sehen ist. AwakeTab ist dagegen ein sichtbarer Browser-Tab, der die standardisierte Screen Wake Lock API nutzt. Nehmen Sie Caffeine, wenn nichts sichtbar bleiben soll und der Mac trotzdem wach bleiben muss. Nehmen Sie AwakeTab, wenn Sie eine ehrliche Statusanzeige wollen und keine zusätzliche App installieren möchten oder dürfen."

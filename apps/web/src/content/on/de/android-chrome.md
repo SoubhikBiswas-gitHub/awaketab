@@ -36,6 +36,28 @@ steps:
   - title: "Brauchen Sie parallel eine andere App?"
     text: "Nutzen Sie den geteilten Bildschirm oder die Pop-up-Ansicht. AwakeTab muss dabei sichtbar bleiben."
     shot: "geteilter Bildschirm mit AwakeTab in einer Hälfte"
+matrix:
+  label: "Android-Browser, Support-Matrix vom 9. September 2026"
+  cols: ["Browser", "Ergebnis", "Hinweis"]
+  rows:
+    - what: "Chrome ab 84"
+      result: works
+      label: "Unterstützt"
+      text: "Chrome ab Version 84 kann auf Android-Geräten einen nativen Bildschirm-Lock vergeben, solange der Tab sichtbar ist."
+    - what: "Samsung Internet ab 14 und Firefox ab 126"
+      result: works
+      label: "Unterstützt"
+      text: "Samsung Internet ab Version 14 und Firefox ab 126 gewähren ebenfalls einen nativen Lock."
+    - what: "Ältere Firefox-Versionen"
+      result: fallback
+      label: "Video-Ersatzlösung"
+      text: "Ältere Firefox-Versionen können nach einem Tippen auf ein kleines stummes Video als Ersatzlösung ausweichen; das kostet mehr Akku."
+rows:
+  blockers:
+    - title: "Energiesparmodus"
+      text: "Den Energiesparmodus prüft Chrome nicht; er lehnt den Lock also nicht ab. Er kann aber die Abschaltzeit verkürzen oder das Display dimmen. Ob er sich über einen gehaltenen Lock hinwegsetzt, haben wir noch nicht auf einem Gerät geprüft. „Blockiert — so beheben Sie es“ erscheint nur, wenn Chrome wirklich ablehnt, und darunter steht die Ursache."
+    - title: "Hersteller-Listen"
+      text: "Heikler sind die eigenen Energiesparlisten mancher Hersteller. Bei Samsung heißen sie zum Beispiel „Apps im Standby“ und „Apps im Tiefschlaf“, bei anderen Marken gibt es ähnliche Menüs. Landet Chrome dort, kann das System den Tab beenden, sobald Sie die App verlassen. Beim Zurückkehren lädt die Seite dann neu, und Sie müssen die Sitzung erneut starten."
 faq:
   - q: "Bleibt das Display an, wenn ich kurz zu Maps oder YouTube springe?"
     a: "Nein. Verlassen Sie Chrome oder wechseln Sie den Tab, gibt der Browser den Wake Lock frei, und die Anzeige zeigt „Pausiert — Tab ausgeblendet“. Kommen Sie zurück, fordert AwakeTab ihn neu an. Legen Sie das Handy erst weg, wenn wieder „Bildschirm bleibt an“ zu sehen ist."
@@ -67,7 +89,9 @@ Nach Ablauf der Dauer erscheint eine Frage, ob Sie verlängern möchten, etwa um
 
 ## Welche Android-Browser was können
 
-Laut Support-Matrix vom 9. September 2026 gewähren Chrome 84+, Samsung Internet 14+, Firefox 126+ und Opera 70+ unter Android einen nativen Lock. Ältere Firefox-Versionen können nach einem Tippen auf ein kleines stummes Video als Ersatzlösung ausweichen; das kostet mehr Akku.
+Laut Support-Matrix vom 9. September 2026 gewähren Chrome 84+, Samsung Internet 14+, Firefox 126+ und Opera 70+ unter Android einen nativen Lock.
+
+::matrix
 
 ## Die Android-Einstellung, die Sie kennen sollten
 
@@ -75,9 +99,7 @@ Die normale Abschaltzeit finden Sie unter Einstellungen → Display → Bildschi
 
 ## Energiesparmodus und Hersteller-Listen
 
-Den Energiesparmodus prüft Chrome nicht; er lehnt den Lock also nicht ab. Er kann aber die Abschaltzeit verkürzen oder das Display dimmen. Ob er sich über einen gehaltenen Lock hinwegsetzt, haben wir noch nicht auf einem Gerät geprüft. „Blockiert — so beheben Sie es“ erscheint nur, wenn Chrome wirklich ablehnt, und darunter steht die Ursache.
-
-Heikler sind die eigenen Energiesparlisten mancher Hersteller. Bei Samsung heißen sie zum Beispiel „Apps im Standby“ und „Apps im Tiefschlaf“, bei anderen Marken gibt es ähnliche Menüs. Landet Chrome dort, kann das System den Tab beenden, sobald Sie die App verlassen. Beim Zurückkehren lädt die Seite dann neu, und Sie müssen die Sitzung erneut starten.
+::rows blockers
 
 ## Was Chrome auf Android nicht kann
 
