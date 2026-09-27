@@ -10,6 +10,7 @@
     "pnpm": ">=9 <10"
   },
   "scripts": {
+    "setup": "node scripts/setup.mjs",
     "dev": "pnpm --filter web dev",
     "build": "pnpm -r build",
     "test": "pnpm test:unit && pnpm test:functions",
