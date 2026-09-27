@@ -3,7 +3,6 @@ import type { IStore, IToastItem } from '../store.js';
 import { moreCss } from './more-css.js';
 import { dismiss } from './toast.js';
 
-// Each kind has its own shape, not only its own colour.
 const ICON: Record<IToastItem['kind'], string> = {
   success: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM8 12.2l2.8 2.8L16 9.6',
   info: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 11v5M12 7.8v.1',
@@ -12,11 +11,10 @@ const ICON: Record<IToastItem['kind'], string> = {
   offline:
     'M2.5 8.8a14 14 0 0 1 5-3M11 5a14 14 0 0 1 10.5 3.8M5.6 12.2a9.5 9.5 0 0 1 3.9-2.3M14.8 10.1a9.5 9.5 0 0 1 3.6 2.1M9 15.6a4.5 4.5 0 0 1 6 0M12 19.2v.1M3.5 3.5l17 17',
 };
-// Intrinsic sizes keep the icons small even if the stylesheet is late or fails.
 const svg = (d: string, cls = '', size = 20) =>
   `<svg class="${cls}" width="${String(size)}" height="${String(size)}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
 
-// Time to read it: a base per kind plus 60 ms a character. Errors, sticky notices and ones with an action stay.
+// A base per kind plus 60 ms a character; errors and sticky notices stay.
 const life = (x: IToastItem) =>
   x.kind === 'error' || x.sticky || x.action ? Infinity : (x.kind === 'warn' ? 8000 : 5000) + 60 * x.text.length;
 
@@ -28,10 +26,9 @@ export function mountToasts(region: HTMLElement, store: IStore): () => void {
   let timer = 0;
   let hover = false;
   let back: HTMLElement | null = null;
-  // run() takes the time since its last call off every clock, so a new clock starts with that much extra.
   const fresh = (x: IToastItem) => life(x) + (since ? Date.now() - since : 0);
 
-  // Clocks only run while the tab is visible and the pointer and focus are elsewhere, so nothing vanishes unseen.
+  // Clocks pause while hidden, hovered or focused, so nothing vanishes unseen.
   const run = () => {
     const now = Date.now();
     const due: string[] = [];
@@ -46,8 +43,7 @@ export function mountToasts(region: HTMLElement, store: IStore): () => void {
     for (const id of due) dismiss(store, id);
   };
 
-  // A modal makes the page behind it inert and popovers sit in the top layer, so the region moves into the modal
-  // and becomes a manual popover itself, shown again after anything else opens.
+  // Modals make the page inert and popovers sit on top, so the region follows them.
   const place = (e?: Event) => {
     if (e?.target === region) return;
     const modal =
@@ -98,18 +94,16 @@ export function mountToasts(region: HTMLElement, store: IStore): () => void {
       const focused = s.el.contains(document.activeElement);
       s.el.inert = true;
       s.el.style.animation = '';
-      // Focus never drops to the page: it goes to the next notice, or back where it came from.
       if (focused) (region.querySelector<HTMLElement>('.at-toast:not([inert]) .at-toast-x') ?? back)?.focus();
       setTimeout(() => {
         s.el.remove();
       }, 320);
     }
-    // One live region: polite, and assertive only while an error is on screen.
     region.setAttribute('aria-live', list.some((x) => x.kind === 'error') ? 'assertive' : 'polite');
     for (const item of list) {
       const s = shown.get(item.id);
       if (s?.item === item) continue;
-      // The same notice again restarts its clock and says nothing new; a changed one is swapped in without a rise.
+      // A repeated notice restarts its clock without being announced again.
       if (s?.item.text === item.text && s.item.kind === item.kind) {
         s.item = item;
         s.left = fresh(item);
@@ -147,7 +141,6 @@ export function mountToasts(region: HTMLElement, store: IStore): () => void {
   document.addEventListener('close', place, true);
 
   let off: () => void = () => undefined;
-  // The toast styles sit in the on-demand sheet; nothing renders before it has loaded.
   void moreCss().then(() => {
     off = store.subscribe((s) => {
       if (s.ui.toasts !== last) render((last = s.ui.toasts));

@@ -1,10 +1,9 @@
 import type { IStore, IToastItem } from '../store.js';
 
-// The boot chunk only keeps the queue; timers, pausing and the DOM live in the lazy toast-view.ts.
+// The critical chunk keeps only the queue; the rest loads lazily.
 export function toast(store: IStore, item: Omit<IToastItem, 'id'> & { id?: string }): void {
   const id = item.id ?? item.text;
   const list = store.get().ui.toasts.filter((x) => x.id !== id);
-  // A fourth notice makes room by dropping the oldest one that would time out anyway.
   const old =
     list.length > 2
       ? Math.max(
