@@ -5,6 +5,7 @@ import { t } from './i18n.js';
 import { EXTEND_AUTO_STOP_MS } from './params.js';
 import { chime, notify } from './signal.js';
 import type { IDone } from './store.js';
+import { maybeShowRating } from './ui/rating.js';
 import { toast } from './ui/toast.js';
 
 export const TITLE_FLASH_MS = 1000;
@@ -52,9 +53,7 @@ function bumpSessionCount(ctx: IToolCtx, session: ISession): void {
 
 function maybeRate(ctx: IToolCtx): void {
   window.setTimeout(() => {
-    void import('./ui/rating.js').then(({ maybeShowRating }) => {
-      maybeShowRating(ctx);
-    });
+    maybeShowRating(ctx);
   }, RATING_DELAY_MS);
 }
 

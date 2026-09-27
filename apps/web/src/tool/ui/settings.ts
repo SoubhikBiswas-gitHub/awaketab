@@ -177,27 +177,21 @@ export function openSettings(ctx: IToolCtx): void {
     form.addEventListener('change', (e) => {
       const next = readSettings(form, ctx.store.get().settings, gates());
       const target = e.target;
+      const asked =
+        target instanceof HTMLInputElement && target.name === 'notifications' && target.checked
+          ? notificationsState()
+          : '';
       // Permission is asked only when the user turns notifications on (docs/04 §10 step 4).
-      if (
-        target instanceof HTMLInputElement &&
-        target.name === 'notifications' &&
-        target.checked &&
-        notificationsState() === 'default'
-      ) {
+      if (asked === 'default') {
         void Notification.requestPermission().then((p) => {
           const granted = p === 'granted';
-          target.checked = granted;
+          (target as HTMLInputElement).checked = granted;
           save({ ...ctx.store.get().settings, notifications: granted });
           refresh();
         });
       }
-      if (
-        target instanceof HTMLInputElement &&
-        target.name === 'notifications' &&
-        target.checked &&
-        notificationsState() === 'denied'
-      ) {
-        target.checked = false;
+      if (asked === 'denied') {
+        (target as HTMLInputElement).checked = false;
         next.notifications = false;
       }
       save(next);

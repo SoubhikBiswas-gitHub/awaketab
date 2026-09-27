@@ -17,7 +17,7 @@ export interface IDone {
 
 export interface IToastItem {
   id: string;
-  kind: 'info' | 'success' | 'warn' | 'error';
+  kind: 'info' | 'success' | 'warn' | 'error' | 'offline';
   text: string;
   action?: { label: string; onClick: () => void };
   sticky?: boolean;

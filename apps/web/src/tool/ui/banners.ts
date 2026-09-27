@@ -41,7 +41,10 @@ export function mountBanners(ctx: IToolCtx): () => void {
       const n = q(sel);
       if (n) n.textContent = text;
     };
-    const ask = t('tool.resume.body', { label: planLabel(session.presetId, s.eightHour) });
+    const ask =
+      rem === null
+        ? t('tool.resume.bodyInf')
+        : t('tool.resume.body', { label: planLabel(session.presetId, s.eightHour) });
     // A no-limit session has no time left to name, so its question becomes the title.
     put('[data-resume-title]', rem === null ? ask : t('tool.resume.title', { time: words(Math.round(rem / 1000)) }));
     put(

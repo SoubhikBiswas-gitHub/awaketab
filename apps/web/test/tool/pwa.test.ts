@@ -56,7 +56,7 @@ describe('watchUpdates (FR-PWA-01)', () => {
     expect(env.swToasts()[0]).toMatchObject({
       kind: 'info',
       sticky: true,
-      text: 'Update ready — reload when you finish',
+      text: 'Update ready. Reload when you finish.',
     });
     expect(env.swToasts()[0]?.action?.label).toBe('Reload');
   });

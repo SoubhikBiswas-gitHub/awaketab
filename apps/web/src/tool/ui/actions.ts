@@ -1,9 +1,12 @@
 import './more-css.js';
 import { planUntil, type TPresetId, type TTheme } from '@awaketab/core';
 import type { IToolCtx } from '../ctx.js';
+import { extendAsk, finishAsk } from '../end.js';
+import { openStats } from '../stats/panel.js';
 import { hm, mins, nextWall, stepCustom, wallOf, when } from '../format.js';
 import { t } from '../i18n.js';
 import { applyTheme, nextTheme } from '../theme.js';
+import { openSettings } from './settings.js';
 import { toast } from './toast.js';
 import { liveSession } from './view.js';
 
@@ -128,17 +131,9 @@ export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
   else if (name === 'changeTime') setUntil(ctx, wallOf(untilSlots()[0] ?? Date.now()));
   else if (name === 'why') store.set({ ui: { why: !store.get().ui.why } });
   else if (name === 'add15' || name === 'add30' || name === 'add60')
-    void import('../end.js').then((m) => {
-      m.extendAsk(ctx, { add15: 15, add30: 30, add60: 60 }[name] * 60_000);
-    });
-  else if (name === 'askStop')
-    void import('../end.js').then((m) => {
-      m.finishAsk(ctx);
-    });
-  else if (name === 'battSettings')
-    void import('./settings.js').then((m) => {
-      m.openSettings(ctx);
-    });
+    extendAsk(ctx, { add15: 15, add30: 30, add60: 60 }[name] * 60_000);
+  else if (name === 'askStop') finishAsk(ctx);
+  else if (name === 'battSettings') openSettings(ctx);
 }
 
 const SHARE_ROUTES: Partial<Record<TPresetId, string>> = {
@@ -176,12 +171,15 @@ export function openShare(ctx: IToolCtx): void {
   const label = q<HTMLElement>('[data-share-label]');
   const pre = s.session?.presetId ?? s.selectedPreset;
   if (label)
-    label.textContent = t('tool.share.body', {
-      label:
-        pre === 'until' && s.session?.plan.type === 'until'
-          ? when(s.session.endsAt ?? 0)
-          : t(`tool.preset.${pre === 'custom' || pre === 'until' ? 'pinf.sr' : pre}`),
-    });
+    label.textContent =
+      pre === 'pinf'
+        ? t('tool.share.bodyInf')
+        : t('tool.share.body', {
+            label:
+              pre === 'until' && s.session?.plan.type === 'until'
+                ? when(s.session.endsAt ?? 0)
+                : t(`tool.preset.${pre === 'custom' || pre === 'until' ? 'pinf.sr' : pre}`),
+          });
   if (input) input.value = url();
   if (msg) msg.textContent = '';
   if (el.dataset.bound !== '1') {
@@ -249,14 +247,8 @@ export function help(ctx: IToolCtx, show?: boolean): void {
 
 export function open(ctx: IToolCtx, el: HTMLElement): void {
   const d = el.dataset;
-  if ('openSettings' in d)
-    void import('./settings.js').then((m) => {
-      m.openSettings(ctx);
-    });
-  else if ('openStats' in d)
-    void import('../stats/panel.js').then((m) => {
-      m.openStats(ctx);
-    });
+  if ('openSettings' in d) openSettings(ctx);
+  else if ('openStats' in d) openStats(ctx);
   else if ('openShare' in d) openShare(ctx);
   else if ('openPip' in d) pip(ctx);
   else help(ctx, 'openShortcuts' in d);
