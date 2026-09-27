@@ -1,65 +1,77 @@
 ---
-title: "Keep iPhone on in Safari — AwakeTab"
-description: "Safari on iPhone gained a native screen wake lock in 16.4. Low Power Mode still greys out Auto-Lock Never and forces a short lock. Leaving Safari releases"
-h1: "Keep iPhone on in Safari"
+title: "Keep your iPhone screen on in Safari — AwakeTab"
+description: "Safari 16.4 and later can keep an iPhone screen on from a tab after one tap, while the tab stays in front. Low Power Mode can still force a 30-second lock."
+h1: "Keep your iPhone screen on in Safari"
 intent: "keep iphone screen on safari"
+secondaryQueries:
+  - "keep iphone screen on without changing auto-lock"
+  - "stop iphone screen turning off in safari"
+  - "iphone safari wake lock"
 preset: p30
 mode: standard
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: ["safari"]
 os: ["ios"]
 faq:
-  - q: "Does keep iPhone on in Safari work in a hidden tab?"
-    a: "No. The iphone-safari flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "Safari 16.4+ only; Low Power Mode forces 30 s Auto-Lock; switching apps releases the lock."
+  - q: "Why does a shared AwakeTab link still ask me to tap on iPhone?"
+    a: "Safari grants a wake lock only after a recent tap on the page. A link such as /30m, or one ending in ?autostart=1, picks the length for you but still needs one tap the first time. Until then the pill stays at \"Ready\"."
+  - q: "Can AwakeTab keep the screen on while I read a recipe in another app?"
+    a: "No. An iPhone shows one app at a time, and iOS lets go of the wake lock as soon as the AwakeTab tab is off screen. For a recipe in another app, lengthen Auto-Lock while you cook, or use the recipe site's own cook mode if it has one."
+  - q: "What happens if I press the side button during a session?"
+    a: "The iPhone locks straight away, whatever the tab asked for. A wake lock only holds off the automatic Auto-Lock timer. Open the phone again, go back to Safari and check the pill: if it does not return to \"Screen awake\", tap Start once more."
+  - q: "Should I add AwakeTab to my Home Screen?"
+    a: "Only on iOS 18.4 or later; before that, a Home Screen web app had no wake lock. On iOS 26, sites added to the Home Screen open as web apps by default. In Safari itself, iOS 16.4 is enough."
+honestLimit: "The screen stays on only while Safari and the AwakeTab tab are in front. Open another app or tab, or press the side button, and your iPhone falls back to its normal Auto-Lock time."
 related:
-  - "/on/windows-10"
-  - "/vs/powertoys-awake"
   - "/guides/iphone-auto-lock-never-greyed-out"
+  - "/for/cooking"
+  - "/on/ipad"
+  - "/learn/browser-support-matrix"
+  - "/on/ios-home-screen"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+On iOS 16.4 or later, open AwakeTab in Safari and tap Start. The screen stays on while the tab is in front. Switch apps or tabs and iOS releases it; come back and the pill shows the real state. Low Power Mode sets Auto-Lock to 30 seconds. We are still testing whether a wake lock holds under it, and will post the result here.
 
-Safari on iPhone gained a native screen wake lock in 16.4. Low Power Mode still greys out Auto-Lock Never and forces a short lock. Leaving Safari releases the sentinel.
+## Try the iPhone setting first
 
-## How the lock works on this page
+To keep the phone lit for everything, change Auto-Lock:
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for iphone-safari.
+1. Open Settings > Display & Brightness > Auto-Lock.
+2. Choose a longer time, or Never.
+3. Change it back afterwards, or the battery drains fast.
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+If Auto-Lock is greyed out, [iPhone Auto-Lock greyed out or stuck at 30 seconds](/guides/iphone-auto-lock-never-greyed-out) covers the two causes: Low Power Mode and a work or school profile.
 
-## Practical setup for Keep iPhone on in Safari
+## When a Safari tab is the better choice
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+A tab suits the times you would rather leave Auto-Lock alone: a work phone, a borrowed phone, or a task that needs the screen for half an hour and no longer. Pick a length or an "Until…" clock time and tap Start. When the session ends, the phone returns to its usual lock time, with nothing to undo.
 
-## Operating-system notes
+## Safari support on iPhone
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+| Where you open AwakeTab | Can keep the screen on? | What to know |
+|---|---|---|
+| Safari on iOS 16.4 or later (March 2023) | Yes, after one tap | The tab must stay in front |
+| Home Screen web app | iOS 18.4 or later | iOS 26 opens Home Screen sites as web apps by default |
+| Safari before iOS 16.4 | No Screen Wake Lock API | AwakeTab offers "Tap to use the fallback" |
 
-## What success looks like
+Other browsers and versions are in the [wake lock support table](/learn/browser-support-matrix).
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+## What stops it on an iPhone
 
-## Related paths
+- **Leaving the tab.** Going to the Home Screen, opening another app or switching Safari tabs releases the wake lock at once. The pill shows "Paused — tab hidden", and those minutes do not count toward your timer.
+- **Low Power Mode.** Apple says it "sets Auto-Lock to 30 seconds" ([Apple Support](https://support.apple.com/en-us/101604), checked 26 September 2026). Safari itself has no Low Power Mode check, but whether the screen stays on with it turned on is not yet tested.
+- **No tap yet.** Safari refuses a wake lock that no tap started. If a shared link opens and nothing changes, tap Start.
+- **Full screen and the floating window.** Neither is available here: iPhone Safari has no floating window, and element full screen works on iPad only.
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no on claim here that is missing from the matrix.
+## One screen, one app
 
-## A short checklist before you walk away
+This is the catch for cooking and reading. If your recipe sits in another app or tab, the AwakeTab tab cannot keep the screen on for it, because it is no longer in front. For a recipe you follow step by step, [cook mode on a propped-up tablet](/for/cooking) works better, and [Keep an iPad display awake](/on/ipad) shows how to put AwakeTab beside the recipe there.
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For iphone-safari, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+## What we have checked
 
-## Why the pill is the product
-
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On iphone-safari, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Keep iPhone on in Safari to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+The sources behind this page (Apple Support, the WebKit source and MDN's compatibility data) were checked on 26 September 2026. There is no iPhone device result yet; it will appear on /learn/how-we-tested when the device run is complete.

@@ -1,65 +1,91 @@
 ---
-title: "Windows 11 screen off after 1 minute — AwakeTab"
-description: "Open Settings, System, Power and battery, then Screen, sleep and hibernate timeouts. A one-minute timeout is common on battery. AwakeTab holds the display."
-h1: "Windows 11 screen off after 1 minute"
+title: "Windows 11 screen turns off after 1 minute — AwakeTab"
+description: "Three usual causes: the lock screen's own 60-second display timeout, a 1-minute power setting, or a work policy. How to check each, with exact steps."
+h1: "Windows 11 screen turns off after 1 minute: how to fix it"
 intent: "windows 11 screen turns off after 1 minute"
+secondaryQueries:
+  - "windows 11 screen turns off after 1 minute when locked"
+  - "monitor turns off after 60 seconds lock screen"
+  - "console lock display off timeout"
+  - "windows 11 screen timeout not working"
+  - "windows 10 screen turns off after 1 minute"
 preset: p60
 mode: standard
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+lastVerified: 2026-09-26
+browsers:
+  - chrome
+  - edge
+os:
+  - windows
 faq:
-  - q: "Does windows 11 screen off after 1 minute work in a hidden tab?"
-    a: "No. The windows-11-screen-turns-off-after-1-minute flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "On managed PCs the setting is locked by policy; AwakeTab works there only while its tab is visible."
+  - q: "How do I undo the lock-screen change?"
+    a: "Run the same powercfg command with 60 as the number of seconds, then run the /setactive command again. That puts back the Windows default. Use /setdcvalueindex as well if you also changed the value for battery power."
+  - q: "Why is the timeout fine on the charger but 1 minute on battery?"
+    a: "Windows keeps two separate screen timeouts, one for battery and one for plugged in. Changing one leaves the other alone. Energy saver may also shorten timeouts or dim the screen on battery, so check Settings > System > Power & battery > Energy saver too."
+  - q: "My pill said \"Paused — tab hidden\" and the screen went off. Why?"
+    a: "Chrome and Edge take the wake lock back when the tab is hidden: another tab in front, the window minimised, or a full-screen app on top. The normal timeout then applies again. Keep the tab visible, or use AwakeTab for Chrome, which works with the tab hidden."
+  - q: "Is a 1-minute timeout a sign that something is wrong with my PC?"
+    a: "No. It is a setting, a policy or the lock screen doing what it was told. Nothing on this page needs a driver update or a repair Work through the four causes in order."
+honestLimit: "AwakeTab cannot change the 60-second display timeout on the Windows lock screen. For that case, Microsoft's powercfg setting is the fix. A tab helps only while you are signed in and it is visible."
 related:
+  - "/on/windows-11"
   - "/guides/lock-screen-vs-sleep"
-  - "/for/cooking"
-  - "/for/reading"
+  - "/for/work-laptop"
+  - "/vs/powertoys-awake"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+If the screen goes dark about a minute after you lock the PC (Windows key + L), that is Windows' separate lock-screen timeout: 60 seconds by default, and the "Turn off my screen after" setting doesn't change it. Microsoft documents a `powercfg` fix. If it happens while you're signed in and working, check your power timeout, then the screen saver, then any work policy.
 
-Open Settings → System → Power & battery → Screen, sleep & hibernate timeouts. A one-minute screen timeout is common on battery. AwakeTab can hold the display while visible; Group Policy can still lock the control.
+## The causes, most likely first
 
-## How the lock works on this page
+1. **The lock-screen display timeout.** Once the PC is locked, Windows switches the monitor off a minute later, on a timer of its own that Microsoft describes as by design ([Microsoft Learn: Monitor powers off when computer is locked](https://learn.microsoft.com/en-us/troubleshoot/windows-client/shell-experience/monitor-powers-off-when-pc-locked), checked 26 September 2026). It only happens at the lock screen.
+2. **A 1-minute screen timeout.** Windows has one value for battery and one for plugged in. One of them may be set to 1 minute.
+3. **A screen saver with a 1-minute wait.** A blank screen saver looks exactly like the display turning off.
+4. **A work or school policy.** On a managed PC, your organisation can set the timeout and lock the setting.
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for windows-11-screen-turns-off-after-1-minute.
+## Fix the lock-screen timeout
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+This works on Windows 11 and Windows 10.
 
-## Practical setup for Windows 11 screen off after 1 minute
+1. Right-click Start and choose **Terminal (Admin)**. On Windows 10 it is **Windows PowerShell (Admin)**.
+2. To set 10 minutes when plugged in, run `powercfg.exe /setacvalueindex SCHEME_CURRENT SUB_VIDEO VIDEOCONLOCK 600`. The number is in seconds.
+3. For battery power, run the same command with `/setdcvalueindex` in place of `/setacvalueindex`.
+4. Run `powercfg.exe /setactive SCHEME_CURRENT` to apply it.
+5. Press Windows key + L and time how long the screen stays on.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+Microsoft's article also shows how to add this setting, "Console lock display off timeout", to Advanced power settings if you prefer a menu.
 
-## Operating-system notes
+## Fix a 1-minute power setting
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+1. Open **Settings > System > Power & battery**.
+2. Expand **Screen, sleep & hibernate timeouts**. On older Windows 11 builds this section is called **Screen and sleep**.
+3. Set both "turn off my screen" choices, on battery and when plugged in, to the length you want.
+4. On Windows 10 the same choices are in **Settings > System > Power & sleep**.
 
-## What success looks like
+If the battery value keeps coming back short, check Energy saver on the same page (Battery saver before Windows 11 24H2).
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+## Check the screen saver
 
-## Related paths
+1. Open **Settings > Personalization > Lock screen** and choose **Screen saver**.
+2. Set it to **(None)**, or raise **Wait** above your screen timeout.
+3. Note the **On resume, display logon screen** box. It decides whether you sign in again afterwards, which is a separate question covered in [lock screen versus display sleep](/guides/lock-screen-vs-sleep).
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no guides claim here that is missing from the matrix.
+## If the setting is greyed out or managed
 
-## A short checklist before you walk away
+If Settings shows "Some of these settings are managed by your organization", or your changes revert after a restart, the timeout comes from a policy. Only your IT team can change it, so ask them. The [work laptop page](/for/work-laptop) covers what a browser tab can and cannot do on a managed PC.
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For windows-11-screen-turns-off-after-1-minute, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+## Confirm what is happening
 
-## Why the pill is the product
+- Run `powercfg /query SCHEME_CURRENT SUB_VIDEO` to see your current display timeouts. Values are shown in seconds, written in hexadecimal: `0x3c` is 60.
+- Run `powercfg /requests` in an administrator terminal. The **DISPLAY** section lists every app that is asking Windows to keep the screen on. If it is empty, nothing is.
 
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On windows-11-screen-turns-off-after-1-minute, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
+## Skip the settings for now
 
-## Battery, heat and overnight use
+If you can't change the timeout, a visible browser tab can hold it while you work. The timer above this guide starts a 1-hour session. In Chrome or Edge, AwakeTab sends Windows a request to keep the display on, and the pill turns to "Screen awake" when the browser has granted it. While it holds, the browser shows up under DISPLAY in `powercfg /requests`.
 
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Windows 11 screen off after 1 minute to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+It does not touch the lock-screen timeout. We have not recorded whether a browser's request keeps the display on at the lock screen, so use the powercfg fix above for that. For the full Windows walk-through, see [keep the screen on in Windows 11](/on/windows-11).

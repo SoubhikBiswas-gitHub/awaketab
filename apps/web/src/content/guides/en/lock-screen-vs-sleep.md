@@ -1,65 +1,97 @@
 ---
-title: "Lock screen versus display sleep — AwakeTab"
-description: "Display sleep and “require sign-in” are different policies. AwakeTab contests display sleep. A work lock screen after idle can still appear. Check"
+title: "Lock screen vs display sleep on Windows and Mac — AwakeTab"
+description: "Display sleep, the sign-in lock, screen savers and Modern Standby are separate settings. A wake lock stops display sleep, not a sign-in policy."
 h1: "Lock screen versus display sleep"
-intent: "lock screen vs sleep"
+intent: "prevent screen from locking windows 11"
+secondaryQueries:
+  - "lock screen vs sleep"
+  - "modern standby"
+  - "modern standby keep awake"
+  - "windows 11 require sign in after sleep"
+  - "dynamic lock windows 11"
+  - "mac require password after display is turned off"
 preset: p30
 mode: standard
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+lastVerified: 2026-09-26
+browsers:
+  - chrome
+  - edge
+os:
+  - windows
+  - macos
 faq:
-  - q: "Does lock screen versus display sleep work in a hidden tab?"
-    a: "No. The lock-screen-vs-sleep flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "A wake lock prevents display sleep, not a require-sign-in-after-N-minutes policy."
+  - q: "Can I stop Windows 11 asking for my password without admin rights?"
+    a: "If the choice under Accounts > Sign-in options is not greyed out, you can change it yourself. If it is greyed out, your organisation sets it and only IT can change it. Keeping the display on from a tab needs no admin rights."
+  - q: "My PC locked even though the screen never went dark. What did that?"
+    a: "Something other than display sleep: usually Dynamic lock (your paired phone left with you), a work inactivity policy, or a screen saver that asks for a password."
+  - q: "Does Modern Standby drain my battery with the lid closed?"
+    a: "It can, and the cause is usually a driver or an app waking the PC. Run powercfg /sleepstudy in an administrator terminal: the report shows each standby session and what used power during it. A wake lock plays no part once the lid is shut."
+  - q: "Is the Mac's password delay the same as its display timeout?"
+    a: "No. The timeout decides when the screen turns off; the password delay decides how long after that you can wake the Mac without typing your password. Each can be set without the other."
+honestLimit: "A wake lock stops the display sleeping. It does not change when Windows or macOS asks for your password, and a work policy that locks after inactivity can still lock the screen while the pill says \"Screen awake\"."
 related:
-  - "/for/cooking"
-  - "/for/reading"
-  - "/for/workouts"
+  - "/guides/windows-11-screen-turns-off-after-1-minute"
+  - "/on/windows-11"
+  - "/on/macos"
+  - "/for/work-laptop"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+Your screen going dark and your computer locking are two separate settings. Display sleep turns the screen off after a timeout. The sign-in lock asks for your password when you come back. A screen saver, Dynamic lock or a work policy can lock you out as well. A wake lock stops display sleep only, so to stop the lock you need to find which setting is doing it.
 
-Display sleep and “require sign-in” are different policies. AwakeTab contests display sleep. A work lock screen after idle can still appear. Check Settings → Accounts → Sign-in options separately from Power.
+## What looks like "the screen locked"
 
-## How the lock works on this page
+| What you see | The setting behind it | Does a wake lock change it? |
+|---|---|---|
+| Screen dark; a key brings it back with no password | Display timeout | Yes, while its tab is visible |
+| Screen dark; you must sign in to get back | Display timeout, then the sign-in rule | It stops the dark screen; the sign-in rule stays as set |
+| A pattern or picture, then a sign-in | Screen saver with a password on resume | Not reliably; change the screen saver |
+| Locked soon after you walk away with your phone | Dynamic lock (Windows) | No |
+| Locked after a fixed time on a work PC | An inactivity policy from IT | No |
+| PC asleep or in standby | Sleep or Modern Standby | It prevents idle sleep while the tab is visible; not after the lid closes |
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for lock-screen-vs-sleep.
+While the screen is kept on, neither Windows nor macOS idle-sleeps, but that does not reach the sign-in rules.
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+## Windows 11: where each setting lives
 
-## Practical setup for Lock screen versus display sleep
+1. **Display timeout:** in Settings, go to System, then Power & battery, and open the timeouts section.
+2. **Sign-in on return:** Settings > Accounts > Sign-in options, then "If you've been away, when should Windows require you to sign in again?"
+3. **Dynamic lock:** the same page. It locks the PC when a phone paired over Bluetooth goes out of range.
+4. **Screen saver:** Settings > Personalization > Lock screen > Screen saver. Untick "On resume, display logon screen", or set the screen saver to (None).
+5. **Work policy:** if choices are greyed out and Settings notes that your organisation manages them, IT has set them. One common source is the "Interactive logon: Machine inactivity limit" policy. Ask IT.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+## Mac: where each setting lives
 
-## Operating-system notes
+On macOS Ventura and later, almost everything is in **System Settings > Lock Screen**:
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+1. **Turn display off on battery when inactive** and **Turn display off on power adapter when inactive** set the display timeout.
+2. **Start Screen Saver when inactive** sets the screen saver.
+3. **Require password after screen saver begins or display is turned off** sets the sign-in rule. "Immediately" means any dark screen is a locked screen.
 
-## What success looks like
+A work Mac can have these set by a profile, in which case they are greyed out.
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+## Modern Standby: the part a wake lock can't touch
 
-## Related paths
+Many recent Windows laptops use Modern Standby (S0 low-power idle) in place of classic sleep. When the screen goes off, firmware and drivers run the PC in a low-power state, more like a phone.
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no guides claim here that is missing from the matrix.
+A wake lock keeps the display on, so the PC does not enter standby while the tab is visible. Once the screen is off or the lid is closed, drivers and firmware decide what happens.
 
-## A short checklist before you walk away
+To see what your PC does:
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For lock-screen-vs-sleep, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+1. Open an administrator terminal.
+2. Run `powercfg /a` to list the sleep states the PC supports. "Standby (S0 Low Power Idle)" means Modern Standby.
+3. Run `powercfg /sleepstudy`. It saves a report of recent standby sessions and what used the battery during each.
 
-## Why the pill is the product
+## Confirm which one you hit
 
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On lock-screen-vs-sleep, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
+- On Windows, an administrator terminal running `powercfg /requests` lists Chrome or Edge in its DISPLAY section while the AwakeTab tab is visible.
+- On a Mac, Terminal's `pmset -g assertions` output should include a PreventUserIdleDisplaySleep line from the browser.
+- If that entry is there and the computer still locks, a sign-in rule or policy is doing it.
 
-## Battery, heat and overnight use
+## Keeping the display on from a tab
 
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Lock screen versus display sleep to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+The 30-minute timer above keeps the display on while its tab is visible. It leaves every lock rule in place; if your employer sets one, follow it. Managed machines get their own page: [keeping a work laptop display awake](/for/work-laptop). For browser steps per system, see the [Windows 11 device page](/on/windows-11) or the [Mac device page](/on/macos). A screen that goes dark after only a minute has its own guide: [Windows 11 screen turns off after 1 minute](/guides/windows-11-screen-turns-off-after-1-minute).

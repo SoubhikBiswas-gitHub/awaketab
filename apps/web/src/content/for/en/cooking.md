@@ -1,65 +1,78 @@
 ---
-title: "Keep your screen on while cooking — AwakeTab"
-description: "A recipe on a phone or tablet will dim mid-step unless something holds the display. AwakeTab does that in the browser while its tab stays visible beside"
-h1: "Keep your screen on while cooking"
+title: "Cook mode: keep your screen on while cooking — AwakeTab"
+description: "Keep the screen on with floury hands: kitchen timers, a one-tap pause, no install. It works while its tab is visible; on a phone, that is the catch."
+h1: "Cook mode: keep your screen on while you cook"
 intent: "keep screen on while cooking"
+secondaryQueries:
+  - "cook mode keep screen on"
+  - "keep iphone screen on for recipe"
+  - "keep ipad screen on while cooking"
+  - "kitchen timer that keeps screen on"
 preset: pinf
 mode: cook
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+lastVerified: 2026-09-26
+browsers: ["chrome", "edge", "firefox", "safari", "samsung-internet"]
+os: ["ipados", "ios", "android", "windows", "macos", "chromeos"]
 faq:
-  - q: "Does keep your screen on while cooking work in a hidden tab?"
-    a: "No. The cooking flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "Works while the AwakeTab tab is on screen; opening another app on a phone releases the lock until you return."
+  - q: "Can AwakeTab keep a recipe app awake on my iPhone?"
+    a: "No. The browser keeps the screen on only while AwakeTab’s own tab is in front, and an iPhone shows one app at a time. Open the recipe app and the screen follows Auto-Lock again. Use the app’s own keep-awake option, or a longer Auto-Lock until you finish."
+  - q: "What happens when I tap the big number?"
+    a: "The count-up stops and the hint tells you it is paused, but the screen stays on. Any kitchen timers you added carry on counting down. Tap the number again to carry on counting from where you stopped."
+  - q: "Do my kitchen timers survive if the page reloads?"
+    a: "Yes. Timers are saved in this browser with the session, so a reload or an accidental swipe back picks them up with the right time left."
+  - q: "Does iPhone Low Power Mode matter in the kitchen?"
+    a: "It can. Low Power Mode sets Auto-Lock to 30 seconds, and we have not yet recorded a device test of whether a Safari wake lock still holds under it. Until that result is published, turn Low Power Mode off while you cook."
+honestLimit: "On a phone, AwakeTab keeps the screen on only while its own tab is in front. It cannot keep a recipe in another app or tab lit; use that site’s cook mode or a longer Auto-Lock instead."
 related:
-  - "/for/reading"
-  - "/for/workouts"
+  - "/on/ipad"
+  - "/on/iphone-safari"
+  - "/guides/iphone-auto-lock-never-greyed-out"
   - "/on/android-chrome"
+  - "/embed"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+AwakeTab's cook mode keeps the screen on with big kitchen timers and a count you pause with one tap. It works only while its tab is visible. On a tablet or laptop, put it beside the recipe. On an iPhone only one app is in front, so AwakeTab can't keep a recipe in another app or tab awake. Use the recipe site's own cook mode if it has one, or lengthen Auto-Lock while you cook.
 
-A recipe on a phone or tablet will dim mid-step unless something holds the display. AwakeTab does that in the browser while its tab stays visible beside the recipe, in Split View, or as the only tab you glance at.
+## Which screen to cook from
 
-## How the lock works on this page
+| Device | Does it fit? | How |
+|---|---|---|
+| iPad | Yes | Two Safari windows side by side: windowed apps on iPadOS 26, Split View on iPadOS 18 and earlier |
+| Android tablet or phone | Yes, with split screen | The recipe in one half, AwakeTab in the other |
+| Laptop | Yes | Two browser windows next to each other |
+| iPhone | Only for the timers | The recipe can't share the screen, so see the iPhone section below |
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for cooking.
+A wake lock keeps the whole display on, not one window. So when the AwakeTab half is visible, the recipe half stays lit too. We have not yet recorded a device test of Android split screen; the result will appear on our how-we-tested page.
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+## Set it up on a tablet or laptop
 
-## Practical setup for Keep your screen on while cooking
+1. Open the recipe in one window.
+2. Open AwakeTab in a second window and place it beside the recipe. On iPad, [the iPad page](/on/ipad) has the details for your iPadOS version.
+3. Tap the big number. The pill shows "Starting…", then "Screen awake" once the browser agrees. Safari needs that tap before it will keep the screen on, so the page never starts by itself there.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+## On an iPhone
 
-## Operating-system notes
+The recipe and AwakeTab can't both be in front, so pick one of these:
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+- **The recipe site's cook mode.** Many recipe sites have a "Cook Mode" switch on the recipe card. It keeps the screen on for that page, which is exactly what you need.
+- **A longer Auto-Lock, for tonight only.** Settings > Display & Brightness > Auto-Lock, then set it back afterwards. If Never is greyed out, the fix is in [iPhone Auto-Lock greyed out or stuck at 30 seconds](/guides/iphone-auto-lock-never-greyed-out).
+- **AwakeTab for the timers alone.** If you cook from a printed page or from memory, cook mode on the phone gives you three timers on a screen that stays on while the tab is in front. [Keep your iPhone screen on in Safari](/on/iphone-safari) covers the Safari details.
 
-## What success looks like
+## How cook mode works
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+The big number counts up from zero when you start, so you can see how long the onions have had. Tap it to pause the count; the screen stays on while it is paused. Tap again to carry on.
 
-## Related paths
+Below it you can add up to three kitchen timers. Give one a name ("Rice") if you like, then tap 5, 10, 15, 30 or 60 minutes, or type your own length. Each timer chimes when it reaches zero, flashes, and can send a notification if you allowed them.
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no for claim here that is missing from the matrix.
+## What you'll see
 
-## A short checklist before you walk away
+"Screen awake" means the browser has confirmed the lock. If you switch tabs or apps, the pill changes to "Paused — tab hidden" and the screen follows its normal timeout. Come back and AwakeTab asks again. On a very old browser without wake lock support, the pill offers "Tap to use the fallback", which uses a silent video and shows "Awake via video fallback".
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For cooking, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+## For recipe-site owners
 
-## Why the pill is the product
-
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On cooking, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Keep your screen on while cooking to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+The phone problem goes away when the lock lives on the recipe page itself. The free [Cook Mode widget](/embed) adds a button and kitchen timers to your recipe with one script tag, and shows your readers the same status pill. The Embed licence, $29 a year per site, removes the credit link and applies your brand; sales open soon.

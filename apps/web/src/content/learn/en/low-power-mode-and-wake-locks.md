@@ -1,65 +1,71 @@
 ---
-title: "Low Power Mode and wake locks — AwakeTab"
-description: "iOS Low Power Mode forces a short Auto-Lock and can deny Safari's request. Android Battery Saver and Windows battery saver deny Chromium. The pill should"
-h1: "Low Power Mode and wake locks"
+title: "Do battery savers block a wake lock? — AwakeTab"
+description: "No browser engine refuses a wake lock for battery saver; Firefox stops at 5 % battery. iPhone Low Power Mode does cap Auto-Lock at 30 seconds."
+h1: "Do battery savers block a wake lock? Mostly, no"
 intent: "low power mode wake lock"
+secondaryQueries:
+  - "battery saver wake lock"
+  - "low power mode keep screen on"
+  - "energy saver wake lock"
+  - "wake lock notallowederror battery"
 preset: p30
 mode: standard
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+noindex: true
+lastVerified: 2026-09-26
+browsers: ["chrome", "edge", "firefox", "safari", "samsung-internet"]
+os: ["ios", "android", "windows"]
 faq:
-  - q: "Does low Power Mode and wake locks work in a hidden tab?"
-    a: "No. The low-power-mode-and-wake-locks flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "iOS Low Power Mode and Android or Windows battery savers override or deny; this page lists the behaviours we ship against."
+  - q: "Should I turn off Low Power Mode to keep my iPhone screen on?"
+    a: "If the screen must stay on for more than 30 seconds without a touch, yes, at least until our device test shows whether Safari's wake lock holds under it. Turn it off in Settings > Battery, then set Auto-Lock in Settings > Display & Brightness."
+  - q: "Does Chrome's Energy Saver stop a wake lock?"
+    a: "No. Energy Saver limits background activity and some visual effects to save battery, and Chromium's wake lock code has no check for it. A visible tab can still keep the screen on while Energy Saver is active."
+  - q: "My Firefox lock stopped with the battery nearly flat. Is that a bug?"
+    a: "No, it's by design. Firefox refuses a new lock, and releases a held one, at 5 % battery or less while unplugged. Plug in, then start the session again so AwakeTab can ask the browser afresh."
+honestLimit: "On iPhone, Low Power Mode sets Auto-Lock to 30 seconds. We have not yet recorded whether a Safari wake lock still keeps the screen on under it, so turn Low Power Mode off if the screen must stay on."
 related:
-  - "/for/dashboards"
-  - "/for/video-calls"
   - "/on/iphone-safari"
+  - "/guides/iphone-auto-lock-never-greyed-out"
+  - "/learn/browser-support-matrix"
+  - "/learn/screen-wake-lock-api-guide"
+  - "/on/android-chrome"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+Mostly, no. Chrome, Edge, Samsung Internet and Safari never refuse a wake lock because a battery saver is on: their code has no such check. Firefox is the one exception, and only at 5 % battery or less while unplugged. Savers work on the device's own timeout instead: on an iPhone, Low Power Mode drops Auto-Lock to 30 seconds.
 
-iOS Low Power Mode forces a short Auto-Lock and can deny Safari's request. Android Battery Saver and Windows battery saver deny Chromium. The pill should show Blocked with an advice code, not Screen awake.
+## A correction first
 
-## How the lock works on this page
+Earlier versions of this page said Low Power Mode and battery savers deny the wake lock. That was wrong, and the same claim is repeated across much of the web. On 26 September 2026 we read the wake lock code in all three browser engines, and none of them checks for a saver mode.
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for low-power-mode-and-wake-locks.
+## What each browser engine checks
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+- **Chromium** (Chrome, Edge, Opera, Samsung Internet) refuses only when the page is hidden or inactive, or a Permissions-Policy blocks the feature. The permission is granted without a prompt, and nothing in that code reads the state of a saver mode, whether it is Battery Saver on a phone, Energy saver on Windows or Energy Saver inside Chrome ([wake_lock.cc](https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/modules/wake_lock/wake_lock.cc)).
+- **WebKit** (Safari on Mac, iPhone and iPad) wants a recent tap, or an earlier one it remembers. There is no Low Power Mode check ([WakeLock.cpp](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/Modules/screen-wake-lock/WakeLock.cpp)).
+- **Gecko** (Firefox) refuses a new lock, and releases one it holds, when the battery is at 5 % or less and not charging. It has no other battery-saver check ([WakeLockJS.cpp](https://github.com/mozilla-firefox/firefox/blob/main/dom/power/WakeLockJS.cpp)).
 
-## Practical setup for Low Power Mode and wake locks
+## What the operating system does
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+A saver mode works one level below the browser, on the operating system's own settings.
 
-## Operating-system notes
+- **On iPhone, Low Power Mode** fixes Auto-Lock at 30 seconds and greys out the longer choices until you turn it off ([Apple Support](https://support.apple.com/en-us/101604), checked 26 September 2026). If Auto-Lock is stuck and Low Power Mode is off, a work or school profile may be setting it: see [iPhone Auto-Lock greyed out or stuck at 30 seconds](/guides/iphone-auto-lock-never-greyed-out).
+- **Android Battery Saver** may shorten the screen timeout or dim the display, depending on the phone.
+- **Windows Energy saver** (called Battery saver before Windows 11 24H2) may dim the screen or shorten timeouts to save power.
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+None of these is a refused request, so AwakeTab's pill would not show "Blocked — here's the fix" for them. If a saver overrides the screen timeout while the browser still holds the lock, the pill can say "Screen awake" while the screen dims. That is the case we most want to measure.
 
-## What success looks like
+## What we have not tested yet
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+We have not yet recorded a device test for any of these; the results will appear on How we tested.
 
-## Related paths
+- Whether Safari's wake lock keeps an iPhone screen on while Low Power Mode is active.
+- Whether Android Battery Saver, on Pixel and Samsung phones, turns the screen off despite a lock Chrome still holds.
+- Whether Windows Energy saver dims or turns off a display that Chrome or Edge has asked to keep on.
+- Whether Samsung Internet's and Edge's own efficiency modes change anything for a visible tab.
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no learn claim here that is missing from the matrix.
+## What to do today
 
-## A short checklist before you walk away
-
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For low-power-mode-and-wake-locks, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
-
-## Why the pill is the product
-
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On low-power-mode-and-wake-locks, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Low Power Mode and wake locks to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+On iPhone, turn Low Power Mode off when the screen must stay on, then open AwakeTab in Safari and tap Start. On Android and Windows, keep the tab visible and watch the screen for the first few minutes; if it dims while the pill says "Screen awake", turn the saver off for that session. In Firefox, plug in before the battery reaches 5 %. [Keep your iPhone screen on in Safari](/on/iphone-safari) has the full iPhone steps.

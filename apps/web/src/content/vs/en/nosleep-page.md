@@ -1,65 +1,84 @@
 ---
-title: "nosleep.page vs AwakeTab — AwakeTab"
-description: "nosleep.page is also a tab. Hidden, both release. AwakeTab adds a seven-state pill, until-time, session restore and a documented fallback. Compare them as"
-h1: "nosleep.page vs AwakeTab"
+title: "A nosleep.page alternative with honest status — AwakeTab"
+description: "nosleep.page and AwakeTab both keep a screen on from a visible tab with the Wake Lock API. Who should use which, as of 26 September 2026."
+h1: "AwakeTab vs nosleep.page"
 intent: "nosleep.page alternative"
-preset: pinf
+secondaryQueries:
+  - "nosleep page alternative"
+  - "no sleep page"
+  - "nosleep.page vs awaketab"
+  - "sites like nosleep.page"
+preset: p30
 mode: standard
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: []
+lastVerified: 2026-09-26
+browsers:
+  - chrome
+  - edge
+  - firefox
+  - safari
+  - samsung-internet
+  - opera
 os: []
 faq:
-  - q: "Does nosleep.page vs AwakeTab work in a hidden tab?"
-    a: "No. The nosleep-page flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "Both are tabs and both release when hidden; the difference is honest status, until-time and persistence. Facts dated 9 September 2026."
+  - q: "Is nosleep.page the same thing as NoSleep.js?"
+    a: "No. nosleep.page is a website you open and use. NoSleep.js is a JavaScript library, last released in December 2020, that developers add to their own sites. If you build sites, the AwakeTab vs NoSleep.js page compares the libraries."
+  - q: "Can I keep both open at once?"
+    a: "You can, but only the tab in front holds the screen. A browser gives the wake lock to a visible page and takes it back from a hidden one, so a second tab behind the first adds nothing. Pick one and keep it in view."
+  - q: "Why does AwakeTab ask me to tap Start on an iPhone?"
+    a: "Safari grants a wake lock only after a recent tap on the page. That applies to any site using the Wake Lock API. After the first tap, AwakeTab starts, and the pill says \"Screen awake\" once Safari confirms."
+honestLimit: "AwakeTab shares the core limit of nosleep.page: the browser takes the wake lock back when the tab is hidden, so on a phone the tab has to stay in front. AwakeTab shows \"Paused — tab hidden\" when that happens; it cannot prevent it."
 related:
-  - "/guides/android-screen-timeout-one-app"
-  - "/learn/low-power-mode-and-wake-locks"
-  - "/for/dashboards"
+  - "/vs/nosleep-js"
+  - "/learn/browser-support-matrix"
+  - "/learn/screen-wake-lock-api-guide"
+  - "/vs/caffeine"
+  - "/for/presentations"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+Use nosleep.page if you want the plainest page possible: open it, pick 30 minutes, 1 hour, 2 hours or your own length, and keep the tab in front. Use AwakeTab if you need the session to end at a clock time, run until you stop it, pick up again after a reload, or tell you in words what the browser is doing. Both use the Wake Lock API, and both need the tab visible.
 
-nosleep.page is also a tab. Hidden, both release. AwakeTab adds a seven-state pill, until-time, session restore and a documented fallback. Compare them as browsers, not as magic.
+## At a glance
 
-## How the lock works on this page
+Facts about nosleep.page are from its own page as of 26 September 2026. Where it does not cover a point, the table says so.
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for nosleep-page.
+| Feature | nosleep.page | AwakeTab |
+|---|---|---|
+| How it keeps the screen on | Wake Lock API | Screen Wake Lock API; a video fallback after a tap where the API is missing |
+| With the tab hidden | Asks you to keep the tab in front | Pauses and shows "Paused — tab hidden", then asks again when you return |
+| Install | None, it is a web page | None; can also be installed as an app |
+| Lengths | 30 min, 1 h, 2 h, custom | 15 min to 4 h, ∞, custom up to 7 days, or until a clock time |
+| Platforms | Its page does not list them | Firefox 126+, Safari 16.4+, and Chromium browsers from Chrome and Edge 84, Opera 70 and Samsung Internet 14 |
+| Price | Its page does not mention one | Free; Pro ($12 a year or a one-time payment) adds extras |
+| What the status shows | Its page does not say | A pill that reads "Screen awake" only after the browser confirms |
+| After a reload | Its page does not say | The session restores |
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+## When nosleep.page is the better pick
 
-## Practical setup for nosleep.page vs AwakeTab
+- **You want nothing else on the page.** AwakeTab has modes, settings and help text around the timer. If all you want is a button and a countdown, less is better.
+- **Your sessions fit its buttons.** Thirty minutes, an hour or two covers a meeting, a film or a large download.
+- **It is already bookmarked and working for you.** There is no need to switch for the same job.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+## When AwakeTab is the better pick
 
-## Operating-system notes
+- **It has to stop at a time, not after a length.** "Until…" ends the session at, say, 11:30 AM, which suits a lecture or a shift.
+- **It has to run a long time.** Pick ∞ to run until you stop it, or a custom length of up to 7 days.
+- **You want to see what the browser did.** The pill shows "Screen awake" after the browser has granted the wake lock, not before. Switch tabs and it shows "Paused — tab hidden"; time spent paused is left out of a timed session's count. If the browser refuses, it shows "Blocked — here's the fix" with the fix.
+- **The page might reload.** A timed session carries on where it was after a reload.
+- **The screen has a job.** Cook mode gives you up to three kitchen timers and a big tap-to-pause count. Clock mode shows the time large enough to read across a room.
+- **You want to share a length.** A link such as [a 1-hour session](/1h) starts that preset for whoever opens it.
+- **The tab can't stay visible.** On desktop Chrome and Edge, [AwakeTab for Chrome](/extension) uses Chrome's power setting, so it keeps working with the tab hidden or the window minimised.
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+## If you are a developer
 
-## What success looks like
+nosleep.page is a page to use, not code to add. To build the same behaviour into your own site, [AwakeTab vs NoSleep.js](/vs/nosleep-js) compares the library options and the [Screen Wake Lock API guide](/learn/screen-wake-lock-api-guide) covers the errors to handle. AwakeTab's engine, @awaketab/wake, is on the [library page](/library); the npm package is coming soon.
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+## What neither can do
 
-## Related paths
+Both are browser tabs, with the same edges. Neither keeps the screen on while its tab is hidden. Neither keeps a laptop awake once you close the lid. Neither changes your status in Teams or Slack. On a phone, neither can keep another app lit, since the phone shows one app at once.
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no vs claim here that is missing from the matrix.
-
-## A short checklist before you walk away
-
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For nosleep-page, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
-
-## Why the pill is the product
-
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On nosleep-page, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect nosleep.page vs AwakeTab to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+Which browsers support the wake lock, and from which version, is set out in the [wake lock browser support matrix](/learn/browser-support-matrix).

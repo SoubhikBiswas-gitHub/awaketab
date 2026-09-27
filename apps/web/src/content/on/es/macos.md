@@ -1,6 +1,6 @@
 ---
 title: "Evita que la pantalla de tu Mac se apague — AwakeTab"
-description: "Safari 16.4+, Chrome 84+ y Firefox 126+ mantienen encendida la pantalla de tu Mac. En nuestras pruebas no evitaron el reposo; cerrar la tapa lo activa."
+description: "Safari 16.4+, Chrome 84+ y Firefox 126+ mantienen encendida la pantalla de tu Mac desde una pestaña visible. Cerrar la tapa sí la pone en reposo."
 h1: "Evita que la pantalla de tu Mac se apague desde una pestaña"
 ogTitle: "Que la pantalla de tu Mac no se apague"
 intent: "evitar que la pantalla de la mac se apague desde el navegador"
@@ -15,14 +15,14 @@ browsers: ["chrome", "safari", "firefox"]
 os: ["macos"]
 faq:
   - q: "¿AwakeTab evita que la Mac entre en reposo?"
-    a: "Mantiene la pantalla encendida, que es lo que promete. En nuestras pruebas, macOS no evitó el reposo del sistema por inactividad con solo un Wake Lock del navegador. Si necesitas el equipo activo con la pantalla apagada, usa una utilidad nativa."
+    a: "Sí, mientras la pantalla siga encendida. Chrome sostiene una aserción que impide el reposo de la pantalla y, según la documentación de Apple, la Mac tampoco entra en reposo por inactividad mientras está activa. Si necesitas el equipo activo con la pantalla apagada, usa caffeinate u otra utilidad nativa."
   - q: "¿Funciona con la tapa de la MacBook cerrada?"
-    a: "No. Cerrar la tapa siempre pone la Mac en reposo, y ninguna página web puede evitarlo. AwakeTab solo actúa sobre el tiempo de apagado de la pantalla mientras la pestaña está visible."
+    a: "Normalmente no. Cerrar la tapa pone la Mac en reposo, salvo en modo de tapa cerrada (con corriente y una pantalla externa), y ninguna página web puede evitarlo. AwakeTab solo actúa sobre el tiempo de apagado de la pantalla mientras la pestaña está visible."
   - q: "¿Qué navegador conviene usar en Mac?"
     a: "Cualquiera de estos tiene Wake Lock nativo: Safari 16.4+, Chrome 84+, Firefox 126+, además de Edge 84+ y Opera 70+. Con un Firefox anterior, AwakeTab usa un video de respaldo tras un clic, que gasta más energía."
   - q: "¿Qué pasa si minimizo la ventana o cambio a otra pestaña?"
     a: "El navegador libera el bloqueo y el indicador muestra “En pausa — pestaña oculta”; la cuenta regresiva se detiene. Vuelve a la pestaña y espera a “Pantalla despierta” antes de alejarte."
-honestLimit: "La pantalla sigue encendida, pero en nuestras pruebas macOS no evitó el reposo del sistema por inactividad; cerrar la tapa siempre pone la Mac en reposo y el Modo de bajo consumo puede acortar el tiempo."
+honestLimit: "La pantalla sigue encendida y, mientras lo está, la Mac no entra en reposo por inactividad; cerrar la tapa sí la pone en reposo (salvo en modo de tapa cerrada con pantalla externa) y ocultar la pestaña libera el bloqueo."
 related:
   - "/vs/caffeine"
   - "/vs/caffeinate-command"
@@ -31,19 +31,20 @@ related:
   - "/learn/does-a-wake-lock-keep-teams-green"
 author: soubhik
 published: 2026-09-26
+updated: 2026-09-27
 ---
 
 ## Qué consigues en macOS
 
-Safari 16.4+, Chrome 84+ y Firefox 126+ pueden mantener encendida la pantalla de tu Mac desde una pestaña visible, sin instalar ninguna app. Inicia la sesión de una hora que trae esta página, o cualquier otra duración; estará activa cuando el indicador marque “Pantalla despierta”. Ten presentes dos límites: en nuestras pruebas, macOS no evitó el reposo del sistema por inactividad, y cerrar la tapa siempre pone la Mac en reposo.
+Safari 16.4+, Chrome 84+ y Firefox 126+ pueden mantener encendida la pantalla de tu Mac desde una pestaña visible, sin instalar ninguna app. Inicia la sesión de una hora que trae esta página, o cualquier otra duración; estará activa cuando el indicador marque “Pantalla despierta”. Mientras la pantalla siga encendida, la Mac tampoco entra en reposo por inactividad. Ten presentes dos límites: cerrar la tapa la pone en reposo, y minimizar la ventana o cambiar de pestaña libera el bloqueo.
 
 ## Pantalla encendida no es lo mismo que Mac despierta
 
-macOS separa dos cosas: el reposo de la pantalla y el reposo del sistema. Un Wake Lock del navegador está diseñado para la primera, y en nuestras pruebas macOS no lo trató como motivo para mantener despierto el sistema. Por eso, si tu objetivo es que termine una copia larga o una exportación con la pantalla apagada, AwakeTab no es la herramienta: necesitas una utilidad nativa, como el comando caffeinate que trae macOS. Comparamos ese enfoque con una pestaña en [Caffeine vs. AwakeTab](/es/vs/caffeine).
+macOS separa dos cosas: el reposo de la pantalla y el reposo del sistema. Un Wake Lock del navegador está diseñado para la primera, pero arrastra la segunda: Chrome sostiene una aserción que impide el reposo de la pantalla y, según la documentación de Apple (IOKit, revisada el 26 de septiembre de 2026), mientras está activa la Mac no entra en reposo por inactividad. Puedes comprobarlo con `pmset -g assertions` en la Terminal. Pero si tu objetivo es que termine una copia larga o una exportación con la pantalla apagada, AwakeTab no es la herramienta: necesitas una utilidad nativa, como el comando caffeinate que trae macOS. Comparamos ese enfoque con una pestaña en [Caffeine vs. AwakeTab](/es/vs/caffeine).
 
 ## Cómo dejarlo listo
 
-1. Conecta la MacBook al cargador si la sesión va a ser larga. El Modo de bajo consumo puede acortar el tiempo o rechazar el bloqueo.
+1. Conecta la MacBook al cargador si la sesión va a ser larga.
 2. Abre AwakeTab en Safari, Chrome o Firefox y elige la duración.
 3. Revisa que el indicador diga “Pantalla despierta”. Si dice “Bloqueado — aquí está la solución”, el motivo aparece justo debajo.
 4. Deja la ventana a la vista. Puede estar en un costado de la pantalla o en un monitor externo, pero no minimizada.
@@ -52,7 +53,7 @@ Los ajustes del sistema que controlan cuándo se apaga la pantalla están en Aju
 
 ## La tapa cerrada
 
-Una MacBook con la tapa cerrada entra en reposo siempre. No importa si AwakeTab dice “Pantalla despierta” un segundo antes: ni una página web ni una extensión pueden impedirlo. Entre las páginas relacionadas hay una guía dedicada a la Mac con la tapa cerrada.
+Una MacBook con la tapa cerrada entra en reposo, salvo en modo de tapa cerrada (con corriente y una pantalla externa conectada). No importa si AwakeTab dice “Pantalla despierta” un segundo antes: ni una página web ni una extensión pueden impedirlo. Entre las páginas relacionadas hay una guía dedicada a la Mac con la tapa cerrada.
 
 ## Si minimizas o cambias de pestaña
 

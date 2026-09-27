@@ -144,12 +144,26 @@ ${PREVIEW_HOST_RULES.map((route) => `${route}
 `;
 }
 
+/**
+ * OD-3 content merges (docs/00 §7, docs/06 §20; redesign B11): each retired URL 301s to the page that now answers
+ * the same question. The four cut /for pages (navigation, live-streams, exams-proctoring, baby-monitor) have no
+ * redirect: they were never indexed, nothing links to them, and a plain 404 is the honest answer for a page that
+ * no longer exists (Pages `_redirects` cannot send 410).
+ */
+export const CONTENT_REDIRECTS = /** @type {const} */ ([
+  ['/for/second-monitor', '/guides/second-monitor-turns-off'],
+  ['/on/windows-10', '/on/windows-11'],
+  ['/guides/modern-standby', '/guides/lock-screen-vs-sleep'],
+  ['/learn/nosleep-js-vs-wake-lock', '/vs/nosleep-js'],
+]);
+
 export function generateRedirects() {
   return `https://www.awaketab.com/* https://awaketab.com/:splat 301
 /en/* /:splat 301
 /support-matrix /learn/browser-support-matrix 301
 /how-we-tested /learn/how-we-tested 301
 /pro/buy /pro 302
+${CONTENT_REDIRECTS.map(([from, to]) => `${from} ${to} 301`).join('\n')}
 `;
 }
 

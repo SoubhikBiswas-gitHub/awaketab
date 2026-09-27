@@ -17,18 +17,18 @@ Hub-and-spoke with one hub (`/`), five spoke families, one product family and on
 | Home | `/` | 1 | — | yes |
 | Preset pages | `/15m` `/30m` `/45m` `/1h` `/2h` `/4h` `/8h` | 7 | chips | yes (self-canonical) |
 | Until deep links | `/until/HH-MM` | ∞ | — | no (`noindex`, canonical `/`) |
-| Scenarios | `/for/{slug}` | 18 | "Scenarios" grid | yes |
-| Devices and browsers | `/on/{slug}` | 12 | "Devices" row | yes |
-| Comparisons | `/vs/{slug}` | 7 | "Alternatives" | yes |
-| OS how-tos | `/guides/{slug}` | 8 | Honest-limits callout | yes |
-| Deep and developer | `/learn/{slug}` | 6 | Support matrix, footer | yes |
+| Scenarios | `/for/{slug}` | 14 | "Scenarios" grid | rewritten pages yes; drafts `noindex` (§20) |
+| Devices and browsers | `/on/{slug}` | 11 | "Devices" row | rewritten pages yes; drafts `noindex` (§20) |
+| Comparisons | `/vs/{slug}` | 7 | "Alternatives" | rewritten pages yes; drafts `noindex` (§20) |
+| OS how-tos | `/guides/{slug}` | 7 | Honest-limits callout | rewritten pages yes; drafts `noindex` (§20) |
+| Deep and developer | `/learn/{slug}` | 5 | Support matrix, footer | rewritten pages yes; drafts `noindex` (§20) |
 | Product | `/pro` `/pro/activate` `/pro/manage` `/extension` `/embed` `/kiosk` `/library` | 7 | Pro strip, product cards | `/pro/activate` `/pro/manage` `noindex`; rest yes |
 | Trust | `/about` `/privacy` `/terms` `/changelog` `/support-matrix` `/how-we-tested` | 6 | Footer, author box | yes |
 | Apps | `/embed/cook` `/pip` `/404` | 3 | — | no |
 
 Route conflicts to resolve (**PROPOSED — decide in 00-conventions.md**): `/support-matrix` duplicates `/learn/browser-support-matrix` and `/how-we-tested` duplicates `/learn/how-we-tested`. Recommendation: the short trust URLs `301` to the `/learn/*` articles, which carry the content; the trust pages then exist only as redirects, keeping one indexable URL per topic.
 
-The English total is 66 indexable URLs (1 + 7 + 18 + 12 + 7 + 8 + 6 + 5 + 2 trust after redirects). Locales replicate the content families and the tool routes; product pages localize in phase 3.
+The English content total is 44 pages after OD-3 (14 + 11 + 7 + 7 + 5; redesign B11, §20), of which 25 are indexable at launch and 19 are `noindex` drafts until rewritten. (The v1.0 plan was 66 indexable URLs with 51 content pages.) Locales replicate the content families and the tool routes; product pages localize in phase 3.
 
 ---
 
@@ -62,7 +62,7 @@ The how-to is the answer; the tool is the shortcut. Sections: answer paragraph (
 
 ### 2.7 `/learn/{slug}` — deep and developer
 
-Sections: abstract (first 100 words) → body with `<h2>` per question, code blocks for API pages → methodology and dates for tests → results table → limits → "Try it" tool embed at the end → related. Word bar 1,200–2,000. `Article` schema with `dateModified`. Code samples use `@awaketab/wake`.
+Sections: abstract (first 100 words) → body with `<h2>` per question, code blocks for API pages → methodology and dates for tests → results table → limits → "Try it" tool embed at the end → related. Word bar 1,000–2,000 (was 1,200; lowered to the research standard, `marketing-seo-content.md` §4, so a complete explainer such as the Teams page is not padded). `Article` schema with `dateModified`. Code samples use `@awaketab/wake`.
 
 ### 2.8 Trust pages
 
@@ -332,81 +332,76 @@ Every page passes this checklist before publish (Google's helpful-content and "p
 
 `preset`/`mode` are the `data-preset`/`data-mode` values on the embedded tool. Honest limits are the sentence the `<aside class="limit">` must convey (edit for voice, keep the fact).
 
-### 12.1 `/for/` — 18 scenarios
+### 12.1 `/for/` — 14 scenarios
+
+Honest limits below were corrected on 2026-09-27 (redesign B11, decision O-79) to match `docs/research/fact-check-2026-09-26.md`: no browser refuses a wake lock because of a battery saver, and no claim rests on device tests that have not been recorded.
 
 | Slug | Intent (target query) | Preset / mode | Honest limit |
 |---|---|---|---|
-| `cooking` | keep screen on while cooking | `pinf` / `cook` | Works while the AwakeTab tab is on screen; opening another app on a phone releases the lock until you return. |
-| `presentations` | keep screen on during presentation | `p120` / `standard` | Full-screen slide apps hide the tab; use the PiP pill (Chromium) or the extension, and remember the projector still follows the OS display timeout. |
-| `downloads` | keep computer awake while downloading | `pinf` / `standard` | Keeps the display on; whether idle system sleep is also held off varies by OS (Chromium on Windows: yes in our tests; macOS: no). Closing the lid always sleeps. |
-| `ai-agents` | keep browser awake while ai agent runs | `pinf` / `minimal` | Keeps the screen on; it cannot stop a site's own inactivity timeout or the throttling of a hidden agent tab. |
-| `dashboards` | keep dashboard screen on | `pinf` / `minimal` | AwakeTab must stay visible on the same display as the dashboard (split-screen, second window or its own monitor). Use `?autostart=1`. |
+| `cooking` | keep screen on while cooking | `pinf` / `cook` | Works while the AwakeTab tab is on screen; on a phone the recipe and AwakeTab cannot both be in front, so switching apps releases the lock until you return. |
+| `presentations` | keep screen on during presentation | `p120` / `standard` | Full-screen slides hide the tab; use the floating window (desktop Chrome, Edge 116+, Firefox 151+) or the extension, and the projector still follows the OS display timeout. |
+| `downloads` | keep screen on during a long download | `pinf` / `standard` | Keeps the display on while visible, which also stops Windows and macOS idle sleep; closing the lid always sleeps. |
+| `ai-agents` | keep computer awake while an ai agent runs | `pinf` / `minimal` | A visible tab keeps the display on; for a terminal job with the screen off, `caffeinate -i` or PowerToys Awake fit better; a closed lid sleeps. |
+| `dashboards` | keep dashboard screen on | `pinf` / `minimal` | AwakeTab must stay visible on the same display as the dashboard (side by side, second window or its own monitor). Use `?autostart=1` (Safari needs one tap). |
 | `kiosk` | keep screen on kiosk browser | `pinf` / `minimal` | Not a kiosk browser: no lockdown, no auto-launch. Pair it with the OS kiosk mode; see `/kiosk` for the licence. |
-| `sheet-music` | keep ipad screen on for sheet music | `p60` / `minimal` | Needs Split View next to the score app; Low Power Mode forces a 30 s lock regardless. |
-| `reading` | keep screen on while reading | `p60` / `minimal` | Only the visible tab is protected; for a reading app, use split-screen with AwakeTab beside it. |
-| `night-clock` | night clock online oled | `pinf` / `night` | A screen on all night needs power — plug in. Pixel shift reduces OLED burn-in risk but cannot remove it. |
-| `baby-monitor` | keep phone screen on baby monitor | `pinf` / `standard` | AwakeTab is not a safety device and must share the screen with a web-based monitor; battery auto-stop is Chromium-only. |
-| `navigation` | keep screen on while navigating maps | `pinf` / `standard` | Native map apps hide the browser; works only with web maps in split-screen. Expect heavy battery use. |
-| `video-calls` | keep screen on during video call | `p60` / `standard` | Does not keep Teams, Slack or Zoom "available" — presence follows keyboard and mouse activity, not the display. |
-| `live-streams` | keep screen from sleeping while watching stream | `p240` / `standard` | Most players hold their own wake lock while playing; AwakeTab helps when paused, muted or in chat. The tab must stay visible. |
-| `teleprompter` | teleprompter keep screen on | `p30` / `minimal` | Not a teleprompter; the prompter page must be visible alongside AwakeTab (split view or PiP pill). |
+| `sheet-music` | keep ipad screen on for sheet music | `p60` / `minimal` | AwakeTab must stay on screen beside the score app (windowed apps on iPadOS 26, Split View on iPadOS 18 and earlier); Low Power Mode sets Auto-Lock to 30 s. |
+| `reading` | keep screen on while reading | `p60` / `minimal` | Only the visible tab is kept awake; for a reading app, use split-screen with AwakeTab beside it. |
+| `night-clock` | night clock online oled | `pinf` / `night` | A screen on all night needs power, so plug in. Pixel shift reduces OLED burn-in risk but cannot remove it. |
+| `video-calls` | keep screen on during video call | `p60` / `standard` | Does not keep Teams, Slack or Zoom "available": presence follows keyboard and mouse activity, not the display. |
+| `teleprompter` | teleprompter keep screen on | `p30` / `minimal` | Not a teleprompter; the prompter page must be visible alongside AwakeTab (side by side or the floating window). |
 | `workouts` | keep screen on during workout timer | `p45` / `clock` | Sweaty taps can stop the session; lock the phone orientation and keep it plugged in for long sessions. |
-| `second-monitor` | keep second monitor from turning off | `pinf` / `clock` | A wake lock holds the OS display timeout for all displays; it cannot fix a monitor that sleeps on its own signal detection or a flaky cable. |
 | `work-laptop` | keep work laptop from locking | `p30` / `standard` | Cannot override lid-close sleep, smart-card removal or a lock policy that isn't the display timeout; will not show you as active in Teams. |
-| `exams-proctoring` | keep screen on during online exam | `p120` / `minimal` | Never interacts with proctoring software; check your exam rules — a second tab may be forbidden. |
+| `classroom` | keep classroom screen on | `p60` / `clock` | Keeps the display on while this tab is visible. A school policy that locks the screen still applies; ask IT about the timeout. |
 
-### 12.2 `/on/` — 12 devices and browsers
+### 12.2 `/on/` — 11 devices and browsers
 
 | Slug | Intent | Preset / mode | Honest limit |
 |---|---|---|---|
-| `iphone-safari` | keep iphone screen on safari | `p30` / `standard` | Safari 16.4+ only; Low Power Mode forces 30 s Auto-Lock; switching apps releases the lock. |
-| `ios-home-screen` | keep screen on iphone web app | `pinf` / `clock` | Wake Lock in Home Screen web apps needs iOS 18.4+; notifications work only in the installed app. |
-| `ipad` | keep ipad screen on | `p60` / `minimal` | Split View works; Stage Manager backgrounding and Low Power Mode release or override the lock. |
-| `android-chrome` | keep android screen on chrome | `p30` / `standard` | Battery Saver denies the lock; leaving Chrome releases it; some OEM "sleeping apps" settings kill the tab. |
-| `samsung-internet` | keep screen on samsung internet | `p30` / `standard` | Samsung Internet 14+ (Chromium 87 base); Samsung "Adaptive battery" and "Put unused apps to sleep" can override. |
-| `chromebook` | keep chromebook screen on | `pinf` / `standard` | Managed Chromebooks may enforce power policies AwakeTab cannot override; lid close sleeps. |
-| `windows-11` | keep screen on windows 11 | `p60` / `standard` | Battery saver denies the lock; Modern Standby quirks (`/guides/modern-standby`); lid close sleeps. |
-| `windows-10` | keep screen on windows 10 | `p60` / `standard` | Same as Windows 11; Chrome's Energy Saver does not block a visible tab. |
-| `macos` | prevent mac display sleep in browser | `p60` / `standard` | Display stays on; idle *system* sleep is not held on macOS in our tests; lid close always sleeps; Low Power Mode may shorten. |
-| `linux` | keep screen on linux browser | `pinf` / `standard` | Needs a desktop that honours idle-inhibit (GNOME, KDE, Wayland or X11); tested on Ubuntu 24.04 GNOME. |
-| `firefox` | keep screen on firefox | `p30` / `standard` | Wake Lock since Firefox 126 (May 2024); older versions use the video fallback with higher CPU. |
-| `edge` | keep screen on edge | `p30` / `standard` | Edge 84+; Windows Battery saver denies; Sleeping Tabs affect only background tabs. |
+| `iphone-safari` | keep iphone screen on safari | `p30` / `standard` | Safari 16.4+ only, after one tap; switching apps releases the lock; Low Power Mode sets Auto-Lock to 30 s (whether the lock still holds under it is not yet device-tested). |
+| `ios-home-screen` | keep screen on iphone web app | `pinf` / `clock` | Wake lock in Home Screen web apps needs iOS 18.4+ (iOS 26 opens Home Screen sites as web apps by default); notifications work only in the installed app. |
+| `ipad` | keep ipad screen on | `p60` / `minimal` | A tab in the background releases the lock (windowed apps on iPadOS 26; Split View on 18 and earlier); Low Power Mode sets Auto-Lock to 30 s. |
+| `android-chrome` | keep android screen on chrome | `p30` / `standard` | Leaving Chrome releases the lock; some makers' sleeping-apps settings can close the tab after you leave it. Battery Saver does not refuse the lock. |
+| `samsung-internet` | keep screen on samsung internet | `p30` / `standard` | Samsung Internet 14+ (Chromium 87 base); Samsung's sleeping-apps settings can close the tab after you leave it. |
+| `chromebook` | keep chromebook screen on | `pinf` / `standard` | Managed Chromebooks may enforce power policies AwakeTab cannot override; closing the lid sleeps unless "Sleep when cover is closed" is off. |
+| `windows-11` | keep screen on windows 11 (and 10; `/on/windows-10` 301s here) | `p60` / `standard` | The lock screen has its own 60-second monitor timeout; the lid follows the lid-close setting. Energy saver does not refuse the lock. |
+| `macos` | prevent mac display sleep in browser | `p60` / `standard` | While the display is kept on, the Mac does not idle-sleep; closing the lid still sleeps unless you use clamshell mode with power and an external display. |
+| `linux` | keep screen on linux browser | `pinf` / `standard` | Needs a desktop that honours the browser's sleep inhibit (GNOME SessionManager or freedesktop ScreenSaver); device results pending. |
+| `firefox` | keep screen on firefox | `p30` / `standard` | Wake lock since Firefox 126 (May 2024); refused at 5 % battery or less while not charging; older versions use the video fallback with higher CPU. |
+| `edge` | keep screen on edge | `p30` / `standard` | Edge 84+; sleeping tabs affect only background tabs; Energy saver may dim the screen but does not refuse the lock. |
 
 ### 12.3 `/vs/` — 7 comparisons
 
 | Slug | Intent | Preset / mode | Honest limit |
 |---|---|---|---|
-| `caffeine` | caffeine alternative online | `pinf` / `standard` | Caffeine simulates an F15 key press system-wide and works with nothing visible; AwakeTab needs a visible tab. |
-| `amphetamine` | amphetamine mac alternative | `pinf` / `standard` | Amphetamine is native, has triggers and closed-lid mode; no browser tab can keep a closed Mac awake. |
-| `powertoys-awake` | powertoys awake alternative | `pinf` / `standard` | PowerToys Awake keeps the system awake with the display off; AwakeTab keeps the display on and needs a visible tab. |
-| `caffeinate-command` | caffeinate command alternative | `pinf` / `standard` | `caffeinate -di` prevents idle and display sleep from a terminal; AwakeTab holds the display only. |
-| `nosleep-page` | nosleep.page alternative | `p30` / `standard` | Both are tabs and both release when hidden; the difference is honesty of status, until-time and persistence. Facts dated. |
-| `nosleep-js` | nosleep.js alternative | `pinf` / `standard` | NoSleep.js last shipped Dec 2020; a fallback video costs CPU. `@awaketab/wake` is the maintained option; see `/library`. |
+| `caffeine` | caffeine alternative online | `pinf` / `standard` | Caffeine for Mac holds a macOS power assertion with nothing visible (the F15 key press is Caffeine for Windows); AwakeTab needs a visible tab. |
+| `amphetamine` | amphetamine mac alternative | `pinf` / `standard` | Amphetamine is native, has triggers and a closed-display mode; no browser tab can keep a closed Mac awake. |
+| `powertoys-awake` | powertoys awake alternative | `pinf` / `standard` | PowerToys Awake keeps the system awake with the display off by default, or on with "Keep screen on"; it stops at the lock screen. AwakeTab needs a visible tab. |
+| `caffeinate-command` | caffeinate command alternative | `pinf` / `standard` | `caffeinate -di` prevents idle and display sleep from a terminal; AwakeTab needs its tab on screen. |
+| `nosleep-page` | nosleep.page alternative | `p30` / `standard` | Both are tabs and both release when hidden; the difference is the status, until-time and session restore. Facts dated. |
+| `nosleep-js` | nosleep.js alternative (absorbs nosleep.js vs wake lock; `/learn/nosleep-js-vs-wake-lock` 301s here) | `pinf` / `standard` | NoSleep.js (last release December 2020) uses the Wake Lock API where present and a video otherwise; `@awaketab/wake` is an actively maintained alternative (npm package coming soon); see `/library`. |
 | `mouse-jigglers` | mouse jiggler alternative | `pinf` / `standard` | AwakeTab never simulates input and does not keep Teams or Slack green. Jigglers do, and may breach your employer's policy. |
 
-### 12.4 `/guides/` — 8 OS how-tos
+### 12.4 `/guides/` — 7 OS how-tos
 
 | Slug | Intent | Preset / mode | Honest limit |
 |---|---|---|---|
-| `windows-11-screen-turns-off-after-1-minute` | windows 11 screen turns off after 1 minute | `p60` / `standard` | On managed PCs the setting is locked by policy; AwakeTab works there only while its tab is visible. |
-| `mac-prevent-sleep-lid-closed` | prevent mac sleep lid closed | `pinf` / `standard` | No browser can keep a closed Mac awake; needs an external display and power, or `pmset`/Amphetamine. |
-| `iphone-auto-lock-never-greyed-out` | iphone auto lock never greyed out | `p30` / `standard` | Low Power Mode greys it out and forces 30 s; even AwakeTab is overridden until it is off. |
-| `chrome-energy-saver` | chrome energy saver | `p30` / `standard` | Energy Saver throttles background tabs; it does not block a visible tab's wake lock, but OS battery saver does. |
+| `windows-11-screen-turns-off-after-1-minute` | windows 11 screen turns off after 1 minute | `p60` / `standard` | On managed PCs the setting is locked by policy; the lock screen's 60-second timeout needs the powercfg fix; AwakeTab works only while its tab is visible. |
+| `mac-prevent-sleep-lid-closed` | prevent mac sleep lid closed | `pinf` / `standard` | No browser can keep a closed Mac awake; clamshell mode with power and an external display, or a native tool, can. |
+| `iphone-auto-lock-never-greyed-out` | iphone auto lock never greyed out | `p30` / `standard` | Low Power Mode, or a work or school profile, locks Auto-Lock; whether a Safari wake lock holds under Low Power Mode is not yet device-tested. |
+| `chrome-energy-saver` | chrome energy saver | `p30` / `standard` | Energy Saver throttles background tabs; it does not block a visible tab's wake lock, and neither do OS battery savers. |
 | `android-screen-timeout-one-app` | android screen timeout for one app | `p30` / `standard` | Stock Android has no per-app timeout; AwakeTab covers the browser only. |
-| `modern-standby` | modern standby keep awake | `pinf` / `standard` | A wake lock controls the display, not S0 low-power states; drivers and firmware decide the rest. |
-| `second-monitor-turns-off` | second monitor turns off | `pinf` / `clock` | Signal-detection sleep, DisplayPort link drops and cables are outside any software's reach. |
-| `lock-screen-vs-sleep` | lock screen vs sleep | `p30` / `standard` | A wake lock prevents display sleep, not a "require sign-in after N minutes" policy. |
+| `second-monitor-turns-off` | second monitor turns off (absorbs `/for/second-monitor`, which 301s here) | `pinf` / `clock` | Signal-detection sleep, DisplayPort link drops and cables are outside any software's reach. |
+| `lock-screen-vs-sleep` | lock screen vs sleep (absorbs modern standby; `/guides/modern-standby` 301s here) | `p30` / `standard` | A wake lock prevents display sleep, not a "require sign-in after N minutes" policy, and it does not control what drivers do in Modern Standby once the screen is off. |
 
-### 12.5 `/learn/` — 6 deep and developer pages
+### 12.5 `/learn/` — 5 deep and developer pages
 
 | Slug | Intent | Preset / mode | Honest limit |
 |---|---|---|---|
-| `screen-wake-lock-api-guide` | screen wake lock api | `p15` / `standard` | Secure contexts only; released when the document is hidden; `NotAllowedError` on battery saver — the guide shows the handling. |
-| `nosleep-js-vs-wake-lock` | nosleep.js vs wake lock | `p15` / `standard` | The video fallback costs CPU and needs a gesture; measured numbers with dates. |
-| `does-a-wake-lock-keep-teams-green` | does wake lock keep teams status green | `p30` / `standard` | No. Presence follows input idle in our tests (dates, versions); AwakeTab will not change your status. |
-| `low-power-mode-and-wake-locks` | low power mode wake lock | `p30` / `standard` | iOS Low Power Mode and Android/Windows battery savers override or deny; the page lists exact behaviours per OS. |
-| `browser-support-matrix` | wake lock browser support | `p15` / `standard` | Table is as of `lastVerified`; older versions fall back; each row states the test date. |
-| `how-we-tested` | how awaketab was tested | `p15` / `standard` | Methodology page: what was tested and what was not (no claims beyond the matrix). |
+| `screen-wake-lock-api-guide` | screen wake lock api | `p15` / `standard` | Secure contexts only; released when the document is hidden; `NotAllowedError` for a hidden document, a Permissions-Policy block, Safari without a tap, or Firefox at ≤ 5 % battery. |
+| `does-a-wake-lock-keep-teams-green` | does wake lock keep teams status green | `p30` / `standard` | No. Presence follows keyboard and mouse input (Microsoft and Slack documentation); AwakeTab will not change your status. |
+| `low-power-mode-and-wake-locks` | low power mode wake lock | `p30` / `standard` | iOS Low Power Mode sets Auto-Lock to 30 s; Chromium and WebKit have no battery-saver check; Firefox refuses at ≤ 5 % battery. Draft until device results exist. |
+| `browser-support-matrix` | wake lock browser support | `p15` / `standard` | Checked against browser documentation and engine source on the stated date; device results pending; older versions fall back. |
+| `how-we-tested` | how awaketab is checked | `p15` / `standard` | Methodology page: what each claim rests on today, and which device runs are still pending. |
 
 ---
 
@@ -450,7 +445,7 @@ Rank tracking: 25 English queries × 8 locales (localized equivalents from `07-i
 
 1. keep screen awake · 2. keep screen awake online · 3. keep screen on · 4. keep my screen on · 5. prevent screen from sleeping · 6. stop screen from turning off · 7. keep computer awake · 8. keep screen on website · 9. nosleep page · 10. nosleep.page alternative · 11. keep screen on while cooking · 12. keep screen on during presentation · 13. keep computer awake while downloading · 14. keep iphone screen on safari · 15. keep chromebook screen on · 16. keep screen on windows 11 · 17. prevent mac display sleep · 18. caffeine alternative online · 19. powertoys awake alternative · 20. screen wake lock api · 21. nosleep.js alternative · 22. does wake lock keep teams green · 23. keep android screen on chrome · 24. keep screen on for 2 hours · 25. awaketab
 
-Targets follow the blueprint: day 30 — 60 URLs indexed; day 90 — top 10 for queries 1–3 in three locales; day 180 — top 3 for query 1 in EN and #1 on 15+ long-tail queries.
+Targets follow the blueprint: day 30 — 60 URLs indexed; day 90 — top 10 for queries 1–3 in three locales; day 180 — top 3 for query 1 in EN and #1 on 15+ long-tail queries. **Superseded (OD-13, adopted 2026-09-27 under O-49):** the day 30/60/90 targets are the KPI table in `docs/research/marketing-seo-content.md` §10 (index coverage of indexable pages, zero draft leakage, long-tail top-10s, referring domains, organic tool starts); head-term goals move to day 180 and depend on links.
 
 ## 17. Acceptance criteria (selection)
 
@@ -481,4 +476,15 @@ Targets follow the blueprint: day 30 — 60 URLs indexed; day 90 — top 10 for 
 - **OG images (§9).** `scripts/og.mts` renders one PNG per translated page to `public/og/{lang}/{collection}/{public slug}.png` (the English slug for `ja` / `zh` / `hi`) (regenerated from scratch each build): title = `ogTitle ?? h1`, footer "awaketab.com · {language name}", Noto Sans JP / SC / Devanagari from `@fontsource` read from `node_modules` at build time only (the SEO suite asserts no font file in `dist/`). Titles wrap with `textWrap: balance` and step down from 68 px to 58/50 px when their display width exceeds 36/56; locale home images (`/og/home-{lang}.png`) now also show the language name. Pages also emit `og:image:alt` (= `h1`) and, when indexable, `og:locale:alternate`. English content pages still use the per-family image (`/og/{collection}-en.png`).
 - **JSON-LD.** `inLanguage` is the BCP 47 tag (`pt-BR`, `zh-Hans`), not the folder code, on `WebSite`, `WebApplication` and `Article`; `Article` gains `image`.
 - **Word bar.** §2's word bars are English targets; translations run ≈ 440–660 words (Latin scripts, Hindi) or ≈ 1,200–1,550 characters (ja, zh).
-- **Open for the owner.** `vs/en/caffeine.md` says "Pick Caffeine when you need closed-lid … behaviour"; the translations do not repeat that claim (no evidence Caffeine keeps a closed Mac awake, and §12.3 amphetamine row says no tab can). Fix the English source to match.
+- **Resolved (B11, §20).** `vs/en/caffeine.md` was rewritten: it no longer says Caffeine keeps a closed-lid Mac awake, and the F15 key press is attributed to Caffeine for Windows.
+
+## 20. As built — content fixes (redesign B11 · 2026-09-27)
+
+Applies owner decisions OD-3, OD-2 / O-45, O-15, O-23, O-49 and O-79 (`docs/redesign/DECISIONS.md`) and the research in `docs/research/content-audit.md`, `fact-check-2026-09-26.md`, `editorial-audit-articles.md` and `marketing-seo-content.md`.
+
+- **Routes (OD-3).** 51 English content pages became 44 (`00-conventions.md` §7, §13.20). 301s: `/for/second-monitor` → `/guides/second-monitor-turns-off`, `/on/windows-10` → `/on/windows-11` (retitled "Windows 11 and 10"), `/guides/modern-standby` → `/guides/lock-screen-vs-sleep`, `/learn/nosleep-js-vs-wake-lock` → `/vs/nosleep-js`; each target absorbed the useful facts of the page it replaces. Cut with no redirect (404; never indexed, and a redirect to an unrelated page would be a soft 404; `_redirects` cannot send 410): `/for/navigation`, `/for/live-streams`, `/for/exams-proctoring`, `/for/baby-monitor`. New: `/for/classroom` (O-23), English only per `07-i18n.md` §5 (not a top-10 page).
+- **Draft gate (OD-2, O-45).** No new schema field: the existing `noindex: true` frontmatter is the draft flag. A draft is live, `noindex, follow`, has no hreflang and is absent from the sitemaps and IndexNow (the machinery in `scripts/translations.mjs` `isIndexable()`). The **launch set** (indexable, rewritten from scratch to its §2 template and the research standard, `lastVerified` 2026-09-26 = the date the sources were checked): `/for/cooking`, `/for/ai-agents`, `/for/presentations`, `/for/work-laptop`, `/for/dashboards`, `/for/classroom`, `/on/iphone-safari`, `/on/macos`, `/on/android-chrome`, `/on/windows-11`, `/on/chromebook`, `/on/ipad`, `/guides/iphone-auto-lock-never-greyed-out`, `/guides/windows-11-screen-turns-off-after-1-minute`, `/guides/mac-prevent-sleep-lid-closed`, `/guides/lock-screen-vs-sleep`, `/guides/second-monitor-turns-off`, `/vs/nosleep-page`, `/vs/caffeine`, `/vs/powertoys-awake`, `/vs/mouse-jigglers`, `/vs/nosleep-js`, `/learn/screen-wake-lock-api-guide`, `/learn/does-a-wake-lock-keep-teams-green`, `/learn/browser-support-matrix` (25). **Drafts** (19, generated text with the false claims removed, `noindex: true`): `/for/downloads`, `/for/kiosk`, `/for/sheet-music`, `/for/reading`, `/for/night-clock`, `/for/video-calls`, `/for/teleprompter`, `/for/workouts`, `/on/ios-home-screen`, `/on/samsung-internet`, `/on/linux`, `/on/firefox`, `/on/edge`, `/vs/amphetamine`, `/vs/caffeinate-command`, `/guides/chrome-energy-saver`, `/guides/android-screen-timeout-one-app`, `/learn/low-power-mode-and-wake-locks` (rewritten accurately, but it waits for the device run), `/learn/how-we-tested`. A draft flips to indexable only after a rewrite to its template and a check against the fact-check.
+- **Word bars as tested.** `test/seo/holding-page.test.ts` measures the built `.at-prose` block (body, FAQ, related links): indexable pages meet §2 (for 600–1,000, on 600–900, vs 700–1,000, guides 700–1,100, learn 1,000–2,000); drafts keep the old 600–1,000 band.
+- **Fact fixes.** The battery-saver refusal claim (decision D-R12), unrecorded device-test claims ("in our tests", "tested on Ubuntu"), the macOS idle-sleep claim, Caffeine's F15 key press on Mac, iPadOS 26 Split View, the floating window's Firefox 151+ support and the Windows Energy saver rename are fixed in every English page, in the 70 translations and in the seven locale homes (`src/content/locale-home/*.ts`), and in `src/data/support-matrix.json` (notes per engine; Edge platforms; the extension's 30 s alarm needs Chrome 120; unverified Brave, Arc and Opera removed from the extension row, O-41). `test/lib/content.test.ts` fails if a false claim, a banned term or an em dash in English prose comes back.
+- **Generator retired (O-15).** `scripts/write-content.mjs` wrote the 51 templated pages. It is not part of any build; no content file depends on it any more, and re-running it would overwrite the rewrites. Deleting it is a code follow-up (B11 left code alone).
+- **Not done here (UI or code follow-ups).** The "Last verified" badge copy (O-46: "Sources checked {date}" / "Tested on {device}") lives in `en.json` `content.verified` and `ArticlePage.astro`; the hub pages' intro copy and item lines (`HubPage.astro`, canvas `HubFor.dc.html`), and the home page's battery-saver and testing claims (`index.astro`) belong to B5; `tool.advice.battery_saver` in all locale catalogs is O-59.

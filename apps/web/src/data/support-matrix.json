@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-09",
+  "lastUpdated": "2026-09-26",
   "browsers": [
     {
       "id": "chrome",
@@ -7,15 +7,15 @@
       "minimumVersion": "84",
       "mechanism": "native",
       "platforms": ["Windows", "macOS", "Linux", "Android", "ChromeOS"],
-      "notes": "The tab must remain visible. Battery Saver may deny or release the lock."
+      "notes": "The tab must remain visible. Chrome has no battery-saver check: Battery Saver and Energy Saver do not refuse the lock."
     },
     {
       "id": "edge",
       "name": "Edge",
       "minimumVersion": "84",
       "mechanism": "native",
-      "platforms": ["Windows", "macOS"],
-      "notes": "The tab must remain visible. Efficiency mode may affect the lock."
+      "platforms": ["Windows", "macOS", "Linux", "Android"],
+      "notes": "The tab must remain visible. Sleeping tabs affect only tabs in the background."
     },
     {
       "id": "firefox",
@@ -23,7 +23,7 @@
       "minimumVersion": "126",
       "mechanism": "native",
       "platforms": ["Windows", "macOS", "Linux", "Android"],
-      "notes": "Earlier versions use the video fallback after a user gesture."
+      "notes": "The tab must remain visible. Refuses and releases the lock at 5% battery or less while not charging. Earlier versions use the video fallback after a user gesture."
     },
     {
       "id": "safari",
@@ -31,7 +31,7 @@
       "minimumVersion": "16.4",
       "mechanism": "native",
       "platforms": ["macOS", "iOS", "iPadOS"],
-      "notes": "Low Power Mode can prevent a wake lock. The tab must remain visible."
+      "notes": "Needs a tap to start. The tab must remain visible. iPhone Low Power Mode caps Auto-Lock at 30 seconds."
     },
     {
       "id": "samsung",
@@ -39,7 +39,7 @@
       "minimumVersion": "14",
       "mechanism": "native",
       "platforms": ["Android"],
-      "notes": "Power-saving settings may deny or release the lock."
+      "notes": "The tab must remain visible. Power-saving settings can close the browser after you leave it."
     },
     {
       "id": "opera",
@@ -55,9 +55,9 @@
     "name": "AwakeTab for Chrome",
     "api": "chrome.power",
     "minimumChromeVersion": "116",
-    "browsers": ["Chrome", "Edge", "Brave", "Arc", "Opera"],
+    "browsers": ["Chrome", "Edge"],
     "unsupported": ["Firefox", "Safari"],
-    "notes": "Works while the browser is running, including hidden tabs and minimised windows. Does not prevent sleep when a laptop lid is closed. Firefox and Safari have no power API for extensions."
+    "notes": "Works while the browser is running, including hidden tabs and minimised windows. Keep-alive alarm every 30 seconds on Chrome 120 and later (60 seconds on Chrome 116 to 119). Does not prevent sleep when a laptop lid is closed. Firefox and Safari have no power API for extensions."
   },
   "contexts": [
     {

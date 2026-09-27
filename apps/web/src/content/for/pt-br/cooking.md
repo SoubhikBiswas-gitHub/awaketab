@@ -16,9 +16,9 @@ faq:
   - q: "Se eu abrir o app de receitas ou o WhatsApp, a tela continua ligada?"
     a: "Não. Quando você troca de app ou a aba fica oculta, o navegador libera o bloqueio e o indicador passa para “Pausado — aba oculta”. Volte para a aba do AwakeTab e espere aparecer “Tela ligada” de novo antes de voltar para a panela."
   - q: "Minha receita está em outro site. Preciso abrir tudo dentro do AwakeTab?"
-    a: "Não, mas o AwakeTab precisa continuar visível. No tablet ou no Android, use a tela dividida com a receita de um lado e o AwakeTab do outro. No computador, abra uma segunda janela lado a lado."
+    a: "Não, mas o AwakeTab precisa continuar visível. No tablet, deixe a receita e o AwakeTab lado a lado (apps em janelas no iPadOS 26, Split View no iPadOS 18 ou anterior, tela dividida no Android). No iPhone só um app fica na frente, então o AwakeTab não mantém acesa uma receita aberta em outro app. No computador, use uma segunda janela."
   - q: "Posso encostar na tela com a mão suja de farinha?"
-    a: "No modo Cozinha, um toque em qualquer lugar pausa a sessão, e o indicador mostra isso. Se você pausar sem querer, toque de novo para retomar. Com o celular longe do fogão, a tela fica ligada sem você precisar mexer nela."
+    a: "No modo Cozinha, tocar no número grande pausa a contagem, e a tela continua ligada. Se você pausar sem querer, toque de novo para retomar. Com o celular longe do fogão, a tela fica ligada sem você precisar mexer nela."
   - q: "Quais navegadores funcionam para cozinhar com o celular?"
     a: "Wake Lock nativo no Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+ e Samsung Internet 14+, conforme a tabela de 9 de setembro de 2026. Firefox mais antigo usa o vídeo alternativo depois de um toque."
 honestLimit: "Funciona enquanto a aba do AwakeTab está na tela. No celular, abrir outro app — inclusive o da própria receita — libera o bloqueio até você voltar para a aba."
@@ -30,6 +30,7 @@ related:
   - "/guides/iphone-auto-lock-never-greyed-out"
 author: soubhik
 published: 2026-09-26
+updated: 2026-09-27
 ---
 
 ## A resposta curta
@@ -40,26 +41,26 @@ Você está no meio da receita, com a mão cheia de massa, e a tela do celular e
 
 1. Deixe o celular ou tablet na tomada, se puder. Uma tela acesa por uma hora gasta bateria.
 2. Toque em iniciar e confira o indicador. Só quando ele mostrar “Tela ligada” é que o navegador confirmou o bloqueio.
-3. Se a receita estiver em outro site ou app, coloque os dois lado a lado. No Android e no iPad, a tela dividida resolve; no computador, uma segunda janela.
+3. Se a receita estiver em outro site ou app, coloque os dois lado a lado: tela dividida no Android, apps em janelas no iPadOS 26 (Split View no iPadOS 18 ou anterior), uma segunda janela no computador. No iPhone, só um app fica na frente.
 
-No modo Cozinha, você também pode adicionar até três temporizadores com nome, como “arroz” ou “forno”, e um toque em qualquer lugar pausa a sessão.
+No modo Cozinha, você também pode adicionar até três temporizadores de cozinha (5, 10, 15, 30 ou 60 min), cada um toca ao chegar a zero, e tocar no número grande pausa a contagem sem apagar a tela.
 
 ## O que o indicador vai mostrar
 
 - **“Tela ligada”**: o navegador está segurando o bloqueio de verdade. O cronômetro só anda neste estado.
 - **“Pausado — aba oculta”**: você mudou de app ou de aba. É o comportamento esperado, não um defeito; volte para a aba e o bloqueio é pedido de novo.
-- **“Bloqueado — veja como corrigir”**: o sistema recusou, quase sempre por causa da economia de bateria. Leia o motivo mostrado e resolva a causa antes de tocar em iniciar outra vez.
+- **“Bloqueado — veja como corrigir”**: o navegador recusou, quase sempre porque a aba não estava visível ou porque o Safari precisa de um toque antes (no Firefox, também com bateria em 5 % ou menos sem carregar). Resolva essa causa antes de tentar de novo.
 - **“Tela ligada por vídeo alternativo”**: seu navegador não tem Wake Lock nativo e você aceitou o vídeo silencioso, que consome mais bateria.
 
 ## Celular e tablet: o que o sistema pode atrapalhar
 
-No iPhone, o Modo de Pouca Energia deixa a opção Nunca em cinza em Ajustes → Tela e Brilho → Bloqueio Automático e força a tela a apagar em 30 segundos; desative-o antes de começar. Veja [como deixar o iPhone com a tela acesa usando o Safari](/pt-br/on/iphone-safari).
+No iPhone, o Modo de Pouca Energia define o Bloqueio Automático em 30 segundos e deixa a opção Nunca em cinza em Ajustes → Tela e Brilho → Bloqueio Automático. O Safari não recusa o Wake Lock por causa dele, mas ainda não registramos um teste em aparelho que confirme se a tela fica acesa com o modo ligado; se ela apagar mesmo assim, desative-o em Ajustes → Bateria. Veja [como deixar o iPhone com a tela acesa usando o Safari](/pt-br/on/iphone-safari).
 
-No Android, o tempo limite fica em Configurações → Tela → Tempo limite da tela, e a Economia de bateria pode negar o pedido. Algumas marcas também têm listas de apps colocados em suspensão, que podem encerrar o navegador depois que você sai dele. Os detalhes estão [no passo a passo para Android e Chrome](/pt-br/on/android-chrome).
+No Android, o tempo limite fica em Configurações → Tela → Tempo limite da tela (no Pixel: Tela e toque). A Economia de bateria pode encurtar esse tempo ou escurecer a tela, mas o Chrome não recusa o pedido por causa dela. Algumas marcas também têm listas de apps colocados em suspensão, que podem encerrar o navegador depois que você sai dele. Os detalhes estão [no passo a passo para Android e Chrome](/pt-br/on/android-chrome).
 
 ## Navegadores compatíveis
 
-Na cozinha, o que costuma estar à mão é um celular ou tablet. No iPhone e no iPad, vale o Safari 16.4 ou mais novo. No Android, o Chrome desde a versão 84, o Samsung Internet desde a 14 e o Firefox desde a 126. Se você instalou o AwakeTab na Tela de Início do iPhone, o iOS precisa estar na versão 18.4 ou mais nova. Firefox antigo pode usar o vídeo alternativo, que só começa depois de um toque seu. Esses números foram conferidos em 9 de setembro de 2026.
+Na cozinha, o que costuma estar à mão é um celular ou tablet. No iPhone e no iPad, vale o Safari 16.4 ou mais novo. No Android, o Chrome desde a versão 84, o Samsung Internet desde a 14 e o Firefox desde a 126. Se você instalou o AwakeTab na Tela de Início do iPhone, o iOS precisa estar na versão 18.4 ou mais nova. Firefox antigo pode usar o vídeo alternativo, que só começa depois de um toque seu. Esses números seguem a documentação dos navegadores, conferida em 26 de setembro de 2026.
 
 ## Antes de ir para o fogão
 

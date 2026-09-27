@@ -1,6 +1,6 @@
 ---
 title: "Bloqueo automático en gris en iPhone — AwakeTab"
-description: "¿Nunca aparece en gris en Bloqueo automático? Es el Modo de bajo consumo. Desactívalo: mientras siga activo, ni AwakeTab evita el bloqueo a los 30 s."
+description: "¿Nunca aparece en gris en Bloqueo automático? Casi siempre es el Modo de bajo consumo, que lo fija en 30 s. Un perfil del trabajo también puede limitarlo."
 h1: "¿No puedes elegir Nunca en Bloqueo automático del iPhone?"
 ogTitle: "Bloqueo automático en gris en iPhone"
 intent: "bloqueo automático nunca en gris iphone"
@@ -15,33 +15,34 @@ browsers: []
 os: []
 faq:
   - q: "¿Por qué la opción Nunca está en gris en Bloqueo automático?"
-    a: "Porque el Modo de bajo consumo está activado, ya sea porque lo encendiste tú o porque la batería bajó lo suficiente. En ese modo iOS fija el Bloqueo automático en 30 segundos y no deja elegir otro valor hasta que lo desactives."
-  - q: "¿AwakeTab puede saltarse el Modo de bajo consumo?"
-    a: "No. El Modo de bajo consumo tiene prioridad sobre Safari y sobre cualquier página web, incluida AwakeTab. Mientras esté activo, la pantalla se bloqueará a los 30 segundos. Apágalo y después inicia la sesión."
+    a: "Porque el Modo de bajo consumo está activado, ya sea porque lo encendiste tú o porque aceptaste la sugerencia de iOS cuando la batería bajó. En ese modo iOS fija el Bloqueo automático en 30 segundos y no deja elegir otro valor hasta que lo desactives. Si está apagado y Nunca sigue en gris, puede ser un perfil del trabajo o la escuela (MDM)."
+  - q: "¿AwakeTab funciona con el Modo de bajo consumo activado?"
+    a: "Todavía no lo sabemos con certeza. Safari no tiene ninguna regla que rechace el Wake Lock por ese modo, pero aún no registramos una prueba en un dispositivo que confirme si la pantalla sigue encendida más allá de los 30 segundos. Si el iPhone se bloquea igual, apaga el modo y vuelve a iniciar la sesión."
   - q: "Ya apagué el Modo de bajo consumo, ¿la pantalla sigue encendida si cambio de app?"
     a: "No. Safari solo mantiene el Wake Lock mientras la pestaña está al frente. Si abres otra app o bajas al inicio, el bloqueo se libera y el indicador muestra “En pausa — pestaña oculta” hasta que regreses."
   - q: "¿Qué versión necesito para usar AwakeTab en lugar de cambiar el ajuste?"
     a: "Safari 16.4 o posterior. Si agregaste AwakeTab a la pantalla de inicio, esa app necesita iOS 18.4 o posterior; con versiones anteriores, úsalo en Safari."
-honestLimit: "El Modo de bajo consumo pone Nunca en gris y fuerza 30 segundos; mientras siga activo, ni siquiera AwakeTab puede evitar el bloqueo."
+honestLimit: "El Modo de bajo consumo pone Nunca en gris y fija 30 segundos; aún no registramos una prueba que confirme si el Wake Lock de Safari mantiene la pantalla encendida con ese modo activo."
 related:
   - "/on/iphone-safari"
   - "/learn/low-power-mode-and-wake-locks"
   - "/for/cooking"
   - "/for/downloads"
-  - "/for/baby-monitor"
+  - "/for/night-clock"
 author: soubhik
 published: 2026-09-26
+updated: 2026-09-27
 ---
 
 ## Por qué Nunca está en gris
 
-Entras a Ajustes → Pantalla y brillo → Bloqueo automático y la opción Nunca no se deja tocar. En casi todos los casos la causa es el Modo de bajo consumo: se activa cuando tú lo enciendes o cuando la batería ya bajó bastante, y mientras está encendido iOS fija el bloqueo en 30 segundos. La solución es desactivarlo primero. Después, Safari 16.4 o posterior puede mantener la pantalla encendida con un Wake Lock hasta que salgas de la pestaña.
+Entras a Ajustes → Pantalla y brillo → Bloqueo automático y la opción Nunca no se deja tocar. En casi todos los casos la causa es el Modo de bajo consumo: se activa cuando tú lo enciendes o cuando aceptas la sugerencia de iOS con poca batería, y mientras está encendido iOS fija el bloqueo en 30 segundos. La otra causa es un perfil del trabajo o la escuela que limita el Bloqueo automático. La solución es desactivar el modo primero. Después, Safari 16.4 o posterior puede mantener la pantalla encendida con un Wake Lock hasta que salgas de la pestaña.
 
 ## Cómo desbloquear la opción en dos minutos
 
 1. Abre Ajustes → Batería y apaga Modo de bajo consumo. También puedes hacerlo desde el Centro de control si tienes el botón de la batería.
 2. Fíjate en el ícono de la batería: si ya no está amarillo, el modo quedó apagado.
-3. Regresa a Ajustes → Pantalla y brillo → Bloqueo automático. Nunca debería aparecer disponible otra vez.
+3. Regresa a Ajustes → Pantalla y brillo → Bloqueo automático. Nunca debería aparecer disponible otra vez. Si sigue en gris, mira Ajustes → General → VPN y gestión de dispositivos: un perfil del trabajo o la escuela puede limitarlo, y solo su administrador puede cambiarlo.
 4. Si prefieres no dejar el iPhone en Nunca todo el día, conserva tu ajuste normal y usa AwakeTab solo cuando lo necesites.
 
 Si el Modo de bajo consumo se vuelve a encender solo, conecta el iPhone al cargador: con poca batería, iOS te lo va a sugerir de nuevo.
@@ -52,7 +53,7 @@ Poner Bloqueo automático en Nunca sirve, pero es fácil olvidarlo y encontrar e
 
 ## Lo que el Modo de bajo consumo le hace a AwakeTab
 
-Con el modo encendido, iOS ignora la solicitud de Safari y el iPhone se bloquea a los 30 segundos de todos modos. AwakeTab no lo disimula: verás “Bloqueado — aquí está la solución” y el mensaje te dice que lo desactives en Ajustes → Batería. Tocar Iniciar otra vez sin apagarlo no cambia nada. Lo explicamos con más detalle, junto con los otros límites en Safari, en la guía de [iPhone con Safari](/es/on/iphone-safari).
+Con el modo encendido, iOS fija el Bloqueo automático en 30 segundos. Safari no rechaza el Wake Lock por ese modo, así que el indicador no mostrará “Bloqueado — aquí está la solución” por su culpa. Lo que aún no sabemos, porque todavía no registramos una prueba en un dispositivo, es si la pantalla aguanta más de esos 30 segundos. Si el iPhone se bloquea igual, apaga el modo en Ajustes → Batería. Lo explicamos con más detalle, junto con los otros límites en Safari, en la guía de [iPhone con Safari](/es/on/iphone-safari).
 
 ## Otros casos que conviene conocer
 

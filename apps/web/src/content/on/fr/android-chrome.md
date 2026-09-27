@@ -1,6 +1,6 @@
 ---
 title: "Garder l’écran allumé sur Android avec Chrome — AwakeTab"
-description: "Chrome 84+ sur Android garde l’écran allumé dans un onglet visible. L’économiseur de batterie refuse le verrou, et quitter Chrome le libère aussitôt."
+description: "Chrome 84+ sur Android garde l’écran allumé dans un onglet visible. Quitter Chrome libère le verrou ; l’économiseur de batterie peut assombrir l’écran."
 h1: "Garder l’écran allumé sur Android avec Chrome"
 ogTitle: "Écran Android allumé avec Chrome"
 intent: "garder l'écran allumé android chrome"
@@ -17,12 +17,12 @@ faq:
   - q: "L’écran reste-t-il allumé si je passe sur WhatsApp ou YouTube ?"
     a: "Non. Dès que Chrome passe en arrière-plan, l’onglet est masqué et Android retire le verrou ; la pastille affiche « En pause — onglet masqué » à votre retour. Pour garder une autre appli à côté, utilisez l’écran partagé afin que Chrome reste visible."
   - q: "Pourquoi AwakeTab affiche « Bloqué — voici la solution » sur mon téléphone ?"
-    a: "Presque toujours à cause de l’économiseur de batterie, qui refuse la demande de verrou. Désactivez-le ou branchez le téléphone, puis touchez Démarrer. Retenter sans rien changer produira le même refus."
+    a: "Chrome a refusé le verrou, et la ligne sous la pastille en donne la cause. Ce n’est pas l’économiseur de batterie : Chrome ne le vérifie pas. Le plus souvent, l’onglet n’était pas visible au démarrage, ou AwakeTab est intégré dans une page sans l’autorisation screen-wake-lock. Ouvrez awaketab.com directement, gardez l’onglet au premier plan et touchez Démarrer."
   - q: "Ma session avait disparu quand je suis revenu dans Chrome. Pourquoi ?"
     a: "Certains fabricants endorment ou ferment les applications qu’ils jugent inutilisées, et l’onglet avec elles. Vérifiez dans les paramètres de batterie que Chrome ne figure pas dans la liste des applications mises en veille."
   - q: "Ça marche aussi avec Samsung Internet ou Firefox pour Android ?"
     a: "Oui : Samsung Internet 14+ et Firefox 126+ accordent un verrou natif d’après notre matrice du 9 septembre 2026. Un Firefox plus ancien passe par la vidéo de secours après un toucher, qui consomme davantage."
-honestLimit: "L’économiseur de batterie refuse le verrou ; quitter Chrome le libère ; certains réglages de fabricants qui mettent en veille les applis inutilisées ferment l’onglet."
+honestLimit: "Quitter Chrome libère le verrou ; certains réglages de fabricants qui mettent en veille les applis inutilisées ferment l’onglet une fois quitté ; l’économiseur de batterie peut raccourcir le délai d’écran."
 related:
   - "/on/samsung-internet"
   - "/on/firefox"
@@ -30,11 +30,12 @@ related:
   - "/for/cooking"
 author: soubhik
 published: 2026-09-26
+updated: 2026-09-27
 ---
 
 ## Chrome 84 et plus : le verrou natif sur Android
 
-Chrome 84 et les versions ultérieures sur Android accordent un Wake Lock natif tant que l’onglet reste visible. AwakeTab l’utilise pour empêcher l’écran de s’éteindre pendant 30 minutes par défaut, ou plus si vous changez de durée. Trois obstacles existent : l’économiseur de batterie refuse la demande, quitter Chrome libère le verrou, et certaines listes « applis en veille » des fabricants peuvent fermer l’onglet une fois que vous l’avez quitté.
+Chrome 84 et les versions ultérieures sur Android accordent un Wake Lock natif tant que l’onglet reste visible. AwakeTab l’utilise pour empêcher l’écran de s’éteindre pendant 30 minutes par défaut, ou plus si vous changez de durée. Trois choses à savoir : quitter Chrome libère le verrou, certaines listes « applis en veille » des fabricants peuvent fermer l’onglet une fois que vous l’avez quitté, et l’économiseur de batterie peut raccourcir le délai ou baisser la luminosité.
 
 ## Navigateurs Android dans notre matrice
 
@@ -55,7 +56,7 @@ Vérifié le 9 septembre 2026. Les navigateurs absents de ce tableau ne sont pas
 
 ## Les blocages propres à Android
 
-**L’économiseur de batterie.** Activé à la main ou automatiquement sous un certain niveau de charge, il refuse le verrou. La pastille passe alors à « Bloqué — voici la solution », avec un conseil : désactivez-le ou branchez l’appareil, puis touchez Démarrer.
+**L’économiseur de batterie.** Activé à la main ou automatiquement sous un certain niveau de charge, il peut raccourcir le délai de mise en veille ou baisser la luminosité. Chrome ne le vérifie pas et ne refuse donc pas le verrou à cause de lui ; nous n’avons pas encore vérifié sur un appareil s’il passe outre un verrou accordé. « Bloqué — voici la solution » n’apparaît que lors d’un vrai refus, avec sa cause.
 
 **Les applis mises en veille par le fabricant.** Plusieurs surcouches, dont celle de Samsung, endorment les applications peu utilisées pour gagner de l’autonomie. Si Chrome y figure, l’onglet peut être fermé en arrière-plan et la session perdue. Retirez Chrome de cette liste dans les paramètres de batterie.
 
@@ -63,7 +64,7 @@ Vérifié le 9 septembre 2026. Les navigateurs absents de ce tableau ne sont pas
 
 ## Le délai de mise en veille d’Android
 
-Le réglage général se trouve dans Paramètres → Affichage → Mise en veille de l’écran ; son nom varie selon les fabricants. Android standard n’offre pas de délai propre à une seule application, d’où l’intérêt d’un onglet qui ne garde l’écran allumé que pendant que vous en avez besoin.
+Le réglage général se trouve dans Paramètres → Affichage → Mise en veille de l’écran (Pixel sous Android 16 : « Display & touch ») ; son nom varie selon les fabricants. Android standard n’offre pas de délai propre à une seule application, d’où l’intérêt d’un onglet qui ne garde l’écran allumé que pendant que vous en avez besoin.
 
 ## Batterie et écran OLED
 

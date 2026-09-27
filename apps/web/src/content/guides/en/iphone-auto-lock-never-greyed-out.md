@@ -1,65 +1,92 @@
 ---
-title: "iPhone Auto-Lock Never is greyed out — AwakeTab"
-description: "Settings, Display and Brightness, Auto-Lock greys out Never under Low Power Mode and after battery drain. Turn Low Power Mode off first, then use Safari."
-h1: "iPhone Auto-Lock Never is greyed out"
+title: "iPhone Auto-Lock greyed out? Causes and fixes — AwakeTab"
+description: "Auto-Lock is greyed out and stuck at 30 seconds when Low Power Mode is on or a work or school profile sets it. How to check each one, step by step."
+h1: "iPhone Auto-Lock greyed out or stuck at 30 seconds"
 intent: "iphone auto lock never greyed out"
+secondaryQueries:
+  - "iphone auto lock greyed out"
+  - "iphone auto lock stuck at 30 seconds"
+  - "auto lock never missing iphone"
+  - "low power mode auto lock"
+  - "auto lock managed by work profile"
 preset: p30
 mode: standard
 locale: en
 reviewed: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+lastVerified: 2026-09-26
+browsers:
+  - safari
+os:
+  - ios
+  - ipados
 faq:
-  - q: "Does iPhone Auto-Lock Never is greyed out work in a hidden tab?"
-    a: "No. The iphone-auto-lock-never-greyed-out flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
-  - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
-honestLimit: "Low Power Mode greys it out and forces 30 s; even AwakeTab is overridden until it is off."
+  - q: "Why does Auto-Lock go back to 30 seconds every evening?"
+    a: "Something switches Low Power Mode on again, and that resets Auto-Lock to 30 seconds. A battery-level automation in Shortcuts is the usual reason, especially one someone else set up on a shared or family phone."
+  - q: "Will removing the work profile bring Never back?"
+    a: "It may, but it usually takes work email, apps and Wi-Fi with it, and it can break your employer's rules. Some managed phones do not let you remove the profile at all. Ask the administrator whether they can raise the limit for your role instead."
+  - q: "Is Never a bad idea for the battery?"
+    a: "A lit screen is the biggest drain on a phone, so Never costs battery every time you forget to lock it. It is fine on a charger. For cooking or reading, 5 minutes is often enough."
+  - q: "Does the same fix work on an iPad?"
+    a: "Yes. The iPad has the same Auto-Lock row under Display & Brightness, and a school or work profile can cap it in the same way. On an iPad you can also keep AwakeTab on screen next to another app, which a phone cannot do."
+honestLimit: "We have not yet recorded a device test of whether a Safari wake lock keeps an iPhone screen on while Low Power Mode is on, so this page does not claim it. Until that result is in, turning Low Power Mode off is the fix we can stand behind."
 related:
-  - "/learn/nosleep-js-vs-wake-lock"
-  - "/for/downloads"
-  - "/for/baby-monitor"
+  - "/on/iphone-safari"
+  - "/on/ipad"
+  - "/for/cooking"
+  - "/learn/low-power-mode-and-wake-locks"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
-## What you are actually asking
+If Auto-Lock is greyed out and stuck at 30 seconds, Low Power Mode is almost certainly on: iOS sets Auto-Lock to 30 seconds while it runs. Turn it off in Settings > Battery and the other options, including Never, come back. If Low Power Mode is off and Auto-Lock is still locked, a work or school profile sets it, and only its administrator can change it.
 
-Settings → Display & Brightness → Auto-Lock greys out Never under Low Power Mode and after enough battery drain. Turn Low Power Mode off first. Safari 16.4+ can then grant a wake lock until you leave the tab.
+## The causes, most likely first
 
-## How the lock works on this page
+1. **Low Power Mode is on.** Apple's page on Low Power Mode lists "Sets Auto-Lock to 30 seconds" among the things it changes ([Apple Support](https://support.apple.com/en-us/101604), checked 26 September 2026). The row is greyed out on purpose; nothing is broken. The giveaway is a yellow battery icon at the top of the screen.
+2. **Low Power Mode keeps switching itself back on.** An automation or the low-battery alert is turning it on again.
+3. **A work or school profile caps Auto-Lock.** A phone managed by an employer or a school can have a maximum Auto-Lock time set by its administrator. Never, and sometimes the longer choices, are then missing or greyed out, even with Low Power Mode off.
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for iphone-auto-lock-never-greyed-out.
+## Turn off Low Power Mode
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+These steps are the same on iOS 16 through iOS 26.
 
-## Practical setup for iPhone Auto-Lock Never is greyed out
+1. Open **Settings > Battery**.
+2. Find **Low Power Mode** and switch it off.
+3. Open **Settings > Display & Brightness > Auto-Lock**.
+4. Pick a length. The choices run from 30 seconds to 5 minutes, plus Never.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+If you added the Low Power Mode button to Control Centre, tapping it there does the same as step 2.
 
-## Operating-system notes
+## Stop it coming back
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+1. Open the **Shortcuts** app and tap **Automation**.
+2. Look for an automation that runs when the battery drops to a level, or one that uses the "Set Low Power Mode" action.
+3. Turn it off or delete it.
+4. When the low-battery alert appears, dismiss it rather than tapping Low Power Mode.
 
-## What success looks like
+## If it's greyed out and Low Power Mode is off
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+This is the managed case.
 
-## Related paths
+1. Open **Settings > General > VPN & Device Management**.
+2. If you see a profile from your employer, your school or a device management service, the phone is managed.
+3. Tap the profile to see who issued it and what it includes.
+4. If it is a profile you installed yourself and no longer need, you can remove it here, then check Auto-Lock again.
+5. If it belongs to work or school, ask the administrator. The limit is usually a security rule.
 
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no guides claim here that is missing from the matrix.
+## Confirm which one it is
 
-## A short checklist before you walk away
+- **Stuck at exactly 30 seconds, greyed out, yellow battery:** Low Power Mode.
+- **Longer choices available but no Never, battery icon normal:** most likely a profile limit.
+- **Everything available but the screen still locks early:** set Auto-Lock to 1 minute and time it without touching the phone. If it locks on time, the setting itself works.
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For iphone-auto-lock-never-greyed-out, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+## Meanwhile: a tab as a stopgap
 
-## Why the pill is the product
+If you can't change the setting yet, a browser tab can keep the screen on while it is in front. Open AwakeTab in Safari 16.4 or later and tap Start in the timer above, which is set to 30 minutes. The pill says "Screen awake" only once Safari confirms the wake lock. If you switch apps, iOS releases it; come back and AwakeTab asks again.
 
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On iphone-auto-lock-never-greyed-out, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
+Two cases are not yet tested: whether a Safari wake lock still holds while Low Power Mode is on, and whether it holds on a phone whose profile caps Auto-Lock. We will publish both results with our device tests. The full Safari walk-through is on [keep your iPhone screen on in Safari](/on/iphone-safari).
 
-## Battery, heat and overnight use
+## When the screen you need is another app
 
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect iPhone Auto-Lock Never is greyed out to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+A wake lock in a tab covers that tab only. On an iPhone only one app can be in front, so AwakeTab cannot keep a recipe app or a PDF reader on. For a kitchen, the [cook mode page](/for/cooking) explains what works on a phone and what does not. An iPad can show AwakeTab next to the app you are using; see [keeping an iPad display awake](/on/ipad).

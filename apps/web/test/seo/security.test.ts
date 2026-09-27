@@ -203,7 +203,7 @@ describe('security headers per route class (docs/14 §3)', async () => {
     expect(h.get('x-frame-options')).toBe('DENY');
   });
 
-  const CONTENT = ['/for/cooking', '/on/iphone-safari', '/vs/nosleep-page', '/guides/modern-standby', '/learn/how-we-tested', '/es/for/cocinar', '/pt-br/learn/x', '/hi/guides/x'];
+  const CONTENT = ['/for/cooking', '/on/iphone-safari', '/vs/nosleep-page', '/guides/lock-screen-vs-sleep', '/learn/how-we-tested', '/es/for/cocinar', '/pt-br/learn/x', '/hi/guides/x'];
   it.each(CONTENT)('content route %s: its own network CSP (not joined), still no framing', (p) => {
     const h = effective(rules, p);
     expectCommon(h, p);

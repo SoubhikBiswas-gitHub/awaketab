@@ -1,22 +1,23 @@
 ---
 title: "Keep an iOS Home Screen app awake — AwakeTab"
-description: "Add to Home Screen is a different runtime. Native wake lock there needs iOS 18.4 or later. Older versions should stay in Safari. Notifications also"
+description: "Keep an iPhone Home Screen web app awake. The wake lock there needs iOS 18.4 or later; on older iOS, use Safari. Notifications need the installed app."
 h1: "Keep an iOS Home Screen app awake"
 intent: "keep screen on iphone web app"
 preset: pinf
 mode: clock
 locale: en
 reviewed: true
+noindex: true
 lastVerified: 2026-09-09
 browsers: ["safari"]
 os: ["ios"]
 faq:
-  - q: "Does keep an iOS Home Screen app awake work in a hidden tab?"
-    a: "No. The ios-home-screen flow releases when the document is hidden. Return to the tab and wait for the pill to say Screen awake or Awake via video fallback."
+  - q: "Does this work if the tab is hidden?"
+    a: "No. The browser releases the lock when you switch tabs or apps. Come back and the pill returns to “Screen awake”. On desktop Chrome or Edge, AwakeTab for Chrome keeps the screen on with the tab hidden."
   - q: "Will this keep Teams or Slack Available?"
-    a: "No. Those products follow input idle. AwakeTab never moves the mouse or presses keys, including for this scenario."
+    a: "No. Teams and Slack set you to Away from keyboard and mouse inactivity, not from a lit screen. AwakeTab never moves the mouse or presses keys."
   - q: "What browsers are in scope?"
-    a: "Native lock: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+. Older Firefox can use the video fallback after a tap. Versions come from the 9 September 2026 matrix."
+    a: "Chrome and Edge 84+, Firefox 126+, Safari 16.4+ and Samsung Internet 14+ support the wake lock natively. Older Firefox can use the video fallback after a tap. Checked against browser documentation on 26 September 2026."
 honestLimit: "Wake Lock in Home Screen web apps needs iOS 18.4+; notifications work only in the installed app."
 related:
   - "/on/macos"
@@ -24,42 +25,40 @@ related:
   - "/guides/chrome-energy-saver"
 author: soubhik
 published: 2026-09-09
+updated: 2026-09-27
 ---
 
 ## What you are actually asking
 
-Add to Home Screen is a different runtime. Native wake lock there needs iOS 18.4 or later. Older versions should stay in Safari. Notifications also require the installed app.
+A site added to the Home Screen runs as a web app, apart from Safari, and iOS 26 opens every Home Screen site that way by default. A wake lock there needs iOS 18.4 or later; on older versions, stay in Safari. Notifications also require the installed app.
 
 ## How the lock works on this page
 
-AwakeTab requests `navigator.wakeLock.request('screen')` from a secure, visible document. The seven pill states are idle, requesting, held, lost, denied, unsupported and fallback. Only held and fallback may show a running timer or the words Screen awake / Awake via video fallback. That contract does not change for ios-home-screen.
+AwakeTab asks the browser for a screen wake lock from a secure page that is on screen. The pill at the top of the tool says what the browser answered: "Starting…" while it asks, "Screen awake" once the browser has confirmed the lock, "Paused — tab hidden" when the tab is out of sight, and "Blocked — here's the fix" when the browser refuses, with the cause. Only "Screen awake" and "Awake via video fallback" come with a running timer.
 
-Chrome 84, Edge 84, Firefox 126, Safari 16.4 and Samsung Internet 14 are the native floors in the 9 September 2026 support matrix. iOS Home Screen apps need 18.4. Older Firefox can start the one-frame video fallback after you tap. Battery Saver, Low Power Mode, a hidden tab, an insecure context or a Permissions-Policy that blocks `screen-wake-lock` produce denied or lost — never a fake held.
+Chrome and Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 and Opera 70 are the first versions with the Screen Wake Lock API; iPhone and iPad Home Screen apps need iOS 18.4. Older Firefox can use the video fallback after a tap. A browser refuses or takes back the lock when the tab is hidden, when a Permissions-Policy blocks it, when Safari has not had a tap yet, or when Firefox is at 5 % battery or less and not charging. A page without HTTPS has no wake lock at all. Battery savers are not a refusal cause in Chrome or Safari.
 
-## Practical setup for Keep an iOS Home Screen app awake
+## Practical setup
 
 Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
 
 ## Operating-system notes
 
-Windows: Settings → System → Power & battery for screen timeouts; battery saver can deny the lock. macOS: System Settings → Lock Screen / Energy; lid close always sleeps and idle system sleep was not held in our tests. iPhone: Settings → Display & Brightness → Auto-Lock; Low Power Mode greys out Never. Android: Settings → Display → Screen timeout, plus OEM sleeping-apps lists. Linux: we tested Ubuntu 24.04 GNOME idle-inhibit with Firefox 126+ and Chrome 84+.
+Windows: Settings > System > Power & battery sets the screen timeout. Energy saver (called Battery saver before Windows 11 24H2) may dim the screen, but it does not refuse a browser wake lock. macOS: System Settings > Lock Screen. While Chrome keeps the display on, the Mac does not idle-sleep; closing the lid still sleeps it unless you use clamshell mode with power and an external display. iPhone: Settings > Display & Brightness > Auto-Lock; Low Power Mode sets Auto-Lock to 30 seconds. Android: Settings > Display (Pixel: Display & touch) > Screen timeout, and some makers' sleeping-apps lists can close a browser after you leave it. Linux: Chrome and Firefox ask the desktop not to sleep; whether that holds depends on your desktop.
 
 ## What success looks like
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Retrying without changing visibility or power policy repeats the same denial. Stats accrue only while held or fallback; Date.now() drives every timer.
+Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Tapping Start again without changing what caused a refusal gets the same answer. Stats count only the time the screen was actually kept awake.
 
-## Related paths
-
-Use the links below for neighbouring scenarios, the device page that matches your OS, and the API notes. Internal links stay on awaketab.com. There is no on claim here that is missing from the matrix.
 
 ## A short checklist before you walk away
 
-Confirm HTTPS, that this tab is in front, that Low Power Mode or battery saver is off if you need a native lock, and that the pill matches what you believe. For ios-home-screen, do not trust a dimming clock or a chat avatar. If the browser denies the request, read the advice code and fix that condition instead of tapping Start again. Extend from the prompt when a timed session ends; do not assume an indefinite lock if you picked a duration chip.
+Before you walk away, check that the page uses HTTPS, that this tab is in front, and that the pill says "Screen awake". A dimming clock or a chat avatar tells you nothing about the lock; the pill does. If the pill says "Blocked — here's the fix", follow the line under it instead of tapping Start again. A timed session ends when its time is up, so pick ∞ if you want it to run until you stop it.
 
-## Why the pill is the product
+## When the pill changes
 
-Plenty of pages keep a video looping and hope the display stays on. AwakeTab treats the Screen Wake Lock API as the source of truth and only then runs timers, stats and the Screen awake copy. That is slower to brag about and faster to trust. On ios-home-screen, a lost lock after you hide the tab is success of the model, not a bug. A denied lock under battery saver is also success of the model. The failure mode to avoid is a green label while the sentinel is dead.
+When you hide the tab, the pill changes to "Paused — tab hidden". That is the page telling the truth, not a bug: the browser has taken the lock back, and AwakeTab asks again as soon as you return. Paused time does not count toward a timed session. If the screen must stay on while the tab is hidden, AwakeTab for Chrome uses Chrome's own power setting instead and keeps working with the tab hidden on desktop Chrome and Edge. Firefox and Safari give extensions no power setting, so there the tab has to stay in view.
 
 ## Battery, heat and overnight use
 
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. Chromium can auto-stop near a battery threshold you set; other browsers may not. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Do not leave an unattended phone as a safety monitor. Do not fight a closed lid. Do not expect Keep an iOS Home Screen app awake to outrank firmware. If you need those jobs, use a native utility and keep this tab for visible, honest display hold.
+A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. In Chrome and Edge, AwakeTab can stop by itself at a battery level you pick; Firefox and Safari do not tell pages the battery level. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Firmware and OS power rules still win. If you need those jobs, use a native utility and keep this tab for a screen you can see.
