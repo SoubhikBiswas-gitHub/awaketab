@@ -1,6 +1,5 @@
 import type { ISettings, TAmbientMode, TFace, TTheme } from '@awaketab/core';
 import { DEFAULT_SETTINGS } from '@awaketab/core';
-import { ACCENTS, accentHex, applyAccent, PACK_ACCENTS } from '../accent.js';
 import { hasFeature, type IToolCtx } from '../ctx.js';
 import { hm } from '../format.js';
 import { t } from '../i18n.js';
@@ -44,8 +43,6 @@ function setValue(form: HTMLFormElement, name: string, value: string | boolean):
 
 export function fillSettings(form: HTMLFormElement, s: ISettings): void {
   setValue(form, 'theme', s.theme);
-  // A legacy palette hex (amber, indigo, teal, rose) selects the lamp that replaced it (docs/08 §2.1).
-  setValue(form, 'accent', accentHex(s.accent));
   setValue(form, 'face', s.face);
   setValue(form, 'defaultPreset', s.defaultPreset);
   setValue(form, 'sound', s.sound.id === 'none' ? 'none' : 'chime');
@@ -72,7 +69,6 @@ export function readSettings(
     const v = data.get(k);
     return typeof v === 'string' ? v : '';
   };
-  const accent = str('accent').toUpperCase() || cur.accent;
   const mode = str('ambientMode') as TAmbientMode;
   const clock = str('clock24h');
   const threshold = Math.min(30, Math.max(5, Math.round(Number(str('batteryThreshold')) || cur.battery.threshold)));
@@ -82,7 +78,6 @@ export function readSettings(
   return {
     ...cur,
     theme: (['auto', 'light', 'dark', 'oled'].includes(str('theme')) ? str('theme') : cur.theme) as TTheme,
-    accent: PACK_ACCENTS.has(accent) && !gates.packs ? cur.accent : accent,
     face: FACES.has(str('face') as TFace) ? (str('face') as TFace) : cur.face,
     defaultPreset: (str('defaultPreset') || cur.defaultPreset) as ISettings['defaultPreset'],
     telemetry: data.get('telemetry') === 'on',
@@ -98,7 +93,8 @@ export function readSettings(
     },
     ambient: {
       ...cur.ambient,
-      mode: MODES.has(mode) ? mode : cur.ambient.mode,
+      // A locked mode is never stored without its licence (docs/02 FR-AMBIENT-01); Message needs ambient.message.
+      mode: MODES.has(mode) && (mode !== 'message' || gates.message) ? mode : cur.ambient.mode,
       message: gates.message && data.has('ambientMessage') ? sanitizeMsg(str('ambientMessage')) : cur.ambient.message,
       showSeconds: data.get('showSeconds') === 'on',
       clock24h: clock === '24' ? true : clock === '12' ? false : null,
@@ -129,15 +125,6 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
 
   const refresh = () => {
     const s = ctx.store.get().settings;
-    const picked = (form.elements.namedItem('accent') as RadioNodeList | null)?.value ?? s.accent;
-    const hex = accentHex(picked);
-    const preview = PACK_ACCENTS.has(hex) && !gates().packs;
-    applyAccent(hex, true);
-    const name = t(`settings.accent.${ACCENTS[hex]}`);
-    const note = q('[data-lamp-note]');
-    if (note) note.textContent = preview ? t('settings.lamp.preview', { name }) : name;
-    const packGate = q('[data-pack-gate]');
-    if (packGate) packGate.hidden = gates().packs;
     const notif = field(form, 'notifications');
     const state = notificationsState();
     if (notif instanceof HTMLInputElement) notif.disabled = state === 'unavailable';
@@ -224,13 +211,16 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
       fillSettings(form, next);
       refresh();
     });
-    // A previewed pack lamp is never kept: closing puts the stored lamp back.
-    dialog.addEventListener('close', () => {
-      applyAccent(ctx.store.get().settings.accent, gates().packs);
-    });
   }
 
   fillSettings(form, ctx.store.get().settings);
   refresh();
-  openDialog(dialog, opener);
+  // Colour themes, lamps, patterns and presets are the themes pack, loaded on first open; the sheet waits briefly
+  // for it so the section does not pop in.
+  const looks = q('[data-appearance]');
+  const ready = looks && import('../packs/themes/appearance.js').then((m) => m.mountAppearance(ctx, looks));
+  // A failed pack load still opens the sheet; only the gallery is missing.
+  void Promise.race([ready?.catch(() => undefined), new Promise((r) => setTimeout(r, 400))]).then(() => {
+    openDialog(dialog, opener);
+  });
 }

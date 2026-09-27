@@ -2,17 +2,13 @@ import { hasFeature, type IToolCtx } from '../ctx.js';
 import { dateLong, hm } from '../format.js';
 import { t } from '../i18n.js';
 import { sanitizeMsg } from '../params.js';
-import { toast } from '../ui/toast.js';
-import { MESSAGE_PREVIEW_MS, resolveMessage } from './logic.js';
+import { resolveMessage } from './logic.js';
 import { el, everySecond } from './tick.js';
-
-// The shared-link preview is spent once per page view; coming back to the mode shows the Pro card.
-let previewSpent = false;
 
 export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   const pro = hasFeature(ctx, 'ambient.message');
   const view = resolveMessage({
-    param: previewSpent && !pro ? '' : sanitizeMsg(ctx.params.msg),
+    param: sanitizeMsg(ctx.params.msg),
     saved: sanitizeMsg(ctx.store.get().settings.ambient.message),
     pro,
     sample: t('ambient.message.placeholder'),
@@ -55,12 +51,7 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
     see.focus();
   }
 
-  const long = el('span');
-  const brief = el('span');
-  if (!pro) {
-    const tail = view.preview ? [long, brief] : previewSpent ? [el('span', {}, t('ambient.message.ended'))] : [];
-    stage.append(el('p', { class: 'at-am-preview' }, el('span', { class: 'at-am-tag' }, t('pro.badge')), ...tail));
-  }
+  if (!pro) stage.append(el('p', { class: 'at-am-preview' }, el('span', { class: 'at-am-tag' }, t('pro.badge'))));
 
   if (pro) {
     const edit = el('button', { type: 'button', class: 'at-am-edit' }, t('ambient.message.edit'));
@@ -106,26 +97,35 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
     stage.append(edit);
   }
 
-  const started = Date.now();
   const off = everySecond((now) => {
     time.textContent = hm(now, ctx.store.get().settings.ambient.clock24h);
     date.textContent = dateLong(now);
-    const s = Math.max(0, Math.ceil((MESSAGE_PREVIEW_MS - (now - started)) / 1000));
-    long.textContent = t('ambient.message.preview', { n: s });
-    brief.textContent = t('ambient.message.previewShort', { n: s });
   });
 
-  let timer = 0;
-  if (view.preview) {
-    timer = window.setTimeout(() => {
-      previewSpent = true;
-      toast(ctx.store, { kind: 'info', text: t('tool.toast.proMessage'), id: 'mode' });
-      ctx.store.set({ ui: { mode: 'clock' } });
-    }, MESSAGE_PREVIEW_MS);
-  }
+  // A shared link's message runs as the shared five-minute Pro preview (its chip counts down), then Clock returns.
+  let gone = false;
+  let stop: () => void = () => undefined;
+  if (view.preview)
+    void import('../packs/themes/preview.js').then((m) => {
+      if (gone) return;
+      m.startPreview(ctx, {
+        kind: 'mode',
+        id: 'message',
+        label: t('ambient.mode.message'),
+        back: t('ambient.mode.clock'),
+        apply: () => undefined,
+        revert: () => {
+          ctx.store.set({ ui: { mode: 'clock' } });
+        },
+      });
+      stop = () => {
+        if (m.activePreview()?.id === 'message') m.endPreview(false);
+      };
+    });
   return () => {
+    gone = true;
     off();
-    window.clearTimeout(timer);
+    stop();
     delete stage.dataset.scrim;
   };
 }

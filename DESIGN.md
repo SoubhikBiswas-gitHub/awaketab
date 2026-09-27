@@ -15,7 +15,7 @@ Contracts that do **not** change: the seven lock states and their exact pill cop
 
 ## 2. Colour
 
-Strategy: **restrained**. Tinted neutrals plus one lamp colour for "awake". Amber and red keep their aviation meanings (caution = paused, alert = blocked) and are never offered as lamp colours.
+Strategy: **restrained**. Tinted neutrals plus one lamp colour for "awake". Amber and red keep their aviation meanings (caution = paused, alert = blocked); a lamp is never a saturated red, and the warm lamps (Amber, Coral, Gold) are told apart from the paused tone by the pill text, glyph and ring pattern, never by colour alone. Colour themes (§2.4) re-map the neutrals, not these meanings.
 
 ### 2.1 Theme tokens (map onto existing `--at-*` names)
 
@@ -51,16 +51,25 @@ Extension toolbar badge (Chrome draws it; white text): Screen level `#087B87` (5
 
 Night mode (OLED, red digits): `--at-night-ink #FF5A3C`, `--at-night-ink-2 #E8563C`, `--at-night-muted #A89690`, `--at-night-line #3A2E2A`; ground `#000`. Scrim is always `rgba(4,7,12,.55)`.
 
-### 2.2 Lamp colours (user choice — replaces the docs/05 §1.1a amber/indigo/teal/rose set)
+### 2.2 Lamp colours (user choice)
 
-| Id | Dark | Light (ring, fills and accent text) | White-on-fill contrast | Gate (proposal) |
-|---|---|---|---|---|
-| `aqua` (default) | `#5BE0E8` | `#087B87` | 5.0:1 | free |
-| `violet` | `#A594FF` | `#5A47CF` | 6.5:1 | free |
-| `mint` | `#7EF0B8` | `#167A50` | 5.3:1 | `ambient.packs` |
-| `sky` | `#7CB8FF` | `#255FBD` | 6.1:1 | `ambient.packs` |
+| Id | Dark | Light (ring, fills and accent text) | Gate |
+|---|---|---|---|
+| `aqua` (default) | `#5BE0E8` | `#087B87` | free |
+| `violet` | `#A594FF` | `#5A47CF` | free |
+| `amber` | `#FFAF6B` | `#A34F00` | free |
+| `teal` | `#4FD8BE` | `#0A7565` | free |
+| `mint` | `#7EF0B8` | `#167A50` | `ambient.packs` |
+| `sky` | `#7CB8FF` | `#255FBD` | `ambient.packs` |
+| `ice` | `#A8DDF5` | `#2A6A8A` | `ambient.packs` |
+| `lavender` | `#CDB8FF` | `#7446B0` | `ambient.packs` |
+| `rose` | `#FF9CC6` | `#B0366A` | `ambient.packs` |
+| `coral` | `#FF9B85` | `#B1452F` | `ambient.packs` |
+| `gold` | `#EBCB5A` | `#7F6400` | `ambient.packs` |
+| `lime` | `#B5E36A` | `#4D7300` | `ambient.packs` |
+| custom | the light value mixed 40 % with white | any colour, fitted | `ambient.packs` |
 
-Light values are the darker accent-text shades because lighter fills (for example `#0A8F9B`, 3.9:1) fail AA for white button text. Rules: lamp hues stay in the blue–green–violet band so they never read as amber/red status; accent ≥ 3:1 on ground, accent-text ≥ 4.5:1; the picker shows a live preview on the ring and is in Settings → Appearance (swatches with names, not colour alone). Gate split decided (O-01): Aqua and Violet free, Mint and Sky in Pro; a lapsed licence falls back to Aqua.
+Light values are the darker accent-text shades because lighter fills (for example `#0A8F9B`, 3.9:1) fail AA for white button text. Rules: lamps are calm and **never a saturated red**, so a lamp cannot read as "blocked"; state is never colour alone (pill text, glyph, ring pattern), so a warm lamp next to the amber paused tone stays honest. Every lamp on every colour theme (§2.4) in light, dark and OLED: accent ≥ 3:1 on ground, accent-text ≥ 4.5:1 on ground and surface, label ≥ 4.5:1 on the fill (checked with culori). The custom lamp is fitted (same hue, lightness moved the least, red capped at 55 % saturation) until it passes on every theme. The picker is Settings → Appearance → Lamp colour: named swatches drawn as a mini ring, never colour alone. A lapsed licence falls back to Aqua. Old stored hexes (amber `#B86E00`, indigo, teal `#0F766E`, rose `#BE123C`) keep mapping to Aqua, Violet, Mint and Sky; the new lamps use other hexes.
 
 ### 2.3 State colour map
 
@@ -75,6 +84,26 @@ Light values are the darker accent-text shades because lighter fills (for exampl
 | fallback | Awake via video fallback | lamp | dot in ring | depleting arc + dashed track `3 9` |
 
 The logo bead in the header takes the current tone, so the brand mark is itself a status light. The tab favicon and title mirror it (`● 24:18 left`).
+
+### 2.4 Theme layer (colour themes, backgrounds, presets)
+
+A colour theme re-maps the same tokens; it never adds names. `html[data-palette="<id>"]` with `data-theme` sets the neutrals and tones of §2.1 (`ground`, `surface`, `line`, `line-strong`, `ink`, `ink-2`, `muted`, `track`, `tick`, `raised`, `sunken`, `input-border`, `warn`, `bad`, `good`, `lift`, `ground-end`), so the shadcn aliases, the ambient ground and every component follow. Each theme has light and dark; OLED keeps the theme's inks on pure black. The lamp, night mode and the Horizon art are not re-mapped.
+
+| Theme | Character | Light ground · ink | Dark ground · ink | Gate |
+|---|---|---|---|---|
+| Clear Night | the default (§2.1) | `#F2F6FA` · `#0E1726` | `#0A0E16` · `#EAF0F7` | free |
+| Paper | warm sepia, like a notebook | `#F8F3E9` · `#2B2118` | `#15110C` · `#F2E9DA` | free |
+| Nord | cool arctic greys | `#F1F3F7` · `#2E3440` | `#242933` · `#ECEFF4` | free |
+| Solarized | Schoonover's base tones | `#FDF6E3` · `#073642` | `#002B36` · `#FDF6E3` | Pro |
+| Midnight | deep indigo night | `#F2F3FA` · `#0B1030` | `#070B1A` · `#E8ECFF` | Pro |
+| Forest | moss and pine | `#F2F6F1` · `#13221A` | `#0B130F` · `#E6F0E8` | Pro |
+| Sunset | dusk rose | `#FBF2ED` · `#2A1418` | `#160E14` · `#FBECE6` | Pro |
+| Mono | pure greys | `#F4F4F4` · `#111111` | `#0B0B0B` · `#EDEDED` | Pro |
+| High contrast | black and white, strong lines | `#FFFFFF` · `#000000` | `#000000` · `#FFFFFF` | Pro |
+
+Backgrounds sit behind the page and every ambient mode but Night and Minimal: None, Grain, Dots, Grid (free), Contours, Waves, Aurora, Stars, Drift (Pro). They are drawn from tokens (ink at 7 %, 60 % of that on OLED; lamp at ≤ 8 % for Aurora and Drift), so text stays AA over them; they move only by slow transform or opacity (a 240 s drift keeps them burn-in safe; Stars twinkle over 11 s, Drift rises over 320 s), stop under reduced motion and hide under forced colours. Presets are one-tap theme + lamp + background: Classic, Library, Fjord (free), Night desk, Kitchen, Focus, Campfire, Northern lights (Pro).
+
+The boot script paints the stored theme, lamp and background before the first frame (a parser-inserted link to `public/assets/themes.css` only when one is set), so nothing flashes. Settings → Appearance shows every option as a live mini (ground, background, lamp ring, a card with two lines), drawn with the real tokens on the tile itself. A Pro option previews for 5 minutes: a calm chip above the dock ("Previewing Nord · 4:59 left · Keep it with Pro", folds to a dot), a toast at 1 minute, then a slow cross-fade back to the last free choice. Nothing is stored and a session is never touched; while a session runs the chip carries no Pro link (D-R15).
 
 ## 3. Type
 
@@ -168,7 +197,7 @@ All twelve are free. The newer eight load only when chosen, keep the face box re
 
 ## 9. Theme behaviour
 
-`auto` follows `prefers-color-scheme` live (listener on the media query). Horizon's sky phase is independent of theme and follows local time. The boot script applies theme and lamp before first paint (no flash).
+`auto` follows `prefers-color-scheme` live (listener on the media query). Horizon's sky phase is independent of theme and follows local time. The boot script applies theme, colour theme, lamp and background before first paint (no flash). Every colour theme has a light and a dark variant, so Auto switches both live.
 
 ## 10. Do and don't
 

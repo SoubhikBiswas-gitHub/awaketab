@@ -20,7 +20,7 @@ Status: v1.4 · 26 Sep 2026 · Owner: Soubhik · Derived from `awaketab-blueprin
 | Embed product | **AwakeTab Embed** (first widget: Cook Mode) |
 | Business tier | **AwakeTab Business** (Embed licence, Kiosk licence) |
 | Paid tier | **AwakeTab Pro** |
-| Brand accent | The lamp (Clear Night, `DESIGN.md` §2.2): default Aqua `#087B87` (light UI) / `#5BE0E8` (dark UI); night indigo `#2B3A67` / `#9DB0FF`; OLED black `#000000`. Amber and red are reserved for the paused and blocked states, never the brand |
+| Brand accent | The lamp (Clear Night, `DESIGN.md` §2.2): default Aqua `#087B87` (light UI) / `#5BE0E8` (dark UI); night indigo `#2B3A67` / `#9DB0FF`; OLED black `#000000`. Saturated red is reserved for the blocked state and never a lamp; the Amber lamp is a warmer orange than the paused tone, and state is never colour alone (pill text, glyph, ring pattern) |
 | Favicon / icon motif | The ring (progress ring with a glowing dot at 12 o'clock) |
 | Author page | `/about` — real name, testing setup, contact |
 
@@ -210,7 +210,7 @@ Content slugs (English canonical; translated slugs for the Latin-script locales 
 
 `ambient.packs` · `ambient.message` · `ambient.logo` · `schedules` · `sounds.custom` · `stats.history` (beyond 7 days) · `stats.export` · `pip.pro` (PiP with ambient modes) · `ext.autostart` · `ext.schedules` · `ads.free` · `embed.noattrib` (Business) · `kiosk.branding` (Business).
 
-Free always includes: the lock, every preset, custom duration, until-time, session restore, standard + clock + minimal ambient, one chime, notifications, 7-day stats, PiP basic, keyboard shortcuts, PWA, all languages.
+Free always includes: the lock, every preset, custom duration, until-time, session restore, standard + clock + minimal ambient, one chime, notifications, 7-day stats, PiP basic, keyboard shortcuts, PWA, all languages, the colour themes Clear Night, Paper and Nord, the lamps Aqua, Violet, Amber and Teal, the backgrounds None, Grain, Dots and Grid, and the presets built from them. `ambient.packs` unlocks the other colour themes, lamps (and the custom lamp), backgrounds and presets; every one of them previews for 5 minutes first (§13.25).
 
 ### 8.3 Monetization gates (from the blueprint)
 
@@ -393,9 +393,9 @@ Accepted on 2026-09-26 with the M6 implementation; confirmed by owner decision D
 | `TDialogName` | Removed: the open `<dialog>` is the source of truth (`ui/dialog.ts`), so the store no longer mirrors it |
 | `TChime` (`signal.ts`) | `end` · `focus` · `timer` — Web Audio oscillator tones, no audio files |
 | Notification tags | `at-end` · `at-focus` · `at-cook-{timerId}` |
-| Lamp colours (`accent.ts`, was "accent palettes") | `aqua` `#087B87` (default, no attribute) · `violet` `#5A47CF` · `mint` `#167A50` · `sky` `#255FBD` (`ACCENTS`, keyed by the light hex; `DEFAULT_ACCENT` = Aqua). `settings.accent` stores the hex; the id goes on `<html data-accent>`; `mint` and `sky` are the `ambient.packs` lamps (`PACK_ACCENTS`) and fall back to Aqua without it. `LEGACY_ACCENTS` + `accentHex()` migrate the old palette hexes (`08-data-storage.md` §2.1). The inline boot script `src/boot/boot.js` mirrors both maps so the lamp paints before first frame |
+| Lamp colours (was "accent palettes") | Twelve lamps, keyed by the stored light hex in `LAMPS` (`src/tool/packs/themes/looks.ts`): free `aqua` `#087B87` (default, no attribute) · `violet` `#5A47CF` · `amber` `#A34F00` · `teal` `#0A7565`; `ambient.packs` `mint` `#167A50` · `sky` `#255FBD` · `ice` `#2A6A8A` · `lavender` `#7446B0` · `rose` `#B0366A` · `coral` `#B1452F` · `gold` `#7F6400` · `lime` `#4D7300`; any other valid hex is `custom` (Pro, `--at-custom` on `<html style>`). `settings.accent` stores the hex; the id goes on `<html data-accent>`. `LEGACY_LAMPS` + `lampOf()` migrate the old palette hexes (`08-data-storage.md` §2.1). The inline boot script mirrors both maps so the lamp paints before first frame; `tool/accent.ts` `gateLooks(packs)` drops Pro looks without the licence (it leaves a running preview alone) |
 | Ambient gating | Only `message` is gated (`MODE_GATES = { message: 'ambient.message' }`); `ambient.packs` gates palettes, never layouts. `05-frontend-spec.md` §3.13 wins over the E10-T01 wording in `15-implementation-plan.md` |
-| `ambient/logic.ts` constants | `AMBIENT_ORDER` (the `M` cycle) · `PIXEL_SHIFT_MS` 60,000 · `PIXEL_SHIFT_PX` 2 · `NIGHT_DIM_AFTER_MS` 30,000 · `BURNIN_DIM_AFTER_MS` 30 min · `MESSAGE_PREVIEW_MS` 60,000 · `FOCUS_LONG_BREAK_MIN` 15 · `COOK_MAX_TIMERS` 3 · `COOK_NAME_MAX` 20 · `COOK_MIN_MS` 1 min · `COOK_MAX_MS` 12 h · `COOK_FLASH_MS` 10,000 |
+| `ambient/logic.ts` constants | `AMBIENT_ORDER` (the `M` cycle) · `PIXEL_SHIFT_MS` 60,000 · `PIXEL_SHIFT_PX` 2 · `NIGHT_DIM_AFTER_MS` 30,000 · `BURNIN_DIM_AFTER_MS` 30 min · `FOCUS_LONG_BREAK_MIN` 15 · `COOK_MAX_TIMERS` 3 · `COOK_NAME_MAX` 20 · `COOK_MIN_MS` 1 min · `COOK_MAX_MS` 12 h · `COOK_FLASH_MS` 10,000 |
 | `end.ts` constants | `TITLE_FLASH_MS` 1000 · `TITLE_FLASH_MIN_MS` 3000 · `RATING_DELAY_MS` 2000 · `COUNTED_SESSION_S` 300 (a completed session counts toward `meta.sessionCount` only if ≥ 5 min awake) |
 | `ui/rating.ts` constants | `RATING_MIN_SESSIONS` 5 · `RATING_REARM_SESSIONS` 10 · `RATING_TEXT_MAX` 280 |
 | `stats/heatmap.ts` constants | `HEATMAP_WEEKS` 12 · `FREE_HISTORY_DAYS` 7 |
@@ -750,7 +750,6 @@ Added on 2026-09-28 with the shell, Pro, extension, ambient and library fixes. A
 | `.at-pro-key-out` (`pro.css`) | The read-only box on `/pro/activate` that shows the licence key after checkout ("Show my key"): a sunken 48 px field in the key type style, wrapping anywhere so a long key never overflows on phones, select-all on click, with the Copy button beside it |
 | `ext.until.summary` (extension, all eight locales) | The summary line under the popup's Until stepper: "{day} at {time}, in {remain}", for example "Tomorrow at 12:15 AM, in 1 h 15 min"; `{day}` is `tool.until.today` or `tool.until.tomorrow` |
 | `ext.license.device` (extension, all eight locales) | "Chrome on {os}": how the options page names this browser in the active licence row ("AwakeTab Pro · Chrome on macOS"; the OS is ChromeOS, Windows, macOS, Linux or "desktop"). The activation API keeps its own device label ("AwakeTab for Chrome · macOS") |
-| `ambient.message.ended` (web, all eight locales) | "Preview ended": shown beside the Pro tag in Message mode for a free user once the 60 s shared-link preview has been used (once per page view) |
 | `page.extension.cta.*` (web, all eight locales) | The `/extension` store buttons and their note: `chrome` "Add to Chrome", `edge` "Get it for Edge", `note` "Free. Works in {browsers} (version {version} or later).", and, while `EXTENSION_LISTED` is `false` in `src/lib/extension.ts`, `chromeSearch` "Search the Chrome Web Store", `edgeSearch` "Search Edge Add-ons" and `pending` "The listing is waiting for store review, so for now these buttons open a store search." (the links are store searches until the listing is approved) |
 | `@awaketab/wake/video` (package entry) | New export of `@awaketab/wake` (`src/video.ts` → `dist/video.{js,cjs,d.ts,d.cts}`): `webm` and `mp4`, the fallback clips as `data:` URLs, capped at 650 B gz. The core ships only the WebM; pass the MP4 for Safari before 16.4 with `createWakeLock({ videoSources: { mp4 } })`. The embed widget does. Spec: `04-engine-spec.md` §5, `12-library-spec.md` §10.4 |
 
@@ -888,6 +887,27 @@ Accepted on 2026-09-28. Spec: `05-frontend-spec.md` §3.33 (Faces) and `DESIGN.m
 | Custom properties | `--at-fx-*` (face-local: `--at-fx-ink`, `--at-fx-glow` 0–1 by state, `--at-fx-shade`, per-face sizes), defined in the pack sheets only |
 | Tool CSS | `.at-faces` `--at-seg-n` 4 → 5; `:root[data-face] .at-face-ring { display: none }` replaces the three-face list; `--at-tl-tabs-late` 360 → 400 px |
 | i18n keys | New in all 8 locales (English values until translated): `tool.face.flip` · `tool.face.rolling` · `tool.face.analog` · `tool.face.rings` · `tool.face.word` · `tool.face.nixie` · `tool.face.lcd` · `tool.face.matrix` · `tool.face.more` · `tool.face.moreLabel` · `tool.face.moreTitle` · `settings.face.analogStyle` · `settings.face.analog.minimal` · `settings.face.analog.luxe` |
+
+### 13.25 Colour themes, lamps, patterns, presets and Pro previews
+
+Accepted on 2026-09-28. Spec: `05-frontend-spec.md` §1.1a–§1.1d; storage fields: `08-data-storage.md` §2.1. Budgets: no critical tool JS added and total tool JS about flat (the old lamp code left `settings.ts` and `accent.ts`); the pack has its own budget (`themes` ≤ 25 KB gz) and its own stylesheet; the inlined tool CSS is unchanged and the lazy `tool-more.css` lost the old lamp swatch rules.
+
+| Identifier | Decision |
+|---|---|
+| `TPalette` ids | `clear-night` (default) · `paper` · `nord` · `solarized` · `midnight` · `forest` · `sunset` · `mono` · `contrast`; free `clear-night`, `paper`, `nord` (`PALETTES` in `looks.ts`) |
+| `TPattern` ids | `none` (default) · `grain` · `dots` · `grid` · `topo` · `waves` · `aurora` · `stars` · `drift`; free `none`, `grain`, `dots`, `grid` (`PATTERNS`) |
+| Preset ids | `classic` · `library` · `fjord` (free) · `night-desk` · `kitchen` · `focus` · `campfire` · `northern-lights` (`PRESETS`: `[id, palette, lamp, pattern]`; free when all three parts are) |
+| `<html data-palette>` / `data-pattern` | Set by `boot.js` from `at.v1.settings` before first paint (absent for `clear-night` / `none`); re-map the `--at-*` tokens and draw the background layer |
+| `<html data-preview>` | The kind of the running Pro preview (`palette`, `accent`, `pattern`, `preset`, `mode`, …) |
+| `public/assets/themes.css` | The theme layer: palette, lamp (eight lamps plus `custom`) and pattern rules; URL `/assets/themes.css?v=<10 hex of its sha256>` from `themesHref()` in `scripts/boot-inline.mjs`, which also defines `__AT_THEMES__` for Vite; the boot script's `<link data-at-themes>` |
+| `public/assets/patterns/` | `dots.svg`, `grid.svg`, `waves.svg` (Hero Patterns, CC BY 4.0) and `topo.svg` (own contour SVG); referenced with `?v=1` |
+| Pattern tokens | `--at-pat` (mask image) · `--at-pat-size` · `--at-pat-a` (0.07; 1 for gradient patterns) · `--at-pat-k` (1; 0.6 on OLED) · `--at-pat-bg` · `--at-pat-bg-size` · `--at-pat-anim`; keyframes `at-pat-drift`, `at-pat-rise`, `at-pat-aurora`, `at-pat-twinkle` |
+| `--at-custom` | The custom lamp's light hex; dark value `color-mix(in srgb, var(--at-custom) 40%, #fff)` |
+| Themes pack modules | `src/tool/packs/themes/`: `looks.ts` (catalogue, `lampOf`, `lookOf`, `ownedLook`, `paintLook`, `themesCss`, `uiCss`) · `fit.ts` (`fitLamp`, `lampOk`, `darkOf`, `WORST_LIGHT` `#F1F3F7`, `WORST_DARK` `#2E3440`, `ON_DARK` `#04232A`) · `preview.ts` · `appearance.ts` (`mountAppearance(ctx, host)` on `[data-appearance]`) · `picker.ts` (`vanilla-colorful`) · `themes-ui.css` |
+| `startPreview(ctx, { kind, id, label, apply, revert, back? })` | The shared Pro preview (`preview.ts`): `PREVIEW_MS` 300,000 · `PREVIEW_WARN_MS` 60,000; also `endPreview(revert?, reason?)`, `activePreview()`, `onPreview(fn)`, `previewLine()`. Toast id `preview` |
+| `IToastItem.alt` | A second toast action (the one-minute preview toast: Get Pro · End now) |
+| `.at-pv` | The preview chip (first child of `[data-toasts]`; `data-min` folds it to the dot; `data-float` when a page has no toast region) |
+| i18n keys | `settings.looks.*` (section labels, Pro note) · `settings.palette.<id>` · `settings.accent.<id>` (new lamps and `custom`) · `settings.pattern.<id>` · `settings.preset.<id>` · `settings.preview.*` · `settings.custom.*`. Removed: `settings.lamp.note`, `ambient.message.preview`, `ambient.message.previewShort`, `ambient.message.ended` (the Message mode's shared link now runs the five-minute preview; `MESSAGE_PREVIEW_MS` is gone) |
 
 ## 14. Writing conventions for these docs
 

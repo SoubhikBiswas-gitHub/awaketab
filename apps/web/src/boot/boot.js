@@ -9,6 +9,8 @@
   // Edge is the one browser CSS cannot tell apart from Chrome.
   if (/\bEdg\//u.test(navigator.userAgent)) root.dataset.edge = '';
   const KEY = 'at.v1.settings';
+  // scripts/boot-inline.mjs swaps in the hashed URL of public/assets/themes.css.
+  const THEMES = '__AT_THEMES__';
   const dark = matchMedia('(prefers-color-scheme: dark)');
   /** @type {Record<string, string>} */
   const GROUND = { light: '#F2F6FA', dark: '#0A0E16', oled: '#000000' };
@@ -39,19 +41,38 @@
     const saved = raw ? /** @type {Record<string, unknown>} */ (JSON.parse(raw)) : null;
     if (q && allowed.includes(q)) theme = q;
     else if (saved && typeof saved.theme === 'string' && allowed.includes(saved.theme)) theme = saved.theme;
-    // Mirror of src/tool/accent.ts ACCENTS + LEGACY_ACCENTS (aqua, the default, has no attribute); the island
-    // re-checks pack lamps against the licence.
+    // Mirror of LAMPS + LEGACY_LAMPS in src/tool/packs/themes/looks.ts (aqua, the default, has no attribute); any
+    // other hex is a custom lamp. The island re-checks Pro lamps, colour themes and patterns against the licence.
     /** @type {Record<string, string>} */
     const accents = {
       '#5A47CF': 'violet',
       '#167A50': 'mint',
       '#255FBD': 'sky',
+      '#A34F00': 'amber',
+      '#B1452F': 'coral',
+      '#B0366A': 'rose',
+      '#7F6400': 'gold',
+      '#4D7300': 'lime',
+      '#0A7565': 'teal',
+      '#2A6A8A': 'ice',
+      '#7446B0': 'lavender',
       '#4F46E5': 'violet',
       '#0F766E': 'mint',
       '#BE123C': 'sky',
     };
-    const accent = saved && typeof saved.accent === 'string' ? accents[saved.accent.toUpperCase()] : undefined;
+    const hex = saved && typeof saved.accent === 'string' ? saved.accent.toUpperCase() : '';
+    const accent =
+      accents[hex] ?? (/^#[0-9A-F]{6}$/u.test(hex) && hex !== '#087B87' && hex !== '#B86E00' ? 'custom' : '');
     if (accent) root.dataset.accent = accent;
+    if (accent === 'custom') root.style.setProperty('--at-custom', hex);
+    const palette = saved?.palette;
+    const pattern = saved?.pattern;
+    if (typeof palette === 'string' && palette !== 'clear-night') root.dataset.palette = palette;
+    if (typeof pattern === 'string' && pattern !== 'none') root.dataset.pattern = pattern;
+    // Colour themes, patterns and the newer lamps live in public/assets/themes.css. A parser-inserted link holds the
+    // first paint for it, as the inline CSS does, so a chosen look never flashes the default one.
+    if (root.dataset.palette || root.dataset.pattern || (accent && !/^(?:violet|mint|sky)$/u.test(accent)))
+      document.write(`<link rel="stylesheet" href="${THEMES}" data-at-themes>`);
     // The remembered clock face (DESIGN.md §7) and the keyboard-hint switch paint before first frame too, so the
     // tool never flashes the Ring face or a keycap it is about to hide.
     const f = saved && typeof saved.face === 'string' ? saved.face : '';

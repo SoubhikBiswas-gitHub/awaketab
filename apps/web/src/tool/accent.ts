@@ -1,37 +1,12 @@
-export const ACCENTS = {
-  '#087B87': 'aqua',
-  '#5A47CF': 'violet',
-  '#167A50': 'mint',
-  '#255FBD': 'sky',
-} as const;
+// Looks anyone may keep. boot.js paints the stored lamp, colour theme and pattern before first paint; any other value
+// needs ambient.packs, so a lapsed licence falls back to the default (the catalogue is packs/themes/looks.ts).
+const FREE = /^(?:violet|amber|teal|paper|nord|grain|dots|grid)$/u;
 
-export type TAccentId = (typeof ACCENTS)[keyof typeof ACCENTS];
-
-export const LEGACY_ACCENTS: Readonly<Record<string, keyof typeof ACCENTS>> = {
-  '#B86E00': '#087B87', // amber → aqua
-  '#4F46E5': '#5A47CF', // indigo → violet
-  '#0F766E': '#167A50', // teal → mint
-  '#BE123C': '#255FBD', // rose → sky
-};
-
-export const PACK_ACCENTS: ReadonlySet<string> = new Set(['#167A50', '#255FBD']);
-export const DEFAULT_ACCENT = '#087B87';
-
-export function accentHex(hex: string): keyof typeof ACCENTS {
-  const up = hex.toUpperCase();
-  const key = (LEGACY_ACCENTS[up] ?? up) as keyof typeof ACCENTS;
-  return key in ACCENTS ? key : DEFAULT_ACCENT;
-}
-
-export function accentId(hex: string, packs: boolean): TAccentId {
-  const key = accentHex(hex);
-  if (PACK_ACCENTS.has(key) && !packs) return 'aqua';
-  return ACCENTS[key];
-}
-
-export function applyAccent(hex: string, packs: boolean, doc: Document = document): TAccentId {
-  const id = accentId(hex, packs);
-  if (id === 'aqua') delete doc.documentElement.dataset.accent;
-  else doc.documentElement.dataset.accent = id;
-  return id;
+export function gateLooks(packs: boolean, html: HTMLElement = document.documentElement): void {
+  // A running preview owns the page until it ends (packs/themes/preview.ts).
+  if (packs || 'preview' in html.dataset) return;
+  for (const k of ['accent', 'palette', 'pattern'] as const) {
+    const v = html.dataset[k];
+    if (v && !FREE.test(v)) html.removeAttribute(`data-${k}`);
+  }
 }

@@ -2,7 +2,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
-import { bootInline, BOOT_FILE } from './scripts/boot-inline.mjs';
+import { bootInline, BOOT_FILE, themesHref } from './scripts/boot-inline.mjs';
 import { polarDefines } from './scripts/polar-server.mjs';
 
 // Libraries each feature pack owns; they never enter the tool's own chunks.
@@ -14,7 +14,7 @@ const PACK_LIBS = [
     /\/node_modules\/.*(?:@tiptap|prosemirror-|orderedmap|rope-sequence|w3c-keyname|linkifyjs|idb-keyval|annyang)/u,
     'notes',
   ],
-  [/\/node_modules\/.*(?:vanilla-colorful|@tsparticles|tsparticles)/u, 'themes'],
+  [/\/node_modules\/.*vanilla-colorful/u, 'themes'],
   [/\/node_modules\/.*(?:dayjs|easytimer|hotkeys-js)/u, 'extras'],
 ];
 
@@ -62,7 +62,7 @@ export default defineConfig({
       },
     ],
     // F-06: PUBLIC_POLAR_SERVER picks CHECKOUT_LINKS and whether the bundles trust the dev licence key.
-    define: polarDefines(),
+    define: { ...polarDefines(), __AT_THEMES__: JSON.stringify(themesHref()) },
     build: {
       // No __vitePreload wrapper or deps map: it put a shared helper chunk and a dependency table on the
       // island's critical path (docs/00 §11: ≤ 15 KB gz). Lazy chunks are small and load on first use.

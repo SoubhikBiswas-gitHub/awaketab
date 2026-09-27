@@ -8,7 +8,6 @@ export const PIXEL_SHIFT_MS = 60_000;
 const PIXEL_SHIFT_PX = 2;
 const NIGHT_DIM_AFTER_MS = 30_000;
 const BURNIN_DIM_AFTER_MS = 30 * 60_000;
-export const MESSAGE_PREVIEW_MS = 60_000;
 export const FOCUS_LONG_BREAK_MIN = 15;
 export const COOK_MAX_TIMERS = 3;
 export const COOK_NAME_MAX = 20;

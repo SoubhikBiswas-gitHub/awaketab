@@ -207,7 +207,9 @@ export function mountAmbient(ctx: IToolCtx): () => void {
     const s = store.get();
     if (mode === 'night' || prev === 'night') applyTheme(s.settings.theme, mode === 'night');
     const session = ctx.engine.session;
-    if (session && (session.status === 'active' || session.status === 'paused')) ctx.engine.updateSession({ mode });
+    // A locked mode on preview is never written into the stored session.
+    if (session && (session.status === 'active' || session.status === 'paused'))
+      ctx.engine.updateSession({ mode: modeAllowed(mode, has(ctx)) ? mode : 'standard' });
     if (mode === 'standard') {
       exit();
       return;

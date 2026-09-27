@@ -88,16 +88,19 @@ test('cook mode: tap pauses the clock but keeps the lock; kitchen timer finishes
   await expect(pillText(page)).toHaveText('Screen awake');
 });
 
-test('message mode: a shared msg previews for 60 s, then falls back to clock', async ({ page }) => {
+test('message mode: a shared msg runs the five-minute Pro preview, then falls back to clock', async ({ page }) => {
   await page.clock.install();
   await page.goto('/?mode=message&msg=Back%20soon');
   await expect(ambient(page)).toHaveAttribute('data-mode', 'message');
   await expect(page.locator('[data-message]')).toHaveText('Back soon');
   await expect(page.locator('[data-message-pro]')).toHaveCount(0);
+  await expect(page.locator('.at-pv')).toContainText('Previewing Message');
 
+  await page.clock.fastForward(4 * 60_000);
+  await expect(toasts(page)).toContainText('1 minute left of the Message preview');
   await page.clock.fastForward(61_000);
   await expect(ambient(page)).toHaveAttribute('data-mode', 'clock');
-  await expect(toasts(page)).toContainText('Custom messages are a Pro feature');
+  await expect(toasts(page)).toContainText('Preview ended, back to Clock.');
 });
 
 test('message mode without msg shows sample text and the Pro card', async ({ page }) => {

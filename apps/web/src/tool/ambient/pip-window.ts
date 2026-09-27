@@ -72,11 +72,19 @@ export async function togglePip(ctx: IToolCtx): Promise<'document' | 'popup' | '
       const pro = hasFeature(ctx, 'pip.pro');
       const pip = await api.requestWindow(pro ? PIP_PRO_SIZE : PIP_SIZE);
       for (const node of document.querySelectorAll('style, link[rel="stylesheet"]')) {
-        pip.document.head.append(node.cloneNode(true));
+        const copy = node.cloneNode(true);
+        // boot.js writes the themes sheet with a path; the window is about:blank, so it needs the full URL.
+        if (copy instanceof HTMLLinkElement && node instanceof HTMLLinkElement) copy.href = node.href;
+        pip.document.head.append(copy);
       }
       const html = pip.document.documentElement;
       html.dataset.theme = document.documentElement.dataset.theme;
-      if (document.documentElement.dataset.accent) html.dataset.accent = document.documentElement.dataset.accent;
+      // The window wears the page's lamp and colour theme (a custom lamp's colour rides on the style attribute).
+      for (const k of ['accent', 'palette'] as const) {
+        const v = document.documentElement.dataset[k];
+        if (v) html.dataset[k] = v;
+      }
+      html.style.cssText = document.documentElement.style.cssText;
       html.lang = document.documentElement.lang;
       pip.document.title = t('pip.open');
       slot.style.minBlockSize = `${String(slot.offsetHeight)}px`;
