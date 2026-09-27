@@ -156,6 +156,8 @@ test.describe('PWA', () => {
   test('each locale home links its own installable manifest', async ({ browserName, page }) => {
     test.skip(browserName !== 'chromium', 'Page.getInstallabilityErrors is a Chromium DevTools Protocol command');
     await page.goto('/es/');
+    // Tool pages link the manifest after the first paint (src/tool/pwa.ts).
+    await page.locator('link[rel="manifest"]').waitFor({ state: 'attached' });
     const cdp = await page.context().newCDPSession(page);
     const { installabilityErrors } = (await cdp.send('Page.getInstallabilityErrors')) as {
       installabilityErrors: Array<{ errorId: string }>;

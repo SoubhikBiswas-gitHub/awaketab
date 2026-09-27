@@ -308,7 +308,7 @@ const untilWall = until?.replace('-', ':');
           <div class="at-bold-meta">
             <span
               ><span data-t="ma">{t('tool.meta.endsAt')}</span>
-              <span class="at-nowrap" data-t="mb"></span></span
+              <span data-t="mb"></span></span
             ><span data-t="of"></span>
           </div>
         </div>
@@ -370,7 +370,7 @@ const untilWall = until?.replace('-', ':');
               <span class="at-hz-name" data-t="hz"></span>
               <span class="at-hz-when"
                 ><span data-t="ma">{t('tool.meta.endsAt')}</span>
-                <span class="at-nowrap" data-t="mb"></span></span
+                <span data-t="mb"></span></span
               >
             </div>
           </div>
@@ -408,7 +408,7 @@ const untilWall = until?.replace('-', ':');
             </div>
             <div class="at-meta">
               <span data-t="ma">{t('tool.meta.endsAt')}</span>
-              <span class="at-nowrap" data-t="mb"></span>
+              <span data-t="mb"></span>
             </div>
           </div>
           <div class="at-tide-text at-tide-under" aria-hidden="true">
@@ -418,7 +418,7 @@ const untilWall = until?.replace('-', ':');
             </div>
             <div class="at-meta">
               <span data-t="ma">{t('tool.meta.endsAt')}</span>
-              <span class="at-nowrap" data-t="mb"></span>
+              <span data-t="mb"></span>
             </div>
           </div>
         </div>
@@ -1109,17 +1109,38 @@ const untilWall = until?.replace('-', ':');
   </div>
 
   <div class="at-banner at-lang-banner" data-lang-suggest hidden>
-    <p data-lang-suggest-text></p>
-    <div class="at-acts">
-      <a class="at-button at-button-sm" data-lang-suggest-accept href="/"
-        >{t('i18n.suggest.accept')}</a
+    <div class="at-fs-bar">
+      <svg
+        class="at-toast-i"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        aria-hidden="true"
+        ><circle cx="12" cy="12" r="9"></circle><path
+          d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"
+        ></path></svg
       >
+      <p data-lang-suggest-text></p>
       <button
-        class="at-button at-button-sm at-button-quiet"
+        class="at-icon-button"
         type="button"
-        data-lang-suggest-dismiss>{t('i18n.suggest.dismiss')}</button
+        data-lang-suggest-dismiss
+        aria-label={t('i18n.suggest.dismiss')}
+        ><svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          aria-hidden="true"><path d={X}></path></svg
+        ></button
       >
     </div>
+    <a class="at-button at-button-sm" data-lang-suggest-accept href="/"
+      >{t('i18n.suggest.accept')}</a
+    >
   </div>
   <noscript><p class="at-noscript">{t('tool.noscript')}</p></noscript>
 </div>
@@ -1271,6 +1292,7 @@ const untilWall = until?.replace('-', ':');
             LOCALES.map((code) => {
               const meta = LOCALE_META[code];
               const current = code === locale;
+              const tl = createT(code);
               const note = current
                 ? t('footer.language.current')
                 : meta.reviewed
@@ -1284,6 +1306,9 @@ const untilWall = until?.replace('-', ':');
                     lang={meta.htmlLang}
                     hreflang={meta.hreflang}
                     aria-current={current ? 'true' : undefined}
+                    data-code={code}
+                    data-q={tl('i18n.suggest', { language: meta.label })}
+                    data-a={tl('i18n.suggest.accept')}
                   >
                     <svg
                       class="at-lang-mark"
@@ -1670,19 +1695,37 @@ const untilWall = until?.replace('-', ':');
 </dialog>
 
 <dialog
+  class="at-sheet at-tsheet"
   data-dialog="pro"
-  class="at-float-sheet"
   aria-labelledby="pro-sheet-title"
 >
-  <h2 id="pro-sheet-title">{t('pro.title')}</h2>
-  <p>{t('pro.card')}</p>
-  <p>
-    <a href="/pro">{t('pro.cta')}</a> · <a href="/pro/activate"
-      >{t('pro.activate')}</a>
-  </p>
-  <button class="at-button" type="button" data-pro-close
-    >{t('settings.close')}</button
-  >
+  <div class="at-tsheet-head">
+    <span class="at-grab" aria-hidden="true"></span>
+    <div class="at-tsheet-bar">
+      <h2 id="pro-sheet-title">{t('pro.title')}</h2>
+      <button
+        class="at-icon-button"
+        type="button"
+        data-pro-close
+        aria-label={close}
+        ><svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          aria-hidden="true"><path d={X}></path></svg
+        ></button
+      >
+    </div>
+  </div>
+  <div class="at-tsheet-body">
+    <p>{t('pro.card')}</p>
+    <div class="at-stats-foot">
+      <Button variant="primary" href="/pro" glyph={false}>{t('pro.cta')}</Button>
+      <a class="at-textlink" href="/pro/activate">{t('pro.activate')}</a>
+    </div>
+  </div>
 </dialog>
 
 <dialog class="at-ambient" data-ambient aria-labelledby="ambient-title">

@@ -72,6 +72,8 @@ const LENGTHS = [
   ['4h', '4 h'],
   ['8h', '8 h'],
 ] as const;
+// Minutes per route, for the in-place switch below the tool (tool/extras.ts reads data-len).
+const MINUTES = { '15m': 15, '30m': 30, '45m': 45, '1h': 60, '2h': 120, '4h': 240, '8h': 480 } as const;
 const GUIDES = [
   ['Keep the screen on during a video call', '/for/video-calls'],
   ['Keep the screen on while downloading', '/for/downloads'],
@@ -112,10 +114,10 @@ const h1 = `Keep your screen awake for ${route.words}`;
   <ToolIsland heading={h1} kicker="About this page" preset={route.preset}>
     <section class="at-page-copy" aria-label="About this page">
       <p class="at-lead">
-        Tap “Keep awake · {route.cta}” above and this screen stays on for the
-        next {route.words}, as long as this tab stays visible. Before you start,
-        the tool shows the time it will stop, so you know when the screen may
-        dim again.
+        This page keeps the screen on for {route.words} from the moment it
+        opens, as long as this tab stays visible. If your browser wants a tap
+        first, tap “Keep awake · {route.cta}” above. The tool shows the time it
+        will stop, so you know when the screen may dim again.
       </p>
       <p>
         When {
@@ -159,15 +161,13 @@ const h1 = `Keep your screen awake for ${route.words}`;
             LENGTHS.map(([s, l]) => (
               <li>
                 {s === slug ? (
-                  <span class="at-chip at-length-here" aria-current="page">
-                    <span class="at-dot" aria-hidden="true" />
-                    {l}<span class="sr-only">, this page</span>
-                  </span>
+                  <span class="at-chip at-length-here" aria-current="page"><span class="at-dot" aria-hidden="true" /><span>{l}<span class="sr-only">, this page</span></span></span>
                 ) : (
                   <a
                     class="at-chip"
                     href={`/${s}`}
                     aria-label={`Keep awake for ${l}`}
+                    data-len={`${routes[s].preset}:${String(MINUTES[s])}`}
                   >
                     {l}
                   </a>
@@ -179,6 +179,7 @@ const h1 = `Keep your screen awake for ${route.words}`;
             <a
               class="at-chip at-chip-choose"
               href="/"
+              data-len="until"
               aria-label="Pick an end time in the tool">Until a time…</a>
           </li>
         </ul>

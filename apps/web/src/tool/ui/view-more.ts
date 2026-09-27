@@ -23,6 +23,8 @@ export function more({
   const w = when(untilAt, c24);
   const at = hm(untilAt, c24);
   const cw = words(customSec);
+  // A day or more reads to the hour on the chip; the chip's label keeps the minutes.
+  const chipW = customSec < 86_400 ? cw : words(customSec - (customSec % 3600));
   const u = pre === 'until';
   const c = pre === 'custom';
   const chip = t('tool.chip.untilAt', { time: w });
@@ -30,7 +32,7 @@ export function more({
     {
       untilLong: u ? chip : t('tool.preset.until'),
       untilShort: u ? t('tool.chip.untilAt', { time: at }) : t('tool.preset.until'),
-      custom: c ? cw : t('tool.preset.custom'),
+      custom: c ? chipW : t('tool.preset.custom'),
       more: t(u ? 'tool.chip.moreUntil' : c ? 'tool.chip.moreCustom' : 'tool.chip.more'),
       customWords: cw,
       ask: t('tool.extend.auto', { seconds: askLeft }),
@@ -40,6 +42,17 @@ export function more({
         percent: s.settings.battery.threshold,
       }),
       untilChip: chip,
+      // The nearby-time tiles on /until pages (±15 and ±30 min): each says whether it comes later today or tomorrow.
+      ...Object.fromEntries(
+        [-30, -15, 15, 30].map((d, i) => [
+          `near${String(i)}`,
+          t(
+            dayDiff(now + ((untilAt + d * 60_000 - now + 86_400_000) % 86_400_000), now) > 0
+              ? 'tool.slot.tomorrow'
+              : 'tool.until.laterToday',
+          ),
+        ]),
+      ),
       whenLine: t(dayDiff(untilAt, now) > 0 ? 'tool.until.isTomorrow' : 'tool.until.isToday', {
         time: at,
         length: mins(Math.round((untilAt - now) / 60_000)),

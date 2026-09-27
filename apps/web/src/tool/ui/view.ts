@@ -120,17 +120,18 @@ export function mountView(ctx: IToolCtx): () => void {
     let note = st === 'blocked' ? '' : t(`tool.note.${st}`, { time: hm(act?.startedAt ?? now, c24) });
     if (routeUntil && st === 'ready' && tomorrow) note = t('tool.note.overnight');
     if (deferred) note = t('tool.note.deferred');
+    if (ui.rcpt && st === 'awake' && ui.ok)
+      note = t(ui.auto ? 'tool.note.askedAuto' : 'tool.note.asked', {
+        asked: hm(ui.asked, c24, true),
+        secs: ((ui.ok - ui.asked) / 1000).toFixed(1),
+      });
+    // A day-long session's end line and the no-limit reminder outrank the start receipt.
     if (live && !inf && left >= 86_400 && st !== 'starting')
       note = t('tool.note.multiday', {
         date: `${dateLong(endMs, false)} · ${hm(endMs, c24)}`,
       });
     if (live && inf && el >= 86_400) note = t('tool.note.longNoLimit');
     if (final) note = t(settings.endBehaviour === 'stop' ? 'tool.note.finalStop' : 'tool.note.finalAsk');
-    if (ui.rcpt && st === 'awake' && !final && ui.ok)
-      note = t(ui.auto ? 'tool.note.askedAuto' : 'tool.note.asked', {
-        asked: hm(ui.asked, c24, true),
-        secs: ((ui.ok - ui.asked) / 1000).toFixed(1),
-      });
 
     const pre = act ? act.presetId : s.selectedPreset;
     const isUntil = !!routeUntil || pre === 'until';

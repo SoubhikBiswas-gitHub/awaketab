@@ -80,41 +80,30 @@ export function maybeShowRating(ctx: IToolCtx): boolean {
         }),
         keepalive: true,
       })
-        .then((res) => {
+        .then(
+          (res) => res.ok,
+          () => false,
+        )
+        .then((ok) => {
           toast(ctx.store, {
-            kind: res.ok ? 'success' : 'warn',
-            text: t(res.ok ? 'rating.thanks' : 'rating.failed'),
-            id: 'rating',
-          });
-        })
-        .catch(() => {
-          toast(ctx.store, {
-            kind: 'warn',
-            text: t('rating.failed'),
+            kind: ok ? 'success' : 'warn',
+            text: t(ok ? 'rating.thanks' : 'rating.failed'),
             id: 'rating',
           });
         });
     },
     { signal },
   );
-  dialog.querySelector('[data-rating-later]')?.addEventListener(
-    'click',
-    () => {
-      record(ctx, 'later');
-      ctx.track('rating_prompt', { action: 'later' });
-      close();
-    },
-    { signal },
-  );
-  dialog.querySelector('[data-rating-never]')?.addEventListener(
-    'click',
-    () => {
-      record(ctx, 'never');
-      ctx.track('rating_prompt', { action: 'never' });
-      close();
-    },
-    { signal },
-  );
+  for (const action of ['later', 'never'] as const)
+    dialog.querySelector(`[data-rating-${action}]`)?.addEventListener(
+      'click',
+      () => {
+        record(ctx, action);
+        ctx.track('rating_prompt', { action });
+        close();
+      },
+      { signal },
+    );
   dialog.addEventListener(
     'close',
     () => {

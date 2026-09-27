@@ -442,6 +442,12 @@
   --at-focus: #7cb8ff;
 }
 
+:root:is(:lang(ja), :lang(zh), :lang(hi)) {
+  --at-trk-k: 0;
+  --at-trk-1: 0;
+  --at-trk-2: 0;
+}
+
 [dir="rtl"] :is([data-slot="breadcrumb-separator"] > svg, .at-flip-rtl) {
   transform: scaleX(-1);
 }

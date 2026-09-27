@@ -41,6 +41,8 @@ export function keyHandler(
       e.preventDefault();
       fn();
     };
+    // The ambient layer's own cancel event takes Esc back to standard; on a first press this module loads after it did.
+    if (key === 'escape' && e.target instanceof Element && e.target.closest('[data-ambient]')) return;
     if (key === 'escape') {
       // Esc closes the innermost layer: a dialog, the ambient mode, a length panel or "How AwakeTab knows", then
       // the session (docs/05 §5).

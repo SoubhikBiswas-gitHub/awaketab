@@ -60,6 +60,10 @@
   text-decoration: none;
 }
 
+.at-untilchips .at-chip:not(.at-chip-on) {
+  background: transparent;
+}
+
 .at-untilchips .at-chip-on {
   gap: var(--at-gap-tight);
   padding-inline-start: var(--at-s-3);
@@ -78,7 +82,7 @@
 @media (width >= 1024px) {
   .at-tool-until .at-tool {
     grid-template-rows: 1fr auto auto auto 1fr;
-    grid-template-areas: "face ." "face pill" "face note" "face dock" "face .";
+    grid-template-areas: "face ." "face pill" "face note" "face dock" "face toast";
     padding-block-start: var(--at-s-2);
   }
 

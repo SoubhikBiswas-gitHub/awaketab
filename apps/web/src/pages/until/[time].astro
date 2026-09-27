@@ -28,6 +28,8 @@ const site =
 const label = (hh: number, mm: number) =>
   `${String(hh % 12 || 12)}:${String(mm).padStart(2, '0')} ${hh < 12 ? 'AM' : 'PM'}`;
 const here = label(h, m);
+// Mornings until 10 AM are the overnight case (UntilPage board); later targets get the daytime limit.
+const overnight = h < 10;
 const at = h * 60 + m;
 const near = [-30, -15, 15, 30].map((d) => {
   const x = (at + d + 1440) % 1440;
@@ -54,9 +56,10 @@ const near = [-30, -15, 15, 30].map((d) => {
   >
     <section class="at-page-copy" aria-label="About this page">
       <p class="at-lead">
-        Tap Keep awake and AwakeTab works out the length from your device clock,
-        then counts down to {here}. If {here} has already passed today, the session
-        ends at {here} tomorrow, and the tool says so before you start.
+        This page starts as soon as it opens: AwakeTab works out the length from
+        your device clock, then counts down to {here}. If {here} has already
+        passed today, the session ends at {here} tomorrow, and the tool says so
+        above the countdown.
       </p>
       <p>
         The end time stays fixed while the session runs. +15 min moves it 15
@@ -77,11 +80,21 @@ const near = [-30, -15, 15, 30].map((d) => {
         >
         <div>
           <span class="at-kicker">Honest limit</span>
-          <p>
-            An overnight session needs this tab in front for the whole night. A
-            hidden tab, a closed lid or another app in front lets the display
-            sleep. Plug in so the battery lasts until morning.
-          </p>
+          {
+            overnight ? (
+              <p>
+                An overnight session needs this tab in front for the whole night. A
+                hidden tab, a closed lid or another app in front lets the display
+                sleep. Plug in so the battery lasts until morning.
+              </p>
+            ) : (
+              <p>
+                The session needs this tab in front until {here}. A hidden tab, a
+                closed lid or another app in front lets the display sleep. For a
+                long wait, plug in so the battery lasts.
+              </p>
+            )
+          }
         </div>
       </div>
     </section>
@@ -89,15 +102,13 @@ const near = [-30, -15, 15, 30].map((d) => {
       <h2 id="h-times">Nearby times</h2>
       <ul>
         {
-          near.map((n) => (
+          near.map((n, i) => (
             <li>
-              <a
-                class="at-time-tile"
-                href={n.path}
-                aria-label={`Keep awake until ${n.label}`}
-              >
+              <a class="at-time-tile" href={n.path}>
+                <span class="sr-only">Keep awake until </span>
                 <span class="at-time-big">{n.label}</span>
-                <span class="at-guide-path">{n.path}</span>
+                <span class="at-time-day" data-t={`near${String(i)}`} />
+                <span class="at-guide-path" aria-hidden="true">{n.path}</span>
               </a>
             </li>
           ))
