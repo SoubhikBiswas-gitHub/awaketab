@@ -10,7 +10,7 @@ mode: standard
 locale: fr
 reviewed: false
 translationOf: "iphone-safari"
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: ["safari"]
 os: ["ios"]
 lead: "Safari 16.4 et les versions ultérieures prennent en charge le Wake Lock ; sur iPhone, l’onglet doit rester au premier plan. AwakeTab s’en sert pour empêcher l’écran de s’éteindre pendant la durée choisie, sans application à installer. Quitter Safari libère le verrou. Et le mode Économie d’énergie règle le Verrouillage automatique sur 30 secondes ; nous n’avons pas encore vérifié sur un appareil si un verrou Safari tient malgré tout."
@@ -111,4 +111,4 @@ Réglages → Luminosité et affichage → Verrouillage automatique. Vous pouvez
 
 AwakeTab n’écrit « Écran allumé » que lorsque Safari a confirmé le verrou, et le minuteur ne tourne que pendant ce temps. Si l’écran s’assombrit malgré tout, regardez la pastille : elle vous dira si l’onglet a été masqué ou si la demande a été refusée.
 
-Dernière vérification : 9 septembre 2026.
+Dernière vérification : 26 septembre 2026.

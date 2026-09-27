@@ -10,7 +10,7 @@ mode: standard
 locale: fr
 reviewed: false
 translationOf: "caffeine"
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: []
 os: []
 lead: "Caffeine pour macOS pose une assertion d’alimentation, sans appui de touche, pour garder le système éveillé, même quand aucune de ses fenêtres n’est affichée. AwakeTab est un onglet de navigateur visible qui passe par l’API standard Screen Wake Lock. Choisissez Caffeine si vous avez besoin que le Mac reste éveillé pendant que vous travaillez dans d’autres applications, sans rien de visible à l’écran. Choisissez AwakeTab si vous voulez une pastille d’état honnête, aucun logiciel à installer, et le même outil sur votre téléphone ou votre PC."

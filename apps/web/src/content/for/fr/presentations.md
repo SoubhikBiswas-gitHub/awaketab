@@ -44,6 +44,9 @@ pills:
     text: "Les diapositives ont recouvert la page : revenez-y ou ouvrez la fenêtre flottante."
   - state: denied
     text: "Un refus, par exemple une page intégrée sans autorisation ou Safari qui attend un clic ; la cause est affichée. Retoucher Démarrer sans rien changer reproduit le même refus."
+checklist:
+  - "À la fin des deux heures, une invite propose de prolonger (+15 min, +30 min ou +1 h) : ne supposez pas que la session continue indéfiniment."
+  - "Dans Safari, gardez AwakeTab dans une seconde fenêtre visible, par exemple sur l’écran du portable pendant que les diapositives s’affichent sur le projecteur."
 faq:
   - q: "Mes diapositives sont en plein écran. AwakeTab tient-il encore l’écran ?"
     a: "Seulement si AwakeTab reste visible quelque part : fenêtre flottante sous Chrome, Edge ou Firefox 151+, seconde fenêtre sur l’écran du portable, ou moniteur de retour. Si les diapositives recouvrent complètement l’onglet, il est masqué, le navigateur libère le verrou et la pastille passe à « En pause — onglet masqué »."
@@ -70,6 +73,8 @@ updated: 2026-09-27
 
 ::figures
 
+::checklist
+
 ::ad
 
 ## Lire la pastille en pleine intervention
@@ -77,8 +82,6 @@ updated: 2026-09-27
 Un coup d’œil suffit.
 
 ::pills
-
-À la fin des deux heures, une invite propose de prolonger (+15 min, +30 min ou +1 h) : ne supposez pas que la session continue indéfiniment.
 
 ## Trois configurations courantes
 

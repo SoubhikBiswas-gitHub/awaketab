@@ -1,6 +1,6 @@
 ---
 title: "Wake Lock : navigateurs compatibles — AwakeTab"
-description: "Wake Lock natif dès Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 et Opera 70 (9 septembre 2026). Plus ancien : vidéo de secours."
+description: "Wake Lock natif dès Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 et Opera 70 (26 septembre 2026). Plus ancien : vidéo de secours."
 h1: "Quels navigateurs prennent en charge le Wake Lock ?"
 ogTitle: "Navigateurs compatibles Wake Lock"
 intent: "wake lock compatibilité navigateurs"
@@ -10,17 +10,26 @@ mode: standard
 locale: fr
 reviewed: false
 translationOf: "browser-support-matrix"
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: []
 os: []
 crumb: "Tableau de compatibilité"
-lead: "D’après notre fichier de référence daté du 9 septembre 2026, le Wake Lock natif (l’API Screen Wake Lock, qui garde l’écran allumé) est disponible à partir de Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 et Opera 70, ainsi que dans les applications web ajoutées à l’écran d’accueil sous iOS 18.4. Un Firefox plus ancien passe par la vidéo de secours. Un navigateur ou une plateforme sans ligne vérifiée n’est pas revendiqué."
+lead: "D’après notre fichier de référence daté du 26 septembre 2026, le Wake Lock natif (l’API Screen Wake Lock, qui garde l’écran allumé) est disponible à partir de Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 et Opera 70, ainsi que dans les applications web ajoutées à l’écran d’accueil sous iOS 18.4. Un Firefox plus ancien passe par la vidéo de secours. Un navigateur ou une plateforme sans ligne vérifiée n’est pas revendiqué."
 rows:
   refusals:
     - title: "L’onglet est masqué (autre onglet, fenêtre réduite, autre application)."
     - title: "La page est intégrée dans un cadre sans l’autorisation `screen-wake-lock`."
     - title: "Safari n’a pas reçu de toucher ou de clic récent."
     - title: "Firefox est à 5 % de batterie ou moins, hors charge."
+  os:
+    - title: "Windows et macOS"
+      text: "Tant que l’écran reste allumé, ni Windows ni macOS ne se mettent en veille pour inactivité, mais un capot fermé endort un portable."
+    - title: "Linux"
+      text: "Sous Linux, Chrome et Firefox demandent au bureau, via D-Bus, de ne pas se mettre en veille ; le résultat dépend de l’environnement de bureau."
+notes:
+  savers:
+    kicker: "Remarque"
+    text: "L’économiseur de batterie et le mode Économie d’énergie ne refusent pas la demande."
 faq:
   - q: "Mon navigateur n’est pas dans le tableau. AwakeTab fonctionnera-t-il ?"
     a: "Nous ne revendiquons que les lignes vérifiées. Ouvrez AwakeTab : si le Wake Lock natif est absent, la pastille affiche « Touchez pour utiliser la solution de secours ». La vidéo de secours démarre après ce toucher et consomme davantage d’énergie."
@@ -29,8 +38,8 @@ faq:
   - q: "Pourquoi le verrou s’arrête quand je change d’onglet, même dans un navigateur compatible ?"
     a: "Parce que la spécification l’exige : un document masqué ne peut pas détenir de Wake Lock. Changer d’onglet, réduire la fenêtre ou passer à une autre application libère le verrou, quelle que soit la version du navigateur."
   - q: "Ces versions sont-elles encore à jour ?"
-    a: "Le tableau reflète l’état au 9 septembre 2026, date de notre dernière vérification. Chaque ligne est liée à cette date de vérification ; les versions plus anciennes passent par la vidéo de secours."
-honestLimit: "Le tableau reflète l’état au 9 septembre 2026 ; les versions plus anciennes passent par la solution de secours, et chaque ligne ne vaut que pour cette date de vérification."
+    a: "Le tableau reflète l’état au 26 septembre 2026, date de notre dernière vérification. Chaque ligne est liée à cette date de vérification ; les versions plus anciennes passent par la vidéo de secours."
+honestLimit: "Le tableau reflète l’état au 26 septembre 2026 ; les versions plus anciennes passent par la solution de secours, et chaque ligne ne vaut que pour cette date de vérification."
 related:
   - "/learn/screen-wake-lock-api-guide"
   - "/learn/how-we-tested"
@@ -68,16 +77,32 @@ Une version minimale indique à partir de quand le navigateur expose l’API. El
 
 ::rows refusals
 
-Sans HTTPS, l’API est absente : la pastille propose alors « Touchez pour utiliser la solution de secours ». L’économiseur de batterie et le mode Économie d’énergie ne refusent pas la demande.
+Sans HTTPS, l’API est absente : la pastille propose alors « Touchez pour utiliser la solution de secours ».
+
+::note savers
 
 AwakeTab traduit chacun de ces cas en un état visible. La pastille affiche « Écran allumé » ou « Écran allumé grâce à la vidéo de secours » uniquement quand un verrou est réellement actif ; sinon, elle indique « En pause — onglet masqué » ou « Bloqué — voici la solution », avec la cause. Pour Safari sur iPhone, voyez aussi [notre page dédiée](/fr/on/iphone-safari).
 
 ## Méthode et date
 
-Toutes les lignes proviennent d’un seul fichier de données, mis à jour le 9 septembre 2026, qui alimente aussi l’outil. Ces lignes s’appuient sur la documentation et le code source des navigateurs (vérifiés le 26 septembre 2026), pas sur des tests d’appareils, qui ne sont pas encore enregistrés. Sous Linux, Chrome et Firefox demandent au bureau, via D-Bus, de ne pas se mettre en veille ; le résultat dépend de l’environnement de bureau. Nous n’ajoutons aucune part de marché ni aucune version non vérifiée. Quand un navigateur change de comportement, la ligne est revérifiée et la date avancée.
+Toutes les lignes proviennent d’un seul fichier de données, mis à jour le 26 septembre 2026, qui alimente aussi l’outil. Ces lignes s’appuient sur la documentation et le code source des navigateurs (vérifiés le 26 septembre 2026), pas sur des tests d’appareils, qui ne sont pas encore enregistrés. Nous n’ajoutons aucune part de marché ni aucune version non vérifiée. Quand un navigateur change de comportement, la ligne est revérifiée et la date avancée.
+
+## Sources
+
+- [MDN browser-compat-data, WakeLock](https://github.com/mdn/browser-compat-data/blob/main/api/WakeLock.json)
+- [New in Chrome 84](https://developer.chrome.com/blog/new-in-chrome-84/)
+- [Firefox 126 release notes for developers](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/126)
+- [WebKit features in Safari 18.4](https://webkit.org/blog/16574/webkit-features-in-safari-18-4/)
+- [Chromium wake_lock.cc](https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/modules/wake_lock/wake_lock.cc)
+- [WebKit WakeLock.cpp](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/Modules/screen-wake-lock/WakeLock.cpp)
+- [Firefox WakeLockJS.cpp](https://github.com/mozilla-firefox/firefox/blob/main/dom/power/WakeLockJS.cpp)
 
 ## Et la veille du système ?
 
-Ce tableau ne concerne que l’écran. Tant que l’écran reste allumé, ni Windows ni macOS ne se mettent en veille pour inactivité, mais un capot fermé endort un portable. Le détail par système figure sur les pages [Windows 11](/fr/on/windows-11) et [macOS](/fr/on/macos).
+Ce tableau ne concerne que l’écran.
+
+::rows os
+
+Le détail par système figure sur les pages [Windows 11](/fr/on/windows-11) et [macOS](/fr/on/macos).
 
 ::limit inline

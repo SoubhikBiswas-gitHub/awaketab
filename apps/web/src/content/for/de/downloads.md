@@ -10,7 +10,7 @@ mode: standard
 locale: de
 reviewed: false
 translationOf: "downloads"
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: []
 os: []
 faq:
@@ -51,7 +51,7 @@ Wer „Standby verhindern Browser“ sucht, meint meist zwei Dinge auf einmal. E
 
 ## Welche Browser mitspielen
 
-Einen nativen Lock gewähren laut Matrix vom 9. September 2026 Chrome und Edge ab Version 84, Firefox ab 126, Safari ab 16.4 und Samsung Internet ab 14. Ältere Firefox-Versionen nutzen nach einem Klick eine Video-Ersatzlösung, die mehr Strom verbraucht. Unter Linux bitten Chrome und Firefox den Desktop über D-Bus, nicht in den Ruhezustand zu gehen; ob das greift, hängt vom Desktop ab.
+Einen nativen Lock gewähren laut Matrix vom 26. September 2026 Chrome und Edge ab Version 84, Firefox ab 126, Safari ab 16.4 und Samsung Internet ab 14. Ältere Firefox-Versionen nutzen nach einem Klick eine Video-Ersatzlösung, die mehr Strom verbraucht. Unter Linux bitten Chrome und Firefox den Desktop über D-Bus, nicht in den Ruhezustand zu gehen; ob das greift, hängt vom Desktop ab.
 
 ## Wenn der Rechner trotzdem abschaltet
 
