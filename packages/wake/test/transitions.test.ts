@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { classifyDenial, createWakeLock } from '../src/index.js';
 import { createFakeApi, FakeSentinel, setVisibility } from './fake.js';
+import { mp4 as MP4_DATA_URL, webm as WEBM_DATA_URL } from '../src/video.js';
 
 function doc() {
   return document;
@@ -151,6 +152,57 @@ describe('@awaketab/wake', () => {
     expect(document.querySelector('video')).toBeNull();
     play.mockRestore();
     lock.destroy();
+  });
+
+  it('T09b a play() that never settles fails over when the last source errors', async () => {
+    const play = vi
+      .spyOn(HTMLVideoElement.prototype, 'play')
+      .mockImplementation(() => new Promise<void>(() => undefined));
+    const lock = createWakeLock({ wakeLock: null, documentLike: doc(), fallback: 'video' });
+    const pending = lock.request();
+    await Promise.resolve();
+    const sources = [...document.querySelectorAll('video source')];
+    sources.at(-1)?.dispatchEvent(new Event('error'));
+    expect(await pending).toBe('unsupported');
+    expect(lock.advice).toBe('unsupported_browser');
+    expect(document.querySelector('video')).toBeNull();
+    play.mockRestore();
+    lock.destroy();
+  });
+
+  it('T09c the built-in source is WebM; an MP4 is added only when passed', async () => {
+    const play = mockPlaying();
+    const plain = createWakeLock({ wakeLock: null, documentLike: doc(), fallback: 'video' });
+    await plain.request();
+    expect([...document.querySelectorAll('video source')].map((s) => s.getAttribute('type'))).toEqual(['video/webm']);
+    plain.destroy();
+    const withMp4 = createWakeLock({
+      wakeLock: null,
+      documentLike: doc(),
+      fallback: 'video',
+      videoSources: { mp4: MP4_DATA_URL },
+    });
+    await withMp4.request();
+    expect([...document.querySelectorAll('video source')].map((s) => s.getAttribute('type'))).toEqual([
+      'video/webm',
+      'video/mp4',
+    ]);
+    play.mockRestore();
+    withMp4.destroy();
+  });
+
+  it('T09d the fallback clips are real two-frame videos', () => {
+    const bytes = (url: string) => Buffer.from(url.slice(url.indexOf(',') + 1), 'base64');
+    const webm = bytes(WEBM_DATA_URL);
+    expect(webm.subarray(0, 4).toString('hex')).toBe('1a45dfa3');
+    expect(webm.includes('webm')).toBe(true);
+    expect(webm.includes('V_VP8')).toBe(true);
+    // Two SimpleBlocks (0xA3), each a VP8 keyframe with its start code.
+    expect(webm.toString('hex').split('9d012a').length - 1).toBe(2);
+    const mp4 = bytes(MP4_DATA_URL);
+    for (const box of ['ftyp', 'moov', 'mvhd', 'trak', 'stsd', 'avc1', 'avcC', 'stts', 'stsz', 'stco', 'mdat'])
+      expect(mp4.includes(box), box).toBe(true);
+    expect(mp4.readUInt32BE(mp4.indexOf('stsz') + 12)).toBe(2);
   });
 
   it('T10 release from held and fallback returns idle with user_release', async () => {

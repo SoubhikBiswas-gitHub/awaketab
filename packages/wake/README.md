@@ -8,7 +8,7 @@
 
 Screen Wake Lock with an honest state machine and a tiny video fallback. The maintained replacement for NoSleep.js (last release December 2020).
 
-`@awaketab/wake` keeps a web page's screen from dimming while it is visible, and tells you the truth about it: it reports `held` only while a live `WakeLockSentinel` exists or the fallback video is actually playing. Zero dependencies, ≤ 3.4 KB gzipped including the inlined 1-frame fallback videos, SSR-safe, TypeScript-native. It is the lock layer behind [AwakeTab](https://awaketab.com), its Picture-in-Picture pill, its embeddable Cook Mode widget and its browser extension.
+`@awaketab/wake` keeps a web page's screen from dimming while it is visible, and tells you the truth about it: it reports `held` only while a live `WakeLockSentinel` exists or the fallback video is actually playing. Zero dependencies, ≤ 3.4 KB gzipped including the inlined WebM fallback video, SSR-safe, TypeScript-native. It is the lock layer behind [AwakeTab](https://awaketab.com), its Picture-in-Picture pill, its embeddable Cook Mode widget and its browser extension.
 
 ## Install
 
@@ -69,7 +69,7 @@ Every `change` event carries `{ from, to, reason, advice?, error?, at }`. Reason
 | Option | Default | What it does |
 |---|---|---|
 | `fallback` | `'video'` | `'none'` disables the video fallback |
-| `videoSources` | inlined 1-frame WebM + MP4 | `{ webm?, mp4? }` — `data:` or `https:` URLs |
+| `videoSources` | inlined two-frame WebM | `{ webm?, mp4? }` — `data:` or `https:` URLs; add `mp4` for Safari before 16.4 |
 | `reacquireOnVisible` | `true` | Re-request when the document becomes visible after `lost` |
 | `retry` | `{ attempts: 3, baseMs: 500 }` | Backoff for transient denials; `false` disables |
 | `nudgeIntervalMs` | `20000` | How often the fallback video's `currentTime` is nudged |
@@ -95,6 +95,7 @@ const { state, request, release } = useWakeLock();
 ## Fallback caveats
 
 - The video fallback needs a user gesture (autoplay policy). If `play()` is rejected the state stays `unsupported` and an `error` event fires — call `request()` again from a click.
+- Safari before 16.4 has no Wake Lock API and cannot play WebM. For those readers pass the MP4 too: `import { mp4 } from '@awaketab/wake/video'` (≈ 0.4 KB gzipped), then `createWakeLock({ videoSources: { mp4 } })`. If no source can play, `request()` resolves to `unsupported` instead of waiting.
 - It uses more power than a native wake lock. It pauses while the tab is hidden and resumes when it is visible.
 - Battery savers do not refuse a wake lock: Chromium and WebKit have no such check. Firefox refuses and releases the lock at 5 % battery or less while discharging, and iPhone Low Power Mode caps Auto-Lock at 30 seconds.
 
