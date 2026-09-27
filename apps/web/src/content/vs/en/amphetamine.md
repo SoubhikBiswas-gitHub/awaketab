@@ -1,64 +1,111 @@
 ---
 title: "Amphetamine alternative in a browser tab — AwakeTab"
-description: "Amphetamine is a native Mac app with triggers and a closed-lid mode; no web page can match that. AwakeTab suits a visible task with nothing installed."
-h1: "Amphetamine vs a wake-lock tab"
+description: "Amphetamine is a native Mac app with triggers and a closed-display mode. AwakeTab needs no install but holds only while its tab is visible. Which fits."
+h1: "AwakeTab vs Amphetamine"
+crumb: "Amphetamine"
 intent: "amphetamine mac alternative"
 preset: pinf
 mode: standard
 locale: en
 reviewed: true
 noindex: true
-lastVerified: 2026-09-09
-browsers: []
-os: []
+lastVerified: 2026-09-26
+browsers: ["chrome", "edge", "firefox", "safari"]
+os: ["macos"]
+lead: "If the Mac has to stay awake on its own, with the lid closed or no browser open, use Amphetamine: a native Mac app with triggers and a closed-display mode. No web page can match that. If you can't install apps, aren't on a Mac, or want the screen on for a set time with a status you can trust, AwakeTab does that from a visible browser tab."
+toc:
+  side-by-side: "Side by side"
+  when-amphetamine-is-the-better-choice: "When Amphetamine is better"
+  when-awaketab-is-the-better-choice: "When AwakeTab is better"
+  neither-a-tab-nor-a-power-setting-beats-a-closed-lid: "A closed lid"
+  check-what-is-holding-your-mac-awake: "Check what holds it"
+compare:
+  label: "AwakeTab compared with Amphetamine for Mac, checked 26 September 2026"
+  what: "What"
+  cols:
+    - name: "AwakeTab"
+      us: true
+    - name: "Amphetamine"
+  rows:
+    - what: "What it is"
+      cells: ["A web page that asks the browser for a screen wake lock", "A native Mac app"]
+    - what: "With the tab hidden or no browser open"
+      cells: ["Stops. The pill says \"Paused — tab hidden\" and asks again when you return.", "Keeps holding, with no window open"]
+    - what: "With the lid closed"
+      cells: ["No. A closed lid sleeps the Mac unless it is in clamshell mode with power and an external display.", "Has a closed-display mode option. Its own help lists what it needs on your Mac."]
+    - what: "Triggers"
+      cells: ["None. You start a session, and it ends at the time you picked.", "Yes"]
+    - what: "Install"
+      cells: ["None, open a web page", "From the Mac App Store"]
+    - what: "Platforms"
+      cells: ["Chrome and Edge 84+, Firefox 126+, Safari 16.4+", "macOS"]
+    - what: "Facts checked"
+      cells: ["26 September 2026", "26 September 2026"]
+      same: true
+picks:
+  them:
+    - title: "The lid has to close"
+      text: "A closed lid sleeps a MacBook whatever a web page asks. Amphetamine has a closed-display mode option; read its help for what it needs on your model."
+    - title: "The Mac must stay awake with no browser open"
+      text: "A render, a large copy or a download can run with every browser window closed. A web page can't."
+    - title: "You work full screen in other apps all day"
+      text: "A native app holds whatever is in front. A browser tab loses its lock the moment you switch away."
+    - title: "You want it to start by itself"
+      text: "Amphetamine has triggers for that. A web page holds the screen only while you have it open and in front of you."
+  us:
+    - title: "You can't install apps"
+      text: "On a managed Mac, a web page is often the option left. It needs no admin password and leaves your organisation's lock policies alone."
+    - title: "You are not on a Mac"
+      text: "AwakeTab works in Chrome and Edge on Windows, in Chrome on Android, and in Safari 16.4 or later on iPhone and iPad."
+    - title: "You want it to end by itself"
+      text: "Pick 30 min, 1 h or a clock time such as 11:30 AM. Hidden time doesn't count toward a timed session."
+    - title: "You want to see that it's working"
+      text: "The pill turns to \"Screen awake\" once your browser has granted the lock, not when you press the button."
+    - title: "You want a hidden tab to count"
+      text: "On desktop Chrome or Edge, [AwakeTab for Chrome](/extension) uses Chrome's own power setting, so it keeps working with the tab hidden. It still stops at a closed lid."
 faq:
-  - q: "Does this work if the tab is hidden?"
-    a: "No. The browser releases the lock when you switch tabs or apps. Come back and the pill returns to “Screen awake”. On desktop Chrome or Edge, AwakeTab for Chrome keeps the screen on with the tab hidden."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Teams and Slack set you to Away from keyboard and mouse inactivity, not from a lit screen. AwakeTab never moves the mouse or presses keys."
-  - q: "What browsers are in scope?"
-    a: "Chrome and Edge 84+, Firefox 126+, Safari 16.4+ and Samsung Internet 14+ support the wake lock natively. Older Firefox can use the video fallback after a tap. Checked against browser documentation on 26 September 2026."
-honestLimit: "Amphetamine is native, has triggers and closed-lid mode; no browser tab can keep a closed Mac awake."
+  - q: "Can a web page keep a closed MacBook awake?"
+    a: "No. Closing the lid is a direct request to sleep, not idle time, so a browser's wake lock and AwakeTab for Chrome both stop there. Clamshell mode with power and an external display, or a native tool such as Amphetamine, can."
+  - q: "Can I run Amphetamine and AwakeTab at the same time?"
+    a: "Yes. AwakeTab's request is separate from anything Amphetamine does, and ending an AwakeTab session does not end an Amphetamine one. If the Mac still won't sleep after AwakeTab stops, check Amphetamine."
+  - q: "Will AwakeTab keep Teams or Slack Available?"
+    a: "No. Teams and Slack set you to Away from keyboard and mouse inactivity, not from a lit screen, and AwakeTab never moves the pointer or presses keys."
+honestLimit: "Amphetamine is native, has triggers and a closed-display mode; no browser tab can keep a closed Mac awake. If the Mac has to run on its own, use a native tool."
 related:
   - "/guides/mac-prevent-sleep-lid-closed"
-  - "/learn/screen-wake-lock-api-guide"
-  - "/for/presentations"
+  - "/on/macos"
+  - "/vs/caffeine"
+  - "/vs/caffeinate-command"
+  - "/for/ai-agents"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
-## What you are actually asking
+## Side by side
 
-Amphetamine is a native Mac utility with triggers and closed-lid options. No web page can match that. AwakeTab holds a visible display only. Use Amphetamine when the lid must close; use AwakeTab in the browser when you want a portable, no-install tab.
+Amphetamine is a native Mac app from the Mac App Store that keeps the whole Mac awake with no window open. AwakeTab is a web page: in Chrome on a Mac its wake lock becomes a "no display sleep" power assertion, and per Apple's documentation the Mac does not idle-sleep while it is held. It lasts only while the tab is visible. Rows marked Same are real ties.
 
-## How the lock works on this page
+::compare
 
-AwakeTab asks the browser for a screen wake lock from a secure page that is on screen. The pill at the top of the tool says what the browser answered: "Starting…" while it asks, "Screen awake" once the browser has confirmed the lock, "Paused — tab hidden" when the tab is out of sight, and "Blocked — here's the fix" when the browser refuses, with the cause. Only "Screen awake" and "Awake via video fallback" come with a running timer.
+::ad
 
-Chrome and Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 and Opera 70 are the first versions with the Screen Wake Lock API; iPhone and iPad Home Screen apps need iOS 18.4. Older Firefox can use the video fallback after a tap. A browser refuses or takes back the lock when the tab is hidden, when a Permissions-Policy blocks it, when Safari has not had a tap yet, or when Firefox is at 5 % battery or less and not charging. A page without HTTPS has no wake lock at all. Battery savers are not a refusal cause in Chrome or Safari.
+## When Amphetamine is the better choice
 
-## Practical setup
+In these cases we would send you there.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+::picks them
 
-## Operating-system notes
+## When AwakeTab is the better choice
 
-Windows: Settings > System > Power & battery sets the screen timeout. Energy saver (called Battery saver before Windows 11 24H2) may dim the screen, but it does not refuse a browser wake lock. macOS: System Settings > Lock Screen. While Chrome keeps the display on, the Mac does not idle-sleep; closing the lid still sleeps it unless you use clamshell mode with power and an external display. iPhone: Settings > Display & Brightness > Auto-Lock; Low Power Mode sets Auto-Lock to 30 seconds. Android: Settings > Display (Pixel: Display & touch) > Screen timeout, and some makers' sleeping-apps lists can close a browser after you leave it. Linux: Chrome and Firefox ask the desktop not to sleep; whether that holds depends on your desktop.
+These are the jobs AwakeTab was built for.
 
-## What success looks like
+::picks us
 
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Tapping Start again without changing what caused a refusal gets the same answer. Stats count only the time the screen was actually kept awake.
+## Neither a tab nor a power setting beats a closed lid
 
+Without a native tool, closing the lid sleeps a MacBook unless it is in clamshell mode, plugged in and driving an external display. The guide to [keeping a Mac awake with the lid closed](/guides/mac-prevent-sleep-lid-closed) covers clamshell mode, Amphetamine and the pmset switch.
 
-## A short checklist before you walk away
+## Check what is holding your Mac awake
 
-Before you walk away, check that the page uses HTTPS, that this tab is in front, and that the pill says "Screen awake". A dimming clock or a chat avatar tells you nothing about the lock; the pill does. If the pill says "Blocked — here's the fix", follow the line under it instead of tapping Start again. A timed session ends when its time is up, so pick ∞ if you want it to run until you stop it.
-
-## When the pill changes
-
-When you hide the tab, the pill changes to "Paused — tab hidden". That is the page telling the truth, not a bug: the browser has taken the lock back, and AwakeTab asks again as soon as you return. Paused time does not count toward a timed session. If the screen must stay on while the tab is hidden, AwakeTab for Chrome uses Chrome's own power setting instead and keeps working with the tab hidden on desktop Chrome and Edge. Firefox and Safari give extensions no power setting, so there the tab has to stay in view.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. In Chrome and Edge, AwakeTab can stop by itself at a battery level you pick; Firefox and Safari do not tell pages the battery level. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Firmware and OS power rules still win. If you need those jobs, use a native utility and keep this tab for a screen you can see.
+Run `pmset -g assertions` in Terminal. It lists every process asking macOS not to sleep. With AwakeTab showing "Screen awake" in Chrome, the browser holds a PreventUserIdleDisplaySleep or NoDisplaySleep entry. Hide the tab and that line is gone; anything still listed belongs to another app.
