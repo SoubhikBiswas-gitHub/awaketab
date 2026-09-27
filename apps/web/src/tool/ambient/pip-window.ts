@@ -1,6 +1,7 @@
 import { hasFeature, type IToolCtx } from '../ctx.js';
 import { remainingOf } from '../format.js';
 import { t } from '../i18n.js';
+import { liveSession } from '../ui/view.js';
 import { ambientCss, at, digits as writeDigits } from './fmt.js';
 import { el, everySecond } from './tick.js';
 
@@ -30,19 +31,16 @@ export function mirrorAmbient(ctx: IToolCtx, body: HTMLElement): () => void {
     const clock = content?.querySelector('[data-clock]');
     const digits = label ? content?.querySelector('[data-focus-digits]') : clock;
     const on = ctx.store.get().ui.mode !== 'standard' && !!digits;
-    const kick = el('p', { class: 'at-pip-kick' });
-    if (label)
-      kick.textContent = [...label.children]
-        .slice(0, 2)
-        .map((n) => n.textContent)
-        .join(' · ');
-    else if (clock)
-      kick.textContent = [
-        clock.querySelector('.at-am-ap')?.textContent,
-        content?.querySelector('.at-am-date')?.textContent,
-      ]
-        .filter(Boolean)
-        .join(' · ');
+    const kick = el(
+      'p',
+      { class: 'at-pip-kick' },
+      (label
+        ? [...label.children].slice(0, 2).map((n) => n.textContent)
+        : [clock?.querySelector('.at-am-ap')?.textContent, content?.querySelector('.at-am-date')?.textContent].filter(
+            Boolean,
+          )
+      ).join(' · '),
+    );
     kick.toggleAttribute('data-now', !label);
     box.replaceChildren(...(on ? [kick, digits.cloneNode(true)] : []));
     body.toggleAttribute('data-ambient', on);
@@ -89,30 +87,31 @@ export async function togglePip(ctx: IToolCtx): Promise<'document' | 'popup' | '
       timer.before(timerHome);
       const body = pip.document.body;
       body.className = 'at-pip-body';
-      const top = el('div', { class: 'at-pip-top' });
       const until = el('span', { class: 'at-pip-until' });
-      top.append(pill, until);
       const digits = el('div', { class: 'at-pip-digits', role: 'timer' });
-      const actions = el('div', { class: 'at-pip-actions' });
       const add = el(
         'button',
         { type: 'button', class: 'at-pip-btn', 'data-pip-add': '', 'aria-label': t('pip.add15.label') },
         t('pip.add15'),
       );
       const stop = el('button', { type: 'button', class: 'at-pip-btn', 'data-pip-stop': '' }, t('tool.ring.stop'));
-      actions.append(add, stop);
       const empty = el('p', { class: 'at-pip-empty' }, `${t('pip.empty')} AwakeTab`);
-      body.append(top, digits, actions, empty, timer);
+      body.append(
+        el('div', { class: 'at-pip-top' }, pill, until),
+        digits,
+        el('div', { class: 'at-pip-actions' }, add, stop),
+        empty,
+        timer,
+      );
       const offPro = pro ? mirrorAmbient(ctx, body) : () => undefined;
       const paint = (now: number) => {
         const s = ctx.store.get();
-        const session = s.session;
-        const live = session?.status === 'active' || session?.status === 'paused';
-        add.hidden = !live || session.endsAt === null;
-        stop.hidden = !live;
-        empty.hidden = live;
-        body.toggleAttribute('data-live', live);
-        if (!live) return;
+        const session = liveSession(s);
+        add.hidden = !session || session.endsAt === null;
+        stop.hidden = !session;
+        empty.hidden = !!session;
+        body.toggleAttribute('data-live', !!session);
+        if (!session) return;
         const rem = remainingOf(session, now);
         const text = writeDigits(digits, rem ?? now - session.startedAt - session.pausedMs);
         digits.toggleAttribute('data-long', text.length > 5);

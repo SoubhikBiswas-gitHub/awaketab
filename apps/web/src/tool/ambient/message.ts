@@ -1,9 +1,9 @@
 import { hasFeature, type IToolCtx } from '../ctx.js';
+import { dateLong, hm } from '../format.js';
 import { t } from '../i18n.js';
 import { sanitizeMsg } from '../params.js';
 import { toast } from '../ui/toast.js';
 import { MESSAGE_PREVIEW_MS, resolveMessage } from './logic.js';
-import { dateLong, hm } from './fmt.js';
 import { el, everySecond } from './tick.js';
 
 // The shared-link preview is spent once per page view; coming back to the mode shows the Pro card.
@@ -24,29 +24,26 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
     'data-message': '',
   });
   text.textContent = view.text || t('ambient.message.empty');
-  const meta = el('p', { class: 'at-am-meta' });
   const time = el('time');
   const date = el('span');
-  meta.append(time, date);
-  stage.append(text, meta);
+  stage.append(text, el('p', { class: 'at-am-meta' }, time, date));
 
   if (view.sample) {
     stage.dataset.scrim = '';
     text.setAttribute('aria-hidden', 'true');
-    const card = el('section', { class: 'at-pro-card', 'data-message-pro': '', 'aria-labelledby': 'am-pro' });
-    const actions = el('div');
     const see = el('a', { class: 'at-am-cta', href: '/pro', 'data-pro-link': '' }, t('pro.see'));
     const back = el(
       'button',
       { type: 'button', class: 'at-am-skip' },
       t('ambient.message.back', { mode: t('ambient.mode.clock') }),
     );
-    actions.append(see, back);
-    card.append(
+    const card = el(
+      'section',
+      { class: 'at-pro-card', 'data-message-pro': '', 'aria-labelledby': 'am-pro' },
       el('span', { class: 'at-am-tag' }, t('pro.badge')),
       el('h2', { id: 'am-pro' }, t('tool.toast.proMessage')),
       el('p', {}, t('ambient.message.pro')),
-      actions,
+      el('div', {}, see, back),
     );
     see.addEventListener('click', () => {
       ctx.track('pro_view', { from: 'message' });
@@ -58,25 +55,25 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
     see.focus();
   }
 
-  const preview = el('p', { class: 'at-am-preview' });
   const long = el('span');
   const brief = el('span');
   if (!pro) {
-    preview.append(el('span', { class: 'at-am-tag' }, t('pro.badge')));
-    if (view.preview) preview.append(long, brief);
-    else if (previewSpent) preview.append(el('span', {}, t('ambient.message.ended')));
-    stage.append(preview);
+    const tail = view.preview ? [long, brief] : previewSpent ? [el('span', {}, t('ambient.message.ended'))] : [];
+    stage.append(el('p', { class: 'at-am-preview' }, el('span', { class: 'at-am-tag' }, t('pro.badge')), ...tail));
   }
 
   if (pro) {
     const edit = el('button', { type: 'button', class: 'at-am-edit' }, t('ambient.message.edit'));
-    const form = el('form', { class: 'at-am-msgform', hidden: '' });
     const input = el('input', { id: 'am-msg', dir: 'auto', maxlength: '80', autocomplete: 'off' });
-    const row = el('div');
     const n = el('span');
     const cancel = el('button', { type: 'button', class: 'at-am-skip' }, t('tool.custom.cancel'));
-    row.append(n, cancel, el('button', { type: 'submit', class: 'at-am-save' }, t('ambient.message.show')));
-    form.append(el('label', { for: 'am-msg' }, t('ambient.message.label')), input, row);
+    const form = el(
+      'form',
+      { class: 'at-am-msgform', hidden: '' },
+      el('label', { for: 'am-msg' }, t('ambient.message.label')),
+      input,
+      el('div', {}, n, cancel, el('button', { type: 'submit', class: 'at-am-save' }, t('ambient.message.show'))),
+    );
     const close = () => {
       form.hidden = true;
       text.hidden = edit.hidden = false;

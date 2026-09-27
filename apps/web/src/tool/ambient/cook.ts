@@ -2,6 +2,7 @@ import type { IToolCtx } from '../ctx.js';
 import { t } from '../i18n.js';
 import { chime, notify } from '../signal.js';
 import { toast } from '../ui/toast.js';
+import { liveSession } from '../ui/view.js';
 import {
   activeElapsed,
   addCookTimer,
@@ -37,32 +38,26 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   const digits = el('span', { class: 'at-am-cdigits', role: 'timer', 'data-cook-elapsed': '' });
   const hint = el('span', { class: 'at-am-hint', 'data-cook-hint': '' });
   const note = el('span', { class: 'at-am-cnote' }, t('ambient.cook.pausedNote'));
-  const tap = el('button', { type: 'button', class: 'at-cook-tap', 'data-cook-tap': '' });
-  tap.append(kicker, digits, hint, note);
+  const tap = el('button', { type: 'button', class: 'at-cook-tap', 'data-cook-tap': '' }, kicker, digits, hint, note);
 
-  const side = el('section', { class: 'at-cook-side', 'aria-labelledby': 'cook-kt' });
-  const head = el('div', { class: 'at-cook-head' });
+  const add = t('ambient.cook.timer.add');
   const count = el('span');
-  head.append(el('h2', { id: 'cook-kt', class: 'at-am-kicker' }, t('ambient.cook.timers')), count);
   const list = el('div', { class: 'at-cook-timers', 'data-cook-timers': '' });
   const empty = el('p', { class: 'at-cook-msg' }, t('ambient.cook.empty'));
   const full = el('p', { class: 'at-cook-msg' }, t('ambient.cook.full'));
-
-  const form = el('form', { class: 'at-cook-add', 'data-cook-add': '', 'aria-label': t('ambient.cook.timer.add') });
-  const nameRow = el('div', { class: 'at-cook-name' });
-  const nameBox = el('div');
   const name = el('input', { id: 'cook-name', name: 'name', maxlength: String(COOK_NAME_MAX), autocomplete: 'off' });
-  nameBox.append(el('label', { for: 'cook-name' }, t('ambient.cook.timer.name')), name);
   const custom = el(
     'button',
     { type: 'button', class: 'at-cook-custom', 'aria-expanded': 'false' },
     t('tool.preset.custom'),
   );
-  nameRow.append(nameBox, custom);
-  const quick = el('div', { class: 'at-cook-quick', role: 'group', 'aria-label': t('ambient.cook.timer.add') });
-  for (const m of QUICK_MIN)
-    quick.append(el('button', { type: 'button', 'data-cook-quick': String(m) }, t('stats.minutes', { minutes: m })));
-  const step = el('div', { class: 'at-cook-step', hidden: '' });
+  const quick = el(
+    'div',
+    { class: 'at-cook-quick', role: 'group', 'aria-label': add },
+    ...QUICK_MIN.map((m) =>
+      el('button', { type: 'button', 'data-cook-quick': String(m) }, t('stats.minutes', { minutes: m })),
+    ),
+  );
   const less = el('button', { type: 'button', 'aria-label': t('ambient.cook.less') }, '−');
   const more = el('button', { type: 'button', 'aria-label': t('ambient.cook.more') }, '+');
   const minutes = el('input', {
@@ -74,17 +69,43 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
     value: '20',
     'aria-label': t('ambient.cook.timer.custom'),
   });
-  const box = el('span');
-  box.append(minutes, el('span', { 'aria-hidden': 'true' }, t('ambient.cook.min')));
-  step.append(
+  const step = el(
+    'div',
+    { class: 'at-cook-step', hidden: '' },
     less,
-    box,
+    el('span', {}, minutes, el('span', { 'aria-hidden': 'true' }, t('ambient.cook.min'))),
     more,
-    el('button', { type: 'submit', 'aria-label': t('ambient.cook.timer.add') }, t('ambient.cook.addShort')),
+    el('button', { type: 'submit', 'aria-label': add }, t('ambient.cook.addShort')),
   );
-  form.append(nameRow, quick, step);
-  side.append(head, list, empty, form, full);
-  stage.append(tap, side);
+  const form = el(
+    'form',
+    { class: 'at-cook-add', 'data-cook-add': '', 'aria-label': add },
+    el(
+      'div',
+      { class: 'at-cook-name' },
+      el('div', {}, el('label', { for: 'cook-name' }, t('ambient.cook.timer.name')), name),
+      custom,
+    ),
+    quick,
+    step,
+  );
+  stage.append(
+    tap,
+    el(
+      'section',
+      { class: 'at-cook-side', 'aria-labelledby': 'cook-kt' },
+      el(
+        'div',
+        { class: 'at-cook-head' },
+        el('h2', { id: 'cook-kt', class: 'at-am-kicker' }, t('ambient.cook.timers')),
+        count,
+      ),
+      list,
+      empty,
+      form,
+      full,
+    ),
+  );
 
   const flashes = new Map<string, number>();
   let timers: ICookTimer[] = readCookTimers(ctx.engine.session?.modeState);
@@ -103,9 +124,8 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
     empty.hidden = n > 0;
     count.textContent = t('ambient.cook.count', { n, total: COOK_MAX_TIMERS });
     name.placeholder = t('ambient.cook.timer.default', { n: n + 1 });
-    const ids = new Set(timers.map((x) => x.id));
     for (const [id, view] of cards) {
-      if (!ids.has(id)) {
+      if (!timers.some((x) => x.id === id)) {
         view.card.remove();
         cards.delete(id);
       }
@@ -114,25 +134,22 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
       let view = cards.get(timer.id);
       if (!view) {
         const headingId = `cook-${timer.id}`;
-        const card = el('div', {
-          class: 'at-cook-timer',
-          role: 'group',
-          'aria-labelledby': headingId,
-          'data-cook-timer': timer.id,
-        });
-        const info = el('div');
         const sub = el('span', { class: 'at-cook-sub' });
-        info.append(el('h3', { id: headingId }, timer.name), sub);
         const left = el('p', { class: 'at-cook-left', role: 'timer' });
-        const remove = el('button', {
-          type: 'button',
-          class: 'at-cook-rm',
-          'data-cook-remove': timer.id,
-          'aria-label': t('ambient.cook.timer.removeNamed', { name: timer.name }),
-        });
-        const bar = el('div', { class: 'at-cook-bar', 'aria-hidden': 'true' });
-        bar.append(el('i'));
-        card.append(info, left, remove, bar);
+        const bar = el('div', { class: 'at-cook-bar', 'aria-hidden': 'true' }, el('i'));
+        const card = el(
+          'div',
+          { class: 'at-cook-timer', role: 'group', 'aria-labelledby': headingId, 'data-cook-timer': timer.id },
+          el('div', {}, el('h3', { id: headingId }, timer.name), sub),
+          left,
+          el('button', {
+            type: 'button',
+            class: 'at-cook-rm',
+            'data-cook-remove': timer.id,
+            'aria-label': t('ambient.cook.timer.removeNamed', { name: timer.name }),
+          }),
+          bar,
+        );
         list.append(card);
         view = { card, left, sub, bar };
         cards.set(timer.id, view);
@@ -153,13 +170,13 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   };
 
   const paint = (now: number) => {
-    const session = ctx.store.get().session;
-    const running = !!session && (session.status === 'active' || session.status === 'paused');
+    const session = liveSession(ctx.store.get());
+    const running = !!session;
     const paused = session?.status === 'paused';
     kicker.textContent = running ? t(paused ? 'ambient.cook.paused' : 'ambient.cook.for') : '';
     const text = writeDigits(digits, running ? activeElapsed(session, now) : 0);
     digits.toggleAttribute('data-long', text.length > 5);
-    hint.textContent = !running ? t('ambient.cook.start') : paused ? t('ambient.cook.resume') : t('ambient.cook.pause');
+    hint.textContent = t(running ? (paused ? 'ambient.cook.resume' : 'ambient.cook.pause') : 'ambient.cook.start');
     note.hidden = !paused;
     tap.toggleAttribute('data-run', running);
     tap.setAttribute('aria-pressed', String(paused));
@@ -215,12 +232,13 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
   const nudge = (d: number) => {
     minutes.value = String(Math.min(720, Math.max(1, (Math.floor(Number(minutes.value)) || 0) + d)));
   };
-  less.addEventListener('click', () => {
-    nudge(-1);
-  });
-  more.addEventListener('click', () => {
-    nudge(1);
-  });
+  for (const [b, d] of [
+    [less, -1],
+    [more, 1],
+  ] as const)
+    b.addEventListener('click', () => {
+      nudge(d);
+    });
   custom.addEventListener('click', () => {
     step.hidden = !step.hidden;
     custom.setAttribute('aria-expanded', String(!step.hidden));
