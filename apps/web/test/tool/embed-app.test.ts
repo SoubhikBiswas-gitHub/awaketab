@@ -22,9 +22,16 @@ vi.mock('../../src/lib/analytics.js', () => ({
 const page = readFileSync(path.resolve('apps/web/src/pages/embed/cook.astro'), 'utf8');
 const markup = /<main[\s\S]*<\/main>/u.exec(page)?.[0] ?? '';
 
-function mount(search: string): { app: IEmbedApp; root: HTMLElement; fake: ReturnType<typeof createFakeApi> } {
+function mount(search: string): {
+  app: IEmbedApp;
+  root: HTMLElement;
+  fake: ReturnType<typeof createFakeApi>;
+} {
   const fake = createFakeApi();
-  Object.defineProperty(navigator, 'wakeLock', { configurable: true, value: fake.api });
+  Object.defineProperty(navigator, 'wakeLock', {
+    configurable: true,
+    value: fake.api,
+  });
   history.replaceState(null, '', `/embed/cook${search}`);
   document.body.innerHTML = markup
     .replace(/\{t\('[^']+'\)\}/gu, '')
@@ -34,7 +41,11 @@ function mount(search: string): { app: IEmbedApp; root: HTMLElement; fake: Retur
       '<script type="application/json" data-embed-catalogs></script>',
     );
   const catalogs = document.querySelector('[data-embed-catalogs]');
-  if (catalogs) catalogs.textContent = JSON.stringify({ en: embedCatalog(en), de: embedCatalog(de) });
+  if (catalogs)
+    catalogs.textContent = JSON.stringify({
+      en: embedCatalog(en),
+      de: embedCatalog(de),
+    });
   const root = document.querySelector<HTMLElement>('#awaketab-embed') as HTMLElement;
   const app = bootEmbed(root, window);
   return { app, root, fake };
@@ -58,7 +69,10 @@ afterEach(() => {
 
 describe('planFor', () => {
   it('maps presets, explicit ms and until', () => {
-    expect(planFor({ preset: 'pinf', until: null })).toEqual({ plan: { type: 'indefinite' }, presetId: 'pinf' });
+    expect(planFor({ preset: 'pinf', until: null })).toEqual({
+      plan: { type: 'indefinite' },
+      presetId: 'pinf',
+    });
     expect(planFor({ preset: 'p30', until: null })).toEqual({
       plan: { type: 'duration', ms: 1_800_000 },
       presetId: 'p30',
@@ -86,15 +100,25 @@ describe('digitsFor — only held/fallback run the clock', () => {
       pausedMs: 0,
       ...over,
     }) as ISession;
-  const base = { mode: 'cook' as const, params: { preset: 'pinf' as const, until: null }, locale: 'en' };
+  const base = {
+    mode: 'cook' as const,
+    params: { preset: 'pinf' as const, until: null },
+    locale: 'en',
+  };
 
   it('shows the preset length, muted, before a session', () => {
-    expect(digitsFor({ ...base, lock: 'idle', session: null, now: 0, params: { preset: 'p15', until: null } })).toEqual(
-      {
-        text: '15:00',
-        muted: true,
-      },
-    );
+    expect(
+      digitsFor({
+        ...base,
+        lock: 'idle',
+        session: null,
+        now: 0,
+        params: { preset: 'p15', until: null },
+      }),
+    ).toEqual({
+      text: '15:00',
+      muted: true,
+    });
   });
 
   it('runs elapsed time while held and freezes it when the lock is lost or the clock paused', () => {
@@ -102,7 +126,12 @@ describe('digitsFor — only held/fallback run the clock', () => {
     expect(digitsFor({ ...base, lock: 'held', session: s, now: 1_065_000 })).toEqual({ text: '01:05', muted: false });
     expect(digitsFor({ ...base, lock: 'lost', session: s, now: 1_065_000 }).muted).toBe(true);
     expect(
-      digitsFor({ ...base, lock: 'held', session: session({ status: 'paused', pausedAt: 1_030_000 }), now: 1_065_000 }),
+      digitsFor({
+        ...base,
+        lock: 'held',
+        session: session({ status: 'paused', pausedAt: 1_030_000 }),
+        now: 1_065_000,
+      }),
     ).toEqual({
       text: '00:30',
       muted: true,
@@ -110,7 +139,10 @@ describe('digitsFor — only held/fallback run the clock', () => {
   });
 
   it('counts down a duration plan', () => {
-    const s = session({ plan: { type: 'duration', ms: 600_000 }, endsAt: 1_600_000 });
+    const s = session({
+      plan: { type: 'duration', ms: 600_000 },
+      endsAt: 1_600_000,
+    });
     expect(digitsFor({ ...base, lock: 'fallback', session: s, now: 1_060_000 }).text).toBe('09:00');
   });
 });
@@ -156,7 +188,11 @@ describe('bootEmbed (/embed/cook)', () => {
     expect(toggle?.dataset.kind).toBe('stop');
     expect(toggle?.textContent.trim()).toBe(de['tool.ring.stop']);
     expect(toggle?.hasAttribute('aria-pressed')).toBe(false);
-    expect(app.state()).toMatchObject({ lock: 'held', status: 'active', mode: 'cook' });
+    expect(app.state()).toMatchObject({
+      lock: 'held',
+      status: 'active',
+      mode: 'cook',
+    });
     toggle?.click();
     await vi.waitFor(() => {
       expect(app.state().lock).toBe('idle');
@@ -193,7 +229,7 @@ describe('bootEmbed (/embed/cook)', () => {
     });
     expect(root.querySelector('[data-pill-text]')?.textContent).toBe(en['tool.pill.denied']);
     expect(root.querySelector<HTMLElement>('[data-embed-notice]')?.hidden).toBe(false);
-    expect(root.querySelector('[data-embed-notice-text]')?.textContent).toBe(en['tool.advice.battery_saver']);
+    expect(root.querySelector('[data-embed-notice-text]')?.textContent).toBe(en['tool.advice.unknown']);
     expect(root.querySelector<HTMLElement>('[data-embed-notice]')?.dataset.tone).toBe('bad');
     expect(root.querySelector<HTMLElement>('[data-embed-notice-link]')?.hidden).toBe(true);
     // Board EmbedEdge: after a denial the action reads Retry (a strong neutral, DESIGN.md §6).
@@ -235,7 +271,11 @@ describe('bootEmbed (/embed/cook)', () => {
       expect(tracked.some(([event]) => event === 'page_view')).toBe(true);
     });
     const [, , opts] = tracked.find(([event]) => event === 'page_view') ?? [];
-    expect(opts).toMatchObject({ source: 'embed', path: '/embed/cook', locale: 'en' });
+    expect(opts).toMatchObject({
+      source: 'embed',
+      path: '/embed/cook',
+      locale: 'en',
+    });
   });
 
   it('writes nothing to the app’s at.v1.* keys', async () => {

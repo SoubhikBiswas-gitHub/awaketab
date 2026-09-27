@@ -99,13 +99,10 @@ async function openTool(page: Page, url: string): Promise<void> {
   await page.locator('#awaketab-tool[data-booted]').waitFor();
 }
 
+// The stored last custom length is one minute (useTheme below), so Custom + the lamp button runs a 1-minute session.
 async function customMinute(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Custom…' }).click();
-  const dlg = page.locator('dialog[data-dialog="custom"]');
-  await dlg.locator('input[name="days"]').fill('0');
-  await dlg.locator('input[name="hours"]').fill('0');
-  await dlg.locator('input[name="minutes"]').fill('1');
-  await dlg.locator('[data-custom-start]').click();
+  await page.getByRole('button', { name: 'Custom length' }).click();
+  await page.locator('#awaketab-tool .at-cta').click();
   await expect(pill(page)).toHaveText('Screen awake');
 }
 
@@ -132,49 +129,49 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     open: async (page) => {
       await openTool(page, '/?autostart=0');
       await page.locator('#awaketab-tool header [data-open-stats]').click();
-      await expect(page.locator('dialog[data-dialog="stats"] tbody tr')).toHaveCount(7);
+      await expect(page.locator('dialog[data-dialog="stats"] .at-heat-cell')).toHaveCount(84);
     },
   },
   {
     name: 'shortcuts overlay',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.locator('#awaketab-tool [data-open-shortcuts]').click();
+      await page.locator('#awaketab-tool header [data-open-shortcuts]').click();
       await expect(page.locator('dialog[data-dialog="shortcuts"]')).toBeVisible();
     },
   },
   {
-    name: 'custom dialog',
+    name: 'custom panel',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.getByRole('button', { name: 'Custom…' }).click();
-      await expect(page.locator('dialog[data-dialog="custom"]')).toBeVisible();
+      await page.getByRole('button', { name: 'Custom length' }).click();
+      await expect(page.locator('.at-lp-custom')).toBeVisible();
     },
   },
   {
-    name: 'until dialog',
+    name: 'until panel',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.getByRole('button', { name: 'Until…' }).click();
-      await expect(page.locator('dialog[data-dialog="until"] [data-until-summary]')).not.toHaveText('');
+      await page.getByRole('button', { name: 'Until a time' }).click();
+      await expect(page.locator('.at-lp-until [data-slot="0"]')).toContainText(/\d/u);
     },
   },
   {
     name: 'share dialog',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.locator('#awaketab-tool [data-open-share]').click();
+      await page.locator('#awaketab-tool header [data-open-share]').click();
       await expect(page.locator('dialog[data-dialog="share"] [data-share-url]')).toHaveValue(/^http/u);
     },
   },
   {
-    name: 'extend prompt',
+    name: "time's-up card",
     open: async (page) => {
       await page.clock.install();
       await openTool(page, '/?autostart=0');
       await customMinute(page);
       await page.clock.fastForward(61_000);
-      await expect(page.locator('dialog[data-dialog="extend"]')).toBeVisible({ timeout: 4000 });
+      await expect(page.locator('#awaketab-tool .at-ask')).toBeVisible({ timeout: 4000 });
     },
   },
   {
@@ -203,14 +200,14 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     },
   },
   {
-    name: 'denied notice',
+    name: 'blocked card',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
       await page.evaluate(() => {
         (window as Window & { __at: { rejectNext: string | null } }).__at.rejectNext = 'NotAllowedError';
       });
-      await page.getByRole('button', { name: '15 min', exact: true }).click();
-      await expect(page.locator('[data-notice]')).toBeVisible({ timeout: 4000 });
+      await page.locator('#awaketab-tool .at-cta').click();
+      await expect(page.locator('#awaketab-tool .at-blocked')).toBeVisible({ timeout: 4000 });
     },
   },
   {
@@ -250,7 +247,10 @@ test.describe('tool surfaces', () => {
   for (const theme of ['light', 'dark', 'oled'] as const) {
     for (const surface of SURFACES) {
       test(`${surface.name}, ${theme}`, async ({ page }) => {
-        await useTheme(page, theme, surface.name === 'rating prompt' ? { endBehaviour: 'stop' } : {});
+        await useTheme(page, theme, {
+          lastCustomMs: 60_000,
+          ...(surface.name === 'rating prompt' ? { endBehaviour: 'stop' } : {}),
+        });
         await surface.open(page, theme);
         await expectNoViolations(page, theme);
       });

@@ -54,29 +54,53 @@ export function mountPwa(
   sessionStatus: () => string | undefined,
   onInstall: () => void,
 ): void {
-  const installBtn = root.querySelector<HTMLButtonElement>('[data-install]');
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    const ev = e as Event & { prompt: () => Promise<void> };
-    installBtn?.removeAttribute('hidden');
-    installBtn?.addEventListener(
-      'click',
-      () => {
-        void ev.prompt();
-      },
-      { once: true },
-    );
-  });
-  window.addEventListener('appinstalled', onInstall);
-  if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches) {
-    installBtn?.removeAttribute('hidden');
-    installBtn?.addEventListener('click', () => {
-      pushToast(store, { kind: 'info', text: t('pwa.ios.body'), sticky: true, id: 'ios' });
+  const buttons = [...root.querySelectorAll<HTMLElement>('[data-install]')];
+  const card = root.querySelector<HTMLElement>('[data-install-card]');
+  const body = card?.querySelector<HTMLElement>('[data-install-body]');
+  const now = card?.querySelector<HTMLElement>('[data-install-now]');
+  let ev: (Event & { prompt: () => Promise<void> }) | null = null;
+  const show = (on: boolean) => {
+    for (const b of buttons) b.hidden = !on;
+  };
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches;
+  for (const b of buttons) {
+    b.addEventListener('click', () => {
+      if (card) card.hidden = false;
+      if (ios && body) body.textContent = t('pwa.ios.body');
+      if (now) now.hidden = ios;
+      card?.querySelector<HTMLElement>('button')?.focus();
     });
   }
+  card?.querySelector('[data-install-later]')?.addEventListener('click', () => {
+    card.hidden = true;
+  });
+  now?.addEventListener('click', () => {
+    void ev?.prompt();
+  });
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    ev = e as Event & { prompt: () => Promise<void> };
+    show(true);
+  });
+  window.addEventListener('appinstalled', () => {
+    show(false);
+    if (card) card.hidden = true;
+    pushToast(store, {
+      kind: 'success',
+      text: t('pwa.installed'),
+      id: 'installed',
+    });
+    onInstall();
+  });
+  if (ios) show(true);
   // Offline: the tool keeps working from the precached shell; say so once instead of failing silently.
   const offline = () => {
-    pushToast(store, { kind: 'info', text: t('tool.offline'), sticky: true, id: 'offline' });
+    pushToast(store, {
+      kind: 'info',
+      text: t('tool.offline'),
+      sticky: true,
+      id: 'offline',
+    });
   };
   window.addEventListener('offline', offline);
   window.addEventListener('online', () => {

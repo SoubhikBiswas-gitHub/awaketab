@@ -4,6 +4,7 @@ import { planLabel } from './format.js';
 import { t } from './i18n.js';
 import { EXTEND_AUTO_STOP_MS } from './params.js';
 import { chime, notify } from './signal.js';
+import type { IDone } from './store.js';
 import { toast } from './ui/toast.js';
 
 export const TITLE_FLASH_MS = 1000;
@@ -12,6 +13,8 @@ export const RATING_DELAY_MS = 2000;
 export const COUNTED_SESSION_S = 5 * 60;
 
 let stopFlash: (() => void) | null = null;
+let askTimer = 0;
+let askedSession: ISession | null = null;
 
 export function flashTitle(text: string, doc: Document = document): () => void {
   stopFlash?.();
@@ -55,34 +58,43 @@ function maybeRate(ctx: IToolCtx): void {
   }, RATING_DELAY_MS);
 }
 
-function openExtend(ctx: IToolCtx, onClose: () => void): void {
-  const dialog = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="extend"]');
-  if (!dialog) {
-    onClose();
-    return;
-  }
-  ctx.store.set({ ui: { dialog: 'extend' } });
-  void import('./ui/notices.js').then(({ bindExtend }) => {
-    bindExtend(dialog, {
-      graceMs: EXTEND_AUTO_STOP_MS,
-      onAdd: (ms) => {
-        ctx.track('session_extend', { addedMin: ms / 60_000 });
-        void ctx.engine.extend(ms).then(ctx.syncLock);
-      },
-      onStop: ctx.stop,
-    });
-    dialog.addEventListener(
-      'close',
-      () => {
-        // Every way out (a button, Esc, the auto-stop) clears the dialog state, or shortcuts stay off and
-        // the rating prompt (which waits for ui.dialog === null) never shows.
-        ctx.store.set({ ui: { dialog: null } });
-        onClose();
-      },
-      { once: true },
-    );
-    if (!dialog.open) dialog.showModal();
+export function doneOf(ctx: IToolCtx, reason: string, session: ISession | null, now = Date.now()): IDone {
+  const total =
+    !session || session.endsAt === null
+      ? 0
+      : session.plan.type === 'duration'
+        ? session.plan.ms
+        : session.endsAt - session.startedAt;
+  const left = session?.endsAt
+    ? Math.max(0, session.endsAt - now + (session.plan.type === 'duration' ? session.pausedMs : 0))
+    : 0;
+  const log = ctx.store.get().ui.log.map(([k, from, to]) => [k, from, to ?? now] as IDone['log'][number]);
+  return { at: now, reason, log, total, left };
+}
+
+export function finish(ctx: IToolCtx, reason: string, session: ISession | null): void {
+  ctx.store.set({
+    ui: { ask: null, open: '', done: doneOf(ctx, reason, session) },
   });
+  ctx.root.dataset.off = '';
+  window.setTimeout(() => {
+    delete ctx.root.dataset.off;
+  }, 1800);
+}
+
+export function finishAsk(ctx: IToolCtx): void {
+  window.clearTimeout(askTimer);
+  if (!ctx.store.get().ui.ask) return;
+  ctx.stop();
+  finish(ctx, 'completed', askedSession);
+  maybeRate(ctx);
+}
+
+export function extendAsk(ctx: IToolCtx, ms: number): void {
+  window.clearTimeout(askTimer);
+  ctx.store.set({ ui: { ask: null, done: null } });
+  ctx.track('session_extend', { addedMin: ms / 60_000 });
+  void ctx.engine.extend(ms).then(ctx.syncLock);
 }
 
 export function onEnded(ctx: IToolCtx, reason: TEndReason, session: ISession): void {
@@ -100,16 +112,33 @@ export function onEnded(ctx: IToolCtx, reason: TEndReason, session: ISession): v
         : t('tool.toast.lostTimeout');
   void notify(ctx, t('end.notify.title'), body, 'at-end');
   flashTitle(t('end.titleFlash'));
-
+  if (reason === 'battery') finish(ctx, reason, session);
   if (reason !== 'completed') return;
   if (s.settings.endBehaviour === 'prompt_extend' && s.ui.mode !== 'cook') {
-    // Grace: the screen stays awake while the user decides; Stop (or the auto-stop) releases it.
-    void ctx.lock.request().then(ctx.syncLock);
-    openExtend(ctx, () => {
-      maybeRate(ctx);
+    // The time's-up card (canvas status `timesup`): the screen stays awake for the grace period while the user
+    // decides; Stop, or the grace running out, releases it.
+    askedSession = session;
+    ctx.store.set({
+      ui: {
+        ask: {
+          until: Date.now() + EXTEND_AUTO_STOP_MS,
+          fb: s.lock === 'fallback',
+        },
+        open: '',
+      },
     });
+    void ctx.lock.request().then(ctx.syncLock);
+    window.clearTimeout(askTimer);
+    askTimer = window.setTimeout(() => {
+      finishAsk(ctx);
+    }, EXTEND_AUTO_STOP_MS);
     return;
   }
-  toast(ctx.store, { kind: 'success', text: t('tool.timer.complete'), id: 'end' });
+  toast(ctx.store, {
+    kind: 'success',
+    text: t('tool.timer.complete'),
+    id: 'end',
+  });
+  finish(ctx, reason, session);
   maybeRate(ctx);
 }

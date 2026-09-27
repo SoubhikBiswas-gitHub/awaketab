@@ -1,13 +1,15 @@
-import type { ISettings, TAmbientMode, TTheme } from '@awaketab/core';
+import type { ISettings, TAmbientMode, TFace, TTheme } from '@awaketab/core';
 import { DEFAULT_SETTINGS } from '@awaketab/core';
-import { accentHex, applyAccent, PACK_ACCENTS } from '../accent.js';
+import { ACCENTS, accentHex, applyAccent, PACK_ACCENTS } from '../accent.js';
 import { hasFeature, type IToolCtx } from '../ctx.js';
+import { hm } from '../format.js';
 import { t } from '../i18n.js';
 import { sanitizeMsg } from '../params.js';
 import { notificationsState } from '../signal.js';
 import { applyTheme } from '../theme.js';
 
 const MODES = new Set<TAmbientMode>(['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook']);
+const FACES = new Set<TFace>(['ring', 'bold', 'horizon', 'tide']);
 
 type TField = HTMLInputElement | HTMLSelectElement;
 
@@ -30,6 +32,7 @@ export function fillSettings(form: HTMLFormElement, s: ISettings): void {
   setValue(form, 'theme', s.theme);
   // A legacy palette hex (amber, indigo, teal, rose) selects the lamp that replaced it (docs/08 §2.1).
   setValue(form, 'accent', accentHex(s.accent));
+  setValue(form, 'face', s.face);
   setValue(form, 'defaultPreset', s.defaultPreset);
   setValue(form, 'sound', s.sound.id === 'none' ? 'none' : 'chime');
   setValue(form, 'notifications', s.notifications);
@@ -66,6 +69,7 @@ export function readSettings(
     ...cur,
     theme: (['auto', 'light', 'dark', 'oled'].includes(str('theme')) ? str('theme') : cur.theme) as TTheme,
     accent: PACK_ACCENTS.has(accent) && !gates.packs ? cur.accent : accent,
+    face: FACES.has(str('face') as TFace) ? (str('face') as TFace) : cur.face,
     defaultPreset: (str('defaultPreset') || cur.defaultPreset) as ISettings['defaultPreset'],
     telemetry: data.get('telemetry') === 'on',
     keyboardShortcuts: data.get('keyboardShortcuts') === 'on',
@@ -73,11 +77,15 @@ export function readSettings(
     notifications: notifDisabled ? cur.notifications : data.get('notifications') === 'on',
     endBehaviour: str('endBehaviour') === 'stop' ? 'stop' : 'prompt_extend',
     sound: { ...cur.sound, id: str('sound') === 'none' ? 'none' : 'chime' },
-    battery: { ...cur.battery, autoStop: data.get('batteryAuto') === 'on', threshold },
+    battery: {
+      ...cur.battery,
+      autoStop: data.get('batteryAuto') === 'on',
+      threshold,
+    },
     ambient: {
       ...cur.ambient,
       mode: MODES.has(mode) ? mode : cur.ambient.mode,
-      message: gates.message ? sanitizeMsg(str('ambientMessage')) : cur.ambient.message,
+      message: gates.message && data.has('ambientMessage') ? sanitizeMsg(str('ambientMessage')) : cur.ambient.message,
       showSeconds: data.get('showSeconds') === 'on',
       clock24h: clock === '24' ? true : clock === '12' ? false : null,
     },
@@ -90,50 +98,81 @@ export function openSettings(ctx: IToolCtx): void {
   const dialog = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="settings"]');
   const form = dialog?.querySelector('form');
   if (!dialog || !form) return;
-  const gates = () => ({ packs: hasFeature(ctx, 'ambient.packs'), message: hasFeature(ctx, 'ambient.message') });
+  const gates = () => ({
+    packs: hasFeature(ctx, 'ambient.packs'),
+    message: hasFeature(ctx, 'ambient.message'),
+  });
   const q = (sel: string) => dialog.querySelector<HTMLElement>(sel);
+  const btn = ctx.root.querySelector('.at-site-header [data-open-settings]');
+  const html = document.documentElement;
 
   const save = (next: ISettings) => {
     ctx.storage.writeSettings(next);
     ctx.store.set({ settings: next });
     applyTheme(next.theme, ctx.store.get().ui.mode === 'night');
-    applyAccent(next.accent, gates().packs);
+    if (next.keyboardHints) delete html.dataset.hints;
+    else html.dataset.hints = 'off';
   };
 
-  const refreshGates = () => {
-    const g = gates();
-    for (const input of form.querySelectorAll<HTMLInputElement>('input[name="accent"]')) {
-      if (PACK_ACCENTS.has(input.value.toUpperCase())) input.disabled = !g.packs;
-    }
-    const msg = field(form, 'ambientMessage');
-    if (msg instanceof HTMLInputElement) msg.disabled = !g.message;
-    const gate = q('[data-message-gate]');
-    if (gate) gate.hidden = g.message;
+  const refresh = () => {
+    const s = ctx.store.get().settings;
+    const picked = (form.elements.namedItem('accent') as RadioNodeList | null)?.value ?? s.accent;
+    const hex = accentHex(picked);
+    const preview = PACK_ACCENTS.has(hex) && !gates().packs;
+    applyAccent(hex, true);
+    const name = t(`settings.accent.${ACCENTS[hex]}`);
+    const note = q('[data-lamp-note]');
+    if (note) note.textContent = preview ? t('settings.lamp.preview', { name }) : name;
     const packGate = q('[data-pack-gate]');
-    if (packGate) packGate.hidden = g.packs;
-    const notes = q('[data-notifications-note]');
+    if (packGate) packGate.hidden = gates().packs;
     const notif = field(form, 'notifications');
     const state = notificationsState();
     if (notif instanceof HTMLInputElement) notif.disabled = state === 'unavailable';
+    const notes = q('[data-notifications-note]');
     if (notes) {
-      notes.hidden = state !== 'unavailable' && state !== 'denied';
       notes.textContent =
-        state === 'unavailable' ? t('settings.notifications.unavailable') : t('settings.notifications.blocked');
+        state === 'unavailable'
+          ? t('settings.notifications.unavailable')
+          : state === 'denied'
+            ? t('settings.notifications.blocked')
+            : t('settings.notifications.help');
     }
     const hasBattery = 'getBattery' in navigator;
     const batt = q('[data-battery-fields]');
     if (batt) batt.hidden = !hasBattery;
     const battNote = q('[data-battery-unavailable]');
     if (battNote) battNote.hidden = hasBattery;
+    const range = field(form, 'batteryThreshold');
+    if (range instanceof HTMLInputElement) range.disabled = !s.battery.autoStop;
     const label = q('[data-battery-label]');
     if (label)
-      label.textContent = t('settings.battery.threshold', { percent: ctx.store.get().settings.battery.threshold });
+      label.textContent = t('settings.battery.value', {
+        percent: s.battery.threshold,
+      });
+    const hint = q('[data-battery-hint]');
+    if (hint) hint.textContent = t(s.battery.autoStop ? 'settings.battery.on' : 'settings.battery.off');
+    const now = q('[data-t="nowShows"]');
+    if (now)
+      now.textContent = t('settings.clock.now', {
+        time: hm(Date.now(), s.ambient.clock24h, s.ambient.showSeconds),
+      });
   };
 
   if (!bound) {
     bound = true;
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+    });
+    form.addEventListener('input', (e) => {
+      // The threshold slider reads its value live while dragging.
+      const target = e.target;
+      if (target instanceof HTMLInputElement && target.name === 'batteryThreshold') {
+        const label = q('[data-battery-label]');
+        if (label)
+          label.textContent = t('settings.battery.value', {
+            percent: target.value,
+          });
+      }
     });
     form.addEventListener('change', (e) => {
       const next = readSettings(form, ctx.store.get().settings, gates());
@@ -149,7 +188,7 @@ export function openSettings(ctx: IToolCtx): void {
           const granted = p === 'granted';
           target.checked = granted;
           save({ ...ctx.store.get().settings, notifications: granted });
-          refreshGates();
+          refresh();
         });
       }
       if (
@@ -162,7 +201,16 @@ export function openSettings(ctx: IToolCtx): void {
         next.notifications = false;
       }
       save(next);
-      refreshGates();
+      refresh();
+    });
+    // Language row (PRIMITIVES.md P-LANG, settings placement): the list opens inline, pushing the rows below down.
+    const langBtn = q('[data-lang-row]');
+    langBtn?.addEventListener('click', () => {
+      const open = langBtn.getAttribute('aria-expanded') !== 'true';
+      langBtn.setAttribute('aria-expanded', String(open));
+      const list = q('#at-lang-set-list');
+      if (list) list.hidden = !open;
+      if (open) list?.querySelector<HTMLElement>('[aria-current="true"]')?.focus();
     });
     const reset = dialog.querySelector<HTMLButtonElement>('[data-settings-reset]');
     reset?.addEventListener('click', () => {
@@ -176,18 +224,26 @@ export function openSettings(ctx: IToolCtx): void {
       const next = structuredClone(DEFAULT_SETTINGS);
       save(next);
       fillSettings(form, next);
-      refreshGates();
+      refresh();
     });
     q('[data-settings-close]')?.addEventListener('click', () => {
       dialog.close();
     });
+    // Stats, Share, Shortcuts (phones) and the Pro sheet open over the page, so the sheet closes first.
+    q('.at-settings-links')?.addEventListener('click', (e) => {
+      if (e.target instanceof Element && e.target.closest('button, [data-open-pro]')) dialog.close();
+    });
     dialog.addEventListener('close', () => {
+      btn?.setAttribute('aria-expanded', 'false');
+      const s = ctx.store.get();
+      applyAccent(s.settings.accent, gates().packs);
       ctx.store.set({ ui: { dialog: null } });
     });
   }
 
   fillSettings(form, ctx.store.get().settings);
-  refreshGates();
+  refresh();
   ctx.store.set({ ui: { dialog: 'settings' } });
+  btn?.setAttribute('aria-expanded', 'true');
   if (!dialog.open) dialog.showModal();
 }

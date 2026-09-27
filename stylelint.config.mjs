@@ -5,10 +5,10 @@ const RADIUS_TOKENS = /^(?:0|50%|inherit|calc\(|var\(--at-r-[a-z0-9]+\)|var\(--a
 // DESIGN.md §12.8, from B2 on: rebuilt stylesheets (shell.css) take spacing, type and control heights by token only.
 // Allowed: 0, auto, percentages, 1px borders, the tokens and calc() over them.
 const SPACING_TOKENS =
-  /^(?:0|auto|-?\d+%|calc\(|var\(--at-(?:s|gutter|section|card-pad|edge-min|dock-bottom|gap|h|border|icon|am)[a-z0-9-]*\)|[\s()*/+-]|\d+(?:\.\d+)?(?![\w%]))+$/u;
-// --at-pg-type-* (pages.css), --at-am-type-* (ambient.css) and --at-embed-type-* (embed.css) are named off-scale
-// roles, each defined once in its file.
-const TYPE_TOKENS = /^(?:inherit|var\(--at-(?:pg-|am-|embed-)?type-[a-z0-9-]+\))$/u;
+  /^(?:0|auto|-?\d+%|calc\(|var\(--at-(?:s|gutter|section|card-pad|edge-min|dock-bottom|gap|h|border|icon|am|tl)[a-z0-9-]*\)|[\s()*/+-]|\d+(?:\.\d+)?(?![\w%]))+$/u;
+// --at-pg-type-* (pages.css), --at-am-type-* (ambient.css), --at-embed-type-* (embed.css) and --at-tl-* (the tool
+// stylesheets) are named off-scale values, each defined once at the top of its file.
+const TYPE_TOKENS = /^(?:inherit|var\(--at-(?:pg-|am-|embed-|tl-)?type-[a-z0-9-]+\))$/u;
 
 export default {
   extends: ['stylelint-config-standard'],
@@ -54,6 +54,13 @@ export default {
         'apps/extension/entrypoints/popup/popup.css',
         'apps/extension/entrypoints/options/options.css',
         'apps/extension/entrypoints/welcome/welcome.css',
+        '**/styles/base.css',
+        '**/styles/tool.css',
+        '**/styles/tool-full.css',
+        '**/styles/tool-embed.css',
+        '**/styles/tool-more.css',
+        '**/styles/tool-page.css',
+        '**/styles/tool-until.css',
       ],
       rules: {
         'declaration-property-value-allowed-list': [

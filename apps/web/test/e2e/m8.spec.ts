@@ -361,11 +361,11 @@ test('/library demo drives the published IIFE through all seven states', async (
   await page.getByRole('button', { name: 'Simulate tab visible' }).click();
   await expect(current).toHaveText('held');
 
-  // battery saver → denied with advice
+  // the browser refuses (as Firefox does at 5 % battery or less) → denied, no known cause to name
   await page.locator('[data-demo-scenario]').selectOption('denied');
   await page.getByRole('button', { name: 'Request' }).click();
   await expect(current).toHaveText('denied');
-  await expect(page.locator('[data-demo-advice]')).toContainText('battery_saver');
+  await expect(page.locator('[data-demo-advice]')).toHaveText('');
 
   // no API → unsupported; a click starts the real video fallback
   await page.locator('[data-demo-scenario]').selectOption('unsupported');

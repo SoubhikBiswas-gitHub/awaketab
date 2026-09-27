@@ -7,6 +7,7 @@ export type TEndReason = 'completed' | 'user' | 'lost_timeout' | 'denied' | 'bat
 export type TPresetId = 'p15' | 'p30' | 'p45' | 'p60' | 'p120' | 'p240' | 'pinf' | 'custom' | 'until';
 export type TAmbientMode = 'standard' | 'clock' | 'focus' | 'minimal' | 'night' | 'message' | 'cook';
 export type TTheme = 'auto' | 'light' | 'dark' | 'oled';
+export type TFace = 'ring' | 'bold' | 'horizon' | 'tide';
 export type TEndBehaviour = 'stop' | 'prompt_extend';
 export type TSessionSource = 'web' | 'pwa' | 'pip' | 'ext' | 'embed';
 
@@ -49,11 +50,15 @@ export interface ISettings {
   v: 1;
   theme: TTheme;
   accent: string;
+  face: TFace;
   defaultPreset: TPresetId;
   lastCustomMs: number;
   lastUntilWall: string | null;
   autostart: boolean;
-  sound: { id: 'chime' | 'bell' | 'soft' | 'none' | `custom:${string}`; volume: number };
+  sound: {
+    id: 'chime' | 'bell' | 'soft' | 'none' | `custom:${string}`;
+    volume: number;
+  };
   notifications: boolean;
   endBehaviour: TEndBehaviour;
   battery: { autoStop: boolean; threshold: number; chargingReminder: boolean };
@@ -130,6 +135,7 @@ export const DEFAULT_SETTINGS: ISettings = {
   v: 1,
   theme: 'auto',
   accent: '#087B87',
+  face: 'ring',
   defaultPreset: 'pinf',
   lastCustomMs: 90 * 60_000,
   lastUntilWall: null,

@@ -1,6 +1,7 @@
 import { DEFAULT_SETTINGS, type ISettings } from '@awaketab/core';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { fillSettings, openSettings, readSettings } from '../../src/tool/ui/settings.js';
+import en from '../../src/i18n/en.json';
 import { makeCtx } from './ctx-helper.js';
 
 // happy-dom's RadioNodeList has a `value` getter only; browsers also have the setter fillSettings relies on
@@ -40,8 +41,9 @@ const SETTINGS_HTML = `
       </fieldset>
       <fieldset class="at-accents">
         ${ACCENTS.map((hex) => `<label><input type="radio" name="accent" value="${hex}" ${hex === '#087B87' ? 'checked' : ''} /></label>`).join('')}
-        <p data-pack-gate></p>
+        <p data-pack-gate></p><span data-lamp-note></span>
       </fieldset>
+      <fieldset>${['ring', 'bold', 'horizon', 'tide'].map((v) => `<label><input type="radio" name="face" value="${v}" ${v === 'ring' ? 'checked' : ''} /></label>`).join('')}</fieldset>
       <select name="defaultPreset">
         ${['p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf'].map((p) => `<option value="${p}">${p}</option>`).join('')}
       </select>
@@ -83,12 +85,19 @@ const STORED: ISettings = {
   ...DEFAULT_SETTINGS,
   theme: 'oled',
   accent: '#5A47CF',
+  face: 'horizon',
   defaultPreset: 'p60',
   sound: { id: 'none', volume: 0.3 },
   notifications: true,
   endBehaviour: 'stop',
   battery: { autoStop: true, threshold: 22, chargingReminder: false },
-  ambient: { ...DEFAULT_SETTINGS.ambient, mode: 'clock', message: 'Back at 3', showSeconds: true, clock24h: false },
+  ambient: {
+    ...DEFAULT_SETTINGS.ambient,
+    mode: 'clock',
+    message: 'Back at 3',
+    showSeconds: true,
+    clock24h: false,
+  },
   telemetry: false,
   keyboardShortcuts: false,
   keyboardHints: false,
@@ -115,7 +124,10 @@ describe('fillSettings → readSettings', () => {
     const f = form();
     fillSettings(f, STORED);
     input(f, 'keyboardHints').checked = true;
-    expect(readSettings(f, STORED, NONE)).toEqual({ ...STORED, keyboardHints: true });
+    expect(readSettings(f, STORED, NONE)).toEqual({
+      ...STORED,
+      keyboardHints: true,
+    });
   });
 
   it('maps clock24h auto/24/12 to null/true/false', () => {
@@ -217,7 +229,10 @@ describe('openSettings', () => {
   });
 
   it('opens on the stored values and a change keeps them (no default overwrite)', () => {
-    const { ctx, root, store, storage } = makeCtx({ html: SETTINGS_HTML, settings: STORED });
+    const { ctx, root, store, storage } = makeCtx({
+      html: SETTINGS_HTML,
+      settings: STORED,
+    });
     openSettings(ctx);
     const dialog = root.querySelector<HTMLDialogElement>('[data-dialog="settings"]') as HTMLDialogElement;
     const f = dialog.querySelector('form') as HTMLFormElement;
@@ -225,9 +240,11 @@ describe('openSettings', () => {
     expect(store.get().ui.dialog).toBe('settings');
     expect((f.elements.namedItem('theme') as RadioNodeList).value).toBe('oled');
 
-    // happy-dom has no Notification API: the switch is disabled with the "unavailable" note.
+    // happy-dom has no Notification API: the switch is disabled and its help line says why.
     expect(input(f, 'notifications').disabled).toBe(true);
-    expect(root.querySelector<HTMLElement>('[data-notifications-note]')?.hidden).toBe(false);
+    expect(root.querySelector<HTMLElement>('[data-notifications-note]')?.textContent).toBe(
+      en['settings.notifications.unavailable'],
+    );
 
     const hints = input(f, 'keyboardHints');
     hints.checked = true;
@@ -237,14 +254,25 @@ describe('openSettings', () => {
     expect(document.documentElement.dataset.theme).toBe('oled');
     expect(document.documentElement.dataset.accent).toBe('violet');
 
-    // Pack lamps are disabled and the gates are shown without a licence.
-    const mint = f.querySelector<HTMLInputElement>('input[name="accent"][value="#167A50"]');
-    expect(mint?.disabled).toBe(true);
+    // Without a licence a pack lamp previews on the clock (canvas: "Tap one to preview it") but is never stored,
+    // and closing the sheet puts the stored lamp back.
     expect(root.querySelector<HTMLElement>('[data-pack-gate]')?.hidden).toBe(false);
-    expect(input(f, 'ambientMessage').disabled).toBe(true);
+    const mint = f.querySelector<HTMLInputElement>('input[name="accent"][value="#167A50"]') as HTMLInputElement;
+    mint.checked = true;
+    mint.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(document.documentElement.dataset.accent).toBe('mint');
+    expect(root.querySelector('[data-lamp-note]')?.textContent).toBe('Mint · Pro preview');
+    expect(storage.settings().accent).toBe('#5A47CF');
+
+    // The clock face is a setting too (docs/08 §2.1).
+    const bold = f.querySelector<HTMLInputElement>('input[name="face"][value="bold"]') as HTMLInputElement;
+    bold.checked = true;
+    bold.dispatchEvent(new Event('change', { bubbles: true }));
+    expect(storage.settings().face).toBe('bold');
 
     dialog.querySelector<HTMLButtonElement>('[data-settings-close]')?.click();
     expect(dialog.open).toBe(false);
     expect(store.get().ui.dialog).toBeNull();
+    expect(document.documentElement.dataset.accent).toBe('violet');
   });
 });

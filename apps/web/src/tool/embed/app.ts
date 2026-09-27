@@ -80,7 +80,11 @@ export function planFor(
 }
 
 const wallTime = (locale: string, at: number) =>
-  new Intl.DateTimeFormat(locale, { hour: 'numeric', minute: '2-digit', numberingSystem: 'latn' }).format(at);
+  new Intl.DateTimeFormat(locale, {
+    hour: 'numeric',
+    minute: '2-digit',
+    numberingSystem: 'latn',
+  }).format(at);
 
 export function digitsFor(input: {
   mode: IEmbedParams['mode'];
@@ -91,10 +95,17 @@ export function digitsFor(input: {
   locale: string;
 }): { text: string; muted: boolean } {
   const { session, now } = input;
-  if (input.mode === 'clock') return { text: wallTime(input.locale, now), muted: !RUNNING.has(input.lock) };
+  if (input.mode === 'clock')
+    return {
+      text: wallTime(input.locale, now),
+      muted: !RUNNING.has(input.lock),
+    };
   if (!isLive(session)) {
     const { plan } = planFor(input.params);
-    return { text: formatClock(plan.type === 'duration' ? plan.ms : 0), muted: true };
+    return {
+      text: formatClock(plan.type === 'duration' ? plan.ms : 0),
+      muted: true,
+    };
   }
   const running = RUNNING.has(input.lock) && session.status === 'active';
   const ms = session.plan.type === 'indefinite' ? activeElapsed(session, now) : (remainingOf(session, now) ?? 0);
@@ -156,7 +167,9 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
   const storage = safeLocalStorage(win);
   let telemetry = true;
   try {
-    const app = JSON.parse(storage?.getItem('at.v1.settings') ?? 'null') as { telemetry?: unknown } | null;
+    const app = JSON.parse(storage?.getItem('at.v1.settings') ?? 'null') as {
+      telemetry?: unknown;
+    } | null;
     telemetry = app?.telemetry !== false;
   } catch {
     // unreadable settings: keep the default
@@ -164,7 +177,12 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
   const track = (event: string, p: Record<string, string | number | boolean> = {}) => {
     if (!telemetry) return;
     void import('../../lib/analytics.js').then((m) => {
-      m.track(event, p, { telemetry: true, source: 'embed', locale: params.lang, path: EMBED_PATH });
+      m.track(event, p, {
+        telemetry: true,
+        source: 'embed',
+        locale: params.lang,
+        path: EMBED_PATH,
+      });
     });
   };
 
@@ -193,9 +211,9 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
   const policy = wakeLockPolicy(doc);
   let tapNeeded = false;
 
-  const adviceNow = (): TAdviceCode | 'tap' | null => {
+  const adviceNow = (): TAdviceCode | 'tap' | 'unknown' | null => {
     if (framed && policy === false) return 'iframe_no_allow';
-    if (lock.state === 'denied') return embedAdvice(lock.advice, policy, win.navigator.userAgent) ?? 'battery_saver';
+    if (lock.state === 'denied') return embedAdvice(lock.advice, policy) ?? 'unknown';
     if (lock.state === 'unsupported') return tapNeeded ? 'tap' : (lock.advice ?? 'unsupported_browser');
     return null;
   };
@@ -248,7 +266,14 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
       toggleText.textContent =
         kind === 'stop' ? t('tool.ring.stop') : kind === 'retry' ? t('tool.advice.retry') : t('embed.start');
     }
-    const view = digitsFor({ mode: params.mode, lock: lockState, session: s, params, now, locale });
+    const view = digitsFor({
+      mode: params.mode,
+      lock: lockState,
+      session: s,
+      params,
+      now,
+      locale,
+    });
     if (digits) {
       digits.textContent = view.text;
       digits.classList.toggle('is-muted', view.muted);
@@ -284,12 +309,18 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
               ? t(params.mode === 'clock' ? 'embed.meta.clock' : 'embed.advice.tapToStart')
               : cook
                 ? t(paused ? 'embed.cook.resume' : 'embed.cook.pause')
-                : t('embed.meta.since', { time: wallTime(locale, s?.startedAt ?? now) });
+                : t('embed.meta.since', {
+                    time: wallTime(locale, s?.startedAt ?? now),
+                  });
     }
     if (foot) {
       foot.textContent =
         params.mode === 'clock'
-          ? new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' }).format(now)
+          ? new Intl.DateTimeFormat(locale, {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+            }).format(now)
           : t('embed.foot');
     }
     const advice = adviceNow();
@@ -316,7 +347,11 @@ export function bootEmbed(root: HTMLElement, win: Window = window): IEmbedApp {
 
   async function start(cmd?: Extract<TPageMessage, { type: 'awaketab:start' }>): Promise<void> {
     const { plan, presetId } = planFor(params, cmd);
-    const result = await engine.start(plan, { presetId, mode: params.mode, source: 'embed' });
+    const result = await engine.start(plan, {
+      presetId,
+      mode: params.mode,
+      source: 'embed',
+    });
     // A programmatic start (postMessage) cannot play the fallback video without a gesture (docs/11 §3).
     tapNeeded = cmd !== undefined && result === 'unsupported';
     render();

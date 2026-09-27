@@ -126,14 +126,12 @@ describe('Permissions-Policy detection and advice', () => {
     ).toBeNull();
   });
 
-  it('turns the library’s iframe_no_allow into power advice when the policy allows the lock', () => {
-    expect(embedAdvice('iframe_no_allow', true, 'Mozilla/5.0 (Windows NT 10.0) Chrome/130')).toBe('battery_saver');
-    expect(embedAdvice('iframe_no_allow', true, 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0) Version/18.0 Safari')).toBe(
-      'low_power_ios',
-    );
-    expect(embedAdvice('iframe_no_allow', false, 'x')).toBe('iframe_no_allow');
-    expect(embedAdvice('iframe_no_allow', null, 'x')).toBe('iframe_no_allow');
-    expect(embedAdvice('battery_saver', true, 'x')).toBe('battery_saver');
+  it('drops the library’s iframe_no_allow guess when the policy allows the lock', () => {
+    expect(embedAdvice('iframe_no_allow', true)).toBeNull();
+    expect(embedAdvice('iframe_no_allow', false)).toBe('iframe_no_allow');
+    expect(embedAdvice('iframe_no_allow', null)).toBe('iframe_no_allow');
+    expect(embedAdvice('hidden_document', true)).toBe('hidden_document');
+    expect(embedAdvice(null, true)).toBeNull();
   });
 
   it('knows whether it is framed', () => {

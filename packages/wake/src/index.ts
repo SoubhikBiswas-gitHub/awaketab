@@ -120,7 +120,7 @@ export function createWakeLock(options: IWakeLockOptions = {}): IWakeLockHandle 
       visibleReleases = visibleReleases.filter((t) => now - t < 10_000);
       visibleReleases.push(now);
       if (visibleReleases.length >= 3) {
-        transition('denied', 'denied', 'battery_saver');
+        transition('denied', 'denied', null);
         scheduleRetry();
         return;
       }

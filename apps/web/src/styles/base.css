@@ -1,0 +1,184 @@
+:root {
+  --at-tl-clip: 1px;
+  --at-tl-dialog: 24rem;
+  --at-tl-prose: 45rem;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--at-font);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+
+  .sr-only,
+  .at-sr {
+    position: absolute;
+    inline-size: var(--at-tl-clip);
+    block-size: var(--at-tl-clip);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@layer components {
+  .at-skip {
+    position: absolute;
+    inset-block-start: var(--at-s-2);
+    inset-inline-start: var(--at-s-2);
+    z-index: 40;
+    padding-block: var(--at-s-2);
+    padding-inline: var(--at-s-4);
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-sm);
+    background: var(--card);
+    color: var(--card-foreground);
+    text-decoration: none;
+  }
+
+  .at-skip:not(:focus) {
+    clip-path: inset(50%);
+    inline-size: var(--at-tl-clip);
+    block-size: var(--at-tl-clip);
+    overflow: hidden;
+  }
+
+  .at-shell {
+    max-inline-size: calc(var(--at-content-max) + 2 * var(--at-gutter));
+    margin-inline: auto;
+    padding-inline: var(--at-gutter);
+    padding-block-start: var(--at-s-4);
+  }
+
+  .at-shell:focus {
+    outline: none;
+  }
+
+  dialog {
+    inline-size: calc(100% - 2 * var(--at-s-4));
+    max-inline-size: var(--at-tl-dialog);
+    max-block-size: calc(100% - 2 * var(--at-s-4));
+    margin: auto;
+    padding: var(--at-s-6);
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-lg);
+    background: var(--card);
+    color: var(--card-foreground);
+  }
+
+  dialog::backdrop {
+    background: var(--at-scrim);
+  }
+
+  .at-prose {
+    max-inline-size: var(--at-tl-prose);
+    margin-inline: auto;
+    margin-block-start: var(--at-s-8);
+    font: var(--at-type-body);
+    content-visibility: auto;
+    contain-intrinsic-size: auto 480px;
+  }
+
+  .at-prose h1 {
+    margin-block: 0 var(--at-s-4);
+    font: var(--at-type-h2);
+    text-wrap: balance;
+  }
+
+  .at-prose h2 {
+    margin-block: var(--at-s-8) var(--at-s-3);
+    font: var(--at-type-h3);
+    text-wrap: balance;
+  }
+
+  .at-prose h3 {
+    margin-block: var(--at-s-6) var(--at-s-2);
+    font: var(--at-type-lead);
+    font-weight: 600;
+  }
+
+  .at-prose p,
+  .at-prose :is(ul, ol) {
+    margin-block: 0 var(--at-s-4);
+  }
+
+  .at-prose :is(ul, ol) {
+    padding-inline-start: var(--at-s-6);
+  }
+
+  .at-prose ul {
+    list-style: disc;
+  }
+
+  .at-prose ol {
+    list-style: decimal;
+  }
+
+  .at-prose li {
+    margin-block: var(--at-s-2);
+  }
+
+  .at-prose a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .at-prose nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--at-s-2);
+    margin-block-start: var(--at-s-6);
+  }
+
+  .at-prose nav a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--at-h-control);
+    padding-inline: var(--at-s-4);
+    border: 1px solid var(--border);
+    border-radius: var(--at-r-sm);
+    background: var(--card);
+    color: var(--card-foreground);
+    font: var(--at-type-small);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .at-prose nav a:hover {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .at-prose code {
+    padding-inline: var(--at-s-1);
+    border-radius: var(--at-r-xs);
+    background: var(--muted);
+    font: var(--at-type-small);
+    font-family: var(--at-font-mono);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      transition-duration: 1ms !important;
+    }
+  }
+}

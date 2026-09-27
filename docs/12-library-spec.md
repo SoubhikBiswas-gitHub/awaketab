@@ -28,7 +28,7 @@ Related docs: `00-conventions.md` §5.1, §13.1 · `04-engine-spec.md` §3–§5
 export type TLockState = 'idle' | 'requesting' | 'held' | 'lost' | 'denied' | 'unsupported' | 'fallback';
 export type TLockReason = 'request' | 'acquired' | 'fallback_started' | 'released_hidden' | 'released_platform'
   | 'denied' | 'unsupported' | 'user_release' | 'retry' | 'destroyed';
-export type TAdviceCode = 'battery_saver' | 'low_power_ios' | 'hidden_document' | 'permissions_policy'
+export type TAdviceCode = 'hidden_document' | 'permissions_policy'
   | 'insecure_context' | 'unsupported_browser' | 'ios_safari_old' | 'firefox_old' | 'iframe_no_allow';
 
 export interface IWakeLockOptions {
@@ -56,14 +56,14 @@ export interface IWakeLockHandle {
 }
 
 export function createWakeLock(options?: IWakeLockOptions): IWakeLockHandle;
-export function classifyDenial(err: unknown, ctx: { visible: boolean; secure: boolean; inIframe: boolean; ua: string }): TAdviceCode;
+export function classifyDenial(err: unknown, ctx: { visible: boolean; secure: boolean; inIframe: boolean; ua: string }): TAdviceCode | null; // null: cause unknown
 export const isWakeLockSupported: () => boolean;
 ```
 
 ### 2.1 Behavioural notes
 
 - `request()` from `idle`/`lost`/`denied` → `requesting` → `held` on resolve. On `NotAllowedError` → `denied` with `advice` from `classifyDenial()`; transient causes (`hidden_document`) retry per `retry` when the document becomes visible; others wait for a new `request()`.
-- Sentinel `release` while `document.hidden` → `lost` (reason `released_hidden`); while visible → `lost` (reason `released_platform`, e.g. battery saver kicked in) and one retry.
+- Sentinel `release` while `document.hidden` → `lost` (reason `released_hidden`); while visible → `lost` (reason `released_platform`, e.g. Firefox at 5 % battery or less) and one retry; three visible releases within 10 s → `denied` with advice `null`.
 - `unsupported` is set at creation when the API is missing or the context is insecure. `request()` in `unsupported` with `fallback:'video'` attempts the video: `play()` rejection (autoplay policy) leaves the state `unsupported` and emits `error` — callers must invoke `request()` from a user gesture in that case (the UI shows "Tap to use the fallback").
 - The fallback video element is `<video muted playsinline loop hidden>` appended to `document.body`, sources = inlined 1-frame WebM then MP4; `currentTime` nudged every `nudgeIntervalMs`; paused when hidden and resumed when visible.
 - `fullscreenchange` triggers a re-request (some browsers release locks when entering fullscreen).

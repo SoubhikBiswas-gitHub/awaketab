@@ -132,13 +132,14 @@ test('stats panel shows today, a 7-row heatmap and the free-tier limits', async 
   });
   await page.goto('/?autostart=0');
   await page.locator('#awaketab-tool[data-booted]').waitFor();
-  await page.getByRole('button', { name: 'Stats', exact: true }).click();
+  await page.getByRole('button', { name: 'Your stats', exact: true }).click();
   const dlg = page.locator('dialog[data-dialog="stats"]');
   await expect(dlg).toBeVisible();
-  await expect(dlg.locator('[data-stats-today]')).toHaveText('42 min · 2 sessions');
-  await expect(dlg.locator('[data-stats-heatmap] tbody tr')).toHaveCount(7);
-  await expect(dlg.locator('[data-stats-heatmap] td[data-locked]').first()).toBeAttached();
-  await expect(dlg.locator('[data-stats-export]')).toBeHidden();
+  await expect(dlg.locator('[data-stats-today]')).toHaveText('42 min');
+  // 7 days × 12 weeks; without Pro the days before the last week are locked and export carries the Pro tag.
+  await expect(dlg.locator('[data-stats-heatmap] .at-heat-cell')).toHaveCount(84);
+  await expect(dlg.locator('[data-stats-heatmap] [data-locked]').first()).toBeAttached();
+  await expect(dlg.locator('[data-export-pro]')).toBeVisible();
   await expect(dlg.locator('[data-stats-locked]')).toBeVisible();
   await expect(dlg.locator('[data-stats-empty]')).toBeHidden();
 });
@@ -166,19 +167,15 @@ test('rating prompt after the 5th counted session, once only', async ({ page }) 
         secondTabWarnedAt: null,
       }),
     );
-    localStorage.setItem('at.v1.settings', JSON.stringify({ v: 1, endBehaviour: 'stop' }));
+    localStorage.setItem('at.v1.settings', JSON.stringify({ v: 1, endBehaviour: 'stop', lastCustomMs: 300_000 }));
   });
 
   const rating = page.locator('dialog[data-dialog="rating"]');
   const runFiveMinutes = async () => {
     await page.goto('/?autostart=0');
     await page.locator('#awaketab-tool[data-booted]').waitFor();
-    await page.getByRole('button', { name: 'Custom…' }).click();
-    const dlg = page.locator('dialog[data-dialog="custom"]');
-    await dlg.locator('input[name="days"]').fill('0');
-    await dlg.locator('input[name="hours"]').fill('0');
-    await dlg.locator('input[name="minutes"]').fill('5');
-    await dlg.locator('[data-custom-start]').click();
+    await page.getByRole('button', { name: 'Custom length' }).click();
+    await page.locator('#awaketab-tool .at-cta').click();
     await expect(pillText(page)).toHaveText('Screen awake');
     // runFor (not fastForward) fires every 1 s tick, so awakeSeconds reaches the 5-minute counting floor.
     await page.clock.runFor(5 * 60_000 + 3000);
@@ -188,7 +185,9 @@ test('rating prompt after the 5th counted session, once only', async ({ page }) 
   await runFiveMinutes();
   await expect.poll(async () => (await storedJson<IStoredMeta>(page, 'at.v1.meta'))?.sessionCount).toBe(5);
   await expect(rating).toBeVisible({ timeout: 4000 });
-  await rating.getByRole('radio', { name: '4 stars' }).check();
+  // The star radios are visually hidden inside their labels; a person taps the star.
+  await rating.locator('label', { has: page.getByRole('radio', { name: '4 stars' }) }).click();
+  await expect(rating.getByRole('radio', { name: '4 stars' })).toBeChecked();
   const sent = page.waitForRequest((r) => r.url().endsWith('/api/rating') && r.method() === 'POST');
   await rating.getByRole('button', { name: 'Send' }).click();
   expect((await sent).postDataJSON()).toMatchObject({ stars: 4 });
@@ -259,10 +258,10 @@ test('SponsorCard slots are not rendered, nor the config fetched, with PUBLIC_SP
     if (req.url().includes('/config/sponsor.json')) configRequests.push(req.url());
   });
   await page.goto('/?autostart=0');
-  await expect(page.locator('dialog[data-dialog="extend"]')).toHaveCount(1);
-  // Build flag off (the production default until G5): no reserved box anywhere, including the ExtendPrompt.
+  await expect(page.locator('#awaketab-tool .at-ask')).toHaveCount(1);
+  // Build flag off (the production default until G5): no reserved box anywhere, including the time's-up card.
   await expect(page.locator('[data-sponsor]')).toHaveCount(0);
-  await expect(page.locator('dialog[data-dialog="extend"] .at-sponsor')).toHaveCount(0);
+  await expect(page.locator('#awaketab-tool .at-ask .at-sponsor')).toHaveCount(0);
   await page.waitForLoadState('networkidle');
   expect(configRequests).toEqual([]);
 });
@@ -296,10 +295,22 @@ test.describe('offline', () => {
     await page.goto('/30m');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(pillText(page)).toHaveText('Screen awake', { timeout: 4000 });
-    await expect(toasts(page)).toContainText("You're offline — the tool works, content pages may be unavailable.");
+    await expect(toasts(page)).toContainText("You're offline. The tool still works; guides may not load.");
     await context.setOffline(false);
   });
 });
+
+// Entrance rises and sheet slides (DESIGN.md §8) must end first: axe must judge resting colours, not a mid-fade.
+async function settled(page: Page): Promise<void> {
+  await page.waitForFunction(() =>
+    document
+      .getAnimations()
+      .every(
+        (a) =>
+          !(a instanceof CSSAnimation) || a.effect?.getTiming().iterations === Infinity || a.playState === 'finished',
+      ),
+  );
+}
 
 test.describe('axe on M6 surfaces', () => {
   for (const theme of ['light', 'dark'] as const) {
@@ -314,8 +325,9 @@ test.describe('axe on M6 surfaces', () => {
     test(`stats dialog, ${theme}`, async ({ page }) => {
       await page.goto(`/?autostart=0&theme=${theme}`);
       await page.locator('#awaketab-tool[data-booted]').waitFor();
-      await page.getByRole('button', { name: 'Stats', exact: true }).click();
-      await expect(page.locator('dialog[data-dialog="stats"] tbody tr')).toHaveCount(7);
+      await page.getByRole('button', { name: 'Your stats', exact: true }).click();
+      await expect(page.locator('dialog[data-dialog="stats"] .at-heat-cell')).toHaveCount(84);
+      await settled(page);
       const results = await new AxeBuilder({ page }).analyze();
       expect(results.violations).toEqual([]);
     });
@@ -325,6 +337,7 @@ test.describe('axe on M6 surfaces', () => {
       await page.locator('#awaketab-tool[data-booted]').waitFor();
       await page.getByRole('button', { name: 'Settings', exact: true }).click();
       await expect(page.locator('dialog[data-dialog="settings"]')).toBeVisible();
+      await settled(page);
       const results = await new AxeBuilder({ page }).analyze();
       expect(results.violations).toEqual([]);
     });
@@ -338,6 +351,7 @@ test('content page scenario mode waits for a session instead of covering the art
   await page.locator('#awaketab-tool[data-booted]').waitFor();
   await expect(page.locator('dialog[data-ambient]')).toBeHidden();
   await page.locator('#awaketab-tool [data-chips] button[data-preset="pinf"]').click();
+  await page.locator('#awaketab-tool .at-cta').click();
   await expect(page.locator('dialog[data-ambient]')).toBeVisible();
   await expect(page.locator('dialog[data-ambient]')).toHaveAttribute('data-mode', 'cook');
   await expect(page.locator('dialog[data-ambient] [data-pill-text]')).toHaveText('Screen awake');

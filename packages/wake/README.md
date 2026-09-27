@@ -1,8 +1,8 @@
 # @awaketab/wake
 
 [![npm version](https://img.shields.io/npm/v/@awaketab/wake?label=npm&color=B86E00)](https://www.npmjs.com/package/@awaketab/wake)
-[![gzip size](https://img.shields.io/badge/gzip-%E2%89%A4%203.4%20KB-B86E00)](https://github.com/awaketab/awaketab/blob/main/packages/wake/package.json)
-[![CI](https://github.com/awaketab/awaketab/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/awaketab/awaketab/actions/workflows/ci.yml)
+[![gzip size](https://img.shields.io/badge/gzip-%E2%89%A4%203.4%20KB-B86E00)](https://github.com/SoubhikBiswas-gitHub/awaketab/blob/main/packages/wake/package.json)
+[![CI](https://github.com/SoubhikBiswas-gitHub/awaketab/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SoubhikBiswas-gitHub/awaketab/actions/workflows/ci.yml)
 [![npm provenance](https://img.shields.io/badge/npm-provenance-2B3A67)](https://www.npmjs.com/package/@awaketab/wake#provenance)
 [![license: MIT](https://img.shields.io/npm/l/@awaketab/wake)](./LICENSE)
 
@@ -12,15 +12,12 @@ Screen Wake Lock with an honest state machine and a tiny video fallback. The mai
 
 ## Install
 
-```bash
-npm install @awaketab/wake
-# or: pnpm add @awaketab/wake · yarn add @awaketab/wake
-```
+The npm package is coming soon; `npm install @awaketab/wake` works once the first version is published. Until then, build it from the repository (`pnpm -F @awaketab/wake build`, output in `packages/wake/dist`).
 
-No bundler? Load the IIFE build from a CDN — it exposes `window.AwakeTabWake`:
+No bundler? Load the IIFE build: it exposes `window.AwakeTabWake`. The live demo serves the same file:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@awaketab/wake@1/dist/awaketab-wake.iife.js"></script>
+<script src="https://awaketab.com/library/awaketab-wake.iife.js"></script>
 <script>
   const lock = AwakeTabWake.createWakeLock();
 </script>
@@ -34,7 +31,7 @@ import { createWakeLock } from '@awaketab/wake';
 const lock = createWakeLock();
 lock.on('change', ({ from, to, reason, advice }) => {
   status.textContent = to; // idle · requesting · held · lost · denied · unsupported · fallback
-  if (advice) hint.textContent = advice; // e.g. 'battery_saver', 'iframe_no_allow'
+  if (advice) hint.textContent = advice; // e.g. 'hidden_document', 'iframe_no_allow'
 });
 button.addEventListener('click', () => lock.request()); // a gesture keeps the fallback path open
 stopButton.addEventListener('click', () => lock.release());
@@ -61,11 +58,11 @@ stopButton.addEventListener('click', () => lock.release());
 | `requesting` | `navigator.wakeLock.request('screen')` (or the fallback video) is in flight |
 | `held` | A sentinel is alive |
 | `lost` | The browser released the sentinel (tab hidden, OS). Re-requested when the document is visible again |
-| `denied` | The request was rejected (`NotAllowedError`: battery saver, Permissions-Policy, hidden document). `advice` says why |
+| `denied` | The request was rejected (`NotAllowedError`: hidden document, Permissions-Policy, Safari before a tap, Firefox at 5 % battery or less). `advice` says why when the cause is known, and is `null` otherwise |
 | `unsupported` | No Screen Wake Lock API, or an insecure context. `request()` tries the video fallback |
 | `fallback` | The hidden 1-frame video loop is playing |
 
-Every `change` event carries `{ from, to, reason, advice?, error?, at }`. Reasons: `request` · `acquired` · `fallback_started` · `released_hidden` · `released_platform` · `denied` · `unsupported` · `user_release` · `retry` · `destroyed`. Advice codes: `battery_saver` · `low_power_ios` · `hidden_document` · `permissions_policy` · `insecure_context` · `unsupported_browser` · `ios_safari_old` · `firefox_old` · `iframe_no_allow`.
+Every `change` event carries `{ from, to, reason, advice?, error?, at }`. Reasons: `request` · `acquired` · `fallback_started` · `released_hidden` · `released_platform` · `denied` · `unsupported` · `user_release` · `retry` · `destroyed`. Advice codes: `hidden_document` · `permissions_policy` · `insecure_context` · `unsupported_browser` · `ios_safari_old` · `firefox_old` · `iframe_no_allow`.
 
 ## Options
 
@@ -79,7 +76,7 @@ Every `change` event carries `{ from, to, reason, advice?, error?, at }`. Reason
 | `navigatorLike` / `documentLike` | globals | Test injection |
 | `debug` | `false` | `true` or a logger `(msg, data) => void` |
 
-Also exported: `classifyDenial(err, ctx)` → advice code, and `isWakeLockSupported()`.
+Also exported: `classifyDenial(err, ctx)` → advice code (or `null` when the cause is unknown), and `isWakeLockSupported()`.
 
 ## Framework adapters
 
@@ -99,7 +96,7 @@ const { state, request, release } = useWakeLock();
 
 - The video fallback needs a user gesture (autoplay policy). If `play()` is rejected the state stays `unsupported` and an `error` event fires — call `request()` again from a click.
 - It uses more power than a native wake lock. It pauses while the tab is hidden and resumes when it is visible.
-- Battery savers (Android Battery Saver, iPhone Low Power Mode, Chrome Energy Saver) can deny or release any lock. `denied` + `advice` tells you which.
+- Battery savers do not refuse a wake lock: Chromium and WebKit have no such check. Firefox refuses and releases the lock at 5 % battery or less while discharging, and iPhone Low Power Mode caps Auto-Lock at 30 seconds.
 
 ## What a wake lock cannot do
 
@@ -129,7 +126,7 @@ Try the live state-machine demo at [awaketab.com/library](https://awaketab.com/l
 
 ## Contributing
 
-Issues and PRs are welcome at [github.com/awaketab/awaketab](https://github.com/awaketab/awaketab). A PR needs a changeset (`pnpm changeset`), a test for any transition change, and a passing size check (`pnpm -F @awaketab/wake size`). Security issues: security@awaketab.com.
+Issues and PRs are welcome at [github.com/SoubhikBiswas-gitHub/awaketab](https://github.com/SoubhikBiswas-gitHub/awaketab). A PR needs a changeset (`pnpm changeset`), a test for any transition change, and a passing size check (`pnpm -F @awaketab/wake size`). Security issues: security@awaketab.com.
 
 Sponsor development via [GitHub Sponsors](https://github.com/sponsors/awaketab).
 

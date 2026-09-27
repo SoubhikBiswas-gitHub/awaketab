@@ -40,7 +40,7 @@ const fakeWakeLock = { request: vi.fn(async () => new FakeSentinel()) };
 | ID | Scenario | Expect |
 |---|---|---|
 | T01 | `request()` resolves | `idle → requesting → held`, reason `acquired` |
-| T02 | `request()` rejects `NotAllowedError` while visible & plugged | `denied`, advice `battery_saver` (UA-agnostic default), one retry after `baseMs` |
+| T02 | `request()` rejects `NotAllowedError` while visible & plugged | `denied`, advice `null` (cause unknown; UA-agnostic default), one retry after `baseMs` |
 | T03 | rejects `NotAllowedError` while `hidden` | `denied`, advice `hidden_document`; auto re-request on visible → `held` |
 | T04 | rejects `SecurityError`/insecure context | `unsupported` with `insecure_context` |
 | T05 | sentinel `release` while hidden | `held → lost` (`released_hidden`); visible → `requesting → held` |
@@ -273,7 +273,7 @@ As built (M7):
 | 2 | macOS · Safari, Chrome (display sleep 1 min; lid) | lock holds; lid close sleeps regardless (documented) |
 | 3 | iPhone · Safari 17/18 (Auto-Lock 30 s) | holds; Low Power Mode behaviour recorded; Home-Screen app on iOS 18.4+ |
 | 4 | iPad · Safari | same as 3; sheet-music scenario |
-| 5 | Android · Chrome, Samsung Internet (timeout 30 s) | holds; battery saver → `denied` advice; PWA install |
+| 5 | Android · Chrome, Samsung Internet (timeout 30 s) | holds with Battery Saver on (it never refuses the lock); PWA install |
 | 6 | Chromebook · Chrome | holds; extension |
 | 7 | Windows laptop · Modern Standby | screen vs system behaviour for `/for/downloads` copy |
 | 8 | Linux · Firefox 126+ | native lock |

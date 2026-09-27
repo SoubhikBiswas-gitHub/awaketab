@@ -3,18 +3,17 @@ import type { ILicenseRecord, ISession, ISettings } from '@awaketab/core';
 import { DEFAULT_SETTINGS } from '@awaketab/core';
 import type { TAmbientMode } from '@awaketab/core';
 
-export type TDialogName =
-  | 'custom'
-  | 'until'
-  | 'settings'
-  | 'shortcuts'
-  | 'share'
-  | 'extend'
-  | 'rating'
-  | 'stats'
-  | 'fallback'
-  | 'ios-install'
-  | null;
+export type TDialogName = 'settings' | 'shortcuts' | 'share' | 'rating' | 'stats' | 'pro' | null;
+
+export type TLogEntry = [0 | 1, number, number?];
+
+export interface IDone {
+  at: number;
+  reason: string;
+  log: TLogEntry[];
+  total: number;
+  left: number;
+}
 
 export interface IToastItem {
   id: string;
@@ -44,7 +43,17 @@ export interface IToolState {
     secondTab: boolean;
     pip: 'closed' | 'document' | 'popup';
     resumeVisible: boolean;
-    noticeOpen: boolean;
+    open: '' | 'until' | 'custom' | 'more';
+    ask: { until: number; fb: boolean } | null;
+    done: IDone | null;
+    why: boolean;
+    log: TLogEntry[];
+    asked: number;
+    ok: number;
+    rcpt: boolean;
+    auto: boolean;
+    past: boolean;
+    tap: boolean;
   };
 }
 
@@ -80,7 +89,17 @@ export function initialState(settings: ISettings = DEFAULT_SETTINGS): IToolState
       secondTab: false,
       pip: 'closed',
       resumeVisible: false,
-      noticeOpen: false,
+      open: '',
+      ask: null,
+      done: null,
+      why: false,
+      log: [],
+      asked: 0,
+      ok: 0,
+      rcpt: false,
+      auto: false,
+      past: false,
+      tap: false,
     },
   };
 }

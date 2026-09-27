@@ -1,4 +1,4 @@
-import { PRESET_MS, type TPlan, type TPresetId, type ISession } from '@awaketab/core';
+import { CUSTOM_MAX_MS, type ISession, type TPresetId } from '@awaketab/core';
 import { t } from './i18n.js';
 
 export function pad(n: number): string {
@@ -8,44 +8,120 @@ export function pad(n: number): string {
 export function formatHms(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000));
   const days = Math.floor(total / 86400);
-  const h = Math.floor((total % 86400) / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const s = total % 60;
-  const clock = `${pad(h)}:${pad(m)}:${pad(s)}`;
+  const clock = `${pad((total % 86400) / 3600)}:${pad((total % 3600) / 60)}:${pad(total % 60)}`;
   return days > 0 ? `${String(days)}d ${clock}` : clock;
 }
 
-export function presetDurationMs(id: TPresetId, lastCustomMs: number): number | null {
-  if (id === 'pinf') return null;
-  if (id === 'custom') return lastCustomMs;
-  if (id === 'until') return null;
-  return PRESET_MS[id];
+export function splitDigits(sec: number): [string, string] {
+  const s = Math.max(0, Math.floor(sec));
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const tail = `:${pad(s % 60)}`;
+  const mm = pad((s % 3600) / 60);
+  if (d) return [`${String(d)}d ${pad(h)}:${mm}`, tail];
+  return [h ? `${String(h)}:${mm}` : mm, tail];
 }
 
-export function idleTimerText(preset: TPresetId, lastCustomMs: number, eightHour: boolean): string {
-  if (eightHour) return formatHms(480 * 60_000);
-  if (preset === 'pinf') return t('tool.timer.indefiniteIdle');
-  const ms = presetDurationMs(preset, lastCustomMs);
-  return ms === null ? t('tool.timer.indefiniteIdle') : formatHms(ms);
+export function words(sec: number): string {
+  if (!sec) return t('tool.noLimit');
+  const d = Math.floor(sec / 86400);
+  const h = Math.floor((sec % 86400) / 3600);
+  const m = Math.round((sec % 3600) / 60);
+  if (d)
+    return [t('tool.len.days', { d }), h ? t('tool.len.h', { h }) : '', m ? t('tool.len.min', { m }) : '']
+      .filter(Boolean)
+      .join(' ');
+  if (h && m) return t('tool.len.hm', { h, m });
+  if (h) return t('tool.len.hours', { h });
+  return t('tool.len.min', { m });
+}
+
+export function mins(m: number): string {
+  const h = Math.floor(m / 60);
+  const r = m % 60;
+  if (!h) return t('tool.len.min', { m: r });
+  return r ? t('tool.len.hm', { h, m: r }) : t('tool.len.h', { h });
+}
+
+const cache = new Map<string, Intl.DateTimeFormat>();
+export function dtf(o: Intl.DateTimeFormatOptions, lang = document.documentElement.lang || 'en'): Intl.DateTimeFormat {
+  const key = lang + JSON.stringify(o);
+  let f = cache.get(key);
+  if (!f) {
+    f = new Intl.DateTimeFormat(lang, { ...o, numberingSystem: 'latn' });
+    cache.set(key, f);
+  }
+  return f;
+}
+
+export function hm(ms: number, c24: boolean | null = null, secs = false): string {
+  return dtf({
+    hour: 'numeric',
+    minute: '2-digit',
+    ...(secs ? { second: '2-digit' } : {}),
+    ...(c24 === null ? {} : { hour12: !c24 }),
+  }).format(ms);
+}
+
+export function dateLong(ms: number, year = true): string {
+  const lang = document.documentElement.lang || 'en';
+  const o: Intl.DateTimeFormatOptions = {
+    day: 'numeric',
+    month: 'long',
+    ...(year ? { year: 'numeric' } : {}),
+  };
+  if (lang !== 'en') return dtf({ weekday: 'long', ...o }).format(ms);
+  return `${dtf({ weekday: 'long' }, 'en-GB').format(ms)}, ${dtf(o, 'en-GB').format(ms)}`;
+}
+
+export function dayDiff(ms: number, now = Date.now()): number {
+  const a = new Date(ms);
+  const b = new Date(now);
+  return Math.round(
+    (new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime() -
+      new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime()) /
+      86_400_000,
+  );
+}
+
+export function when(ms: number, c24: boolean | null = null): string {
+  const d = dayDiff(ms);
+  const time = hm(ms, c24);
+  if (d === 0) return time;
+  if (d === 1) return t('tool.when.tomorrow', { time });
+  return t('tool.when.day', { day: dtf({ weekday: 'long' }).format(ms), time });
+}
+
+export function since(ms: number, c24: boolean | null = null): string {
+  const d = dayDiff(ms);
+  const time = hm(ms, c24);
+  if (d === 0) return time;
+  if (d === -1) return t('tool.when.yesterday', { time });
+  return t('tool.when.day', { day: dtf({ weekday: 'long' }).format(ms), time });
+}
+
+export function nextWall(wall: string, from = Date.now()): number {
+  const [h, m] = wall.split(':').map(Number);
+  const d = new Date(from);
+  d.setHours(h ?? 0, m ?? 0, 0, 0);
+  if (d.getTime() <= from) d.setDate(d.getDate() + 1);
+  return d.getTime();
+}
+
+export function wallOf(ms: number): string {
+  const d = new Date(ms);
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+export function stepCustom(m: number, up: boolean): number {
+  const step = up ? (m < 720 ? 5 : 60) : m <= 720 ? 5 : 60;
+  return Math.min(CUSTOM_MAX_MS / 60_000, Math.max(5, m + (up ? step : -step)));
 }
 
 export function planLabel(preset: TPresetId, eightHour = false): string {
   if (eightHour) return t('tool.preset.eightHour');
   if (preset === 'pinf') return t('tool.preset.pinf.sr');
   return t(`tool.preset.${preset}`);
-}
-
-export function wallLabel(wall: string, locale: string, clock24h: boolean | null): string {
-  const [hs, ms] = wall.split(':').map(Number);
-  const d = new Date();
-  d.setHours(hs ?? 0, ms ?? 0, 0, 0);
-  const hour12 = clock24h === null ? undefined : !clock24h;
-  return new Intl.DateTimeFormat(locale, {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12,
-    numberingSystem: 'latn',
-  }).format(d);
 }
 
 export function remainingOf(session: ISession | null, now: number): number | null {
@@ -55,25 +131,4 @@ export function remainingOf(session: ISession | null, now: number): number | nul
     return Math.max(0, session.endsAt - now + session.pausedMs + pauseNow);
   }
   return Math.max(0, session.endsAt - now);
-}
-
-export function progressOf(session: ISession | null, now: number): number {
-  if (!session) return 0;
-  if (session.plan.type === 'indefinite') return 1;
-  const start = session.startedAt;
-  const end = session.endsAt;
-  if (end === null) return 1;
-  const span = end - start;
-  if (span <= 0) return 1;
-  return Math.min(1, Math.max(0, (now - start) / span));
-}
-
-export function planUntilWall(plan: TPlan): string | null {
-  return plan.type === 'until' ? plan.wall : null;
-}
-
-export const RING_C = 2 * Math.PI * 88;
-
-export function dashOffset(progress: number): number {
-  return RING_C * (1 - Math.min(1, Math.max(0, progress)));
 }

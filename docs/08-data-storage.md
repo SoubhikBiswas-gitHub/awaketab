@@ -28,6 +28,7 @@ export interface ISettings {
   v: 1;
   theme: 'auto' | 'light' | 'dark' | 'oled';        // default 'auto'
   accent: string;                                   // lamp light-theme hex, default '#087B87'; one of '#087B87' (aqua) · '#5A47CF' (violet) · '#167A50' (mint, ambient.packs) · '#255FBD' (sky, ambient.packs); legacy values migrate on read: '#B86E00' amber → aqua, '#4F46E5' indigo → violet, '#0F766E' teal → mint, '#BE123C' rose → sky; unknown or unlicensed values render as aqua; the next settings save writes the lamp hex — dark variants come from tokens.css (05-frontend-spec.md §1.1a)
+  face: 'ring' | 'bold' | 'horizon' | 'tide';       // default 'ring' — the remembered clock face (DESIGN.md §7); the face tabs and Settings → Clock face write it, src/boot/boot.js paints <html data-face> from it before first frame (absent for ring); an unknown value shows the Ring face
   defaultPreset: TPresetId;                          // 'p15'|'p30'|'p45'|'p60'|'p120'|'p240'|'pinf'|'custom'|'until'; default 'pinf'
   lastCustomMs: number;                             // default 90 * 60_000
   lastUntilWall: string | null;                     // 'HH:MM', default null

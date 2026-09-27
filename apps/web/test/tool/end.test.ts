@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setVisibility } from '../../../../packages/wake/test/fake.js';
 import {
   COUNTED_SESSION_S,
+  extendAsk,
+  finishAsk,
   flashTitle,
   onEnded,
   RATING_DELAY_MS,
@@ -45,7 +47,12 @@ function fakeAudio() {
     gain: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() },
     connect: vi.fn((n: unknown) => n),
   });
-  return { currentTime: 1, destination: {}, createOscillator: vi.fn(osc), createGain: vi.fn(gain) };
+  return {
+    currentTime: 1,
+    destination: {},
+    createOscillator: vi.fn(osc),
+    createGain: vi.fn(gain),
+  };
 }
 
 const notificationSpy = vi.fn();
@@ -67,15 +74,6 @@ function withServiceWorker(reg: unknown) {
     value: { getRegistration: vi.fn(async () => reg) },
   });
 }
-
-const EXTEND_HTML = `
-  <dialog data-dialog="extend">
-    <p data-extend-auto></p>
-    <button type="button" data-extend-15>+15</button>
-    <button type="button" data-extend-30>+30</button>
-    <button type="button" data-extend-60>+60</button>
-    <button type="button" data-extend-stop>Stop</button>
-  </dialog>`;
 
 const RATING_HTML = `
   <dialog data-dialog="rating">
@@ -113,7 +111,9 @@ describe('onEnded: skipped reasons', () => {
   it.each(['user', 'denied'] as const)('%s runs none of the end steps', async (reason) => {
     stubNotification('granted');
     const audio = fakeAudio();
-    const { ctx, store, storage } = makeCtx({ html: EXTEND_HTML, settings: { notifications: true } });
+    const { ctx, store, storage } = makeCtx({
+      settings: { notifications: true },
+    });
     ctx.audio = () => audio as unknown as AudioContext;
     onEnded(ctx, reason, session({ endReason: reason }));
     await settle();
@@ -130,7 +130,9 @@ describe('onEnded: skipped reasons', () => {
 describe('onEnded: completed', () => {
   it('shows a page notification when enabled, granted and no SW registration exists', async () => {
     stubNotification('granted');
-    const { ctx, store } = makeCtx({ settings: { notifications: true, endBehaviour: 'stop' } });
+    const { ctx, store } = makeCtx({
+      settings: { notifications: true, endBehaviour: 'stop' },
+    });
     onEnded(ctx, 'completed', session());
     await settle();
     expect(notificationSpy).toHaveBeenCalledTimes(1);
@@ -145,7 +147,9 @@ describe('onEnded: completed', () => {
     stubNotification('granted');
     const reg = { showNotification: vi.fn(async () => undefined) };
     withServiceWorker(reg);
-    const { ctx } = makeCtx({ settings: { notifications: true, endBehaviour: 'stop' } });
+    const { ctx } = makeCtx({
+      settings: { notifications: true, endBehaviour: 'stop' },
+    });
     onEnded(ctx, 'completed', session());
     await settle();
     expect(reg.showNotification).toHaveBeenCalledWith('AwakeTab', expect.objectContaining({ tag: 'at-end' }));
@@ -154,13 +158,17 @@ describe('onEnded: completed', () => {
 
   it('never notifies when the setting is off or permission is not granted', async () => {
     stubNotification('granted');
-    const off = makeCtx({ settings: { notifications: false, endBehaviour: 'stop' } });
+    const off = makeCtx({
+      settings: { notifications: false, endBehaviour: 'stop' },
+    });
     onEnded(off.ctx, 'completed', session());
     await settle();
     expect(notificationSpy).not.toHaveBeenCalled();
 
     stubNotification('default');
-    const pending = makeCtx({ settings: { notifications: true, endBehaviour: 'stop' } });
+    const pending = makeCtx({
+      settings: { notifications: true, endBehaviour: 'stop' },
+    });
     onEnded(pending.ctx, 'completed', session());
     await settle();
     expect(notificationSpy).not.toHaveBeenCalled();
@@ -183,7 +191,9 @@ describe('onEnded: completed', () => {
 
   it("stays silent when sound is 'none'", () => {
     const audio = fakeAudio();
-    const { ctx } = makeCtx({ settings: { endBehaviour: 'stop', sound: { id: 'none', volume: 0.6 } } });
+    const { ctx } = makeCtx({
+      settings: { endBehaviour: 'stop', sound: { id: 'none', volume: 0.6 } },
+    });
     ctx.audio = () => audio as unknown as AudioContext;
     onEnded(ctx, 'completed', session());
     expect(audio.createOscillator).not.toHaveBeenCalled();
@@ -255,83 +265,97 @@ describe('flashTitle', () => {
   });
 });
 
-describe('onEnded: extend prompt (docs/05 §3.9)', () => {
-  it('opens the extend dialog and holds the lock during the grace period', async () => {
-    const { ctx, root, store, lock } = makeCtx({ html: EXTEND_HTML });
+describe("onEnded: time's up (docs/05 §3.9, canvas status timesup)", () => {
+  it('asks inline and holds the lock during the 60 s grace', async () => {
+    const { ctx, store, lock } = makeCtx();
     onEnded(ctx, 'completed', session());
     await settle();
-    const dialog = root.querySelector<HTMLDialogElement>('[data-dialog="extend"]');
-    expect(dialog?.open).toBe(true);
-    expect(store.get().ui.dialog).toBe('extend');
+    const ask = store.get().ui.ask;
+    expect(ask).not.toBeNull();
+    expect((ask?.until ?? 0) - Date.now()).toBe(EXTEND_AUTO_STOP_MS);
+    expect(EXTEND_AUTO_STOP_MS).toBe(60_000);
     expect(lock.state).toBe('held');
-    expect(root.querySelector('[data-extend-auto]')?.textContent).toBe('Stops in 300 s');
     expect(store.get().ui.toasts).toHaveLength(0);
+    expect(store.get().ui.done).toBeNull();
   });
 
-  it('closing without a choice (Esc / close()) stops and releases the lock', async () => {
-    const { ctx, root, store, lock, engine } = makeCtx({ html: EXTEND_HTML });
+  it('Stop releases the lock and shows the Done receipt', async () => {
+    const { ctx, store, lock, engine } = makeCtx();
     onEnded(ctx, 'completed', session());
     await settle();
-    const dialog = root.querySelector<HTMLDialogElement>('[data-dialog="extend"]') as HTMLDialogElement;
     expect(lock.state).toBe('held');
-    dialog.close();
+    finishAsk(ctx);
     await settle();
-    expect(dialog.open).toBe(false);
+    expect(store.get().ui.ask).toBeNull();
     expect(lock.state).toBe('idle');
     expect(store.get().lock).toBe('idle');
     expect(engine.session?.status ?? 'inactive').not.toBe('active');
-    expect(store.get().ui.dialog).toBeNull();
+    expect(store.get().ui.done).toMatchObject({
+      reason: 'completed',
+      total: 15 * 60_000,
+    });
   });
 
-  it('auto-stops after the grace period', async () => {
-    const { ctx, root, lock } = makeCtx({ html: EXTEND_HTML });
+  it('stops by itself when the grace runs out', async () => {
+    const { ctx, store, lock } = makeCtx();
     onEnded(ctx, 'completed', session());
     await settle();
     await vi.advanceTimersByTimeAsync(EXTEND_AUTO_STOP_MS);
     await settle();
-    expect(root.querySelector<HTMLDialogElement>('[data-dialog="extend"]')?.open).toBe(false);
+    expect(store.get().ui.ask).toBeNull();
     expect(lock.state).toBe('idle');
   });
 
-  it('+15 extends into a new session and clears the dialog state', async () => {
-    const { ctx, root, store, engine, lock } = makeCtx({ html: EXTEND_HTML });
+  it('+15 extends into a new session on the held lock', async () => {
+    const { ctx, store, engine, lock } = makeCtx();
     onEnded(ctx, 'completed', session());
     await settle();
-    root.querySelector<HTMLButtonElement>('[data-extend-15]')?.click();
+    extendAsk(ctx, 15 * 60_000);
     await settle();
-    expect(root.querySelector<HTMLDialogElement>('[data-dialog="extend"]')?.open).toBe(false);
-    expect(engine.session).toMatchObject({ status: 'active', plan: { type: 'duration', ms: 15 * 60_000 } });
+    expect(store.get().ui.ask).toBeNull();
+    expect(engine.session).toMatchObject({
+      status: 'active',
+      plan: { type: 'duration', ms: 15 * 60_000 },
+    });
     expect(lock.state).toBe('held');
     expect(ctx.track).toHaveBeenCalledWith('session_extend', { addedMin: 15 });
-    // Regression: a button choice used to leave ui.dialog === 'extend', which kept keyboard shortcuts off.
-    expect(store.get().ui.dialog).toBeNull();
+    // A later grace timer must not stop the new session.
+    await vi.advanceTimersByTimeAsync(EXTEND_AUTO_STOP_MS);
+    expect(engine.session?.status).toBe('active');
   });
 
-  it('the rating prompt can follow once the extend prompt is stopped', async () => {
-    const { ctx, root, storage } = makeCtx({ html: EXTEND_HTML + RATING_HTML });
+  it("the rating prompt can follow once time's up is stopped", async () => {
+    const { ctx, root, storage } = makeCtx({ html: RATING_HTML });
     storage.writeMeta({ ...storage.meta(), sessionCount: 4 });
     onEnded(ctx, 'completed', session());
     expect(storage.meta().sessionCount).toBe(5);
     await settle();
-    root.querySelector<HTMLButtonElement>('[data-extend-stop]')?.click();
+    finishAsk(ctx);
     await settle();
     await vi.advanceTimersByTimeAsync(RATING_DELAY_MS);
     await settle();
     expect(root.querySelector<HTMLDialogElement>('[data-dialog="rating"]')?.open).toBe(true);
   });
 
-  it('cook mode and the stop behaviour skip the prompt and toast instead', async () => {
-    const cook = makeCtx({ html: EXTEND_HTML });
+  it('cook mode and the stop behaviour skip the question, toast and show the receipt instead', async () => {
+    const cook = makeCtx();
     cook.store.set({ ui: { mode: 'cook' } });
     onEnded(cook.ctx, 'completed', session());
     await settle();
-    expect(cook.root.querySelector<HTMLDialogElement>('[data-dialog="extend"]')?.open).toBe(false);
+    expect(cook.store.get().ui.ask).toBeNull();
     expect(cook.store.get().ui.toasts.map((x) => x.text)).toContain('Session complete');
 
-    const stop = makeCtx({ html: EXTEND_HTML, settings: { endBehaviour: 'stop' } });
+    const stop = makeCtx({ settings: { endBehaviour: 'stop' } });
     onEnded(stop.ctx, 'completed', session());
     await settle();
-    expect(stop.root.querySelector<HTMLDialogElement>('[data-dialog="extend"]')?.open).toBe(false);
+    expect(stop.store.get().ui.ask).toBeNull();
+    expect(stop.store.get().ui.done?.reason).toBe('completed');
     expect(stop.lock.state).toBe('idle');
+  });
+
+  it('a battery stop keeps its figures for the low-battery card', () => {
+    const { ctx, store } = makeCtx();
+    onEnded(ctx, 'battery', session({ endReason: 'battery' }));
+    expect(store.get().ui.done?.reason).toBe('battery');
   });
 });

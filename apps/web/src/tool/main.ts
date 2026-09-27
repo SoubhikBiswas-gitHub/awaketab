@@ -13,39 +13,23 @@ import type * as TActions from './ui/actions.js';
 import { EIGHT_H_MS, parseToolParams } from './params.js';
 import { planLabel } from './format.js';
 import { setCatalog, t } from './i18n.js';
-import { mountShortcuts } from './shortcuts.js';
-import { createStore, initialState, type IStore } from './store.js';
-import { applyTheme } from './theme.js';
-import { mountResume, mountSecondTab, mountStop } from './ui/banners.js';
-import { mountChips } from './ui/chips.js';
-import { mountPill } from './ui/pill.js';
-import { mountRing } from './ui/ring.js';
-import { mountTimer } from './ui/timer.js';
-import { mountToasts as mountToastRegion, toast as pushToast } from './ui/toast.js';
+import { createStore, initialState, type TLogEntry } from './store.js';
+import { toast as pushToast } from './ui/toast.js';
+import { liveSession, mountView, statusOf } from './ui/view.js';
 
 // Non-urgent chunks (analytics, licence re-check, PWA, suggestions) wait for load + idle so nothing they fetch
 // sits on the first-paint path (LCP lab ≤ 1.2 s, docs/00 §11). The wake-lock request never waits for this.
 const later = new Promise<void>((resolve) => {
   const go = () => {
-    if ('requestIdleCallback' in window) {
+    if ('requestIdleCallback' in window)
       requestIdleCallback(() => {
         resolve();
       });
-    } else {
-      setTimeout(resolve, 1);
-    }
+    else setTimeout(resolve, 1);
   };
   if (document.readyState === 'complete') go();
   else addEventListener('load', go, { once: true });
 });
-
-function track(store: IStore, event: string, params?: Record<string, string | number | boolean>): void {
-  void later
-    .then(() => import('./extras.js'))
-    .then((mod) => {
-      mod.track(store, event, params);
-    });
-}
 
 function sessionSource(source: string | null): 'web' | 'pwa' | 'pip' | 'ext' | 'embed' {
   if (source === 'pwa' || source === 'pip' || source === 'ext' || source === 'embed') return source;
@@ -75,73 +59,119 @@ export function boot(root: HTMLElement): () => void {
     selectedPreset,
     ui: { ...initialState(settings).ui, mode: embedded ? 'standard' : scene },
   });
+  const track = (event: string, p?: Record<string, string | number | boolean>) => {
+    void later
+      .then(() => import('./extras.js'))
+      .then((mod) => {
+        mod.track(store, event, p);
+      });
+  };
 
-  applyTheme(params.theme ?? settings.theme, store.get().ui.mode === 'night');
+  // The inline boot script already painted the theme (and ?theme=); only night mode forces OLED on top of it.
+  if (store.get().ui.mode === 'night') void import('./theme.js').then((m) => m.applyTheme(settings.theme, true));
   const bootSearch = location.search;
   history.replaceState(null, '', `${params.canonicalPath}${location.hash}`);
 
-  if (!storage.persistent) pushToast(store, { kind: 'info', text: t('tool.toast.storage'), id: 'storage' });
+  if (!storage.persistent)
+    pushToast(store, {
+      kind: 'info',
+      text: t('tool.toast.storage'),
+      id: 'storage',
+    });
 
   const lock = createWakeLock();
   const engine = createSession({
     lock,
     storage,
-    settings: () => {
-      return store.get().settings;
-    },
-    track: (event, p) => {
-      track(store, event, p);
-    },
+    settings: () => store.get().settings,
+    track,
   });
 
   const syncLock = () => {
-    store.set({ lock: lock.state, advice: lock.advice, session: engine.session });
+    store.set({
+      lock: lock.state,
+      advice: lock.advice,
+      session: engine.session,
+    });
   };
 
+  // The session log (held / paused stretches) feeds the Done receipt; ignition plays once per real grant.
+  const log = (k: 0 | 1 | null, at = Date.now()) => {
+    const next: TLogEntry[] = store.get().ui.log.map((g) => (g[2] ? g : [g[0], g[1], at]));
+    if (k !== null) next.push([k, at]);
+    store.set({ ui: { log: next } });
+  };
   let awaitingReacquire = false;
   const offLock = engine.on('lock', (e) => {
-    store.set({ lock: e.to, advice: e.advice ?? lock.advice, session: engine.session });
+    const ui = store.get().ui;
+    // A refused auto-start (Safari wants a tap first, decision O-70) stays on the Ready layout with the tap button,
+    // so the first paint never swaps in the blocked card; a refused tap shows it.
+    if (e.to === 'denied' && ui.auto) {
+      store.set({ ui: { tap: true, auto: false } });
+      void lock.release();
+    }
+    store.set({
+      lock: e.to,
+      advice: e.advice ?? lock.advice,
+      session: engine.session,
+    });
     if (e.to === 'lost') {
       awaitingReacquire = true;
-      pushToast(store, { kind: 'info', text: t('tool.toast.lost'), id: 'lock' });
-    }
-    if (e.to === 'held' && awaitingReacquire) {
+      log(1);
+    } else if (e.to === 'held' || e.to === 'fallback') {
+      if (e.from === 'requesting' && !awaitingReacquire && !ui.ask) {
+        store.set({ ui: { ok: Date.now(), done: null } });
+        root.dataset.ig = '';
+        setTimeout(() => delete root.dataset.ig, 1600);
+      }
+      if (awaitingReacquire)
+        pushToast(store, {
+          kind: 'success',
+          text: t('tool.toast.reacquired'),
+          id: 'lock',
+        });
       awaitingReacquire = false;
-      pushToast(store, { kind: 'success', text: t('tool.toast.reacquired'), id: 'lock' });
-    }
-    if (e.to === 'denied' || e.to === 'unsupported') {
-      store.set({ ui: { noticeOpen: true } });
-    }
-    if (e.to === 'held' || e.to === 'fallback' || e.to === 'idle') {
-      store.set({ ui: { noticeOpen: false } });
-    }
+      log(0);
+    } else if (e.to !== 'requesting') log(null);
   });
   const offTick = engine.on('tick', (ev) => {
-    store.set({ remainingMs: ev.remainingMs, elapsedMs: ev.elapsedMs, session: engine.session, lock: lock.state });
+    store.set({
+      remainingMs: ev.remainingMs,
+      elapsedMs: ev.elapsedMs,
+      session: engine.session,
+      lock: lock.state,
+    });
   });
   const offWarn = engine.on('warning', (w) => {
     if (w.code === 'second_tab') store.set({ ui: { secondTab: true } });
     if (w.code === 'battery_low') {
       pushToast(store, {
         kind: 'warn',
-        text: t('tool.toast.batteryLow', { percent: Math.round((w.level ?? 0) * 100) }),
+        text: t('tool.toast.batteryLow', {
+          percent: Math.round((w.level ?? 0) * 100),
+        }),
         id: 'battery',
       });
     }
   });
   const offEnd = engine.on('ended', ({ reason, session }) => {
     syncLock();
-    const s = store.get();
-    if (reason === 'lost_timeout') pushToast(store, { kind: 'warn', text: t('tool.toast.lostTimeout'), id: 'end' });
-    if (reason === 'battery') {
+    if (reason === 'lost_timeout')
       pushToast(store, {
         kind: 'warn',
-        text: t('tool.toast.battery', { percent: s.settings.battery.threshold }),
+        text: t('tool.toast.lostTimeout'),
         id: 'end',
       });
-    }
-    if (reason === 'error') pushToast(store, { kind: 'error', text: t('tool.toast.error'), id: 'end' });
+    if (reason === 'error')
+      pushToast(store, {
+        kind: 'error',
+        text: t('tool.toast.error'),
+        id: 'end',
+      });
+    const held = store.get().ui.log.reduce((sum, [k, from, to]) => sum + (k ? 0 : (to ?? Date.now()) - from), 0);
+    // A stop after a minute awake shows the Done receipt (canvas `ended`); a shorter one goes straight back to Ready.
     void import('./end.js').then((m) => {
+      if (reason === 'user' && held >= 60_000) m.finish(ctx, reason, session);
       m.onEnded(ctx, reason, session);
     });
   });
@@ -149,11 +179,18 @@ export function boot(root: HTMLElement): () => void {
   function currentPlan(): { plan: TPlan; presetId: TPresetId } {
     const s = store.get();
     if (params.routeUntil ?? params.until) {
-      return { plan: planUntil(params.routeUntil ?? params.until ?? '00:00'), presetId: 'until' };
+      return {
+        plan: planUntil(params.routeUntil ?? params.until ?? '00:00'),
+        presetId: 'until',
+      };
     }
     if (s.eightHour) return { plan: { type: 'duration', ms: EIGHT_H_MS }, presetId: 'custom' };
     const id = s.selectedPreset;
-    if (id === 'custom') return { plan: { type: 'duration', ms: s.settings.lastCustomMs }, presetId: 'custom' };
+    if (id === 'custom')
+      return {
+        plan: { type: 'duration', ms: s.settings.lastCustomMs },
+        presetId: 'custom',
+      };
     if (id === 'until') {
       if (s.settings.lastUntilWall) return { plan: planUntil(s.settings.lastUntilWall), presetId: 'until' };
       return { plan: planFromPreset('p30'), presetId: 'p30' };
@@ -165,6 +202,17 @@ export function boot(root: HTMLElement): () => void {
     store.set({
       selectedPreset: presetId,
       eightHour: presetId === 'custom' && plan.type === 'duration' && plan.ms === EIGHT_H_MS,
+      ui: switched
+        ? {}
+        : {
+            asked: Date.now(),
+            ok: 0,
+            rcpt: store.get().ui.rcpt,
+            log: [],
+            done: null,
+            ask: null,
+            open: '',
+          },
     });
     if (embedded && !switched) store.set({ ui: { mode: scene } });
     const state = await engine.start(plan, {
@@ -172,30 +220,45 @@ export function boot(root: HTMLElement): () => void {
       mode: store.get().ui.mode,
       source: sessionSource(params.source),
     });
-    store.set({ lock: state, advice: lock.advice, session: engine.session, ui: { resumeVisible: false } });
-    if (switched) {
+    store.set({
+      lock: state,
+      advice: lock.advice,
+      session: engine.session,
+      ui: { resumeVisible: false },
+    });
+    if (switched)
       pushToast(store, {
         kind: 'info',
-        text: t('tool.toast.switched', { label: planLabel(presetId, store.get().eightHour) }),
+        text: t('tool.toast.switched', {
+          label: planLabel(presetId, store.get().eightHour),
+        }),
         id: 'switch',
       });
-    }
   }
 
+  let first = true;
+  const startCurrent = () => {
+    const cur = currentPlan();
+    // The receipt note ("Asked at … · confirmed … later") shows for the first start of a page view (canvas O-70).
+    store.set({ ui: { rcpt: first, auto: false, tap: false } });
+    first = false;
+    void startPlan(cur.plan, cur.presetId);
+  };
   const startPreset = (id: Exclude<TPresetId, 'custom' | 'until'>) => {
-    void startPlan(planFromPreset(id), id, engine.session?.status === 'active');
+    void startPlan(planFromPreset(id), id, !!liveSession(store.get()));
   };
   const stop = () => {
     engine.stop();
     syncLock();
   };
   const toggle = () => {
-    const st = engine.session?.status;
-    if (st === 'active' || st === 'paused') stop();
-    else {
-      const cur = currentPlan();
-      void startPlan(cur.plan, cur.presetId);
-    }
+    const st = statusOf(store.get());
+    if (st === 'timesup')
+      void import('./end.js').then((m) => {
+        m.finishAsk(ctx);
+      });
+    else if (liveSession(store.get())) stop();
+    else startCurrent();
   };
 
   // The AudioContext must be created inside a user gesture so the end chime can play later (docs/04 §10).
@@ -215,13 +278,10 @@ export function boot(root: HTMLElement): () => void {
     storage,
     params,
     startPlan,
-    stop: () => {
-      stop();
-    },
+    startCurrent,
+    stop,
     syncLock,
-    track: (event, p) => {
-      track(store, event, p);
-    },
+    track,
     audio: () => audio,
   };
 
@@ -229,206 +289,64 @@ export function boot(root: HTMLElement): () => void {
   if (location.hash.startsWith('#lic=') || bootSearch.includes('logo='))
     void import('./embed/kiosk.js').then((m) => m.mountKiosk(ctx, bootSearch));
 
-  const unsubs: Array<() => void> = [];
+  const unsubs: Array<() => void> = [mountView(ctx)];
   let ambient = false;
   unsubs.push(
     store.subscribe((s) => {
       if (s.ui.mode === 'standard' || ambient) return;
       ambient = true;
-      void import('./ambient/shell.js').then((m) => unsubs.push(m.mountAmbient(ctx)));
+      // The ambient layer's styles are in the on-demand sheet (tool-more.css); link it before the layer opens.
+      void import('./ui/more-css.js')
+        .then((c) => c.moreCss())
+        .then(() => import('./ambient/shell.js'))
+        .then((m) => unsubs.push(m.mountAmbient(ctx)));
     }),
   );
-  if (root.querySelector('[data-sponsor]'))
-    void later.then(() => import('./sponsor.js')).then((m) => m.mountSponsor(ctx).then((u) => unsubs.push(u)));
-  void later
-    .then(() => import('./extras.js'))
-    .then((mod) => {
-      unsubs.push(mod.mountExtras(store, storage));
-    });
-  const ring = root.querySelector<HTMLElement>('[data-ring]');
-  const pill = root.querySelector<HTMLElement>('[data-pill]');
-  const timer = root.querySelector<HTMLElement>('[data-timer]');
-  const chips = root.querySelector<HTMLElement>('[data-chips]');
-  const stopBtn = root.querySelector<HTMLButtonElement>('[data-stop]');
-  const resume = root.querySelector<HTMLElement>('[data-resume]');
-  const toastsEl = root.querySelector<HTMLElement>('[data-toasts]');
-  const second = root.querySelector<HTMLElement>('[data-second-tab]');
-  const notice = root.querySelector<HTMLElement>('[data-notice]');
-  const shortcutsDlg = root.querySelector<HTMLDialogElement>('[data-dialog="shortcuts"]');
+  // After load + idle: analytics and the licence check, PWA install and updates, the language suggestion, sponsor.
+  void later.then(() => import('./extras.js')).then((m) => unsubs.push(m.mountLate(ctx)));
   const act = (fn: (m: typeof TActions) => void) => {
     void import('./ui/actions.js').then(fn);
   };
-  const openUntil = () => {
-    act((m) => {
-      m.openUntil(ctx);
-    });
-  };
-
-  function openNotice(): void {
-    if (!notice) return;
-    const s = store.get();
-    notice.hidden = !s.ui.noticeOpen;
-    if (!s.ui.noticeOpen) return;
-    void import('./ui/notices.js').then(({ bindNotice }) => {
-      bindNotice(notice, {
-        advice: s.advice,
-        unsupported: s.lock === 'unsupported',
-        onRetry: () => {
-          const cur = currentPlan();
-          void startPlan(cur.plan, cur.presetId);
-        },
-        onFallback: () => {
-          const cur = currentPlan();
-          void startPlan(cur.plan, cur.presetId);
-        },
-      });
-    });
-  }
-
-  if (ring) unsubs.push(mountRing(ring, store));
-  if (pill) {
-    unsubs.push(
-      mountPill(pill, store, () => {
-        store.set({ ui: { noticeOpen: true } });
-        openNotice();
-      }),
-    );
-  }
-  if (notice)
-    unsubs.push(
-      store.subscribe(() => {
-        openNotice();
-      }),
-    );
-  if (timer) unsubs.push(mountTimer(timer, store));
-  if (chips) {
-    unsubs.push(
-      mountChips(chips, store, {
-        startPreset,
-        openCustom: () => {
-          act((m) => {
-            m.openCustom(ctx);
-          });
-        },
-        openUntil,
-      }),
-    );
-  }
-  if (stopBtn) unsubs.push(mountStop(stopBtn, store, stop));
-  if (resume) {
-    unsubs.push(
-      mountResume(resume, store, {
-        accept: () => {
-          track(store, 'resume_accepted');
-          void engine.resumeSession().then(syncLock);
-          store.set({ ui: { resumeVisible: false, mode: store.get().session?.mode ?? store.get().ui.mode } });
-        },
-        dismiss: () => {
-          engine.discardResumable();
-          store.set({ ui: { resumeVisible: false }, session: engine.session });
-        },
-      }),
-    );
-  }
-  if (toastsEl) unsubs.push(mountToastRegion(toastsEl, store));
-  if (second) {
-    unsubs.push(
-      mountSecondTab(second, store, {
-        useThis: () => {
-          store.set({ ui: { secondTab: false } });
-          const cur = currentPlan();
-          void startPlan(cur.plan, cur.presetId);
-        },
-        keep: () => {
-          store.set({ ui: { secondTab: false } });
-        },
-      }),
-    );
-  }
-
-  function pip(): void {
-    void import('./pip.js').then(({ togglePip }) =>
-      togglePip(ctx).then((kind) => {
-        if (kind === 'blocked') pushToast(store, { kind: 'info', text: t('tool.toast.pipBlocked'), id: 'pip' });
-        else if (kind !== 'closed') track(store, 'pip_open');
-      }),
-    );
-  }
-
-  root.querySelector('[data-open-settings]')?.addEventListener('click', () => {
-    void import('./ui/settings.js').then((m) => {
-      m.openSettings(ctx);
-    });
-  });
-  // Header Stats (600 and up) and its phone twin in the tool's action row (B2).
-  for (const btn of root.querySelectorAll('[data-open-stats]')) {
-    btn.addEventListener('click', () => {
-      void import('./stats/panel.js').then((m) => {
-        m.openStats(ctx);
-      });
-    });
-  }
-
-  shortcutsDlg?.addEventListener('close', () => {
-    store.set({ ui: { dialog: null } });
-  });
-  root.querySelector('[data-open-shortcuts]')?.addEventListener('click', () => {
-    store.set({ ui: { dialog: 'shortcuts' } });
-    shortcutsDlg?.showModal();
-  });
-  shortcutsDlg?.querySelector('[data-shortcuts-close]')?.addEventListener('click', () => {
-    shortcutsDlg.close();
-  });
-
-  root.querySelector('[data-open-share]')?.addEventListener('click', () => {
-    act((m) => {
-      m.openShare(ctx);
-    });
-  });
-
+  // Toasts, the dock cards (resume, second tab) and every sheet load on first use (docs/05 §13).
+  let lazy = 0;
   unsubs.push(
-    mountShortcuts(store, {
-      toggle,
-      startPreset: (id) => {
-        if (id) startPreset(id);
-      },
-      openUntil,
-      fullscreen: () => {
-        act((m) => {
-          m.toggleFullscreen(store);
-        });
-      },
-      cycleTheme: (theme) => {
-        act((m) => {
-          m.cycleTheme(ctx, theme);
-        });
-      },
-      cycleMode: () => {
-        void import('./ambient/shell.js').then((m) => {
-          m.cycleMode(ctx);
-        });
-      },
-      exitMode: () => {
-        store.set({ ui: { mode: 'standard' } });
-      },
-      pip,
-      stop,
-      closeDialog: () => {
-        const open = [...root.querySelectorAll('dialog[open]:not([data-ambient])')].pop();
-        if (open instanceof HTMLDialogElement) open.close();
-        store.set({ ui: { dialog: null } });
-      },
-      toggleHelp: () => {
-        if (shortcutsDlg?.open) shortcutsDlg.close();
-        else {
-          store.set({ ui: { dialog: 'shortcuts' } });
-          shortcutsDlg?.showModal();
-        }
-      },
+    store.subscribe((s) => {
+      const toastsEl = root.querySelector<HTMLElement>('[data-toasts]');
+      if (s.ui.toasts.length && toastsEl && !(lazy & 1)) {
+        lazy |= 1;
+        void import('./ui/toast-view.js').then((m) => unsubs.push(m.mountToasts(toastsEl, store)));
+      }
+      if ((s.ui.resumeVisible || s.ui.secondTab) && !(lazy & 2)) {
+        lazy |= 2;
+        void import('./ui/banners.js').then((m) => unsubs.push(m.mountBanners(ctx)));
+      }
     }),
   );
+  root.addEventListener('click', (e) => {
+    const el =
+      e.target instanceof Element
+        ? e.target.closest<HTMLElement>(
+            '[data-open-settings],[data-open-stats],[data-open-share],[data-open-shortcuts],[data-open-pip],[data-shortcuts-close]',
+          )
+        : null;
+    if (el)
+      act((m) => {
+        m.open(ctx, el);
+      });
+  });
+  // Single-key shortcuts load with the first key press; Space on the page must not scroll meanwhile.
+  let onKey: ((e: KeyboardEvent) => void) | undefined;
+  window.addEventListener('keydown', (e) => {
+    if (onKey) {
+      onKey(e);
+      return;
+    }
+    if (e.key === ' ' && e.target === document.body) e.preventDefault();
+    void import('./shortcuts.js').then((m) => {
+      (onKey ??= m.keyHandler(ctx, toggle, startPreset))(e);
+    });
+  });
 
-  root.querySelector('[data-open-pip]')?.addEventListener('click', pip);
   // The header theme switch is run by the inline boot script (it also works on pages without the island);
   // it announces each pick so the store's settings, which the island writes back, stay in step.
   document.addEventListener('at-theme', (e) => {
@@ -437,42 +355,30 @@ export function boot(root: HTMLElement): () => void {
     });
   });
 
-  void later
-    .then(() => import('./pwa.js'))
-    .then(({ mountPwa }) => {
-      mountPwa(
-        root,
-        store,
-        () => engine.session?.status,
-        () => {
-          track(store, 'pwa_install');
-        },
-      );
-    });
-
   const resumable = engine.getResumable();
   if (resumable && !params.autostart) {
     store.set({ session: resumable, ui: { resumeVisible: true } });
-    track(store, 'resume_shown');
+    track('resume_shown');
   }
-
-  void later
-    .then(() => import('./ui/lang-suggest.js'))
-    .then(({ mountLangSuggest }) => {
-      mountLangSuggest(root, storage);
-    });
 
   const startNow = () => {
     if (resumable && params.autostart) {
       void engine.resumeSession().then(syncLock);
       return;
     }
-    const cur = currentPlan();
-    void startPlan(cur.plan, cur.presetId);
+    startCurrent();
+    store.set({ ui: { auto: true } });
   };
 
   const wantStart =
     (params.autostart || params.isToolAutostartRoute) && !params.isPip && !(resumable && !params.autostart);
+  // The pill and note show once the start's outcome is known (view.ts), or after 2 s if the request hangs.
+  setTimeout(
+    () => {
+      root.dataset.settled = '';
+    },
+    wantStart ? 2000 : 0,
+  );
   if (wantStart) {
     if (document.visibilityState === 'hidden') {
       store.set({ deferredAutostart: true });

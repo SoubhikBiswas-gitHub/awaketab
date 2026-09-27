@@ -13,8 +13,6 @@ export type TLockReason =
   | 'destroyed';
 
 export type TAdviceCode =
-  | 'battery_saver'
-  | 'low_power_ios'
   | 'hidden_document'
   | 'permissions_policy'
   | 'insecure_context'

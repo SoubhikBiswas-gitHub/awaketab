@@ -11,7 +11,7 @@ export const PRESET_ROUTES: Record<string, TPresetId | 'eight'> = {
 };
 
 export const EIGHT_H_MS = 480 * 60_000;
-export const EXTEND_AUTO_STOP_MS = 5 * 60_000;
+export const EXTEND_AUTO_STOP_MS = 60_000;
 export const CUSTOM_MIN_MS = 60_000;
 
 const LOCALES = new Set(['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi']);
@@ -53,28 +53,15 @@ export function canonicalPathname(pathname: string): string {
   return LOCALES.has(trimmed.slice(1)) ? `${trimmed}/` : trimmed;
 }
 
-export function sanitizeMsg(raw: string): string {
-  const nfc = raw.normalize('NFC');
-  const stripped = Array.from(nfc)
-    .filter((ch) => {
-      const c = ch.codePointAt(0) ?? 0;
-      if (c < 32 || (c >= 127 && c < 160)) return false;
-      if (c >= 0x202a && c <= 0x202e) return false;
-      if (c >= 0x2066 && c <= 0x2069) return false;
-      return true;
-    })
-    .join('')
-    .replace(/\s+/g, ' ')
-    .trim();
-  return Array.from(stripped).slice(0, 80).join('');
-}
+// sanitizeMsg lives in its own module so the boot chunk does not carry it (the message mode and Settings load it).
+export { sanitizeMsg } from './msg.js';
 
 export function parseToolParams(loc: Pick<Location, 'pathname' | 'search'>, dataset: DOMStringMap): IUrlParams {
   const path = stripLocale(loc.pathname);
   const q = new URLSearchParams(loc.search);
   const themeRaw = q.get('theme');
   const modeRaw = q.get('mode') ?? dataset.mode ?? null;
-  const presetRaw = q.get('preset');
+  const presetRaw = q.get('preset') ?? dataset.preset ?? null;
   const untilQ = q.get('until');
   const refRaw = q.get('ref');
   const sourceRaw = q.get('source');
@@ -122,7 +109,8 @@ export function parseToolParams(loc: Pick<Location, 'pathname' | 'search'>, data
     mode,
     preset,
     until,
-    msg: sanitizeMsg(q.get('msg') ?? ''),
+    // Raw and length-bounded here; the message mode sanitises it with sanitizeMsg() before showing it.
+    msg: (q.get('msg') ?? '').slice(0, 400),
     autostart: q.get('autostart') === '1',
     ref,
     source,

@@ -45,6 +45,45 @@ export default defineConfig({
       // Astro inlines a processed <script> under this limit, and the CSP allows only the boot script's hash, so
       // an inlined page script would be blocked. JS always ships as a 'self' file; other assets keep the default.
       assetsInlineLimit: (file) => (file.endsWith('.js') ? false : undefined),
+      // Terser with extra compress passes (and `unsafe`: the island never patches built-ins) packs the island a few
+      // percent tighter than esbuild's minifier, which keeps the Clear Night tool inside its budgets (docs/00 §11).
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          passes: 5,
+          ecma: 2020,
+          unsafe_arrows: true,
+          unsafe_methods: true,
+          pure_getters: true,
+          unsafe: true,
+        },
+        mangle: { toplevel: true },
+        format: { comments: false, ecma: 2020 },
+        module: true,
+      },
+      rollupOptions: {
+        output: {
+          // The tool's on-demand UI (panels, sheets, cards, the end pipeline) ships as one lazy chunk instead of a
+          // dozen small ones: every chunk repeats its import header and compresses alone, which cost more of the
+          // 40 KB total budget than the code itself. It still loads only on first use, never on the boot path.
+          manualChunks(id) {
+            // The boot path's shared modules are named first, so the lazy chunk never pulls them in.
+            if (
+              /\/packages\/core\/src\/(?!license|capability)|\/packages\/wake\/src\/|\/src\/tool\/(?:main|format|i18n|store|params|ctx|ui\/(?:view|toast))\.ts/u.test(
+                id,
+              )
+            )
+              return 'tool-boot';
+            if (
+              /\/src\/tool\/(?:ui\/(?:actions|more-css|view-more|banners|toast-view|why|receipt|settings|rating|lang-suggest)|stats\/\w+|shortcuts|msg|theme|end|signal|pwa|extras|fullscreen|accent|sponsor)\./u.test(
+                id,
+              )
+            )
+              return 'tool-ui';
+            return undefined;
+          },
+        },
+      },
     },
     resolve: {
       alias: {

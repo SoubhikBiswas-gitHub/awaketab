@@ -21,7 +21,10 @@ describe('focus mode — focus blocks today (docs/05 §3.14)', () => {
     off();
 
     const b = makeCtx();
-    b.storage.writeStats({ ...DEFAULT_STATS, dayFocus: { [dayKey(Date.now())]: 3, '2020-01-01': 9 } });
+    b.storage.writeStats({
+      ...DEFAULT_STATS,
+      dayFocus: { [dayKey(Date.now())]: 3, '2020-01-01': 9 },
+    });
     const stage2 = document.createElement('div');
     const off2 = mountFocus(stage2, b.ctx);
     const line = stage2.querySelector<HTMLElement>('[data-focus-today]');
@@ -32,7 +35,10 @@ describe('focus mode — focus blocks today (docs/05 §3.14)', () => {
 
   it('uses the singular for one block', () => {
     const { ctx, storage } = makeCtx();
-    storage.writeStats({ ...DEFAULT_STATS, dayFocus: { [dayKey(Date.now())]: 1 } });
+    storage.writeStats({
+      ...DEFAULT_STATS,
+      dayFocus: { [dayKey(Date.now())]: 1 },
+    });
     const stage = document.createElement('div');
     const off = mountFocus(stage, ctx);
     expect(stage.querySelector('[data-focus-today]')?.textContent).toBe('1 focus block today');
@@ -66,7 +72,7 @@ const SPONSOR = {
 
 const SLOT = (placement: string) =>
   `<aside class="at-sponsor" data-sponsor="${placement}" data-state="hidden"><span>Sponsored</span><a data-sponsor-link href="/pro">Sponsored</a><p data-sponsor-text></p></aside>`;
-const SPONSOR_HTML = `${SLOT('idle')}<dialog data-dialog="extend"><div class="at-banner-actions"></div>${SLOT('extend')}</dialog>`;
+const SPONSOR_HTML = `${SLOT('idle')}<div class="at-ask">${SLOT('extend')}</div>`;
 
 describe('SponsorCard slots (docs/05 §3.23)', () => {
   afterEach(() => {
@@ -108,7 +114,8 @@ describe('SponsorCard slots (docs/05 §3.23)', () => {
     expect(idle?.inert).toBe(true);
     expect(tracked.filter(([e]) => e === 'sponsor_view')).toHaveLength(0);
     // The ExtendPrompt opens (the grace period keeps the lock held): the card there is what the user sees.
-    store.set({ ui: { dialog: 'extend' } });
+    // Time's up shows the extend slot inside its card (canvas dockAsk).
+    store.set({ ui: { ask: { until: Date.now() + 60_000, fb: false } } });
     expect(tracked.filter(([e]) => e === 'sponsor_view')).toEqual([['sponsor_view', { sponsorId: 'acme' }]]);
     // Back to idle: no second view in the same page view.
     store.set({ lock: 'idle', session: null, ui: { dialog: null } });
@@ -123,7 +130,10 @@ describe('SponsorCard slots (docs/05 §3.23)', () => {
 
   it('collapses the extend slot for Pro ads.free without fetching', async () => {
     const fetchMock = stubFetch(SPONSOR);
-    const { ctx, root } = makeCtx({ html: SPONSOR_HTML, license: license(['ads.free']) });
+    const { ctx, root } = makeCtx({
+      html: SPONSOR_HTML,
+      license: license(['ads.free']),
+    });
     await mountSponsor(ctx);
     expect(fetchMock).not.toHaveBeenCalled();
     expect(root.querySelector<HTMLElement>('[data-sponsor="extend"]')?.hidden).toBe(true);

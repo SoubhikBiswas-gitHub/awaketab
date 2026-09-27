@@ -34,15 +34,31 @@ describe('buildHeatmap (docs/05 §3.17)', () => {
   });
 
   it('keys cells by the local date of `now`, not the UTC date', () => {
-    const { rows } = buildHeatmap(DAYS, { now: NOW, history: false, timeZone: TZ });
+    const { rows } = buildHeatmap(DAYS, {
+      now: NOW,
+      history: false,
+      timeZone: TZ,
+    });
     // Today is Monday locally, so it is the last cell of the Monday row.
-    expect(rows[0]?.[11]).toMatchObject({ key: '2026-08-03', minutes: 10, future: false });
+    expect(rows[0]?.[11]).toMatchObject({
+      key: '2026-08-03',
+      minutes: 10,
+      future: false,
+    });
     // Yesterday (the UTC date) is the Sunday of the previous week.
-    expect(rows[6]?.[10]).toMatchObject({ key: '2026-08-02', minutes: 40, future: false });
+    expect(rows[6]?.[10]).toMatchObject({
+      key: '2026-08-02',
+      minutes: 40,
+      future: false,
+    });
   });
 
   it('flags the rest of the current week as future and never counts it', () => {
-    const { rows } = buildHeatmap(DAYS, { now: NOW, history: true, timeZone: TZ });
+    const { rows } = buildHeatmap(DAYS, {
+      now: NOW,
+      history: true,
+      timeZone: TZ,
+    });
     const future = all(rows).filter((c) => c.future);
     expect(future.map((c) => c.key)).toEqual([
       '2026-08-04',
@@ -56,21 +72,43 @@ describe('buildHeatmap (docs/05 §3.17)', () => {
   });
 
   it('locks days older than 7 local days without stats.history', () => {
-    const { rows } = buildHeatmap(DAYS, { now: NOW, history: false, timeZone: TZ });
-    expect(cellFor(rows, '2026-07-28')).toMatchObject({ locked: false, minutes: 30 });
-    expect(cellFor(rows, '2026-07-27')).toMatchObject({ locked: true, minutes: 0, level: 0 });
+    const { rows } = buildHeatmap(DAYS, {
+      now: NOW,
+      history: false,
+      timeZone: TZ,
+    });
+    expect(cellFor(rows, '2026-07-28')).toMatchObject({
+      locked: false,
+      minutes: 30,
+    });
+    expect(cellFor(rows, '2026-07-27')).toMatchObject({
+      locked: true,
+      minutes: 0,
+      level: 0,
+    });
     // 18 May – 27 Jul inclusive.
     expect(all(rows).filter((c) => c.locked)).toHaveLength(71);
   });
 
   it('keeps all 12 weeks unlocked with stats.history', () => {
-    const { rows } = buildHeatmap(DAYS, { now: NOW, history: true, timeZone: TZ });
+    const { rows } = buildHeatmap(DAYS, {
+      now: NOW,
+      history: true,
+      timeZone: TZ,
+    });
     expect(all(rows).some((c) => c.locked)).toBe(false);
-    expect(cellFor(rows, '2026-07-27')).toMatchObject({ locked: false, minutes: 50 });
+    expect(cellFor(rows, '2026-07-27')).toMatchObject({
+      locked: false,
+      minutes: 50,
+    });
   });
 
   it('assigns quartile levels 1–4 over the visible non-zero days, 0 for none', () => {
-    const free = buildHeatmap(DAYS, { now: NOW, history: false, timeZone: TZ }).rows;
+    const free = buildHeatmap(DAYS, {
+      now: NOW,
+      history: false,
+      timeZone: TZ,
+    }).rows;
     expect(cellFor(free, '2026-08-03')?.level).toBe(1); // 10
     expect(cellFor(free, '2026-07-30')?.level).toBe(2); // 20
     expect(cellFor(free, '2026-07-28')?.level).toBe(3); // 30
@@ -78,7 +116,11 @@ describe('buildHeatmap (docs/05 §3.17)', () => {
     expect(cellFor(free, '2026-07-29')?.level).toBe(0);
 
     // Unlocking history adds 50 to the population, which shifts the quartiles.
-    const pro = buildHeatmap(DAYS, { now: NOW, history: true, timeZone: TZ }).rows;
+    const pro = buildHeatmap(DAYS, {
+      now: NOW,
+      history: true,
+      timeZone: TZ,
+    }).rows;
     expect(cellFor(pro, '2026-07-27')?.level).toBe(4); // 50
     expect(cellFor(pro, '2026-08-02')?.level).toBe(3); // 40
     expect(cellFor(pro, '2026-07-28')?.level).toBe(2); // 30
@@ -153,55 +195,53 @@ describe('renderHeatmap DOM', () => {
   });
 
   function render(days: Record<string, number>, history: boolean) {
-    document.body.innerHTML = '<table data-stats-heatmap><caption>x</caption></table>';
-    const table = document.querySelector('table') as HTMLTableElement;
-    renderHeatmap(table, days, { history, now: LOCAL_NOW });
-    return table;
+    document.body.innerHTML = '<div data-stats-heatmap><div data-stats-locked>locked</div></div>';
+    const grid = document.querySelector('[data-stats-heatmap]') as HTMLElement;
+    renderHeatmap(grid, days, { history, now: LOCAL_NOW });
+    return grid;
   }
+  const cellAt = (grid: HTMLElement, row: number, col: number) =>
+    [...grid.querySelectorAll<HTMLElement>('.at-heat-cell')].find(
+      (c) => c.style.gridArea.replace(/\s/gu, '') === `${String(row)}/${String(col + 2)}`,
+    );
 
-  it('labels each visible day with its minutes and date, and carries level as dots', () => {
-    const table = render({ '2026-08-03': 42, '2026-08-02': 7, '2026-07-31': 21, '2026-07-30': 30 }, false);
-    const rows = table.querySelectorAll('tbody tr');
-    expect(rows).toHaveLength(7);
-    expect(rows[0]?.querySelector('th')?.textContent).toBe('Mon');
-    expect(rows[0]?.querySelectorAll('td')).toHaveLength(12);
+  it('draws 7 rows × 12 weeks, Monday first, labels days and carries the level (canvas ToolStats)', () => {
+    const grid = render({ '2026-08-03': 42, '2026-08-02': 7, '2026-07-31': 21, '2026-07-30': 30 }, false);
+    expect(grid.querySelectorAll('.at-heat-cell')).toHaveLength(84);
+    // Weekday initials on rows 1, 3 and 5 (Mon, Wed, Fri), hidden from assistive tech.
+    const days = [...grid.querySelectorAll<HTMLElement>('.at-heat-day')];
+    expect(days.map((d) => d.textContent)).toEqual(['M', 'W', 'F']);
+    for (const d of days) expect(d.getAttribute('aria-hidden')).toBe('true');
 
-    const today = rows[0]?.querySelectorAll('td')[11];
-    const label = today?.getAttribute('aria-label') ?? '';
-    expect(label).toContain('42 min on');
-    expect(label).toContain('3');
-    expect(label).toContain('Aug');
+    const today = cellAt(grid, 1, 11);
+    expect(today?.title).toContain('42 min');
+    expect(today?.title).toContain('3');
+    expect(today?.title).toContain('Aug');
     expect(today?.dataset.level).toBe('4');
-    expect(today?.textContent).toBe('••••');
 
-    const sunday = rows[6]?.querySelectorAll('td')[10];
-    expect(sunday?.getAttribute('aria-label')).toContain('7 min on');
+    const sunday = cellAt(grid, 7, 10);
+    expect(sunday?.title).toContain('7 min');
     expect(sunday?.dataset.level).toBe('1');
-    expect(sunday?.textContent).toBe('•');
 
-    const empty = rows[1]?.querySelectorAll('td')[10];
+    const empty = cellAt(grid, 2, 10);
     expect(empty?.dataset.level).toBe('0');
-    expect(empty?.textContent).toBe('');
-    expect(empty?.getAttribute('aria-label')).toContain('0 min on');
+    expect(empty?.title).toContain('0 min');
+    // The whole map is one image with a summary of the last 7 days (the cells carry the detail as titles).
+    expect(grid.getAttribute('aria-label')).toContain('Last 7 days: 1 h 40 min');
+    expect(grid.getAttribute('aria-label')).toContain('locked without Pro');
   });
 
-  it('marks locked cells and hides future cells from assistive tech', () => {
-    const table = render({ '2026-06-01': 50 }, false);
-    const cells = [...table.querySelectorAll('td')];
+  it('marks locked and future cells, and re-rendering replaces the cells but keeps the lock badge', () => {
+    const grid = render({ '2026-06-01': 50 }, false);
+    const cells = [...grid.querySelectorAll<HTMLElement>('.at-heat-cell')];
     const locked = cells.filter((c) => c.hasAttribute('data-locked'));
     expect(locked).toHaveLength(71);
-    for (const c of locked) {
-      expect(c.getAttribute('aria-label')).toBe('Locked — Pro keeps 12 weeks');
-      expect(c.textContent).toBe('');
-    }
-    const future = cells.filter((c) => c.hasAttribute('data-future'));
-    expect(future).toHaveLength(6);
-    for (const c of future) expect(c.getAttribute('aria-hidden')).toBe('true');
-    // Re-rendering replaces the body instead of appending a second one.
-    renderHeatmap(table, {}, { history: true, now: LOCAL_NOW });
-    expect(table.querySelectorAll('tbody')).toHaveLength(1);
-    expect(table.querySelectorAll('td[data-locked]')).toHaveLength(0);
-    expect(table.querySelector('caption')).not.toBeNull();
+    for (const c of locked) expect(c.title).toContain('locked');
+    expect(cells.filter((c) => c.hasAttribute('data-future'))).toHaveLength(6);
+    renderHeatmap(grid, {}, { history: true, now: LOCAL_NOW });
+    expect(grid.querySelectorAll('.at-heat-cell')).toHaveLength(84);
+    expect(grid.querySelectorAll('[data-locked]')).toHaveLength(0);
+    expect(grid.querySelector('[data-stats-locked]')).not.toBeNull();
   });
 });
 
@@ -209,9 +249,8 @@ const STATS_HTML = `
   <dialog data-dialog="stats">
     <p data-stats-empty hidden></p>
     <dl><dd data-stats-today></dd><dd data-stats-week></dd><dd data-stats-streak></dd><dd data-stats-total></dd></dl>
-    <table data-stats-heatmap><caption>c</caption></table>
-    <p data-stats-locked hidden></p>
-    <button type="button" data-stats-export hidden>Export</button>
+    <div data-stats-heatmap><div data-stats-locked hidden></div></div>
+    <button type="button" data-stats-export hidden>Export <span data-export-pro>Pro</span></button>
     <button type="button" data-stats-close>Close</button>
   </dialog>`;
 
@@ -226,7 +265,7 @@ describe('openStats', () => {
 
   const today = '2026-08-03';
 
-  it('free: hides export, shows the locked caption, fills the summary', () => {
+  it('free: export carries the Pro tag, shows the locked badge, fills the four figures', () => {
     const { ctx, root, storage, store } = makeCtx({ html: STATS_HTML });
     storage.writeStats({
       ...DEFAULT_STATS,
@@ -240,29 +279,45 @@ describe('openStats', () => {
     const q = (sel: string) => root.querySelector<HTMLElement>(sel);
     expect(root.querySelector<HTMLDialogElement>('[data-dialog="stats"]')?.open).toBe(true);
     expect(store.get().ui.dialog).toBe('stats');
-    expect(q('[data-stats-export]')?.hidden).toBe(true);
+    expect(q('[data-stats-export]')?.hidden).toBe(false);
+    expect(q('[data-export-pro]')?.hidden).toBe(false);
     expect(q('[data-stats-locked]')?.hidden).toBe(false);
     expect(q('[data-stats-empty]')?.hidden).toBe(true);
-    expect(q('[data-stats-today]')?.textContent).toBe('42 min · 2 sessions');
+    // Canvas figures: the number large, the unit small ("1 h 37 min", "6 days", "283 h").
+    expect(q('[data-stats-today]')?.textContent).toBe('42 min');
     expect(q('[data-stats-week]')?.textContent).toBe('2 h 12 min');
-    expect(q('[data-stats-streak]')?.textContent).toBe('2 days streak');
-    expect(q('[data-stats-total]')?.textContent).toBe('2 h 12 min · 3 sessions');
-    expect(root.querySelectorAll('[data-stats-heatmap] td[data-locked]').length).toBeGreaterThan(0);
+    expect(q('[data-stats-streak]')?.textContent).toBe('2 days');
+    expect(q('[data-stats-total]')?.textContent).toBe('2 h');
+    expect(q('[data-stats-total] span')?.textContent).toBe(' h');
+    expect(root.querySelectorAll('[data-stats-heatmap] [data-locked]').length).toBeGreaterThan(0);
   });
 
-  it('stats.export shows the export button; stats.history hides the locked caption', () => {
-    const { ctx, root, storage } = makeCtx({ html: STATS_HTML, license: license(['stats.export', 'stats.history']) });
-    storage.writeStats({ ...DEFAULT_STATS, days: { [today]: 5 }, totalMinutes: 5, sessions: 1 });
+  it('stats.export drops the Pro tag; stats.history hides the locked badge', () => {
+    const { ctx, root, storage } = makeCtx({
+      html: STATS_HTML,
+      license: license(['stats.export', 'stats.history']),
+    });
+    storage.writeStats({
+      ...DEFAULT_STATS,
+      days: { [today]: 5 },
+      totalMinutes: 5,
+      sessions: 1,
+    });
     openStats(ctx);
     expect(root.querySelector<HTMLElement>('[data-stats-export]')?.hidden).toBe(false);
+    expect(root.querySelector<HTMLElement>('[data-export-pro]')?.hidden).toBe(true);
     expect(root.querySelector<HTMLElement>('[data-stats-locked]')?.hidden).toBe(true);
-    expect(root.querySelectorAll('[data-stats-heatmap] td[data-locked]')).toHaveLength(0);
+    expect(root.querySelectorAll('[data-stats-heatmap] [data-locked]')).toHaveLength(0);
   });
 
-  it('export stays hidden with only stats.history, and in an embed', () => {
-    const a = makeCtx({ html: STATS_HTML, license: license(['stats.history']) });
+  it('without stats.export the button is a Pro upsell; the embed never shows it', () => {
+    const a = makeCtx({
+      html: STATS_HTML,
+      license: license(['stats.history']),
+    });
     openStats(a.ctx);
-    expect(a.root.querySelector<HTMLElement>('[data-stats-export]')?.hidden).toBe(true);
+    expect(a.root.querySelector<HTMLElement>('[data-stats-export]')?.hidden).toBe(false);
+    expect(a.root.querySelector<HTMLElement>('[data-export-pro]')?.hidden).toBe(false);
 
     const b = makeCtx({ html: STATS_HTML, license: license(['stats.export']) });
     b.root.classList.add('at-tool-embed');
@@ -274,14 +329,19 @@ describe('openStats', () => {
     const { ctx, root } = makeCtx({ html: STATS_HTML });
     openStats(ctx);
     expect(root.querySelector<HTMLElement>('[data-stats-empty]')?.hidden).toBe(false);
-    expect(root.querySelector('[data-stats-today]')?.textContent).toBe('0 min · 0 sessions');
+    expect(root.querySelector('[data-stats-today]')?.textContent).toBe('0 min');
   });
 
-  it('reads today as 0 sessions from stats written before per-day counts', () => {
+  it('reads today from stats written before per-day session counts', () => {
     const { ctx, root, storage } = makeCtx({ html: STATS_HTML });
     // Pre-M6-follow-up record: no daySessions at all.
-    storage.writeStats({ ...DEFAULT_STATS, days: { [today]: 1 }, totalMinutes: 1, sessions: 1 });
+    storage.writeStats({
+      ...DEFAULT_STATS,
+      days: { [today]: 1 },
+      totalMinutes: 1,
+      sessions: 1,
+    });
     openStats(ctx);
-    expect(root.querySelector('[data-stats-today]')?.textContent).toBe('1 min · 0 sessions');
+    expect(root.querySelector('[data-stats-today]')?.textContent).toBe('1 min');
   });
 });

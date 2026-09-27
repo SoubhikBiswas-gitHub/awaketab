@@ -1,24 +1,83 @@
 ---
+import '../styles/tool-page.css';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ToolIsland from '../components/ToolIsland.astro';
+import '../styles/tool-full.css';
 import { t } from '../i18n/load';
 import { articleSchema } from '../lib/seo';
-import { cn } from 'cn';
-import { buttonVariants } from '@/components/ui/button';
 
 export function getStaticPaths() {
   return ['15m', '30m', '45m', '1h', '2h', '4h', '8h'].map((preset) => ({ params: { preset } }));
 }
 
+// The PresetPage board (design/canvas/project/PresetPage.dc.html): the tool fills the first viewport set to this
+// length, then "About this page", the honest limit, the other lengths and the guides for a job of this length.
 const routes = {
-  '15m': { label: t('tool.preset.p15'), preset: 'p15', use: 'a short break, a recipe step or a focused reading block' },
-  '30m': { label: t('tool.preset.p30'), preset: 'p30', use: 'a meeting, focused work block or unattended download' },
-  '45m': { label: t('tool.preset.p45'), preset: 'p45', use: 'a class, presentation rehearsal or longer kitchen task' },
-  '1h': { label: t('tool.preset.p60'), preset: 'p60', use: 'an hour-long presentation, study session or monitored transfer' },
-  '2h': { label: t('tool.preset.p120'), preset: 'p120', use: 'a film, workshop, long download or dashboard session' },
-  '4h': { label: t('tool.preset.p240'), preset: 'p240', use: 'an extended event, monitoring window or reference display' },
-  '8h': { label: t('tool.preset.eightHour'), preset: 'custom', use: 'a workday display, kiosk trial or long-running local task' },
+  '15m': {
+    label: t('tool.preset.p15'),
+    cta: '15 min',
+    words: '15 minutes',
+    job: '15-minute',
+    preset: 'p15',
+  },
+  '30m': {
+    label: t('tool.preset.p30'),
+    cta: '30 min',
+    words: '30 minutes',
+    job: '30-minute',
+    preset: 'p30',
+  },
+  '45m': {
+    label: t('tool.preset.p45'),
+    cta: '45 min',
+    words: '45 minutes',
+    job: '45-minute',
+    preset: 'p45',
+  },
+  '1h': {
+    label: t('tool.preset.p60'),
+    cta: '1 hour',
+    words: '1 hour',
+    job: 'one-hour',
+    preset: 'p60',
+  },
+  '2h': {
+    label: t('tool.preset.p120'),
+    cta: '2 hours',
+    words: '2 hours',
+    job: 'two-hour',
+    preset: 'p120',
+  },
+  '4h': {
+    label: t('tool.preset.p240'),
+    cta: '4 hours',
+    words: '4 hours',
+    job: 'four-hour',
+    preset: 'p240',
+  },
+  '8h': {
+    label: t('tool.preset.eightHour'),
+    cta: '8 hours',
+    words: '8 hours',
+    job: 'eight-hour',
+    preset: 'custom',
+  },
 } as const;
+const LENGTHS = [
+  ['15m', '15 min'],
+  ['30m', '30 min'],
+  ['45m', '45 min'],
+  ['1h', '1 h'],
+  ['2h', '2 h'],
+  ['4h', '4 h'],
+  ['8h', '8 h'],
+] as const;
+const GUIDES = [
+  ['Keep the screen on during a video call', '/for/video-calls'],
+  ['Keep the screen on while downloading', '/for/downloads'],
+  ['Keep a work laptop display on', '/for/work-laptop'],
+  ['Keep the screen on while you present', '/for/presentations'],
+] as const;
 
 const slug = Astro.params.preset as keyof typeof routes;
 const route = routes[slug];
@@ -27,11 +86,7 @@ const site = Astro.site?.toString().replace(/\/$/, '') ?? 'https://awaketab.com'
 const title = t('page.preset.title', { label });
 const description = t('page.preset.description', { label });
 const canonical = `${site}/${slug}`;
-// shadcn outline buttons at build time only (docs/03 ADR-013); 44 px targets (docs/00 §11).
-const related = cn(
-  buttonVariants({ variant: 'outline' }),
-  'h-auto min-h-11 max-w-full shrink py-2 text-start whitespace-normal no-underline',
-);
+const h1 = `Keep your screen awake for ${route.words}`;
 ---
 
 <BaseLayout
@@ -52,30 +107,108 @@ const related = cn(
   })}
   header={false}
 >
-  <ToolIsland heading={title.replace(' — AwakeTab', '')} preset={route.preset}>
-    <section class="at-prose">
-      <p>
-        This page starts a {label} AwakeTab session for {route.use}. The timer uses wall-clock time from
-        <code>Date.now()</code>, so delayed browser ticks do not quietly extend the requested duration.
-        The highlighted preset shows the active plan, and choosing another preset replaces it.
+  <ToolIsland heading={h1} kicker="About this page" preset={route.preset}>
+    <section class="at-page-copy" aria-label="About this page">
+      <p class="at-lead">
+        Tap “Keep awake · {route.cta}” above and this screen stays on for the
+        next {route.words}, as long as this tab stays visible. Before you start,
+        the tool shows the time it will stop, so you know when the screen may
+        dim again.
       </p>
       <p>
-        Watch the live pill rather than the button you pressed. “Screen awake” appears only after the
-        browser confirms a native wake lock. “Awake via video fallback” appears only after the fallback is
-        actually playing. If the browser denies or releases the request, the pill changes and the running
-        timer is hidden or frozen instead of implying that protection continues.
+        When {
+          route.words === '1 hour' ? 'the hour is' : `the ${route.words} are`
+        } up, AwakeTab asks “Time's up. Keep going?” with +15 min, +30 min, +1 h and
+        Stop. If you do nothing, it stops on its own and your usual screen timeout
+        takes over. To change the length, pick another preset in the tool or one of
+        the lengths below; a change during a session applies straight away.
       </p>
-      <aside class="at-limit">
-        Keep this tab visible and the device open. A hidden tab, closed laptop lid, Low Power Mode, battery
-        saver or administrator policy may still let the display sleep. AwakeTab does not simulate input or
-        keep Teams and Slack presence indicators active.
-      </aside>
-      <nav aria-label="Related durations">
-        <a class={related} href="/15m">15 minutes</a>
-        <a class={related} href="/30m">30 minutes</a>
-        <a class={related} href="/1h">1 hour</a>
-        <a class={related} href="/">Custom or until-time session</a>
+      <p>
+        Trust the pill, not the button. It reads “{t('tool.pill.held')}” only
+        after the browser confirms the wake lock, and it changes to “{
+          t('tool.pill.lost')
+        }” the moment you switch away.
+      </p>
+      <div class="at-honest" role="note">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          aria-hidden="true"
+          ><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"
+          ></path></svg
+        >
+        <div>
+          <span class="at-kicker">Honest limit</span>
+          <p>
+            Keep this tab visible and the device open. A hidden tab, a closed
+            laptop lid or a work sign-in policy can still let the display sleep
+            or lock. AwakeTab never simulates input, so it will not keep Teams
+            or Slack showing you as active.
+          </p>
+        </div>
+      </div>
+      <nav class="at-lengths" aria-labelledby="h-lengths">
+        <h2 class="at-kicker" id="h-lengths">Other lengths</h2>
+        <ul>
+          {
+            LENGTHS.map(([s, l]) => (
+              <li>
+                {s === slug ? (
+                  <span class="at-chip at-length-here" aria-current="page">
+                    <span class="at-dot" aria-hidden="true" />
+                    {l}<span class="sr-only">, this page</span>
+                  </span>
+                ) : (
+                  <a
+                    class="at-chip"
+                    href={`/${s}`}
+                    aria-label={`Keep awake for ${l}`}
+                  >
+                    {l}
+                  </a>
+                )}
+              </li>
+            ))
+          }
+          <li>
+            <a
+              class="at-chip at-chip-choose"
+              href="/"
+              aria-label="Pick an end time in the tool">Until a time…</a>
+          </li>
+        </ul>
       </nav>
     </section>
+    <nav class="at-guides" aria-labelledby="h-guides">
+      <h2 id="h-guides">Guides for a {route.job} job</h2>
+      <ul>
+        {
+          GUIDES.map(([l, href]) => (
+            <li>
+              <a class="at-guide-row" href={href}>
+                <span>
+                  <span class="at-guide-title">{l}</span>
+                  <span class="at-guide-path">{href}</span>
+                </span>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h13M13 6l6 6-6 6" />
+                </svg>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
   </ToolIsland>
 </BaseLayout>
