@@ -42,6 +42,9 @@ export default defineConfig({
       // No __vitePreload wrapper or deps map: it put a shared helper chunk and a dependency table on the
       // island's critical path (docs/00 §11: ≤ 15 KB gz). Lazy chunks are small and load on first use.
       modulePreload: false,
+      // Astro inlines a processed <script> under this limit, and the CSP allows only the boot script's hash, so
+      // an inlined page script would be blocked. JS always ships as a 'self' file; other assets keep the default.
+      assetsInlineLimit: (file) => (file.endsWith('.js') ? false : undefined),
     },
     resolve: {
       alias: {
