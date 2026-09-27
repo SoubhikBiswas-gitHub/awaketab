@@ -36,16 +36,21 @@ const ALIAS = {
   '@awaketab/core': path.join(REPO, 'packages/core/src/index.ts'),
 };
 
-export async function frameTitles() {
-  const titles = {};
+/** One catalog key in all eight locales, e.g. `embed.frame.title` → `{ en: 'Keep screen awake', … }`. */
+export async function catalogStrings(key) {
+  const out = {};
   for (const locale of LOCALES) {
     const catalog = JSON.parse(await readFile(path.join(ROOT, `src/i18n/${locale}.json`), 'utf8'));
-    const title = catalog['embed.frame.title'];
-    if (typeof title !== 'string' || !title) throw new Error(`embed-loader: ${locale}.json has no embed.frame.title`);
-    titles[locale] = title;
+    const value = catalog[key];
+    if (typeof value !== 'string' || !value) throw new Error(`embed-loader: ${locale}.json has no ${key}`);
+    out[locale] = value;
   }
-  return titles;
+  return out;
 }
+
+export const frameTitles = () => catalogStrings('embed.frame.title');
+/** O-47: the host-page credit link text the loader inserts after the iframe. */
+export const creditTexts = () => catalogStrings('embed.attribution');
 
 export async function buildLoader() {
   const result = await build({
@@ -54,10 +59,15 @@ export async function buildLoader() {
     write: false,
     format: 'iife',
     minify: true,
-    target: 'es2019',
+    // es2020 (native ?? and ?.) like the iframe app and the @awaketab/wake IIFE: every browser with a wake lock
+    // or the video fallback parses it, and it keeps the credit (O-47) inside the 3 KB budget.
+    target: 'es2020',
     legalComments: 'none',
     banner: { js: BANNER },
-    define: { __AT_FRAME_TITLES__: JSON.stringify(await frameTitles()) },
+    define: {
+      __AT_FRAME_TITLES__: JSON.stringify(await frameTitles()),
+      __AT_CREDITS__: JSON.stringify(await creditTexts()),
+    },
   });
   return result.outputFiles[0]?.text ?? '';
 }

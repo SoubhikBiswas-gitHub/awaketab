@@ -1,7 +1,9 @@
 ---
-// /embed/cook — the AwakeTab Embed iframe app (docs/11 §2, E12-T01). noindex, no ads (docs/00 §8.3), no footer,
-// no fonts, no third-party requests. `_headers` gives /embed/* `frame-ancestors *` and drops X-Frame-Options.
-// Zero hydration (docs/03 ADR-013): one vanilla module, src/tool/embed/app.ts.
+// /embed/cook — the AwakeTab Embed iframe app (docs/11 §2, E12-T01; Clear Night boards EmbedWidget, EmbedCook,
+// EmbedEdge). noindex, no ads (docs/00 §8.3), no footer, no third-party requests; the only font is the site's own
+// self-hosted Geist (DESIGN.md §3, D-R26). `_headers` gives /embed/* `frame-ancestors *` and drops X-Frame-Options.
+// Zero hydration (docs/03 ADR-013): one vanilla module, src/tool/embed/app.ts. The credit line is not in this
+// frame: the loader puts it in the host page (O-47).
 import '../../styles/tokens.css';
 import '../../styles/embed.css';
 import { catalogFor, t } from '../../i18n/load';
@@ -13,6 +15,8 @@ const catalogs = JSON.stringify(Object.fromEntries(LOCALES.map((l) => [l, embedC
   '<',
   '\\u003c',
 );
+// The logo mark: an open ring with the lamp bead at the top (DESIGN.md §6); the Start button carries it too.
+const RING = 'M32.8 11.4A16 16 0 1 1 15.2 11.4';
 ---
 
 <!doctype html>
@@ -23,41 +27,63 @@ const catalogs = JSON.stringify(Object.fromEntries(LOCALES.map((l) => [l, embedC
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#F2F6FA" />
     <title>{t('embed.frame.title')}</title>
+    <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <script is:inline set:html={bootJs} />
   </head>
   <body class="at-embed-body">
-    <main id="awaketab-embed" class="at-embed" data-size="compact" data-mode="cook">
+    <main id="awaketab-embed" class="at-embed" data-size="compact" data-mode="cook" data-lock="idle">
       <h1 class="sr-only" data-t="embed.frame.title">{t('embed.frame.title')}</h1>
       <script is:inline type="application/json" data-embed-catalogs set:html={catalogs} />
-      <div class="at-embed-bar">
-        <button class="at-embed-toggle" type="button" data-embed-toggle aria-pressed="false">{t('embed.start')}</button>
-        <div class="at-embed-status">
-          <output class="at-embed-pill" data-pill data-lock="idle" aria-live="polite" aria-atomic="true">
-            <span data-pill-text>{t('tool.pill.idle')}</span>
-          </output>
-          <button class="at-embed-clock" type="button" data-embed-clock aria-pressed="false" aria-describedby="embed-hint">
-            <span class="at-embed-digits is-muted" data-embed-digits role="timer">00:00:00</span>
-          </button>
+      <div class="at-embed-grid">
+        <div class="at-embed-main">
+          <div class="at-embed-head">
+            <span class="at-embed-brand" aria-hidden="true">
+              <svg class="at-embed-logo" viewBox="0 0 48 48" focusable="false">
+                <path class="at-embed-logo-ring" d={RING}></path>
+                <circle class="at-embed-logo-halo" cx="24" cy="9" r="7.5"></circle>
+                <circle class="at-embed-logo-bead" cx="24" cy="9" r="4.2"></circle>
+              </svg>
+              <span class="at-embed-title" data-t="embed.frame.title">{t('embed.frame.title')}</span>
+            </span>
+            <output class="at-embed-pill" data-pill data-lock="idle" aria-live="polite" aria-atomic="true">
+              <svg class="at-embed-glyph" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+                <path data-pill-glyph d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path>
+              </svg>
+              <span class="at-embed-pill-text" data-pill-text>{t('tool.pill.idle')}</span>
+            </output>
+          </div>
+          <div class="at-embed-row">
+            <div class="at-embed-readout">
+              <button class="at-embed-clock" type="button" data-embed-clock aria-pressed="false">
+                <span class="at-embed-digits is-muted" data-embed-digits role="timer">00:00</span>
+              </button>
+              <p class="at-embed-note" data-embed-note hidden></p>
+              <p class="at-embed-hint" data-embed-hint></p>
+            </div>
+            <button class="at-embed-toggle" type="button" data-embed-toggle data-kind="start">
+              <svg class="at-embed-toggle-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+                <path d={RING}></path>
+                <circle cx="24" cy="9" r="4.6"></circle>
+              </svg>
+              <span data-embed-toggle-text>{t('embed.start')}</span>
+            </button>
+          </div>
         </div>
+        <section class="at-embed-timers" data-embed-timers aria-labelledby="embed-timers-title" hidden>
+          <h2 class="at-embed-kicker" id="embed-timers-title" data-t="embed.timers.title">{t('embed.timers.title')}</h2>
+          <ul class="at-embed-timer-list" data-embed-timer-list></ul>
+          <div class="at-embed-quick" role="group" aria-labelledby="embed-timers-title" data-embed-quick></div>
+          <p class="at-embed-empty" data-embed-timers-empty data-t="embed.timers.empty">{t('embed.timers.empty')}</p>
+        </section>
       </div>
-      <p class="at-embed-hint" id="embed-hint" data-embed-hint hidden>{t('embed.cook.pause')}</p>
-      <div class="at-embed-notice" data-embed-notice hidden>
+      <p class="at-embed-foot" data-embed-foot>{t('embed.foot')}</p>
+      <div class="at-embed-notice" data-embed-notice role="note" hidden>
         <p data-embed-notice-text></p>
         <a data-embed-notice-link href="https://awaketab.com/embed#allow" target="_blank" rel="noopener" data-t="embed.advice.fix" hidden
           >{t('embed.advice.fix')}</a
         >
       </div>
-      <section class="at-embed-timers" data-embed-timers aria-labelledby="embed-timers-title" hidden>
-        <h2 class="sr-only" id="embed-timers-title" data-t="embed.timers.title">{t('embed.timers.title')}</h2>
-        <ul class="at-embed-timer-list" data-embed-timer-list></ul>
-        <div class="at-embed-quick" role="group" aria-labelledby="embed-timers-title" data-embed-quick></div>
-      </section>
       <p class="sr-only" aria-live="polite" data-embed-live></p>
-      <p class="at-embed-attrib" data-embed-attrib>
-        <a href="https://awaketab.com/?ref=embed&source=embed" target="_blank" rel="noopener" data-t="embed.attribution"
-          >{t('embed.attribution')}</a
-        >
-      </p>
     </main>
     <script is:inline type="module" src="/embed/app.js"></script>
   </body>

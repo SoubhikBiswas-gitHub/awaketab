@@ -7,15 +7,14 @@ const PREFIXES = ['embed.', 'tool.pill.', 'tool.advice.'] as const;
 const EXACT = new Set([
   'tool.ring.stop',
   'stats.minutes',
-  'ambient.cook.resume',
   'ambient.cook.timer.default',
   'ambient.cook.timer.done',
   'ambient.cook.timer.removeNamed',
   'ambient.cook.timer.notify',
   'ambient.cook.timer.invalid',
-  'ambient.cook.timer.add',
 ]);
-const SKIP = new Set(['tool.pill.idle.deferred', 'tool.advice.retry', 'tool.advice.learn']);
+// `tool.advice.retry` is the widget's Retry label after a denial (board EmbedEdge), so it stays in.
+const SKIP = new Set(['tool.pill.idle.deferred', 'tool.advice.learn']);
 
 export function isEmbedKey(key: string): boolean {
   if (SKIP.has(key)) return false;

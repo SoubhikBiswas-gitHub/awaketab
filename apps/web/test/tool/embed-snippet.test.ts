@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import en from '../../src/i18n/en.json';
 import { embedCatalog, isEmbedKey } from '../../src/tool/embed/catalog.js';
 import { optionsFromDataset } from '../../src/tool/embed/protocol.js';
-import { DEFAULT_SNIPPET, iframeSnippet, kioskMsg, kioskUrl, loaderSnippet } from '../../src/tool/embed/snippet.js';
+import { creditSnippet, DEFAULT_SNIPPET, iframeSnippet, kioskMsg, kioskUrl, loaderSnippet } from '../../src/tool/embed/snippet.js';
 
 describe('/embed snippet generator (docs/11 §1, E12-T02)', () => {
   it('renders the default tag exactly as sites paste it', () => {
@@ -33,6 +33,23 @@ describe('/embed snippet generator (docs/11 §1, E12-T02)', () => {
     expect(frame).toContain('src="https://awaketab.com/embed/cook?mode=cook&theme=auto&lang=en&size=compact&preset=pinf"');
     expect(frame).toContain('title="Keep &quot;screen&quot; awake"');
     expect(frame).toContain('loading="lazy"');
+    // O-58: the compact box is 320 × 104 with the widget's 16 px corner.
+    expect(frame).toContain('style="width:320px;max-width:100%;height:104px;border:0;border-radius:16px;display:block"');
+    expect(iframeSnippet({ ...DEFAULT_SNIPPET, size: 'full' }, 'x')).toContain('height:240px;border:0;border-radius:28px');
+  });
+
+  it('ends the bare-iframe fallback with the credit line as plain HTML (O-47)', () => {
+    const lines = iframeSnippet(DEFAULT_SNIPPET, 'Keep screen awake').split('\n');
+    const doc = new DOMParser().parseFromString(lines.join('\n'), 'text/html');
+    const iframe = doc.querySelector('iframe');
+    const credit = iframe?.nextElementSibling;
+    expect(credit?.className).toBe('awaketab-credit');
+    const link = credit?.querySelector('a');
+    expect(link?.getAttribute('href')).toBe('https://awaketab.com/?ref=embed&source=embed');
+    expect(link?.getAttribute('rel')).toBe('nofollow');
+    expect(link?.textContent).toBe('Keep awake by AwakeTab');
+    expect(lines.at(-1)).toBe(creditSnippet());
+    expect(iframeSnippet(DEFAULT_SNIPPET, 't', undefined, 'Wach gehalten von <AwakeTab>')).toContain('>Wach gehalten von &lt;AwakeTab></a>');
   });
 });
 

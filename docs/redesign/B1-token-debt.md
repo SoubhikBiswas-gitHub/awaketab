@@ -14,10 +14,10 @@ That width runs as `test.fixme` (listed in the spec's `DEBT` map), so the suite 
 
 ## Stylelint guard (DESIGN.md §12.8)
 
-- **Radius:** enforced in B1. The six raw radii that existed were on the scale and are now tokens (`embed.css` 999px ×2, 4px, 8px; `tool.css` 4px ×2). The two `border-radius:12px` strings in `src/tool/embed/snippet.ts` and `src/tool/embed/loader.ts` are inline styles on the host page's iframe, where the tokens do not exist; they stay raw on purpose.
+- **Radius:** enforced in B1. The six raw radii that existed were on the scale and are now tokens (`embed.css` 999px ×2, 4px, 8px; `tool.css` 4px ×2). The iframe's `border-radius` in `src/tool/embed/snippet.ts` and `src/tool/embed/loader.ts` is an inline style on the host page, where the tokens do not exist; since B8 it comes from `EMBED_BOX.radius` (16 compact, 28 full, the widget's own corner) and stays a raw number on purpose.
 - **Spacing, type size and control height:** not enforced yet. Raw values outside `tokens.css` today (hand-written CSS only):
   - `content.css`: lines 15, 25, 31, 43 (rem margins and padding).
-  - `embed.css`: lines 38, 72, 110 (`min-block-size` 44 / 28 / 44 px).
+  - `embed.css` (rebuilt in B8): control heights and spacing use tokens; the remaining raw values are the widget-scoped `--at-embed-*` sizes (pill 26/32, reserved heights, 60 px primary) at the top of the file, the Start/Stop widths (96 / 104 / 120 px), the 264 px timer column, the 12 px glyph box and the 24 px notice link height, plus the board's digit and meta font sizes in rem.
   - `tool.css`: lines 265 (`var(--at-s-12, 48px)` fallback), 273, 286, 386, 486, 648, 1106 (44 / 56 px control heights), 683, 687, 920, 940, 948, 1060, 1064 (`font-size: 8px`, below the 12 px floor), 1132, 1138, 1150; face digits at 896 and 961 use `clamp()` in rem.
   - Markup: shadcn/Tailwind utilities (`text-sm`, `px-4`, `h-9`, `rounded-md`, …) in `.astro`/`.tsx` bypass a CSS-only rule. B2 maps the shared shell to `--at-type-*`, `--at-h-*` and `--at-gap-*`; the rule is added once each surface is rebuilt.
 

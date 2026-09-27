@@ -3,7 +3,7 @@ import type { ICookTimer } from '../../src/tool/ambient/logic.js';
 import { EMBED_QUICK_MIN, mountTimers } from '../../src/tool/embed/timers.js';
 
 function section(): HTMLElement {
-  document.body.innerHTML = `<section data-embed-timers hidden><ul data-embed-timer-list></ul><div data-embed-quick></div></section>`;
+  document.body.innerHTML = `<section data-embed-timers hidden><ul data-embed-timer-list></ul><div data-embed-quick></div><p data-embed-timers-empty></p></section>`;
   return document.querySelector<HTMLElement>('[data-embed-timers]') as HTMLElement;
 }
 
@@ -41,7 +41,10 @@ describe('embed kitchen timers (full size, docs/11 §2)', () => {
     const buttons = el.querySelectorAll('[data-embed-add]');
     expect([...buttons].map((b) => b.getAttribute('data-embed-add'))).toEqual(EMBED_QUICK_MIN.map(String));
     expect(buttons[0]?.getAttribute('aria-label')).toBe('Add a 5-minute kitchen timer');
+    expect(buttons[0]?.textContent).toBe('5 min');
     expect(el.hidden).toBe(false);
+    // No timers yet: the "Add up to three" line shows (board EmbedWidget).
+    expect(el.querySelector<HTMLElement>('[data-embed-timers-empty]')?.hidden).toBe(false);
     stop();
   });
 
@@ -55,7 +58,10 @@ describe('embed kitchen timers (full size, docs/11 §2)', () => {
     expect(deps.ensureSession).toHaveBeenCalledTimes(3);
     expect(el.querySelector<HTMLElement>('[data-embed-quick]')?.hidden).toBe(true);
     expect(el.querySelectorAll('[data-embed-timer]')).toHaveLength(3);
-    expect(el.querySelector('[data-embed-timer="t1"] .at-embed-timer-left')?.textContent).toBe('00:05:00');
+    expect(el.querySelector<HTMLElement>('[data-embed-timers-empty]')?.hidden).toBe(true);
+    expect(el.querySelector('[data-embed-timer="t1"] .at-embed-timer-left')?.textContent).toBe('05:00');
+    expect(el.querySelector('[data-embed-remove="t1"]')?.getAttribute('aria-label')).toBe('Remove Timer 1');
+    expect(el.querySelector('[data-embed-remove="t1"] svg')?.getAttribute('aria-hidden')).toBe('true');
     stop();
   });
 
@@ -87,7 +93,7 @@ describe('embed kitchen timers (full size, docs/11 §2)', () => {
     const now = Date.now();
     const { el, stop } = setup([{ id: 'x', name: 'Rice', durationMs: 600_000, endsAt: now + 120_000, doneAt: null }]);
     expect(el.querySelector('[data-embed-timer="x"] .at-embed-timer-name')?.textContent).toBe('Rice');
-    expect(el.querySelector('[data-embed-timer="x"] .at-embed-timer-left')?.textContent).toBe('00:02:00');
+    expect(el.querySelector('[data-embed-timer="x"] .at-embed-timer-left')?.textContent).toBe('02:00');
     stop();
   });
 });

@@ -67,16 +67,16 @@ describe('embed config client (docs/11 §2)', () => {
     }
   });
 
-  it('applies branding to the widget root only for licensed configs', () => {
+  it('applies the brand colour to the Start button only, for licensed configs', () => {
     const root = document.createElement('main');
-    const attrib = document.createElement('p');
-    applyBranding(root, attrib, FREE_CONFIG);
-    expect(attrib.hidden).toBe(false);
+    applyBranding(root, FREE_CONFIG);
     expect(root.style.getPropertyValue('--at-embed-brand')).toBe('');
-    applyBranding(root, attrib, { licensed: true, attribution: false, accent: '#ffe066', scheme: null });
-    expect(attrib.hidden).toBe(true);
+    applyBranding(root, { licensed: true, attribution: false, accent: '#ffe066', scheme: null });
     expect(root.style.getPropertyValue('--at-embed-brand')).toBe('#ffe066');
     expect(root.style.getPropertyValue('--at-embed-on-brand')).toBe('#000000');
+    // The pill and focus ring keep the lamp and state tones, so a state never changes meaning (board EmbedEdge).
+    expect(root.style.getPropertyValue('--at-accent')).toBe('');
+    expect(root.style.getPropertyValue('--at-focus')).toBe('');
   });
 });
 

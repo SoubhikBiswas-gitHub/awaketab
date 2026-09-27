@@ -21,11 +21,41 @@ export type TEmbedSize = (typeof EMBED_SIZES)[number];
 export type TEmbedPreset = (typeof EMBED_PRESETS)[number];
 export type TEmbedLocale = (typeof EMBED_LOCALES)[number];
 
-/** Box the loader reserves before the iframe loads (no CLS on the host page, docs/11 §6). */
-export const EMBED_BOX: Record<TEmbedSize, { width: string; height: number }> = {
-  compact: { width: '320px', height: 96 },
-  full: { width: '100%', height: 240 },
+/**
+ * Box the loader reserves before the iframe loads (no CLS on the host page, docs/11 §6). Compact is 320 × 104
+ * (decision O-58: 16 px padding, a 26 px pill and 44 px Start/Stop). `radius` matches the widget's own corner
+ * (DESIGN.md §11.3: 16 card, 28 hero panel) so the iframe clips exactly along it.
+ */
+export const EMBED_BOX: Record<TEmbedSize, { width: string; height: number; radius: number }> = {
+  compact: { width: '320px', height: 104, radius: 16 },
+  full: { width: '100%', height: 240, radius: 28 },
 };
+
+/**
+ * Narrow containers (docs/11 §2, board EmbedEdge): a compact widget under 300 px puts the pill on its own line
+ * (116 tall); a full cook widget under 600 px stacks its kitchen timers under the main control (420 tall). The
+ * loader reserves these heights when it can measure the container, and embed.css mirrors the same breakpoints.
+ */
+export const EMBED_NARROW = { compact: [300, 116], full: [600, 420] } as const;
+
+/** Height the loader reserves for a widget of these options in a container `width` px wide (0 = unknown). */
+export function reservedHeight(opts: Pick<IEmbedOptions, 'size' | 'mode'>, width: number): number {
+  const [below, height] = EMBED_NARROW[opts.size];
+  const narrow = width > 0 && width < below && (opts.size === 'compact' || opts.mode === 'cook');
+  return narrow ? height : EMBED_BOX[opts.size].height;
+}
+
+/**
+ * O-47: the credit sits outside the widget, in the host page's own HTML, directly after the iframe. The loader
+ * inserts it (and removes it for a licensed domain); the iframe-only snippet carries it as plain HTML. Its box
+ * has a fixed 24 px line, 16 px below the widget (board EmbedEdge), so it never shifts the page, and inherits
+ * the host's font and colour.
+ */
+export const EMBED_CREDIT_URL = 'https://awaketab.com/?ref=embed&source=embed';
+export const EMBED_CREDIT_CLASS = 'awaketab-credit';
+export const EMBED_CREDIT_STYLE =
+  'display:block;margin:16px 0 0;height:24px;font-size:13px;line-height:24px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+export const EMBED_CREDIT_LINK_STYLE = 'color:inherit;font:inherit;text-decoration:underline;text-underline-offset:3px';
 
 /** `awaketab:resize` heights outside this range are clamped by the loader. */
 export const EMBED_MIN_HEIGHT = 64;

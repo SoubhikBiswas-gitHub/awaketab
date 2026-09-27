@@ -74,7 +74,10 @@ test.beforeEach(async ({ page }) => {
   await installPolicyAwareWakeLock(page);
   // No Pages Functions behind `astro preview`: answer the licence lookup as an unlicensed domain by default.
   await page.route('**/api/embed/config**', (route) =>
-    route.fulfill({ json: { licensed: false, attribution: true, theme: null, expiresAt: null } }),
+    route.fulfill({
+      headers: { 'access-control-allow-origin': '*' },
+      json: { licensed: false, attribution: true, theme: null, expiresAt: null },
+    }),
   );
   await page.route('**/api/e', (route) => route.fulfill({ json: { ok: true } }));
 });
@@ -88,13 +91,44 @@ test('journey 10 loader → cross-origin iframe with allow holds the lock', asyn
   await expect(iframe).toHaveAttribute('src', /host=localhost/u);
   await expect(page.locator(`script[src="${WIDGET}/embed.js"]`)).toHaveCount(0);
 
+  // O-58: the compact box is reserved at 320 × 104 before the widget loads.
+  await expect(iframe).toHaveCSS('height', '104px');
+  await expect(iframe).toHaveCSS('width', '320px');
+
   const frame = await widgetFrame(page);
   await expect(frame.locator('[data-pill-text]')).toHaveText('Ready');
   await expect(frame.locator('[data-embed-notice]')).toBeHidden();
   await frame.getByRole('button', { name: 'Start' }).click();
   await expect(frame.locator('[data-pill-text]')).toHaveText('Screen awake');
-  await expect(frame.locator('[data-embed-attrib] a')).toHaveAttribute('href', 'https://awaketab.com/?ref=embed&source=embed');
-  await expect(frame.locator('[data-embed-attrib]')).toBeVisible();
+  await expect(frame.getByRole('button', { name: 'Stop' })).toBeVisible();
+
+  // O-47: the credit is a visible nofollow link in the host page, directly after the iframe, not in the frame.
+  const credit = page.locator('iframe[src*="/embed/cook"] + .awaketab-credit a');
+  await expect(credit).toBeVisible();
+  await expect(credit).toHaveText('Keep awake by AwakeTab');
+  await expect(credit).toHaveAttribute('href', 'https://awaketab.com/?ref=embed&source=embed');
+  await expect(credit).toHaveAttribute('rel', 'nofollow');
+  // Neutral on any site: it takes the host's font and colour.
+  const [linkFont, bodyFont, linkColor, bodyColor] = await page.evaluate(() => {
+    const a = document.querySelector('.awaketab-credit a') as HTMLElement;
+    const s = getComputedStyle(a);
+    const b = getComputedStyle(document.body);
+    return [s.fontFamily, b.fontFamily, s.color, b.color];
+  });
+  expect(linkFont).toBe(bodyFont);
+  expect(linkColor).toBe(bodyColor);
+  await expect(frame.locator('a[href*="ref=embed"]')).toHaveCount(0);
+});
+
+test('the credit line reserves its box: nothing below the widget moves after load', async ({ page }) => {
+  await hostPage(page, `${loaderTag()}<p id="after">Method</p>`);
+  const before = await page.locator('#after').boundingBox();
+  const frame = await widgetFrame(page);
+  await expect(frame.locator('[data-pill-text]')).toHaveText('Ready');
+  await page.waitForTimeout(300);
+  const after = await page.locator('#after').boundingBox();
+  expect(after?.y).toBe(before?.y);
+  await expect(page.locator('iframe[src*="/embed/cook"]')).toHaveCSS('height', '104px');
 });
 
 test('journey 10 iframe without allow shows the "Ask the site owner" state', async ({ page, browserName }) => {
@@ -109,6 +143,7 @@ test('journey 10 iframe without allow shows the "Ask the site owner" state', asy
   await expect(frame.locator('[data-pill-text]')).toHaveText("Blocked — here's the fix");
   await expect(frame.locator('[data-embed-notice]')).toContainText('Ask the site owner');
   await expect(frame.locator('[data-embed-digits]')).toHaveClass(/is-muted/u);
+  await expect(frame.getByRole('button', { name: 'Retry' })).toBeVisible();
 });
 
 test('AwakeTabEmbed API starts, reports state and stops the widget', async ({ page }) => {
@@ -127,7 +162,7 @@ test('AwakeTabEmbed API starts, reports state and stops the widget', async ({ pa
     (window as unknown as { AwakeTabEmbed: { start(o: object): void } }).AwakeTabEmbed.start({ preset: 'p30' });
   });
   await expect(frame.locator('[data-pill-text]')).toHaveText('Screen awake');
-  await expect(frame.locator('[data-embed-digits]')).toHaveText(/00:(29|30):\d{2}/u);
+  await expect(frame.locator('[data-embed-digits]')).toHaveText(/^(29:\d{2}|30:00)$/u);
   await expect.poll(() => page.evaluate(() => (window as unknown as { __states: string[] }).__states)).toContain('held/active');
   await page.evaluate(() => {
     (window as unknown as { AwakeTabEmbed: { stop(): void } }).AwakeTabEmbed.stop();
@@ -139,7 +174,7 @@ test('widget rejects commands whose origin does not match the declared host', as
   // host=evil.example does not match the real parent (localhost): the widget must ignore the page entirely.
   await hostPage(
     page,
-    `<iframe id="w" src="${WIDGET}/embed/cook?mode=cook&size=compact&lang=en&host=evil.example" allow="screen-wake-lock" style="width:320px;height:96px"></iframe>`,
+    `<iframe id="w" src="${WIDGET}/embed/cook?mode=cook&size=compact&lang=en&host=evil.example" allow="screen-wake-lock" style="width:320px;height:104px"></iframe>`,
   );
   const frame = await widgetFrame(page);
   await expect(frame.locator('[data-pill-text]')).toHaveText('Ready');
@@ -155,7 +190,7 @@ test('widget rejects commands whose origin does not match the declared host', as
 test('widget ignores commands from a window that is not its parent', async ({ page }) => {
   await hostPage(
     page,
-    `<iframe id="w" src="${WIDGET}/embed/cook?mode=cook&size=compact&lang=en&host=localhost" allow="screen-wake-lock" style="width:320px;height:96px"></iframe>
+    `<iframe id="w" src="${WIDGET}/embed/cook?mode=cook&size=compact&lang=en&host=localhost" allow="screen-wake-lock" style="width:320px;height:104px"></iframe>
      <iframe id="sibling" srcdoc="<p>sibling</p>"></iframe>`,
   );
   const frame = await widgetFrame(page);
@@ -197,16 +232,26 @@ test('loader ignores forged widget messages from other windows', async ({ page }
   expect(await page.evaluate(() => (window as unknown as { __locks: string[] }).__locks)).not.toContain('held');
 });
 
-test('licensed domain removes the attribution and applies the brand colour', async ({ page }) => {
+test('licensed domain gets no credit line and the brand colour on Start', async ({ page }) => {
   await page.route('**/api/embed/config**', (route) =>
     route.fulfill({
+      // The loader asks cross-origin (host page → widget origin); the real function sends this header too.
+      headers: { 'access-control-allow-origin': '*' },
       json: { licensed: true, attribution: false, theme: { accent: '#0f766e', scheme: 'auto' }, expiresAt: Date.now() + 86_400_000 },
     }),
   );
   await hostPage(page, loaderTag());
   const frame = await widgetFrame(page);
-  await expect(frame.locator('[data-embed-attrib]')).toBeHidden();
+  await expect(page.locator('.awaketab-credit')).toHaveCount(0);
   await expect(frame.locator('#awaketab-embed')).toHaveAttribute('style', /--at-embed-brand:\s*#0f766e/u);
+});
+
+test('a failed licence lookup keeps the credit line (free by default)', async ({ page }) => {
+  await page.route('**/api/embed/config**', (route) => route.fulfill({ status: 503, body: 'down' }));
+  await hostPage(page, loaderTag());
+  await widgetFrame(page);
+  await page.waitForTimeout(300);
+  await expect(page.locator('.awaketab-credit a')).toBeVisible();
 });
 
 test('full size in cook mode offers kitchen timers and tap-to-pause keeps the lock', async ({ page }) => {
