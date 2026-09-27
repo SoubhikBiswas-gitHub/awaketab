@@ -140,7 +140,7 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 
 ### 5.3 Keyboard shortcuts (web + PiP)
 
-`Space` toggle · `1`–`6` presets p15…p240 · `0` indefinite · `U` until… · `F` fullscreen · `D` cycle theme · `M` cycle ambient mode · `P` PiP · `Esc` close the innermost layer (dialog → ambient mode → stop the session) · `?` shortcuts overlay.
+`Space` toggle · `1`–`6` presets p15…p240 · `0` indefinite · `U` until… · `F` fullscreen · `D` cycle theme · `M` cycle ambient mode · `P` PiP · `S` Sounds sheet · `Esc` close the innermost layer (dialog → ambient mode → stop the session) · `?` shortcuts overlay.
 
 ---
 
@@ -908,6 +908,25 @@ Accepted on 2026-09-28. Spec: `05-frontend-spec.md` §1.1a–§1.1d; storage fie
 | `IToastItem.alt` | A second toast action (the one-minute preview toast: Get Pro · End now) |
 | `.at-pv` | The preview chip (first child of `[data-toasts]`; `data-min` folds it to the dot; `data-float` when a page has no toast region) |
 | i18n keys | `settings.looks.*` (section labels, Pro note) · `settings.palette.<id>` · `settings.accent.<id>` (new lamps and `custom`) · `settings.pattern.<id>` · `settings.preset.<id>` · `settings.preview.*` · `settings.custom.*`. Removed: `settings.lamp.note`, `ambient.message.preview`, `ambient.message.previewShort`, `ambient.message.ended` (the Message mode's shared link now runs the five-minute preview; `MESSAGE_PREVIEW_MS` is gone) |
+
+### Sound pack
+
+Accepted on 2026-09-28. Spec: `05-frontend-spec.md` §3.34. The pill, lock states, storage keys (the `settings` fields already existed, `08-data-storage.md` §2.1), routes and the tool's JS budgets do not change: the tool gains a few lines of glue and everything else loads as the `sound` pack.
+
+| Identifier | Decision |
+|---|---|
+| End sound ids | `settings.sound.id`: `chime` (default, synthesised in `signal.ts`) · `bell` · `soft` · `digital` · `birds` (the pack, Tone.js) · `none`; all free |
+| Focus sound ids | `settings.focusSound.kind`: `none` · `brown` · `pink` · `white` · `rain` · `cafe` · `fire` · `lofi` (generated, free) · `track:<id>` (a `TRACKS` entry, Pro `sounds.custom`) |
+| Mixer | `settings.focusSound.mix`: level 0–1 per generated sound, Pro `sounds.custom`; non-empty means the mix plays instead of `kind`; a tile pick clears it |
+| Keyboard | `S` opens the Sounds sheet (`tool.shortcuts.sound`) |
+| Modules | `src/tool/packs/sound/index.ts` (`run(ctx, 'open' \| 'play' \| 'end' \| 'mount', el?)`, imported only through `sound()` in `ui/settings.ts`) · `catalog.ts` (`GENS`, `isGen`, `isChime`, `readFocus`) · `engine.ts` (Tone.js: `init`, `resume`, `levels`, `fadeOut`, `volume`, `chime`, `tick`) · `player.ts` (howler.js: `playTrack`, `pauseTrack`, `trackVolume`) · `tracks.ts` (`ITrack`, `TRACKS`, empty) · `sound.css` (loaded with `?url` by the pack) |
+| Chunks | `pack-sound` · `pack-sound-tone` · `pack-sound-howler` (`astro.config.mjs` `manualChunks` and `PACK_LIBS`), counted together toward the `sound` budget (110 KB gz) |
+| Libraries | `tone` 15.1.22 (MIT) with its `standardized-audio-context` (MIT), `automation-events` (MIT), `tslib` (0BSD) and `@babel/runtime` (MIT) · `howler` 2.2.4 (MIT) · `@types/howler` (dev, MIT) |
+| Tool glue | `ui/settings.ts` `sound()` and the Settings end-sound fields · `ui/actions.ts` action `sound` · `shortcuts.ts` `S` · `end.ts` (pack end sounds, vibration) · `extras.ts` (loads the pack after load + idle when `tick` is on) |
+| Markup hooks | Header `.at-snd-btn[data-act="sound"]` · Sheet `[data-dialog="sound"]` with `.at-snd[data-state][data-pro]` (`idle` · `loading` · `playing` · `paused` · `tap` · `error`), `[data-snd="toggle" \| "prev" \| "next" \| "settings"]`, `[data-snd-kind]`, `[data-snd-track]`, `input[data-snd-vol]`, `[data-snd-vol-out]`, `input[data-snd-stop]`, `input[data-snd-mix]`, `.at-snd-lock`, `[data-snd-lib-lock]` · Settings `[data-sound="play" \| "open"]`, `[data-vibrate-row]`, fields `sound`, `soundVolume`, `vibrate`, `tick` · island attributes `data-snd` (the state) and `data-snd-still` (motion off in Settings) |
+| Custom properties | `--at-snd-*` (equaliser height, duration, low point, bar colour), in `sound.css` only |
+| Toast id | `sound` ("Tap to start sound") |
+| i18n keys | New in all 8 locales (English values until translated): `tool.header.sound` · `tool.shortcuts.sound` · `tool.sound.*` (title, honest, pick, state.*, play, pause, tap, tapNote, prev, next, volume, focus, kind.*, sub.*, stopAtEnd, stopAtEnd.help, mix, mix.help, mix.locked, mixTitle, library, library.*, lofi.*, endSettings) · `settings.sound.bell` · `.soft` · `.digital` · `.birds` · `.play` · `.volume` · `.focus` · `settings.vibrate` (+ `.help`) · `settings.tick` (+ `.help`) |
 
 ## 14. Writing conventions for these docs
 

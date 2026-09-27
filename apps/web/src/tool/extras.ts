@@ -5,6 +5,7 @@ import { mountPwa } from './pwa.js';
 import { mountSponsor } from './sponsor.js';
 import { act } from './ui/actions.js';
 import { openDialog } from './ui/dialog.js';
+import { sound } from './ui/settings.js';
 import { mountLangSuggest } from './ui/lang-suggest.js';
 import { moreCss } from './ui/more-css.js';
 import { gateLooks } from './accent.js';
@@ -127,6 +128,8 @@ export function mountLate(ctx: IToolCtx): () => void {
     else act(ctx, id, root);
   });
   if (root.querySelector('[data-sponsor]')) void mountSponsor(ctx).then((u) => offs.push(u));
+  // The tick-tock was turned on in an earlier visit: its pack waits for a session, then asks for a tap if needed.
+  if (store.get().settings.tick) void sound(ctx, 'mount');
   return () => {
     for (const off of offs) off();
   };

@@ -6,7 +6,7 @@ import { hm, mins, nextWall, stepCustom, wallOf, when } from '../format.js';
 import { t } from '../i18n.js';
 import { applyTheme, nextTheme } from '../theme.js';
 import { openDialog } from './dialog.js';
-import { openSettings } from './settings.js';
+import { openSettings, sound } from './settings.js';
 import { toast } from './toast.js';
 import { moreCss } from './more-css.js';
 import { liveSession } from './view.js';
@@ -137,6 +137,7 @@ export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
       extendAsk(ctx, { add15: 15, add30: 30, add60: 60 }[name] * 60_000);
     else if (name === 'askStop') finishAsk(ctx);
     else if (name === 'battSettings') openSettings(ctx, el);
+    else if (name === 'sound') void sound(ctx, 'open', el);
   });
 }
 

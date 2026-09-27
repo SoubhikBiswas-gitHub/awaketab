@@ -1,6 +1,7 @@
 import type { TPresetId } from '@awaketab/core';
 import type { IToolCtx } from './ctx.js';
 import { act, cycleTheme, help, pip, toggleFullscreen } from './ui/actions.js';
+import { sound } from './ui/settings.js';
 
 const PRESET_KEYS: Record<string, Exclude<TPresetId, 'custom' | 'until'>> = {
   '1': 'p15',
@@ -105,6 +106,10 @@ export function keyHandler(
     else if (key === 'p')
       run(() => {
         pip(ctx);
+      });
+    else if (key === 's')
+      run(() => {
+        void sound(ctx, 'open');
       });
   };
 }
