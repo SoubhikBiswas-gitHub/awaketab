@@ -116,6 +116,14 @@ export function mountLate(ctx: IToolCtx): () => void {
   void moreCss().then(() => {
     mountLangSuggest(root, ctx.storage);
   });
+  // A touch or a sideways trackpad swipe on the clock loads the faces pack's swipe, so the next swipe changes the face.
+  const wake = (e: Event) => {
+    if (!(e instanceof WheelEvent) || Math.abs(e.deltaX) > Math.abs(e.deltaY))
+      void import('./packs/faces/index.js').then((m) => {
+        m.armSwipe(ctx);
+      });
+  };
+  for (const k of ['touchstart', 'wheel']) root.querySelector('.at-dial')?.addEventListener(k, wake, { passive: true });
   // The length links below a preset page's tool switch a running session in place instead of reloading the page
   // (which would drop the lock); "Until a time…" opens the Until panel. Without a session they open their page.
   root.addEventListener('click', (e) => {

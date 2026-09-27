@@ -6,12 +6,14 @@ import {
   localePath,
   type TLocale,
 } from '../i18n/locales';
+import FaceSwitch from './FaceSwitch.astro';
 import SponsorCard from './SponsorCard.astro';
 import Button from './shell/Button.astro';
 import Dialog from './ui/Dialog.astro';
 import Sheet from './ui/Sheet.astro';
 import StatusPill from './shell/StatusPill.astro';
 import type { IToolReady } from '../lib/tool-ready';
+import { FACE_GROUPS, FACE_ORDER } from '../tool/packs/faces/order';
 import { TRACKS } from '../tool/packs/sound/tracks';
 
 interface Props {
@@ -30,10 +32,8 @@ const catalogJson = JSON.stringify(islandCatalog(locale)).replaceAll(
   '\\u003c',
 );
 const presets = ['p15', 'p30', 'p45', 'p60', 'p120', 'p240'] as const;
-const faces = ['ring', 'bold', 'horizon', 'tide'] as const;
-const moreFaces = ['flip', 'rolling', 'analog', 'rings', 'word', 'nixie', 'lcd', 'matrix'] as const;
-const allFaces = [...faces, ...moreFaces] as const;
-// One 24 px line drawing per face, shared by the More faces menu and Settings.
+const allFaces = FACE_ORDER;
+// One 24 px line drawing per face, shared by the face gallery, the swipe hint and Settings.
 const FACE_ICON: Record<(typeof allFaces)[number], string> = {
   ring: 'M12 3.5a8.5 8.5 0 1 1-8.5 8.5M12 3.5h.01',
   bold: 'M5 6h5v9H5zM14 6h5v9h-5zM4 19h16',
@@ -78,6 +78,7 @@ const shortcuts = [
   ['0', '', t('tool.shortcuts.pinf')],
   ['U', '', t('tool.shortcuts.until')],
   ['F', '', t('tool.shortcuts.fullscreen')],
+  ['C', '', t('tool.shortcuts.face')],
   ['D', '', t('tool.shortcuts.theme')],
   ['M', '', t('tool.shortcuts.mode')],
   ['P', '', t('tool.shortcuts.pip')],
@@ -146,88 +147,7 @@ const eight = ready.chip === 'custom';
   <span class="at-sr" role="status" data-t="announce"></span>
 
   <div class="at-tabs at-tabs-early">
-    <div
-      class="at-seg at-faces"
-      role="tablist"
-      aria-label={t('tool.face.label')}
-    >
-      <span class="at-seg-ind" aria-hidden="true"></span>
-      {
-        faces.map((f) => (
-          <button
-            class="at-seg-item"
-            type="button"
-            role="tab"
-            data-face={f}
-            aria-selected={f === 'ring' ? 'true' : 'false'}
-          >
-            {t(`tool.face.${f}`)}
-          </button>
-        ))
-      }
-      <button
-        class="at-seg-item at-fm-open"
-        type="button"
-        role="tab"
-        aria-selected="false"
-        aria-label={t('tool.face.moreLabel')}
-        data-faces={moreFaces.join(' ')}
-        popovertarget="at-fm-e"
-        style="anchor-name:--at-fm-e"
-        >{t('tool.face.more')}<svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg
-        ></button
-      >
-    </div>
-    <div
-      class="at-fm"
-      id="at-fm-e"
-      popover
-      role="group"
-      aria-labelledby="at-fm-e-k"
-      style="position-anchor:--at-fm-e"
-    >
-      <p class="at-fm-k" id="at-fm-e-k">{t('tool.face.moreTitle')}</p>
-      <ul class="at-fm-list">
-        {
-          moreFaces.map((f) => (
-            <li>
-              <button
-                class="at-fm-item"
-                type="button"
-                data-face={f}
-                aria-pressed="false"
-                popovertarget="at-fm-e"
-                popovertargetaction="hide"
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d={FACE_ICON[f]} />
-                </svg>
-                <span>{t(`tool.face.${f}`)}</span>
-              </button>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
+    <FaceSwitch locale={locale} />
   </div>
 
   <div class="at-pip-slot" data-pip-slot>
@@ -369,7 +289,8 @@ const eight = ready.chip === 'custom';
                   ><feGaussianBlur stdDeviation="7"></feGaussianBlur></filter
                 ></defs
               >
-              <circle class="at-ticks" cx="160" cy="160" r="129"></circle>
+              <circle class="at-ticks" cx="160" cy="160" r="130"></circle>
+              <circle class="at-ticks at-ticks-h" cx="160" cy="160" r="130"></circle>
               <circle class="at-track" cx="160" cy="160" r="146"></circle>
               <g transform="rotate(-90 160 160)">
                 <circle
@@ -451,18 +372,23 @@ const eight = ready.chip === 'custom';
                   />
                 ))
               }</g
-            >
+            ><path class="at-hz-path" d="M319 230A140 172 0 0 0 131.1 68.4" pathLength="100"></path><circle
+              class="at-hz-end" cx="318.5" cy="215" r="2.2"></circle>
           </svg>
           <div class="at-cloud" aria-hidden="true"></div>
           <div class="at-cloud at-cloud2" aria-hidden="true"></div>
           <div class="at-orb" aria-hidden="true"></div>
-          <svg width="358" height="26"
+          <svg width="358" height="32"
             class="at-hz-hill"
-            viewBox="0 0 358 26"
+            viewBox="0 0 358 32"
             aria-hidden="true"
             focusable="false"
             ><path
-              d="M0 26V16C30 8 58 6 92 12C130 19 150 6 196 8C240 10 262 18 300 13C322 10 342 9 358 12V26Z"
+              class="at-hz-far"
+              d="M0 32V14C40 6 76 2 118 8C160 14 186 4 232 5C276 6 300 14 336 10C346 9 352 9 358 10V32Z"
+            ></path><path
+              class="at-hz-near"
+              d="M0 32V22C30 14 58 12 92 18C130 25 150 12 196 14C240 16 262 24 300 19C322 16 342 15 358 18V32Z"
             ></path></svg
           >
           <div class="at-hz-water" aria-hidden="true"></div>
@@ -1187,88 +1113,7 @@ const eight = ready.chip === 'custom';
   </div>
 
   <div class="at-tabs at-tabs-late" id="at-tabs-late">
-    <div
-      class="at-seg at-faces"
-      role="tablist"
-      aria-label={t('tool.face.label')}
-    >
-      <span class="at-seg-ind" aria-hidden="true"></span>
-      {
-        faces.map((f) => (
-          <button
-            class="at-seg-item"
-            type="button"
-            role="tab"
-            data-face={f}
-            aria-selected={f === 'ring' ? 'true' : 'false'}
-          >
-            {t(`tool.face.${f}`)}
-          </button>
-        ))
-      }
-      <button
-        class="at-seg-item at-fm-open"
-        type="button"
-        role="tab"
-        aria-selected="false"
-        aria-label={t('tool.face.moreLabel')}
-        data-faces={moreFaces.join(' ')}
-        popovertarget="at-fm-l"
-        style="anchor-name:--at-fm-l"
-        >{t('tool.face.more')}<svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg
-        ></button
-      >
-    </div>
-    <div
-      class="at-fm"
-      id="at-fm-l"
-      popover
-      role="group"
-      aria-labelledby="at-fm-l-k"
-      style="position-anchor:--at-fm-l"
-    >
-      <p class="at-fm-k" id="at-fm-l-k">{t('tool.face.moreTitle')}</p>
-      <ul class="at-fm-list">
-        {
-          moreFaces.map((f) => (
-            <li>
-              <button
-                class="at-fm-item"
-                type="button"
-                data-face={f}
-                aria-pressed="false"
-                popovertarget="at-fm-l"
-                popovertargetaction="hide"
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d={FACE_ICON[f]} />
-                </svg>
-                <span>{t(`tool.face.${f}`)}</span>
-              </button>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
+    <FaceSwitch locale={locale} />
   </div>
   <span id="at-tool-parsed" hidden></span>
 
@@ -1745,6 +1590,56 @@ const eight = ready.chip === 'custom';
     </div>
     <Button data-settings-reset>{t('settings.reset')}</Button>
   </div>
+</Sheet>
+
+<Sheet
+  name="faces"
+  title={t('tool.gallery.title')}
+  titleId="faces-title"
+  description={t('tool.gallery.lead')}
+  closeLabel={close}
+  bodyClass="at-fg"
+>
+  {
+    FACE_GROUPS.map(([g, ids]) => (
+      <section class="at-fg-group" aria-labelledby={`fg-${g}`}>
+        <h3 class="at-kicker" id={`fg-${g}`}>{t(`tool.gallery.${g}`)}</h3>
+        <ul class="at-fg-list">
+          {ids.map((f) => (
+            <li class="at-fg-card">
+              <button class="at-fg-pick" type="button" data-pick={f} aria-pressed={f === 'ring' ? 'true' : 'false'}>
+                <span class="at-fg-thumb" data-thumb={f} aria-hidden="true">
+                  <span class="at-fg-stage">
+                    <svg class="at-fg-ph" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d={FACE_ICON[f]} />
+                    </svg>
+                  </span>
+                </span>
+                <span class="at-fg-name">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d={FACE_ICON[f]} />
+                  </svg>
+                  <span>{t(`tool.face.${f}`)}</span>
+                </span>
+                <span class="at-fg-on">{t('tool.gallery.current')}</span>
+              </button>
+              {f === 'analog' && (
+                <div class="at-seg at-sseg at-fg-style" role="radiogroup" aria-label={t('settings.face.analogStyle')} style="--at-seg-n:2">
+                  <span class="at-seg-ind" aria-hidden="true"></span>
+                  {(['minimal', 'luxe'] as const).map((v) => (
+                    <label class="at-seg-item">
+                      <input class="sr-only" type="radio" name="analogStyle" value={v} checked={v === 'minimal'} />
+                      {t(`settings.face.analog.${v}`)}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
 </Sheet>
 
 <Sheet

@@ -7,6 +7,7 @@ import SiteHeader from './shell/SiteHeader.astro';
 import { POLAR_PORTAL_URL } from '../lib/pro-common';
 import { toolReady } from '../lib/tool-ready';
 import { stripLocale } from '../tool/params';
+import { FACE_ORDER } from '../tool/packs/faces/order';
 
 interface Props {
   heading: string;
@@ -100,6 +101,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
   data-chip={until ? t('tool.chip.untilAt') : undefined}
   data-tmr={t('tool.when.tomorrow')}
   data-sky={['dawn', 'day', 'dusk', 'night'].map((p) => t(`tool.sky.${p}`)).join('|')}
+  data-fnames={FACE_ORDER.map((f) => t(`tool.face.${f}`)).join('|')}
   data-manifest={embed ? undefined : localePath(locale, '/manifest.webmanifest')}
 >
   {auto && <noscript><style is:inline>{'.at-pillline{visibility:visible!important}'}</style></noscript>}

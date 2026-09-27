@@ -91,6 +91,11 @@ export function keyHandler(
       run(() => {
         toggleFullscreen(store);
       });
+    // F was already fullscreen, so C (clock face) steps through the faces; Shift+C goes back.
+    else if (key === 'c')
+      run(() => {
+        act(ctx, e.shiftKey ? 'facePrev' : 'faceNext', root);
+      });
     // The theme is read when the press is handled, so two quick presses advance two steps.
     else if (key === 'd')
       run(() => {

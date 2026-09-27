@@ -358,6 +358,13 @@ test('shortcuts: 1–6 and 0 pick presets, D cycles the theme, F asks for fullsc
   await page.keyboard.press('d');
   await expect.poll(theme).toBe('oled');
 
+  // C steps to the next clock face and Shift+C goes back (docs/05 §7).
+  const face = () => page.evaluate(() => document.documentElement.dataset.face ?? 'ring');
+  await page.keyboard.press('c');
+  await expect.poll(face).toBe('bold');
+  await page.keyboard.press('Shift+C');
+  await expect.poll(face).toBe('ring');
+
   await page.keyboard.press('f');
   await expect.poll(() => page.evaluate(() => (window as Window & { __fs: number }).__fs)).toBe(1);
 
@@ -367,7 +374,7 @@ test('shortcuts: 1–6 and 0 pick presets, D cycles the theme, F asks for fullsc
   const help = page.locator('dialog[data-dialog="shortcuts"]');
   await page.keyboard.press('Shift+Slash');
   await expect(help).toBeVisible();
-  await expect(help.locator('dt')).toHaveCount(10);
+  await expect(help.locator('dt')).toHaveCount(12);
   await page.keyboard.press('Escape');
   await expect(help).toBeHidden();
   // Esc closed the overlay, not the session (the pill itself now lives in the PiP window).

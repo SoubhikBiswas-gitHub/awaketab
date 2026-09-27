@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ghost } from '../../src/tool/packs/faces/lcd-text.js';
 import { dotLayout, MATRIX_ROWS } from '../../src/tool/packs/faces/matrix-font.js';
+import { ART_FACES, FACE_GROUPS, FACE_ORDER, stepFace } from '../../src/tool/packs/faces/order.js';
 import { type IWordClock, litCells, WORD_CLOCKS } from '../../src/tool/packs/faces/word-table.js';
 
 function english(): IWordClock {
@@ -68,5 +69,23 @@ describe('dot matrix layout', () => {
     }
     expect(one.dim.length).toBeGreaterThan(0);
     expect(dotLayout('1d 02:15', ':00').cols).toBeGreaterThan(29);
+  });
+});
+
+describe('face order', () => {
+  it('lists all twelve faces once, in the gallery groups', () => {
+    expect(FACE_GROUPS.map(([g]) => g)).toEqual(['classic', 'retro', 'modern']);
+    expect(FACE_ORDER).toHaveLength(12);
+    expect(new Set(FACE_ORDER).size).toBe(12);
+    expect(FACE_ORDER[0]).toBe('ring');
+    for (const f of ART_FACES) expect(FACE_GROUPS[0][1]).toContain(f);
+  });
+
+  it('steps both ways and wraps around', () => {
+    expect(stepFace('ring', 1)).toBe('bold');
+    expect(stepFace('tide', 1)).toBe('flip');
+    expect(stepFace('word', 1)).toBe('ring');
+    expect(stepFace('ring', -1)).toBe('word');
+    expect(stepFace('flip', -13)).toBe('tide');
   });
 });

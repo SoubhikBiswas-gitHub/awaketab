@@ -1,9 +1,12 @@
-.at-face-x {
+:is(.at-face-x, .at-fg-host) {
   --at-fx-ink: var(--at-ink-2);
   --at-fx-glow: 0;
   --at-fx-shade: rgb(14 23 38 / 22%);
 
   place-items: center;
+}
+
+.at-face-x {
   transition: translate 1s var(--at-ease);
 }
 
@@ -21,25 +24,25 @@
   display: grid;
 }
 
-:root:is([data-theme="dark"], [data-theme="oled"]) .at-face-x {
+:root:is([data-theme="dark"], [data-theme="oled"]) :is(.at-face-x, .at-fg-host) {
   --at-fx-shade: rgb(0 0 0 / 55%);
 }
 
 .at-island:is([data-status="awake"], [data-status="fallback"], [data-status="starting"], [data-status="timesup"])
-  .at-face-x {
+  :is(.at-face-x, .at-fg-host) {
   --at-fx-ink: var(--at-ink);
   --at-fx-glow: 1;
 }
 
-.at-island[data-status="paused"] .at-face-x {
+.at-island[data-status="paused"] :is(.at-face-x, .at-fg-host) {
   --at-fx-glow: 0.55;
 }
 
-.at-island[data-status="blocked"] .at-face-x {
+.at-island[data-status="blocked"] :is(.at-face-x, .at-fg-host) {
   --at-fx-glow: 0.4;
 }
 
-.at-island[data-final] .at-face-x {
+.at-island[data-final] :is(.at-face-x, .at-fg-host) {
   --at-fx-ink: var(--at-accent-text);
 }
 
@@ -74,5 +77,73 @@
 @media (width < 360px) {
   .at-fx .at-kick {
     display: none;
+  }
+}
+
+.at-fsw {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  touch-action: pan-y pinch-zoom;
+  cursor: grab;
+  user-select: none;
+}
+
+.at-fsw:active {
+  cursor: grabbing;
+}
+
+.at-fsw-strip {
+  display: flex;
+  block-size: 100%;
+}
+
+.at-fsw-slide {
+  display: grid;
+  flex: 0 0 100%;
+  place-items: center;
+  min-inline-size: 0;
+}
+
+.at-fsw-ghost {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--at-s-2);
+  color: var(--at-ink-2);
+  font: var(--at-type-kicker);
+  letter-spacing: var(--at-trk-k, 0.14em);
+  text-transform: uppercase;
+  opacity: var(--at-swa, 0);
+}
+
+.at-fsw-ghost > svg {
+  inline-size: calc(2 * var(--at-icon-sm));
+  block-size: calc(2 * var(--at-icon-sm));
+  color: var(--at-accent-text);
+}
+
+.at-dial > .at-face {
+  transform: translateX(calc(var(--at-sw, 0) * -30%));
+  opacity: calc(1 - var(--at-swa, 0));
+}
+
+.at-dial[data-swap=""] > .at-face {
+  opacity: 0;
+}
+
+.at-dial[data-swap="in"] > .at-face {
+  animation: at-fsw-in 0.6s var(--at-ease) both;
+}
+
+.at-am-top .at-fsw {
+  display: none;
+}
+
+@keyframes at-fsw-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
   }
 }

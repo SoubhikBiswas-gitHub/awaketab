@@ -73,8 +73,8 @@ const t = createT(locale);
       schema={schema}
       alternates={alternates}
     />
-    <script is:inline set:html={bootJs} />
     {wholeTool && <link rel="expect" href="#at-tool-parsed" blocking="render" />}
+    <script is:inline set:html={bootJs} />
     {header && <link rel="expect" href="#at-hm-menu" blocking="render" />}
     <slot name="head" />
   </head>

@@ -156,7 +156,7 @@ function probeTool(): void {
         t: Math.round(performance.now()),
         face: face ? (/\bat-face-(\w+)/u.exec(face.className)?.[1] ?? '?') : null,
         digits: digits ? (digits.textContent ?? '').replace(/\s+/gu, '') : null,
-        tab: seg([...tool.querySelectorAll('.at-faces')].find(rendered), '[aria-selected="true"]'),
+        tab: [...tool.querySelectorAll('.at-fc [data-t="fn"]')].find(rendered)?.textContent ?? null,
         preset: seg(tool.querySelector('[data-chips] .at-bar'), '[aria-pressed="true"]'),
         pill: rendered(pill) ? (pill.textContent ?? '').trim() : null,
         primary: primary.length > 0 && primary.every((el) => opacity(el) >= 0.99),
@@ -346,7 +346,8 @@ test.describe('layout stability', { tag: '@stability' }, () => {
           await page.evaluate(() => {
             if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
           });
-          const face = (name: string) => page.locator(`#awaketab-tool .at-faces [data-face="${name}"]:visible`).first();
+          const html = page.locator('html');
+          const gallery = page.locator('dialog[data-dialog="faces"]');
           const menu = page.locator('#at-hm-menu');
           const steps: Array<[string, () => Promise<void>]> = [
             [
@@ -366,8 +367,12 @@ test.describe('layout stability', { tag: '@stability' }, () => {
             ...(['bold', 'horizon', 'tide', 'ring'] as const).map((name): [string, () => Promise<void>] => [
               `face ${name}`,
               async () => {
-                await face(name).click();
-                await expect(face(name)).toHaveAttribute('aria-selected', 'true');
+                await page.locator('#awaketab-tool .at-fc-open:visible').first().click();
+                await expect(gallery).toBeVisible();
+                await gallery.locator(`[data-pick="${name}"]`).click();
+                await expect(gallery).toBeHidden();
+                if (name === 'ring') await expect(html).not.toHaveAttribute('data-face');
+                else await expect(html).toHaveAttribute('data-face', name);
               },
             ]),
             [
