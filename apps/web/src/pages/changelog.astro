@@ -54,6 +54,7 @@ const filters = [
 ].map((f) => ({ ...f, aria: `${f.label}, ${String(f.count)} changes` }));
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
+const ogImage = '/og/changelog-en.png';
 const canonical = `${site}/changelog`;
 ---
 
@@ -61,12 +62,13 @@ const canonical = `${site}/changelog`;
   title={t('page.changelog.title')}
   description={t('page.changelog.description')}
   canonical={canonical}
-  ogImage="/og/changelog-en.png"
+  ogImage={ogImage}
   schema={articleSchema({
     canonical,
     title: t('page.changelog.h1'),
     description: t('page.changelog.description'),
     locale: 'en',
+    image: `${site}${ogImage}`,
     published: '2026-09-09',
     ...(latest ? { updated: latest } : {}),
     breadcrumbs: [

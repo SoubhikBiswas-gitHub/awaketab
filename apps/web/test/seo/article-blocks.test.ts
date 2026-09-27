@@ -50,6 +50,11 @@ async function indexedEnglish(): Promise<string[]> {
   );
 }
 
+const ldGraph = (html: string): Array<Record<string, unknown>> =>
+  [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gu)].flatMap(
+    (m) => (JSON.parse(m[1] ?? '{}') as { '@graph'?: Array<Record<string, unknown>> })['@graph'] ?? [],
+  );
+
 const pillLabels = (html: string): string[] =>
   [...html.matchAll(/<span data-lock="[a-z]+" class="at-pill[^"]*">[\s\S]*?<\/svg>([^<]*)<\/span>/gu)].map((m) =>
     (m[1] ?? '').replace(/&#39;/gu, "'").trim(),
@@ -146,10 +151,7 @@ describe('structured article blocks (docs/06 §22)', () => {
         routes.push(m[1] ?? '');
     for (const route of routes) {
       const html = await built(route);
-      const graph = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gu)].flatMap(
-        (m) => (JSON.parse(m[1] ?? '{}') as { '@graph'?: Array<Record<string, unknown>> })['@graph'] ?? [],
-      );
-      const article = graph.find((node) => node['@type'] === 'Article');
+      const article = ldGraph(html).find((node) => node['@type'] === 'Article');
       const og = /<meta property="og:image" content="([^"]+)"/u.exec(html)?.[1];
       const h1 = /<h1[^>]*>([^<]+)<\/h1>/u.exec(html)?.[1]?.trim();
       expect(article, route).toBeDefined();
@@ -161,5 +163,32 @@ describe('structured article blocks (docs/06 §22)', () => {
       expect(article?.author, `${route} author`).toMatchObject({ '@type': 'Person', name: 'Soubhik Biswas' });
       expect(article?.publisher, `${route} publisher`).toMatchObject({ '@type': 'Organization', name: 'AwakeTab' });
     }
+  });
+
+  // Every indexed page, not only the articles: hubs, legal pages, presets and product pages carry Article data too,
+  // and Google needs its image, which is the page's own Open Graph image.
+  it('gives every indexed page with Article structured data its own Open Graph image', async () => {
+    const sitemaps = (await readdir(dist)).filter((name) => /^sitemap-(?!index\.).+\.xml$/u.test(name));
+    const routes = new Set<string>();
+    for (const name of sitemaps) {
+      const xml = await readFile(new URL(name, dist), 'utf8');
+      for (const m of xml.matchAll(/<loc>https:\/\/awaketab\.com(\/[^<]*)?<\/loc>/gu)) routes.add(m[1] ?? '/');
+    }
+    expect(routes.size).toBeGreaterThanOrEqual(47);
+    let articles = 0;
+    for (const route of routes) {
+      const html = await built(route);
+      const og = /<meta property="og:image" content="([^"]+)"/u.exec(html)?.[1] ?? '';
+      expect(og, `${route} og:image`).toMatch(/^https:\/\/awaketab\.com\/og\/.+\.png$/u);
+      await expect(
+        readFile(new URL(og.replace('https://awaketab.com/', ''), dist)),
+        `${route} og file`,
+      ).resolves.toBeTruthy();
+      for (const node of ldGraph(html).filter((n) => n['@type'] === 'Article')) {
+        articles += 1;
+        expect(node.image, `${route} schema image`).toBe(og);
+      }
+    }
+    expect(articles).toBeGreaterThanOrEqual(44);
   });
 });

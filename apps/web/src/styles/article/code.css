@@ -59,8 +59,6 @@
   }
 
   .at-copy svg {
-    inline-size: var(--at-icon-sm);
-    block-size: var(--at-icon-sm);
     fill: none;
     stroke: currentcolor;
     stroke-width: 1.8;

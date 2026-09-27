@@ -111,34 +111,36 @@ export function onEnded(ctx: IToolCtx, reason: TEndReason, session: ISession): v
         ? t('tool.toast.battery', { percent: s.settings.battery.threshold })
         : t('tool.toast.lostTimeout');
   void notify(ctx, t('end.notify.title'), body, 'at-end');
-  flashTitle(t('end.titleFlash'));
   if (reason === 'battery') finish(ctx, reason, session);
-  if (reason !== 'completed') return;
-  if (s.settings.endBehaviour === 'prompt_extend' && s.ui.mode !== 'cook') {
-    // The time's-up card (canvas status `timesup`): the screen stays awake for the grace period while the user
-    // decides; Stop, or the grace running out, releases it.
-    askedSession = session;
-    ctx.store.set({
-      ui: {
-        ask: {
-          until: Date.now() + EXTEND_AUTO_STOP_MS,
-          fb: s.lock === 'fallback',
+  if (reason === 'completed') {
+    if (s.settings.endBehaviour === 'prompt_extend' && s.ui.mode !== 'cook') {
+      // The time's-up card (canvas status `timesup`): the screen stays awake for the grace period while the user
+      // decides; Stop, or the grace running out, releases it.
+      askedSession = session;
+      ctx.store.set({
+        ui: {
+          ask: {
+            until: Date.now() + EXTEND_AUTO_STOP_MS,
+            fb: s.lock === 'fallback',
+          },
+          open: '',
         },
-        open: '',
-      },
-    });
-    void ctx.lock.request().then(ctx.syncLock);
-    window.clearTimeout(askTimer);
-    askTimer = window.setTimeout(() => {
-      finishAsk(ctx);
-    }, EXTEND_AUTO_STOP_MS);
-    return;
+      });
+      void ctx.lock.request().then(ctx.syncLock);
+      window.clearTimeout(askTimer);
+      askTimer = window.setTimeout(() => {
+        finishAsk(ctx);
+      }, EXTEND_AUTO_STOP_MS);
+    } else {
+      toast(ctx.store, {
+        kind: 'success',
+        text: t('tool.timer.complete'),
+        id: 'end',
+      });
+      finish(ctx, reason, session);
+      maybeRate(ctx);
+    }
   }
-  toast(ctx.store, {
-    kind: 'success',
-    text: t('tool.timer.complete'),
-    id: 'end',
-  });
-  finish(ctx, reason, session);
-  maybeRate(ctx);
+  // After the state change: the tab title has left the countdown, so the flash alternates with the plain title.
+  flashTitle(t('end.titleFlash'));
 }

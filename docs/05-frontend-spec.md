@@ -533,6 +533,18 @@ Lock state comes from `@awaketab/wake`; session status from `@awaketab/core`. Co
 | any | `aborted` (`error`) | Track | Ready | Static | Enabled | Error toast "Something went wrong — try again." + `client_error` |
 | any | `aborted` (`user`) | Track | Ready | Static | Enabled | — |
 
+**Tab title and favicon** (`DESIGN.md` §2.3, decision O-19; `src/tool/ui/view.ts`). The browser tab mirrors the state, so a background tab still tells the truth. The title and favicon change only while the tool island runs (the tool page and the article tool card); every other page keeps its own title and `/favicon.svg`.
+
+| Tool status | Tab title (`tool.tab.*`) | Favicon (`/icons/tab-*.svg`) |
+|---|---|---|
+| Awake (`held`, `fallback`) | `● {timer}`: "● 24:18 left", or "● 12:03 awake so far" with no limit | `tab-awake.svg`: lamp bead |
+| Paused (`lost`) | `Paused · {timer}`: "Paused · 24:18 left" | `tab-paused.svg`: amber pause bars |
+| Blocked (`denied`) | "Blocked · AwakeTab" | `tab-blocked.svg`: red triangle |
+| Session done (`completed`, battery stop) | The page title; the 1 Hz "Done — AwakeTab" flash (§3.9) alternates with it until the tab is seen | `tab-done.svg`: closed ring and a tick |
+| Ready, Starting…, one tap needed, time's up | The page title | `/favicon.svg` |
+
+`{timer}` is the timer's accessible label (`tool.timer.left` / `tool.timer.awakeSoFar`), so the tab reads exactly like the timer. The favicon shape, not only its colour, carries the state; each SVG has a `prefers-color-scheme: dark` variant with the dark token values. The flash starts after the session's end state is set, so it restores the page title, never a stale countdown.
+
 ---
 
 ## 7. Accessibility (WCAG 2.2 AA)
