@@ -268,7 +268,10 @@ describe('built site SEO', () => {
       // Only the runtime strings the mirror needs are embedded, not the whole catalog.
       const catalog = /data-i18n-catalog[^>]*>(?<json>[^<]*)</u.exec(html)?.groups?.json ?? '{}';
       const keys = Object.keys(JSON.parse(catalog) as Record<string, string>);
-      expect(keys.every((k) => k.startsWith('tool.pill.') || k === 'tool.timer.indefiniteIdle'), route).toBe(true);
+      // B4 (PipWindow canvas): the popup also writes its "until 5:28 PM" line, so those two strings ship too.
+      const runtime = new Set(['tool.timer.indefiniteIdle', 'ambient.until', 'ambient.tomorrow']);
+      expect(keys.every((k) => k.startsWith('tool.pill.') || runtime.has(k)), route).toBe(true);
+      expect(keys.filter((k) => runtime.has(k)).sort(), route).toEqual([...runtime].sort());
       expect(keys.length, route).toBeGreaterThan(5);
       if (ready) expect(html, route).toContain(`<span data-pill-text>${ready}</span>`);
       expect(robots, route).toContain(`Disallow: /${route}\n`);

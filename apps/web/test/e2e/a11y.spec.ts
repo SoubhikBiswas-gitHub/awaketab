@@ -224,8 +224,15 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
       await page.goto(`/?mode=${mode}${mode === 'cook' ? '&autostart=0' : ''}`);
       const layer = page.locator('dialog[data-ambient]');
       await expect(layer).toHaveAttribute('data-mode', mode);
-      // Wait for the lazily loaded mode module to render its content.
-      await expect(layer.locator('[data-ambient-content] > *').first()).toBeVisible();
+      // Wait for the lazily loaded mode module to render its content (idle-only parts start hidden).
+      await expect(layer.locator('[data-ambient-content] > :not([hidden])').first()).toBeVisible();
+      // …and for its entrance (a 0.7 s rise from opacity 0, DESIGN.md §8): mid-fade colours are not the
+      // resting colours axe must judge. Infinite loops (aura, halo) and the per-second transitions never end.
+      await page.waitForFunction(() =>
+        document
+          .getAnimations()
+          .every((a) => !(a instanceof CSSAnimation) || a.effect?.getTiming().iterations === Infinity || a.playState === 'finished'),
+      );
     },
   })),
 ];

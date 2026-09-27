@@ -7,14 +7,16 @@ const CHANNEL = 'awaketab'; // = CHANNEL_NAME in @awaketab/core
 export const PIP_ADD_MS = 15 * 60_000; // = PIP_ADD_MS in tool/pip.ts
 
 let catalog: Record<string, string> = {};
-const t = (key: string): string => catalog[key] ?? key;
+const t = (key: string, time = ''): string => (catalog[key] ?? key).replace('{time}', time);
 
-function hms(ms: number): string {
+/** Display digits with a dimmed tail (DESIGN §4): `24:17` → ["24", ":17"], `1:24:17`, `1d 02:15:00`. */
+function split(ms: number): [string, string] {
   const total = Math.max(0, Math.floor(ms / 1000));
   const p = (n: number) => String(n).padStart(2, '0');
   const days = Math.floor(total / 86400);
-  const clock = `${p(Math.floor((total % 86400) / 3600))}:${p(Math.floor((total % 3600) / 60))}:${p(total % 60)}`;
-  return days > 0 ? `${String(days)}d ${clock}` : clock;
+  const h = Math.floor((total % 86400) / 3600);
+  const m = p(Math.floor((total % 3600) / 60));
+  return [days > 0 ? `${String(days)}d ${p(h)}:${m}` : h ? `${String(h)}:${m}` : m, `:${p(total % 60)}`];
 }
 
 type TState = Extract<TTabMessage, { type: 'state' }>;
@@ -40,15 +42,28 @@ export function pickOwner(states: Iterable<TState>): TState | null {
  * Timer text for a snapshot, computed locally so a throttled owner tab never freezes the popup. Same maths
  * as format.ts remainingOf(): duration plans add paused time back, until plans count to the wall target.
  */
-export function mirrorTime(s: TState, now: number): string {
-  if (!LIVE.has(s.status) || s.startedAt === null) return t('tool.timer.indefiniteIdle');
+export function mirrorMs(s: TState, now: number): { ms: number; left: boolean } | null {
+  if (!LIVE.has(s.status) || s.startedAt === null) return null;
   const pausedMs = s.pausedMs ?? 0;
   const pausing = s.status === 'paused' && s.pausedAt ? now - s.pausedAt : 0;
   if (s.planType === 'indefinite' || s.endsAt === null || s.endsAt === undefined) {
-    return hms(now - s.startedAt - pausedMs - pausing);
+    return { ms: now - s.startedAt - pausedMs - pausing, left: false };
   }
-  if (s.planType === 'until') return hms(s.endsAt - now);
-  return hms(s.endsAt - now + pausedMs + pausing);
+  if (s.planType === 'until') return { ms: s.endsAt - now, left: true };
+  return { ms: s.endsAt - now + pausedMs + pausing, left: true };
+}
+
+export function mirrorTime(s: TState, now: number): string {
+  const v = mirrorMs(s, now);
+  return v ? split(v.ms).join('') : t('tool.timer.indefiniteIdle');
+}
+
+/** "until 5:28 PM" (rounded to the minute, "tomorrow" past midnight), in the page language. */
+function untilText(end: number, now: number): string {
+  const r = Math.round(end / 60_000) * 60_000;
+  const time = new Intl.DateTimeFormat(document.documentElement.lang || 'en', { hour: 'numeric', minute: '2-digit' }).format(r);
+  const day = new Date(r).toDateString() === new Date(now).toDateString();
+  return t('ambient.until', day ? time : t('ambient.tomorrow', time));
 }
 
 /**
@@ -67,6 +82,7 @@ export function mountMirror(root: HTMLElement, channel: BroadcastChannel | null 
   const add = root.querySelector<HTMLButtonElement>('[data-pip-add]');
   const stop = root.querySelector<HTMLButtonElement>('[data-pip-stop]');
   const empty = root.querySelector<HTMLElement>('[data-pip-empty]');
+  const until = root.querySelector<HTMLElement>('[data-pip-until]');
   const states = new Map<string, TState>();
   let lastHeard = 0;
 
@@ -78,13 +94,23 @@ export function mountMirror(root: HTMLElement, channel: BroadcastChannel | null 
     const live = fresh && LIVE.has(owner.status);
     if (pill) pill.dataset.lock = lock;
     if (pillText) pillText.textContent = t(`tool.pill.${lock}`);
+    const v = fresh ? mirrorMs(owner, now) : null;
     if (digits) {
-      digits.textContent = fresh ? mirrorTime(owner, now) : t('tool.timer.indefiniteIdle');
+      const [a, b] = v ? split(v.ms) : [t('tool.timer.indefiniteIdle'), ''];
+      const tail = document.createElement('span');
+      tail.textContent = b;
+      digits.replaceChildren(a, tail);
+      digits.toggleAttribute('data-long', a.length + b.length > 5);
       digits.classList.toggle('is-muted', !(live && (lock === 'held' || lock === 'fallback')));
+    }
+    if (until) {
+      until.hidden = !(v?.left && lock === 'held');
+      until.textContent = v?.left ? untilText(now + v.ms, now) : '';
     }
     if (stop) stop.hidden = !live;
     if (add) add.hidden = !live || owner.endsAt === null || owner.endsAt === undefined;
-    if (empty) empty.hidden = fresh;
+    if (empty) empty.hidden = live;
+    root.toggleAttribute('data-live', live);
   };
 
   const post = (msg: TTabMessage) => {

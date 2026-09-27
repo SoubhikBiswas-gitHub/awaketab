@@ -1,8 +1,6 @@
 ---
-import { cn } from 'cn';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import StatusPill from './shell/StatusPill.astro';
-import { buttonVariants } from '@/components/ui/button';
+import '../styles/ambient.css';
 import { catalogFor, createT } from '../i18n/load';
 import { localePath, type TLocale } from '../i18n/locales';
 
@@ -14,29 +12,31 @@ interface Props {
 // It mirrors the owning tab over BroadcastChannel('awaketab') — no engine, no wake lock, no cards, no ads.
 // Served at /pip (en) and /{lang}/pip; tool/pip.ts opens the one matching the opener's language. Everything
 // static is rendered here; the page embeds only the strings pip-mirror.ts looks up at runtime (the pill
-// states and the idle timer), not the whole catalog.
+// states, the idle timer and the "until" line), not the whole catalog. Layout: PipWindow canvas, styles in
+// styles/ambient.css (shared with the Document PiP window).
 const { locale } = Astro.props;
 const t = createT(locale);
-const runtimeKeys = Object.keys(catalogFor('en')).filter((k) => k.startsWith('tool.pill.') || k === 'tool.timer.indefiniteIdle');
+const runtime = new Set(['tool.timer.indefiniteIdle', 'ambient.until', 'ambient.tomorrow']);
+const runtimeKeys = Object.keys(catalogFor('en')).filter((k) => k.startsWith('tool.pill.') || runtime.has(k));
 const catalogJson = JSON.stringify(Object.fromEntries(runtimeKeys.map((k) => [k, t(k)]))).replaceAll('<', '\\u003c');
-const btn = cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'min-h-11 cursor-pointer');
 ---
 
 <BaseLayout title={t('page.pip.title')} description={t('page.home.description')} locale={locale} noindex bare>
   <main id="awaketab-pip" class="at-pip-body">
     <h1 class="sr-only">{t('page.pip.title')}</h1>
     <script is:inline type="application/json" data-i18n-catalog set:html={catalogJson}></script>
-    <StatusPill size="S" data-pill aria-live="polite" aria-atomic="true">
-      <span data-pill-text>{t('tool.pill.idle')}</span>
-    </StatusPill>
-    <div class="at-timer" data-timer role="timer" aria-live="off">
-      <div class="at-timer-digits is-muted" data-timer-digits>{t('tool.timer.indefiniteIdle')}</div>
+    <div class="at-pip-top">
+      <output class="at-pill" data-pill data-lock="idle" aria-live="polite" aria-atomic="true">
+        <span data-pill-text>{t('tool.pill.idle')}</span>
+      </output>
+      <span class="at-pip-until" data-pip-until hidden></span>
     </div>
+    <div class="at-pip-digits is-muted" data-timer-digits role="timer" aria-live="off">{t('tool.timer.indefiniteIdle')}</div>
     <div class="at-pip-actions">
-      <button class={btn} type="button" data-pip-add hidden aria-label={t('pip.add15.label')}>{t('pip.add15')}</button>
-      <button class={btn} type="button" data-pip-stop hidden>{t('tool.ring.stop')}</button>
+      <button class="at-pip-btn" type="button" data-pip-add hidden aria-label={t('pip.add15.label')}>{t('pip.add15')}</button>
+      <button class="at-pip-btn" type="button" data-pip-stop hidden>{t('tool.ring.stop')}</button>
     </div>
-    <p class="at-pip-empty" data-pip-empty>{t('pip.empty')} <a href={localePath(locale, '/')} target="_blank">{t('app.name')}</a></p>
+    <p class="at-pip-empty" data-pip-empty>{t('pip.empty')}&nbsp;<a href={localePath(locale, '/')} target="_blank">{t('app.name')}</a></p>
   </main>
 </BaseLayout>
 <script src="../tool/pip-mirror.ts"></script>
