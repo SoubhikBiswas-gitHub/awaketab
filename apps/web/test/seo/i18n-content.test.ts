@@ -275,7 +275,7 @@ describe('hreflang graph', () => {
       }
     }
     for (const xml of sitemaps) {
-      for (const match of xml.matchAll(/<url><loc>([^<]+)<\/loc><lastmod>[^<]+<\/lastmod>(.*?)<\/url>/gu)) {
+      for (const match of xml.matchAll(/<url><loc>([^<]+)<\/loc>(?:<lastmod>[^<]+<\/lastmod>)?(.*?)<\/url>/gu)) {
         const loc = match[1] ?? '';
         const set = [...(match[2] ?? '').matchAll(/hreflang="([^"]+)" href="([^"]+)"/gu)]
           .map((m) => `${m[1] ?? ''} ${m[2] ?? ''}`)

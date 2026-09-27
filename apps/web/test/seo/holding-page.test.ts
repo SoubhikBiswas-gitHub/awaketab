@@ -126,6 +126,32 @@ describe('built site SEO', () => {
     expect(english).toContain(`${site}/extension</loc>`);
   });
 
+  // lastmod is each page's real last change (scripts/sitemap.mjs), never the build time: an article's equals the
+  // dateModified it shows, and each sitemap in the index carries its newest page's date.
+  it('dates sitemap URLs by their last real change', async () => {
+    const index = await readFile(new URL('sitemap-index.xml', dist), 'utf8');
+    const now = Date.now();
+    let articles = 0;
+    for (const locale of ['en', 'es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi']) {
+      const xml = await readFile(new URL(`sitemap-${locale}.xml`, dist), 'utf8');
+      const dates: string[] = [];
+      for (const [, loc = '', lastmod] of xml.matchAll(/<url><loc>([^<]+)<\/loc>(?:<lastmod>([^<]+)<\/lastmod>)?/gu)) {
+        if (lastmod === undefined) continue;
+        dates.push(lastmod);
+        expect(lastmod, loc).toMatch(/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2}))?$/u);
+        expect(Date.parse(lastmod), loc).toBeLessThanOrEqual(now);
+        if (!/\/(?:for|on|vs|guides|learn)\/[^/]+$/u.test(loc)) continue;
+        const html = await readFile(built(new URL(loc).pathname), 'utf8');
+        expect(/"dateModified":"([^"]+)"/u.exec(html)?.[1], loc).toBe(lastmod);
+        articles += 1;
+      }
+      const newest = dates.sort((a, b) => Date.parse(a) - Date.parse(b)).at(-1);
+      const entry = new RegExp(`<loc>${site}/sitemap-${locale}\\.xml</loc>(?:<lastmod>([^<]+)</lastmod>)?`, 'u');
+      expect(entry.exec(index)?.[1], locale).toBe(newest);
+    }
+    expect(articles).toBeGreaterThan(20);
+  });
+
   it('publishes the /extension landing page with store links, the Firefox note and no ad code', async () => {
     const html = await readFile(built('/extension'), 'utf8');
     expect(html).toContain('data-store="chrome"');
