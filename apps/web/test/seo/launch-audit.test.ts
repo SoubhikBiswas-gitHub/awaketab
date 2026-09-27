@@ -78,7 +78,7 @@ describe('F-07 · /changelog renders Markdown and orders by date', () => {
     expect(cards).not.toContain('# 2026-09');
   });
 
-  it('puts the 1.0 launch entry first, then newest date first', async () => {
+  it('pins the 1.0 launch entry first, then newest date first', async () => {
     // Entries only: the shared footer (B2) carries the language switcher's own "Language" heading.
     const html = (await page('/changelog')).split('<footer')[0] ?? '';
     // B6 (board PageChangelog): the release is a card with an h2; the other entries are h3 under an h2 per date.
@@ -92,11 +92,13 @@ describe('F-07 · /changelog renders Markdown and orders by date', () => {
     expect(titles[0]).toBe('1.0 — launch');
     expect(dates.length).toBe(titles.length);
     expect(dates.length).toBeGreaterThanOrEqual(14);
-    expect([...dates].sort().reverse()).toEqual(dates);
+    // The release card is pinned on top (changelog.astro); the entries after it run newest first.
+    const rest = dates.slice(1);
+    expect([...rest].sort().reverse()).toEqual(rest);
     // Every fragment has front matter: no entry falls back to its file name.
     for (const title of titles) expect(title).not.toMatch(/^\d{4}-\d{2}-/u);
     // The Article schema's dateModified follows the newest entry.
-    expect(html).toContain(`"dateModified":"${dates[0] ?? ''}"`);
+    expect(html).toContain(`"dateModified":"${[...dates].sort().at(-1) ?? ''}"`);
   });
 });
 
