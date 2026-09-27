@@ -47,8 +47,8 @@
     --at-bead: var(--at-muted);
 
     display: inline-flex;
-    flex-shrink: 0;
     align-items: center;
+    min-inline-size: 0;
     gap: var(--at-gap-tight);
     min-block-size: var(--at-h-control);
     border-radius: var(--at-r-sm);
@@ -1077,6 +1077,10 @@
   }
 
   @media (width >= 1024px) {
+    .at-logo {
+      flex-shrink: 0;
+    }
+
     .at-nav {
       display: flex;
     }
