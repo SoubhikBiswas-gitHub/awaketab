@@ -728,6 +728,7 @@
   "ambient.focus.finish": "Finish the block",
   "ambient.message.preview": "60 s preview · {n} s left",
   "ambient.message.previewShort": "Preview · {n} s",
+  "ambient.message.ended": "Preview ended",
   "ambient.message.back": "Back to {mode}",
   "ambient.message.edit": "Edit message",
   "ambient.message.label": "Message on the awake screen",

@@ -221,13 +221,16 @@ export function mountAmbient(ctx: IToolCtx): () => void {
     if (!dialog.open) enter();
     dialog.dataset.mode = mode;
     modes.style.setProperty('--i', String(BAR.indexOf(mode)));
-    for (const b of modes.querySelectorAll<HTMLElement>('[data-am-mode]')) {
-      b.setAttribute('aria-pressed', String(b.dataset.amMode === mode));
-    }
     if (title) title.textContent = t('ambient.title', { mode: t(`ambient.mode.${mode}`) });
     lastInput = Date.now();
     setHidden(false);
     armHide();
+    // showModal() focuses the first mode button; focus belongs on the selected one (a mode may move it on).
+    for (const b of modes.querySelectorAll<HTMLElement>('[data-am-mode]')) {
+      const on = b.dataset.amMode === mode;
+      b.setAttribute('aria-pressed', String(on));
+      if (on) b.focus();
+    }
     unmountMode = MODES[mode]?.(content, ctx) ?? null;
   };
 
@@ -237,7 +240,9 @@ export function mountAmbient(ctx: IToolCtx): () => void {
   void ambientCss().then(() => {
     if (gone) return;
     unsub = store.subscribe((s) => {
-      if (s.ui.mode !== current) apply(s.ui.mode);
+      // No layer while the lock is refused or missing (denied, unsupported): the fix is on the tool page.
+      if (/ed$/u.test(s.lock) && s.ui.mode !== 'standard') setMode(ctx, 'standard');
+      else if (s.ui.mode !== current) apply(s.ui.mode);
       // Re-assert the palette when the theme changes underneath night mode.
       if (current === 'night' && document.documentElement.dataset.theme !== 'oled') applyTheme(s.settings.theme, true);
     });

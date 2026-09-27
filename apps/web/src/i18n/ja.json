@@ -702,6 +702,7 @@
   "ambient.focus.finish": "ブロックを終える",
   "ambient.message.preview": "60秒プレビュー · 残り{n}秒",
   "ambient.message.previewShort": "プレビュー · {n}秒",
+  "ambient.message.ended": "プレビュー終了",
   "ambient.message.back": "{mode}に戻る",
   "ambient.message.edit": "メッセージを編集",
   "ambient.message.label": "画面に表示するメッセージ",
