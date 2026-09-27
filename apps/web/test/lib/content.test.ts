@@ -209,3 +209,14 @@ describe('fact-check claims stay fixed (D-R12)', () => {
     }
   });
 });
+
+// O-15: the templated-article generator is retired. A re-run would overwrite every rewrite, so it must not come
+// back as a file or as a package script.
+describe('content generator stays retired (O-15)', () => {
+  it('has no write-content script and no npm script that runs one', async () => {
+    const { access } = await import('node:fs/promises');
+    await expect(access(path.resolve('apps/web/scripts/write-content.mjs'))).rejects.toThrow();
+    const pkg = JSON.parse(await readFile(path.resolve('apps/web/package.json'), 'utf8')) as { scripts: Record<string, string> };
+    for (const cmd of Object.values(pkg.scripts)) expect(cmd).not.toMatch(/write-content/u);
+  });
+});
