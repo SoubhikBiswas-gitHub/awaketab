@@ -35,8 +35,62 @@ type TSatori = (
 ) => Promise<string>;
 type TResvg = new (
   svg: string,
-  opts: { fitTo: { mode: 'width'; value: number } },
-) => { render(): { asPng(): Uint8Array } };
+  opts: { background: string; fitTo: { mode: 'width'; value: number } },
+) => { render(): { pixels: Uint8Array; width: number; height: number } };
+type TZlib = (data: Uint8Array, opts: { level: number; mem: number }) => Uint8Array;
+
+const CRC_TABLE = Array.from({ length: 256 }, (_, n) => {
+  let c = n;
+  for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+  return c >>> 0;
+});
+
+function crc32(bytes: Uint8Array): number {
+  let c = 0xffffffff;
+  for (const byte of bytes) c = (CRC_TABLE[(c ^ byte) & 0xff] ?? 0) ^ (c >>> 8);
+  return (c ^ 0xffffffff) >>> 0;
+}
+
+function chunk(type: string, data: Uint8Array): Uint8Array {
+  const out = new Uint8Array(12 + data.length);
+  const view = new DataView(out.buffer);
+  view.setUint32(0, data.length);
+  out.set(Buffer.from(type, 'latin1'), 4);
+  out.set(data, 8);
+  view.setUint32(8 + data.length, crc32(out.subarray(4, 8 + data.length)));
+  return out;
+}
+
+// The Chrome Web Store takes screenshots and promo tiles as 24-bit PNG with no alpha, so the opaque render is
+// written as colour type 2 (RGB). fflate is pure JS, so the bytes are the same on every machine.
+function rgbPng(rgba: Uint8Array, width: number, height: number, zlib: TZlib): Uint8Array {
+  const stride = width * 3;
+  const raw = new Uint8Array((stride + 1) * height);
+  for (let y = 0; y < height; y += 1) {
+    const row = y * (stride + 1);
+    raw[row] = 1; // "Sub" filter: each byte minus the same channel one pixel to the left.
+    for (let x = 0; x < width; x += 1) {
+      const from = (y * width + x) * 4;
+      if (rgba[from + 3] !== 255) throw new Error(`store image: pixel ${String(x)},${String(y)} is not opaque`);
+      for (let ch = 0; ch < 3; ch += 1) {
+        const left = x > 0 ? (rgba[from - 4 + ch] ?? 0) : 0;
+        raw[row + 1 + x * 3 + ch] = ((rgba[from + ch] ?? 0) - left) & 0xff;
+      }
+    }
+  }
+  const header = new Uint8Array(13);
+  const view = new DataView(header.buffer);
+  view.setUint32(0, width);
+  view.setUint32(4, height);
+  header.set([8, 2, 0, 0, 0], 8);
+  const parts = [
+    Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    chunk('IHDR', header),
+    chunk('IDAT', zlib(raw, { level: 9, mem: 12 })),
+    chunk('IEND', new Uint8Array(0)),
+  ];
+  return Buffer.concat(parts);
+}
 
 const box = (style: TStyle, children?: TChild | TChild[]): INode => ({
   type: 'div',
@@ -1265,10 +1319,14 @@ export async function renderAll(outDir: string): Promise<Record<string, Uint8Arr
     if (!face) throw new Error(`font: no Geist ${String(weight)}`);
     return face.getAdvanceWidth(text, size, { kerning: true });
   });
-  const png = async (tree: INode, width: number, height: number) =>
-    new Resvg(await satori(tree, { width, height, fonts }), { fitTo: { mode: 'width', value: width } })
-      .render()
-      .asPng();
+  const { zlibSync } = createRequire(satoriEntry)('fflate') as { zlibSync: TZlib };
+  const png = async (tree: INode, width: number, height: number) => {
+    const image = new Resvg(await satori(tree, { width, height, fonts }), {
+      background: c.ground,
+      fitTo: { mode: 'width', value: width },
+    }).render();
+    return rgbPng(image.pixels, image.width, image.height, zlibSync);
+  };
 
   const out: Record<string, Uint8Array> = {};
   for (const shot of SHOTS) {

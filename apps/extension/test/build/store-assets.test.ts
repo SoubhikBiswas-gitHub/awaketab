@@ -17,6 +17,8 @@ describe('store listing images (docs/10 §9)', () => {
         const width = Buffer.from(bytes).readUInt32BE(16);
         const height = Buffer.from(bytes).readUInt32BE(20);
         expect([width, height]).toEqual(file.startsWith('promo') ? [440, 280] : [1280, 800]);
+        // The Chrome Web Store wants 24-bit PNG with no alpha: bit depth 8, colour type 2 (RGB).
+        expect([bytes[24], bytes[25]], file).toEqual([8, 2]);
       }
     } finally {
       await rm(dir, { recursive: true, force: true });

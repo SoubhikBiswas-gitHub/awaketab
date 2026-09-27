@@ -6,4 +6,6 @@ interface IE2eStorageArea {
 declare const chrome: {
   storage: { local: IE2eStorageArea; sync: IE2eStorageArea; session: IE2eStorageArea };
   action: { getBadgeText(details: Record<string, never>): Promise<string> };
+  runtime: { sendMessage(message: unknown): Promise<unknown> };
+  extension: { inIncognitoContext: boolean };
 };
