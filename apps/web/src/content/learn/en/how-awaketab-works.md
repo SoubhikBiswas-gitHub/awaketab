@@ -79,7 +79,7 @@ related:
   - "/learn/screen-wake-lock-api-guide"
   - "/extension"
 author: soubhik
-published: 2026-09-28
+published: 2026-09-27
 ---
 
 ## What does AwakeTab do?

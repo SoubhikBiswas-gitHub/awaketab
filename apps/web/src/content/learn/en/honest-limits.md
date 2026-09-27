@@ -66,7 +66,7 @@ related:
   - "/guides/mac-prevent-sleep-lid-closed"
   - "/extension"
 author: soubhik
-published: 2026-09-28
+published: 2026-09-27
 ---
 
 ## What are the limits at a glance?
