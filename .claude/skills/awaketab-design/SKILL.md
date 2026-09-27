@@ -7,7 +7,7 @@ description: Use for any AwakeTab UI or UX work (tool page, clock faces, states,
 
 Before designing or changing any user-facing UI in this repo:
 
-0. Read `docs/redesign/README.md` (redesign hub: status, DECISIONS.md, agent brief with accuracy and copy corrections, research index). Never contradict a Decided item; raise open questions in DECISIONS.md.
+0. Read `docs/redesign/DECISIONS.md`, open the canvas for the area you touch from `docs/redesign/CANVASES.md`, and take shared UI numbers (header, pill, footer, buttons, cards) from `docs/redesign/PRIMITIVES.md`. Never contradict a Decided item; raise open questions in DECISIONS.md.
 1. Read `PRODUCT.md` (users, personality, anti-references, principles), then `DESIGN.md` (tokens, lamp colours, faces, motion, layout, time format). If you touch the tool island, also read the matching section of `docs/05-frontend-spec.md`.
 2. Check the contracts in `CLAUDE.md`. Never change the seven pill strings: Ready · Starting… · Screen awake · Paused — tab hidden · Blocked — here's the fix · Tap to use the fallback · Awake via video fallback. Keep `at.v1.*` storage keys, routes, ad rules, budgets, zero hydration and system fonts on tool pages.
 3. Design every screen for phone (360–599), tablet (600–1023) and desktop (≥ 1024). Give it both light and dark, with `auto` following `prefers-color-scheme` live.
@@ -36,6 +36,6 @@ Before designing or changing any user-facing UI in this repo:
 
 ## Workflow
 
-- **Prototype first** on the design canvas; `Main.dc.html` is the reference logic. Get owner approval before changing production UI.
+- **Prototype first** on the design canvas (`docs/redesign/CANVASES.md`); the `Main` board on the Tool canvas is the reference logic. Get owner approval before changing production UI.
 - **Changing a contract?** Update the docs in the same change: `docs/00-conventions.md` first for identifiers, `docs/05` for tokens and components.
 - **Before any push:** `pnpm test`, `pnpm test:e2e`, `pnpm build && pnpm test:seo` and the size gate must all be green. `main` auto-deploys.

@@ -1,6 +1,6 @@
 # AwakeTab design system — "Clear Night" (version D)
 
-Status: **approved direction, not yet implemented.** The interactive source of truth is the design canvas (the 12 redesign canvases (docs/redesign/CANVASES.md), `Main.dc.html` holds the reference logic). When this file and `docs/05-frontend-spec.md` disagree, this file describes the target and docs/05 must be updated in the same PR that implements it (CLAUDE.md contracts rule). Product context lives in `PRODUCT.md`.
+Status: **approved direction, not yet implemented.** The interactive source of truth is the design canvas: the 12 redesign canvases linked from `docs/redesign/CANVASES.md` (the `Main` board on the Tool canvas holds the reference logic). When this file and `docs/05-frontend-spec.md` disagree, this file describes the target and docs/05 must be updated in the same PR that implements it (CLAUDE.md contracts rule). Product context lives in `PRODUCT.md`.
 
 Contracts that do **not** change: the seven lock states and their exact pill copy, storage keys `at.v1.*`, routes and slugs, ad placement rules, performance budgets, zero hydration, self-hosted fonts only (no third-party font request; D-R26), `--at-*` token names and their shadcn aliases.
 
@@ -311,5 +311,5 @@ Where §11.5 gives a weight range (caption and small 400–500, ui 500–600), t
 - **Text:** `max-inline-size: var(--at-measure)` for paragraphs; `text-wrap: balance` on headings, `pretty` on paragraphs; long words and URLs break (`overflow-wrap: anywhere`) and never push the page wider.
 
 ### 12.8 Gates
-- **Canvas:** `design/canvas/tools/final/rtaudit.sh` (every board rendered with the real canvas runtime, checked against §11: radius, spacing, gap, type size and weight, control height, borders, colours, nested cards) must report nothing; `rtscan.sh` must flag 0 boards (empty boards, overflow, dropped styles, controls within 12 px of an edge).
+- **Canvas:** every board, rendered with the real canvas runtime, follows §11 (radius, spacing, gap, type size and weight, control height, borders, colours, no nested cards) and has no empty board, overflow, dropped style or control within 12 px of an edge. The render and audit scripts that checked this were removed with the canvas sources; `docs/redesign/CANVASES.md` says how to restore them from git history.
 - **Code:** a stylelint rule rejects raw px or rem for `padding`, `margin`, `gap`, `border-radius`, `font-size`, `line-height`, `height` of controls and `font` outside `tokens.css` (allowed: 0, 1px borders, percentages, `auto`). Plus the responsive sweep in §5 (every route, every 40 px from 320 to 2560). Both run in CI and block the release.

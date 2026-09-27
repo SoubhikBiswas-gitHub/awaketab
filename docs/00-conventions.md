@@ -716,7 +716,7 @@ Accepted on 2026-09-27 with milestone B1 (`docs/redesign/BUILD-PLAN.md`). Values
 
 ### 13.19 Clear Night shared shell (redesign B2)
 
-Accepted on 2026-09-27 with milestone B2 (`docs/redesign/BUILD-PLAN.md`). Specs: `05-frontend-spec.md` §3.2, §3.25–§3.30; values: `DESIGN.md` §6, §11, §12 and `design/canvas/PRIMITIVES.md`. All additions; no contract (lock states and pill copy, storage keys, routes, ad rules, budgets, `--at-*` names) changes.
+Accepted on 2026-09-27 with milestone B2 (`docs/redesign/BUILD-PLAN.md`). Specs: `05-frontend-spec.md` §3.2, §3.25–§3.30; values: `DESIGN.md` §6, §11, §12 and `redesign/PRIMITIVES.md`. All additions; no contract (lock states and pill copy, storage keys, routes, ad rules, budgets, `--at-*` names) changes.
 
 | Identifier | Decision |
 |---|---|
