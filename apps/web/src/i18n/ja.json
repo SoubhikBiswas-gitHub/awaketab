@@ -792,7 +792,7 @@
   "research.verdict.fail": "不合格",
   "research.verdict.partial": "一部合格",
   "kiosk.license.invalid": "このキオスクライセンスのリンクを確認できませんでした。キオスク URL ビルダーから URL を開き直してください。",
-  "ext.name": "AwakeTab for Chrome",
+  "ext.name": "AwakeTab: Keep Screen Awake",
   "ext.description": "ワンクリックで画面（またはコンピューター全体）をスリープさせません。信頼できる正直なステータス表示付き。",
   "ext.command.toggle": "スリープ防止のオン/オフ",
   "ext.level.label": "スリープを防ぐ対象",

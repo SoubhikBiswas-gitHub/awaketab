@@ -792,7 +792,7 @@
   "research.verdict.fail": "Fehlgeschlagen",
   "research.verdict.partial": "Teilweise",
   "kiosk.license.invalid": "Dieser Kiosk-Lizenzlink konnte nicht bestätigt werden. Öffne die URL erneut aus dem Kiosk-URL-Generator.",
-  "ext.name": "AwakeTab for Chrome",
+  "ext.name": "AwakeTab: Keep Screen Awake",
   "ext.description": "Halten Sie Bildschirm oder ganzen Computer per Klick wach – mit einem ehrlichen Status, dem Sie vertrauen können.",
   "ext.command.toggle": "Wachhalten ein/aus",
   "ext.level.label": "Wach halten",

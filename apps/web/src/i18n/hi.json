@@ -792,7 +792,7 @@
   "research.verdict.fail": "फ़ेल",
   "research.verdict.partial": "आंशिक",
   "kiosk.license.invalid": "इस कियोस्क लाइसेंस लिंक की पुष्टि नहीं हो सकी। कियोस्क URL बिल्डर से URL फिर से खोलें।",
-  "ext.name": "AwakeTab for Chrome",
+  "ext.name": "AwakeTab: Keep Screen Awake",
   "ext.description": "एक क्लिक में स्क्रीन (या पूरा कंप्यूटर) जागा रखें — ऐसे स्टेटस के साथ जिस पर आप भरोसा कर सकें।",
   "ext.command.toggle": "जागा रखना चालू/बंद करें",
   "ext.level.label": "जागा रखें",

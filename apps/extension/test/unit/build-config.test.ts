@@ -132,6 +132,8 @@ describe('i18n reuse (no duplicated English strings)', () => {
     ]);
     for (const file of files) {
       const messages = JSON.parse(file.contents) as Record<string, { message: string }>;
+      // The store name is a product name, so it stays in English in every locale.
+      expect(messages.ext_name?.message).toBe('AwakeTab: Keep Screen Awake');
       expect(messages.ext_name?.message.length).toBeLessThanOrEqual(75);
       expect(messages.ext_description?.message.length).toBeLessThanOrEqual(132);
       expect(messages.ext_command_toggle?.message).toBeTruthy();

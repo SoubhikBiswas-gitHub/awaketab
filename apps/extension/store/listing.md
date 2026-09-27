@@ -1,4 +1,4 @@
-# Store listing — AwakeTab for Chrome
+# Store listing — AwakeTab: Keep Screen Awake
 
 Source for the Chrome Web Store and Edge Add-ons dashboards (docs/10 §9, docs/17 "Extension submission"). Paste the fields as written. Every claim here is bounded by docs/19 B7 (no background-tab, Teams/Slack or lid-close claims beyond what is stated) and by `apps/web/src/data/support-matrix.json` (`extension`).
 
@@ -6,9 +6,9 @@ Source for the Chrome Web Store and Edge Add-ons dashboards (docs/10 §9, docs/1
 
 | Field | Value |
 |---|---|
-| Name (manifest, all locales) | AwakeTab for Chrome (`_locales/*/messages.json` → `ext_name`, generated from `ext.name`) |
-| Edge Add-ons display name | AwakeTab |
-| Store title | AwakeTab for Chrome — Keep Screen Awake |
+| Name (manifest, all locales) | AwakeTab: Keep Screen Awake, in English in every locale (`_locales/*/messages.json` → `ext_name`, generated from `ext.name`) |
+| Edge Add-ons display name | AwakeTab: Keep Screen Awake (Edge reads the name from the same package's manifest) |
+| Store title | AwakeTab: Keep Screen Awake (the manifest name; the store shows it as the title) |
 | Short description (≤ 132) | Keep your screen or computer awake with one click, a timer, or a schedule. Honest status, no tracking, no mouse jiggling. |
 | Category | Productivity → Tools |
 | Language | English (the extension UI itself ships en, es, pt-BR, de, fr, ja, zh-CN, hi) |
@@ -19,7 +19,7 @@ Source for the Chrome Web Store and Edge Add-ons dashboards (docs/10 §9, docs/1
 
 ## Detailed description
 
-AwakeTab for Chrome keeps your display — or just your computer — awake while Chrome is running, using Chrome's own power API. Unlike a web page, it keeps working when its tab is hidden or the window is minimised.
+AwakeTab keeps your display — or just your computer — awake while Chrome is running, using Chrome's own power API. Unlike a web page, it keeps working when its tab is hidden or the window is minimised.
 
 - Screen or System: keep the display on, or keep only the computer awake and let the screen dim.
 - The same presets as the AwakeTab web app: 15 minutes to 4 hours, until a time, or until you stop.

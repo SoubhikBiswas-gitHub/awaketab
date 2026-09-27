@@ -819,7 +819,7 @@
   "research.verdict.fail": "Fail",
   "research.verdict.partial": "Partial",
   "kiosk.license.invalid": "This kiosk licence link could not be verified. Open the URL from the Kiosk URL builder again.",
-  "ext.name": "AwakeTab for Chrome",
+  "ext.name": "AwakeTab: Keep Screen Awake",
   "ext.description": "Keep your screen (or your whole computer) awake from a click — with an honest status you can trust.",
   "ext.command.toggle": "Toggle keep-awake",
   "ext.level.label": "Keep awake",

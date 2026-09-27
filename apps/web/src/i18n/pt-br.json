@@ -792,7 +792,7 @@
   "research.verdict.fail": "Falhou",
   "research.verdict.partial": "Parcial",
   "kiosk.license.invalid": "Não foi possível verificar este link de licença de quiosque. Abra novamente a URL gerada no criador de URL de quiosque.",
-  "ext.name": "AwakeTab for Chrome",
+  "ext.name": "AwakeTab: Keep Screen Awake",
   "ext.description": "Mantenha a tela (ou o computador inteiro) ligada com um clique, com um status honesto em que você pode confiar.",
   "ext.command.toggle": "Ativar ou desativar",
   "ext.level.label": "Manter ligado",

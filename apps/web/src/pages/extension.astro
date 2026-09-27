@@ -164,11 +164,11 @@ const P = 2658 / 3600;
         <h2 id="ext-adds" class="at-pg-h2">What the extension adds</h2>
         <p class="at-pg-body">Same honest status as the web app. The difference is who holds the lock: the tab, or Chrome itself.</p>
       </div>
-      <div class="at-pg-panel at-pg-table at-pg-wide" role="table" aria-label="The web app compared with AwakeTab for Chrome" style="--at-pg-cols: minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1fr)">
+      <div class="at-pg-panel at-pg-table at-pg-wide" role="table" aria-label={`The web app compared with ${t('ext.name')}`} style="--at-pg-cols: minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1fr)">
         <div class="at-pg-tr at-pg-th" role="row">
           <span role="columnheader"><span class="sr-only">Feature</span></span>
           <span role="columnheader" class="at-pg-ink2">The web app</span>
-          <span role="columnheader" class="at-pg-th-lamp">AwakeTab for Chrome</span>
+          <span role="columnheader" class="at-pg-th-lamp">{t('ext.name')}</span>
         </div>
         {
           adds.map(([label, web, ext]) => (
