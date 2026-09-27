@@ -117,9 +117,9 @@ The product uses the canvas's fonts (decision D-R26, replacing the earlier "syst
 | Bold and Flip face digits | `--at-font-display`: Space Grotesk 600 (digits-only subset: 0–9 : . , space d h m), letter-spacing −0.06em, `tabular-nums` | Used by the Bold and Flip faces only |
 | Nixie face digits | Nixie One 400 (SIL OFL, self-hosted, unmodified) | Loaded only with the Nixie face |
 | LCD face digits | DSEG7 Classic Italic (SIL OFL, self-hosted, unmodified) | Loaded only with the LCD face |
-| Horizon / Tide digits | Geist weight 200 | |
+| Ring / Horizon / Tide digits | Geist weight 250 (Ring, Horizon) and 200 (Tide) | Horizon and Tide go 100 heavier in the final minute |
 
-Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · button 15–17 · date/time line 15 · digits: ring 76 (60 with hours), bold 128 (96), horizon 64 (48), tide 84 (64); desktop scales the face ×1.55. Bold digits are capped to the face width (`min(128px, 34cqi)`, `min(96px, 22cqi)` with hours, `min(62px, 16cqi)` multi-day) so a wide system font never clips them.
+Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · button 15–17 · date/time line 15 · digits (in face units, 358 × 340 box): ring 80 (62 with hours, 42 with days), bold 168 (112, 64) with seconds at 36 %, horizon 64 (48, 34), tide 88 (64, 50); desktop scales the face ×1.55. All digits are tabular with tight display tracking (−0.045em Geist, −0.065em Space Grotesk); the face box scales with its cell, so the widest value (12:59:59, 1d 02:15:00) always fits.
 
 ## 4. Time and dates
 
@@ -135,9 +135,9 @@ Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · butt
 
 | Size | Width | Tool layout |
 |---|---|---|
-| Phone | 360–599 | Single column: header · date line · face tabs · pill · face (340 tall) · note · spacer · length block · 20 px gap · actions at the very bottom |
+| Phone | 360–599 | Single column: header · date line · face switch · pill · face (340 tall) · note · spacer · length block · 20 px gap · actions at the very bottom |
 | Tablet | 600–1023 | Single column centred, face scaled ×1.35, controls max 520 wide, actions stay bottom |
-| Desktop | ≥ 1024 | Two columns: face left (×1.55), right column pill · note · length block · actions · face tabs |
+| Desktop | ≥ 1024 | Two columns: face left (×1.55), right column pill · note · length block · actions · face switch |
 
 Responsive contract (owner requirement, 27 Sep 2026): every screen is responsive at every width, not only at the drawn ones.
 
@@ -156,7 +156,7 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 ## 6. Components
 
 - **Header:** logo lockup (ring + lamp bead) · three menus (Use it for ▾, Devices ▾, Resources ▾, native popovers that rise in with a lamp glow; use cases carry their suggested length as a ring around the icon) · Extension · Pro · theme switch (Light · Dark · Auto, sliding indicator, 44 px segments) · Add to Chrome (Add to Edge, or Add to Home Screen on iOS). Narrower headers and every tool page fold the menus into one Menu button: a bottom sheet on phones, an anchored panel from 600. The tool header keeps Stats (desktop) and Settings.
-- **Segmented bars** (face tabs, presets, theme): surface pill with one sliding indicator (`translateX(index × 100%)`, 600 ms ease-out), selected text ink 600, others ink-2 500.
+- **Segmented bars** (presets, theme): surface pill with one sliding indicator (`translateX(index × 100%)`, 600 ms ease-out), selected text ink 600, others ink-2 500.
 - **Status pill:** see §11.4 pill sizes; tone 12 % fill + 38 % border, glyph 12 px, `<output aria-live="polite">`.
 - **Primary CTA:** lamp fill, on-accent text, logo glyph, soft lamp shadow. **Stop** (and every strong neutral action: Retry, Stop for today, Send, Install, Exit): `raised` fill + 1 px `line-strong` + `ink` text, so it follows the theme (dark button on dark, light button on light; decision D-R20). **Secondary:** surface + strong line.
 - **Inline panels, not modals:** Until a time (4 half-hour slots with `today`/`tomorrow` sub-labels) and Custom (± 5 min stepper) replace the preset bar in place.
@@ -168,10 +168,10 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 
 ## 7. Clock faces (user-switchable, remembered)
 
-1. **Ring:** 60 minute ticks, depleting arc with glow, bright tip bead with a 3.4 s halo, slow 16 s conic light sweep while awake.
-2. **Bold:** huge digits (seconds dimmed), 12 px bar draining with a 3.8 s shimmer, `of 30 min` and `until` beneath.
-3. **Horizon:** a living sky. The sun (moon at night) travels an arc and touches the horizon exactly when the session ends; sky warms as it sets; clouds drift (90 s / 130 s), stars twinkle at night and dawn, the sun glints on the water. Phase follows the real local time (dawn 5–8, day 8–17, dusk 17–20, night). Digits sit on the water so they never collide with the sun.
-4. **Tide:** water level equals time left; two wave layers (9 s / 15 s), rising bubbles; digits are drawn twice and clipped at the waterline so they stay readable above and below the surface.
+1. **Ring:** a watch dial. 60 fine minute ticks with 12 longer hour ticks, the depleting lamp arc with its glow, a bright tip bead with a 3.4 s halo, a soft lamp glow inside the dial, and a one-minute second sweep: a band of light circling the tick ring once a minute with a bright leading edge (it starts with the session, so the edge passes the top as the seconds read :00; it holds still, amber, while paused). Digits Geist 250, tracking −0.045em, seconds muted.
+2. **Bold:** editorial and left-aligned. A kicker with a state dot, display numerals (Space Grotesk 600, 168; the seconds a raised small figure beside them), a 6 px bar in a lamp gradient that glows while held (dashed while paused, dotted while blocked, like the Ring), then "until 10:30 PM" with the time in ink and "of 30 min" muted.
+3. **Horizon:** a living sky. Five-stop skies for dawn, day, dusk and night; the sun (a lit core; a crescent moon at night) travels a faint dotted arc and sets behind two layers of hills exactly when the session ends, at a small mark on the ridge; the sky warms as it sets; clouds drift (90 s / 130 s), stars twinkle at night and dawn, and the sun lays a broken glint on water with fine reflection lines. Phase follows the real local time (dawn 5–8, day 8–17, dusk 17–20, night). Digits (Geist 250) sit on the water so they never collide with the sun.
+4. **Tide:** water level equals time left. The water has depth (the lamp darkening towards the bottom, a soft light under the surface), a bright meniscus on the front wave, a gently bobbing back wave (13 s / 21 s), glassy rising bubbles; digits are drawn twice and clipped at the waterline so they stay readable above and below the surface.
 5. **Flip:** split-flap cards that really turn on each digit change (the top leaf falls, the bottom leaf lands, 660 ms, shaded as they go); a 1 px hinge with side notches, a soft shadow and a lamp under-glow while the screen is held; seconds on smaller cards.
 6. **Rolling:** odometer drums that roll to the next digit (downward while counting down) in a sunken window, with a hairline of time left beneath.
 7. **Analog:** an SVG dial showing the local time, with a sweeping lamp second hand and time left drawn as an arc on the bezel. Two styles in Settings: Minimal (twelve indices) and Luxe (minute ticks, heavier indices, lume dots, hand inlays, a fine sunburst plate).
@@ -181,7 +181,16 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 11. **LCD:** a seven-segment display on lamp-tinted glass with every unlit segment faintly visible, seconds smaller, an outlined annunciator for the state word.
 12. **LED:** a dot-matrix panel of unlit dots with the digits lit in the lamp colour.
 
-All twelve are free. The newer eight load only when chosen, keep the face box reserved (no layout shift on a switch or a saved face), follow every state through the lamp (`--at-face-c`) with the Ring's arc patterns where they have an arc, respect light, dark and OLED, shift 2 px a minute while the screen is held, and stop flipping, rolling, sweeping and fading under reduced motion. The face tabs show Ring · Bold · Horizon · Tide · More; More opens a small popover with the other eight, and Settings → Clock face shows all twelve as tiles.
+All twelve are free. The newer eight load only when chosen, keep the face box reserved (no layout shift on a switch or a saved face), follow every state through the lamp (`--at-face-c`) with the Ring's arc patterns where they have an arc, respect light, dark and OLED, shift 2 px a minute while the screen is held, and stop flipping, rolling, sweeping and fading under reduced motion.
+
+**Choosing a face.** The order is the gallery's, in three groups: Classic (Ring, Bold, Horizon, Tide), Retro (Flip, Nixie, LCD, LED), Modern (Rolling, Analog, Rings, Words).
+
+- *Face switch* (where the tabs were): one surface pill, Previous · Clock face *name* · Next, 44 px segments, the four-dials icon in the state tone. Previous and Next step at once.
+- *Gallery* (a sheet: bottom on phones, side from 600): every face as a live miniature of the real thing, in the current state, lamp and theme, two per row under kicker headings; still at rest, playing while pointed at or focused, never under reduced motion. The face in use has a lamp border and an "In use" tag; Analog carries its Minimal · Luxe switch. Arrow keys move between tiles, Enter picks and closes.
+- *Swipe* on the clock (touch, trackpad, mouse drag): the face follows the finger and fades while the neighbour's name slides in; past halfway it changes, otherwise it springs back. Page scroll and the dock are never affected.
+- *Keyboard:* `C` next face, `Shift+C` previous (`F` stays fullscreen).
+- Settings → Clock face still shows all twelve as tiles.
+- A switch never shows an empty or unstyled box: the old face stays until the new one is ready.
 
 ## 8. Motion
 

@@ -2,12 +2,13 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
-import { bootInline, BOOT_FILE, themesHref } from './scripts/boot-inline.mjs';
+import { bootInline, BOOT_FILE, facesHref, themesHref } from './scripts/boot-inline.mjs';
 import { polarDefines } from './scripts/polar-server.mjs';
 
 // Libraries each feature pack owns; they never enter the tool's own chunks.
 const PACK_LIBS = [
-  [/\/node_modules\/.*(?:@pqina|embla-carousel)/u, 'faces'],
+  [/\/node_modules\/.*@pqina/u, 'faces'],
+  [/\/node_modules\/.*(?:embla-carousel|wheel-gestures)/u, 'faces-swipe'],
   [/\/node_modules\/.*\/(?:number-flow|esm-env)\//u, 'faces-rolling'],
   [
     /\/node_modules\/(?:.*\/(?:tone|standardized-audio-context|automation-events|tslib)|@babel\/runtime)\//u,
@@ -66,7 +67,11 @@ export default defineConfig({
       },
     ],
     // F-06: PUBLIC_POLAR_SERVER picks CHECKOUT_LINKS and whether the bundles trust the dev licence key.
-    define: { ...polarDefines(), __AT_THEMES__: JSON.stringify(themesHref()) },
+    define: {
+      ...polarDefines(),
+      __AT_THEMES__: JSON.stringify(themesHref()),
+      __AT_FACES__: JSON.stringify(facesHref()),
+    },
     build: {
       // No __vitePreload wrapper or deps map: it put a shared helper chunk and a dependency table on the
       // island's critical path (docs/00 §11: ≤ 15 KB gz). Lazy chunks are small and load on first use.
@@ -98,7 +103,7 @@ export default defineConfig({
           manualChunks(id) {
             // Feature packs (src/tool/packs/<name>/ and their libraries) load on first use under their own budgets.
             // Each clock face is its own chunk (pack-faces-<id>), so picking one never downloads the others.
-            const face = /\/src\/tool\/packs\/faces\/(flip|rolling|analog|rings|word|nixie|lcd|matrix)[.-]/u.exec(
+            const face = /\/src\/tool\/packs\/faces\/(flip|rolling|analog|rings|word|nixie|lcd|matrix|swipe)[.-]/u.exec(
               id,
             )?.[1];
             if (face) return `pack-faces-${face}`;

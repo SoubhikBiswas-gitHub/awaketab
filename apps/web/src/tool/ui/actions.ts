@@ -138,6 +138,10 @@ export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
     else if (name === 'askStop') finishAsk(ctx);
     else if (name === 'battSettings') openSettings(ctx, el);
     else if (name === 'sound') void sound(ctx, 'open', el);
+    else if (name.startsWith('face'))
+      void import('../packs/faces/index.js').then((m) => {
+        m.faceAct(ctx, name, el);
+      });
   });
 }
 

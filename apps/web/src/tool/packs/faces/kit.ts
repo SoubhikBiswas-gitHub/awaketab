@@ -41,14 +41,21 @@ export function put(n: Element, v: string): void {
 
 const sheets = new Map<string, Promise<void>>();
 
-// A face mounts once its sheet is in, so a slow network never shows it unstyled.
-export function sheet(href: string): Promise<void> {
+// A face mounts once its sheet is in, so a slow network never shows it unstyled. `mark` names a link boot.js may
+// already have written before first paint.
+export function sheet(href: string, mark = ''): Promise<void> {
   let ready = sheets.get(href);
   if (!ready) {
     ready = new Promise((resolve) => {
+      if (mark && document.querySelector(`link[${mark}]`)) {
+        resolve();
+        return;
+      }
       const link = el('link');
       link.rel = 'stylesheet';
-      link.href = href;
+      // Absolute, so the copy pip-window.ts clones into the about:blank floating window still resolves.
+      link.href = new URL(href, location.href).href;
+      if (mark) link.setAttribute(mark, '');
       link.onload = link.onerror = () => {
         resolve();
       };

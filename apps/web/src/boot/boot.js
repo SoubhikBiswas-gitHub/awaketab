@@ -11,6 +11,10 @@
   const KEY = 'at.v1.settings';
   // scripts/boot-inline.mjs swaps in the hashed URL of public/assets/themes.css.
   const THEMES = '__AT_THEMES__';
+  // The same for public/assets/faces.css, the Bold, Horizon and Tide art.
+  const FACES_CSS = '__AT_FACES__';
+  // FACE_ORDER in src/tool/packs/faces/order.ts; the island root's data-fnames lists their names in this order.
+  const FACES = 'ring bold horizon tide flip nixie lcd matrix rolling analog rings word'.split(' ');
   const dark = matchMedia('(prefers-color-scheme: dark)');
   /** @type {Record<string, string>} */
   const GROUND = { light: '#F2F6FA', dark: '#0A0E16', oled: '#000000' };
@@ -76,9 +80,11 @@
     // The remembered clock face (DESIGN.md §7) and the keyboard-hint switch paint before first frame too, so the
     // tool never flashes the Ring face or a keycap it is about to hide.
     const f = saved && typeof saved.face === 'string' ? saved.face : '';
-    if ('bold horizon tide flip rolling analog rings word nixie lcd matrix'.split(' ').includes(f)) {
-      root.dataset.face = face = f;
-    }
+    const at = FACES.indexOf(f);
+    if (at > 0) root.dataset.face = face = f;
+    // A tool page (BaseLayout puts its render-blocking link above this script) holds its first paint for that art.
+    if (at > 0 && at < 4 && document.querySelector('link[href="#at-tool-parsed"]'))
+      document.write(`<link rel="stylesheet" href="${FACES_CSS}" data-at-faces>`);
     if (saved && saved.keyboardHints === false) root.dataset.hints = 'off';
     const clock = /** @type {{ clock24h?: unknown; showSeconds?: unknown } | undefined} */ (saved?.ambient);
     const h24 = clock?.clock24h;
@@ -280,13 +286,8 @@
           put('untilChip', (d.chip ?? '').replace('{time}', at));
         }
       }
-      if (face) {
-        // The More faces tab stands for the eight faces it lists (data-faces).
-        for (const tab of tool.querySelectorAll('[role="tab"]:is([data-face], [data-faces])')) {
-          const ids = (tab.getAttribute('data-face') ?? tab.getAttribute('data-faces') ?? '').split(' ');
-          tab.setAttribute('aria-selected', String(ids.includes(face)));
-        }
-      }
+      // The face switch names the remembered face.
+      if (face) put('fn', (d.fnames ?? '').split('|')[FACES.indexOf(face)] ?? '');
     }
     if (document.readyState === 'loading') requestAnimationFrame(fill);
   };
