@@ -48,6 +48,7 @@ export default {
         '**/styles/pages.css',
         '**/styles/page-404.css',
         '**/styles/pro.css',
+        '**/styles/extension-page.css',
         '**/styles/ambient.css',
         '**/styles/embed.css',
         'apps/extension/src/styles/base.css',
