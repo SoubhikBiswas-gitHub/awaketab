@@ -17,6 +17,7 @@
 
     container: at-hx / inline-size;
     color: var(--at-ink);
+    visibility: visible;
   }
 
   .at-hx-grid {

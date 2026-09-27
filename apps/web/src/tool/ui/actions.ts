@@ -1,4 +1,3 @@
-import './more-css.js';
 import { planUntil, type TPresetId, type TTheme } from '@awaketab/core';
 import type { IToolCtx } from '../ctx.js';
 import { extendAsk, finishAsk } from '../end.js';
@@ -8,6 +7,7 @@ import { t } from '../i18n.js';
 import { applyTheme, nextTheme } from '../theme.js';
 import { openSettings } from './settings.js';
 import { toast } from './toast.js';
+import { moreCss } from './more-css.js';
 import { liveSession } from './view.js';
 
 export function untilSlots(now = Date.now()): number[] {
@@ -119,21 +119,24 @@ function openPanel(ctx: IToolCtx, panel: 'until' | 'custom' | 'more'): void {
 }
 
 export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
-  const { store } = ctx;
-  if (name === 'until' || name === 'custom' || name === 'more') openPanel(ctx, name);
-  else if (name === 'close') {
-    store.set({ ui: { open: '', past: false } });
-    ctx.root.querySelector<HTMLElement>('[data-chips] [aria-pressed="true"], [data-chips] button')?.focus();
-  } else if (name === 'slot') {
-    const ms = untilSlots()[Number(el.dataset.slot)];
-    if (ms) setUntil(ctx, wallOf(ms));
-  } else if (name === 'less' || name === 'more5') setCustom(ctx, name === 'more5');
-  else if (name === 'changeTime') setUntil(ctx, wallOf(untilSlots()[0] ?? Date.now()));
-  else if (name === 'why') store.set({ ui: { why: !store.get().ui.why } });
-  else if (name === 'add15' || name === 'add30' || name === 'add60')
-    extendAsk(ctx, { add15: 15, add30: 30, add60: 60 }[name] * 60_000);
-  else if (name === 'askStop') finishAsk(ctx);
-  else if (name === 'battSettings') openSettings(ctx);
+  // Panels and sheets style from the on-demand sheet; they open once it is in.
+  void moreCss().then(() => {
+    const { store } = ctx;
+    if (name === 'until' || name === 'custom' || name === 'more') openPanel(ctx, name);
+    else if (name === 'close') {
+      store.set({ ui: { open: '', past: false } });
+      ctx.root.querySelector<HTMLElement>('[data-chips] [aria-pressed="true"], [data-chips] button')?.focus();
+    } else if (name === 'slot') {
+      const ms = untilSlots()[Number(el.dataset.slot)];
+      if (ms) setUntil(ctx, wallOf(ms));
+    } else if (name === 'less' || name === 'more5') setCustom(ctx, name === 'more5');
+    else if (name === 'changeTime') setUntil(ctx, wallOf(untilSlots()[0] ?? Date.now()));
+    else if (name === 'why') store.set({ ui: { why: !store.get().ui.why } });
+    else if (name === 'add15' || name === 'add30' || name === 'add60')
+      extendAsk(ctx, { add15: 15, add30: 30, add60: 60 }[name] * 60_000);
+    else if (name === 'askStop') finishAsk(ctx);
+    else if (name === 'battSettings') openSettings(ctx);
+  });
 }
 
 const SHARE_ROUTES: Partial<Record<TPresetId, string>> = {
@@ -227,30 +230,35 @@ export function openShare(ctx: IToolCtx): void {
 export { toggleFullscreen } from '../fullscreen.js';
 
 export function help(ctx: IToolCtx, show?: boolean): void {
-  const dlg = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="shortcuts"]');
-  const btn = ctx.root.querySelector('[data-open-shortcuts]');
-  if (!dlg) return;
-  if (dlg.dataset.bound !== '1') {
-    dlg.dataset.bound = '1';
-    dlg.addEventListener('close', () => {
-      btn?.setAttribute('aria-expanded', 'false');
-      ctx.store.set({ ui: { dialog: null } });
-    });
-  }
-  if (!(show ?? !dlg.open)) dlg.close();
-  else if (!dlg.open) {
-    ctx.store.set({ ui: { dialog: 'shortcuts' } });
-    btn?.setAttribute('aria-expanded', 'true');
-    dlg.showModal();
-  }
+  void moreCss().then(() => {
+    const dlg = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="shortcuts"]');
+    const btn = ctx.root.querySelector('[data-open-shortcuts]');
+    if (!dlg) return;
+    if (dlg.dataset.bound !== '1') {
+      dlg.dataset.bound = '1';
+      dlg.addEventListener('close', () => {
+        btn?.setAttribute('aria-expanded', 'false');
+        ctx.store.set({ ui: { dialog: null } });
+      });
+    }
+    if (!(show ?? !dlg.open)) dlg.close();
+    else if (!dlg.open) {
+      ctx.store.set({ ui: { dialog: 'shortcuts' } });
+      btn?.setAttribute('aria-expanded', 'true');
+      dlg.showModal();
+    }
+  });
 }
 
 export function open(ctx: IToolCtx, el: HTMLElement): void {
   const d = el.dataset;
-  if ('openSettings' in d) openSettings(ctx);
-  else if ('openStats' in d) openStats(ctx);
-  else if ('openShare' in d) openShare(ctx);
-  else if ('openPip' in d) pip(ctx);
+  if ('openPip' in d) pip(ctx);
+  else if ('openSettings' in d || 'openStats' in d || 'openShare' in d)
+    void moreCss().then(() => {
+      if ('openSettings' in d) openSettings(ctx);
+      else if ('openStats' in d) openStats(ctx);
+      else openShare(ctx);
+    });
   else help(ctx, 'openShortcuts' in d);
 }
 

@@ -22,8 +22,9 @@
     min-inline-size: 0;
     scroll-margin-block-start: var(--at-s-6);
     content-visibility: auto;
-    contain-intrinsic-size: auto 1200px;
+    contain-intrinsic-size: auto 1700px;
     overflow-clip-margin: var(--at-s-4);
+    visibility: visible;
   }
 
   .at-hb h2 {
@@ -320,6 +321,10 @@
   }
 
   @media (width >= 600px) {
+    .at-hb-sec:not(.at-hb-final) {
+      contain-intrinsic-size: auto 1200px;
+    }
+
     .at-hb-uses {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--at-gap-group);
@@ -340,6 +345,10 @@
   }
 
   @media (width >= 1024px) {
+    .at-hb-sec:not(.at-hb-final) {
+      contain-intrinsic-size: auto 760px;
+    }
+
     .at-hb-uses {
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: var(--at-gap-group-lg);

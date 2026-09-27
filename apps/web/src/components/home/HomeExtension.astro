@@ -71,20 +71,20 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
             <div class="at-hx-tabs">
               <span class="at-hx-dots"><span></span><span></span><span></span></span>
               <span class="at-hx-tab at-hx-tab-on">
-                <svg viewBox="0 0 16 16"><path d="M3 13V8M8 13V3M13 13V6"></path></svg>
+                <svg viewBox="0 0 16 16" width="12" height="12"><path d="M3 13V8M8 13V3M13 13V6"></path></svg>
                 <span>{t('page.home.ext.art.tab')}</span>
               </span>
               <span class="at-hx-tab"><span>{t('page.home.ext.art.tab2')}</span></span>
             </div>
             <div class="at-hx-bar">
-              <svg class="at-hx-navs" viewBox="0 0 64 16"><path d="M8 3L3 8l5 5M3 8h10M29 3l5 5-5 5M34 8H24M60 8a5 5 0 1 1-1.5-3.6M60 3v3h-3"></path></svg>
+              <svg class="at-hx-navs" viewBox="0 0 64 16" width="52" height="13"><path d="M8 3L3 8l5 5M3 8h10M29 3l5 5-5 5M34 8H24M60 8a5 5 0 1 1-1.5-3.6M60 3v3h-3"></path></svg>
               <span class="at-hx-url">
-                <svg viewBox="0 0 16 16"><path d="M4 7h8v6H4zM6 7V5a2 2 0 0 1 4 0v2"></path></svg>
+                <svg viewBox="0 0 16 16" width="11" height="11"><path d="M4 7h8v6H4zM6 7V5a2 2 0 0 1 4 0v2"></path></svg>
                 <span>dashboard.example.com</span>
               </span>
-              <svg class="at-hx-puzzle" viewBox="0 0 16 16"><path d="M3 5h3a2 2 0 1 1 4 0h3v3a2 2 0 1 1 0 4v2H3z"></path></svg>
+              <svg class="at-hx-puzzle" viewBox="0 0 16 16" width="15" height="15"><path d="M3 5h3a2 2 0 1 1 4 0h3v3a2 2 0 1 1 0 4v2H3z"></path></svg>
               <span class="at-hx-icon">
-                <svg viewBox="0 0 48 48"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.4"></circle></svg>
+                <svg viewBox="0 0 48 48" width="17" height="17"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.4"></circle></svg>
                 <span class="at-hx-badge">
                   {badge.map((r) => <span class="at-hx-od" style={r.style}><span>{r.digits.map((d) => <span>{d}</span>)}</span></span>)}m
                 </span>
@@ -95,7 +95,7 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
               <span class="at-hx-line at-hx-line-h"></span>
               <span class="at-hx-line"></span>
               <div class="at-hx-kpis"><span></span><span></span><span></span></div>
-              <svg class="at-hx-chart" viewBox="0 0 300 100" preserveAspectRatio="none">
+              <svg class="at-hx-chart" viewBox="0 0 300 100" width="300" height="100" preserveAspectRatio="none">
                 <path class="at-hx-area" d="M0 78L30 70L60 74L90 52L120 58L150 40L180 46L210 30L240 36L270 18L300 24V100H0Z"></path>
                 <path class="at-hx-plot" d="M0 78L30 70L60 74L90 52L120 58L150 40L180 46L210 30L240 36L270 18L300 24"></path>
               </svg>
@@ -104,15 +104,15 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
               <div class="at-hx-paura"></div>
               <div class="at-hx-phead">
                 <span class="at-hx-plogo">
-                  <svg viewBox="0 0 48 48"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="7.5" class="at-hx-halo"></circle><circle cx="24" cy="9" r="4.2"></circle></svg>
+                  <svg viewBox="0 0 48 48" width="26" height="26"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="7.5" class="at-hx-halo"></circle><circle cx="24" cy="9" r="4.2"></circle></svg>
                   AwakeTab
                 </span>
-                <svg class="at-hx-pset" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+                <svg class="at-hx-pset" viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
               </div>
               <div class="at-hx-pstatus">
                 <div class="at-hx-face">
                   <div class="at-hx-sweep"></div>
-                  <svg viewBox="0 0 124 124">
+                  <svg viewBox="0 0 124 124" width="124" height="124">
                     <g transform="rotate(-90 62 62)">
                       <circle cx="62" cy="62" r="46.5" class="at-hx-ticks" stroke-dasharray={`${(TICK * 0.2).toFixed(3)} ${(TICK * 0.8).toFixed(3)}`} stroke-dashoffset={(TICK * 0.1).toFixed(3)}></circle>
                       <circle cx="62" cy="62" r="56" class="at-hx-track"></circle>
@@ -133,7 +133,7 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
                 </div>
                 <div class="at-hx-pside">
                   <span class="at-hx-pill">
-                    <svg viewBox="0 0 12 12"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg>
+                    <svg viewBox="0 0 12 12" width="12" height="12"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg>
                     {t('tool.pill.held')}
                   </span>
                   <span class="at-hx-meta">{t('page.home.ext.art.started', { time: at(21, 30) })}</span>
@@ -146,8 +146,8 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
               <div class="at-hx-level">
                 <span>{t('ext.level.label')}</span>
                 <span class="at-hx-seg">
-                  <span class="at-hx-opt at-hx-opt-on"><svg viewBox="0 0 24 24"><path d="M3 5h18v11H3zM9 20h6M12 16v4"></path></svg>{t('ext.level.display')}</span>
-                  <span class="at-hx-opt"><svg viewBox="0 0 24 24"><path d="M5 4h14v12H5zM3 20h18M9 10h6"></path></svg>{t('ext.level.system')}</span>
+                  <span class="at-hx-opt at-hx-opt-on"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M3 5h18v11H3zM9 20h6M12 16v4"></path></svg>{t('ext.level.display')}</span>
+                  <span class="at-hx-opt"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 4h14v12H5zM3 20h18M9 10h6"></path></svg>{t('ext.level.system')}</span>
                 </span>
               </div>
             </div>
@@ -161,7 +161,7 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
       {
         benefits.map((b) => (
           <li>
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={b.icon} /></svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d={b.icon} /></svg>
             <span class="at-hx-item">
               <strong>{t(`page.home.ext.${b.id}.title`)}</strong>
               <span>{t(`page.home.ext.${b.id}.body`)}</span>
@@ -170,7 +170,7 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
         ))
       }
       <li>
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7h18v10H3zM7 10.5v.01M11 10.5v.01M15 10.5v.01M8 14h8" /></svg>
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M3 7h18v10H3zM7 10.5v.01M11 10.5v.01M15 10.5v.01M8 14h8" /></svg>
         <span class="at-hx-item">
           <strong>{t('page.home.ext.shortcut.title')}</strong>
           <span>{shortcut[0]}<span class="at-hx-keys">{KEYS.map((k, i) => <>{i > 0 && '+'}<kbd class="at-kbd">{k}</kbd></>)}</span>{shortcut[1]}</span>
@@ -184,7 +184,7 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
           EXTENSION_LISTED ? (
             <>
               <a class="at-button at-button-primary at-button-lg" href={EXTENSION_STORE_URLS.chrome} rel="noopener" target="_blank">
-                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg>
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg>
                 {t('page.extension.cta.chrome')}
               </a>
               <a class="at-button at-hx-edge" href={EXTENSION_STORE_URLS.edge} rel="noopener" target="_blank">
@@ -205,7 +205,7 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
         EXTENSION_LISTED && (
           <a class="at-hx-more" href="/extension">
             {t('page.home.ext.more')}
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
           </a>
         )
       }

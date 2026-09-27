@@ -1,6 +1,13 @@
 /* stylelint-disable no-descending-specificity */
 @layer properties, theme, base, components, utilities, content;
 
+@layer base {
+  .at-done[hidden] {
+    display: inline-flex !important;
+    visibility: hidden;
+  }
+}
+
 @layer content {
   .at-step-link svg,
   .at-done svg,
@@ -143,7 +150,6 @@
     background: color-mix(in srgb, var(--at-accent) 14%, transparent);
   }
 
-  .at-done[hidden],
   .at-reset[hidden],
   .at-alldone[hidden] {
     display: none;

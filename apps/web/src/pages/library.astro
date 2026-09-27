@@ -141,7 +141,7 @@ const pills = Object.fromEntries(LOCK_STATES.map((s) => [s, t(`tool.pill.${s}`)]
               <option value="denied">{t('library.demo.scenario.denied')}</option>
               <option value="unsupported">{t('library.demo.scenario.unsupported')}</option>
             </select>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@ const pills = Object.fromEntries(LOCK_STATES.map((s) => [s, t(`tool.pill.${s}`)]
         </div>
         <div class="at-lib-buttons">
           <button class="at-button at-button-primary at-pg-b52" type="button" data-demo-request disabled>
-            <svg class="at-button-glyph" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>
+            <svg class="at-button-glyph" viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>
             {t('library.demo.request')}
           </button>
           <button class="at-button at-button-stop at-pg-b52" type="button" data-demo-release disabled>{t('library.demo.release')}</button>
@@ -196,7 +196,7 @@ const pills = Object.fromEntries(LOCK_STATES.map((s) => [s, t(`tool.pill.${s}`)]
               LOCK_STATES.map((id) => (
                 <li data-state={id} data-lock={id} data-pill={pills[id]} aria-current={id === 'idle' ? 'step' : undefined} data-visited={id === 'idle' ? '' : undefined} style={nodeStyle(id)}>
                   <code>
-                    <svg class="at-pg-glyph" viewBox="0 0 12 12" aria-hidden="true">
+                    <svg class="at-pg-glyph" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
                       <path d={LOCK_GLYPH[id]} />
                     </svg>
                     {id}
@@ -248,7 +248,7 @@ const pills = Object.fromEntries(LOCK_STATES.map((s) => [s, t(`tool.pill.${s}`)]
                 <div class="at-lib-codeactions">
                   <span class="at-pg-caption at-lib-copied" role="status" aria-live="polite"></span>
                   <button class="at-button at-button-quiet at-button-sm at-pg-copy" type="button" data-copy-code aria-label={`Copy the ${label} example`}>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"></rect><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"></path></svg>
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"></rect><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"></path></svg>
                     {t('tool.share.copy')}
                   </button>
                 </div>
@@ -297,7 +297,7 @@ const pills = Object.fromEntries(LOCK_STATES.map((s) => [s, t(`tool.pill.${s}`)]
     </section>
 
     <div class="at-pg-note" role="note">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
       <div class="at-pg-stack-8">
         <span class="at-pg-kicker">What a wake lock cannot do</span>
         <p>
@@ -309,9 +309,9 @@ const pills = Object.fromEntries(LOCK_STATES.map((s) => [s, t(`tool.pill.${s}`)]
     </div>
 
     <nav class="at-pg-related" aria-label="Related">
-      <a class="at-pg-chiplink" href="/learn/how-we-tested">How AwakeTab is checked<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-      <a class="at-pg-chiplink" href="/learn/screen-wake-lock-api-guide">Screen Wake Lock API guide<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-      <a class="at-pg-chiplink" href="/vs/nosleep-js">NoSleep.js vs Wake Lock<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <a class="at-pg-chiplink" href="/learn/how-we-tested">How AwakeTab is checked<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <a class="at-pg-chiplink" href="/learn/screen-wake-lock-api-guide">Screen Wake Lock API guide<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <a class="at-pg-chiplink" href="/vs/nosleep-js">NoSleep.js vs Wake Lock<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
     </nav>
   </main>
   <script is:inline defer src="/library/awaketab-wake.iife.js" data-wake-iife></script>

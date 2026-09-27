@@ -78,7 +78,7 @@ The logo bead in the header takes the current tone, so the brand mark is itself 
 
 ## 3. Type
 
-The product uses the canvas's fonts (decision D-R26, replacing the earlier "system fonts only" rule). All three are SIL OFL 1.1 and **self-hosted** from `/fonts` (Latin woff2, licence files alongside); no third-party font request, `font-display: swap`, and a metric-matched local fallback face per font (size-adjust and ascent/descent/line-gap overrides) so the swap keeps CLS 0. Only Geist is preloaded. Scripts outside Latin (ja, zh, hi) fall through to the system stack.
+The product uses the canvas's fonts (decision D-R26, replacing the earlier "system fonts only" rule). All three are SIL OFL 1.1 and **self-hosted** from `/fonts` (Latin woff2, licence files alongside); no third-party font request, and a metric-matched local fallback face per font (size-adjust and ascent/descent/line-gap overrides). Only Geist is preloaded, with `font-display: optional`: it paints when it arrives in time and otherwise the page keeps its fallback rather than swapping text under the reader. Geist Mono and Space Grotesk load after the first paint with `swap`; their fallbacks match their advances, so the swap never moves layout. Scripts outside Latin (ja, zh, hi) fall through to the system stack.
 
 | Role | Token and font | Notes |
 |---|---|---|
@@ -199,7 +199,7 @@ Nested radius rule: inner radius = outer radius − padding (e.g. bar 999 → it
 - Night mode pill and bead use `--at-night-muted`, never red or lamp; Minimal uses `muted` (decision O-09).
 - Small screens (≤ 568 tall) and landscape phones may use 52 for the primary action and header; nothing else shrinks.
 - Switch 52×32 track, 24 knob. Checkbox/radio 24 visual inside a 44 target.
-- Icons 16 / 20 / 24 px, stroke 1.8, round caps. Icon + label gap 8.
+- Icons 16 / 20 / 24 px, stroke 1.8, round caps. Icon + label gap 8. Every inline SVG carries `width`, `height` and `viewBox` at its design size (drawings at their viewBox size), so an icon never renders larger than designed while its stylesheet is still loading.
 
 ### 11.5 Type scale (size / line-height, weight)
 | Token | Size/LH | Weight | Use |

@@ -86,7 +86,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
           <li><a href="/">{t('app.name')}</a></li>
           <li aria-current="page">
             <span class="at-crumb-sep" data-slot="breadcrumb-separator" aria-hidden="true">
-              <svg viewBox="0 0 16 16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
+              <svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
             </span>
             <span>{hub.crumb}</span>
           </li>
@@ -104,7 +104,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
             {featured.map((doc, i) => (
               <li class="at-docs-card" style={`--at-i: ${String(i)}`} data-tilt>
                 <span class="at-docs-badge" aria-hidden="true" data-tilt-z>
-                  <svg viewBox="0 0 24 24" focusable="false"><path d={doc.icon} /></svg>
+                  <svg viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d={doc.icon} /></svg>
                 </span>
                 <h3>
                   <a href={doc.href}>{doc.title}</a>
@@ -112,7 +112,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
                 <p class="at-docs-line">{doc.line}</p>
                 <span class="at-docs-foot">
                   {doc.minutes !== null && <span class="at-docs-time">{read(doc.minutes)}</span>}
-                  <svg class="at-docs-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+                  <svg class="at-docs-go" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
                 </span>
               </li>
             ))}
@@ -133,7 +133,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
               {group.docs.map((doc) => (
                 <li class="at-docs-row">
                   <span class="at-docs-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" focusable="false"><path d={doc.icon} /></svg>
+                    <svg viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d={doc.icon} /></svg>
                   </span>
                   <div class="at-docs-text">
                     <h3>
@@ -142,7 +142,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
                     <span class="at-docs-line">{doc.line}</span>
                     {doc.minutes !== null && <span class="at-docs-time">{read(doc.minutes)}</span>}
                   </div>
-                  <svg class="at-docs-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+                  <svg class="at-docs-go" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
                 </li>
               ))}
             </ul>
@@ -158,7 +158,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
           tiles.map((tile) => (
             <li class="at-docs-tile" data-tilt>
               <span class="at-docs-badge" aria-hidden="true" data-tilt-z>
-                <svg viewBox="0 0 24 24" focusable="false"><path d={tile.icon} /></svg>
+                <svg viewBox="0 0 24 24" width="20" height="20" focusable="false"><path d={tile.icon} /></svg>
               </span>
               <div class="at-docs-text">
                 <h3>
@@ -171,7 +171,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
                   </span>
                 )}
               </div>
-              <svg class="at-docs-go" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+              <svg class="at-docs-go" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
             </li>
           ))
         }

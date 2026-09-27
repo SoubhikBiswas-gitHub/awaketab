@@ -1,6 +1,7 @@
 import type { IToolCtx } from '../ctx.js';
 import { planLabel, remainingOf, when, words } from '../format.js';
 import { t } from '../i18n.js';
+import { styled } from './more-css.js';
 
 export function mountBanners(ctx: IToolCtx): () => void {
   const { root, store, engine } = ctx;
@@ -29,32 +30,34 @@ export function mountBanners(ctx: IToolCtx): () => void {
   on('[data-tab-keep]', () => {
     store.set({ ui: { secondTab: false } });
   });
-  return store.subscribe((s) => {
-    if (second) second.hidden = !s.ui.secondTab;
-    // The stored session to resume: boot's syncLock replaces s.session with the engine's (none yet).
-    const session = s.session ?? engine.getResumable();
-    if (!resume) return;
-    resume.hidden = !s.ui.resumeVisible || !session;
-    if (resume.hidden || !session) return;
-    const rem = remainingOf(session, Date.now());
-    const put = (sel: string, text: string) => {
-      const n = q(sel);
-      if (n) n.textContent = text;
-    };
-    const ask =
-      rem === null
-        ? t('tool.resume.bodyInf')
-        : t('tool.resume.body', { label: planLabel(session.presetId, s.eightHour) });
-    // A no-limit session has no time left to name, so its question becomes the title.
-    put('[data-resume-title]', rem === null ? ask : t('tool.resume.title', { time: words(Math.round(rem / 1000)) }));
-    put(
-      '[data-resume-until]',
-      session.endsAt === null
-        ? ''
-        : t('tool.resume.until', {
-            time: when(session.endsAt, s.settings.ambient.clock24h),
-          }),
-    );
-    put('[data-resume-body]', rem === null ? '' : ask);
-  });
+  return styled(() =>
+    store.subscribe((s) => {
+      if (second) second.hidden = !s.ui.secondTab;
+      // The stored session to resume: boot's syncLock replaces s.session with the engine's (none yet).
+      const session = s.session ?? engine.getResumable();
+      if (!resume) return;
+      resume.hidden = !s.ui.resumeVisible || !session;
+      if (resume.hidden || !session) return;
+      const rem = remainingOf(session, Date.now());
+      const put = (sel: string, text: string) => {
+        const n = q(sel);
+        if (n) n.textContent = text;
+      };
+      const ask =
+        rem === null
+          ? t('tool.resume.bodyInf')
+          : t('tool.resume.body', { label: planLabel(session.presetId, s.eightHour) });
+      // A no-limit session has no time left to name, so its question becomes the title.
+      put('[data-resume-title]', rem === null ? ask : t('tool.resume.title', { time: words(Math.round(rem / 1000)) }));
+      put(
+        '[data-resume-until]',
+        session.endsAt === null
+          ? ''
+          : t('tool.resume.until', {
+              time: when(session.endsAt, s.settings.ambient.clock24h),
+            }),
+      );
+      put('[data-resume-body]', rem === null ? '' : ask);
+    }),
+  );
 }

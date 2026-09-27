@@ -15,13 +15,14 @@
     align-self: center;
   }
 
-  [data-kiosk] .at-wordmark {
+  [data-kiosk] .at-wordmark,
+  :where(.at-hb > *) {
     visibility: hidden;
   }
 
   .at-kiosk-logo {
     display: block;
-    max-block-size: var(--at-tl-logo-h);
+    block-size: var(--at-tl-logo-h);
     max-inline-size: var(--at-tl-logo-w);
     margin-inline: auto;
     margin-block-end: var(--at-s-4);

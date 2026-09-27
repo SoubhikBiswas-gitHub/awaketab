@@ -15,6 +15,13 @@
   /** @param {string} theme */
   const apply = (theme) => {
     const resolved = theme === 'auto' ? (dark.matches ? 'dark' : 'light') : theme;
+    // base.css holds every transition for two frames, so a theme change repaints at once instead of fading piecemeal.
+    root.dataset.swap = '';
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        delete root.dataset.swap;
+      }),
+    );
     root.dataset.theme = resolved;
     root.dataset.themePref = theme;
     root.style.colorScheme = resolved === 'light' ? 'light' : 'dark';

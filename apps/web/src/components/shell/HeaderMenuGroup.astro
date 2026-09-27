@@ -83,8 +83,8 @@ const dial = arc(50, 19, 24);
                     <circle class="at-hm-ring-bead" cx={len.x} cy={len.y} r="2.5" />
                   </svg>
                 )}
-                {kind === 'for' && <UseCaseIcon name={row.id} />}
-                {kind === 'on' && <DeviceIcon name={row.id} />}
+                {kind === 'for' && <UseCaseIcon name={row.id} size={20} />}
+                {kind === 'on' && <DeviceIcon name={row.id} size={32} />}
                 {kind === 'res' && (
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                     <path d={row.icon} />

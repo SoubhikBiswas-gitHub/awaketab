@@ -70,7 +70,7 @@ const ARROW = 'M5 12h14M13 6l6 6-6 6';
       </div>
       <a class="at-hb-more" href="/for" hreflang={enOnly}>
         <span>{t('page.home.uses.all', { count: useCases.length })}</span>
-        <svg class="at-hb-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ARROW} /></svg>
+        <svg class="at-hb-arrow" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ARROW} /></svg>
       </a>
     </div>
     <ul class="at-hb-uses">
@@ -81,7 +81,7 @@ const ARROW = 'M5 12h14M13 6l6 6-6 6';
           <p>{t(`page.home.uses.${card.key}.body`)}</p>
           <a class="at-hb-use-go" href={card.start} hreflang={card.startLang} aria-describedby={`h-use-${card.slug}`}>
             <span>{t('page.home.uses.start', { length: card.length })}</span>
-            <svg class="at-hb-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ARROW} /></svg>
+            <svg class="at-hb-arrow" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ARROW} /></svg>
           </a>
         </li>
       ))}
@@ -102,7 +102,7 @@ const ARROW = 'M5 12h14M13 6l6 6-6 6';
     </div>
     <a class="at-hb-docs" href="/learn" hreflang={enOnly}>
       <span>{t('page.home.final.docs')}</span>
-      <svg class="at-hb-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={ARROW} /></svg>
+      <svg class="at-hb-arrow" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ARROW} /></svg>
     </a>
   </section>
 </div>

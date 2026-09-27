@@ -25,9 +25,9 @@
 @font-face {
   font-family: "Geist Fallback";
   src: local("Arial"), local("Helvetica"), local("Liberation Sans");
-  size-adjust: 105.5%;
-  ascent-override: 95.26%;
-  descent-override: 27.96%;
+  size-adjust: 105.8%;
+  ascent-override: 94.99%;
+  descent-override: 27.88%;
   line-gap-override: 0%;
 }
 

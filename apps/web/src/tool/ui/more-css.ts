@@ -15,4 +15,15 @@ export function moreCss(): Promise<void> {
   return ready;
 }
 
+// Lazy UI mounts once its sheet is in, so a slow network never shows it unstyled.
+export function styled(mount: () => () => void): () => void {
+  let off = (): void => undefined;
+  void moreCss().then(() => {
+    off = mount();
+  });
+  return () => {
+    off();
+  };
+}
+
 void moreCss();

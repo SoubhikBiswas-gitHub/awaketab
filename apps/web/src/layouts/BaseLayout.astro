@@ -47,7 +47,7 @@ const t = createT(locale);
 ---
 
 <!doctype html>
-<html lang={localeMeta.htmlLang} dir={textDirection(localeMeta.htmlLang)}>
+<html lang={localeMeta.htmlLang} dir={textDirection(localeMeta.htmlLang)} style={bare ? undefined : 'scrollbar-gutter:stable'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

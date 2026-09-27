@@ -847,6 +847,20 @@ Accepted on 2026-09-28. The `/for` and `/on` hubs show their entries as card gal
 | Classes | `.at-gal` (+ `-uc`, `-dev`) · `.at-gal-card` · `.at-gal-top` · `.at-gal-icon` · `.at-gal-title` · `.at-gal-line` · `.at-gal-actions` · `.at-gal-start` · `.at-gal-read` · `.at-gal-link` · `.at-gal-native` · `.at-gal-browsers`; tags reuse `.at-tag` / `.at-tag-tone`. `--at-k` is the card index for the staggered rise |
 | i18n keys | New in all 8 locales (English values until translated): `page.hub.start` · `page.hub.readGuide` · `page.hub.native` |
 
+### No unstyled flash and no layout shift
+
+Accepted on 2026-09-28. Rules and reasons: `05-frontend-spec.md` §1.2 (fonts) and §13 (first paint, late sheets, layout shift). Budgets unchanged: no critical JS added; the inlined tool CSS is net zero or smaller (the unused `.at-panel` and `.at-scrim` classes and a duplicate backdrop rule were deleted to pay for the new rules).
+
+| Identifier | Decision |
+|---|---|
+| Icon sizing | Every inline `<svg>` has `width`, `height` and `viewBox` at its design size; `UseCaseIcon` and `DeviceIcon` take `size` (default 24; the header menus pass 20 and 32) |
+| `styled(mount)` | `src/tool/ui/more-css.ts`: runs `mount` once `tool-more.css` has loaded and returns its unsubscribe; used by `toast-view.ts` and `banners.ts`. `moreCss()` gates `act()`, `open()`, `help()` and the language banner |
+| `<html data-swap>` | Set by `boot.js` for two frames on every theme apply; `base.css` turns transitions off under it, except `.at-seg-ind` |
+| `<html style="scrollbar-gutter:stable">` | Set by `BaseLayout` on every non-bare page |
+| Late-sheet gates | `.at-hm-open` is `visibility: hidden` in `shell.css` until `header-menus.css` loads; `:where(.at-hb > *)` is `visibility: hidden` in `tool-full.css` until `home.css` (`.at-hb-sec`), `home-extension.css` (`.at-hx`) or `home-levels.css` (`.at-hl`) loads |
+| Fonts | Geist `font-display: optional`; Geist Mono and Space Grotesk `swap`; "Geist Fallback" 105.8 / 94.99 / 27.88 % (also in the extension's `base.css`) |
+| Removed classes | `.at-panel` and `.at-scrim` (never used in markup; `--at-scrim` stays) |
+
 ## 14. Writing conventions for these docs
 
 - Requirements are testable sentences with "must/should/may"; every FR has at least one acceptance criterion in Given/When/Then form.

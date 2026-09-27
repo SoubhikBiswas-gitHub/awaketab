@@ -16,6 +16,7 @@
 
   .at-lc svg[role="img"] {
     inline-size: 100%;
+    block-size: auto;
     overflow: visible;
     font: var(--at-type-diagram);
   }

@@ -49,13 +49,13 @@ const principles = [
       <p class="at-pg-ui">Messages go to Soubhik directly.</p>
       <div class="at-about-links">
         <a href={CONTACT_MAILTO}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M4 7l8 6 8-6"></path></svg>{CONTACT_EMAIL}
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M4 7l8 6 8-6"></path></svg>{CONTACT_EMAIL}
         </a>
         <a href={COFFEE} rel="noopener" target="_blank">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"></path><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5v2.5M11 3.5v2.5"></path></svg>Buy Soubhik a coffee<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"></path><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5v2.5M11 3.5v2.5"></path></svg>Buy Soubhik a coffee<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg>
         </a>
         <a href="/changelog">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16M6 7h12M6 12h9M6 17h11"></path></svg>Changelog
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 4v16M6 7h12M6 12h9M6 17h11"></path></svg>Changelog
         </a>
       </div>
     </aside>
@@ -74,7 +74,7 @@ const principles = [
             LOCK_STATES.map((id) => (
               <li data-lock={id}>
                 <span class="at-about-state-id">
-                  <svg class="at-pg-glyph" viewBox="0 0 12 12" aria-hidden="true">
+                  <svg class="at-pg-glyph" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
                     <path d={LOCK_GLYPH[id]} />
                   </svg>
                   <code>{id}</code>
@@ -88,7 +88,7 @@ const principles = [
           {
             journeys.map((label) => (
               <li class="at-tag at-pg-tag">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
                 {label}
               </li>
             ))

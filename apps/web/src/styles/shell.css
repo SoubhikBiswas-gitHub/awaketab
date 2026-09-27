@@ -103,9 +103,8 @@
     gap: var(--at-gap-tight);
   }
 
-  :where(.at-hm-panel) svg {
-    inline-size: var(--at-icon-md);
-    block-size: var(--at-icon-md);
+  .at-hm-open {
+    visibility: hidden;
   }
 
   .at-icon-button {
@@ -829,21 +828,13 @@
     cursor: progress;
   }
 
-  .at-card,
-  .at-panel {
+  .at-card {
     padding: var(--at-card-pad);
     border: var(--at-border) solid var(--at-line);
     border-radius: var(--at-r-lg);
     background: var(--at-surface);
     color: var(--at-ink);
-  }
-
-  .at-card {
     box-shadow: var(--at-elev);
-  }
-
-  .at-panel {
-    animation: at-rise var(--at-d-rise) var(--at-ease) both;
   }
 
   .at-row {
@@ -917,16 +908,6 @@
     margin-inline: auto;
     border-radius: var(--at-r-pill);
     background: var(--at-line-strong);
-  }
-
-  dialog.at-sheet::backdrop,
-  .at-scrim {
-    background: var(--at-scrim);
-  }
-
-  .at-scrim {
-    position: fixed;
-    inset: 0;
   }
 
   @keyframes at-rise {
