@@ -154,6 +154,13 @@ const ICONS = {
           </div>
         </div>
 
+        <div role="alert" class="at-card at-pro-empty" data-manage-offline hidden>
+          <p>{t('license.error.offline')}</p>
+          <div class="at-pro-empty-actions">
+            <Button variant="secondary" data-manage-retry>{t('page.pro.activate.retry')}</Button>
+          </div>
+        </div>
+
         <ProRefund card />
         <a class="at-pro-link at-pro-man-key" href="/pro/activate">{t('pro.activate')}</a>
       </div>

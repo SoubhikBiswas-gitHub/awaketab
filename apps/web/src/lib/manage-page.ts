@@ -3,7 +3,7 @@ import { applyLaunch, fill, longDate } from './pro-common';
 
 type TRow = { label: string; at: number; devHash: string };
 type TRecord = { token?: string; plan?: string; exp?: number; deviceId?: string };
-export type TManageState = 'loading' | 'list' | 'empty' | 'grace' | 'lapsed';
+export type TManageState = 'loading' | 'list' | 'empty' | 'grace' | 'lapsed' | 'offline';
 
 const DAY_S = 86_400;
 const LICENSE_KEY = 'at.v1.license';
@@ -65,13 +65,15 @@ export function bootManagePage(root: HTMLElement, now = Date.now()): void {
   const list = root.querySelector('[data-devices]');
   const wrap = root.querySelector<HTMLElement>('[data-devices-wrap]');
   const empty = root.querySelector<HTMLElement>('[data-manage-empty]');
+  const offline = root.querySelector<HTMLElement>('[data-manage-offline]');
   if (!list) return;
   applyLaunch(root, now);
 
   const setState = (state: TManageState) => {
     root.dataset.state = state;
     if (empty) empty.hidden = state !== 'empty';
-    if (state === 'empty' && wrap) wrap.hidden = true;
+    if (offline) offline.hidden = state !== 'offline';
+    if ((state === 'empty' || state === 'offline') && wrap) wrap.hidden = true;
   };
 
   const raw = localStorage.getItem(LICENSE_KEY);
@@ -177,6 +179,9 @@ export function bootManagePage(root: HTMLElement, now = Date.now()): void {
           } else {
             for (const b of tr.querySelectorAll<HTMLButtonElement>('button')) b.disabled = false;
           }
+        }, () => {
+          // Network failure: nothing was removed, so the row stays usable.
+          for (const b of tr.querySelectorAll<HTMLButtonElement>('button')) b.disabled = false;
         });
       };
       if (!confirm) {
@@ -204,22 +209,28 @@ export function bootManagePage(root: HTMLElement, now = Date.now()): void {
     });
   };
 
-  void fetchActivations(token).then(
-    (data) => {
-      if (data.revoked) {
-        localStorage.removeItem(LICENSE_KEY);
-        setState('empty');
-        return;
-      }
-      // The validate answer carries the fresh plan and exp (docs/09 §2.5); fall back to the stored record.
-      const fresh = data as { plan?: string; exp?: number };
-      const expSec = typeof fresh.exp === 'number' ? fresh.exp : record.exp;
-      lapse = lapseState(fresh.plan ?? record.plan, expSec, now);
-      if (lapse && typeof expSec === 'number') paintLapse(lapse, expSec);
-      void paint(Array.isArray(data.activations) ? data.activations : []);
-    },
-    () => {
-      setState('list');
-    },
-  );
+  const load = () => {
+    setState('loading');
+    void fetchActivations(token).then(
+      (data) => {
+        if (data.revoked) {
+          localStorage.removeItem(LICENSE_KEY);
+          setState('empty');
+          return;
+        }
+        // The validate answer carries the fresh plan and exp (docs/09 §2.5); fall back to the stored record.
+        const fresh = data as { plan?: string; exp?: number };
+        const expSec = typeof fresh.exp === 'number' ? fresh.exp : record.exp;
+        lapse = lapseState(fresh.plan ?? record.plan, expSec, now);
+        if (lapse && typeof expSec === 'number') paintLapse(lapse, expSec);
+        void paint(Array.isArray(data.activations) ? data.activations : []);
+      },
+      // Offline or the API is down: say so with a retry, never an empty list that looks like "no devices".
+      () => {
+        setState('offline');
+      },
+    );
+  };
+  root.querySelector('[data-manage-retry]')?.addEventListener('click', load);
+  load();
 }

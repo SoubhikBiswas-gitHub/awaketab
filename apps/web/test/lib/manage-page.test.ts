@@ -33,6 +33,7 @@ function mount(withTemplate = true): HTMLElement {
       <span data-lapse-fill data-tpl="Pro stays on until {date}" id="grace-title"></span>
       <span data-lapse-fill data-tpl="Yearly · ended {ended}" id="ended-kicker"></span>
       <div role="status" data-manage-empty="" hidden>No licence on this device yet.</div>
+      <div role="alert" data-manage-offline="" hidden>You're offline <button type="button" data-manage-retry>Retry</button></div>
       <div data-devices-wrap="" hidden>
         <div role="table"><div role="rowgroup" data-devices=""></div></div>
       </div>
@@ -188,6 +189,42 @@ describe('manage page', () => {
 
     expect(localStorage.getItem('at.v1.license')).toBeNull();
     expect(root.querySelector<HTMLElement>('[data-manage-empty]')?.hidden).toBe(false);
+  });
+
+  it('a failed device list says offline with a retry, never an empty list', async () => {
+    store();
+    fetchRows.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+    const root = mount();
+    bootManagePage(root, NOW);
+    await flush();
+
+    expect(root.dataset.state).toBe('offline');
+    expect(root.querySelector<HTMLElement>('[data-manage-offline]')?.hidden).toBe(false);
+    expect(root.querySelector<HTMLElement>('[data-devices-wrap]')?.hidden).toBe(true);
+    expect(root.querySelector<HTMLElement>('[data-manage-empty]')?.hidden).toBe(true);
+
+    fetchRows.mockResolvedValueOnce({ revoked: false, activations: ROWS });
+    root.querySelector<HTMLButtonElement>('[data-manage-retry]')?.click();
+    await flush();
+    expect(root.dataset.state).toBe('list');
+    expect(root.querySelector<HTMLElement>('[data-manage-offline]')?.hidden).toBe(true);
+    expect(rowsOf(root)).toHaveLength(2);
+  });
+
+  it('a removal that fails on the network re-enables the row', async () => {
+    store();
+    fetchRows.mockResolvedValue({ revoked: false, activations: ROWS });
+    deactivate.mockRejectedValueOnce(new TypeError('Failed to fetch'));
+    const root = mount();
+    bootManagePage(root, NOW);
+    await flush();
+
+    const row = rowsOf(root)[1];
+    row?.querySelector<HTMLButtonElement>('[data-device-remove]')?.click();
+    row?.querySelector<HTMLButtonElement>('[data-confirm-remove]')?.click();
+    await flush();
+    expect(rowsOf(root)).toHaveLength(2);
+    for (const b of row?.querySelectorAll<HTMLButtonElement>('button') ?? []) expect(b.disabled).toBe(false);
   });
 
   it('falls back to bare rows with the same hooks when no template ships', async () => {
