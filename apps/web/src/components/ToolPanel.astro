@@ -82,9 +82,32 @@ const shortcuts = [
   ['M', '', t('tool.shortcuts.mode')],
   ['P', '', t('tool.shortcuts.pip')],
   ['S', '', t('tool.shortcuts.sound')],
+  ['N', '', t('tool.shortcuts.notes')],
   ['Esc', '', t('tool.shortcuts.esc')],
   ['?', '', t('tool.shortcuts.help')],
 ] as const;
+
+// Notes drawer: toolbar commands with their Tiptap shortcut (the Mod key is added on the client) and 24 px icons.
+const NOTE_TOOLS = [
+  ['h', 'Alt+2', 'Control+Alt+2 Meta+Alt+2'],
+  ['b', 'B', 'Control+B Meta+B'],
+  ['i', 'I', 'Control+I Meta+I'],
+  ['ul', 'Shift+8', 'Control+Shift+8 Meta+Shift+8'],
+  ['ol', 'Shift+7', 'Control+Shift+7 Meta+Shift+7'],
+  ['task', 'Shift+9', 'Control+Shift+9 Meta+Shift+9'],
+] as const;
+const NOTE_ICON = {
+  h: 'M6 5v14M16 5v14M6 12h10M19.5 19h-2.5c0-2.5 3-2.5 3-4.5a1.5 1.5 0 0 0-3-.3',
+  b: 'M7 5h5.5a3.5 3.5 0 0 1 0 7H7zM7 12h6.5a3.5 3.5 0 0 1 0 7H7z',
+  i: 'M10.5 5H18M6 19h7.5M14.5 5l-5 14',
+  ul: 'M9.5 6.5H20M9.5 12H20M9.5 17.5H20M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01',
+  ol: 'M10 6.5h10M10 12h10M10 17.5h10M4 4.5l1.5-.8V9M3.8 14.3a1.4 1.4 0 1 1 2.3 1.1L3.8 18h2.6',
+  task: 'M3.8 6.8l1.6 1.6 3-3.2M3.8 16.3l1.6 1.6 3-3.2M11.5 7H20M11.5 16.5H20',
+  mic: 'M12 3.5a3 3 0 0 0-3 3V11a3 3 0 0 0 6 0V6.5a3 3 0 0 0-3-3zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21',
+  list: 'M8.5 6.5H20M8.5 12H20M8.5 17.5H20M4 6.5h.01M4 12h.01M4 17.5h.01',
+  save: 'M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14',
+  pad: 'M6.5 3.5h8l3 3v14h-11zM14.5 3.5v3h3M9 11h6M9 14.5h6M9 18h3.5',
+} as const;
 
 // Horizon stars and Tide waves: the canvas's deterministic art (Main.dc.html starList / wave), drawn once here.
 function stars(
@@ -653,6 +676,18 @@ const eight = ready.chip === 'custom';
   <div class="at-dock">
     <span class="at-ig-dock" aria-hidden="true"></span>
     <span class="at-ig-travel" aria-hidden="true"></span>
+    {
+      !embed && (
+        <div class="at-dock-tools" role="group" aria-label={t('tool.tools')}>
+          <Button size="sm" variant="quiet" data-open-notes aria-haspopup="dialog" kbd="N" aria-keyshortcuts="N">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d={NOTE_ICON.pad} />
+            </svg>
+            {t('tool.notes.open')}
+          </Button>
+        </div>
+      )
+    }
     {
       untilWall ? (
         <div class="at-untilchips">
@@ -1686,6 +1721,23 @@ const eight = ready.chip === 'custom';
     {t('settings.battery.unavailable')}
   </p>
 
+  {
+    !embed && (
+      <section aria-labelledby="st-notes" class="at-tight">
+        <h3 class="at-kicker" id="st-notes">{t('settings.notes')}</h3>
+        <div class="at-switchrow at-notes-setrow">
+          <span class="at-switch-text">
+            <span class="at-label">{t('settings.notes.label')}</span>
+            <span class="at-caption">{t('settings.notes.help')}</span>
+          </span>
+          <button class="at-button at-button-sm" type="button" data-open-notes aria-haspopup="dialog">
+            {t('settings.notes.open')}
+          </button>
+        </div>
+      </section>
+    )
+  }
+
   <section aria-labelledby="st-priv" class="at-tight">
     <h3 class="at-kicker" id="st-priv">{t('settings.privacy')}</h3>
     <label class="at-switchrow">
@@ -2044,6 +2096,172 @@ const eight = ready.chip === 'custom';
     </p>
   </div>
 </Sheet>
+
+{
+  !embed && (
+    <Sheet
+      name="notes"
+      title={t('notes.title')}
+      titleId="notes-title"
+      description={t('notes.private')}
+      closeLabel={t('notes.close')}
+      class="at-notes"
+      bodyClass="at-notes-body"
+    >
+      <div class="at-notes-bar">
+        <p class="at-notes-live" aria-hidden="true">
+          <span class="at-notes-bead" />
+          <span data-notes-live />
+        </p>
+        <div class="at-notes-nav">
+          <button
+            class="at-button at-button-sm at-button-quiet"
+            type="button"
+            data-notes-all
+            aria-expanded="false"
+            aria-controls="at-notes-list"
+            hidden
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d={NOTE_ICON.list} />
+            </svg>
+            {t('notes.all')}
+            <span class="at-notes-count" data-notes-count />
+          </button>
+          <button class="at-button at-button-sm" type="button" data-notes-new>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            {t('notes.new')}
+            <span class="at-tag" data-notes-pro-tag>{t('pro.badge')}</span>
+          </button>
+        </div>
+      </div>
+      <p class="at-caption at-notes-pv" data-notes-pv hidden>
+        <span class="at-notes-pv-dot" aria-hidden="true" />
+        {t('notes.pro.previewing')}
+      </p>
+      <section class="at-notes-panel" data-notes-pro aria-labelledby="at-notes-pro-h" hidden>
+        <h3 class="at-notes-panel-h" id="at-notes-pro-h">{t('notes.pro.title')}</h3>
+        <p>{t('notes.pro.body')}</p>
+        <p class="at-caption">{t('notes.pro.keep')}</p>
+        <div class="at-notes-row">
+          <button class="at-button at-button-sm" type="button" data-notes-try>{t('notes.pro.try')}</button>
+          <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-see>{t('pro.see')}</button>
+          <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-pro-close>{t('notes.pro.later')}</button>
+        </div>
+      </section>
+      <section class="at-notes-list" id="at-notes-list" data-notes-list aria-label={t('notes.all')} hidden>
+        <input class="at-input" type="search" data-notes-search placeholder={t('notes.search')} aria-label={t('notes.search')} />
+        <ul class="at-notes-items" data-notes-items />
+        <p class="at-caption" data-notes-none hidden>{t('notes.none')}</p>
+      </section>
+      <div class="at-notes-pad" data-notes-pad>
+        <p class="at-notes-ro" data-notes-ro role="note" hidden>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <rect x="5" y="11" width="14" height="10" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </svg>
+          <span>{t('notes.readonly')}</span>
+        </p>
+        <input
+          class="at-notes-title"
+          type="text"
+          maxlength="120"
+          data-notes-title
+          placeholder={t('notes.untitled')}
+          aria-label={t('notes.titleLabel')}
+          hidden
+        />
+        <div class="at-notes-tools" role="toolbar" aria-label={t('notes.toolbar')} aria-controls="at-notes-ed">
+          {
+            NOTE_TOOLS.map(([cmd, keys, aria], i) => (
+              <button
+                class="at-notes-tool"
+                type="button"
+                data-cmd={cmd}
+                data-keys={keys}
+                aria-pressed="false"
+                aria-label={t(`notes.tool.${cmd}`)}
+                aria-keyshortcuts={aria}
+                tabindex={i === 0 ? '0' : '-1'}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d={NOTE_ICON[cmd]} />
+                </svg>
+              </button>
+            ))
+          }
+          <span class="at-notes-sep" aria-hidden="true" />
+          <button class="at-notes-tool at-notes-mic" type="button" data-notes-mic aria-pressed="false" aria-label={t('tool.notes.voice.start')} tabindex="-1" hidden>
+            <span class="at-notes-ring" aria-hidden="true" />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d={NOTE_ICON.mic} />
+            </svg>
+          </button>
+        </div>
+        <section class="at-notes-panel" data-notes-consent aria-labelledby="at-notes-voice-h" hidden>
+          <h3 class="at-notes-panel-h" id="at-notes-voice-h">{t('notes.voice.title')}</h3>
+          <p>{t('notes.voice.notice')}</p>
+          <p class="at-caption">{t('notes.voice.local')}</p>
+          <div class="at-notes-row">
+            <button class="at-button at-button-sm at-button-stop" type="button" data-notes-consent-ok>{t('notes.voice.ok')}</button>
+            <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-consent-no>{t('notes.voice.no')}</button>
+          </div>
+        </section>
+        <p class="at-notes-listen" data-notes-listen hidden>
+          <span class="at-notes-listen-i" aria-hidden="true" />
+          <span data-notes-listen-text />
+        </p>
+        <div class="at-notes-paper">
+          <div class="at-notes-ed" id="at-notes-ed" data-notes-editor />
+          <p class="at-notes-interim" data-notes-interim aria-hidden="true" />
+        </div>
+      </div>
+      <ul class="at-caption at-notes-help">
+        <li>{t('notes.help.private')}</li>
+        <li>{t('notes.help.md')}</li>
+        <li data-notes-novoice hidden>{t('notes.help.novoice')}</li>
+      </ul>
+      <Fragment slot="footer">
+        <div class="at-notes-foot">
+          <p class="at-caption at-notes-meta">
+            <span data-notes-words />
+            <span class="at-notes-state" data-notes-state />
+            <button class="at-textlink at-notes-undo" type="button" data-notes-undo hidden>{t('notes.undo')}</button>
+          </p>
+          <span class="sr-only" role="status" data-notes-said />
+          <div class="at-notes-row" data-notes-acts>
+            <button class="at-button at-button-sm" type="button" data-notes-copy>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 9h10.5v10.5H9zM15 9V4.5H4.5V15H9" />
+              </svg>
+              {t('notes.copy')}
+            </button>
+            <button class="at-button at-button-sm" type="button" data-notes-export="md" aria-label={t('notes.export.mdAria')}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d={NOTE_ICON.save} />
+              </svg>
+              .md
+            </button>
+            <button class="at-button at-button-sm" type="button" data-notes-export="txt" aria-label={t('notes.export.txtAria')}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d={NOTE_ICON.save} />
+              </svg>
+              .txt
+            </button>
+            <button class="at-button at-button-sm at-button-quiet at-notes-clear" type="button" data-notes-clear>{t('tool.notes.clear')}</button>
+          </div>
+          <div class="at-notes-row at-notes-confirm" data-notes-confirm role="group" aria-labelledby="at-notes-confirm-q" hidden>
+            <p id="at-notes-confirm-q" data-notes-confirm-q />
+            <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-confirm-no>{t('notes.keep')}</button>
+            <button class="at-button at-button-sm at-button-stop" type="button" data-notes-confirm-yes />
+          </div>
+        </div>
+      </Fragment>
+    </Sheet>
+  )
+}
 
 <Dialog
   name="shortcuts"

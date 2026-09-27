@@ -232,7 +232,15 @@ export function open(ctx: IToolCtx, el: HTMLElement): void {
   else if ('openStats' in d) openStats(ctx, el);
   else if ('openShare' in d) openShare(ctx, el);
   else if ('openPip' in d) pip(ctx);
+  else if ('openNotes' in d) notes(ctx, el);
   else help(ctx, true, el);
+}
+
+// The notes pack (editor, storage, voice) loads the first time the drawer opens.
+export function notes(ctx: IToolCtx, opener?: Element | null): void {
+  void import('../packs/notes/index.js').then((m) => {
+    m.openNotes(ctx, opener);
+  });
 }
 
 export function pip(ctx: IToolCtx): void {

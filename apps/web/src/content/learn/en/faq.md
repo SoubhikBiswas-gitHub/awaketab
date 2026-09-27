@@ -116,6 +116,10 @@ All of this is free, with no account:
 
 ::rows free
 
+### Where are my notes kept, and does voice typing send my words anywhere?
+
+Notes stay in this browser on this device, in its own storage (IndexedDB). They are never uploaded, there is no account or sync, and they work offline. Clearing the site's data in your browser deletes them, so export a note as `.md` or `.txt` when you want a copy. The notepad's mic uses your browser's speech recognition: in Chrome and Edge your voice goes to the browser's speech service (Google or Microsoft) to be turned into text, and Safari uses Apple's. AwakeTab itself sends nothing and keeps only the text you save. Firefox has no speech recognition, so the mic is hidden there. Press `N` to open the notes.
+
 Ready to try it? [Open AwakeTab](/), pick a duration and watch the pill.
 
 ::limit inline

@@ -67,7 +67,7 @@ export function generateHeaders() {
 
   return `/*
   Content-Security-Policy: ${DEFAULT_CSP}
-  Permissions-Policy: screen-wake-lock=(self), picture-in-picture=(self), camera=(), microphone=(), geolocation=(), payment=()
+  Permissions-Policy: screen-wake-lock=(self), picture-in-picture=(self), camera=(), microphone=(self), geolocation=(), payment=()
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

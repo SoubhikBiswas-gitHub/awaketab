@@ -593,6 +593,10 @@
   margin-block-start: 0;
 }
 
+.at-dock-tools {
+  display: none;
+}
+
 @media (width < 360px) {
   .at-dateline {
     font: var(--at-type-caption);
@@ -629,6 +633,12 @@
     display: block;
     justify-self: start;
     inline-size: var(--at-tl-tabs-late);
+  }
+
+  .at-dock-tools {
+    display: flex;
+    order: 1;
+    justify-content: center;
   }
 }
 
@@ -700,6 +710,10 @@
 }
 
 @media (orientation: landscape) and (height <= 500px) {
+  .at-dock-tools {
+    display: none;
+  }
+
   .at-causes {
     flex-flow: row wrap;
     gap: 0 var(--at-gap-item);

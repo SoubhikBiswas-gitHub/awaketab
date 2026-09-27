@@ -1145,6 +1145,10 @@
   cursor: pointer;
 }
 
+.at-notes-setrow {
+  cursor: default;
+}
+
 .at-switch-text {
   display: flex;
   flex-direction: column;
@@ -1669,7 +1673,7 @@
 
   .at-keys {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(5, auto);
+    grid-template-rows: repeat(6, auto);
     grid-auto-flow: column;
   }
 
@@ -1677,7 +1681,7 @@
     min-block-size: var(--at-h-row);
   }
 
-  .at-keys > div:nth-child(5) {
+  .at-keys > div:nth-child(6) {
     border-block-end: 0;
   }
 }

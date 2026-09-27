@@ -142,6 +142,8 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 
 `Space` toggle · `1`–`6` presets p15…p240 · `0` indefinite · `U` until… · `F` fullscreen · `D` cycle theme · `M` cycle ambient mode · `P` PiP · `S` Sounds sheet · `Esc` close the innermost layer (dialog → ambient mode → stop the session) · `?` shortcuts overlay.
 
+`Space` toggle · `1`–`6` presets p15…p240 · `0` indefinite · `U` until… · `F` fullscreen · `D` cycle theme · `M` cycle ambient mode · `P` PiP · `N` notes drawer · `Esc` close the innermost layer (dialog → ambient mode → stop the session) · `?` shortcuts overlay.
+
 ---
 
 ## 6. Storage (localStorage, JSON, versioned)
@@ -154,6 +156,7 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 | `at.v1.license` | `{ token, plan, exp, features[], lastValidatedAt, deviceId }` | Token = ES256 JWT signed by our Worker |
 | `at.v1.meta` | `{ installedAt, sessionCount, ratingPrompt: { shownAt, action, stars?, rearmAt? }, lastSeenVersion }` | `rearmAt` since v1.3 (§13.8) |
 | `at.v1.onboarding` | `{ dismissedTips: [] }` | |
+| `at.v1.notes` | IndexedDB, not localStorage: database `awaketab`, store `notes`, this key. `{ v: 1, notes: [{ id, title, doc, createdAt, updatedAt, pinned? }], current?, voiceOk? }` | Never leaves the device; schema in `08-data-storage.md` §2.1a |
 
 `BroadcastChannel('awaketab')` coordinates multiple tabs (second-tab warning, single active lock). Migrations: `migrate(fromVersion)` in `@awaketab/core/storage`; bump prefix to `at.v2.` only for breaking changes.
 
@@ -424,7 +427,7 @@ Accepted on 2026-09-26 with the M6 implementation; confirmed by owner decision D
 
 **Analytics fields used by M6**
 
-`session_extend {addedMin}` (extend prompt and PiP `+15`) · `rating_prompt {action: 'rate' | 'later' | 'never', stars?}` · `rating_submitted {stars}` · `sponsor_view {sponsorId}` · `sponsor_click {sponsorId}` · `pro_view {from}` (`from: 'message'` from the message-mode Pro card).
+`session_extend {addedMin}` (extend prompt and PiP `+15`) · `rating_prompt {action: 'rate' | 'later' | 'never', stars?}` · `rating_submitted {stars}` · `sponsor_view {sponsorId}` · `sponsor_click {sponsorId}` · `pro_view {from}` (`from: 'message'` from the message-mode Pro card, `'preview'` from a preview chip, `'notes'` from the notes drawer's Pro panel).
 
 **i18n**
 
@@ -536,7 +539,7 @@ Accepted on 2026-09-26 with the M8 implementation; confirmed by owner decision D
 | `apps/web/scripts/library.mjs` | Copies `packages/wake/dist/awaketab-wake.iife.js` (building the package if needed) to `public/library/` (git-ignored) for the `/library` demo |
 | `apps/web/scripts/support-matrix.mts` | The support-matrix update hook: `matrix:check` (build step) validates `docs/metrics/device-matrix.json` and that every row names a `support-matrix.json` id; `matrix:sync` writes `lastUpdated` and per-row `lastVerified` only when the run is `complete` |
 | `docs/metrics/device-matrix.json` | `{ version: 1, status: 'pending' \| 'complete', updatedAt, method[], rows[] }`; row = `{ id, device, os, browser (support-matrix id), version, power ('plugged' \| 'battery' \| 'battery-saver'), mode, case, expected, observed, evidence, date, verdict ('pending' \| 'pass' \| 'partial' \| 'fail') }`; validated by `src/lib/device-matrix.ts` `parseDeviceMatrix()` (a recorded verdict needs date, version, observed and evidence) |
-| `scripts/size.mjs` gates | `criticalJs` ≤ 15,360 (static closure of `index.html`'s module entries) · `totalJs` ≤ 40,960 (static + dynamic closure of the same entries; replaces "every `dist/_astro/*.js`") · `embedJs` ≤ 25,600 (full closure from `embed/cook.html`) · `loaderJs` ≤ 3,072 (`dist/embed.js`) · `totalCss` · `hydrated` · `reactChunks` unchanged. Feature packs (chunks named `pack-<name>` or `pack-<name>-<part>`, such as one chunk per clock face, from `src/tool/packs/<name>/` and the libraries listed in `astro.config.mjs` `PACK_LIBS`) load only on first use and are measured outside `totalJs` with their own gzip budgets: `faces` ≤ 30 KB · `sound` ≤ 110 KB · `notes` ≤ 70 KB · `themes` ≤ 25 KB · `extras` ≤ 15 KB (report field `packs`). Report fields `files` (critical), `lazyFiles`, `embedFiles`. Closure helpers in `scripts/size-lib.mjs` |
+| `scripts/size.mjs` gates | `criticalJs` ≤ 15,360 (static closure of `index.html`'s module entries) · `totalJs` ≤ 40,960 (static + dynamic closure of the same entries; replaces "every `dist/_astro/*.js`") · `embedJs` ≤ 25,600 (full closure from `embed/cook.html`) · `loaderJs` ≤ 3,072 (`dist/embed.js`) · `totalCss` · `hydrated` · `reactChunks` unchanged. Feature packs (chunks named `pack-<name>` or `pack-<name>-<part>`, such as one chunk per clock face, from `src/tool/packs/<name>/` and the libraries listed in `astro.config.mjs` `PACK_LIBS`) load only on first use and are measured outside `totalJs` with their own gzip budgets: `faces` ≤ 30 KB · `sound` ≤ 110 KB · `notes` ≤ 120 KB (raised from 70 KB on 2026-09-28: Tiptap's core and ProseMirror alone are about 86 KB gz, §13.26) · `themes` ≤ 25 KB · `extras` ≤ 15 KB (report field `packs`). Report fields `files` (critical), `lazyFiles`, `embedFiles`. Closure helpers in `scripts/size-lib.mjs` |
 | `_headers` | `/embed` and `/embed/` (the landing page, which `/embed/*` also matches) re-apply the default CSP, `X-Frame-Options: DENY` and drop `X-Robots-Tag`; `/embed.js` `Cache-Control: public, max-age=3600`. Every rule that sets `Cache-Control` or re-sets `X-Frame-Options` now detaches the `/*` value first (`! Header`), because Cloudflare joins a header set by two matching rules. `resolveHeaders(text, path)` in `scripts/headers.mjs` evaluates the file for tests |
 | Ads | `pages/embed/**`, `pages/kiosk.astro`, `pages/library.astro` are in the ESLint no-ad-imports list; none of them uses `ContentLayout` |
 
@@ -904,7 +907,7 @@ Accepted on 2026-09-28. Spec: `05-frontend-spec.md` §1.1a–§1.1d; storage fie
 | Pattern tokens | `--at-pat` (mask image) · `--at-pat-size` · `--at-pat-a` (0.07; 1 for gradient patterns) · `--at-pat-k` (1; 0.6 on OLED) · `--at-pat-bg` · `--at-pat-bg-size` · `--at-pat-anim`; keyframes `at-pat-drift`, `at-pat-rise`, `at-pat-aurora`, `at-pat-twinkle` |
 | `--at-custom` | The custom lamp's light hex; dark value `color-mix(in srgb, var(--at-custom) 40%, #fff)` |
 | Themes pack modules | `src/tool/packs/themes/`: `looks.ts` (catalogue, `lampOf`, `lookOf`, `ownedLook`, `paintLook`, `themesCss`, `uiCss`) · `fit.ts` (`fitLamp`, `lampOk`, `darkOf`, `WORST_LIGHT` `#F1F3F7`, `WORST_DARK` `#2E3440`, `ON_DARK` `#04232A`) · `preview.ts` · `appearance.ts` (`mountAppearance(ctx, host)` on `[data-appearance]`) · `picker.ts` (`vanilla-colorful`) · `themes-ui.css` |
-| `startPreview(ctx, { kind, id, label, apply, revert, back? })` | The shared Pro preview (`preview.ts`): `PREVIEW_MS` 300,000 · `PREVIEW_WARN_MS` 60,000; also `endPreview(revert?, reason?)`, `activePreview()`, `onPreview(fn)`, `previewLine()`. Toast id `preview` |
+| `startPreview(ctx, { kind, id, label, apply, revert, back?, said? })` | The shared Pro preview (`preview.ts`): `PREVIEW_MS` 300,000 · `PREVIEW_WARN_MS` 60,000; also `endPreview(revert?, reason?)`, `activePreview()`, `onPreview(fn)`, `previewLine()`. Toast id `preview` |
 | `IToastItem.alt` | A second toast action (the one-minute preview toast: Get Pro · End now) |
 | `.at-pv` | The preview chip (first child of `[data-toasts]`; `data-min` folds it to the dot; `data-float` when a page has no toast region) |
 | i18n keys | `settings.looks.*` (section labels, Pro note) · `settings.palette.<id>` · `settings.accent.<id>` (new lamps and `custom`) · `settings.pattern.<id>` · `settings.preset.<id>` · `settings.preview.*` · `settings.custom.*`. Removed: `settings.lamp.note`, `ambient.message.preview`, `ambient.message.previewShort`, `ambient.message.ended` (the Message mode's shared link now runs the five-minute preview; `MESSAGE_PREVIEW_MS` is gone) |
@@ -927,6 +930,21 @@ Accepted on 2026-09-28. Spec: `05-frontend-spec.md` §3.34. The pill, lock state
 | Custom properties | `--at-snd-*` (equaliser height, duration, low point, bar colour), in `sound.css` only |
 | Toast id | `sound` ("Tap to start sound") |
 | i18n keys | New in all 8 locales (English values until translated): `tool.header.sound` · `tool.shortcuts.sound` · `tool.sound.*` (title, honest, pick, state.*, play, pause, tap, tapNote, prev, next, volume, focus, kind.*, sub.*, stopAtEnd, stopAtEnd.help, mix, mix.help, mix.locked, mixTitle, library, library.*, lofi.*, endSettings) · `settings.sound.bell` · `.soft` · `.digital` · `.birds` · `.play` · `.volume` · `.focus` · `settings.vibrate` (+ `.help`) · `settings.tick` (+ `.help`) |
+
+### 13.26 Notes pack: notepad, checklists and voice dictation
+
+Accepted on 2026-09-28. Spec: `05-frontend-spec.md` §3.34; storage: `08-data-storage.md` §2.1a. The seven lock states, the pill copy, routes and the tool's JS budgets do not change: the tool gains a few lines of glue (one selector in `main.ts`, `notes()` in `ui/actions.ts`, the `N` key in `shortcuts.ts`) and everything else is the `notes` pack.
+
+| Identifier | Decision |
+|---|---|
+| Storage | `at.v1.notes` in IndexedDB (`idb-keyval` `createStore('awaketab', 'notes')`), one record. Free: one editable note (the first one written); `ambient.packs` (or a running five-minute preview): any number, with titles, search and pins. A note added in a preview stays, readable, copyable and exportable, and is read only once the preview ends; nothing is deleted silently |
+| Modules | `src/tool/packs/notes/index.ts` (`openNotes(ctx, opener?)`, imported by `ui/actions.ts` `notes()` with `import()`) · `editor.ts` (Tiptap: `makeEditor`, `runTool`, `toolOn`, `insertSpoken`, `newLine`, `newItem`; `TTool` `h` · `b` · `i` · `ul` · `ol` · `task`) · `data.ts` (`parseNotes`, `loadNotes`, `saveNotes`, `newNote`, `canEdit`, `noteName`, `listNotes`) · `text.ts` (`toMarkdown`, `toText`, `plainText`, `countWords`) · `voice.ts` (`voiceSupported`, `speechLang`, `createVoice`) · `notes.css` (linked with `?url` before the drawer mounts) |
+| Chunk | `pack-notes` (`astro.config.mjs` `PACK_LIBS`: `@tiptap/*`, `prosemirror-*`, `orderedmap`, `rope-sequence`, `w3c-keyname`, `idb-keyval`, `annyang`). About 110 KB gz measured with esbuild; budget 120 KB |
+| Libraries | Tiptap 3.31.3 (MIT): `@tiptap/core`, `@tiptap/pm` and StarterKit's own extensions taken one by one (`extension-document`, `-paragraph`, `-text`, `-bold`, `-italic`, `-strike`, `-heading`, `-blockquote`, `-hard-break`, `extension-list` bullet, ordered, item, keymap, task list and task item, `extensions` placeholder and undo-redo), so StarterKit's link (with linkifyjs), code, code block, rule, drop and gap cursor code never ships · `idb-keyval` 6.3.0 (Apache-2.0) · `annyang` 3.0.0 (MIT) |
+| Markup hooks | `dialog[data-dialog="notes"].at-notes` (a `Sheet`, only on the full tool, not the embedded card) · `[data-open-notes]` (the dock's Notes button in `.at-dock-tools`, shown from 1024 px, and Settings → Notes) · `[data-notes-*]` inside the drawer: `pad`, `editor`, `title`, `mic`, `listen`, `interim`, `consent`, `ro`, `pv`, `pro`, `all`, `list`, `items`, `search`, `words`, `state`, `said`, `acts`, `confirm`, `clear`, `undo`, `copy`, `export="md"`/`"txt"`, `live` · toolbar `.at-notes-tools[role="toolbar"]` with `button[data-cmd]` |
+| Permissions-Policy | `microphone=(self)` (was `microphone=()`), so the page's own dictation can ask for the microphone; camera, geolocation and payment stay off |
+| Shortcut | `N` opens the drawer (not while typing or while another dialog is open). In the editor: `Mod+B`, `Mod+I`, `Mod+Shift+S`, `Mod+Alt+1–3`, `Mod+Shift+7/8/9`, `Mod+Z`; Esc stops dictation, then closes |
+| i18n keys | Page-rendered `notes.*` (drawer copy, toolbar labels, help, the voice notice) · island `tool.notes.*` (runtime states, voice commands `tool.notes.voice.cmdLine` / `cmdItem` / `cmdStop`) · `tool.notes.open` · `tool.tools` · `tool.shortcuts.notes` · `settings.notes`, `settings.notes.label`, `settings.notes.help`, `settings.notes.open` |
 
 ## 14. Writing conventions for these docs
 

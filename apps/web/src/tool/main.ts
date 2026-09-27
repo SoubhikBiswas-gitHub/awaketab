@@ -321,7 +321,7 @@ export function boot(root: HTMLElement): () => void {
     const el =
       e.target instanceof Element
         ? e.target.closest<HTMLElement>(
-            '[data-open-settings],[data-open-stats],[data-open-share],[data-open-shortcuts],[data-open-pip]',
+            '[data-open-settings],[data-open-stats],[data-open-share],[data-open-shortcuts],[data-open-pip],[data-open-notes]',
           )
         : null;
     if (el)
