@@ -1,37 +1,60 @@
 ---
+// /changelog (B6, canvas board PageChangelog). Fragments are the `changelog` content collection (repo-root
+// `changelog/*.md`), rendered at build time by Astro's Markdown pipeline: no client JS (F-07, docs/14 §7).
+// The release summary heads the page as its own card; the rest are grouped by date with a New / Fixed / Changed
+// tag from front matter. The filter is four native radios; CSS (:has) hides what does not match, so it works
+// without a script.
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import Crumbs from '../components/pages/Crumbs.astro';
+import SegRadio from '../components/pages/SegRadio.astro';
+import '../styles/pages.css';
 import { t } from '../i18n/load';
-import { changelogDate, sortChangelog } from '../lib/changelog';
+import {
+  changelogDate,
+  changelogLongDate,
+  groupByDate,
+  inlineMarkdown,
+  releaseParts,
+  sortChangelog,
+  type TChangelogType,
+} from '../lib/changelog';
 import { articleSchema } from '../lib/seo';
 
-// Fragments are the `changelog` content collection (repo-root `changelog/*.md`), rendered at build time by
-// Astro's Markdown pipeline like the content pages: no client JS (F-07, docs/14 §7).
+const sorted = sortChangelog(await getCollection('changelog'));
 const entries = await Promise.all(
-  sortChangelog(await getCollection('changelog')).map(async (entry) => ({
+  sorted.map(async (entry) => ({
     id: entry.id,
     title: entry.data.title,
     date: changelogDate(entry.data.date),
+    release: entry.data.release,
+    type: (entry.data.type ?? 'new') as TChangelogType,
+    body: entry.body ?? '',
     Content: (await render(entry)).Content,
   })),
 );
+const release = entries.find((e) => e.release !== undefined);
+const rest = entries.filter((e) => e !== release);
+const groups = groupByDate(rest);
+const parts = release ? releaseParts(release.body) : null;
 const latest = entries[0]?.date;
+
+const LABEL: Record<TChangelogType, string> = { new: 'New', fixed: 'Fixed', changed: 'Changed' };
+const GLYPH: Record<TChangelogType, string> = {
+  new: 'M12 5v14M5 12h14',
+  fixed: 'M5 12.5l4.5 4.5L19 7.5',
+  changed: 'M4 9h13l-3.5-3.5M20 15H7l3.5 3.5',
+};
+const count = (type: TChangelogType) => rest.filter((e) => e.type === type).length + (type === 'new' && release ? 1 : 0);
+const filters = [
+  { value: 'all', label: 'All', count: entries.length },
+  { value: 'new', label: 'New', count: count('new') },
+  { value: 'fixed', label: 'Fixed', count: count('fixed') },
+  { value: 'changed', label: 'Changed', count: count('changed') },
+].map((f) => ({ ...f, aria: `${f.label}, ${String(f.count)} changes` }));
+
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/changelog`;
-const crumbLink = 'inline-flex min-h-11 items-center';
-// The rendered Markdown carries no classes. `.at-article` (tool.css, already in the stylesheet every page inlines)
-// styles its paragraphs, lists, links and inline code, so no page-specific utilities are added to the CSS the tool
-// pages carry. `mt-0` cancels its top margin inside the card.
-const body = 'at-article mt-0 px-5 break-words';
 ---
 
 <BaseLayout
@@ -52,34 +75,79 @@ const body = 'at-article mt-0 px-5 break-words';
     ],
   })}
 >
-  <main class="mx-auto mt-6 w-full max-w-[45rem] leading-relaxed">
-    <Breadcrumb aria-label="Breadcrumb">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>{t('page.changelog.h1')}</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-    <h1 class="mt-4 text-3xl font-semibold leading-tight tracking-tight">{t('page.changelog.h1')}</h1>
-    <ol class="mt-8 grid list-none gap-4 p-0">
+  <main class="at-page at-cl">
+    <div class="at-pg-intro">
+      <Crumbs current={t('page.changelog.h1')} />
+      <h1 class="at-pg-h1">{t('page.changelog.h1')}</h1>
+      <p class="at-pg-lead">{t('page.changelog.description')}</p>
+    </div>
+
+    <SegRadio name="cl-filter" label="Show changes" options={filters} checked="all" small class="at-cl-filter" />
+
+    {
+      release && parts && (
+        <article class="at-cl-release" aria-labelledby="cl-release" data-changelog-entry={release.id} data-date={release.date}>
+          <div class="at-pg-aura at-cl-aura" aria-hidden="true" />
+          <div class="at-cl-release-top">
+            <span class="at-cl-num" aria-hidden="true">
+              {release.release}
+            </span>
+            <div class="at-pg-stack-8">
+              <span class="at-tag at-tag-tone at-pg-tag">Release</span>
+              <time class="at-cl-reldate" datetime={release.date}>
+                {changelogLongDate(release.date)}
+              </time>
+            </div>
+          </div>
+          <h2 id="cl-release" class="at-pg-h2" data-changelog-title>
+            {release.title}
+          </h2>
+          <p class="at-pg-body at-pg-measure" set:html={inlineMarkdown(parts.lede)} />
+          {parts.parts.length > 0 && (
+            <dl class="at-cl-parts">
+              {parts.parts.map((p) => (
+                <div>
+                  <dt>{p.head}</dt>
+                  <dd set:html={inlineMarkdown(p.body)} />
+                </div>
+              ))}
+            </dl>
+          )}
+          {parts.rest.map((p) => (
+            <p class="at-pg-body at-pg-measure" set:html={inlineMarkdown(p)} />
+          ))}
+        </article>
+      )
+    }
+
+    <ol class="at-cl-groups" aria-label="Changes by date">
       {
-        entries.map((entry) => (
-          <li data-changelog-entry={entry.id}>
-            <Card className="gap-4 py-5">
-              <CardHeader className="px-5">
-                <h2 class="text-lg leading-snug font-semibold">{entry.title}</h2>
-                <CardDescription>
-                  <time datetime={entry.date}>{entry.date}</time>
-                </CardDescription>
-              </CardHeader>
-              <CardContent className={body}>
-                <entry.Content />
-              </CardContent>
-            </Card>
+        groups.map((g) => (
+          <li class="at-cl-group">
+            <div class="at-cl-date">
+              <svg viewBox="0 0 12 12" aria-hidden="true">
+                <circle cx="6" cy="6" r="4.75" />
+              </svg>
+              <h2><time datetime={g.date}>{changelogLongDate(g.date)}</time></h2>
+            </div>
+            <ol class="at-cl-items">
+              {g.items.map((e) => (
+                <li class="at-cl-entry" data-changelog-entry={e.id} data-date={e.date} data-type={e.type}>
+                  <span class={`at-tag at-tag-tone at-pg-tag at-cl-tag at-cl-tag-${e.type}`}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d={GLYPH[e.type]} />
+                    </svg>
+                    {LABEL[e.type]}
+                  </span>
+                  <h3 class="at-pg-h3 at-pg-balance" data-changelog-title>
+                    {e.title}
+                  </h3>
+                  <div class="at-cl-body">
+                    <e.Content />
+                  </div>
+                </li>
+              ))}
+            </ol>
           </li>
         ))
       }

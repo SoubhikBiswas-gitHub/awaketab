@@ -1,6 +1,7 @@
 ---
 title: Pro cancellations and refunds reach every device
 date: 2026-09-26
+type: fixed
 ---
 
 When you cancel a Pro subscription, turn a cancellation back off, or get a refund through Polar, your Pro devices now pick up the change the next time they check in, the same way on the website and in the extension. A cancelled yearly plan still keeps Pro until the end of the period you paid for. A full refund ends Pro on every device.

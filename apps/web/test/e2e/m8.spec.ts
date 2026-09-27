@@ -272,12 +272,18 @@ test('/embed shows the paste-ready snippet, the generator and live demos', async
   await expect(page.locator('[data-snippet]')).toHaveText(
     '<script async src="https://awaketab.com/embed.js" data-mode="cook" data-theme="auto" data-size="compact"></script>',
   );
-  await page.locator('select[name="size"]').selectOption('full');
+  // One live widget on the placeholder recipe page (B6, board EmbedShowcase), remounted by the builder.
+  await expect(page.locator('iframe[src*="/embed/cook"]')).toHaveCount(1);
+  await expect(page.locator('iframe[src*="/embed/cook"]')).toHaveAttribute('src', /size=compact/u);
+  // Size is a segmented bar of native radios now (was a <select>); language stays a <select>.
+  await page.getByRole('radio', { name: 'Full width, 240 pixels tall' }).check({ force: true });
   await page.locator('select[name="lang"]').selectOption('de');
   await expect(page.locator('[data-snippet]')).toHaveText(
     '<script async src="https://awaketab.com/embed.js" data-mode="cook" data-theme="auto" data-size="full" data-lang="de"></script>',
   );
-  await expect(page.locator('iframe[src*="/embed/cook"]')).toHaveCount(2);
+  await expect(page.locator('iframe[src*="/embed/cook"]')).toHaveCount(1);
+  await expect(page.locator('iframe[src*="/embed/cook"]')).toHaveAttribute('src', /size=full/u);
+  await expect(page.locator('iframe[src*="/embed/cook"]')).toHaveAttribute('src', /lang=de/u);
   await expect(page.locator('[data-ad-slot]')).toHaveCount(0);
 });
 

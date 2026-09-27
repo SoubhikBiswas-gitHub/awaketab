@@ -1,22 +1,40 @@
 ---
+// /privacy (B6, canvas board PageLegal doc="privacy"). Section ids are link targets (/privacy#extension from
+// /extension, #ads, #server-data, #delete) and stay stable. Every docs/08 §7 row, retention period and the
+// deletion route are listed (test/seo/launch-audit.test.ts F-04).
 import BaseLayout from '../layouts/BaseLayout.astro';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { Separator } from '@/components/ui/separator';
+import LegalDoc from '../components/pages/LegalDoc.astro';
+import LegalSection from '../components/pages/LegalSection.astro';
+import '../styles/pages.css';
 import { t } from '../i18n/load';
 import { CONTACT_EMAIL, CONTACT_MAILTO } from '../lib/contact';
 import { articleSchema } from '../lib/seo';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/privacy`;
-const crumbLink = 'inline-flex min-h-11 items-center';
-const code = 'rounded-sm bg-muted px-1.5 py-0.5 text-[0.9em]';
+const toc = [
+  ['browser', 'Data stored in your browser'],
+  ['telemetry', 'First-party telemetry'],
+  ['extension', 'AwakeTab for Chrome (browser extension)'],
+  ['server-data', 'Data kept on our servers'],
+  ['network', 'Network and payment data'],
+  ['ads', 'Advertising (not yet active)'],
+  ['contact', 'Contact'],
+] as const;
+const title = (id: (typeof toc)[number][0]) => toc.find(([key]) => key === id)?.[1] ?? '';
+const keys = [
+  ['at.v1.settings', 'Theme, accent, default duration, sound, notifications, end behaviour, battery, ambient, language, telemetry and keyboard preferences.'],
+  ['at.v1.session', 'The current or last session so a reload can offer to resume it.'],
+  ['at.v1.stats', 'Local-date minute totals, session count and streak data retained for up to 365 days.'],
+  ['at.v1.license', 'An offline-verifiable Pro token, plan, features, validation time and random device identifier.'],
+  ['at.v1.meta', 'Install date, completed-session count, rating-prompt choice and last seen version.'],
+  ['at.v1.onboarding', 'Dismissed tips, including language suggestions.'],
+] as const;
+const events = [
+  'page_view', 'session_start', 'session_end', 'lock_state', 'lock_denied', 'fallback_used', 'resume_shown', 'resume_accepted',
+  'pwa_install', 'pip_open', 'share_click', 'pro_view', 'pro_checkout_click', 'pro_activated', 'rating_prompt', 'extension_click',
+  'ad_slot_loaded', 'sponsor_view', 'sponsor_click', 'session_extend', 'affiliate_click', 'rating_submitted',
+];
 ---
 
 <BaseLayout
@@ -37,163 +55,137 @@ const code = 'rounded-sm bg-muted px-1.5 py-0.5 text-[0.9em]';
     ],
   })}
 >
-  <main class="mx-auto mt-6 w-full max-w-[45rem] leading-relaxed">
-    <Breadcrumb aria-label="Breadcrumb">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>{t('page.privacy.h1')}</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-    <section class="mt-4 space-y-4">
-      <h1 class="text-3xl font-semibold leading-tight tracking-tight">{t('page.privacy.h1')}</h1>
-      <p>
-        <strong class="font-semibold">Effective September 9, 2026. Last updated September 26, 2026.</strong> AwakeTab
-        requires no account and sets no cookies.
-      </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold tracking-tight">Data stored in your browser</h2>
-      <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-[auto_1fr]">
-        <dt><code class={code}>at.v1.settings</code></dt><dd>Theme, accent, default duration, sound, notifications, end behavior, battery, ambient, language, telemetry and keyboard preferences.</dd>
-        <dt><code class={code}>at.v1.session</code></dt><dd>The current or last session so a reload can offer to resume it.</dd>
-        <dt><code class={code}>at.v1.stats</code></dt><dd>Local-date minute totals, session count and streak data retained for up to 365 days.</dd>
-        <dt><code class={code}>at.v1.license</code></dt><dd>An offline-verifiable Pro token, plan, features, validation time and random device identifier.</dd>
-        <dt><code class={code}>at.v1.meta</code></dt><dd>Install date, completed-session count, rating-prompt choice and last seen version.</dd>
-        <dt><code class={code}>at.v1.onboarding</code></dt><dd>Dismissed tips, including language suggestions.</dd>
+  <LegalDoc
+    title={t('page.privacy.h1')}
+    updated="2026-09-26"
+    effective="2026-09-09"
+    lede="AwakeTab requires no account and sets no cookies."
+    toc={toc}
+    other={['Terms', '/terms']}
+    email={CONTACT_EMAIL}
+    mailto={CONTACT_MAILTO}
+  >
+    <LegalSection id="browser" title={title('browser')} summary="your settings, sessions and stats live in this browser, under six keys. You can clear them from Settings or your browser.">
+      <dl class="at-legal-dl">
+        {
+          keys.map(([key, text]) => (
+            <div>
+              <dt><code>{key}</code></dt>
+              <dd>{text}</dd>
+            </div>
+          ))
+        }
       </dl>
-      <p>
-        This data stays in browser storage unless a feature explicitly contacts the first-party API. You can
-        clear it from Settings or your browser. <code class={code}>BroadcastChannel('awaketab')</code> coordinates open
-        tabs without sending that state to a server.
+      <p class="at-pg-body">
+        This data stays in browser storage unless a feature explicitly contacts the first-party API. You can clear it from
+        Settings or your browser. <code>BroadcastChannel('awaketab')</code> coordinates open tabs without sending that state to a
+        server.
       </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold tracking-tight">Optional first-party telemetry</h2>
-      <p>
-        When telemetry is enabled, AwakeTab may send: <code class={code}>page_view</code>, <code class={code}>session_start</code>,
-        <code class={code}>session_end</code>, <code class={code}>lock_state</code>, <code class={code}>lock_denied</code>,
-        <code class={code}>fallback_used</code>, <code class={code}>resume_shown</code>, <code class={code}>resume_accepted</code>,
-        <code class={code}>pwa_install</code>, <code class={code}>pip_open</code>, <code class={code}>share_click</code>,
-        <code class={code}>pro_view</code>, <code class={code}>pro_checkout_click</code>, <code class={code}>pro_activated</code>,
-        <code class={code}>rating_prompt</code>, <code class={code}>extension_click</code>, <code class={code}>ad_slot_loaded</code>,
-        <code class={code}>sponsor_view</code>, <code class={code}>sponsor_click</code>, <code class={code}>session_extend</code>,
-        <code class={code}>affiliate_click</code>, <code class={code}>rating_submitted</code> and sampled
-        <code class={code}>client_error</code> events.
+    </LegalSection>
+
+    <LegalSection id="telemetry" title={title('telemetry')} summary="telemetry is on by default and anonymous: AwakeTab sends events to its own server, with no user id, no fingerprint and no persistent identifier. One switch in Settings turns it off everywhere.">
+      <p class="at-pg-body">
+        While telemetry is on, AwakeTab may send: {events.map((name, i) => <><code>{name}</code>{i < events.length - 1 ? ', ' : ' '}</>)}and sampled <code>client_error</code> events.
       </p>
-      <p>
-        Common fields are timestamp, path without query parameters, locale, coarse browser/OS and viewport
-        classes, application version and a random per-tab session id held only in memory. AwakeTab does not
-        collect a user id, exact user agent, fingerprint, full referrer or persistent analytics identifier.
+      <p class="at-pg-body">
+        Common fields are timestamp, path without query parameters, locale, coarse browser/OS and viewport classes,
+        application version and a random per-tab session id held only in memory. AwakeTab does not collect a user id, exact
+        user agent, fingerprint, full referrer or persistent analytics identifier.
       </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4" id="extension" aria-labelledby="privacy-extension">
-      <h2 id="privacy-extension" class="text-xl font-semibold tracking-tight">AwakeTab for Chrome (browser extension)</h2>
-      <p>
-        The extension keeps the same records as the site, in <code class={code}>chrome.storage.local</code> on your
-        computer: <code class={code}>at.v1.settings</code>, <code class={code}>at.v1.session</code>,
-        <code class={code}>at.v1.stats</code>, <code class={code}>at.v1.license</code>
-        (only after you activate Pro), <code class={code}>at.v1.ext</code> (Screen or System level, schedules and
-        auto-start sites) and <code class={code}>at.v1.device</code> (a random device id created once per browser
-        profile, used only to count Pro activations).
+    </LegalSection>
+
+    <LegalSection id="extension" title={title('extension')} summary="the extension keeps the same records on your computer, asks for power, storage and alarms (anything else is optional), and sends no usage data unless you turn it on.">
+      <p class="at-pg-body">
+        The extension keeps the same records as the site, in <code>chrome.storage.local</code> on your computer:
+        <code>at.v1.settings</code>, <code>at.v1.session</code>, <code>at.v1.stats</code>, <code>at.v1.license</code> (only after you
+        activate Pro), <code>at.v1.ext</code> (Screen or System level, schedules and auto-start sites) and <code>at.v1.device</code> (a
+        random device id created once per browser profile, used only to count Pro activations).
       </p>
-      <p>
-        If Chrome sync is on, your settings, schedules and auto-start sites are also copied through
-        <code class={code}>chrome.storage.sync</code> to your other Chrome profiles. The licence token and the device id
-        never sync.
+      <p class="at-pg-body">
+        If Chrome sync is on, your settings, schedules and auto-start sites are also copied through <code>chrome.storage.sync</code>
+        to your other Chrome profiles. The licence token and the device id never sync.
       </p>
-      <p>
-        The extension asks for <code class={code}>power</code>, <code class={code}>storage</code> and
-        <code class={code}>alarms</code>. Notifications and access to a website are optional and requested only when
-        you turn on end-of-timer notifications or add an auto-start site; the site permission covers that one site,
-        and the extension never reads page content. Which sites you add is never sent anywhere.
+      <p class="at-pg-body">
+        The extension asks for <code>power</code>, <code>storage</code> and <code>alarms</code>. Notifications and access to a website are
+        optional and requested only when you turn on end-of-timer notifications or add an auto-start site; the site permission
+        covers that one site, and the extension never reads page content. Which sites you add is never sent anywhere.
       </p>
-      <p>
-        Anonymous usage statistics are off by default in the extension. If you turn them on in its settings, it sends
-        at most <code class={code}>session_start</code>, <code class={code}>session_end</code>,
-        <code class={code}>pro_activated</code> and <code class={code}>client_error</code> events to
-        <code class={code}>awaketab.com/api/e</code> with <code class={code}>source: ext</code> and the common fields
-        above — never a URL, tab title or site name. Activating Pro sends the licence key, the random device id and the
-        label “AwakeTab for Chrome · your operating system” to <code class={code}>/api/license/activate</code>. The
-        extension shows no ads, loads no remote code and never simulates keyboard or mouse input.
+      <p class="at-pg-body">
+        Anonymous usage statistics are off by default in the extension. If you turn them on in its settings, it sends at most
+        <code>session_start</code>, <code>session_end</code>, <code>pro_activated</code> and <code>client_error</code> events to
+        <code>awaketab.com/api/e</code> with <code>source: ext</code> and the common fields above, never a URL, tab title or site name.
+        Activating Pro sends the licence key, the random device id and the label “AwakeTab for Chrome · your operating system” to
+        <code>/api/license/activate</code>. The extension shows no ads, loads no remote code and never simulates keyboard or mouse
+        input.
       </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4" id="server-data" aria-labelledby="privacy-server-data">
-      <h2 id="privacy-server-data" class="text-xl font-semibold tracking-tight">Data kept on our servers</h2>
-      <p>AwakeTab runs on Cloudflare. It keeps three kinds of records there, and nothing else:</p>
-      <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-[auto_1fr]">
-        <dt class="font-semibold" id="retention-events">Anonymous usage events</dt>
-        <dd>
-          The telemetry events above, and content-security-policy reports your browser may send to
-          <code class={code}>/api/csp</code> (only the page path is kept). They are stored in Cloudflare Workers
-          Analytics Engine and <strong class="font-semibold">deleted automatically after 90 days</strong>. They carry no
-          IP address and no identifier beyond the per-tab random session id, so they cannot be traced back to you.
-          Turn telemetry off in Settings to stop sending them.
-        </dd>
-        <dt class="font-semibold" id="retention-ratings">Ratings</dt>
-        <dd>
-          If you rate AwakeTab, we store the stars, any text you choose to write (up to 500 characters), the page
-          language, the app version and the time, for up to 2 years. No name, email, IP address or device id is
-          attached. Only the aggregate (average and count) is published.
-        </dd>
-        <dt class="font-semibold" id="retention-licence">Licence record</dt>
-        <dd>
-          If you buy Pro or a Business licence, we keep a record to fulfil the purchase, handle refunds and stop
-          abuse: the plan and its status, your licence key (encrypted), the Polar order and customer ids, and for
-          each activated device a hash of its random device id, its label and when it was last seen. It is kept until
-          the licence expires plus one year, then deleted. Your name, email and payment details stay with Polar, the
-          merchant of record, whose privacy terms apply.
-        </dd>
+    </LegalSection>
+
+    <LegalSection id="server-data" title={title('server-data')} summary="three kinds of records, each with an end date: usage events for 90 days, ratings for up to 2 years, and a licence record until the licence expires plus one year.">
+      <p class="at-pg-body">AwakeTab runs on Cloudflare. It keeps three kinds of records there, and nothing else:</p>
+      <dl class="at-legal-dl">
+        <div>
+          <dt id="retention-events">Anonymous usage events</dt>
+          <dd>
+            The telemetry events above, and content-security-policy reports your browser may send to <code>/api/csp</code> (only
+            the page path is kept). They are stored in Cloudflare Workers Analytics Engine and <strong>deleted automatically after
+            90 days</strong>. They carry no IP address and no identifier beyond the per-tab random session id, so they cannot be
+            traced back to you. Turn telemetry off in Settings to stop sending them.
+          </dd>
+        </div>
+        <div>
+          <dt id="retention-ratings">Ratings</dt>
+          <dd>
+            If you rate AwakeTab, we store the stars, any text you choose to write (up to 280 characters), the page language, the
+            app version and the time, for up to 2 years. No name, email, IP address or device id is attached. Only the aggregate
+            (average and count) is published.
+          </dd>
+        </div>
+        <div>
+          <dt id="retention-licence">Licence record</dt>
+          <dd>
+            If you buy Pro or a Business licence, we keep a record to fulfil the purchase, handle refunds and stop abuse: the plan
+            and its status, your licence key (encrypted), the Polar order and customer ids, and for each activated device a hash
+            of its random device id, its label and when it was last seen. It is kept until the licence expires plus one year, then
+            deleted. Your name, email and payment details stay with Polar, the merchant of record, whose privacy terms apply.
+          </dd>
+        </div>
       </dl>
-      <p id="delete">
-        <strong class="font-semibold">Deleting your licence data.</strong> Email
-        <a class="text-primary underline underline-offset-4" href={CONTACT_MAILTO}>{CONTACT_EMAIL}</a> from any address with
-        your licence key or Polar receipt, and ask us to delete your licence data. We delete the licence record and
-        its device list within 7 days and confirm by reply. Deleting it ends Pro on every device, and it does not
-        refund the purchase (a refund within 14 days does that, see the terms). Usage events and ratings carry no
-        identity, so no one, including us, can pick out yours; they expire on the schedule above.
+      <p class="at-pg-body" id="delete">
+        <strong>Deleting your licence data.</strong> Email <a class="at-pg-link" href={CONTACT_MAILTO}>{CONTACT_EMAIL}</a> from any
+        address with your licence key or Polar receipt, and ask us to delete your licence data. We delete the licence record and its
+        device list within 7 days and confirm by reply. Deleting it ends Pro on every device, and it does not refund the purchase (a
+        refund within 14 days does that, see the terms). Usage events and ratings carry no identity, so no one, including us, can
+        pick out yours; they expire on the schedule above.
       </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold tracking-tight">Network and payment data</h2>
-      <p>
-        API rate limiting uses a salted hash of the source IP transiently; neither the IP nor its hash is
-        stored as analytics. Pro purchases are processed by Polar, whose checkout privacy terms apply.
-        Licence endpoints receive only the licence key or token, a random device id and a user-visible device
-        label.
+    </LegalSection>
+
+    <LegalSection id="network" title={title('network')} summary="your IP address is used briefly, as a salted hash, for rate limiting and is never stored as analytics. Polar handles payment.">
+      <p class="at-pg-body">
+        API rate limiting uses a salted hash of the source IP transiently; neither the IP nor its hash is stored as analytics. Pro
+        purchases are processed by Polar, whose checkout privacy terms apply. Licence endpoints receive only the licence key or
+        token, a random device id and a user-visible device label.
       </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4" id="ads" aria-labelledby="privacy-ads">
-      <h2 id="privacy-ads" class="text-xl font-semibold tracking-tight">Advertising (not yet active)</h2>
-      <p>
-        <strong class="font-semibold">No page shows ads today.</strong> This section describes what will apply once
-        advertising starts on the articles; the effective date above will change when it does.
+    </LegalSection>
+
+    <LegalSection id="ads" title={title('ads')} summary="no page shows ads today. If article ads start, they will never appear on the awake screen, in Picture-in-Picture, in embeds or in the extension.">
+      <p class="at-pg-body">
+        <strong>No page shows ads today.</strong> This section describes what will apply once advertising starts on the articles;
+        the effective date above will change when it does.
       </p>
-      <p>
-        AwakeTab's tool pages load no third-party scripts and show no ads. Our articles (pages under /for, /on, /vs,
-        /guides and /learn) will show advertisements from Google AdSense. Ad vendors may set cookies and process your
-        IP address and browsing information to show and measure ads. If you are in the EEA, the UK or Switzerland we
-        will ask for your consent first through a certified consent management platform, and you will be able to
-        change your choice any time via “Manage consent” in the footer. AwakeTab Pro removes ads on all pages. We
-        never show ads on the awake screen, in Picture-in-Picture, in embeds or in the browser extension.
+      <p class="at-pg-body">
+        AwakeTab's tool pages load no third-party scripts and show no ads. Our articles (pages under /for, /on, /vs, /guides and
+        /learn) will show advertisements from Google AdSense. Ad vendors may set cookies and process your IP address and browsing
+        information to show and measure ads. If you are in the EEA, the UK or Switzerland we will ask for your consent first
+        through a certified consent management platform, and you will be able to change your choice any time via “Manage consent”
+        in the footer. AwakeTab Pro removes ads on all pages. We never show ads on the awake screen, in Picture-in-Picture, in
+        embeds or in the browser extension.
       </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4" id="contact" aria-labelledby="privacy-contact">
-      <h2 id="privacy-contact" class="text-xl font-semibold tracking-tight">Contact</h2>
-      <p>
-        Questions about this policy or your data: <a class="text-primary underline underline-offset-4" href={CONTACT_MAILTO}>{CONTACT_EMAIL}</a>.
+    </LegalSection>
+
+    <LegalSection id="contact" title={title('contact')} summary="one address for every question about this policy or your data.">
+      <p class="at-pg-body">
+        Questions about this policy or your data: <a class="at-pg-link" href={CONTACT_MAILTO}>{CONTACT_EMAIL}</a>.
       </p>
-    </section>
-  </main>
+    </LegalSection>
+  </LegalDoc>
 </BaseLayout>

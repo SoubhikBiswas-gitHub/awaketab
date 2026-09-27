@@ -81,8 +81,14 @@ describe('F-07 · /changelog renders Markdown and orders by date', () => {
   it('puts the 1.0 launch entry first, then newest date first', async () => {
     // Entries only: the shared footer (B2) carries the language switcher's own "Language" heading.
     const html = (await page('/changelog')).split('<footer')[0] ?? '';
-    const titles = [...html.matchAll(/<h2[^>]*>([^<]+)<\/h2>/gu)].map((m) => m[1]);
-    const dates = [...html.matchAll(/<time datetime="(\d{4}-\d{2}-\d{2})">/gu)].map((m) => m[1] ?? '');
+    // B6 (board PageChangelog): the release is a card with an h2; the other entries are h3 under an h2 per date.
+    // Every entry carries its own date (data-date) and its title (data-changelog-title), in page order.
+    const titles = [...html.matchAll(/<h[23][^>]*data-changelog-title[^>]*>\s*([^<]+?)\s*<\/h[23]>/gu)].map((m) => m[1]);
+    const dates = [...html.matchAll(/data-changelog-entry="[^"]+" data-date="(\d{4}-\d{2}-\d{2})"/gu)].map((m) => m[1] ?? '');
+    // Each date heading names a date the entries under it carry.
+    const headings = [...html.matchAll(/<h2[^>]*><time datetime="(\d{4}-\d{2}-\d{2})">/gu)].map((m) => m[1] ?? '');
+    expect(headings.length).toBeGreaterThanOrEqual(4);
+    for (const day of headings) expect(dates).toContain(day);
     expect(titles[0]).toBe('1.0 — launch');
     expect(dates.length).toBe(titles.length);
     expect(dates.length).toBeGreaterThanOrEqual(14);
@@ -145,9 +151,12 @@ describe('F-06 / N-03 · Polar server and licence keys in the bundle', () => {
     return sandbox ? 'sandbox' : 'production';
   }
 
-  it('every checkout link on /pro, /embed and /kiosk comes from the same Polar server', async () => {
+  it('every checkout link on /pro and /kiosk comes from the same Polar server; /embed sells nothing yet', async () => {
     const want = await mode();
-    for (const route of ['pro', 'embed', 'kiosk']) {
+    // Decision O-29 (B6): Embed licences are held until a sandbox purchase ends with a licensed domain, so /embed
+    // shows "Licences open soon" and carries no checkout link at all.
+    expect(await page('/embed')).not.toMatch(/href="https:\/\/[^"]*polar\.sh/u);
+    for (const route of ['pro', 'kiosk']) {
       const links = [...(await page(`/${route}`)).matchAll(/href="(https:\/\/[^"]*polar\.sh[^"]*)"/gu)].map((m) => m[1] ?? '');
       expect(links.length, route).toBeGreaterThan(0);
       for (const href of links) expect(href.includes('sandbox'), `${route}: ${href}`).toBe(want === 'sandbox');

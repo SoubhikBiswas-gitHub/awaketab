@@ -1,6 +1,7 @@
 ---
 title: Steadier layout, clearer focus and pages that stay in your language
 date: 2026-09-26
+type: fixed
 ---
 
 The tool no longer shifts when a session starts. The status pill, the timer caption and the Stop button keep their places, so the page does not move under your finger. The "Read this in…" language suggestion now appears at the bottom of the screen instead of pushing the tool down.

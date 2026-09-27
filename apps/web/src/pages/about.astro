@@ -1,21 +1,23 @@
 ---
+// /about (B6, canvas board PageAbout): intro, author card, how it is checked (the seven lock states and what the
+// browser journeys verify), what AwakeTab will not claim, contact. Build-time markup only, no page script.
 import BaseLayout from '../layouts/BaseLayout.astro';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { Separator } from '@/components/ui/separator';
+import Crumbs from '../components/pages/Crumbs.astro';
+import '../styles/pages.css';
 import { t } from '../i18n/load';
 import { CONTACT_EMAIL, CONTACT_MAILTO } from '../lib/contact';
 import { personSchema } from '../lib/seo';
+import { LOCK_GLYPH, LOCK_STATES } from '../lib/page-glyphs';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
-const crumbLink = 'inline-flex min-h-11 items-center';
-const inlineLink = 'text-primary underline underline-offset-4';
+const COFFEE = 'https://buymeacoffee.com/awaketab';
+const journeys = ['Acquisition', 'Denial', 'Release on hidden tabs', 'Reacquisition', 'Fallback behaviour', 'Multi-tab warnings'];
+const principles = [
+  ['A tab is not a system setting', 'A normal browser tab cannot guarantee operation while hidden, prevent system sleep after a laptop lid closes, or override battery-saving policy.'],
+  ['No fake input', 'AwakeTab does not simulate mouse movement or keystrokes and does not claim to keep chat presence indicators available.'],
+  ['Nothing else on the awake screen', 'The awake screen carries no advertising or third-party scripts.'],
+  ['Open to inspection', 'The core wake-lock package is developed as open-source software so its state transitions can be inspected independently.'],
+] as const;
 ---
 
 <BaseLayout
@@ -25,61 +27,110 @@ const inlineLink = 'text-primary underline underline-offset-4';
   ogImage="/og/about-en.png"
   schema={personSchema()}
 >
-  <main class="mx-auto mt-6 w-full max-w-[45rem] leading-relaxed">
-    <Breadcrumb aria-label="Breadcrumb">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>{t('page.about.h1')}</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-    <section class="mt-4 space-y-4">
-      <h1 class="text-3xl font-semibold leading-tight tracking-tight">{t('page.about.h1')}</h1>
-      <p>
-        AwakeTab is an independent project built and maintained by Soubhik Biswas. Its purpose is narrow:
-        request a browser wake lock, show the result honestly, and make the common timer and until-time
-        workflows fast without requiring an account.
+  <main class="at-page at-about">
+    <div class="at-pg-intro at-about-intro">
+      <Crumbs current={t('page.about.h1')} />
+      <h1 class="at-pg-h1">{t('page.about.h1')}</h1>
+      <p class="at-pg-lead">
+        AwakeTab is an independent project built and maintained by Soubhik Biswas. Its purpose is narrow: request a
+        browser wake lock, show the result honestly, and make the common timer and until-time workflows fast without
+        requiring an account.
       </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold tracking-tight">How it is tested</h2>
-      <p>
-        The lock layer is tested as a seven-state transition machine. Browser journeys inject a controllable
-        Wake Lock implementation and verify acquisition, denial, release on hidden tabs, reacquisition,
-        fallback behavior and multi-tab warnings. Device claims are kept in the support matrix and are
-        refreshed separately from application code.
-      </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold tracking-tight">What AwakeTab will not claim</h2>
-      <p>
-        A normal browser tab cannot guarantee operation while hidden, prevent system sleep after a laptop
-        lid closes, or override battery-saving policy. AwakeTab does not simulate mouse movement or
-        keystrokes and does not claim to keep chat presence indicators available.
-      </p>
-      <p>
-        The awake screen carries no advertising or third-party scripts. The core wake-lock package is
-        developed as open-source software so its state transitions can be inspected independently.
-      </p>
-      <p>
-        If AwakeTab is useful, you can <a class={inlineLink} href="https://buymeacoffee.com/awaketab" rel="noopener" target="_blank">buy Soubhik a coffee</a>.
-        There is no widget, account, or extra script — just a link.
-      </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4" id="contact" aria-labelledby="about-contact">
-      <h2 id="about-contact" class="text-xl font-semibold tracking-tight">Contact</h2>
-      <p>
-        Email <a class={inlineLink} href={CONTACT_MAILTO} data-contact>{CONTACT_EMAIL}</a> for support, refunds,
-        bug reports, device results that differ from the support matrix, or a request to delete your licence data.
-        Messages go to Soubhik directly.
-      </p>
-    </section>
+    </div>
+
+    <aside class="at-card at-about-card" aria-label="Author">
+      <div class="at-about-who">
+        <div class="at-about-avatar" aria-hidden="true">SB<span></span></div>
+        <div class="at-about-name">
+          <span>Soubhik Biswas</span>
+          <span>Builds AwakeTab</span>
+        </div>
+      </div>
+      <p class="at-pg-ui">Messages go to Soubhik directly.</p>
+      <div class="at-about-links">
+        <a href={CONTACT_MAILTO}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M4 7l8 6 8-6"></path></svg>{CONTACT_EMAIL}
+        </a>
+        <a href={COFFEE} rel="noopener" target="_blank">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"></path><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5v2.5M11 3.5v2.5"></path></svg>Buy Soubhik a coffee<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+        </a>
+        <a href="/changelog">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16M6 7h12M6 12h9M6 17h11"></path></svg>Changelog
+        </a>
+      </div>
+    </aside>
+
+    <div class="at-about-body">
+      <section class="at-pg-stack-20" aria-labelledby="ab-test">
+        <h2 id="ab-test" class="at-pg-h2">How AwakeTab is checked</h2>
+        <p class="at-pg-body at-pg-measure">
+          The lock layer is tested as a seven-state transition machine. Browser journeys inject a controllable Wake Lock
+          implementation and verify acquisition, denial, release on hidden tabs, reacquisition, fallback behaviour and
+          multi-tab warnings. Device claims are kept in the support matrix and are refreshed separately from application
+          code.
+        </p>
+        <ol class="at-about-states" aria-label="The seven lock states">
+          {
+            LOCK_STATES.map((id) => (
+              <li data-lock={id}>
+                <span class="at-about-state-id">
+                  <svg class="at-pg-glyph" viewBox="0 0 12 12" aria-hidden="true">
+                    <path d={LOCK_GLYPH[id]} />
+                  </svg>
+                  <code>{id}</code>
+                </span>
+                <span class="at-about-state-pill">{t(`tool.pill.${id}`)}</span>
+              </li>
+            ))
+          }
+        </ol>
+        <ul class="at-about-journeys" aria-label="What the browser journeys verify">
+          {
+            journeys.map((label) => (
+              <li class="at-tag at-pg-tag">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                {label}
+              </li>
+            ))
+          }
+        </ul>
+        <p class="at-pg-ui at-pg-muted at-pg-measure">
+          Real-device results are pending until the manual run is recorded. <a class="at-pg-link" href="/learn/how-we-tested">How AwakeTab is checked</a>
+        </p>
+      </section>
+
+      <section class="at-pg-stack-24" aria-labelledby="ab-claims">
+        <div class="at-pg-stack-8">
+          <span class="at-pg-kicker">Principles</span>
+          <h2 id="ab-claims" class="at-pg-h2">What AwakeTab will not claim</h2>
+        </div>
+        <ol class="at-about-principles">
+          {
+            principles.map(([head, body], i) => (
+              <li>
+                <span class="at-about-n" aria-hidden="true">{`0${String(i + 1)}`}</span>
+                <div class="at-pg-stack-8">
+                  <h3 class="at-pg-h3">{head}</h3>
+                  <p class="at-pg-body">{body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+        <p class="at-pg-body at-pg-measure">
+          If AwakeTab is useful, you can <a class="at-pg-link" href={COFFEE} rel="noopener" target="_blank">buy Soubhik a coffee</a>.
+          There is no widget, account or extra script: just a link.
+        </p>
+      </section>
+
+      <section class="at-pg-stack-16" id="contact" aria-labelledby="ab-contact">
+        <h2 id="ab-contact" class="at-pg-h2">Contact</h2>
+        <p class="at-pg-body at-pg-measure">
+          Email <a class="at-pg-link" href={CONTACT_MAILTO} data-contact>{CONTACT_EMAIL}</a> for support, refunds, bug reports,
+          device results that differ from the support matrix, or a request to delete your licence data. Messages go to
+          Soubhik directly.
+        </p>
+      </section>
+    </div>
   </main>
 </BaseLayout>

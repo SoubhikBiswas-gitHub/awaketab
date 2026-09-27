@@ -1,6 +1,7 @@
 ---
 title: Sessions per day, focus blocks and a floating timer in your language
 date: 2026-09-26
+type: new
 ---
 
 Stats now counts sessions per day. "Today" reads, for example, "42 min · 2 sessions", and the CSV export fills its `sessions` column. Days recorded before this update show no count rather than a guess. Focus mode now shows how many focus blocks you have finished today. A block only counts when it runs to the end.

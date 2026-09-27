@@ -1,34 +1,57 @@
 ---
-// /kiosk — kiosk and signage landing with the URL builder (docs/09 §7.2–§7.3, E12-T02). No ads (docs/00 §8.3).
-// Free params: autostart, preset, mode, msg (≤ 80), theme. Kiosk licence extras: `logo=` (https) and the
-// `#lic=<token>` hash, verified offline by the tool (src/tool/embed/kiosk.ts) and stripped from the address bar.
+// /kiosk (B6, canvas board PageKiosk): kiosk and signage landing with the URL builder (docs/09 §7.2–§7.3, E12-T02).
+// No ads (docs/00 §8.3). Free params: autostart, preset, mode, msg (≤ 80), theme. Kiosk licence extras: `logo=`
+// (https) and the `#lic=` hash, verified offline by the tool (src/tool/embed/kiosk.ts). The preview is a drawing
+// of the kiosk screen the link opens (the real screen is the tool's ambient view); lib/kiosk-page.ts drives it.
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SegRadio from '../components/pages/SegRadio.astro';
+import '../styles/pages.css';
 import { t } from '../i18n/load';
 import { articleSchema } from '../lib/seo';
 import { CHECKOUT_LINKS } from '../lib/checkout';
 import { PLAN_PRICES } from '../lib/license';
-import { KIOSK_MODES, kioskUrl } from '../tool/embed/snippet';
-import { cn } from 'cn';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { kioskUrl } from '../tool/embed/snippet';
+import { kioskHints, urlParts } from '../lib/kiosk-page';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/kiosk`;
 const title = t('page.kiosk.title');
 const description = t('page.kiosk.description');
-const initial = kioskUrl({ preset: 'pinf', mode: 'message', theme: 'dark', msg: 'Welcome — please ring the bell', autostart: true, logo: '', token: '' });
-const presets = ['pinf', 'p60', 'p120', 'p240'] as const;
-const themes = ['auto', 'light', 'dark', 'oled'] as const;
-
-const ctaClass = cn(buttonVariants({ size: 'lg' }), 'min-h-11 w-full text-base');
-const outlineClass = cn(buttonVariants({ variant: 'outline' }), 'min-h-11 cursor-pointer');
-const navClass = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11');
-const h2 = 'mt-10 mb-3 text-xl font-semibold leading-tight';
-const field = 'grid gap-1 text-sm font-medium';
-const control =
-  'min-h-11 rounded-md border border-input bg-background px-3 text-base text-foreground focus-visible:outline-2 focus-visible:outline-ring';
-const code = 'block overflow-x-auto rounded-lg border bg-card p-4 text-sm leading-relaxed break-all whitespace-pre-wrap';
+const DEFAULTS = { preset: 'pinf', mode: 'message', theme: 'dark', msg: 'Welcome. Please ring the bell.', autostart: true, logo: '', token: '' } as const;
+const initial = kioskUrl(DEFAULTS);
+const hints = kioskHints(DEFAULTS);
+const modes = [
+  { value: 'message', label: 'Message' },
+  { value: 'clock', label: 'Clock' },
+  { value: 'minimal', label: 'Minimal' },
+  { value: 'standard', label: 'Standard' },
+  { value: 'night', label: 'Night' },
+];
+const themes = [
+  { value: 'auto', label: 'Auto' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'oled', label: 'OLED black' },
+];
+const lengths = [
+  { value: 'pinf', label: 'Until I stop' },
+  { value: 'p60', label: '1 h', aria: '1 hour' },
+  { value: 'p120', label: '2 h', aria: '2 hours' },
+  { value: 'p240', label: '4 h', aria: '4 hours' },
+];
+type TMark = 'y' | 'n' | 'i';
+const rows: Array<[string, string, string, TMark, string, TMark]> = [
+  ['Starts by itself', 'autostart=1', 'Yes', 'y', 'Yes', 'y'],
+  ['Message, Clock, Minimal, Night or Standard screen', 'mode=', 'Yes', 'y', 'Yes', 'y'],
+  ['Auto, light, dark or OLED theme', 'theme=', 'Yes', 'y', 'Yes', 'y'],
+  ['Your message, up to 80 characters', 'msg=', '60 s preview', 'i', 'Stays on (also with Pro)', 'y'],
+  ['Your logo above the timer and on the ambient screen', 'logo=', 'No', 'n', 'Yes', 'y'],
+  ['AwakeTab wordmark', '', 'Shown', 'i', 'None', 'y'],
+  ['Rating or upgrade prompts', '', 'Can appear', 'i', 'Never', 'y'],
+  ['Licence check', '#lic=', 'Not needed', 'n', 'On the device, works offline', 'y'],
+];
+const GLYPH: Record<TMark, string> = { y: 'M5 12.5l4.5 4.5L19 7.5', n: 'M7 12h10', i: 'M12 9a3 3 0 1 1 0 6a3 3 0 1 1 0-6z' };
+const RC = 2 * Math.PI * 112;
 ---
 
 <BaseLayout
@@ -48,153 +71,202 @@ const code = 'block overflow-x-auto rounded-lg border bg-card p-4 text-sm leadin
     ],
   })}
 >
-  <main class="mx-auto mt-8 max-w-[45rem] leading-normal">
-    <h1 class="text-3xl font-bold leading-tight tracking-tight text-balance">{t('page.kiosk.h1')}</h1>
-    <p class="mt-3 text-lg">
-      Point a kiosk browser, a lobby dashboard or a shop-window screen at one AwakeTab URL. It starts by itself, shows
-      your message or a clock, and keeps the display on for as long as the page is in front — no install, no account.
-    </p>
+  <main class="at-page at-prod at-kiosk" data-kiosk-root>
+    <div class="at-pg-intro at-prod-intro">
+      <span class="at-pg-kicker">Kiosks and signage</span>
+      <h1 class="at-pg-h1">{t('page.kiosk.h1')}</h1>
+      <p class="at-pg-lead">
+        Point a kiosk browser, a lobby dashboard or a shop-window screen at one AwakeTab URL. It starts by itself, shows your
+        message or a clock, and keeps the display on for as long as the page is in front. No install, no account.
+      </p>
+    </div>
 
-    <section aria-labelledby="builder">
-      <h2 id="builder" class={h2}>{t('builder.url')}</h2>
-      <form class="grid gap-4 rounded-lg border p-4 sm:grid-cols-2" data-kiosk-form>
-        <label class={field}>
-          {t('builder.mode')}
-          <select class={control} name="mode">
-            {KIOSK_MODES.map((m) => <option value={m} selected={m === 'message'}>{t(`ambient.mode.${m}`)}</option>)}
-          </select>
+    <section class="at-k-builder" aria-labelledby="k-builder">
+      <div class="at-pg-stack-8 at-k-head">
+        <h2 id="k-builder" class="at-pg-h2">{t('builder.url')}</h2>
+        <p class="at-pg-body">Pick what the screen shows. The preview and the link change as you go.</p>
+      </div>
+
+      <form class="at-k-form" data-kiosk-form>
+        <div class="at-pg-stack-8">
+          <span id="k-mode-l" class="at-pg-label">Mode</span>
+          <SegRadio name="mode" labelledby="k-mode-l" options={modes} checked="message" small compactPhone />
+        </div>
+        <div class="at-pg-stack-8">
+          <span id="k-theme-l" class="at-pg-label">Theme</span>
+          <SegRadio name="theme" labelledby="k-theme-l" options={themes} checked="dark" small compactPhone />
+        </div>
+        <div class="at-pg-stack-8">
+          <span id="k-len-l" class="at-pg-label">Duration</span>
+          <SegRadio name="preset" labelledby="k-len-l" options={lengths} checked="pinf" small compactPhone />
+        </div>
+        <label class="at-k-switch">
+          <span class="at-pg-stack-4">
+            <span>{t('builder.autostart')}</span>
+            <span class="at-pg-caption">The lock is requested as soon as the page is visible.</span>
+          </span>
+          <input class="sr-only" type="checkbox" role="switch" name="autostart" checked />
+          <span class="at-pg-switch" aria-hidden="true"></span>
         </label>
-        <label class={field}>
-          {t('settings.theme')}
-          <select class={control} name="theme">
-            {themes.map((th) => <option value={th} selected={th === 'dark'}>{t(`settings.theme.${th}`)}</option>)}
-          </select>
-        </label>
-        <label class={field}>
-          {t('tool.presets')}
-          <select class={control} name="preset">
-            {presets.map((p) => <option value={p}>{p === 'pinf' ? t('tool.preset.pinf.sr') : t(`tool.preset.${p}`)}</option>)}
-          </select>
-        </label>
-        <label class="flex min-h-11 items-center gap-2 self-end text-sm font-medium">
-          <input type="checkbox" name="autostart" checked class="size-5" />
-          {t('builder.autostart')}
-        </label>
-        <label class={cn(field, 'sm:col-span-2')}>
-          {t('builder.msg')}
-          <input class={control} name="msg" maxlength="80" value="Welcome — please ring the bell" autocomplete="off" />
-        </label>
-        <label class={cn(field, 'sm:col-span-2')}>
-          {t('builder.logo')}
-          <input class={control} name="logo" type="url" inputmode="url" placeholder="https://example.com/logo.png" autocomplete="off" />
-        </label>
-        <label class={cn(field, 'sm:col-span-2')}>
-          {t('builder.token')}
-          <input class={control} name="token" autocomplete="off" spellcheck="false" />
-        </label>
-        <div class="sm:col-span-2">
-          <pre><code class={code} data-kiosk-url>{initial}</code></pre>
-          <div class="mt-3 flex items-center gap-3">
-            <button class={outlineClass} type="button" data-kiosk-copy>{t('tool.share.copy')}</button>
-            <span class="text-sm text-muted-foreground" role="status" data-kiosk-status data-copied={t('builder.copied')}></span>
+        <div class="at-pg-field">
+          <div class="at-pg-field-head">
+            <label for="k-msg" class="at-pg-label">Message</label>
+            <span class="at-pg-caption at-pg-digits" aria-hidden="true"><span data-k-count>{Array.from(DEFAULTS.msg).length}</span> / 80</span>
           </div>
+          <input id="k-msg" class="at-input at-pg-input" name="msg" maxlength="80" value={DEFAULTS.msg} autocomplete="off" aria-describedby="k-msg-h" />
+          <p id="k-msg-h" class="at-pg-hint" data-k-hint="msg">{hints.msg}</p>
+        </div>
+        <div class="at-pg-field">
+          <div class="at-pg-field-head">
+            <label for="k-logo" class="at-pg-label">Logo URL</label>
+            <span class="at-tag at-pg-tag">Kiosk licence</span>
+          </div>
+          <input id="k-logo" class="at-input at-pg-input" name="logo" type="url" inputmode="url" placeholder="https://example.com/logo.png" autocomplete="off" aria-describedby="k-logo-h" />
+          <p id="k-logo-h" class="at-pg-hint" data-k-hint="logo">{hints.logo}</p>
+        </div>
+        <div class="at-pg-field">
+          <div class="at-pg-field-head">
+            <label for="k-token" class="at-pg-label">Licence token</label>
+            <span class="at-tag at-pg-tag">Kiosk licence</span>
+          </div>
+          <input id="k-token" class="at-input at-pg-input at-pg-mono-input" name="token" autocomplete="off" spellcheck="false" aria-describedby="k-token-h" />
+          <p id="k-token-h" class="at-pg-hint" data-k-hint="token">{hints.token}</p>
         </div>
       </form>
-      <p class="mt-3 text-sm text-muted-foreground">
-        If you activated a Kiosk licence in this browser, the token field fills itself in. The token travels in the
-        <code>#lic=</code> part of the URL, which browsers never send to a server; AwakeTab checks it offline and removes
-        it from the address bar.
-      </p>
-    </section>
 
-    <section aria-labelledby="free">
-      <h2 id="free" class={h2}>Free for every screen</h2>
-      <ul class="list-disc space-y-2 ps-5">
-        <li><code>autostart=1</code> — the lock is requested as soon as the page is visible.</li>
-        <li><code>mode=</code> — <code>message</code>, <code>clock</code>, <code>minimal</code>, <code>night</code> or <code>standard</code>.</li>
-        <li><code>msg=</code> — up to 80 characters on the message screen (a shared link previews it; the licence keeps it on).</li>
-        <li><code>theme=</code> — <code>auto</code>, <code>light</code>, <code>dark</code> or <code>oled</code>.</li>
-      </ul>
-    </section>
+      <figure class="at-k-preview">
+        <div class="at-k-bezel" aria-hidden="true" data-placeholder="screen bezel">
+          <div class="at-k-screen" data-kiosk-screen data-mode="message" data-ktheme="dark" data-msg-size="l" data-on style={`--at-kp-c: ${RC.toFixed(1)}`}>
+            <div class="at-k-aura"></div>
+            <div class="at-k-top">
+              <span class="at-k-logo"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 16l5-5 4 4 3-3 6 6"></path></svg>Your logo</span>
+              <span class="at-k-pill" data-k-pillwrap data-lock="held"><svg viewBox="0 0 12 12"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg><span data-k-pill>Screen awake</span></span>
+            </div>
+            <div class="at-k-view at-k-message">
+              <div class="at-k-msg" data-k-msg>{DEFAULTS.msg}</div>
+              <div class="at-k-time at-pg-digits" data-k-time></div>
+            </div>
+            <div class="at-k-view at-k-clock">
+              <div class="at-k-bigclock at-pg-digits"><span data-k-clock></span><span> <span data-k-ampm></span></span></div>
+              <div class="at-k-date" data-k-date></div>
+            </div>
+            <div class="at-k-view at-k-minimal">
+              <div class="at-k-mini at-pg-digits"><span data-k-big>∞</span><span data-k-sec></span></div>
+              <div class="at-k-meta"><span data-k-meta-a></span> <span data-k-meta-b></span></div>
+            </div>
+            <div class="at-k-view at-k-standard">
+              <div class="at-k-ring">
+                <svg viewBox="0 0 250 250"><circle cx="125" cy="125" r="112" class="at-k-track"></circle><g transform="rotate(-90 125 125)"><circle cx="125" cy="125" r="112" class="at-k-arc"></circle></g></svg>
+                <div class="at-k-ringtext">
+                  <div class="at-k-kicker" data-k-kicker></div>
+                  <div class="at-k-ringdigits at-pg-digits"><span data-k-big></span><span data-k-sec></span></div>
+                  <div class="at-k-ringmeta"><span data-k-meta-a></span> <span data-k-meta-b></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="at-k-view at-k-night">
+              <div class="at-k-bigclock at-pg-digits"><span data-k-clock></span><span> <span data-k-ampm></span></span></div>
+              <div class="at-k-dim">Dims after 30 s</div>
+            </div>
+            <div class="at-k-mark"><svg viewBox="0 0 48 48"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.6"></circle></svg>AwakeTab</div>
+          </div>
+        </div>
+        <figcaption class="at-pg-small at-k-cap">
+          <span data-k-caption>Preview · Message · Dark</span>
+          <span data-k-note>{hints.note}</span>
+        </figcaption>
+      </figure>
 
-    <section aria-labelledby="licensed">
-      <h2 id="licensed" class={h2}>With a Kiosk licence</h2>
-      <ul class="list-disc space-y-2 ps-5">
-        <li>Your logo from <code>logo=</code> (an https image) above the timer and on the ambient screen.</li>
-        <li>No AwakeTab wordmark, and no rating or upgrade prompts, ever.</li>
-        <li>The message screen stays on permanently.</li>
-        <li>Works offline: the token is verified on the device and re-checked quietly when it is online.</li>
-      </ul>
-      <div class="mt-6 grid gap-4 sm:grid-cols-2">
-        <Card>
-          <CardHeader><CardTitle className="text-2xl" id="kiosk-one">${PLAN_PRICES.biz_kiosk_site} one-time · 1 site</CardTitle></CardHeader>
-          <CardContent>
-            <a class={ctaClass} href={CHECKOUT_LINKS.biz_kiosk_site} rel="noopener" aria-describedby="kiosk-one">Buy for one site</a>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle className="text-2xl" id="kiosk-five">${PLAN_PRICES.biz_kiosk_5} one-time · 5 sites</CardTitle></CardHeader>
-          <CardContent>
-            <a class={ctaClass} href={CHECKOUT_LINKS.biz_kiosk_5} rel="noopener" aria-describedby="kiosk-five">Buy for five sites</a>
-          </CardContent>
-        </Card>
+      <div class="at-pg-stack-12 at-k-url">
+        <div class="at-k-urlhead">
+          <span id="k-url-l" class="at-pg-kicker">Your kiosk link</span>
+          <span class="at-pg-status" role="status" aria-live="polite" data-kiosk-status data-copied="Link copied"></span>
+        </div>
+        <div class="at-k-well">
+          <code aria-labelledby="k-url-l" data-kiosk-url>{urlParts(initial).map((p) => <span data-part={p.kind}>{p.text}</span>)}</code>
+          <button class="at-button at-button-primary at-button-sm at-pg-copy" type="button" data-kiosk-copy aria-label="Copy the kiosk link">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"></rect><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"></path></svg>
+            <span class="at-pg-copy-idle">{t('tool.share.copy')}</span><span class="at-pg-copy-done">Copied</span>
+          </button>
+        </div>
+        <p class="at-pg-small">
+          If you activated a Kiosk licence in this browser, the token field fills itself in. The token travels in the
+          <code class="at-pg-code">#lic=</code> part of the URL, which browsers never send to a server; AwakeTab checks it offline and
+          removes it from the address bar.
+        </p>
       </div>
-      <p class="mt-4"><a class={navClass} href="/pro/activate">Activate a Kiosk key</a></p>
     </section>
 
-    <Alert role="note" className="mt-8 border-s-4 border-s-warning">
-      <AlertDescription>
-        A web page can keep the display on only while it is the visible tab. Set the kiosk browser to open this URL
-        full-screen, keep the device plugged in, and leave the OS lid and sleep settings to the device's own power
-        plan — no web page can override those.
-      </AlertDescription>
-    </Alert>
+    <section class="at-pg-stack-32" aria-labelledby="k-compare">
+      <div class="at-pg-stack-8 at-ext-sechead">
+        <h2 id="k-compare" class="at-pg-h2">Free for every screen, or with a Kiosk licence</h2>
+        <p class="at-pg-body">Keeping the screen on is free everywhere. A Kiosk licence adds your logo and removes AwakeTab's branding and prompts.</p>
+      </div>
+      <div class="at-pg-panel at-pg-table at-k-table" role="table" aria-label="Free compared with a Kiosk licence">
+        <div class="at-pg-tr at-pg-th" role="row">
+          <span role="columnheader" class="at-pg-muted">Feature</span>
+          <span role="columnheader" class="at-pg-ink2"><span class="at-k-long">Free for every screen</span><span class="at-k-short">Free</span></span>
+          <span role="columnheader" class="at-pg-th-lamp"><span class="at-k-long">With a Kiosk licence</span><span class="at-k-short">Kiosk licence</span></span>
+        </div>
+        {
+          rows.map(([label, param, free, fk, lic, lk]) => (
+            <div class="at-pg-tr" role="row">
+              <span role="rowheader" class="at-pg-rowhead at-pg-stack-4">
+                {label}
+                {param && <code class="at-k-param">{param}</code>}
+              </span>
+              <span role="cell" class={`at-k-cell at-k-${fk}`}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={GLYPH[fk]} /></svg>
+                {free}
+              </span>
+              <span role="cell" class={`at-k-cell at-k-${lk}`}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d={GLYPH[lk]} /></svg>
+                {lic}
+              </span>
+            </div>
+          ))
+        }
+      </div>
 
-    <nav aria-label="Related" class="mt-8 flex flex-wrap gap-2">
-      <a class={navClass} href="/for/kiosk">Kiosk setup guide</a>
-      <a class={navClass} href="/embed">Embed widget</a>
-      <a class={navClass} href="/terms">Licence terms</a>
+      <div class="at-k-prices">
+        <div class="at-pg-stack-8 at-k-pricenote">
+          <span class="at-pg-kicker">Kiosk licence</span>
+          <p class="at-pg-ui">One-time payment. A site is one location with any number of screens. 14-day refund, no questions asked.</p>
+          <a class="at-pg-link at-pg-textlink" href="/pro/activate">Activate a Kiosk key</a>
+        </div>
+        <div class="at-card at-k-price">
+          <div class="at-k-amount"><span id="kiosk-one">${PLAN_PRICES.biz_kiosk_site}</span><span>one-time · 1 site</span></div>
+          <a class="at-button at-button-primary at-button-lg" href={CHECKOUT_LINKS.biz_kiosk_site} rel="noopener" aria-describedby="kiosk-one">Buy for one site</a>
+        </div>
+        <div class="at-card at-k-price">
+          <div class="at-k-amount"><span id="kiosk-five">${PLAN_PRICES.biz_kiosk_5}</span><span>one-time · 5 sites</span></div>
+          <a class="at-button" href={CHECKOUT_LINKS.biz_kiosk_5} rel="noopener" aria-describedby="kiosk-five">Buy for five sites</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="at-pg-note" role="note">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
+      <div class="at-pg-stack-8">
+        <span class="at-pg-kicker">Honest limit</span>
+        <p>
+          A web page can keep the display on only while it is the visible tab. Set the kiosk browser to open this URL full-screen,
+          keep the device plugged in, and leave the OS lid and sleep settings to the device's own power plan. No web page can
+          override those.
+        </p>
+      </div>
+    </div>
+
+    <nav class="at-pg-related" aria-label="Related">
+      <a class="at-pg-chiplink" href="/for/kiosk">Kiosk setup guide<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <a class="at-pg-chiplink" href="/embed">Embed widget<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <a class="at-pg-chiplink" href="/terms">Licence terms<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
     </nav>
   </main>
   <script>
-    import { KIOSK_MODES, kioskUrl, type IKioskUrlOptions } from '../tool/embed/snippet';
-    import { pick } from '../tool/embed/protocol';
+    import { bindKiosk } from '../lib/kiosk-page';
 
-    const form = document.querySelector<HTMLFormElement>('[data-kiosk-form]');
-    const out = document.querySelector<HTMLElement>('[data-kiosk-url]');
-    const status = document.querySelector<HTMLElement>('[data-kiosk-status]');
-    const tokenInput = form?.querySelector<HTMLInputElement>('input[name="token"]');
-
-    // Prefill from a Kiosk licence activated in this browser (at.v1.license, docs/08). Read-only.
-    try {
-      const lic = JSON.parse(localStorage.getItem('at.v1.license') ?? 'null') as { plan?: string; token?: string } | null;
-      if (tokenInput && lic?.token && (lic.plan === 'biz_kiosk_site' || lic.plan === 'biz_kiosk_5')) tokenInput.value = lic.token;
-    } catch {
-      // storage unavailable: leave the field empty
-    }
-
-    const read = (): IKioskUrlOptions => {
-      const data = new FormData(form ?? undefined);
-      return {
-        mode: pick(KIOSK_MODES, data.get('mode'), 'message'),
-        theme: pick(['auto', 'light', 'dark', 'oled'] as const, data.get('theme'), 'dark'),
-        preset: pick(['pinf', 'p15', 'p30', 'p45', 'p60', 'p120', 'p240'] as const, data.get('preset'), 'pinf'),
-        autostart: data.get('autostart') !== null,
-        msg: String(data.get('msg') ?? ''),
-        logo: String(data.get('logo') ?? ''),
-        token: String(data.get('token') ?? ''),
-      };
-    };
-    const render = () => {
-      if (out) out.textContent = kioskUrl(read(), location.origin);
-      if (status) status.textContent = '';
-    };
-    form?.addEventListener('input', render);
-    render();
-    document.querySelector('[data-kiosk-copy]')?.addEventListener('click', () => {
-      void navigator.clipboard.writeText(out?.textContent ?? '').then(() => {
-        if (status) status.textContent = status.dataset.copied ?? '';
-      });
-    });
+    const root = document.querySelector<HTMLElement>('[data-kiosk-root]');
+    if (root) bindKiosk(root);
   </script>
 </BaseLayout>

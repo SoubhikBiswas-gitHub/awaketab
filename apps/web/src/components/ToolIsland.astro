@@ -12,9 +12,11 @@ interface Props {
   mode?: string | undefined;
   locale?: TLocale;
   embed?: boolean;
+  /** Eyebrow above the heading (the 404 page's "Error 404", B6). */
+  kicker?: string | undefined;
 }
 
-const { heading, autostart, pip = false, preset, mode, locale = 'en', embed = false } = Astro.props;
+const { heading, autostart, pip = false, preset, mode, locale = 'en', embed = false, kicker } = Astro.props;
 const t = createT(locale);
 
 // Icons (DESIGN.md §11.4: 20 px, stroke 1.8, round caps), drawn as on the canvas boards (Main, Extras).
@@ -68,6 +70,7 @@ const ICON = {
           </button>
         </SiteHeader>
         <main class="at-shell">
+          {kicker && <p class="at-tool-kicker">{kicker}</p>}
           <h1 class="at-h1" id="content">{heading}</h1>
           <ToolPanel locale={locale} />
           {/* Tool actions that left the header in B2 (header = logo · nav · theme · Stats · Settings, DESIGN.md §6).

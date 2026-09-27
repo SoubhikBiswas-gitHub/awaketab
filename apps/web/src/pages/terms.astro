@@ -1,20 +1,20 @@
 ---
+// /terms (B6, canvas board PageLegal doc="terms").
 import BaseLayout from '../layouts/BaseLayout.astro';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { Separator } from '@/components/ui/separator';
+import LegalDoc from '../components/pages/LegalDoc.astro';
+import LegalSection from '../components/pages/LegalSection.astro';
+import '../styles/pages.css';
 import { t } from '../i18n/load';
+import { CONTACT_EMAIL, CONTACT_MAILTO } from '../lib/contact';
 import { articleSchema } from '../lib/seo';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/terms`;
-const crumbLink = 'inline-flex min-h-11 items-center';
+const toc = [
+  ['guarantee', 'No guarantee of uninterrupted wakefulness'],
+  ['use', 'Responsible use'],
+  ['licences', 'Software and licences'],
+] as const;
 ---
 
 <BaseLayout
@@ -34,56 +34,40 @@ const crumbLink = 'inline-flex min-h-11 items-center';
     ],
   })}
 >
-  <main class="mx-auto mt-6 w-full max-w-[45rem] leading-relaxed">
-    <Breadcrumb aria-label="Breadcrumb">
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink className={crumbLink} href="/">{t('app.name')}</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>{t('page.terms.h1')}</BreadcrumbPage>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-    <section class="mt-4 space-y-4">
-      <h1 class="text-3xl font-semibold leading-tight tracking-tight">{t('page.terms.h1')}</h1>
-      <p><strong class="font-semibold">Effective September 9, 2026.</strong></p>
-      <p>
-        You may use AwakeTab to request that a supported browser keep a display awake while the relevant page
-        remains eligible. Browser, operating-system and device power policy always remain in control.
+  <LegalDoc
+    title={t('page.terms.h1')}
+    updated="2026-09-09"
+    effective="2026-09-09"
+    lede="You may use AwakeTab to request that a supported browser keep a display awake while the relevant page remains eligible. Browser, operating-system and device power policy always remain in control."
+    toc={toc}
+    other={['Privacy', '/privacy']}
+    email={CONTACT_EMAIL}
+    mailto={CONTACT_MAILTO}
+  >
+    <LegalSection id="guarantee" title={toc[0][1]} summary="trust the live status pill, not a promise. Do not rely on AwakeTab for safety-critical monitoring.">
+      <p class="at-pg-body">
+        AwakeTab cannot guarantee operation in a hidden tab, after closing a laptop lid, during low-power modes, after browser
+        suspension, or when a device administrator blocks the API. Use the live status pill as the current result and do not rely
+        on AwakeTab for safety-critical monitoring.
       </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold tracking-tight">No guarantee of uninterrupted wakefulness</h2>
-      <p>
-        AwakeTab cannot guarantee operation in a hidden tab, after closing a laptop lid, during low-power
-        modes, after browser suspension, or when a device administrator blocks the API. Use the live status
-        pill as the current result and do not rely on AwakeTab for safety-critical monitoring.
+    </LegalSection>
+    <LegalSection id="use" title={toc[1][1]} summary="use the shortest session you need, and do not use AwakeTab to fake activity or availability.">
+      <p class="at-pg-body">
+        Keeping a display on uses battery and may cause image retention on some screens. Follow device guidance, use the shortest
+        suitable duration and stop a session when it is no longer needed. You must not use the service to misrepresent activity or
+        availability.
       </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold tracking-tight">Responsible use</h2>
-      <p>
-        Keeping a display on uses battery and may cause image retention on some screens. Follow device
-        guidance, use the shortest suitable duration and stop a session when it is no longer needed. You must
-        not use the service to misrepresent activity or availability.
+    </LegalSection>
+    <LegalSection id="licences" title={toc[2][1]} summary="the website is provided as-is, open-source packages keep their own licence, and paid licences have a 14-day refund.">
+      <p class="at-pg-body">
+        The public website is provided as-is. Open-source packages are governed by the licence included with their source. Paid
+        product terms, activation limits and refund information shown at checkout apply in addition to these terms. Features and
+        browser support may change as platforms change.
       </p>
-    </section>
-    <Separator className="my-8" />
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold tracking-tight">Software and licences</h2>
-      <p>
-        The public website is provided as-is. Open-source packages are governed by the licence included with
-        their source. Paid product terms, activation limits and refund information shown at checkout apply in
-        addition to these terms. Features and browser support may change as platforms change.
+      <p class="at-pg-body">
+        Paid licences include a 14-day refund, no questions asked. Email <a class="at-pg-link" href={CONTACT_MAILTO}>{CONTACT_EMAIL}</a>
+        with your receipt or use the Polar customer portal. Refunds deactivate the licence key.
       </p>
-      <p>
-        Paid licences include a 14-day refund, no questions asked. Email support@awaketab.com with your
-        receipt or use the Polar customer portal. Refunds deactivate the licence key.
-      </p>
-    </section>
-  </main>
+    </LegalSection>
+  </LegalDoc>
 </BaseLayout>

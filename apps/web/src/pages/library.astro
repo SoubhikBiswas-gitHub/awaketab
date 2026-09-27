@@ -1,15 +1,16 @@
 ---
-// /library — @awaketab/wake landing and live demo (docs/12 §6, E12-T04). The demo runs the package's built IIFE
-// (dist/awaketab-wake.iife.js, the file npm publishes and CDNs serve), copied to /library/ by
-// scripts/library.mjs — not the app's bundled copy. No ads (docs/00 §8.3); zero hydration (docs/03 ADR-013).
+// /library (B6, canvas board PageLibrary): @awaketab/wake landing and live demo (docs/12 §6, E12-T04). The demo runs
+// the package's built IIFE (dist/awaketab-wake.iife.js, the file npm publishes and CDNs serve), copied to /library/
+// by scripts/library.mjs, not the app's bundled copy. The state diagram, the pill and the log follow the lock
+// (lib/library-demo.ts). No ads (docs/00 §8.3); zero hydration (docs/03 ADR-013).
 import BaseLayout from '../layouts/BaseLayout.astro';
+import StatusPill from '../components/shell/StatusPill.astro';
+import '../styles/pages.css';
 import { t } from '../i18n/load';
 import { articleSchema } from '../lib/seo';
+import { LOCK_GLYPH, LOCK_STATES, type TPageLockState } from '../lib/page-glyphs';
+import { codeTabs, highlight } from '../lib/library-code';
 import wakePkg from '../../../../packages/wake/package.json';
-import { cn } from 'cn';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { buttonVariants } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/library`;
@@ -17,38 +18,77 @@ const title = t('page.library.title');
 const description = t('page.library.description');
 const version = wakePkg.version;
 const major = version.split('.')[0] ?? '1';
-const STATES = ['idle', 'requesting', 'held', 'lost', 'denied', 'unsupported', 'fallback'] as const;
 
-const esm = `import { createWakeLock } from '@awaketab/wake';
+// ── State diagram (canvas geometry): a 3 × 3 grid of state pills and the seven transitions between them. ──
+const CELL: Record<TPageLockState, [number, number]> = { idle: [0, 0], requesting: [1, 0], held: [2, 0], unsupported: [0, 1], denied: [1, 1], lost: [2, 1], fallback: [0, 2] };
+const EDGES: Array<[TPageLockState, TPageLockState, string]> = [
+  ['idle', 'requesting', 'request()'],
+  ['requesting', 'held', 'acquired'],
+  ['requesting', 'denied', 'denied'],
+  ['held', 'lost', 'released'],
+  ['lost', 'requesting', 'retry'],
+  ['idle', 'unsupported', 'no API'],
+  ['unsupported', 'fallback', 'gesture'],
+];
+const GEO = {
+  wide: { w: 700, h: 310, nw: 180, nh: 64, col: 260, row: 124 },
+  phone: { w: 316, h: 236, nw: 100, nh: 44, col: 108, row: 96 },
+} as const;
+type TGeo = (typeof GEO)[keyof typeof GEO];
+const f = (n: number) => n.toFixed(1);
+const edgesFor = (g: TGeo) =>
+  EDGES.map(([a, b, label]) => {
+    const ctr = (id: TPageLockState): [number, number] => [CELL[id][0] * g.col + g.nw / 2, CELL[id][1] * g.row + g.nh / 2];
+    const [ax, ay] = ctr(a);
+    const [bx, by] = ctr(b);
+    const len = Math.hypot(bx - ax, by - ay);
+    const dx = (bx - ax) / len;
+    const dy = (by - ay) / len;
+    const clip = Math.min(dx ? g.nw / 2 / Math.abs(dx) : Infinity, dy ? g.nh / 2 / Math.abs(dy) : Infinity);
+    const x1 = ax + dx * (clip + 4);
+    const y1 = ay + dy * (clip + 4);
+    const x2 = bx - dx * (clip + 5);
+    const y2 = by - dy * (clip + 5);
+    const hx = x2 - dx * 8;
+    const hy = y2 - dy * 8;
+    const nx = -dy * 4.5;
+    const ny = dx * 4.5;
+    return {
+      id: `${a}-${b}`,
+      to: b,
+      label,
+      d: `M${f(x1)} ${f(y1)}L${f(hx)} ${f(hy)}`,
+      head: `M${f(x2)} ${f(y2)}L${f(hx + nx)} ${f(hy + ny)}L${f(hx - nx)} ${f(hy - ny)}Z`,
+      lx: `${f((((x1 + x2) / 2) / g.w) * 100)}%`,
+      ly: `${f((((y1 + y2) / 2) / g.h) * 100)}%`,
+    };
+  });
+const pct = (n: number, of: number) => `${f((n / of) * 100)}%`;
+const nodeStyle = (id: TPageLockState) => {
+  const [c, r] = CELL[id];
+  return [
+    `--x-w: ${pct(c * GEO.wide.col, GEO.wide.w)}`,
+    `--y-w: ${pct(r * GEO.wide.row, GEO.wide.h)}`,
+    `--x-p: ${pct(c * GEO.phone.col, GEO.phone.w)}`,
+    `--y-p: ${pct(r * GEO.phone.row, GEO.phone.h)}`,
+  ].join('; ');
+};
 
-const lock = createWakeLock();
-lock.on('change', ({ from, to, reason, advice }) => {
-  pill.textContent = to;            // idle · requesting · held · lost · denied · unsupported · fallback
-  hint.textContent = advice ?? '';  // e.g. 'battery_saver', 'iframe_no_allow'
-});
-start.addEventListener('click', () => lock.request()); // a gesture keeps the video fallback available
-stop.addEventListener('click', () => lock.release());`;
-const cdn = `<script src="https://cdn.jsdelivr.net/npm/@awaketab/wake@${major}/dist/awaketab-wake.iife.js"></script>
-<script>
-  const lock = AwakeTabWake.createWakeLock();
-  document.querySelector('#start').addEventListener('click', () => lock.request());
-</script>`;
-const react = `import { useWakeLock } from '@awaketab/wake/react';
+// Code tabs, highlighted at build time (lib/library-code.ts).
+const TABS = codeTabs(major);
 
-export function KeepAwake() {
-  const { state, request, release } = useWakeLock();
-  return state === 'held' || state === 'fallback'
-    ? <button onClick={release}>Screen awake — stop</button>
-    : <button onClick={request}>Keep screen on</button>;
-}`;
-
-const btn = cn(buttonVariants(), 'min-h-11 cursor-pointer');
-const outline = cn(buttonVariants({ variant: 'outline' }), 'min-h-11 cursor-pointer');
-const navClass = cn(buttonVariants({ variant: 'ghost' }), 'min-h-11');
-const h2 = 'mt-10 mb-3 text-xl font-semibold leading-tight';
-const code = 'block overflow-x-auto rounded-lg border bg-card p-4 text-sm leading-relaxed whitespace-pre';
-const control =
-  'min-h-11 rounded-md border border-input bg-background px-3 text-base text-foreground focus-visible:outline-2 focus-visible:outline-ring';
+type TSeg = string | { code: string };
+const CMP: Array<[string, TSeg[], TSeg[]]> = [
+  ['Last release', ['Maintained; semver'], ['16 December 2020']],
+  ['Native Wake Lock', ['Yes, first'], ['Yes (when present)']],
+  ['State reporting', ['Seven states + change events with reason and advice'], [{ code: 'isEnabled' }, ' boolean']],
+  ['Denial diagnosis', [{ code: 'classifyDenial()' }, ' advice codes'], ['None']],
+  ['Fallback', ['Inlined 1-frame video, gesture-aware, pauses when hidden'], ['Looping video, always on']],
+  ['Size (gzip)', ['≤ 3.4 KB, fallback included'], ['≈ 3.2 KB']],
+  ['TypeScript · SSR', ['Native · inert on the server'], ['Community typings · no']],
+  ['Adapters', ['React, Preact, Vue (< 400 B each)'], ['No']],
+];
+const pills = Object.fromEntries(LOCK_STATES.map((s) => [s, t(`tool.pill.${s}`)]));
 ---
 
 <BaseLayout
@@ -68,111 +108,218 @@ const control =
     ],
   })}
 >
-  <main class="mx-auto mt-8 max-w-[45rem] leading-normal">
-    <h1 class="text-3xl font-bold leading-tight tracking-tight text-balance">{t('page.library.h1')}</h1>
-    <p class="mt-3 text-lg">
-      <code>@awaketab/wake</code> keeps a web page's screen from dimming and tells you the truth about it: seven
-      states, a reason and an advice code on every change, and <code>held</code> only while the browser really holds
-      the lock. Zero dependencies, ≤ 3.4 KB gzipped with the fallback videos inlined, MIT. The maintained replacement
-      for NoSleep.js.
-    </p>
-    <pre class="mt-4"><code tabindex="0" class={code}>npm install @awaketab/wake</code></pre>
-
-    <section aria-labelledby="demo" class="mt-10 rounded-lg border p-4" data-wake-demo>
-      <h2 id="demo" class="text-xl font-semibold leading-tight">{t('library.demo.title')}</h2>
-      <p class="mt-1 text-sm text-muted-foreground">
-        Running <code>awaketab-wake.iife.js</code> v{version} — the exact file on npm.
-        <span data-demo-loading>…</span>
+  <main class="at-page at-prod at-lib">
+    <div class="at-pg-intro at-prod-intro">
+      <span class="at-pg-kicker">Open source · MIT · v{version}</span>
+      <h1 class="at-pg-h1"><code class="at-lib-h1code">@awaketab/wake</code>: a wake lock that says when it works</h1>
+      <p class="at-pg-lead">
+        <code class="at-pg-code">@awaketab/wake</code> keeps a web page's screen from dimming and tells you the truth about it: seven states,
+        a reason and an advice code on every change, and <code class="at-pg-code">held</code> only while the browser really holds the lock.
+        Zero dependencies, ≤ 3.4 KB gzipped with the fallback videos inlined, MIT. The maintained replacement for NoSleep.js.
       </p>
-      <label class="mt-4 grid max-w-sm gap-1 text-sm font-medium">
-        {t('library.demo.scenario')}
-        <select class={control} data-demo-scenario>
-          <option value="real" selected>{t('library.demo.scenario.real')}</option>
-          <option value="simulated">{t('library.demo.hide')} / {t('library.demo.show')}</option>
-          <option value="denied">{t('library.demo.scenario.denied')}</option>
-          <option value="unsupported">{t('library.demo.scenario.unsupported')}</option>
-        </select>
-      </label>
-      <ol class="mt-4 grid gap-2 sm:grid-cols-2" data-demo-states>
+      <div class="at-lib-install">
+        <code tabindex="0"><span aria-hidden="true">$ </span>npm install @awaketab/wake</code>
+        <span class="at-tag at-tag-tone at-pg-tag">npm package coming soon</span>
+      </div>
+    </div>
+
+    <section class="at-lib-demo" aria-labelledby="demo" data-wake-demo data-demo-state="idle" data-scenario="real">
+      <div class="at-pg-aura at-lib-aura" aria-hidden="true"></div>
+      <div class="at-lib-head">
+        <div class="at-pg-stack-8">
+          <h2 id="demo" class="at-pg-h2">{t('library.demo.title')}</h2>
+          <p class="at-pg-small">Running <code class="at-pg-code">awaketab-wake.iife.js</code> v{version}, the build that will be published to npm.</p>
+        </div>
+        <div class="at-pg-field at-lib-scenario">
+          <label for="lib-scenario" class="at-pg-label">{t('library.demo.scenario')}</label>
+          <div class="at-pg-select">
+            <select id="lib-scenario" class="at-input" data-demo-scenario>
+              <option value="real" selected>{t('library.demo.scenario.real')}</option>
+              <option value="simulated">{t('library.demo.hide')} / {t('library.demo.show')}</option>
+              <option value="denied">{t('library.demo.scenario.denied')}</option>
+              <option value="unsupported">{t('library.demo.scenario.unsupported')}</option>
+            </select>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="at-pg-stack-20 at-lib-ctrl">
+        <div class="at-lib-status">
+          <StatusPill state="idle" aria-live="polite" data-demo-pill><span data-demo-pill-text>{pills.idle}</span></StatusPill>
+          <code class="at-lib-state">state: <span data-demo-current>idle</span></code>
+          <span class="at-lib-advice" data-demo-advice data-label={t('library.demo.advice', { code: '{code}' })}></span>
+        </div>
+        <div class="at-lib-buttons">
+          <button class="at-button at-button-primary at-pg-b52" type="button" data-demo-request disabled>
+            <svg class="at-button-glyph" viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"></path><circle cx="24" cy="9" r="4.6" fill="currentColor"></circle></svg>
+            {t('library.demo.request')}
+          </button>
+          <button class="at-button at-button-stop at-pg-b52" type="button" data-demo-release disabled>{t('library.demo.release')}</button>
+          <button class="at-button at-lib-sim" type="button" data-demo-hide disabled aria-describedby="lib-sim-note">{t('library.demo.hide')}</button>
+          <button class="at-button at-lib-sim" type="button" data-demo-show disabled aria-describedby="lib-sim-note">{t('library.demo.show')}</button>
+        </div>
+        <p id="lib-sim-note" class="at-pg-small">
+          <span data-note="real">Uses this browser’s own Screen Wake Lock API. Switch tabs for real to see it pause. Simulate tab hidden and visible work in the second scenario.</span>
+          <span data-note="simulated">An injected lock whose “tab hidden” releases it, so lost and the retry are visible.</span>
+          <span data-note="denied">An injected lock that rejects with NotAllowedError, as Firefox does at 5 % battery or less while not charging. Simulate tab hidden and visible work in the second scenario.</span>
+          <span data-note="unsupported">No Wake Lock API, so Request starts the inlined video fallback from your click. Simulate tab hidden and visible work in the second scenario.</span>
+        </p>
+      </div>
+
+      <div class="at-pg-stack-16 at-lib-diag">
+        <div class="at-lib-graph">
+          {
+            (['wide', 'phone'] as const).map((geo) => (
+              <div class={`at-lib-edges at-lib-edges-${geo}`} aria-hidden="true">
+                <svg viewBox={`0 0 ${String(GEO[geo].w)} ${String(GEO[geo].h)}`}>
+                  {edgesFor(GEO[geo]).map((e) => (
+                    <g data-edge={e.id} data-lock={e.to}>
+                      <path d={e.d} class="at-lib-line" />
+                      <path d={e.head} class="at-lib-head-mark" />
+                    </g>
+                  ))}
+                </svg>
+                {geo === 'wide' &&
+                  edgesFor(GEO.wide).map((e) => (
+                    <span class:list={['at-lib-elabel', e.label.includes('(') && 'at-pg-mono']} data-edge={e.id} style={`left: ${e.lx}; top: ${e.ly}`}>
+                      {e.label}
+                    </span>
+                  ))}
+              </div>
+            ))
+          }
+          <ol aria-label="The seven lock states" class="at-lib-nodes">
+            {
+              LOCK_STATES.map((id) => (
+                <li data-state={id} data-lock={id} data-pill={pills[id]} aria-current={id === 'idle' ? 'step' : undefined} data-visited={id === 'idle' ? '' : undefined} style={nodeStyle(id)}>
+                  <code>
+                    <svg class="at-pg-glyph" viewBox="0 0 12 12" aria-hidden="true">
+                      <path d={LOCK_GLYPH[id]} />
+                    </svg>
+                    {id}
+                  </code>
+                  <span>{pills[id]}</span>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+        <p class="at-pg-caption at-lib-diagnote">
+          <code class="at-pg-code">release()</code> returns to <code class="at-pg-code">idle</code> from any state. States you have visited stay lit.
+        </p>
+      </div>
+
+      <div class="at-pg-stack-12 at-lib-log">
+        <div class="at-lib-loghead">
+          <h3>{t('library.demo.log')}</h3>
+          <span class="at-pg-caption">newest first · last 12</span>
+        </div>
+        <div class="at-lib-logbox" tabindex="0" aria-label="Transition log entries">
+          <p class="at-pg-small at-lib-empty">No transitions yet. Press Request to ask for a lock.</p>
+          <ol data-demo-log></ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="at-lib-use" aria-labelledby="usage" data-lib-tabs>
+      <div class="at-pg-stack-12">
+        <h2 id="usage" class="at-pg-h2">Use it</h2>
+        {TABS.map(([id, , , , note], i) => <p class="at-pg-body" data-tab-note={id} hidden={i > 0}>{note}</p>)}
+      </div>
+      <div class="at-pg-stack-16">
+        <div class="at-seg at-pg-seg at-pg-seg-sm at-pg-seg-xs at-lib-tabs" role="tablist" aria-label="Setup" style={`--at-seg-n: ${String(TABS.length)}`}>
+          <span class="at-seg-ind" aria-hidden="true"></span>
+          {
+            TABS.map(([id, label], i) => (
+              <button class="at-seg-item" type="button" role="tab" id={`lib-tab-${id}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`lib-code-${id}`} tabindex={i === 0 ? 0 : -1} data-tab={id}>
+                {label}
+              </button>
+            ))
+          }
+        </div>
         {
-          STATES.map((s) => (
-            <li class="at-demo-state flex min-h-11 items-center justify-between gap-2 rounded-md border px-3" data-state={s}>
-              <code>{s}</code>
-              <span class="text-sm text-muted-foreground">{t(`tool.pill.${s}`)}</span>
-            </li>
+          TABS.map(([id, label, file, code], i) => (
+            <div id={`lib-code-${id}`} class="at-lib-code" role="tabpanel" aria-labelledby={`lib-tab-${id}`} hidden={i > 0}>
+              <div class="at-lib-codehead">
+                <code>{file}</code>
+                <div class="at-lib-codeactions">
+                  <span class="at-pg-caption at-lib-copied" role="status" aria-live="polite"></span>
+                  <button class="at-button at-button-quiet at-button-sm at-pg-copy" type="button" data-copy-code aria-label={`Copy the ${label} example`}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"></rect><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"></path></svg>
+                    {t('tool.share.copy')}
+                  </button>
+                </div>
+              </div>
+              <pre tabindex="0" data-code={code}><code>{highlight(code).map((segs, n) => (
+                <span class="at-lib-line-row"><span class="at-lib-ln" aria-hidden="true">{n + 1}</span><span>{segs.map(([x, k]) => (k ? <span data-tok={k}>{x}</span> : x))}{segs.length === 0 && ' '}</span></span>
+              ))}</code></pre>
+            </div>
           ))
         }
-      </ol>
-      <p class="mt-4 text-sm">
-        <output class="font-semibold" aria-live="polite" data-demo-current>idle</output>
-        <span class="ms-2 text-muted-foreground" data-demo-advice data-label={t('library.demo.advice', { code: '{code}' })}></span>
-      </p>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <button class={btn} type="button" data-demo-request disabled>{t('library.demo.request')}</button>
-        <button class={outline} type="button" data-demo-release disabled>{t('library.demo.release')}</button>
-        <button class={outline} type="button" data-demo-hide disabled>{t('library.demo.hide')}</button>
-        <button class={outline} type="button" data-demo-show disabled>{t('library.demo.show')}</button>
-      </div>
-      <h3 class="mt-6 text-sm font-semibold">{t('library.demo.log')}</h3>
-      <ol class="mt-2 grid gap-1 font-mono text-xs" data-demo-log></ol>
-    </section>
-
-    <section aria-labelledby="usage">
-      <h2 id="usage" class={h2}>Use it</h2>
-      <h3 class="mb-2 font-semibold">ESM (bundlers)</h3>
-      <pre><code tabindex="0" class={code}>{esm}</code></pre>
-      <h3 class="mt-6 mb-2 font-semibold">CDN (no build step)</h3>
-      <pre><code tabindex="0" class={code}>{cdn}</code></pre>
-      <h3 class="mt-6 mb-2 font-semibold">React, Preact and Vue</h3>
-      <pre><code tabindex="0" class={code}>{react}</code></pre>
-    </section>
-
-    <section aria-labelledby="compare">
-      <h2 id="compare" class={h2}>Compared with NoSleep.js</h2>
-      <div class="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead><span class="sr-only">Feature</span></TableHead>
-              <TableHead><code>@awaketab/wake</code></TableHead>
-              <TableHead>NoSleep.js 0.12.0</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow><TableCell>Last release</TableCell><TableCell>maintained; semver</TableCell><TableCell>16 Dec 2020</TableCell></TableRow>
-            <TableRow><TableCell>Native Wake Lock</TableCell><TableCell>yes, first</TableCell><TableCell>yes (when present)</TableCell></TableRow>
-            <TableRow><TableCell>Honest state</TableCell><TableCell>seven states + change events with reason and advice</TableCell><TableCell><code>isEnabled</code> boolean</TableCell></TableRow>
-            <TableRow><TableCell>Denial diagnosis</TableCell><TableCell><code>classifyDenial()</code> advice codes</TableCell><TableCell>none</TableCell></TableRow>
-            <TableRow><TableCell>Fallback</TableCell><TableCell>inlined 1-frame video, gesture-aware, pauses when hidden</TableCell><TableCell>looping video, always on</TableCell></TableRow>
-            <TableRow><TableCell>Size (gzip)</TableCell><TableCell>≤ 3.4 KB, fallback included</TableCell><TableCell>≈ 3.2 KB</TableCell></TableRow>
-            <TableRow><TableCell>TypeScript · SSR</TableCell><TableCell>native · inert on the server</TableCell><TableCell>community typings · no</TableCell></TableRow>
-            <TableRow><TableCell>Adapters</TableCell><TableCell>React, Preact, Vue (&lt; 400 B each)</TableCell><TableCell>no</TableCell></TableRow>
-          </TableBody>
-        </Table>
       </div>
     </section>
 
-    <Alert role="note" className="mt-8 border-s-4 border-s-warning">
-      <AlertDescription>
-        A wake lock keeps the display on while the page is visible — nothing more. It does not keep a hidden tab
-        awake, does not stop a laptop sleeping when the lid closes, and does not keep Teams or Slack "Available"
-        (presence follows input, and this library never fakes input).
-      </AlertDescription>
-    </Alert>
+    <section class="at-pg-stack-24" aria-labelledby="compare">
+      <div class="at-pg-stack-8 at-ext-sechead">
+        <h2 id="compare" class="at-pg-h2">Compared with NoSleep.js</h2>
+        <p class="at-pg-body">Both use the native Wake Lock when it exists. The difference is what you are told when it does not work.</p>
+      </div>
+      <div class="at-pg-panel at-pg-table at-pg-wide" role="table" aria-label="@awaketab/wake compared with NoSleep.js 0.12.0" style="--at-pg-cols: minmax(0, 0.8fr) minmax(0, 1.3fr) minmax(0, 1fr)">
+        <div class="at-pg-tr at-pg-th" role="row">
+          <span role="columnheader" class="at-pg-muted">Feature</span>
+          <span role="columnheader" class="at-pg-th-lamp"><code class="at-pg-mono">@awaketab/wake</code></span>
+          <span role="columnheader" class="at-pg-ink2">NoSleep.js 0.12.0</span>
+        </div>
+        {
+          CMP.map(([label, a, b]) => (
+            <div class="at-pg-tr" role="row">
+              <span role="rowheader" class="at-pg-rowhead">{label}</span>
+              <span role="cell" class="at-pg-ink">{a.map((s) => (typeof s === 'string' ? s : <code class="at-pg-code">{s.code}</code>))}</span>
+              <span role="cell" class="at-pg-ink2">{b.map((s) => (typeof s === 'string' ? s : <code class="at-pg-code">{s.code}</code>))}</span>
+            </div>
+          ))
+        }
+      </div>
+      <dl class="at-pg-panel at-pg-dl at-pg-narrow at-lib-dl">
+        {
+          CMP.map(([label, a, b]) => (
+            <div>
+              <dt>{label}</dt>
+              <dd><code class="at-pg-dl-label at-pg-lampdot at-pg-mono">wake</code><span>{a.map((s) => (typeof s === 'string' ? s : <code class="at-pg-code">{s.code}</code>))}</span></dd>
+              <dd><code class="at-pg-dl-label at-pg-mono">NoSleep.js</code><span>{b.map((s) => (typeof s === 'string' ? s : <code class="at-pg-code">{s.code}</code>))}</span></dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
 
-    <nav aria-label="Related" class="mt-8 flex flex-wrap gap-2">
-      <a class={navClass} href="https://www.npmjs.com/package/@awaketab/wake" rel="noopener">npm</a>
-      <a class={navClass} href="https://github.com/awaketab/awaketab/tree/main/packages/wake" rel="noopener">GitHub</a>
-      <a class={navClass} href="/learn/how-we-tested">How we tested</a>
-      <a class={navClass} href="/learn/screen-wake-lock-api-guide">Screen Wake Lock API guide</a>
-      <a class={navClass} href="/vs/nosleep-js">NoSleep.js vs Wake Lock</a>
+    <div class="at-pg-note" role="note">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
+      <div class="at-pg-stack-8">
+        <span class="at-pg-kicker">What a wake lock cannot do</span>
+        <p>
+          A wake lock keeps the display on while the page is visible. Nothing more. It does not keep a hidden tab awake, does not
+          stop a laptop sleeping when the lid closes, and does not keep Teams or Slack "Available" (presence follows input, and this
+          library never fakes input).
+        </p>
+      </div>
+    </div>
+
+    <nav class="at-pg-related" aria-label="Related">
+      <a class="at-pg-chiplink" href="/learn/how-we-tested">How AwakeTab is checked<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <a class="at-pg-chiplink" href="/learn/screen-wake-lock-api-guide">Screen Wake Lock API guide<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <a class="at-pg-chiplink" href="/vs/nosleep-js">NoSleep.js vs Wake Lock<svg class="at-pg-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
     </nav>
   </main>
   <script is:inline defer src="/library/awaketab-wake.iife.js" data-wake-iife></script>
   <script>
     import { bindDemo } from '../lib/library-demo';
+    import { bindCodeTabs } from '../lib/code-tabs';
 
     const root = document.querySelector<HTMLElement>('[data-wake-demo]');
     if (root) bindDemo(root, window);
+    const tabs = document.querySelector<HTMLElement>('[data-lib-tabs]');
+    if (tabs) bindCodeTabs(tabs);
   </script>
 </BaseLayout>

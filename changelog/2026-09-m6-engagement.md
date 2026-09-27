@@ -1,6 +1,7 @@
 ---
 title: Ambient modes, stats and an offline app
 date: 2026-09-26
+type: new
 ---
 
 Press `M` to switch the awake screen into Clock, Focus, Minimal, Night, Message or Cook. Focus runs 25/5-minute Pomodoro cycles. Night shows red digits on true black. Cook keeps the screen on while you pause its timer and adds up to three named kitchen timers that survive a reload. Message shows one line of your own text (Pro).

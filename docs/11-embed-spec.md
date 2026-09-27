@@ -125,6 +125,8 @@ Events from the widget carry `source: 'embed'` and `blob1 = '/embed/cook'`; `hos
 
 Live demo of both sizes, the one-line install, the "why the allow attribute" explainer, the licence pitch (remove the credit line, brand colour, priority support — $29/year per site), FAQ (does it slow my page? no third-party requests; does it work on AMP? no), and the WordPress plugin link when live.
 
+**As rebuilt in Clear Night B6 (2026-09-27, board `EmbedShowcase`).** One live widget, on a placeholder recipe page: the real loader tag, which the snippet builder removes and re-adds (`src/lib/embed-page.ts`) whenever the mode, theme, size, language or start length changes, so the demo always matches the copied tag, and the loader's credit line appears under it as it would on a host site. "Install: one line" shows the tag with its attributes coloured (`[data-snippet]`, textContent = the exact tag) and a Copy button; the note says the loader adds the credit link itself (§1), so the snippet stays one line. The builder: Mode · Theme · Size as segmented bars of native radios, Language and start length as selects. The licence pitch now reads "Licences open soon" with no checkout link (decision O-29: Embed sales are held until a sandbox purchase ends with a licensed domain), and "Activate your domain" is gone until then. The FAQ and the AMP line are gone (decision O-41: the AMP claim is unverified); `#allow` (the widget's "How to fix" target, §4) and the JavaScript API stay below the board's sections. No ads.
+
 ---
 
 ## 11. As built (M8, 2026-09-26; Clear Night B8, 2026-09-27)
