@@ -100,15 +100,15 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
 
       <section class="at-try" aria-label="Try it now">
         <div class="at-try-top">
-          <StatusPill state="idle" label={t('tool.pill.idle')} />
+          <StatusPill as="span" state="idle" label={t('tool.pill.idle')} />
           <span class="at-try-digits" aria-hidden="true">00<span>:00</span></span>
         </div>
         <Button variant="primary" href="/?preset=pinf&autostart=1" class="at-try-cta" aria-label="Keep awake until I stop">
           Keep awake · ∞
         </Button>
         <p class="at-try-note">
-          Keep this tab visible and watch the pill. A hidden tab releases the wake lock, and Safari needs a tap before it
-          grants one; the pill changes immediately when that happens.
+          Opens the tool and keeps the screen awake until you stop. Keep that tab visible and watch its pill: a hidden tab
+          releases the wake lock, and Safari needs a tap before it grants one.
         </p>
         <a class="at-try-link" href="/">Open the full tool <span aria-hidden="true">→</span></a>
       </section>

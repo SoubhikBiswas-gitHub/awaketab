@@ -245,6 +245,21 @@
     font-variant-numeric: tabular-nums;
   }
 
+  @media (width < 360px) {
+    .at-jump {
+      grid-template-columns: repeat(var(--at-n, 4), auto);
+    }
+
+    .at-jump-ind {
+      display: none;
+    }
+
+    .at-jump a[aria-current="location"] {
+      background: color-mix(in srgb, var(--at-accent) 14%, transparent);
+      box-shadow: inset 0 0 0 var(--at-border) color-mix(in srgb, var(--at-accent) 45%, transparent);
+    }
+  }
+
   @media (width >= 600px) {
     .at-hub-groups {
       gap: var(--at-s-16);
