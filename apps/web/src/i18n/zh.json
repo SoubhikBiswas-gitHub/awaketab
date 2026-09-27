@@ -648,7 +648,7 @@
   "ambient.cook.timer.done": "完成",
   "ambient.cook.timer.remove": "移除",
   "ambient.cook.timer.removeNamed": "移除 {name}",
-  "ambient.cook.timer.notify": "{name} — 时间到",
+  "ambient.cook.timer.notify": "{name} 时间到了",
   "ambient.cook.timer.invalid": "请选择 1 分钟到 12 小时；最多 3 个计时器。",
   "stats.minutes": "{minutes} 分钟",
   "stats.hours": "{hours} 小时 {minutes} 分钟",

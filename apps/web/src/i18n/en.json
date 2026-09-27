@@ -674,7 +674,7 @@
   "ambient.cook.timer.done": "Done",
   "ambient.cook.timer.remove": "Remove",
   "ambient.cook.timer.removeNamed": "Remove {name}",
-  "ambient.cook.timer.notify": "{name} — done",
+  "ambient.cook.timer.notify": "{name} is done",
   "ambient.cook.timer.invalid": "Pick 1 minute to 12 hours; up to 3 timers.",
   "stats.minutes": "{minutes} min",
   "stats.hours": "{hours} h {minutes} min",

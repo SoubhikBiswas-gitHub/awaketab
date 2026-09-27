@@ -396,6 +396,14 @@
     margin-block-start: 0;
   }
 
+  @media (width >= 1600px) {
+    .at-site-header:not([data-tool]),
+    .at-site-footer {
+      max-inline-size: calc(var(--at-content-max) + 2 * var(--at-gutter));
+      margin-inline: auto;
+    }
+  }
+
   .at-footer-line {
     margin: 0;
     color: var(--at-muted);

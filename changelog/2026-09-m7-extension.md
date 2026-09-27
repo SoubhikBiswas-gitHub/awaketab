@@ -1,5 +1,5 @@
 ---
-title: AwakeTab for Chrome — the browser extension
+title: AwakeTab for Chrome, the browser extension
 date: 2026-09-26
 type: new
 ---

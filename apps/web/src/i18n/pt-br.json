@@ -648,7 +648,7 @@
   "ambient.cook.timer.done": "Pronto",
   "ambient.cook.timer.remove": "Remover",
   "ambient.cook.timer.removeNamed": "Remover {name}",
-  "ambient.cook.timer.notify": "{name} — pronto",
+  "ambient.cook.timer.notify": "{name} está pronto",
   "ambient.cook.timer.invalid": "Escolha de 1 minuto a 12 horas; até 3 temporizadores.",
   "stats.minutes": "{minutes} min",
   "stats.hours": "{hours} h {minutes} min",
