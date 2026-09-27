@@ -6,6 +6,7 @@
   --at-type-ext-digits-long: 300 1.25rem/1 var(--at-font);
   --at-type-ext-until: 300 1.5rem/1.75rem var(--at-font);
   --at-ext-popup: 360px;
+  --at-ext-popup-h: 600px;
   --at-ext-ring: 124px;
   --at-ext-ring-blocked: 72px;
   --at-ext-status-h: 128px;
@@ -18,6 +19,7 @@
 
 body {
   inline-size: var(--at-ext-popup);
+  block-size: var(--at-ext-popup-h);
   background: var(--at-ground);
 }
 
@@ -30,10 +32,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--at-s-3);
-  min-block-size: 100%;
-  padding-block: 0 var(--at-dock-bottom);
+  block-size: 100%;
+  padding-block: 0 var(--at-s-2);
   padding-inline: var(--at-s-4);
-  overflow: hidden;
+  overflow: hidden auto;
   background: radial-gradient(120% 70% at 50% 26%, var(--ext-lift) 0%, var(--at-ground) 58%, var(--ext-lift-end) 100%);
   color: var(--at-ink);
 }
@@ -730,6 +732,7 @@ body {
 }
 
 .pp-close {
+  flex-shrink: 0;
   margin-block-start: calc(-1 * var(--at-s-3));
   margin-inline-end: calc(-1 * var(--at-s-3));
 }
@@ -740,11 +743,16 @@ body {
   text-wrap: pretty;
 }
 
+.pp-pro-price {
+  display: block;
+  margin-block-start: var(--at-s-1);
+  color: var(--at-muted);
+}
+
 .pp-pro-actions {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   gap: var(--at-s-2);
-  padding-block-start: var(--at-s-1);
 }
 
 .pp-pro-actions .at-btn {

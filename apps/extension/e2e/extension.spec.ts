@@ -165,6 +165,159 @@ test('Blocked: a refused request says so, shows the fix, and Retry works once al
   await expect(page.locator('[data-error]')).toBeHidden();
 });
 
+// Chrome caps a popup at 600 px and scrolls anything taller, so every state has to fit the 360×600 frame (ExtPopup,
+// ExtEdge boards) and the frame itself must not change size between states.
+async function expectPopupFits(page: Page, state: string): Promise<void> {
+  const box = await page.evaluate(() => {
+    const blocks = [...document.querySelectorAll('[data-root] > :not(.pp-aura)')].filter(
+      (block) => block.getClientRects().length > 0,
+    );
+    const root = document.querySelector('[data-root]');
+    return {
+      document: document.documentElement.scrollHeight,
+      frame: document.body.getBoundingClientRect().height,
+      content: Math.max(...blocks.map((block) => block.getBoundingClientRect().bottom)),
+      scroll: root ? root.scrollHeight - root.clientHeight : -1,
+    };
+  });
+  expect(box.frame, `${state}: frame`).toBe(600);
+  expect(box.document, `${state}: document`).toBeLessThanOrEqual(600);
+  expect(box.content, `${state}: content`).toBeLessThanOrEqual(600);
+  expect(box.scroll, `${state}: scroll`).toBe(0);
+}
+
+test('every popup state fits the 600 px popup without scrolling', async ({ context, extensionId }) => {
+  const page = await openPopup(context, extensionId);
+  await expect(page.locator('[data-tips]')).toBeVisible();
+  await expectPopupFits(page, 'first open');
+  await page.locator('[data-tips-ok]').click();
+  await expect(page.locator('[data-pro-row]')).toBeVisible();
+  await expectPopupFits(page, 'ready with the Pro row');
+  await page.locator('[data-pro-row]').click();
+  await expect(page.locator('[data-pro-price]')).toContainText('$12 a year');
+  await expectPopupFits(page, 'Pro panel');
+  await page.locator('[data-pro-close]').click();
+  await page.locator('[data-until-open]').click();
+  await expect(page.locator('[data-until]')).toBeVisible();
+  await expect(page.locator('[data-primary]')).toBeHidden();
+  await expectPopupFits(page, 'until stepper');
+  await page.locator('[data-until-cancel]').click();
+
+  await page.locator('[data-preset="p60"]').click();
+  await expect(pill(page)).toHaveText('Screen awake');
+  await expect(page.locator('[data-add]')).toBeVisible();
+  await expectPopupFits(page, 'awake, 1 h');
+  await page.locator('input[name="level"][value="system"]').check({ force: true });
+  await expect(pill(page)).toHaveText('System awake');
+  await expectPopupFits(page, 'system awake');
+  await page.locator('input[name="level"][value="display"]').check({ force: true });
+  await page.locator('[data-preset="pinf"]').click();
+  await expect(page.locator('[data-kicker]')).toHaveText('Awake for');
+  await expectPopupFits(page, 'no limit');
+  await page.locator('[data-toggle]').click();
+  await expect(page.locator('[data-meta]')).toHaveText(/^Held /u);
+  await expectPopupFits(page, 'receipt');
+
+  await page.evaluate(() => chrome.storage.session.set({ 'at.test.deny': true }));
+  await page.locator('[data-preset="p30"]').click();
+  await expect(page.locator('[data-error]')).toBeVisible();
+  await expectPopupFits(page, 'blocked');
+  await page.evaluate(() => chrome.storage.session.set({ 'at.test.deny': false }));
+  await page.locator('[data-retry]').click();
+  await expect(pill(page)).toHaveText('Screen awake');
+  await page.locator('[data-toggle]').click();
+  await expect(pill(page)).toHaveText('Ready');
+
+  await page.evaluate(() =>
+    chrome.storage.local.set({ 'at.v1.meta': { v: 1, installedAt: Date.now(), lastSeenVersion: '0.9.0' } }),
+  );
+  const updated = await openPopup(context, extensionId);
+  await expect(updated.locator('[data-new-label]')).toHaveText(/^New in \d+\.\d+$/u);
+  await expectPopupFits(updated, 'update chip');
+});
+
+test('Starting shows the picked length, Stop and the pressed chip until Chrome answers', async ({
+  context,
+  extensionId,
+}) => {
+  const page = await openPopup(context, extensionId);
+  await page.evaluate(() => {
+    const send = chrome.runtime.sendMessage.bind(chrome.runtime);
+    chrome.runtime.sendMessage = (message: unknown) =>
+      (message as { type?: string }).type === 'start' ? new Promise<never>(() => undefined) : send(message);
+  });
+  await page.locator('[data-preset="p60"]').click();
+  await expect(pill(page)).toHaveText('Starting…');
+  await expect(page.locator('[data-toggle]')).toHaveText('Stop');
+  await expect(page.locator('[data-toggle]')).toHaveAttribute('data-live', '1');
+  await expect(page.locator('[data-preset="p60"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-timer]')).toHaveText('1:00:00');
+  await expect(page.locator('[data-caption]')).toHaveText('Starting');
+  // The per-second tick keeps the Starting view instead of falling back to the stored Ready state.
+  await page.waitForTimeout(1_200);
+  await expect(page.locator('[data-caption]')).toHaveText('Starting');
+  await expectPopupFits(page, 'starting');
+});
+
+test("a private window and Time's up both fit, and a private window offers no add-time row", async ({
+  context,
+  extensionId,
+}) => {
+  const page = await context.newPage();
+  await page.setViewportSize({ width: 360, height: 600 });
+  await page.addInitScript(() => {
+    Object.defineProperty(chrome.extension, 'inIncognitoContext', { value: true });
+  });
+  await page.goto(`chrome-extension://${extensionId}/popup.html`);
+  await expect(page.locator('[data-private]')).toBeVisible();
+  await page.locator('[data-preset="p60"]').click();
+  await expect(pill(page)).toHaveText('Screen awake');
+  await expect(page.locator('[data-add]')).toBeHidden();
+  await expectPopupFits(page, 'private window');
+  await page.locator('[data-toggle]').click();
+  await expect(pill(page)).toHaveText('Ready');
+
+  const ended = await context.newPage();
+  await ended.setViewportSize({ width: 360, height: 600 });
+  await ended.addInitScript(() => {
+    const send = chrome.runtime.sendMessage.bind(chrome.runtime);
+    chrome.runtime.sendMessage = (message: unknown) => {
+      if ((message as { type?: string }).type !== 'state') return send(message);
+      const endedAt = Date.now() - 20_000;
+      const startedAt = endedAt - 1_800_000;
+      return Promise.resolve({
+        lock: 'idle',
+        advice: null,
+        level: 'display',
+        origin: 'user',
+        extend: true,
+        features: [],
+        now: Date.now(),
+        session: {
+          v: 1,
+          id: 'e2e',
+          mode: 'standard',
+          plan: { type: 'duration', ms: 1_800_000 },
+          presetId: 'p30',
+          startedAt,
+          endsAt: endedAt,
+          pausedAt: null,
+          pausedMs: 0,
+          status: 'completed',
+          endedAt,
+          endReason: 'completed',
+          awakeSeconds: 1_800,
+          source: 'ext',
+          modeState: { level: 'display', origin: 'user' },
+        },
+      });
+    };
+  });
+  await ended.goto(`chrome-extension://${extensionId}/popup.html`);
+  await expect(ended.locator('[data-extend]')).toBeVisible();
+  await expectPopupFits(ended, "time's up");
+});
+
 test('first open: the tips card shows once; then free users get the inline Pro row', async ({
   context,
   extensionId,

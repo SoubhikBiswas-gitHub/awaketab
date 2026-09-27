@@ -1,6 +1,7 @@
 import 'virtual:at-tokens.css';
 import '../../src/styles/base.css';
 import './popup.css';
+import { PLAN_PRICES, lifetimePrice } from '../../../web/src/lib/license';
 import { DEFAULT_META, DEFAULT_ONBOARDING, STORAGE_KEYS, type IMeta, type IOnboarding } from '@awaketab/core';
 import { browser } from 'wxt/browser';
 import type { IExtApi, TPowerLevel } from '../../src/api';
@@ -97,6 +98,7 @@ async function boot(): Promise<void> {
     error: q(root, '[data-error]'),
     errorTitle: q(root, '[data-error-title]'),
     errorBody: q(root, '[data-error-body]'),
+    primary: q(root, '[data-primary]'),
     toggle: q(root, '[data-toggle]', HTMLButtonElement),
     toggleLabel: q(root, '[data-toggle-label]'),
     retryRow: q(root, '[data-retry-row]'),
@@ -124,8 +126,17 @@ async function boot(): Promise<void> {
   };
 
   // Static pieces that depend on runtime values.
-  el.newLabel.textContent = t('ext.update.chip', { version });
-  el.newChip.setAttribute('aria-label', t('ext.update.aria', { version }));
+  const release = version.split('.').slice(0, 2).join('.');
+  el.newLabel.textContent = t('ext.update.chip', { version: release });
+  el.newChip.setAttribute('aria-label', t('ext.update.aria', { version: release }));
+  // The same launch-price switch as /pro: the lifetime price drops to its full price when the launch ends.
+  const lifetime = lifetimePrice();
+  const usd = (amount: number) => `$${String(amount)}`;
+  q(root, '[data-pro-price]').textContent = t(lifetime.strike ? 'ext.pro.price.launch' : 'ext.pro.price', {
+    yearly: usd(PLAN_PRICES.pro_yearly),
+    price: usd(lifetime.current),
+    after: usd(lifetime.strike ?? lifetime.current),
+  });
   void api.commands.getAll().then((commands) => {
     const shortcut = commands.find((command) => command.name === 'toggle')?.shortcut || 'Alt+Shift+A';
     q(root, '[data-tips-shortcut]').textContent = `${shortcut} `;
@@ -152,12 +163,20 @@ async function boot(): Promise<void> {
     };
   }
 
+  // While Chrome answers a start, the popup shows what was asked for: Stop, the picked chip and its length.
+  let pending: { view: IExtState; preset: TExtPreset | 'until'; ms: number } | null = null;
   const act = async (request: TExtRequest) => {
     if (request.type === 'start' || request.type === 'until' || request.type === 'toggle') {
-      // Optimistic `requesting` only: the pill says "Starting…" until the worker confirms `held`.
-      render({ ...(state ?? fallbackState()), lock: 'requesting' });
+      const preset = request.type === 'start' ? request.presetId : request.type === 'until' ? 'until' : defaultPreset();
+      const ms = preset === 'until' ? ui.draft - Date.now() : PRESET_MS[preset];
+      pending = { view: { ...(state ?? fallbackState()), lock: 'requesting' }, preset, ms };
+      render(pending.view);
     }
-    state = (await send(api, request)) ?? state;
+    try {
+      state = (await send(api, request)) ?? state;
+    } finally {
+      pending = null;
+    }
     render(state);
   };
 
@@ -207,7 +226,7 @@ async function boot(): Promise<void> {
     view.session.endsAt === null &&
     (view.origin === 'startup' || view.origin === 'autostart');
 
-  function render(s: IExtState | null = state): void {
+  function render(s: IExtState | null = pending?.view ?? state): void {
     const view = s ?? fallbackState();
     const mode = modeOf(view);
     const session = view.session;
@@ -297,7 +316,7 @@ async function boot(): Promise<void> {
     const proRow = mode === 'ready' && !pro && !tipsOn && !proPanel && ui.panel !== 'until';
     const untilPanel = ui.panel === 'until' && !blocked && !extendCard;
     show(el.privateCard, incognito);
-    show(el.add, held && session?.endsAt !== null && !isSched && !untilPanel);
+    show(el.add, held && session?.endsAt !== null && !isSched && !untilPanel && !incognito);
     show(el.extend, extendCard);
     if (extendCard && session?.endedAt) {
       el.extendNote.textContent = t('ext.extend.note', { time: time.hm(session.endedAt + RECEIPT_MS) });
@@ -311,11 +330,12 @@ async function boot(): Promise<void> {
 
     // Primary action: Stop (raised, D-R20) while live; the lamp Start in Ready; Retry when refused.
     const showToggle = !blocked && !extendCard && !untilPanel;
+    const starting = mode === 'starting' && pending !== null;
     show(el.toggle, showToggle);
-    el.toggle.dataset.live = live ? '1' : '0';
+    el.toggle.dataset.live = live || starting ? '1' : '0';
     el.toggle.disabled = view.lock === 'unsupported';
     const preset = defaultPreset();
-    if (live) {
+    if (live || starting) {
       el.toggleLabel.textContent = t(isSched ? 'ext.schedule.stopToday' : 'tool.ring.stop');
       el.toggle.removeAttribute('aria-label');
     } else {
@@ -343,6 +363,8 @@ async function boot(): Promise<void> {
       el.noteText.textContent = note;
       show(el.noteLink, noteLink);
     }
+    // The Until panel takes the primary block's place, gap included (ExtPopup board).
+    show(el.primary, !untilPanel);
 
     // Level switch (hidden where it cannot act: Blocked, the Pro panel).
     show(el.levels, !blocked && !proPanel);
@@ -355,20 +377,19 @@ async function boot(): Promise<void> {
 
     // Length chips: the running preset while live, the default length in Ready.
     show(el.chips, !blocked && !isSched && !proPanel && !extendCard && !untilPanel);
-    const selected = live ? session.presetId : mode === 'ready' ? preset : null;
+    const selected = live ? session.presetId : starting ? pending?.preset : mode === 'ready' ? preset : null;
     for (const chip of root.querySelectorAll<HTMLButtonElement>('[data-preset]')) {
       chip.setAttribute('aria-pressed', String(selected === chip.dataset.preset));
       const id = chip.dataset.preset;
       if (id && id !== 'pinf') chip.setAttribute('aria-label', t('ext.chip.aria', { length: t(`tool.preset.${id}`) }));
     }
-    const untilLive = live && session.presetId === 'until' && session.endsAt !== null;
-    el.untilChip.setAttribute('aria-pressed', String(untilLive));
-    el.untilChip.textContent = untilLive && session.endsAt ? time.hm(session.endsAt) : t('tool.preset.until');
+    const untilAt =
+      live && session.presetId === 'until' ? session.endsAt : selected === 'until' && pending ? now + pending.ms : null;
+    el.untilChip.setAttribute('aria-pressed', String(untilAt !== null));
+    el.untilChip.textContent = untilAt ? time.hm(untilAt) : t('tool.preset.until');
     el.untilChip.setAttribute(
       'aria-label',
-      untilLive && session.endsAt
-        ? t('ext.until.change', { when: time.when(session.endsAt, now) })
-        : t('ext.until.open'),
+      untilAt ? t('ext.until.change', { when: time.when(untilAt, now) }) : t('ext.until.open'),
     );
     show(el.until, untilPanel);
     if (untilPanel) renderUntil();
@@ -392,7 +413,7 @@ async function boot(): Promise<void> {
     tick(view);
   }
 
-  function tick(view: IExtState = state ?? fallbackState()): void {
+  function tick(view: IExtState = pending?.view ?? state ?? fallbackState()): void {
     const mode = modeOf(view);
     const session = view.session;
     const now = Date.now();
@@ -427,8 +448,7 @@ async function boot(): Promise<void> {
       p = 0;
       caption = t('tool.timer.complete');
     } else {
-      const preset = defaultPreset();
-      const ms = PRESET_MS[preset];
+      const ms = mode === 'starting' && pending ? Math.max(0, pending.ms) : PRESET_MS[defaultPreset()];
       shown = ms || null;
       p = 1;
       caption =
@@ -486,7 +506,7 @@ async function boot(): Promise<void> {
     el.untilTime.textContent = time.hm(ui.draft);
     const minutes = Math.max(1, Math.round((ui.draft - now) / 60_000));
     const remain = words(minutes * 60_000, t);
-    el.untilSummary.textContent = t('tool.until.summary', {
+    el.untilSummary.textContent = t('ext.until.summary', {
       day: t(
         new Date(ui.draft).toDateString() !== new Date(now).toDateString() ? 'tool.until.tomorrow' : 'tool.until.today',
       ),
