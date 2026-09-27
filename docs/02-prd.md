@@ -269,7 +269,7 @@ Each flow lists the visible steps and the state or event changes that must occur
 
 | ID | Requirement | Pri | Phase | Acceptance criteria |
 |---|---|---|---|---|
-| FR-CONTENT-01 | The home page must carry the tool above the fold, 1,200–1,800 words, the support matrix (browser × OS × result), 8 FAQs, the limits section, and links to all hubs. | P1 | P1 | Given the build, when word count is measured (excluding UI strings), then it is within range and the matrix table is present. |
+| FR-CONTENT-01 | The home page must carry the tool above the fold, then sell in few words: six use-case cards that start the tool, the extension, the levels and a closing band, with one link to the docs (`/learn`), which carry how it works, the support matrix, the limits and the FAQ. | P1 | P1 | Given the build, when the text below the tool is counted, then it is 120–800 words and the six use cases, `/for`, `/extension` and `/learn` are linked. |
 | FR-CONTENT-02 | The 18 `/for/{slug}` pages must each embed the tool with the scenario preset and mode from frontmatter, contain 600–1,000 words, a "What it can't do" section, and a "Last verified" line. | P1 | P2 | Given `/for/night-clock`, when loaded, then the tool starts with `mode=night`… (locked modes preview per FR-AMBIENT-01) and the page states the burn-in and battery limits. |
 | FR-CONTENT-03 | The 12 `/on/`, 7 `/vs/`, 8 `/guides/` and 6 `/learn/` pages must exist with the slugs in `00-conventions.md` §7, each 600–1,000 words (`/learn/` may exceed), with tested statements marked by the test date and device. | P1 | P2–P3 | Given `/vs/nosleep-page`, when reviewed, then every claim about nosleep.page cites the observed source line or behaviour and date. |
 | FR-CONTENT-04 | `/learn/does-a-wake-lock-keep-teams-green` must state that presence follows input idle, that no source shows a wake lock resets it, and that AwakeTab ships no jiggler; the home FAQ links to it. | P1 | P2 | Given the page, when read, then it contains the test method, date and result, and no workaround suggestion. |
@@ -385,7 +385,7 @@ Details, outlines and keyword maps live in `06-content-seo-spec.md`. Every conte
 
 | Page type | Count (EN) | Words | Must contain |
 |---|---|---|---|
-| Home `/` | 1 | 1,200–1,800 | Tool above the fold; how it works (3 steps); support matrix; limits ("what it can't do"); 8 FAQs; links to every hub, `/extension`, `/embed`, `/library`, `/pro` |
+| Home `/` | 1 | 120–800 below the tool | Tool above the fold; six use cases; extension showcase; choose your level; closing band with the docs link (the story moved to `/learn`) |
 | Preset pages `/15m`…`/8h` | 7 | 150–300 | Tool auto-started with the duration; one paragraph on typical uses; links to `/for/` scenarios; canonical self |
 | `/for/{slug}` | 18 | 600–1,000 | Scenario problem in the first 100 words; recommended preset and mode; step list; "What it can't do"; device notes; 2–3 related scenarios |
 | `/on/{slug}` | 12 | 600–1,000 | Support status for that device/browser with version; native vs fallback; OS-specific sleep settings; installed-app notes (iOS 18.4) |

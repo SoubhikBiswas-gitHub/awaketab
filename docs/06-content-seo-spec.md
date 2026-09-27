@@ -38,7 +38,7 @@ Every template shares: one `<h1>` matching the target intent; the answer in the 
 
 ### 2.1 `/` — home
 
-Sections in order (also in `05-frontend-spec.md` §4.2): tool → answer paragraph → how it works → honest limits → support matrix → scenarios grid → devices → comparisons → 8 FAQs → Pro strip and product cards → author box + footer. Word bar 1,200–1,800. `<h1>` "Keep your screen awake" (locale equivalents in `07-i18n.md`). Preset `p30`, mode `standard`.
+Sections in order (also in `05-frontend-spec.md` §4.2): tool → use cases (six cards and a link to all of them) → extension showcase → choose your level → closing band with one link to the docs → footer. The home sells; how it works, the limits, the support matrix and the FAQ live in `/learn` (the FAQPage schema goes there too). Word bar below the tool 120–800. `<h1>` "Keep your screen awake" (locale equivalents in `07-i18n.md`). Preset `p30`, mode `standard`.
 
 ### 2.2 Preset pages `/15m` … `/8h`
 

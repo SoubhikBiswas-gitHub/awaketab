@@ -173,12 +173,37 @@ describe('built site SEO', () => {
     expect(/<title>(.*?)<\/title>/u.exec(html)?.[1]).toBe('Keep the screen awake for 15 min — AwakeTab');
   });
 
-  it('keeps the English home in the 1,200–1,800 word band', async () => {
+  // The home sells: use cases, the extension, the levels and a closing band. How it works, the limits and the FAQ
+  // live in /learn, one link away.
+  it('builds the English home as a short product page below the tool', async () => {
     const html = await readFile(built('/'), 'utf8');
-    const text = extractProse(html);
-    const words = text.split(/\s+/u).filter(Boolean);
-    expect(words.length).toBeGreaterThanOrEqual(1200);
-    expect(words.length).toBeLessThanOrEqual(1800);
+    for (const id of ['home-uses', 'home-final']) expect(html, id).toContain(`id="${id}"`);
+    for (const id of ['what', 'how', 'limits', 'support', 'guides', 'alt', 'faq', 'who']) {
+      expect(html, id).not.toContain(`id="home-${id}"`);
+    }
+    for (const slug of ['cooking', 'reading', 'presentations', 'dashboards', 'video-calls', 'downloads']) {
+      expect(html, slug).toContain(`href="/for/${slug}"`);
+    }
+    expect(html).toContain('All 14 use cases');
+    for (const href of ['#content', '/extension', '/learn']) expect(html, href).toContain(`href="${href}"`);
+    expect(html).not.toContain('FAQPage');
+    const start = /<div class="at-hb"[^>]*>/u.exec(html);
+    const below = start ? proseBlock(html, start.index, start[0].length) : '';
+    const words = below
+      .replace(/<(script|style)[\s\S]*?<\/\1>/gu, ' ')
+      .replace(/<[^>]+>/gu, ' ')
+      .split(/\s+/u)
+      .filter(Boolean);
+    expect(words.length).toBeGreaterThanOrEqual(120);
+    expect(words.length).toBeLessThanOrEqual(800);
+  });
+
+  // Its stylesheet is linked after the tool, so it never counts against the tool's inline CSS budget.
+  it('links the home stylesheet instead of inlining it', async () => {
+    const html = await readFile(built('/'), 'utf8');
+    const href = /<link rel="stylesheet" href="(\/_astro\/home\.[^"]+\.css)"/u.exec(html)?.[1] ?? '';
+    await expect(stat(new URL(`.${href}`, dist)), href).resolves.toBeTruthy();
+    expect(html.indexOf(href)).toBeGreaterThan(html.indexOf('id="content"'));
   });
 
   // OD-3 (redesign B11): 51 generated pages became 44 (4 cut, 4 merged with a 301, /for/classroom added). The 25
@@ -268,8 +293,8 @@ describe('built site SEO', () => {
         const href = match[1] ?? '';
         if (href.startsWith('/api/') || href.startsWith('/og/') || href.startsWith('/icons/')) continue;
         if (href.endsWith('.webmanifest') || href.endsWith('.svg') || href.endsWith('.js')) continue;
-        // Self-hosted font preloads (D-R26) must point at a file that ships.
-        if (href.startsWith('/fonts/')) {
+        // Self-hosted font preloads (D-R26) and linked stylesheets must point at a file that ships.
+        if (href.startsWith('/fonts/') || (href.startsWith('/_astro/') && href.endsWith('.css'))) {
           await expect(stat(new URL(`.${href}`, dist)), `${relative} -> ${href}`).resolves.toBeTruthy();
           continue;
         }
