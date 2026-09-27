@@ -103,6 +103,20 @@ export function articleSchema(input: IArticleSchemaInput): TSchemaNode {
   };
 }
 
+export function itemListSchema(name: string, items: Array<{ name: string; url: string }>): TSchemaNode {
+  return {
+    '@type': 'ItemList',
+    name,
+    numberOfItems: items.length,
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      url: item.url,
+    })),
+  };
+}
+
 export function personSchema(): TSchemaNode {
   return {
     '@context': 'https://schema.org',
