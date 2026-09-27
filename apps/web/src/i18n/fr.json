@@ -792,7 +792,7 @@
   "research.verdict.fail": "Échec",
   "research.verdict.partial": "Partiel",
   "kiosk.license.invalid": "Ce lien de licence kiosque n'a pas pu être vérifié. Rouvrez l'URL depuis le générateur d'URL de kiosque.",
-  "ext.name": "AwakeTab for Chrome",
+  "ext.name": "AwakeTab: Keep Screen Awake",
   "ext.description": "Gardez l’écran (ou tout l’ordinateur) éveillé en un clic, avec un statut honnête sur lequel compter.",
   "ext.command.toggle": "Activer ou désactiver",
   "ext.level.label": "Garder éveillé",

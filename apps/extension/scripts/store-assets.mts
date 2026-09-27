@@ -2,7 +2,7 @@
 // rendered with satori + resvg — the same renderer (and pinned versions) the web uses for OG images,
 // resolved from apps/web so the extension adds no dependency. Text becomes paths from a bundled font file,
 // so output bytes depend only on this script and its inputs: `pnpm -F extension store:assets` twice → same
-// files (test/unit/store-assets.test.ts). Real screenshots replace these before submission (Needs Soubhik).
+// files (test/build/store-assets.test.ts). Real screenshots replace these before submission (Needs Soubhik).
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -192,7 +192,7 @@ export async function renderAll(outDir: string): Promise<Record<string, Uint8Arr
       },
       [
         el('div', { flexDirection: 'column', gap: 24, width: 640 }, [
-          el('div', { fontSize: 26, color: COLORS.muted }, 'AwakeTab for Chrome'),
+          el('div', { fontSize: 26, color: COLORS.muted }, 'AwakeTab: Keep Screen Awake'),
           el('div', { fontSize: 60, lineHeight: 1.08, letterSpacing: -1.5 }, shot.headline),
           el('div', { fontSize: 28, lineHeight: 1.3, color: COLORS.muted }, shot.caption),
           ...(shot.badge

@@ -792,7 +792,7 @@
   "research.verdict.fail": "Fallo",
   "research.verdict.partial": "Parcial",
   "kiosk.license.invalid": "No se pudo verificar este enlace de licencia de quiosco. Vuelve a abrir la URL desde el generador de URL de quiosco.",
-  "ext.name": "AwakeTab for Chrome",
+  "ext.name": "AwakeTab: Keep Screen Awake",
   "ext.description": "Mantén la pantalla (o todo el ordenador) despierta con un clic, con un estado honesto en el que puedes confiar.",
   "ext.command.toggle": "Activar o desactivar",
   "ext.level.label": "Mantener despierto",

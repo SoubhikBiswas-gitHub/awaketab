@@ -792,7 +792,7 @@
   "research.verdict.fail": "失败",
   "research.verdict.partial": "部分通过",
   "kiosk.license.invalid": "无法验证此终端许可证链接。请从终端网址生成器重新打开该网址。",
-  "ext.name": "AwakeTab for Chrome",
+  "ext.name": "AwakeTab: Keep Screen Awake",
   "ext.description": "一键让屏幕（或整台电脑）保持唤醒，状态显示诚实可信。",
   "ext.command.toggle": "开关保持唤醒",
   "ext.level.label": "保持唤醒",

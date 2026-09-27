@@ -1,4 +1,4 @@
-# 10 · Browser extension specification — AwakeTab for Chrome
+# 10 · Browser extension specification — AwakeTab: Keep Screen Awake
 
 Status: v1.2 · 2026-09-27 (Clear Night redesign, B9: §14) · Owner: Soubhik
 
@@ -21,7 +21,7 @@ Related docs: `00-conventions.md` §5, §6, §8, §9 · `04-engine-spec.md` (ses
 ```json
 {
   "manifest_version": 3,
-  "name": "AwakeTab for Chrome",
+  "name": "AwakeTab: Keep Screen Awake",
   "short_name": "AwakeTab",
   "description": "Keep your screen (or your whole computer) awake from a click — with an honest status you can trust.",
   "version": "1.0.0",
@@ -103,7 +103,7 @@ Off by default in the extension (store review friendliness); the Options toggle 
 
 ## 9. Store listing
 
-**Title:** AwakeTab for Chrome — Keep Screen Awake · **Short description (≤ 132):** Keep your screen or computer awake with one click, a timer, or a schedule. Honest status, no tracking, no mouse jiggling. · **Category:** Productivity → Tools.
+**Title:** AwakeTab: Keep Screen Awake (the manifest name, `ext.name`, kept in English in every locale; Chrome Web Store and Edge Add-ons both show it) · **Short description (≤ 132):** Keep your screen or computer awake with one click, a timer, or a schedule. Honest status, no tracking, no mouse jiggling. · **Category:** Productivity → Tools.
 
 **Screenshots (1280×800):** 1 popup in `held` state · 2 presets and until-time · 3 options with schedules · 4 web app + extension side by side · 5 the honest limits panel.
 
@@ -198,4 +198,6 @@ Built from the canvas boards `ExtPopup`, `ExtEdge`, `ExtOptions`, `ExtBadges` an
 
 **Tests.** Unit: `format.test.ts` (digits, words, tomorrow / weekday / full date, spans, keycaps), controller (add time to a live session, welcome on install, `lastSeenVersion`), the `unsupported` pill mapping, catalog and font checks. E2E (`pnpm test:e2e:ext`): Ready copy, ∞ and finite sessions, System (D-02), the until stepper, +15 min, Blocked + Retry (test hook `at.test.deny`), first-open tips and the Pro row, the welcome page on install, options gates and default duration, the language row, licence activation, axe in light and dark (popup Ready / held / until, options with the language list open, welcome, Blocked).
 
-**Follow-ups.** Store name: the canvas shows "AwakeTab: Keep Screen Awake" (O-37); the manifest name is still `ext.name` "AwakeTab for Chrome" (web catalog), so the welcome page shows the real name until that key changes. Icons: unchanged. Move the `apps/extension/locales` keys into the web catalogs when those are next edited.
+**Store name.** The manifest name is `ext.name` "AwakeTab: Keep Screen Awake" in all 8 web catalogs (English everywhere: it is a product name), so the Chrome extensions menu, the store title, the welcome page (menu mock, pin step, pin button label) and the store screenshots show it. The website and running text keep the product name "AwakeTab for Chrome" (`docs/00`): the `/extension` heading, breadcrumb, comparison table and structured data use it. The short name stays "AwakeTab", and the licence device label stays "AwakeTab for Chrome · {OS}" because activations already stored on the server carry it and `/pro/manage` recognises the extension by it. The options and welcome headers keep the "AwakeTab" wordmark with a "for Chrome" tag, as in the design canvas.
+
+**Follow-ups.** Icons: unchanged. Move the `apps/extension/locales` keys into the web catalogs when those are next edited.

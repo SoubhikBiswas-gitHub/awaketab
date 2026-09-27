@@ -16,7 +16,7 @@ Status: v1.4 · 26 Sep 2026 · Owner: Soubhik · Derived from `awaketab-blueprin
 | Company/legal | Sole proprietorship of Soubhik (India) — confirm with CA; placeholder legal name `AwakeTab` |
 | GitHub org | `awaketab` — repo `awaketab/awaketab` (monorepo) |
 | npm scope | `@awaketab` — package `@awaketab/wake` |
-| Extension name | **AwakeTab for Chrome** (also published to Edge Add-ons as "AwakeTab") |
+| Extension name | Product name on the website and in running text: **AwakeTab for Chrome**. Store and manifest name on the Chrome Web Store and Edge Add-ons: **AwakeTab: Keep Screen Awake** (`ext.name`, English in every locale; Edge shows the same manifest name). Manifest short name: **AwakeTab**. The licence device label stays "AwakeTab for Chrome · {OS}" |
 | Embed product | **AwakeTab Embed** (first widget: Cook Mode) |
 | Business tier | **AwakeTab Business** (Embed licence, Kiosk licence) |
 | Paid tier | **AwakeTab Pro** |

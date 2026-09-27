@@ -196,6 +196,9 @@ test('install opens the welcome page once, and it has no axe violations', async 
   if (!page) throw new Error('welcome page not open');
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('h1')).toHaveText('AwakeTab is ready. Pin it where you can see it.');
+  // The toolbar menu mock and the pin step name the extension exactly as Chrome lists it (the manifest name).
+  await expect(page.locator('[data-store-name]')).toHaveText('AwakeTab: Keep Screen Awake');
+  await expect(page.locator('[data-step2]')).toHaveText('Click the pin next to AwakeTab: Keep Screen Awake.');
   await page.locator('[data-pin-button]').click();
   await expect(page.locator('[data-pin]')).toHaveAttribute('aria-pressed', 'true');
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
