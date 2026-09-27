@@ -61,15 +61,15 @@ Remote code: none. All scripts are bundled in the package.
 
 ## Images
 
-Generated reproducibly by `pnpm -F extension store:assets` into `store/images/` (placeholders until real captures replace them):
+Generated reproducibly by `pnpm -F extension store:assets` into `store/images/`, drawn from the design canvas board `StoreAssets` (Clear Night, dark). Upload them in this order:
 
 | File | Size | Screenshot (docs/10 §9) |
 |---|---|---|
-| `screenshot-1-held.png` | 1280×800 | Popup in the `held` state |
-| `screenshot-2-presets.png` | 1280×800 | Presets and until-time |
-| `screenshot-3-schedules.png` | 1280×800 | Options with schedules |
-| `screenshot-4-web-and-extension.png` | 1280×800 | Web app and extension side by side |
-| `screenshot-5-honest-limits.png` | 1280×800 | The honest limits |
+| `screenshot-1-popup.png` | 1280×800 | The popup over a page, held, with the toolbar badge |
+| `screenshot-2-screen-or-system.png` | 1280×800 | Screen or System, side by side |
+| `screenshot-3-toolbar-badge.png` | 1280×800 | The five toolbar badge states |
+| `screenshot-4-lengths.png` | 1280×800 | A 2 h session and an end time past midnight |
+| `screenshot-5-pro-auto-start.png` | 1280×800 | Pro auto-start and the Pro licence |
 | `promo-440x280.png` | 440×280 | Small promotional tile |
 | `public/icon-128.png` | 128×128 | Store icon (also 16/32/48 in the package) |
 
