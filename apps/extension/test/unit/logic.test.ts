@@ -40,10 +40,16 @@ describe('level ↔ pill mapping (docs/10 §3)', () => {
     expect(pillTextKey('held', 'system')).toBe('ext.pill.systemHeld');
     expect(pillTextKey('held', 'display')).toBe('tool.pill.held');
     expect(pillTextKey('held', null)).toBe('tool.pill.held');
-    for (const state of ['idle', 'requesting', 'lost', 'denied', 'unsupported', 'fallback'] as const) {
+    for (const state of ['idle', 'requesting', 'lost', 'denied', 'fallback'] as const) {
       expect(pillTextKey(state, 'system')).toBe(`tool.pill.${state}`);
       expect(pillTextKey(state, 'display')).toBe(`tool.pill.${state}`);
     }
+  });
+
+  it('never offers the web video fallback: unsupported reads as Blocked with the fix (ExtEdge, docs/10 §3)', () => {
+    expect(pillTextKey('unsupported', 'display')).toBe('tool.pill.denied');
+    expect(pillTextKey('unsupported', 'system')).toBe('tool.pill.denied');
+    expect(pillTextKey('unsupported', null)).not.toBe('tool.pill.unsupported');
   });
 
   it('ships the system-level copy in every locale, distinct from the held pill', () => {

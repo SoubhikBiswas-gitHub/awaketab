@@ -14,8 +14,24 @@ export interface IPowerCall {
   at: number;
 }
 
-export function mockPower(area: IStorageAreaApi | undefined): NonNullable<IExtApi['power']> {
+/** Test builds only: while `chrome.storage.session['at.test.deny']` is true, requests throw like a policy block. */
+export const POWER_DENY_KEY = 'at.test.deny';
+
+export function mockPower(
+  area: IStorageAreaApi | undefined,
+  onChanged?: IExtApi['storage']['onChanged'],
+): NonNullable<IExtApi['power']> {
   let chain: Promise<void> = Promise.resolve();
+  let deny = false;
+  void area?.get(POWER_DENY_KEY).then(
+    (v) => {
+      deny = v[POWER_DENY_KEY] === true;
+    },
+    () => undefined,
+  );
+  onChanged?.addListener((changes, areaName) => {
+    if (areaName === 'session' && POWER_DENY_KEY in changes) deny = changes[POWER_DENY_KEY].newValue === true;
+  });
   const log = (entry: IPowerCall) => {
     chain = chain
       .then(async () => {
@@ -27,6 +43,7 @@ export function mockPower(area: IStorageAreaApi | undefined): NonNullable<IExtAp
   };
   return {
     requestKeepAwake(level) {
+      if (deny) throw new Error('Blocked by policy (test hook)');
       log({ call: 'request', level, at: Date.now() });
     },
     releaseKeepAwake() {

@@ -455,6 +455,11 @@ Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`), as written with
 | `BADGE_COLORS` | `display` `#087B87` (Aqua light, 5.0:1 with white; amber means paused, `DESIGN.md` §2.1) · `system` `#2B3A67`; text `#FFFFFF`; text `ON` / `SYS` / `<n>m` / `<n>h` |
 | System-level pill (D-02) | `status.ts` `pillTextKey(lock, level)`: a held `system` lock → `ext.pill.systemHeld` "System awake" (never `tool.pill.held`), secondary line `pillExtraKey()` → `ext.pill.system` "Screen may dim or lock"; badge tooltip `AwakeTab — System awake · Screen may dim or lock`. Display copy only; the lock state stays `held` (§5.1) |
 | `EXT_KEYS` | `{ ext: 'at.v1.ext', device: 'at.v1.device' }` (`settings.ts`) |
+| Unsupported pill in the extension (B9) | `pillTextKey('unsupported', …)` → `tool.pill.denied` ("Blocked — here's the fix"): the extension has no video fallback, so it never offers one. `data-lock` stays `unsupported`; the seven states and their web copy are unchanged |
+| `extend {ms}` on a live session (B9) | Adds the time to the running session (`ISessionEngine.addTime`), except a `schedule` session, which keeps its window; after time is up it starts a new `custom` session of that length as before |
+| `WELCOME_PAGE` (B9, O-25) | `welcome.html`, opened once by `onInstalled('install')`, which also writes `at.v1.meta.lastSeenVersion`; an update from a build without it records `previousVersion` |
+| Popup UI state in existing keys (B9) | "New in {version}" chip: `at.v1.meta.lastSeenVersion` ≠ manifest version (opening the chip writes the version) · first-open tips: `ext-first-open` in `at.v1.onboarding.dismissedTips` · language: `at.v1.settings.locale` (`null` = browser language). No new storage key |
+| Popup states (B9) | `<main data-mode>`: `ready` · `starting` · `held` · `ended` (time's up, `IExtState.extend`) · `blocked` (`denied` or `unsupported`) |
 | `TExtRequest` | Popup → worker messages: `state` · `start {presetId}` · `until {wall}` · `stop` · `toggle` · `extend {ms}` · `dismiss` · `level {level}` |
 | `ISessionOptions.resumeIndefiniteMs` | `@awaketab/core`: how long an `indefinite` session stays resumable (default 12 h; the extension passes `Infinity`) |
 | `IStorageAdapter` | Now exported from `@awaketab/core` (docs/04 §16) |
@@ -463,9 +468,12 @@ Accepted on 2026-09-26 (owner decision D-04, `LAUNCH-AUDIT.md`), as written with
 
 | Identifier | Decision |
 |---|---|
-| `AT_EXT_TEST` · `__AT_TEST__` | `AT_EXT_TEST=1` builds the Playwright flavour into `apps/extension/.output-test/` with `chrome.power` replaced by a recorder (`src/test-hooks.ts`, `chrome.storage.session['at.test.power']`) |
+| `AT_EXT_TEST` · `__AT_TEST__` | `AT_EXT_TEST=1` builds the Playwright flavour into `apps/extension/.output-test/` with `chrome.power` replaced by a recorder (`src/test-hooks.ts`, `chrome.storage.session['at.test.power']`); `chrome.storage.session['at.test.deny'] = true` makes requests throw like a policy block (`POWER_DENY_KEY`, B9) |
 | `AT_EXT_OUT` | Alternate WXT output directory (reproducibility check) |
-| `virtual:at-catalog/<locale>` · `virtual:at-catalogs-bg` · `virtual:at-tokens.css` | Build-time modules generated from `apps/web/src/i18n/*.json` and `apps/web/src/styles/tokens.css` (`apps/extension/scripts/i18n.mjs`) |
+| `virtual:at-catalog/<locale>` · `virtual:at-catalogs-bg` · `virtual:at-tokens.css` | Build-time modules generated from `apps/web/src/i18n/*.json` (+ `apps/extension/locales/<locale>.json`, B9) and `apps/web/src/styles/tokens.css` (`apps/extension/scripts/i18n.mjs`) |
+| `apps/extension/locales/<locale>.json` (B9) | The extension's own copy (Clear Night popup states, options help, welcome page): `ext.*` keys only, never a web key, same keys and placeholders in all 8 locales (unit test). Merged under the web keys; move them to `apps/web/src/i18n` when the web catalog is next edited |
+| `apps/extension/public/fonts/` (B9, D-R26) | `geist-latin-wght-normal.woff2`, `geist-mono-latin-wght-normal.woff2`, `OFL-Geist.txt` (copied from `apps/web/public/fonts`); `@font-face` + metric fallbacks in `src/styles/base.css`; no remote font request |
+| `--ext-*` (B9) | Extension-local CSS values tokens.css has no name for: `--ext-lift`, `--ext-lift-end` (ground radial lift), `--ext-halo`, `--ext-shadow`, `--ext-float`, `--ext-ease`, `--ext-lamp-{soft,line,tag,faint,glow}` (lamp at 14 / 45 / 12 / 8 / 55 %). Never a replacement for an `--at-*` token |
 | Scripts | `pnpm -F extension zip` → `.output/awaketab-chrome-<version>.zip` · `zip:check` · `store:assets` · `build:test`; root `pnpm test:e2e:ext` |
 | `support-matrix.json` → `extension` | `{ minimumChromeVersion, browsers, unsupported, notes }` — the manifest's `minimum_chrome_version` and `/extension` read it |
 

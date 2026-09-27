@@ -1,6 +1,6 @@
 import { STORAGE_KEYS, type ISession } from '@awaketab/core';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ALARMS, NOTIFICATION_ID } from '../../src/controller';
+import { ALARMS, NOTIFICATION_ID, WELCOME_PAGE } from '../../src/controller';
 import { EXT_KEYS } from '../../src/settings';
 import { BADGE_COLORS } from '../../src/status';
 import { bodyOf, createFakeChrome, flush } from './fake-chrome';
@@ -359,5 +359,52 @@ describe('background controller — Pro schedules and auto-start', () => {
     expect(fetchFn).toHaveBeenCalled();
     expect(fake.local.data.has(STORAGE_KEYS.license)).toBe(false);
     expect(ctl.state().lock).toBe('idle');
+  });
+});
+
+describe('background controller — Clear Night popup support (B9)', () => {
+  it('+15 / +30 / +1 h on a running session adds to it instead of starting a new one', async () => {
+    const fake = createFakeChrome();
+    const ctl = track(wired(fake));
+    const first = await ctl.onMessage({ type: 'start', presetId: 'p15' });
+    const firstId = first?.session?.id;
+    const firstEnd = first?.session?.endsAt ?? 0;
+    const next = await ctl.onMessage({ type: 'extend', ms: 15 * 60_000 });
+    expect(next?.session?.id).toBe(firstId);
+    expect((next?.session?.endsAt ?? 0) - firstEnd).toBe(15 * 60_000);
+    expect(next?.lock).toBe('held');
+    expect(fake.badge.text).toMatch(/^(30|29)m$/u);
+    expect(Math.abs((fake.alarms.get(ALARMS.end)?.scheduledTime ?? 0) - (next?.session?.endsAt ?? 0))).toBeLessThan(50);
+  });
+
+  it('after time is up, the same buttons start a new session of that length (extend prompt)', async () => {
+    const fake = createFakeChrome();
+    const ctl = track(wired(fake));
+    await ctl.onMessage({ type: 'start', presetId: 'p15' });
+    await ctl.onMessage({ type: 'stop' });
+    const next = await ctl.onMessage({ type: 'extend', ms: 30 * 60_000 });
+    expect(next?.session?.plan).toEqual({ type: 'duration', ms: 30 * 60_000 });
+    expect(next?.lock).toBe('held');
+  });
+
+  it('first install records the version and opens the welcome page once; updates keep it for the "New in" chip', async () => {
+    const fake = createFakeChrome();
+    const ctl = track(wired(fake));
+    await ctl.onInstalled('install');
+    expect(fake.opened).toEqual([`chrome-extension://abcdefghijklmnopabcdefghijklmnop/${WELCOME_PAGE}`]);
+    await flush(20);
+    expect(fake.local.data.get(STORAGE_KEYS.meta)).toMatchObject({ lastSeenVersion: '1.0.0' });
+    await ctl.onInstalled('update', '0.9.0');
+    expect(fake.opened).toHaveLength(1);
+    expect(fake.local.data.get(STORAGE_KEYS.meta)).toMatchObject({ lastSeenVersion: '1.0.0' });
+  });
+
+  it('an update from a build that never recorded a version records the previous one', async () => {
+    const fake = createFakeChrome();
+    const ctl = track(wired(fake));
+    await ctl.onInstalled('update', '0.9.0');
+    await flush(20);
+    expect(fake.opened).toEqual([]);
+    expect(fake.local.data.get(STORAGE_KEYS.meta)).toMatchObject({ lastSeenVersion: '0.9.0' });
   });
 });

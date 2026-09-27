@@ -3,7 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ICON_SIZES, ringPng } from '../../scripts/icons.mjs';
-import { BG_KEYS, bgCatalogs, LOCALES, localeMessages, pageCatalog, readCatalog, tokensCss } from '../../scripts/i18n.mjs';
+import { BG_KEYS, bgCatalogs, LOCALES, localeMessages, pageCatalog, readCatalog, readExtCatalog, tokensCss } from '../../scripts/i18n.mjs';
 import config from '../../wxt.config';
 
 const EXT = path.resolve('apps/extension');
@@ -45,7 +45,7 @@ describe('manifest (docs/10 §2, FR-EXT-03)', () => {
 });
 
 describe('i18n reuse (no duplicated English strings)', () => {
-  it('every key the extension uses exists in the web catalogs of all eight locales', async () => {
+  it('every key the extension uses exists in the catalogs (web + the extension\'s own locales/) of all eight locales', async () => {
     const used = new Set<string>();
     for (const file of await sources(path.join(EXT, 'entrypoints')).then(async (a) => [...a, ...(await sources(path.join(EXT, 'src')))])) {
       const text = await readFile(file, 'utf8');
@@ -62,8 +62,27 @@ describe('i18n reuse (no duplicated English strings)', () => {
     for (const locale of LOCALES) for (const key of BG_KEYS) expect(readCatalog(locale), `${locale}:${key}`).toHaveProperty(key);
   });
 
-  it('ships no English copy of its own: extension sources hold no user-facing string literals of the catalog', async () => {
-    const english = Object.values(readCatalog('en')).filter((v) => v.length > 12);
+  it('the extension catalog only adds ext.* keys, never shadows a web key, and every locale has the same keys and placeholders', () => {
+    const en = readExtCatalog('en');
+    const web = readCatalog('en');
+    const placeholders = (v: string) => [...v.matchAll(/\{(\w+)/gu)].map((m) => m[1]).sort();
+    expect(Object.keys(en).length).toBeGreaterThan(100);
+    for (const key of Object.keys(en)) {
+      expect(key.startsWith('ext.'), key).toBe(true);
+      expect(web, `${key} is a web key`).not.toHaveProperty(key);
+    }
+    for (const locale of LOCALES) {
+      const cat = readExtCatalog(locale);
+      expect(Object.keys(cat).sort(), locale).toEqual(Object.keys(en).sort());
+      for (const [key, value] of Object.entries(en)) {
+        expect(placeholders(cat[key] ?? ''), `${locale}:${key}`).toEqual(placeholders(value));
+        expect((cat[key] ?? '').trim(), `${locale}:${key}`).not.toBe('');
+      }
+    }
+  });
+
+  it('ships no English copy in its sources: no user-facing string literal of either catalog', async () => {
+    const english = [...Object.values(readCatalog('en')), ...Object.values(readExtCatalog('en'))].filter((v) => v.length > 12);
     for (const file of await sources(EXT)) {
       if (file.includes('/test/') || file.includes('/e2e/') || file.includes('node_modules') || file.includes('.output')) continue;
       const text = await readFile(file, 'utf8');
@@ -98,8 +117,26 @@ describe('i18n reuse (no duplicated English strings)', () => {
     const css = tokensCss();
     expect(css.startsWith(':root,\n[data-theme="light"]')).toBe(true);
     expect(css).toContain('--at-accent: #087b87;');
+    // Clear Night (DESIGN.md §2.1, §12): the extension gets the new ground, raised and spacing tokens too.
+    expect(css).toContain('--at-ground: #0a0e16;');
+    expect(css).toContain('--at-raised: #26324b;');
+    expect(css).toContain('--at-h-primary: 60px;');
     expect(css).toContain('[data-theme="oled"]');
     expect(css).not.toMatch(/@import|@theme|@apply|@layer/u);
+  });
+});
+
+describe('fonts (DESIGN.md §3, D-R26)', () => {
+  it('bundles Geist and Geist Mono with the OFL licence and requests no remote font', async () => {
+    const files = await readdir(path.join(EXT, 'public/fonts'));
+    expect(files.sort()).toEqual(['OFL-Geist.txt', 'geist-latin-wght-normal.woff2', 'geist-mono-latin-wght-normal.woff2']);
+    const base = await readFile(path.join(EXT, 'src/styles/base.css'), 'utf8');
+    expect(base).toContain('url("/fonts/geist-latin-wght-normal.woff2")');
+    expect(base).toContain('font-family: "Geist Fallback"');
+    for (const file of await sources(path.join(EXT, 'entrypoints'))) {
+      expect(await readFile(file, 'utf8'), file).not.toMatch(/fonts\.(googleapis|gstatic)\.com/u);
+    }
+    expect(base).not.toMatch(/https?:\/\//u);
   });
 });
 

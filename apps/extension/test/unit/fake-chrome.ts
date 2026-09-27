@@ -85,6 +85,8 @@ export interface IFakeChrome {
   notifications: Array<{ id: string; options: INotificationOptions }>;
   granted: { permissions: Set<string>; origins: Set<string> };
   tabs: ITab[];
+  /** URLs passed to `tabs.create` (the welcome page, chrome://extensions/shortcuts). */
+  opened: string[];
   commands: Array<{ name?: string; shortcut?: string }>;
   events: {
     storage: ReturnType<typeof fakeEvent<(changes: Record<string, IStorageChange>, area: string) => void>>;
@@ -113,6 +115,7 @@ export function createFakeChrome(opts: { power?: boolean; notifications?: boolea
   const notifications: IFakeChrome['notifications'] = [];
   const granted = { permissions: new Set<string>(['power', 'storage', 'alarms']), origins: new Set<string>() };
   const tabs: ITab[] = [];
+  const opened: string[] = [];
   const commands = [{ name: 'toggle', shortcut: 'Alt+Shift+A' }];
   const matches = (p: IPermissions) =>
     (p.permissions ?? []).every((x) => granted.permissions.has(x)) && (p.origins ?? []).every((x) => granted.origins.has(x));
@@ -220,7 +223,10 @@ export function createFakeChrome(opts: { power?: boolean; notifications?: boolea
             }),
           ),
         ),
-      create: () => Promise.resolve({}),
+      create: (p) => {
+        opened.push(p.url);
+        return Promise.resolve({});
+      },
       onUpdated: fakeEvent(),
       onRemoved: fakeEvent(),
     },
@@ -237,6 +243,7 @@ export function createFakeChrome(opts: { power?: boolean; notifications?: boolea
     notifications,
     granted,
     tabs,
+    opened,
     commands,
     events: { storage: storageEvent, alarm: alarmEvent, button: buttonEvent },
   };
