@@ -48,6 +48,14 @@ describe('size gate closures', () => {
     ).toEqual(['/_astro/a.js', '/embed/app.js']);
   });
 
+  it('counts the entries defer-main.mjs moved onto [data-main] as the page’s entry scripts', () => {
+    expect(
+      entryScripts(
+        '<main class="at-cp" data-main="/_astro/content.js"><div id="awaketab-tool" data-main="/_astro/tool.js" class="at-island"></div></main>',
+      ),
+    ).toEqual(['/_astro/content.js', '/_astro/tool.js']);
+  });
+
   it('critical = static closure; total = static + dynamic closure; other pages never count', async () => {
     const page = await pageJs(dist, 'index.html');
     expect(page.files(page.critical)).toEqual(['/_astro/entry.js', '/_astro/shared.js', '/_astro/side.js']);

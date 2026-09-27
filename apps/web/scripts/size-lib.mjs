@@ -15,8 +15,8 @@ export function entryScripts(html) {
   const srcs = tags
     .filter((tag) => /\btype="module"/u.test(tag))
     .map((tag) => /\bsrc="(?<src>[^"]+)"/u.exec(tag)?.groups?.src ?? '');
-  const deferred = /<div id="awaketab-tool"[^>]*\bdata-main="(?<src>[^"]+)"/u.exec(html)?.groups?.src;
-  if (deferred) srcs.push(deferred);
+  // Entry scripts that defer-main.mjs moved onto [data-main] (src/boot/boot.js starts them after the first paint).
+  for (const m of html.matchAll(/<[a-z]+\b[^>]*\bdata-main="(?<src>[^"]+)"/gu)) srcs.push(m.groups?.src ?? '');
   return [...new Set(srcs.filter((s) => s.startsWith('/') && !s.startsWith('//') && s.endsWith('.js')))];
 }
 

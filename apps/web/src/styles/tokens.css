@@ -336,6 +336,10 @@
   --at-lamp-sky-dark: #7cb8ff;
 }
 
+:root[data-font-hold] {
+  --at-font-mono: "Geist Mono Fallback", ui-monospace, "SF Mono", menlo, consolas, monospace;
+}
+
 @media (width >= 600px) {
   :root {
     --at-gutter: var(--at-s-8);
