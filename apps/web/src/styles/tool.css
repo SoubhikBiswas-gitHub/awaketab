@@ -52,7 +52,6 @@
   }
 
   @media (forced-colors: active) {
-    .at-toast,
     .at-sponsor {
       border: 1px solid CanvasText;
     }
@@ -1030,8 +1029,7 @@
 
 @media (width < 360px), (orientation: landscape) and (height <= 500px) {
   .at-note-text,
-  .at-card-tone,
-  .at-toast p {
+  .at-card-tone {
     font: var(--at-type-caption);
   }
 }
@@ -1055,8 +1053,7 @@
 
 @media (width >= 1024px) and (pointer: coarse) {
   .at-note-text,
-  .at-card-tone,
-  .at-toast p {
+  .at-card-tone {
     font: var(--at-type-ui);
     font-weight: 400;
   }
@@ -1070,8 +1067,7 @@
 
 @media (width >= 1600px) {
   .at-note-text,
-  .at-card-tone,
-  .at-toast p {
+  .at-card-tone {
     font: var(--at-tl-type-note-xl);
   }
 

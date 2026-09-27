@@ -539,8 +539,7 @@ const untilWall = until?.replace('-', ':');
     </div>
   </div>
 
-  <section class="at-toasts" data-toasts aria-label={t('tool.notifications')}>
-  </section>
+  <section class="at-toasts" data-toasts aria-label={t('tool.notifications')} aria-live="polite"></section>
 
   <div class="at-dock">
     <span class="at-ig-dock" aria-hidden="true"></span>
@@ -1112,6 +1111,8 @@ const untilWall = until?.replace('-', ':');
     <div class="at-fs-bar">
       <svg
         class="at-toast-i"
+        width="20"
+        height="20"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"

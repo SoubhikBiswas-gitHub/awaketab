@@ -167,6 +167,7 @@ export function boot(root: HTMLElement): () => void {
         kind: 'error',
         text: t('tool.toast.error'),
         id: 'end',
+        action: { label: t('tool.advice.retry'), onClick: startCurrent },
       });
     const held = store.get().ui.log.reduce((sum, [k, from, to]) => sum + (k ? 0 : (to ?? Date.now()) - from), 0);
     // A stop after a minute awake shows the Done receipt (canvas `ended`); a shorter one goes straight back to Ready.

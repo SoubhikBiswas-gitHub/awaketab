@@ -231,6 +231,7 @@ TV / kiosk scale (≥ 1920 wide): meta 32, date 40, message 96–128, clock digi
 - Every page ends with the same footer (links, honest line "No ads on the awake screen, now or later."; wording depends on owner decision O-04 about the sponsor card).
   Footer spec: a site map that mirrors the header. 1 px `line` top border; brand block (logo lockup, one-line promise in small `ink-2`, "Open source · MIT" in caption `muted`); five columns Product · Use it for · Devices · Resources · About with kicker titles and caption 500 `ink-2` links (44 × 44 targets); a base row with the honest line in caption 13 `muted` and the language switcher last. Phones: the columns are native `<details>` accordions (48 px rows, no JS). 3 columns from 600, 5 from 1024, brand beside the map when the footer is 1120 wide inside its gutters. Pro, Activate and Manage pages included. Full spec in docs/05 §3.27.
 - A notice, toast or banner never covers the primary action or the status pill; it pushes content or sits above the dock.
+- Toasts: one region above the dock, newest nearest it; a distinct icon shape per kind (check, info ring, triangle, octagon); errors stay until dismissed; while a sheet, dialog or menu is open they rise above it at the bottom centre instead of hiding behind it (docs/05 §3.7).
 - Canvas boards: height ≤ 8000; a board's default `layout` prop must match its width.
 
 ## 12. Token system (scalable, responsive; how §11 is built)
