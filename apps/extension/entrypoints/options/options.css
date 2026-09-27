@@ -1079,3 +1079,28 @@
 .op-about .op-help {
   max-inline-size: var(--at-ext-help-max);
 }
+
+.op-stepper button:focus-visible {
+  outline-offset: calc(-1 * var(--at-ext-ring-width));
+}
+
+@media (hover: hover) {
+  .op-nav-list a:hover,
+  .op-lang-btn:hover .op-lang-now,
+  .op-stepper button:not(:disabled):hover {
+    color: var(--at-ink);
+  }
+
+  .op-levelcard:not(:has(input:checked)):hover {
+    border-color: var(--at-line-strong);
+  }
+
+  .op-day:not([aria-pressed="true"], :disabled):hover {
+    border-color: var(--at-ink-2);
+    color: var(--at-ink);
+  }
+
+  .op-lang-row:not(:has(input:checked)):hover {
+    background: var(--at-raised);
+  }
+}

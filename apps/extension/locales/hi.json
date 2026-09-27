@@ -48,6 +48,7 @@
   "ext.popup.ends": "{time} पर खत्म",
   "ext.popup.heldSpan": "{span} ऑन रही",
   "ext.popup.lengths": "सेशन की अवधि",
+  "ext.popup.noAnswer": "AwakeTab didn't answer. Close this popup and open it again.",
   "ext.popup.noEnd": "कोई तय अंत नहीं। काम पूरा होने पर रोकें।",
   "ext.popup.notRunning": "नहीं चल रहा",
   "ext.popup.openTab": "AwakeTab को टैब में खोलें",

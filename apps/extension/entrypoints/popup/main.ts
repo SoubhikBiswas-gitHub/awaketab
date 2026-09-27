@@ -70,7 +70,14 @@ async function boot(): Promise<void> {
     ...(stored[STORAGE_KEYS.onboarding] as Partial<IOnboarding> | undefined),
   };
   const incognito = api.extension?.inIncognitoContext === true;
-  const ui = { panel: 'none' as 'none' | 'until' | 'pro', draft: 0, retrying: false, levelSaved: false };
+  // `failed`: the worker did not answer, so the popup cannot vouch for what it shows.
+  const ui = {
+    panel: 'none' as 'none' | 'until' | 'pro',
+    draft: 0,
+    retrying: false,
+    levelSaved: false,
+    failed: first === null,
+  };
 
   const el = {
     pill: q(root, '[data-pill]'),
@@ -82,6 +89,7 @@ async function boot(): Promise<void> {
     originText: q(root, '[data-origin-text]'),
     meta: q(root, '[data-meta]'),
     meta2: q(root, '[data-meta2]'),
+    fail: q(root, '[data-fail]'),
     arcs: [...root.querySelectorAll<SVGCircleElement>('[data-arc]')],
     tip: q(root, '[data-tip]', SVGGElement),
     kicker: q(root, '[data-kicker]'),
@@ -166,6 +174,7 @@ async function boot(): Promise<void> {
   // While Chrome answers a start, the popup shows what was asked for: Stop, the picked chip and its length.
   let pending: { view: IExtState; preset: TExtPreset | 'until'; ms: number } | null = null;
   const act = async (request: TExtRequest) => {
+    const focused = document.activeElement;
     if (request.type === 'start' || request.type === 'until' || request.type === 'toggle') {
       const preset = request.type === 'start' ? request.presetId : request.type === 'until' ? 'until' : defaultPreset();
       const ms = preset === 'until' ? ui.draft - Date.now() : PRESET_MS[preset];
@@ -173,11 +182,21 @@ async function boot(): Promise<void> {
       render(pending.view);
     }
     try {
-      state = (await send(api, request)) ?? state;
+      const next = await send(api, request);
+      ui.failed = next === null;
+      state = next ?? state;
     } finally {
       pending = null;
     }
     render(state);
+    keepFocus(focused);
+  };
+
+  // A control that just hid (the Until form, the Time's up card) must not strand keyboard focus on the page.
+  const keepFocus = (was: Element | null) => {
+    if (!(was instanceof HTMLElement) || !was.closest('[hidden]')) return;
+    if (document.activeElement !== was && document.activeElement !== document.body) return;
+    [el.toggle, el.retry].find((button) => !button.closest('[hidden]'))?.focus();
   };
 
   const defaultPreset = (): TExtPreset => presetOf(ctx.settings);
@@ -300,12 +319,15 @@ async function boot(): Promise<void> {
       metaText = t(view.lock === 'unsupported' ? 'ext.error.unsupported.meta' : 'ext.error.denied.meta');
       meta2 = ui.retrying ? t('ext.error.retrying') : t('ext.error.nothing');
     }
-    show(el.meta, !(held && system && !originKey));
+    // No answer from the worker: say so in the meta lines' place instead of vouching for a state.
+    const failed = ui.failed && pending === null;
+    show(el.fail, failed);
+    show(el.meta, !failed && !(held && system && !originKey));
     el.meta.textContent = metaText;
     if (strong) el.meta.dataset.strong = '';
     else delete el.meta.dataset.strong;
     el.meta2.textContent = meta2;
-    show(el.meta2, meta2 !== '');
+    show(el.meta2, !failed && meta2 !== '');
 
     // Cards and blocks, per state.
     const extendCard = mode === 'ended';
@@ -637,6 +659,7 @@ async function boot(): Promise<void> {
       else if (ui.panel === 'pro') {
         ui.panel = 'none';
         render();
+        el.proRow.focus();
       } else window.close();
       return;
     }
@@ -678,6 +701,7 @@ async function boot(): Promise<void> {
       void send(api, { type: 'state' }).then((next) => {
         if (next) {
           state = next;
+          ui.failed = false;
           render(next);
         }
       });

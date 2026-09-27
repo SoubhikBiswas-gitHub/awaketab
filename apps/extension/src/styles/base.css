@@ -630,6 +630,26 @@ svg {
   }
 }
 
+@media (hover: hover) {
+  .at-btn:not(.at-btn-lamp, :disabled):hover {
+    background: color-mix(in srgb, var(--at-raised) 88%, var(--at-ink));
+    color: var(--at-ink);
+  }
+
+  .at-link:hover {
+    text-decoration: underline;
+    text-underline-offset: var(--at-s-1);
+  }
+
+  .at-foot a:hover {
+    color: var(--at-ink);
+  }
+
+  .at-seg-item:not(:has(input:checked, input:disabled)):hover {
+    color: var(--at-ink);
+  }
+}
+
 .at-in {
   animation: at-in 0.7s var(--ext-ease) both;
 }
