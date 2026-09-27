@@ -181,10 +181,11 @@ describe('built site SEO', () => {
     expect(words.length).toBeLessThanOrEqual(1800);
   });
 
-  // OD-3 (redesign B11): 51 generated pages became 44 (4 cut, 4 merged with a 301, /for/classroom added). The 25
-  // rewritten pages are indexed and meet their family's word band (docs/06 §2; learn per marketing-seo-content.md
-  // §4); the 19 drafts stay live but noindex (OD-2 / O-45) and keep the old 600–1,000 band until rewritten.
-  it('publishes forty-four English content pages: rewritten pages in their family band, drafts in 600–1,000', async () => {
+  // OD-3 (redesign B11): 51 generated pages became 44 (4 cut, 4 merged with a 301, /for/classroom added), and three
+  // /learn pages that took over the home page's story make 47. The 28 rewritten pages are indexed and meet their
+  // family's word band (docs/06 §2; learn per marketing-seo-content.md §4); the 19 drafts stay live but noindex
+  // (OD-2 / O-45) and keep the old 600–1,000 band until rewritten.
+  it('publishes forty-seven English content pages: rewritten pages in their family band, drafts in 600–1,000', async () => {
     const BANDS: Record<string, readonly [number, number]> = {
       for: [600, 1000],
       on: [600, 900],
@@ -196,7 +197,7 @@ describe('built site SEO', () => {
       const relative = path.relative(new URL(dist).pathname, file.pathname).replace(/\\/gu, '/');
       return /^(for|on|vs|guides|learn)\/[^/]+\.html$/u.test(relative);
     });
-    expect(files).toHaveLength(44);
+    expect(files).toHaveLength(47);
     const english = await readFile(new URL('sitemap-en.xml', dist), 'utf8');
     const descriptions = new Set<string>();
     let indexed = 0;
@@ -223,7 +224,7 @@ describe('built site SEO', () => {
       expect(descriptions.has(description), relative).toBe(false);
       descriptions.add(description);
     }
-    expect(indexed).toBe(25);
+    expect(indexed).toBe(28);
   });
 
   it('builds no page for the OD-3 cut and merged routes, and 301s the merged ones (docs/00 §7)', async () => {

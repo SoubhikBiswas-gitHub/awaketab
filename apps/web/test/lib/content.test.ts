@@ -66,6 +66,9 @@ const ROUTES: Record<string, readonly string[]> = {
   learn: [
     'browser-support-matrix',
     'does-a-wake-lock-keep-teams-green',
+    'faq',
+    'honest-limits',
+    'how-awaketab-works',
     'how-we-tested',
     'low-power-mode-and-wake-locks',
     'screen-wake-lock-api-guide',
@@ -73,7 +76,8 @@ const ROUTES: Record<string, readonly string[]> = {
 };
 
 // The launch set (docs/06 §20): marketing-seo-content.md §7 top pages + the days 15–45 wave + /for/classroom + the
-// two 301 targets that absorbed merged pages. Everything else is a draft: live, noindex, out of the sitemap.
+// two 301 targets that absorbed merged pages, plus the three /learn pages that took over the home page's story.
+// Everything else is a draft: live, noindex, out of the sitemap.
 const READY = [
   '/for/cooking',
   '/for/ai-agents',
@@ -100,12 +104,15 @@ const READY = [
   '/learn/screen-wake-lock-api-guide',
   '/learn/does-a-wake-lock-keep-teams-green',
   '/learn/browser-support-matrix',
+  '/learn/how-awaketab-works',
+  '/learn/honest-limits',
+  '/learn/faq',
 ];
 
 const CUT = ['/for/navigation', '/for/live-streams', '/for/exams-proctoring', '/for/baby-monitor'];
 
 describe('OD-3 content routes (docs/00 §7)', () => {
-  it('ships exactly the 44 English pages of docs/00 §7: 14 /for, 11 /on, 7 /vs, 7 /guides, 5 /learn', () => {
+  it('ships exactly the 47 English pages of docs/00 §7: 14 /for, 11 /on, 7 /vs, 7 /guides, 8 /learn', () => {
     for (const [kind, slugs] of Object.entries(ROUTES)) {
       expect(
         english
@@ -115,7 +122,7 @@ describe('OD-3 content routes (docs/00 §7)', () => {
         kind,
       ).toEqual([...slugs].sort());
     }
-    expect(english).toHaveLength(44);
+    expect(english).toHaveLength(47);
   });
 
   it('keeps no page, translation or translated slug for a cut or merged route', async () => {
@@ -166,7 +173,7 @@ describe('OD-3 content routes (docs/00 §7)', () => {
 });
 
 describe('launch set and drafts (OD-2 / O-45, docs/06 §20)', () => {
-  it('indexes exactly the 25 rewritten pages; every other English page is a noindex draft', () => {
+  it('indexes exactly the 28 rewritten pages; every other English page is a noindex draft', () => {
     expect(
       english
         .filter((page) => !page.noindex)

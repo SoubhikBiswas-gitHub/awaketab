@@ -170,7 +170,7 @@ Timing rules: ticks every 1000 ms aligned to the wall clock; all arithmetic uses
 | `/on/{slug}` | 11 device/browser pages |
 | `/vs/{slug}` | 7 comparison pages |
 | `/guides/{slug}` | 7 OS how-to pages |
-| `/learn/{slug}` | 5 deep/dev pages |
+| `/learn/{slug}` | 8 docs pages: how AwakeTab works, honest limits, FAQ, reference and developer pages (§13.24) |
 | Retired content URLs (OD-3, §13.20) | `/for/second-monitor` → `/guides/second-monitor-turns-off`, `/on/windows-10` → `/on/windows-11`, `/guides/modern-standby` → `/guides/lock-screen-vs-sleep`, `/learn/nosleep-js-vs-wake-lock` → `/vs/nosleep-js` (all 301, `_redirects`). Cut, no redirect (404): `/for/navigation`, `/for/live-streams`, `/for/exams-proctoring`, `/for/baby-monitor` |
 | `/pro` · `/pro/activate` · `/pro/manage` | Pricing, key entry, device list |
 | `/extension` · `/embed` · `/kiosk` · `/library` | Product landing pages |
@@ -191,7 +191,7 @@ Content slugs (English canonical; translated slugs for the Latin-script locales 
 - `/on/`: iphone-safari · ios-home-screen · ipad · android-chrome · samsung-internet · chromebook · windows-11 ("Windows 11 and 10") · macos · linux · firefox · edge
 - `/vs/`: caffeine · amphetamine · powertoys-awake · caffeinate-command · nosleep-page · nosleep-js · mouse-jigglers
 - `/guides/`: windows-11-screen-turns-off-after-1-minute · mac-prevent-sleep-lid-closed · iphone-auto-lock-never-greyed-out · chrome-energy-saver · android-screen-timeout-one-app · second-monitor-turns-off · lock-screen-vs-sleep
-- `/learn/`: screen-wake-lock-api-guide · does-a-wake-lock-keep-teams-green · low-power-mode-and-wake-locks · browser-support-matrix · how-we-tested
+- `/learn/`: how-awaketab-works · honest-limits · faq · screen-wake-lock-api-guide · does-a-wake-lock-keep-teams-green · low-power-mode-and-wake-locks · browser-support-matrix · how-we-tested
 
 ---
 
@@ -803,6 +803,18 @@ Accepted on 2026-09-27. Spec: `05-frontend-spec.md` §3.33; canvas `Main`, `Extr
 | Stylesheets | `base.css` (every page, via BaseLayout) · `tool.css` (ToolIsland) · `tool-full.css` (the full tool pages: `/`, presets, `/until`, `[lang]` homes, 404) · `tool-more.css` (lazy) · `tool-page.css` · `tool-until.css` · `tool-embed.css`, all under the strict stylelint token override since B3 |
 | Advice codes | `TAdviceCode` drops `battery_saver` and `low_power_ios` (battery savers and Low Power Mode never refuse a wake lock; Chromium and WebKit have no such check). `classifyDenial()` returns `null` for a denial with no known cause; `advice` stays `null` and the blocked card lists the usual causes. `embedAdvice()` maps an allowed frame's `iframe_no_allow` to `null` (`tool.advice.unknown`) |
 | i18n keys | About 209 new keys in all 8 locales, in the groups `tool.face.*` · `tool.sky.*` · `tool.kicker.*` · `tool.meta.*` · `tool.when.*` · `tool.len.*` · `tool.note.*` · `tool.cta.*` · `tool.chip.*` · `tool.until.*` · `tool.slot.*` · `tool.custom.*` · `tool.blocked.*` · `tool.battery.*` · `tool.done.*` · `tool.why.*` · `tool.share.*` · `tool.card.*` · `settings.lamp.*` · `settings.clock.*` · `settings.battery.*` · `stats.heat.*` · `stats.unit.*` · `pwa.card.*`, plus `tool.advice.unknown`. Removed: `tool.advice.battery_saver`, `tool.advice.low_power_ios`. Changed: `pro.card` (no schedules), `library.demo.scenario.denied`, `tool.offline` |
+
+### 13.24 The home page's story moves to /learn
+
+Accepted on 2026-09-28. The home page now sells and starts the tool; the explanation that sat below it lives in the Docs section (`/learn`). Spec: `06-content-seo-spec.md` §23. The seven lock states and their pill strings, storage keys, budgets and the ad rules do not change.
+
+| Identifier | Decision |
+|---|---|
+| New routes | `/learn/how-awaketab-works` (what AwakeTab does, how a session works, the seven states with their exact pill copy) · `/learn/honest-limits` (the six limits and what to use instead) · `/learn/faq` (every question the home page answered). English only; translated slugs reserved in `slugs.json`: `como-funciona-awaketab` / `como-o-awaketab-funciona` / `so-funktioniert-awaketab` / `comment-fonctionne-awaketab`, `limites-honestos` / `limites-honestos` / `ehrliche-grenzen` / `limites-honnetes`, `preguntas-frecuentes` / `perguntas-frequentes` / `haeufige-fragen` / `questions-frequentes` (es / pt-br / de / fr) |
+| Content counts | 47 English pages: 14 `/for`, 11 `/on`, 7 `/vs`, 7 `/guides`, 8 `/learn`. 28 are indexable (the 25 of §13.20 plus the three new pages); the 19 drafts are unchanged |
+| Hub order | `/learn` lists How AwakeTab works, Honest limits and FAQ first, then the existing pages |
+| Merged copy | The home support table and device list join `/learn/browser-support-matrix`; "How AwakeTab is checked" joins `/learn/how-we-tested`; "When something else is the better tool" becomes the `/vs` hub intro; "Or fix the setting itself" becomes the `/guides` hub intro (`src/lib/hubs.ts`) |
+| Structured data | None added. `FAQPage` is not emitted anywhere (`06-content-seo-spec.md` §7, §8); `/learn/faq` carries the usual `Article` and `BreadcrumbList` |
 
 ## 14. Writing conventions for these docs
 
