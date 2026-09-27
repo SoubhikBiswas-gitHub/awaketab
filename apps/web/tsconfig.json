@@ -5,6 +5,7 @@
     "noUncheckedIndexedAccess": true,
     "paths": {
       "@/*": ["./src/*"],
+      "@awaketab/wake/video": ["../../packages/wake/src/video.ts"],
       "@awaketab/wake": ["../../packages/wake/src/index.ts"],
       "@awaketab/core": ["../../packages/core/src/index.ts"]
     },

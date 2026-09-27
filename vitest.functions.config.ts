@@ -9,6 +9,7 @@ export default defineConfig({
   define: { __AT_POLAR_SERVER__: JSON.stringify('sandbox'), __AT_LICENSE_DEV_KEY__: 'true' },
   resolve: {
     alias: {
+      '@awaketab/wake/video': fileURLToPath(new URL('./packages/wake/src/video.ts', import.meta.url)),
       '@awaketab/wake': fileURLToPath(new URL('./packages/wake/src/index.ts', import.meta.url)),
       '@awaketab/core': fileURLToPath(new URL('./packages/core/src/index.ts', import.meta.url)),
     },

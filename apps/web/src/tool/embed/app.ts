@@ -12,8 +12,7 @@ import {
   type TPresetId,
 } from '@awaketab/core';
 import { createWakeLock, type TAdviceCode } from '@awaketab/wake';
-// The same asset `@awaketab/wake/video` publishes; the app's `@awaketab/wake` alias points at the package source.
-import { MP4_DATA_URL as mp4 } from '../../../../../packages/wake/src/assets/blank.mp4.b64.js';
+import { mp4 } from '@awaketab/wake/video';
 import { activeElapsed } from '../ambient/logic.js';
 import { everySecond } from '../ambient/tick.js';
 import type { IToolCtx } from '../ctx.js';
