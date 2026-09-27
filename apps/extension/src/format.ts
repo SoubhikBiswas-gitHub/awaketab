@@ -84,9 +84,20 @@ export function createTimeFormat(f: ITimeFormat) {
     return hm(new Date(2023, 0, 2, Math.floor(m / 60), m % 60).getTime());
   };
 
-  const hour = (h: number): string => hourOnly.format(new Date(2023, 0, 2, h % 24).getTime());
+  // Axis labels: "6 AM", "Noon", "6 PM" on a 12-hour clock (ExtOptions board); the locale's own hours otherwise.
+  const hour = (h: number): string => {
+    const ms = new Date(2023, 0, 2, h % 24).getTime();
+    const twelve = hourOnly.formatToParts(ms).some((p) => p.type === 'dayPeriod');
+    return twelve && h % 24 === 12 ? t('ext.time.noon') : hourOnly.format(ms);
+  };
 
-  return { hm, when, since, at, full, span, wall, hour, weekday: (ms: number) => weekday.format(ms) };
+  const range = (start: number, end: number): string =>
+    t('ext.time.span', {
+      from: wall(start),
+      to: end <= start ? t('ext.time.nextDay', { time: wall(end) }) : wall(end),
+    });
+
+  return { hm, when, since, at, full, span, wall, hour, range, weekday: (ms: number) => weekday.format(ms) };
 }
 
 export function keyCaps(shortcut: string): string[] {
