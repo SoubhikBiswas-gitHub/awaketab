@@ -7,6 +7,7 @@
   --at-tl-tabs-late: 360px;
   --at-tl-hdr-short: 60px;
   --at-tl-col-gap: clamp(48px, 6.25vw - 16px, 64px);
+  --at-tl-land-col: 344px;
 }
 
 @layer components {
@@ -81,6 +82,7 @@
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   min-block-size: calc(100dvh - var(--at-h-header));
+  overflow-x: clip;
 }
 
 .at-first > .at-tool {
@@ -115,6 +117,10 @@
 
 .at-tabs-late {
   display: none;
+}
+
+.at-pillline {
+  flex-wrap: nowrap;
 }
 
 /* stylelint-disable declaration-property-value-allowed-list -- the four clock faces are drawn art: sizes scale with the face unit (--u), DESIGN.md §3, §11.2 */
@@ -210,7 +216,7 @@
   --hz-warm-op: calc(0.7 * (1 - var(--at-p)));
 
   overflow: hidden;
-  border-radius: calc(28 * var(--u));
+  border-radius: var(--at-r-2xl);
   background: var(--hz-sky);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 8%);
 }
@@ -414,7 +420,7 @@
   --tide-top: calc(340 * (1 - var(--at-p)) * var(--u));
 
   overflow: hidden;
-  border-radius: calc(28 * var(--u));
+  border-radius: var(--at-r-2xl);
   background: radial-gradient(90% 80% at 50% 15%, var(--at-lift) 0%, var(--at-ground) 100%);
   box-shadow: inset 0 0 0 1px var(--at-line);
 }
@@ -587,6 +593,10 @@
   text-wrap: balance;
 }
 
+:lang(ja) .at-below-h1 {
+  word-break: auto-phrase;
+}
+
 .at-below > * {
   min-inline-size: 0;
   margin-inline: 0;
@@ -672,13 +682,33 @@
   }
 }
 
+@media (360px <= width < 600px) {
+  .at-tool {
+    --at-u-max: clamp(0.44px, (100dvh - 482px) / 340, 1px);
+  }
+
+  .at-island[data-status="timesup"] .at-tool {
+    --at-u-max: clamp(0.44px, (100dvh - 498px) / 340, 1px);
+  }
+
+  .at-island:is(:not([data-open=""]), [data-deferred], [data-toast], [data-status="blocked"]) .at-tool {
+    --at-u-max: clamp(0.44px, (100dvh - 482px) / 340, 0.86px);
+  }
+}
+
+@media (600px <= width < 1024px) {
+  .at-tool {
+    --at-u-max: clamp(0.44px, (100dvh - 554px) / 340, clamp(1.2px, 0.7909px + 0.0682vw, 1.35px));
+  }
+}
+
 @media (600px <= width < 1024px) and (500px < height < 1100px) {
   .at-island:is(:not([data-open=""]), [data-deferred], [data-status="timesup"]) .at-tool {
-    --at-u-max: 1px;
+    --at-u-max: clamp(0.44px, (100dvh - 560px) / 340, 1px);
   }
 
   .at-island:is([data-toast], [data-past], [data-status="blocked"]:not([data-cause])) .at-tool {
-    --at-u-max: 0.9px;
+    --at-u-max: clamp(0.44px, (100dvh - 560px) / 340, 0.9px);
   }
 }
 
@@ -711,13 +741,23 @@
     flex: 1;
     order: -1;
     justify-content: center;
+    min-inline-size: 0;
     padding: 0;
+    overflow: clip;
     font: var(--at-type-caption);
     white-space: nowrap;
   }
 
   .at-island .at-header-end {
     flex: 1;
+  }
+
+  .at-island .at-site-header :is([data-open-share], [data-open-shortcuts], [data-open-pip]) {
+    display: none;
+  }
+
+  .at-settings .at-settings-links > :is([data-open-share], [data-open-shortcuts]) {
+    display: inline-flex;
   }
 
   .at-tool {
@@ -729,7 +769,7 @@
       "face pill tabs" auto
       "face note note" auto
       "face toast toast" 1fr
-      "face dock dock" auto / calc(358 * var(--at-u-max)) auto minmax(0, 1fr);
+      "face dock dock" auto / calc(358 * var(--at-u-max)) minmax(0, 1fr) auto;
     gap: var(--at-s-2) var(--at-gap-group);
     padding-block: 0 var(--at-dock-bottom);
     padding-inline: var(--at-s-4);
@@ -750,11 +790,6 @@
     font-weight: 500;
   }
 
-  .at-pillrow {
-    align-items: flex-start;
-    justify-self: start;
-  }
-
   .at-pillline .at-why-btn {
     display: none;
   }
@@ -763,27 +798,36 @@
     display: inline-flex;
   }
 
-  .at-noterow,
-  .at-choose {
-    justify-content: flex-start;
-  }
-
-  .at-tool > .at-note {
-    text-align: start;
-  }
-
-  .at-note-text,
-  .at-card-tone,
-  .at-toast p {
-    font: var(--at-type-caption);
-  }
-
   .at-island:is(:not([data-open=""]), [data-status="blocked"], [data-toast]) .at-tabs {
     display: none;
   }
 
   .at-island:not([data-open=""]) .at-noterow {
     display: none;
+  }
+}
+
+@media (orientation: landscape) and (height <= 500px) and (width < 800px) {
+  .at-tool {
+    grid-template:
+      "face pill" auto
+      "face note" auto
+      "face toast" 1fr
+      "face dock" auto / minmax(0, 1fr) minmax(var(--at-tl-land-col), 1fr);
+  }
+
+  .at-island .at-tabs {
+    display: none;
+  }
+
+  .at-dock {
+    gap: var(--at-gap-item);
+  }
+}
+
+@media (orientation: landscape) and (height <= 500px) and (width < 700px) {
+  .at-dateline-hdr {
+    visibility: hidden;
   }
 }
 
