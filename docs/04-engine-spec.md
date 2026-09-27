@@ -35,7 +35,7 @@ Verified in the blueprint and re-verified per release on `/support-matrix`:
     │         requesting ──play() ok──► fallback ──────┘      │
     │              │ play() rejects      │                    │
     │              ▼                     └────────────────────┘
-    │         unsupported (advice gesture_required)
+    │         unsupported (advice unsupported_browser)
     └── release() from any state; destroy() from any state
 ```
 
@@ -50,47 +50,40 @@ export type TLockReason =
   | 'request'            // request() called
   | 'acquired'           // native promise resolved
   | 'fallback_started'   // video play() resolved
-  | 'released_hidden'    // sentinel release while document hidden
-  | 'released_visible'   // sentinel release while visible (fullscreen transition, OS)
-  | 'visible'            // visibilitychange → visible triggered a re-request
-  | 'hidden'             // visibilitychange → hidden paused the fallback video
-  | 'fullscreen'         // fullscreenchange triggered a re-request
-  | 'retry'              // backoff timer fired
-  | 'denied'             // NotAllowedError (see DeniedReason)
-  | 'error'              // unexpected rejection
-  | 'no_api'             // navigator.wakeLock absent
-  | 'gesture_required'   // video play() rejected with NotAllowedError
-  | 'release'            // release() called
-  | 'destroy';
+  | 'released_hidden'    // sentinel release, or fallback paused, while the document is hidden
+  | 'released_platform'  // sentinel release while visible (fullscreen transition, OS)
+  | 'denied'             // NotAllowedError or another rejection
+  | 'unsupported'        // no API, or no fallback video could play
+  | 'user_release'       // release() called
+  | 'retry'              // backoff timer, visibility or fullscreen re-request
+  | 'destroyed';         // destroy() called
 
-/** Classification of a NotAllowedError. */
-export type DeniedReason = 'hidden' | 'policy' | 'insecure_context' | 'unknown';
-
-/** What the UI should tell the user to do. Null when nothing is wrong. */
-export type Advice =
-  | 'tab_hidden'           // bring the tab back to the front
+/** What the UI should tell the user to do. Null when nothing is wrong or the cause is unknown. */
+export type TAdviceCode =
+  | 'hidden_document'      // bring the tab back to the front
+  | 'permissions_policy'   // the page's Permissions-Policy blocks screen-wake-lock
   | 'insecure_context'     // page is served over http
-  | 'unsupported_browser'  // browser too old / no API and no fallback possible
-  | 'iframe_policy'        // embedded without allow="screen-wake-lock"
-  | 'gesture_required';    // tap to start the video fallback
+  | 'unsupported_browser'  // no API and no playable fallback, or the fallback video was refused
+  | 'ios_safari_old'       // iOS Safari before 16.4
+  | 'firefox_old'          // Firefox before 126
+  | 'iframe_no_allow';     // embedded without allow="screen-wake-lock"
 ```
 
-Classification of a `NotAllowedError`, in order:
+Classification of a refusal (`classify.ts`), in order. Battery savers and Low Power Mode never refuse a wake lock (Chromium and WebKit have no such check), so there is no battery advice:
 
 ```ts
-function classifyDenial(doc: Document, isIOS: boolean): { reason: DeniedReason; advice: Advice | null } {
-  if (doc.visibilityState === 'hidden') return { reason: 'hidden', advice: 'tab_hidden' };
-  const pp = (doc as any).permissionsPolicy ?? (doc as any).featurePolicy;
-  if (pp && typeof pp.allowsFeature === 'function' && !pp.allowsFeature('screen-wake-lock')) {
-    return { reason: 'policy', advice: 'iframe_policy' };
-  }
-  if (!pp && window !== window.top) return { reason: 'policy', advice: 'iframe_policy' }; // Safari: no policy API, assume the iframe case
-  if (!window.isSecureContext) return { reason: 'insecure_context', advice: 'insecure_context' };
-  return { reason: 'unknown', advice: null }; // no known cause (on iOS usually Safari wanting a tap): the UI lists the usual ones
+function classifyDenial(err, ctx: { visible; secure; inIframe; ua }): TAdviceCode | null {
+  if (!ctx.secure || err.name === 'SecurityError') return 'insecure_context';
+  if (!ctx.visible) return 'hidden_document';
+  if (ctx.inIframe) return 'iframe_no_allow';
+  if (/permissions policy/i.test(err.message)) return 'permissions_policy';
+  if (iOS && Safari < 16.4) return 'ios_safari_old';
+  if (Firefox < 126) return 'firefox_old';
+  return null; // no known cause (on iOS usually Safari wanting a tap): the UI lists the usual ones
 }
 ```
 
-`unsupported` carries advice `insecure_context` when `!isSecureContext`, otherwise `unsupported_browser`; once the fallback is available it carries `gesture_required` until the user taps.
+`unsupported` carries advice `insecure_context` when `!isSecureContext`, otherwise `unsupported_browser`; when the fallback is available the pill reads Tap to use the fallback until the user taps.
 
 ### 4. Transition table
 
@@ -99,16 +92,16 @@ Guards reference `vis` (`document.visibilityState`), `fb` (`options.fallback ===
 | # | From | Event | Guard | To | Side effects |
 |---|---|---|---|---|---|
 | 1 | `idle` | `request()` | `'wakeLock' in navigator` | `requesting` | `attempt = 0`; call `navigator.wakeLock.request('screen')`; set `pending` flag |
-| 2 | `idle` | `request()` | API absent | `unsupported` | advice = `insecure_context` if `!isSecureContext` else (`fb` ? `gesture_required` : `unsupported_browser`); emit `error` if not `fb` |
+| 2 | `idle` | `request()` | API absent | `unsupported` | advice = `insecure_context` if `!isSecureContext` else `unsupported_browser`; with `fb` the pill offers Tap to use the fallback; emit `error` if not `fb` |
 | 3 | `requesting` | native promise resolves | not cancelled | `held` | store sentinel; `sentinel.addEventListener('release', onRelease)`; `mode = 'native'`; `attempt = 0`; advice = null |
 | 4 | `requesting` | native promise resolves | cancelled (release() during flight) | `idle` | `await sentinel.release()`; drop sentinel (*silent* beyond the earlier `release` change) |
 | 5 | `requesting` | rejects `NotAllowedError` | — | `denied` | `{reason, advice} = classifyDenial()`; if reason is `unknown` and `vis==='visible'` and `n < N` → schedule retry in `min(baseMs·2^n, maxMs)` (defaults 1 s, 2 s, 4 s); if `hidden` → wait for `visibilitychange`; if `policy`/`insecure_context` → no timer; emit `error` |
 | 6 | `requesting` | rejects other error | — | `denied` | reason `unknown`, advice `null` (cause unknown); same retry rule; emit `error` |
 | 7 | `requesting` (video) | `video.play()` resolves | — | `fallback` | `mode = 'video'`; start 20 s nudge timer; advice = null |
-| 8 | `requesting` (video) | `play()` rejects `NotAllowedError` | — | `unsupported` | advice `gesture_required`; emit `error` |
+| 8 | `requesting` (video) | `play()` rejects `NotAllowedError` | — | `unsupported` | advice `unsupported_browser`; emit `error` |
 | 9 | `requesting` (video) | `play()` rejects another way (`NotSupportedError`, `AbortError`), or the last `<source>` fires `error` | — | `unsupported` | at once, never left on `requesting`: the browser tries the sources in order itself, and when none can play, `play()` never settles, so the last source's `error` ends the request; video removed; advice `unsupported_browser`; emit `error` |
-| 10 | `held` | sentinel `release` event | `vis === 'hidden'` | `lost` | sentinel = null; advice `tab_hidden`; reason `released_hidden` |
-| 11 | `held` | sentinel `release` event | `vis === 'visible'` | `lost` → immediately `requesting` | reason `released_visible`; loop guard: if ≥ 3 visible-releases within 10 s → go to `denied` (reason `battery_platform`) instead and apply the retry rule |
+| 10 | `held` | sentinel `release` event | `vis === 'hidden'` | `lost` | sentinel = null; advice `hidden_document`; reason `released_hidden` |
+| 11 | `held` | sentinel `release` event | `vis === 'visible'` | `lost` → immediately `requesting` | reason `released_platform`; loop guard: if ≥ 3 visible-releases within 10 s → go to `denied` (reason `denied`, advice null) instead and apply the retry rule |
 | 12 | `held` | `release()` | — | `idle` | set `releasing`; `await sentinel.release()`; ignore the resulting `release` event; sentinel = null; `mode` kept |
 | 13 | `lost` | `visibilitychange` → visible | `reacq` | `requesting` | native: `request('screen')`; video: `video.play()`; reason `visible` |
 | 14 | `lost` | `visibilitychange` → visible | `!reacq` | `lost` | *silent*; caller must `request()` |
@@ -121,14 +114,14 @@ Guards reference `vis` (`document.visibilityState`), `fb` (`options.fallback ===
 | 21 | `unsupported` | `request()` | `fb` and video not yet created | `requesting` | create `<video>` (§5) synchronously inside the caller's gesture; `play()`; reason `request` |
 | 22 | `unsupported` | `request()` | `fb` and video exists | `requesting` | `play()` again |
 | 23 | `unsupported` | `request()` | `!fb` | `unsupported` | emit `error`; *silent* |
-| 24 | `fallback` | `visibilitychange` → hidden | — | `lost` | `video.pause()`; clear nudge timer; advice `tab_hidden`; reason `hidden` |
-| 25 | `fallback` | nudge timer (every 20 s) | `video.paused \|\| video.ended \|\| video.readyState < 2` | `fallback` (self) | `video.currentTime = 0; video.play()`; on `NotAllowedError` → `unsupported` (advice `gesture_required`); *silent* when successful |
+| 24 | `fallback` | `visibilitychange` → hidden | — | `lost` | `video.pause()`; clear nudge timer; advice `hidden_document`; reason `released_hidden` |
+| 25 | `fallback` | nudge timer (every 20 s) | `video.paused \|\| video.ended \|\| video.readyState < 2` | `fallback` (self) | `video.currentTime = 0; video.play()`; on `NotAllowedError` → `unsupported` (advice `unsupported_browser`); *silent* when successful |
 | 26 | `fallback` | `release()` | — | `idle` | `video.pause()`; clear timer; keep element for reuse |
 | 27 | `held` \| `fallback` | `fullscreenchange` | state unchanged after 250 ms | same | *silent* no-op — if the browser released, row 10/11 already fired |
 | 28 | any | `destroy()` | — | `idle` | release sentinel; pause and remove `<video>`; remove all listeners; clear timers; `emitter.clear()`; further calls resolve to `'idle'` |
 | 29 | any except `idle` | `pagehide` / `freeze` (Page Lifecycle) | — | as per rows 10/24 | The browser releases anyway; we just mirror it. On `resume` event treat as `visibilitychange` → visible |
 
-Row 5 is the retry policy in full: exponential backoff, at most `N = 3` attempts (1 s, 2 s, 4 s), only while visible and only for `battery_platform`/`unknown`; after the third failure the machine stays in `denied` with its advice and waits for one of: `request()` (user tap on the pill's "Try again"), `visibilitychange` → visible, `fullscreenchange`. `hidden` denials never retry on a timer (the visible event is the retry). `policy` and `insecure_context` never retry — nothing the user does in the tab can fix them.
+Row 5 is the retry policy in full: exponential backoff, at most `N = 3` attempts (1 s, 2 s, 4 s), only while visible and only for refusals with no known cause (advice null); after the third failure the machine stays in `denied` with its advice and waits for one of: `request()` (user tap on the pill's "Try again"), `visibilitychange` → visible, `fullscreenchange`. `hidden` denials never retry on a timer (the visible event is the retry). `policy` and `insecure_context` never retry — nothing the user does in the tab can fix them.
 
 ### 5. Video fallback details
 
@@ -163,7 +156,7 @@ function createFallbackVideo(doc: Document, sources: { webm?: string; mp4?: stri
 - **Who passes the MP4.** The embed widget (`src/tool/embed/app.ts`) passes it for readers on older Safari, since its own budget has room (`11-embed-spec.md` §2); the tool page uses the default WebM only.
 - `play()` is called synchronously in the gesture handler's call stack (no `await` before it); its promise is handled per rows 7–9.
 - Nudge: every 20 s (`setInterval`) check `paused || ended || readyState < 2` and re-`play()` from `currentTime = 0`. This is a watchdog for browsers that stall a looping tiny video, not a keep-alive by itself.
-- On hidden: pause (row 24) — saves the CPU that older fallbacks burned (25–30% reported for the Firefox video path). On visible: `play()` again; if the browser now demands a gesture we surface `gesture_required` honestly instead of pretending.
+- On hidden: pause (row 24) — saves the CPU that older fallbacks burned (25–30% reported for the Firefox video path). On visible: `play()` again; if the browser now demands a gesture the machine goes to `unsupported` and the pill asks for a tap (Tap to use the fallback) instead of pretending.
 - The element is removed when a failed `play()` ends the request, on `release()` from `fallback`, and on `destroy()`; the next `request()` creates a fresh one.
 
 ### 6. Public API of `@awaketab/wake`
@@ -191,14 +184,14 @@ export interface IWakeLockOptions {
   isIOS?: boolean;                              // default: UA sniff for iPhone|iPad|iPod
 }
 
-export interface IChangeEvent { from: TLockState; to: TLockState; reason: TLockReason; advice: Advice | null; deniedReason?: DeniedReason }
-export interface IErrorEvent  { error: unknown; state: TLockState; advice: Advice | null }
+export interface IChangeEvent { from: TLockState; to: TLockState; reason: TLockReason; advice?: TAdviceCode; error?: unknown; at: number }
+export interface IErrorEvent  { error: unknown; state: TLockState; advice: TAdviceCode | null }
 export interface WakeLockEvents extends Record<string, unknown> { change: IChangeEvent; error: IErrorEvent }
 
 export interface WakeLock {
   readonly state: TLockState;
   readonly mode: 'native' | 'video' | null;
-  readonly advice: Advice | null;
+  readonly advice: TAdviceCode | null;
   readonly supported: boolean;                 // API present in this document (false during SSR)
   /** Never rejects; resolves with the state reached: held | fallback | denied | unsupported | idle (if destroyed). */
   request(): Promise<TLockState>;
@@ -233,7 +226,7 @@ Constraints: `createWakeLock()` touches no globals until `request()`/`on()` is f
 ### 7. Types
 
 ```ts
-import type { TLockState, Advice, WakeLock } from '@awaketab/wake';
+import type { TLockState, TAdviceCode, WakeLock } from '@awaketab/wake';
 
 export type TPlanType = 'indefinite' | 'duration' | 'until';
 export type TPlan =
@@ -404,7 +397,7 @@ export interface ICapabilities {
     serviceWorker: boolean;
     webCrypto: boolean;                                    // crypto.subtle available (needed for licence verify)
   };
-  advice: Advice | null;          // initial advice before any request: insecure_context | unsupported_browser | null
+  advice: TAdviceCode | null;          // initial advice before any request: insecure_context | unsupported_browser | null
 }
 
 const NATIVE_MIN: Partial<Record<TBrowserFamily, [major: number, minor: number]>> = { chrome: [84, 0], edge: [84, 0], firefox: [126, 0], safari: [16, 4], samsung: [14, 0], opera: [70, 0] };
