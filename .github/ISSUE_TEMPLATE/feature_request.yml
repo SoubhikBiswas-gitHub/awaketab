@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest something AwakeTab should do, or do better.
+title: "Idea: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea. AwakeTab stays small and honest on purpose, so it helps most to hear the situation you are in.
+  - type: dropdown
+    id: product
+    attributes:
+      label: Which part is it about?
+      options:
+        - The website or tool
+        - Ambient modes (clock, cook, focus, night, message, minimal)
+        - AwakeTab for Chrome (the extension)
+        - The embed widget
+        - The @awaketab/wake library
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The situation and the problem, not the solution yet. For example "I follow a recipe on my iPad and my hands are wet."
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help?
+      description: How you imagine it working.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What do you do today instead?
+    validations:
+      required: false

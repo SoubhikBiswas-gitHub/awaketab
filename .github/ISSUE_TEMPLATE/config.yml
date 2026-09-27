@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security problem
+    url: https://github.com/SoubhikBiswas-gitHub/awaketab/blob/main/SECURITY.md
+    about: Please report security problems privately, as described in the security policy.
+  - name: Use AwakeTab
+    url: https://awaketab.pages.dev
+    about: The live site, with help pages for each browser and device.

@@ -1,0 +1,80 @@
+name: Bug report
+description: Something does not work, or the status pill said something that was not true.
+title: "Bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please do not report security problems here; see SECURITY.md instead.
+  - type: dropdown
+    id: product
+    attributes:
+      label: Where did it happen?
+      options:
+        - The website or tool (awaketab.pages.dev)
+        - AwakeTab for Chrome (the extension)
+        - The embed widget on another site
+        - The @awaketab/wake library
+        - Something else
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      description: For example "Chrome 131", "Safari 18.4", "Firefox 133". Your browser's About page shows the version.
+      placeholder: Chrome 131
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system and device
+      description: For example "macOS 15 on a MacBook Air", "Android 15 on a Pixel 8", "iPadOS 18.4".
+      placeholder: macOS 15
+    validations:
+      required: true
+  - type: dropdown
+    id: pill
+    attributes:
+      label: What did the status pill say?
+      description: The pill is the small label that shows the wake lock state.
+      options:
+        - Ready
+        - Starting…
+        - Screen awake
+        - Paused — tab hidden
+        - Blocked — here's the fix
+        - Tap to use the fallback
+        - Awake via video fallback
+        - System awake (extension)
+        - Something else (write it below)
+        - I did not see a pill
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: What you did, one step per line. Include the page address and the length you picked, if any.
+      placeholder: |
+        1. Open https://awaketab.pages.dev/30m
+        2. Start keeping the screen awake
+        3. Switch to another tab for a minute and come back
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect, and what happened instead?
+      description: If the pill text was not in the list above, write it here exactly.
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Battery saver or Low Power Mode on? Screenshots, console errors, or how often it happens.
+    validations:
+      required: false
