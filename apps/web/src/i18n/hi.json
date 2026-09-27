@@ -704,6 +704,7 @@
   "ambient.focus.finish": "ब्लॉक पूरा करें",
   "ambient.message.preview": "60 सेकंड का पूर्वावलोकन · {n} सेकंड बाकी",
   "ambient.message.previewShort": "पूर्वावलोकन · {n} सेकंड",
+  "ambient.message.ended": "पूर्वावलोकन खत्म",
   "ambient.message.back": "{mode} पर लौटें",
   "ambient.message.edit": "संदेश बदलें",
   "ambient.message.label": "जागी स्क्रीन पर संदेश",

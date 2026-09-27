@@ -704,6 +704,7 @@
   "ambient.focus.finish": "结束本时段",
   "ambient.message.preview": "60 秒预览 · 剩余 {n} 秒",
   "ambient.message.previewShort": "预览 · {n} 秒",
+  "ambient.message.ended": "预览已结束",
   "ambient.message.back": "返回{mode}",
   "ambient.message.edit": "编辑消息",
   "ambient.message.label": "唤醒屏幕上的消息",

@@ -704,6 +704,7 @@
   "ambient.focus.finish": "Terminar el bloque",
   "ambient.message.preview": "Vista previa de 60 s · quedan {n} s",
   "ambient.message.previewShort": "Vista previa · {n} s",
+  "ambient.message.ended": "Vista previa terminada",
   "ambient.message.back": "Volver a {mode}",
   "ambient.message.edit": "Editar mensaje",
   "ambient.message.label": "Mensaje en la pantalla despierta",

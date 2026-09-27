@@ -704,6 +704,7 @@
   "ambient.focus.finish": "Block beenden",
   "ambient.message.preview": "60 s Vorschau · noch {n} s",
   "ambient.message.previewShort": "Vorschau · {n} s",
+  "ambient.message.ended": "Vorschau beendet",
   "ambient.message.back": "Zurück zu {mode}",
   "ambient.message.edit": "Nachricht bearbeiten",
   "ambient.message.label": "Nachricht auf dem wachen Bildschirm",

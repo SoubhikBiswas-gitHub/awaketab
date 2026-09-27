@@ -25,7 +25,7 @@
   --at-tl-type-fig: 600 1.5rem/2rem var(--at-font);
   --at-tl-type-fig-unit: 500 0.9375rem/2rem var(--at-font);
   --at-tl-type-seg: 500 0.875rem/1rem var(--at-font);
-  --at-tl-type-keys: 400 0.875rem/1.5rem var(--at-font);
+  --at-tl-type-keys: 400 0.8125rem/1.5rem var(--at-font);
 }
 
 .at-island[data-why] .at-why {
@@ -539,9 +539,11 @@
   border: 0;
   border-radius: var(--at-r-md);
   background: transparent;
-  color: var(--at-accent-text);
+  color: var(--at-ink);
   font: var(--at-type-small);
   font-weight: 600;
+  text-decoration: underline var(--at-accent);
+  text-underline-offset: 4px;
   cursor: pointer;
 }
 
@@ -586,6 +588,11 @@
 .at-lp-two .at-chip {
   padding-inline: var(--at-s-2);
   font: var(--at-type-small);
+}
+
+.at-lp-two .at-chip:not([aria-pressed="true"]) {
+  background: transparent;
+  font-weight: 500;
 }
 
 .at-dockcard {
@@ -813,25 +820,24 @@
   font-family: var(--at-font-mono);
 }
 
-.at-copy {
+.at-share-row .at-copy {
   border-color: transparent;
   background: var(--at-raised);
   padding-inline: var(--at-s-3) var(--at-s-4);
 }
 
-.at-copy > svg {
+.at-share-row .at-copy > svg {
   inline-size: var(--at-icon-md);
   block-size: var(--at-icon-md);
 }
 
-.at-copy[data-done] {
+.at-share-row .at-copy[data-done] {
   border-color: var(--at-lamp-line);
   background: var(--at-lamp-soft);
 }
 
-.at-copy .at-copied-i,
-.at-copy .at-copied-t,
-.at-copy[data-done] :is(.at-copy-i, .at-copy-t) {
+.at-share-row .at-copy :is(.at-copied-i, .at-copied-t),
+.at-share-row .at-copy[data-done] :is(.at-copy-i, .at-copy-t) {
   display: none;
 }
 
@@ -1080,6 +1086,7 @@ dialog.at-tsheet::before {
 
 .at-caption a {
   color: var(--at-accent-text);
+  text-decoration: underline;
   text-underline-offset: 3px;
 }
 
@@ -1326,12 +1333,9 @@ dialog.at-tsheet::before {
   background: transparent;
   color: var(--at-accent-text);
   font: var(--at-type-ui);
+  text-decoration: underline;
   text-underline-offset: 4px;
   cursor: pointer;
-}
-
-button.at-textlink {
-  text-decoration: underline;
 }
 
 .at-settings-foot .at-button {
@@ -1550,9 +1554,28 @@ button.at-textlink {
   margin: 0;
 }
 
+.at-lang-banner .at-button {
+  block-size: auto;
+  min-block-size: var(--at-h-control);
+  white-space: normal;
+  text-wrap: balance;
+}
+
+[data-dialog="share"] .at-field > .at-caption {
+  font-weight: 500;
+}
+
 @media (width < 600px) {
   dialog.at-tsheet .at-phone-only {
     display: inline-flex;
+  }
+
+  .at-lang-banner .at-acts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .at-fs-bar .at-icon-button {
+    margin-inline-end: 0;
   }
 }
 
@@ -1651,6 +1674,14 @@ button.at-textlink {
 
   .at-tsheet-body {
     padding-inline: var(--at-s-6);
+  }
+
+  .at-textlink.at-phone-only {
+    display: none;
+  }
+
+  .at-island:has(.at-docked[open]) :is(.at-tabs, .at-len, .at-untilchips, .at-lpanel) {
+    display: none;
   }
 
   .at-docked[open] {
@@ -1936,7 +1967,7 @@ button.at-textlink {
 }
 
 .at-am-top .at-arc {
-  stroke: var(--am-tone);
+  stroke: var(--at-am-tone);
   stroke-opacity: 1;
 }
 
@@ -1945,7 +1976,7 @@ button.at-textlink {
   stroke-opacity: 0.45;
 }
 
-.at-copy[data-done] :is(.at-copied-i, .at-copied-t) {
+.at-share-row .at-copy[data-done] :is(.at-copied-i, .at-copied-t) {
   display: inline;
 }
 

@@ -55,13 +55,16 @@ export function mount(stage: HTMLElement, ctx: IToolCtx): () => void {
       ctx.store.set({ ui: { mode: 'clock' } });
     });
     stage.append(card);
+    see.focus();
   }
 
   const preview = el('p', { class: 'at-am-preview' });
   const long = el('span');
   const brief = el('span');
-  if (view.preview) {
-    preview.append(el('span', { class: 'at-am-tag' }, t('pro.badge')), long, brief);
+  if (!pro) {
+    preview.append(el('span', { class: 'at-am-tag' }, t('pro.badge')));
+    if (view.preview) preview.append(long, brief);
+    else if (previewSpent) preview.append(el('span', {}, t('ambient.message.ended')));
     stage.append(preview);
   }
 
