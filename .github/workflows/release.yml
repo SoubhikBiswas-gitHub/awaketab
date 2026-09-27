@@ -28,8 +28,11 @@ concurrency:
 jobs:
   # LAUNCH-AUDIT N-03: the release gate for the web app and the extension. Fails (no waiver) while
   # @awaketab/core has no production licence key or a production checkout link is still a placeholder. It does
-  # not block publish-wake: the npm library contains no licence code.
+  # not block publish-wake: the npm library contains no licence code. It runs once the owner starts the launch
+  # (repository variable LAUNCH_READY=true) or on a manual run; before that it could only fail, and the
+  # production-mode build refuses the same problems on its own (scripts/check-keys.mts).
   launch-guard:
+    if: vars.LAUNCH_READY == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4

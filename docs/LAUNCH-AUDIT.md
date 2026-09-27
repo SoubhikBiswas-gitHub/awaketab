@@ -306,6 +306,10 @@ Remaining steps:
 4. After approval, **(code change)** replace the store-search URLs in `EXTENSION_STORE_URLS` (`apps/web/src/lib/extension.ts`) with the real listing URLs.
 5. Optional: `extension-release.yml` (`14-devops.md` §6) is not built. Uploads are manual until it is.
 
+### Launch switch
+
+GitHub → Settings → Secrets and variables → Actions → Variables: set `LAUNCH_READY` to `true` when the production Polar links (N-04 step 4) and the production signing key (N-03) are in place. From then on `release.yml` job `launch-guard` runs on every push to `main` and must be green before launch.
+
 ### N-06 · npm trusted publishing for `@awaketab/wake`
 
 1. npm → create or claim the org `awaketab` (scope `@awaketab`), 2FA on.
