@@ -63,7 +63,7 @@ related:
   - "/on/iphone-safari"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-28
+updated: 2026-09-27
 ---
 
 ## Prepara el teléfono o la tablet antes de empezar

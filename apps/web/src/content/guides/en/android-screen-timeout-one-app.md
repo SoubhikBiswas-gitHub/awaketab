@@ -68,7 +68,7 @@ related:
   - "/guides/chrome-energy-saver"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-28
+updated: 2026-09-27
 ---
 
 ## Keep one tab on in five steps

@@ -64,7 +64,7 @@ related:
   - "/guides/iphone-auto-lock-never-greyed-out"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-28
+updated: 2026-09-27
 ---
 
 ## Montando na cozinha em 30 segundos

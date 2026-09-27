@@ -105,7 +105,7 @@ related:
   - "/for/dashboards"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-28
+updated: 2026-09-27
 ---
 
 ## Set it up on Linux

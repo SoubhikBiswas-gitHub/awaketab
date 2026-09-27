@@ -79,7 +79,7 @@ related:
   - "/learn/low-power-mode-and-wake-locks"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-28
+updated: 2026-09-27
 ---
 
 ## Find the real cause in five steps

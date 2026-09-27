@@ -82,7 +82,7 @@ related:
   - "/vs/powertoys-awake"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-28
+updated: 2026-09-27
 ---
 
 ## Paso a paso en Safari

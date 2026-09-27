@@ -62,7 +62,7 @@ related:
   - "/for/presentations"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-28
+updated: 2026-09-27
 ---
 
 ## Dónde dejar la ventana
