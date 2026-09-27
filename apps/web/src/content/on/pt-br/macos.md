@@ -57,6 +57,14 @@ matrix:
       result: works
       label: "Compatível"
       text: "A aba precisa continuar visível"
+rows:
+  tools:
+    - title: "Mac acordado com a tela apagada"
+      text: "O comando `caffeinate` no Terminal ou um app como o Caffeine. Veja [AwakeTab vs Caffeine](/pt-br/vs/caffeine)."
+    - title: "Mac com a tampa fechada"
+      text: "Nenhuma aba de navegador consegue. É preciso monitor externo, energia e os recursos do próprio macOS."
+    - title: "Parecer disponível no chat"
+      text: "O AwakeTab não é a resposta, porque nunca simula entrada."
 faq:
   - q: "Se eu usar o Mission Control ou mudar de Mesa, a tela continua ligada?"
     a: "Só enquanto a janela do AwakeTab estiver à vista. Minimizada no Dock, esquecida em outra Mesa ou coberta por outras janelas, ela pode ser tratada como oculta; aí o bloqueio é liberado e o indicador mostra “Pausado — aba oculta” até você voltar."
@@ -75,7 +83,7 @@ related:
   - "/learn/does-a-wake-lock-keep-teams-green"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 ## Como deixar a janela à vista
@@ -98,9 +106,7 @@ O tempo para a tela desligar fica em Ajustes do Sistema → Tela Bloqueada, e as
 
 ## Quando outra ferramenta é melhor
 
-- **Mac acordado com a tela apagada**: o comando `caffeinate` no Terminal ou um app como o Caffeine. Veja [AwakeTab vs Caffeine](/pt-br/vs/caffeine).
-- **Mac com a tampa fechada**: nenhuma aba de navegador consegue. É preciso monitor externo, energia e os recursos do próprio macOS.
-- **Parecer disponível no chat**: o AwakeTab não é a resposta, porque nunca simula entrada.
+::rows tools
 
 ## Modo de Pouca Energia no MacBook
 

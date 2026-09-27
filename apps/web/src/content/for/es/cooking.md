@@ -39,6 +39,13 @@ pills:
     text: "El temporizador se detiene. Cuando regresas, espera a que vuelva a decir “Pantalla despierta” antes de dejar el teléfono en la barra."
   - state: denied
     text: "El motivo aparece al lado: casi siempre la pestaña no estaba a la vista o Safari necesita que toques la pantalla primero (en Firefox, también la batería al 5 % o menos sin cargar)."
+checklist:
+  - "Una pantalla encendida gasta energía. En sesiones largas, mejor enchufado."
+  - "En iPhone, el Modo de bajo consumo fija el Bloqueo automático en 30 segundos. Safari no rechaza el Wake Lock por ese modo, pero aún no registramos una prueba en un dispositivo que lo confirme."
+  - "En Android, el Ahorro de batería puede acortar el tiempo de espera o atenuar la pantalla; Chrome no rechaza el bloqueo por eso."
+  - "Para revisar el tiempo de pantalla del sistema, en iPhone es Bloqueo automático, dentro de Pantalla y brillo."
+  - "En Android busca Tiempo de espera de la pantalla en Ajustes → Pantalla (en un Pixel, Pantalla y función táctil)."
+  - "Algunos fabricantes de Android además tienen listas de “apps en suspensión” que pueden cerrar el navegador cuando lo dejas en segundo plano."
 faq:
   - q: "¿La pantalla sigue encendida si contesto un WhatsApp en medio de la receta?"
     a: "No. Al cambiar de app o de pestaña, el navegador libera el bloqueo y el indicador pasa a “En pausa — pestaña oculta”. Vuelve a AwakeTab y espera a que diga “Pantalla despierta” o “Despierta con video de respaldo” antes de seguir cocinando."
@@ -56,7 +63,7 @@ related:
   - "/on/iphone-safari"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 ## Prepara el teléfono o la tablet antes de empezar
@@ -75,7 +82,7 @@ Un mensaje, un video de la técnica o la calculadora para convertir tazas a gram
 
 ## Batería baja y modos de ahorro
 
-En iPhone, el Modo de bajo consumo fija el Bloqueo automático en 30 segundos. Safari no rechaza el Wake Lock por ese modo, pero aún no registramos una prueba en un dispositivo que lo confirme. En Android, el Ahorro de batería puede acortar el tiempo de espera o atenuar la pantalla; Chrome no rechaza el bloqueo por eso. Para revisar el tiempo de pantalla del sistema, en iPhone es Bloqueo automático, dentro de Pantalla y brillo; en Android busca Tiempo de espera de la pantalla en Ajustes → Pantalla (en un Pixel, Pantalla y función táctil). Algunos fabricantes de Android además tienen listas de “apps en suspensión” que pueden cerrar el navegador cuando lo dejas en segundo plano.
+::checklist
 
 Hay guías específicas para [iPhone con Safari](/es/on/iphone-safari) y para [Android con Chrome](/es/on/android-chrome) si tu equipo se sigue apagando.
 
@@ -88,7 +95,6 @@ Según la documentación de los navegadores, revisada el 26 de septiembre de 202
 - No sigue activo en segundo plano: si la pestaña queda oculta, el bloqueo se va.
 - No toca la pantalla por ti ni simula movimientos, y tampoco cambia tu estado en Teams o Slack.
 - No es un dispositivo de seguridad: no dejes el teléfono como vigilante de una olla sin nadie cerca.
-- Una pantalla encendida gasta energía. En sesiones largas, mejor enchufado.
 
 Si lo que buscas es leer un libro o hacer ejercicio con el teléfono enfrente, las páginas relacionadas de abajo cubren esos casos.
 

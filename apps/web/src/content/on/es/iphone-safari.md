@@ -41,6 +41,29 @@ steps:
   - title: "Deja Safari al frente"
     text: "La pestaña de AwakeTab tiene que quedar visible."
     shot: "Safari al frente con la pestaña de AwakeTab"
+matrix:
+  label: "Tabla de compatibilidad"
+  cols: ["Navegador", "Mecanismo", "Nota"]
+  rows:
+    - what: "Safari 16.4 o posterior"
+      result: works
+      label: "Nativo"
+      text: "Necesita un toque primero. El Modo de bajo consumo fija el Bloqueo automático del iPhone en 30 s. La pestaña debe seguir visible."
+    - what: "App en la pantalla de inicio de iOS"
+      result: works
+      label: "Nativo"
+      text: "Si agregaste AwakeTab a la pantalla de inicio, el Wake Lock dentro de esa app necesita iOS 18.4 o posterior. Con una versión anterior, úsalo desde Safari."
+    - what: "iOS anterior a 16.4"
+      result: fallback
+      label: "Respaldo"
+      text: "Requiere un toque o clic y consume más energía que el bloqueo nativo."
+rows:
+  limits:
+    - title: "El iPhone no te mantiene como “disponible” en Teams o Slack."
+      text: "Esas apps siguen la actividad del teclado y el mouse, no la pantalla."
+    - title: "Una pantalla encendida gasta batería."
+      text: "Para sesiones largas, deja el iPhone conectado."
+    - title: "No uses un iPhone sin supervisión como monitor de seguridad."
 faq:
   - q: "¿Qué versión de iOS necesito para que funcione en Safari?"
     a: "Safari 16.4 o posterior, que llega con iOS 16.4. En versiones anteriores AwakeTab muestra “Toca para usar el respaldo”: con un toque inicia un video silencioso que mantiene la pantalla encendida, aunque gasta más batería que el Wake Lock nativo."
@@ -59,7 +82,7 @@ related:
   - "/vs/powertoys-awake"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 ## Paso a paso en Safari
@@ -72,7 +95,7 @@ updated: 2026-09-27
 
 En iOS anterior a 16.4 no hay Wake Lock en Safari. AwakeTab te ofrece “Toca para usar el respaldo”: un video silencioso diminuto que mantiene la pantalla encendida mientras la pestaña está visible. Necesita que toques la pantalla para arrancar y consume más batería. El indicador lo muestra como “Despierta con video de respaldo”, nunca como si fuera el bloqueo nativo.
 
-Si agregaste AwakeTab a la pantalla de inicio, el Wake Lock dentro de esa app necesita iOS 18.4 o posterior. Con una versión anterior, úsalo desde Safari.
+::matrix
 
 ## Qué hace el Modo de bajo consumo
 
@@ -84,8 +107,6 @@ iOS solo permite el Wake Lock a la pestaña que tienes enfrente. Si abres WhatsA
 
 ## Otros límites en iPhone
 
-- El iPhone no te mantiene como “disponible” en Teams o Slack: esas apps siguen la actividad del teclado y el mouse, no la pantalla.
-- Una pantalla encendida gasta batería. Para sesiones largas, deja el iPhone conectado.
-- No uses un iPhone sin supervisión como monitor de seguridad.
+::rows limits
 
 Si usas el iPhone en la cocina, la guía de [cocina](/es/for/cocinar) explica cómo dejar la receta y AwakeTab a la vista.

@@ -15,6 +15,17 @@ browsers: []
 os: []
 crumb: "Matriz de compatibilidad"
 lead: "Estas son las versiones mínimas con Wake Lock nativo según la documentación y el código fuente de los navegadores (revisados el 26 de septiembre de 2026): Chrome 84, Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 y Opera 70. Las apps web instaladas en la pantalla de inicio del iPhone lo tienen desde iOS 18.4. Un Firefox más antiguo usa el video de respaldo. Si una combinación no aparece en la tabla, es porque no la revisamos, y no afirmamos que funcione."
+rows:
+  rules:
+    - title: "El bloqueo solo existe mientras la pestaña está visible."
+      text: "Ocultarla, minimizar la ventana o cambiar de app lo libera."
+    - title: "Cerrar la tapa de una laptop suspende el equipo, salvo excepciones como el modo de tapa cerrada de la Mac con pantalla externa."
+    - title: "Ningún navegador de la lista mantiene tu estado “disponible” en Teams, Slack o Zoom."
+      text: "Esas apps miden actividad de teclado y mouse."
+notes:
+  pending:
+    kicker: "Nota"
+    text: "Aún no registramos pruebas en dispositivos; cuando existan, aparecerán en nuestra página sobre cómo probamos."
 faq:
   - q: "¿Qué navegadores mantienen la pantalla encendida sin usar el respaldo?"
     a: "Los que tienen Wake Lock nativo: Chrome 84+, Edge 84+, Firefox 126+, Safari 16.4+, Samsung Internet 14+ y Opera 70+. En todos, la pestaña tiene que estar visible para que el bloqueo se mantenga."
@@ -33,7 +44,7 @@ related:
   - "/learn/how-we-tested"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 ## Tabla de compatibilidad
@@ -51,7 +62,7 @@ updated: 2026-09-27
 
 ## Cómo leer la tabla
 
-**Versión mínima** es la primera versión en la que el navegador concede un Screen Wake Lock a una pestaña visible y segura (HTTPS). No es una promesa sobre tu equipo en particular: una pestaña oculta, una política del sitio (por ejemplo, un marco sin permiso), Safari sin un toque previo o Firefox con la batería al 5 % o menos pueden rechazar la solicitud aunque tu navegador esté al día. Una página sin HTTPS no tiene Wake Lock. Cuando eso ocurre, el indicador cambia a “Bloqueado — aquí está la solución” y explica el motivo; jamás finge un “Pantalla despierta”.
+**Versión mínima** es la primera versión en la que el navegador concede un Screen Wake Lock a una pestaña visible y segura (HTTPS). No es una promesa sobre tu equipo en particular: una pestaña oculta, una política del sitio (por ejemplo, un marco sin permiso), Safari sin un toque previo o Firefox con la batería al 5 % o menos pueden rechazar la solicitud aunque tu navegador esté al día. Cuando eso ocurre, el indicador cambia a “Bloqueado — aquí está la solución” y explica el motivo; jamás finge un “Pantalla despierta”. Una página sin HTTPS no tiene Wake Lock.
 
 **Nativo** significa que AwakeTab usa la API del navegador directamente. **Respaldo** significa que reproduce un video silencioso de un cuadro para mantener la pantalla encendida; solo arranca después de que tocas la pantalla y gasta más batería.
 
@@ -59,7 +70,19 @@ updated: 2026-09-27
 
 ## Fecha y actualizaciones
 
-Cada fila se revisó con la documentación y el código fuente de los navegadores el 26 de septiembre de 2026. Aún no registramos pruebas en dispositivos; cuando existan, aparecerán en nuestra página sobre cómo probamos. Si tu versión es anterior a la mínima, actualiza el navegador o usa el video de respaldo; AwakeTab te lo propone con “Toca para usar el respaldo”.
+Cada fila se revisó con la documentación y el código fuente de los navegadores el 26 de septiembre de 2026:
+
+- [MDN browser-compat-data, WakeLock](https://github.com/mdn/browser-compat-data/blob/main/api/WakeLock.json)
+- [New in Chrome 84](https://developer.chrome.com/blog/new-in-chrome-84/)
+- [Firefox 126 release notes for developers](https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Releases/126)
+- [WebKit features in Safari 18.4](https://webkit.org/blog/16574/webkit-features-in-safari-18-4/)
+- [Chromium wake_lock.cc](https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/modules/wake_lock/wake_lock.cc)
+- [WebKit WakeLock.cpp](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/Modules/screen-wake-lock/WakeLock.cpp)
+- [Firefox WakeLockJS.cpp](https://github.com/mozilla-firefox/firefox/blob/main/dom/power/WakeLockJS.cpp)
+
+Si tu versión es anterior a la mínima, actualiza el navegador o usa el video de respaldo; AwakeTab te lo propone con “Toca para usar el respaldo”.
+
+::note pending
 
 ## Guías por dispositivo
 
@@ -67,6 +90,8 @@ Si ya sabes qué navegador usas, las guías específicas explican los ajustes de
 
 ## Lo que ninguna fila cambia
 
-Todas las filas comparten las mismas reglas de la plataforma. El bloqueo solo existe mientras la pestaña está visible: ocultarla, minimizar la ventana o cambiar de app lo libera. Cerrar la tapa de una laptop suspende el equipo, salvo excepciones como el modo de tapa cerrada de la Mac con pantalla externa. Y ningún navegador de la lista mantiene tu estado “disponible” en Teams, Slack o Zoom, porque esas apps miden actividad de teclado y mouse.
+Todas las filas comparten las mismas reglas de la plataforma.
+
+::rows rules
 
 ::limit inline

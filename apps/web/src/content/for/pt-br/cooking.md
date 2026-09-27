@@ -41,6 +41,11 @@ pills:
     text: "O navegador recusou, quase sempre porque a aba não estava visível ou porque o Safari precisa de um toque antes (no Firefox, também com bateria em 5 % ou menos sem carregar). Resolva essa causa antes de tentar de novo."
   - state: fallback
     text: "Seu navegador não tem Wake Lock nativo e você aceitou o vídeo silencioso, que consome mais bateria."
+checklist:
+  - "Não confie num relógio que está escurecendo — confie no indicador."
+  - "Se o indicador diz “Tela ligada”, a receita não vai sumir enquanto a aba ficar na frente."
+  - "Se você sair para responder uma mensagem, o bloqueio cai e volta quando você retornar."
+  - "Lembre: o AwakeTab não é temporizador de segurança; não deixe o forno ligado confiando só na tela do celular."
 faq:
   - q: "Se eu abrir o app de receitas ou o WhatsApp, a tela continua ligada?"
     a: "Não. Quando você troca de app ou a aba fica oculta, o navegador libera o bloqueio e o indicador passa para “Pausado — aba oculta”. Volte para a aba do AwakeTab e espere aparecer “Tela ligada” de novo antes de voltar para a panela."
@@ -59,7 +64,7 @@ related:
   - "/guides/iphone-auto-lock-never-greyed-out"
 author: soubhik
 published: 2026-09-26
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
 ## Montando na cozinha em 30 segundos
@@ -90,4 +95,4 @@ Na cozinha, o que costuma estar à mão é um celular ou tablet. No iPhone e no 
 
 ## Antes de ir para o fogão
 
-Não confie num relógio que está escurecendo — confie no indicador. Se ele diz “Tela ligada”, a receita não vai sumir enquanto a aba ficar na frente. Se você sair para responder uma mensagem, o bloqueio cai e volta quando você retornar. E lembre: o AwakeTab não é temporizador de segurança; não deixe o forno ligado confiando só na tela do celular.
+::checklist
