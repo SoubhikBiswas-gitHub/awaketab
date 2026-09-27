@@ -815,7 +815,7 @@
 
 .at-tool-until .at-tabs,
 .at-tool-until .at-why-btn,
-.at-tool-until .at-site-header .at-header-end > :not(.at-theme, .at-theme-cycle) {
+.at-tool-until .at-site-header .at-header-end > :not(.at-theme, .at-theme-cycle, .at-hm-open, .at-hm-panel) {
   display: none;
 }
 

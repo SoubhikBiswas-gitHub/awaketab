@@ -6,6 +6,8 @@
   const root = document.documentElement;
   // Geist Mono waits until after the first paint (tokens.css maps it to its metric-matched fallback until then).
   root.dataset.fontHold = '';
+  // The header's "Add to Edge" (header-menus.css): the one browser CSS cannot tell apart from Chrome.
+  if (/\bEdg\//u.test(navigator.userAgent)) root.dataset.edge = '';
   const KEY = 'at.v1.settings';
   const dark = matchMedia('(prefers-color-scheme: dark)');
   /** @type {Record<string, string>} */

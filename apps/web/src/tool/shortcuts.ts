@@ -33,6 +33,10 @@ export function keyHandler(
     const s = store.get();
     if (!s.settings.keyboardShortcuts && e.key !== 'Escape') return;
     if (typingTarget(e.target)) return;
+    // The header menus own their keys: the browser closes an open one on Esc, which must not stop the session.
+    // The first key press loads this module late, after that close, so the menu's own elements count too.
+    if (e.target instanceof Element && e.target.closest('.at-hm-panel, [popovertarget]')) return;
+    if ('showPopover' in root && document.querySelector('.at-hm-panel:popover-open')) return;
     // Any open modal counts (the Pro sheet, the rating prompt), not just the ones the store names; the
     // ambient layer is a <dialog> too but is a mode, not a dialog.
     const dialogOpen = s.ui.dialog !== null || document.querySelector('dialog[open]:not([data-ambient])') !== null;

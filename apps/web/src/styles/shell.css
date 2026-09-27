@@ -96,49 +96,16 @@
     --at-bead: var(--at-bad);
   }
 
-  .at-nav {
-    display: none;
-    align-items: center;
-    gap: var(--at-gap-tight);
-  }
-
-  .at-nav-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--at-gap-tight);
-    min-block-size: var(--at-h-control);
-    min-inline-size: var(--at-h-control);
-    padding-inline: var(--at-s-3);
-    border-radius: var(--at-r-md);
-    color: var(--at-ink-2);
-    font: var(--at-type-ui);
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  .at-nav-link:hover {
-    color: var(--at-ink);
-  }
-
-  .at-nav-link[aria-current="page"] {
-    color: var(--at-ink);
-    font-weight: 600;
-  }
-
-  .at-nav-link[aria-current="page"]::before {
-    content: "";
-    inline-size: 6px;
-    block-size: 6px;
-    border-radius: var(--at-r-pill);
-    background: var(--at-accent);
-  }
-
   .at-header-end {
     display: flex;
     flex-shrink: 0;
     align-items: center;
     gap: var(--at-gap-tight);
+  }
+
+  :where(.at-hm-panel) svg {
+    inline-size: var(--at-icon-md);
+    block-size: var(--at-icon-md);
   }
 
   .at-icon-button {
@@ -361,7 +328,7 @@
     display: revert;
   }
 
-  @container at-header (width < 328px) {
+  @container at-header (width < 704px) {
     .at-site-header[data-tool] .at-theme {
       display: none;
     }
@@ -374,8 +341,13 @@
     }
   }
 
-  @container at-header (width < 1008px) {
-    .at-site-header[data-tool] .at-nav {
+  @container at-header (width < 328px) {
+    .at-logo {
+      justify-content: center;
+      min-inline-size: var(--at-h-control);
+    }
+
+    .at-logo-word {
       display: none;
     }
   }
@@ -392,16 +364,14 @@
     border-block-start: var(--at-border) solid var(--at-line);
   }
 
-  .at-island + .at-site-footer {
-    margin-block-start: 0;
+  .at-site-header:not([data-tool]),
+  .at-site-footer {
+    max-inline-size: calc(var(--at-content-max) + 2 * var(--at-gutter));
+    margin-inline: auto;
   }
 
-  @media (width >= 1600px) {
-    .at-site-header:not([data-tool]),
-    .at-site-footer {
-      max-inline-size: calc(var(--at-content-max) + 2 * var(--at-gutter));
-      margin-inline: auto;
-    }
+  .at-island + .at-site-footer {
+    margin-block-start: 0;
   }
 
   .at-footer-line {
@@ -1087,10 +1057,6 @@
   @media (width >= 1024px) {
     .at-logo {
       flex-shrink: 0;
-    }
-
-    .at-nav {
-      display: flex;
     }
   }
 

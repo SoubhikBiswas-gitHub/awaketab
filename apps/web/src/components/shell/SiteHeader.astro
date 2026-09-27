@@ -1,6 +1,11 @@
 ---
+import headerCss from '../../styles/header-menus.css?raw';
 import { createT } from '../../i18n/load';
 import { LOCALES, localePath, type TLocale } from '../../i18n/locales';
+import { minifyCss } from '../../lib/article-css';
+import { RES_SECTIONS } from '../../lib/header-menu';
+import HeaderAdd from './HeaderAdd.astro';
+import HeaderMenuGroup from './HeaderMenuGroup.astro';
 import ThemeSwitch from './ThemeSwitch.astro';
 
 interface Props {
@@ -12,17 +17,30 @@ const { locale, tool = false } = Astro.props;
 const t = createT(locale);
 // The section the page belongs to, for aria-current (locale prefix stripped: /es/for/cocinar → for).
 const parts = Astro.url.pathname.split('/').filter(Boolean);
-const first = parts[0] && (LOCALES as readonly string[]).includes(parts[0]) ? parts[1] : parts[0];
+const own = parts[0] && (LOCALES as readonly string[]).includes(parts[0]) ? parts.slice(1) : parts;
+const first = own[0] ?? '';
+const path = Astro.url.pathname.replace(/\/$/u, '') || '/';
 // Hubs and product pages are English-only routes (docs/00 §7), so every locale links to them.
 const english = locale !== 'en';
-const nav = [
-  ['for', '/for', t('header.nav.for')],
-  ['on', '/on', t('header.nav.on')],
+const menus = [
+  ['for', '/for', t('header.nav.for'), first === 'for'],
+  ['on', '/on', t('header.nav.on'), first === 'on'],
+  ['res', '/learn', t('header.nav.res'), RES_SECTIONS.includes(first)],
+] as const;
+const links = [
   ['extension', '/extension', t('header.nav.extension')],
   ['pro', '/pro', t('header.nav.pro')],
 ] as const;
+// Tool pages load the menu styles with the tool's on-demand sheet (tool-more.css), outside the critical CSS budget.
+const css = tool ? '' : minifyCss(headerCss);
+const themes = [
+  ['auto', t('settings.theme.auto')],
+  ['light', t('settings.theme.light')],
+  ['dark', t('settings.theme.dark')],
+] as const;
 ---
 
+{css && <style is:inline set:html={css} />}
 <header class="at-site-header" data-tool={tool ? '' : undefined}>
   <a class="at-logo at-wordmark" href={localePath(locale, '/')} aria-label={t('header.home')}>
     <svg class="at-logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
@@ -30,20 +48,93 @@ const nav = [
       <circle class="at-logo-halo" cx="24" cy="9" r="7.5"></circle>
       <circle class="at-logo-bead" cx="24" cy="9" r="4.2"></circle>
     </svg>
-    {t('app.name')}
+    <span class="at-logo-word">{t('app.name')}</span>
   </a>
-  <nav class="at-nav" aria-label={t('header.nav')}>
-    {
-      nav.map(([id, href, label]) => (
-        <a class="at-nav-link" href={href} hreflang={english ? 'en' : undefined} aria-current={id === first ? 'page' : undefined}>
-          {label}
-          {english && <span class="sr-only"> {t('header.nav.english')}</span>}
-        </a>
-      ))
-    }
-  </nav>
+  {
+    !tool && (
+      <nav class="at-nav" aria-label={t('header.nav')}>
+        <ul class="at-nav-list" role="list">
+          {menus.map(([id, hub, label, current]) => (
+            <li>
+              <a class="at-nav-link at-hm-hub" href={hub} hreflang={english ? 'en' : undefined} aria-current={current ? 'page' : undefined}>
+                {label}
+                {english && <span class="sr-only"> {t('header.nav.english')}</span>}
+              </a>
+              <button class="at-nav-link at-hm-trigger" type="button" popovertarget={`at-hm-${id}`} style={`anchor-name:--at-hm-${id}`} aria-current={current ? 'true' : undefined}>
+                {label}
+                <svg class="at-hm-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div class="at-hm-panel at-hm-drop" id={`at-hm-${id}`} data-kind={id} popover style={`position-anchor:--at-hm-${id}`}>
+                <HeaderMenuGroup locale={locale} kind={id} scope="drop" path={path} feature={id === 'for'} />
+              </div>
+            </li>
+          ))}
+          {links.map(([id, href, label]) => (
+            <li>
+              <a class="at-nav-link" href={href} hreflang={english ? 'en' : undefined} aria-current={id === first ? 'page' : undefined}>
+                {label}
+                {english && <span class="sr-only"> {t('header.nav.english')}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )
+  }
   <div class="at-header-end">
     <ThemeSwitch locale={locale} compact={tool} />
     <slot />
+    {!tool && <HeaderAdd locale={locale} store={first !== 'extension'} />}
+    <button class="at-icon-button at-hm-open" type="button" popovertarget="at-hm-menu" style="anchor-name:--at-hm-menu" aria-label={t('header.menu')} title={t('header.menu')}>
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
+        <path d="M4 6.5h16M4 12h16M4 17.5h10" />
+        <circle cx="19" cy="17.5" r="1.9" fill="currentColor" stroke="none" />
+      </svg>
+    </button>
+    <div class="at-hm-panel at-hm-menu" id="at-hm-menu" popover style="position-anchor:--at-hm-menu">
+      <div class="at-hm-head">
+        <p class="at-hm-title">{t('header.menu')}</p>
+        <button class="at-icon-button" type="button" popovertarget="at-hm-menu" popovertargetaction="hide" aria-label={t('header.menu.close')}>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+      <nav class="at-hm-body" aria-label={t('header.nav')}>
+        <HeaderMenuGroup locale={locale} kind="for" scope="menu" path={path} feature={!tool} />
+        <HeaderMenuGroup locale={locale} kind="on" scope="menu" path={path} />
+        <HeaderMenuGroup locale={locale} kind="res" scope="menu" path={path} />
+        <ul class="at-hm-links" role="list">
+          {links.map(([id, href, label]) => (
+            <li>
+              <a class="at-hm-link" href={href} hreflang={english ? 'en' : undefined} aria-current={id === first ? 'page' : undefined}>
+                {label}
+                {english && <span class="sr-only"> {t('header.nav.english')}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      {
+        !tool && (
+          <button class="at-hm-theme" type="button" data-theme-cycle>
+            <span class="at-hm-label">{t('settings.theme')}</span>
+            {themes.map(([value, label]) => (
+              <span class="at-hm-theme-v" data-v={value}>{label}</span>
+            ))}
+            <span class="sr-only">. {t('header.theme.change')}</span>
+          </button>
+        )
+      }
+      {
+        tool && (
+          <div class="at-hm-cta">
+            <HeaderAdd locale={locale} />
+          </div>
+        )
+      }
+    </div>
   </div>
 </header>

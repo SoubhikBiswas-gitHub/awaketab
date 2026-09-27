@@ -1,0 +1,44 @@
+---
+interface Props {
+  name: string;
+  class?: string;
+  label?: string;
+}
+
+const { name, class: className, label } = Astro.props;
+
+const PHONE = '<rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/>';
+const MONITOR = '<rect x="2.5" y="3.5" width="19" height="13" rx="2"/><path d="M9 20.5h6M12 16.5v4"/>';
+const WINDOW = '<rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 8.5h19M5.5 6.25h.01M8 6.25h.01"/>';
+const ICONS: Record<string, string> = {
+  'iphone-safari': `${PHONE}<path d="M10.5 5h3"/><circle cx="12" cy="12.5" r="3"/><path d="m13.4 11.1-.9 1.9-1.9.9.9-1.9z"/>`,
+  'ios-home-screen': `${PHONE}<path d="M10.5 5h3"/><rect x="8.75" y="8" width="2.75" height="2.75" rx=".6"/><rect x="12.5" y="8" width="2.75" height="2.75" rx=".6"/><rect x="8.75" y="11.75" width="2.75" height="2.75" rx=".6"/><rect x="12.5" y="11.75" width="2.75" height="2.75" rx=".6"/>`,
+  ipad: '<rect x="3.5" y="3" width="17" height="18" rx="2.5"/><path d="M12 5.5h.01M11 18h2"/>',
+  'android-chrome': `${PHONE}<path d="M12 5.2h.01M10 19h4"/><circle cx="12" cy="12" r="2.75"/>`,
+  'samsung-internet': `${PHONE}<path d="M10 19h4"/><circle cx="12" cy="11.5" r="2"/><ellipse cx="12" cy="11.5" rx="3.4" ry="1.2" transform="rotate(-25 12 11.5)"/>`,
+  chromebook:
+    '<path d="M4.5 16V6.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2V16"/><path d="M2.5 16h19l-.8 2.3a1.5 1.5 0 0 1-1.4 1.2H4.7a1.5 1.5 0 0 1-1.4-1.2z"/><circle cx="8" cy="12.5" r="1.2"/>',
+  macos:
+    '<path d="M4.5 16V6a1.5 1.5 0 0 1 1.5-1.5h12A1.5 1.5 0 0 1 19.5 6v10"/><path d="M10.5 4.5v.8a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7v-.8"/><path d="M2 16.5h20v.5a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 17z"/>',
+  'windows-11': `${MONITOR}<rect x="9" y="6.5" width="6" height="6" rx=".5"/><path d="M12 6.5v6M9 9.5h6"/>`,
+  linux: `${MONITOR}<path d="m7 8 2.5 2L7 12M11.5 12.5h4"/>`,
+  firefox: `${WINDOW}<path d="M12 17.5a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3-2.5-4.5-.3 1.3-1 2-2 2.5-.9.5-2.5 1.2-2.5 3a3.5 3.5 0 0 0 3.5 2.5z"/>`,
+  edge: `${WINDOW}<path d="M7 14.5c1.5-2 3-2 4.5 0s3 2 4.5 0"/>`,
+};
+const body = ICONS[name] ?? MONITOR;
+---
+
+<svg
+  class:list={['at-icon', className]}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  focusable="false"
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  set:html={body}
+/>

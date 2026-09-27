@@ -1,5 +1,7 @@
 /* stylelint-disable no-descending-specificity -- state rules refine the base rule above them, in canvas order. */
 
+@import "./header-menus.css";
+
 :root {
   --at-tl-dot: 10px;
   --at-tl-bar: 14px;
