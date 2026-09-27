@@ -1,64 +1,137 @@
 ---
 title: "Keep the screen on in Firefox — AwakeTab"
-description: "Firefox 126 and later keep the screen on natively from a visible tab. Older versions use the video fallback after a tap, which uses more CPU."
+description: "Firefox 126 and later keep the screen on natively from a visible tab. Older versions use the video fallback after a tap, which uses more power."
 h1: "Keep the screen on in Firefox"
+crumb: "Firefox"
 intent: "keep screen on firefox"
+secondaryQueries:
+  - "firefox wake lock"
+  - "stop firefox screen turning off"
+  - "firefox keep screen awake"
 preset: p30
 mode: standard
 locale: en
 reviewed: true
 noindex: true
-lastVerified: 2026-09-09
+lastVerified: 2026-09-26
 browsers: ["firefox"]
 os: ["windows", "macos", "linux", "android"]
+lead: "Firefox 126 and later keep the screen on natively while the AwakeTab tab is visible, on Windows, macOS, Linux and Android. Firefox shipped the Screen Wake Lock API in May 2024. On older versions, AwakeTab offers a video fallback after one tap. Firefox refuses the lock at 5 % battery or less while not charging, so plug in for long sessions."
+facts:
+  - label: "Firefox"
+    value: "126 or later"
+  - label: "Low battery"
+    value: "refused at 5 % or less"
+  - label: "Older Firefox"
+    value: "video fallback after a tap"
+  - label: "Extension"
+    value: "not for Firefox"
+toc:
+  set-it-up-in-firefox: "Set it up"
+  which-firefox-setups-keep-the-screen-on: "Which setups work"
+  what-turns-the-screen-off-anyway: "What turns it off"
+steps:
+  - title: "Open AwakeTab in Firefox and press Start"
+    path: "Firefox › awaketab.com"
+    text: "Wait for the pill to say \"Screen awake\". If it says \"Tap to use the fallback\" instead, this Firefox has no Screen Wake Lock API: update to 126 or later, or tap to use the video fallback."
+    shot: "AwakeTab in Firefox with the pill reading Screen awake"
+  - title: "Keep the tab visible"
+    path: "No minimising while it runs"
+    text: "Minimise the window or switch tabs and Firefox releases the lock. The pill changes to \"Paused — tab hidden\", and AwakeTab asks again when you come back."
+    shot: "the pill after switching tabs and back"
+  - title: "Plug in when the battery is low"
+    path: "Charger in, then Start"
+    text: "At 5 % battery or less and not charging, Firefox refuses the lock or takes it back, and the pill says \"Blocked — here's the fix\". Plug in, then press Start again."
+    shot: "the Blocked pill with the Firefox battery fix"
+  - title: "Optional: change the system timeout"
+    path: "Windows: Settings › System › Power & battery"
+    text: "This sets the screen timeout for every app. On a Mac, it is Apple menu › System Settings › Lock Screen. It stays changed until you set it back."
+    shot: "the screen timeout choices in Windows 11 Settings"
+matrix:
+  label: "Firefox support, sources checked 26 September 2026"
+  cols: ["Setup", "Result", "What to know"]
+  rows:
+    - what: "Firefox 126 or later on Windows, macOS or Linux, tab visible"
+      result: works
+      label: "Supported"
+      text: "Native wake lock since 14 May 2024."
+    - what: "Firefox 126 or later on Android, tab on screen"
+      result: works
+      label: "Supported"
+      text: "Leaving Firefox releases the lock."
+    - what: "Battery at 5 % or less and not charging"
+      result: blocked
+      label: "Blocked"
+      text: "Firefox refuses or releases the lock. Plug in and press Start."
+    - what: "Window minimised or another tab in front"
+      result: pauses
+      label: "Pauses"
+      text: "The lock is released until the tab is back in front."
+    - what: "Firefox before 126"
+      result: fallback
+      label: "Video fallback"
+      text: "Tap once to start it. It needs this tab visible and uses a little more battery."
+    - what: "Stop automatically on low battery"
+      result: "no"
+      label: "Not available"
+      text: "Firefox removed the Battery Status API in version 52, so AwakeTab cannot read the battery level."
+    - what: "AwakeTab browser extension"
+      result: "no"
+      label: "Not available"
+      text: "Firefox gives extensions no power API, so there is no Firefox version."
+rows:
+  blockers:
+    - title: "A low battery"
+      text: "At 5 % or less and not charging, Firefox itself refuses the lock."
+    - title: "A hidden tab"
+      text: "A minimised window or another tab in front lets the display go."
+    - title: "Locking a Windows PC"
+      text: "A locked PC hides the tab and turns the monitor off after 60 seconds."
+      link:
+        label: "Windows 11 screen turns off after 1 minute"
+        href: "/guides/windows-11-screen-turns-off-after-1-minute"
+    - title: "A Linux desktop that ignores the request"
+      text: "Firefox can grant the lock while the desktop still blanks the screen."
+      link:
+        label: "Keep the screen on in Linux"
+        href: "/on/linux"
 faq:
-  - q: "Does this work if the tab is hidden?"
-    a: "No. The browser releases the lock when you switch tabs or apps. Come back and the pill returns to “Screen awake”. On desktop Chrome or Edge, AwakeTab for Chrome keeps the screen on with the tab hidden."
-  - q: "Will this keep Teams or Slack Available?"
-    a: "No. Teams and Slack set you to Away from keyboard and mouse inactivity, not from a lit screen. AwakeTab never moves the mouse or presses keys."
-  - q: "What browsers are in scope?"
-    a: "Chrome and Edge 84+, Firefox 126+, Safari 16.4+ and Samsung Internet 14+ support the wake lock natively. Older Firefox can use the video fallback after a tap. Checked against browser documentation on 26 September 2026."
-honestLimit: "Wake lock since Firefox 126 (May 2024). Firefox refuses it at 5 % battery or less while not charging, and older versions use the video fallback with higher CPU."
+  - q: "Why did Firefox stop keeping the screen on when my battery ran low?"
+    a: "Firefox refuses a new wake lock, and releases a held one, when the battery is at 5 % or less and not charging. It is Firefox's own rule. Plug in and press Start again."
+  - q: "Is there an AwakeTab extension for Firefox?"
+    a: "No. Firefox gives extensions no power API, so an extension could not keep the screen on. The web app keeps it on while its tab is visible."
+  - q: "Is the video fallback as good as the native lock?"
+    a: "It keeps the screen on, but it needs one tap to start, needs the tab visible and uses more power than a native wake lock. On Firefox 126 or later you do not need it."
+  - q: "Does it work in Firefox on Android?"
+    a: "Yes, from Firefox 126, while the tab is on screen. Press Home or open another app and the phone goes back to its normal screen timeout."
+honestLimit: "Firefox 126 (May 2024) and later hold the lock only while the tab is visible, and refuse it at 5 % battery or less while not charging. Older versions need the video fallback, which uses more power, and no extension can keep the screen on with the tab hidden."
 related:
-  - "/vs/nosleep-js"
-  - "/guides/lock-screen-vs-sleep"
+  - "/on/linux"
+  - "/on/windows-11"
   - "/learn/browser-support-matrix"
+  - "/vs/nosleep-js"
+  - "/extension"
 author: soubhik
 published: 2026-09-09
-updated: 2026-09-27
+updated: 2026-09-28
 ---
 
-## What you are actually asking
+## Set it up in Firefox
 
-Firefox shipped native Screen Wake Lock in 126 (May 2024). Older builds offer the video fallback after a tap, at higher CPU. The tab must stay visible either way.
+Two steps start a session. The third is Firefox's own low-battery rule, and the fourth is optional.
 
-## How the lock works on this page
+::steps
 
-AwakeTab asks the browser for a screen wake lock from a secure page that is on screen. The pill at the top of the tool says what the browser answered: "Starting…" while it asks, "Screen awake" once the browser has confirmed the lock, "Paused — tab hidden" when the tab is out of sight, and "Blocked — here's the fix" when the browser refuses, with the cause. Only "Screen awake" and "Awake via video fallback" come with a running timer.
+::ad
 
-Chrome and Edge 84, Firefox 126, Safari 16.4, Samsung Internet 14 and Opera 70 are the first versions with the Screen Wake Lock API; iPhone and iPad Home Screen apps need iOS 18.4. Older Firefox can use the video fallback after a tap. A browser refuses or takes back the lock when the tab is hidden, when a Permissions-Policy blocks it, when Safari has not had a tap yet, or when Firefox is at 5 % battery or less and not charging. A page without HTTPS has no wake lock at all. Battery savers are not a refusal cause in Chrome or Safari.
+## Which Firefox setups keep the screen on
 
-## Practical setup
+These results come from Mozilla's documentation and Firefox's source, checked 26 September 2026. Real-device results appear here once recorded.
 
-Open this article, keep the embedded tool visible, pick the suggested duration, and watch the pill. If you need the recipe, slides, dashboard or score in another app, use split-screen or a second window so AwakeTab stays on-screen. Closing a laptop lid, switching apps on a phone, or sending this tab to the background ends eligibility until you return.
+::matrix
 
-## Operating-system notes
+## What turns the screen off anyway
 
-Windows: Settings > System > Power & battery sets the screen timeout. Energy saver (called Battery saver before Windows 11 24H2) may dim the screen, but it does not refuse a browser wake lock. macOS: System Settings > Lock Screen. While Chrome keeps the display on, the Mac does not idle-sleep; closing the lid still sleeps it unless you use clamshell mode with power and an external display. iPhone: Settings > Display & Brightness > Auto-Lock; Low Power Mode sets Auto-Lock to 30 seconds. Android: Settings > Display (Pixel: Display & touch) > Screen timeout, and some makers' sleeping-apps lists can close a browser after you leave it. Linux: Chrome and Firefox ask the desktop not to sleep; whether that holds depends on your desktop.
+When the screen still goes dark in Firefox, one of these is usually why.
 
-## What success looks like
-
-Success is a pill that matches the browser. If the OS still dims, you are looking at a different policy (lock screen, smart card, monitor auto-off) or a hidden tab. Tapping Start again without changing what caused a refusal gets the same answer. Stats count only the time the screen was actually kept awake.
-
-
-## A short checklist before you walk away
-
-Before you walk away, check that the page uses HTTPS, that this tab is in front, and that the pill says "Screen awake". A dimming clock or a chat avatar tells you nothing about the lock; the pill does. If the pill says "Blocked — here's the fix", follow the line under it instead of tapping Start again. A timed session ends when its time is up, so pick ∞ if you want it to run until you stop it.
-
-## When the pill changes
-
-When you hide the tab, the pill changes to "Paused — tab hidden". That is the page telling the truth, not a bug: the browser has taken the lock back, and AwakeTab asks again as soon as you return. Paused time does not count toward a timed session. If the screen must stay on while the tab is hidden, AwakeTab for Chrome uses Chrome's own power setting instead and keeps working with the tab hidden on desktop Chrome and Edge. Firefox and Safari give extensions no power setting, so there the tab has to stay in view.
-
-## Battery, heat and overnight use
-
-A lit panel costs energy. Plug in for night-clock, dashboard and kiosk sessions. In Chrome and Edge, AwakeTab can stop by itself at a battery level you pick; Firefox and Safari do not tell pages the battery level. OLED burn-in is reduced by night mode pixel shift and is not eliminated. Firmware and OS power rules still win. If you need those jobs, use a native utility and keep this tab for a screen you can see.
+::rows blockers
