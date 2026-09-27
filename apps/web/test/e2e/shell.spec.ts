@@ -60,7 +60,47 @@ test.describe('header and footer on every surface', () => {
       const footer = page.locator('footer.at-site-footer');
       await expect(footer).toHaveCount(1);
       const hrefs = await footer.locator('nav a').evaluateAll((els) => els.map((a) => a.getAttribute('href')));
-      expect(hrefs).toEqual(['/privacy', '/terms', '/changelog', '/about', 'https://buymeacoffee.com/awaketab']);
+      const home = path === '/es/' ? '/es/' : '/';
+      expect(hrefs).toEqual([
+        home,
+        '/extension',
+        '/pro',
+        '/embed',
+        '/kiosk',
+        '/library',
+        '/for/cooking',
+        '/for/reading',
+        '/for/presentations',
+        '/for/dashboards',
+        '/for/video-calls',
+        '/for/downloads',
+        '/for',
+        '/on/iphone-safari',
+        '/on/ipad',
+        '/on/android-chrome',
+        '/on/macos',
+        '/on/windows-11',
+        '/on/chromebook',
+        '/on',
+        '/guides',
+        '/learn',
+        '/vs',
+        '/changelog',
+        '/about',
+        '/privacy',
+        '/terms',
+        `${home}#keys`,
+        'https://github.com/SoubhikBiswas-gitHub/awaketab',
+        'https://buymeacoffee.com/awaketab',
+      ]);
+      // Five site-map columns: headings from 600, closed native accordions on phones.
+      await expect(footer.locator('h2.at-foot-h')).toHaveCount(5);
+      await expect(footer.locator('h2.at-foot-h').first()).toBeVisible();
+      await page.setViewportSize({ width: 390, height: 800 });
+      await expect(footer.locator('summary.at-foot-sum').first()).toBeVisible();
+      await expect(footer.locator('nav a').first()).toBeHidden();
+      await footer.locator('summary.at-foot-sum').first().click();
+      await expect(footer.locator('nav a').first()).toBeVisible();
       await expect(footer.locator('#at-lang-btn')).toHaveAttribute('aria-expanded', 'false');
     });
   }
@@ -343,7 +383,7 @@ test.describe('status pill and logo bead', () => {
     expect(await glyph()).toEqual(['at-g-dot']);
     // M pill: 38 px drawn (O-62 allows a second line in long locales).
     expect((await pill.boundingBox())?.height).toBe(38);
-    const bead = () => page.locator('.at-logo-bead').evaluate((el) => getComputedStyle(el).fill);
+    const bead = () => page.locator('header .at-logo-bead').evaluate((el) => getComputedStyle(el).fill);
     const muted = await page.evaluate(() =>
       getComputedStyle(document.documentElement).getPropertyValue('--at-muted').trim(),
     );

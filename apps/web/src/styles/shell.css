@@ -410,31 +410,6 @@
     font: var(--at-type-caption);
   }
 
-  .at-footer-nav {
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: var(--at-s-4);
-  }
-
-  .at-footer-nav a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-block-size: var(--at-h-control);
-    min-inline-size: var(--at-h-control);
-    border-radius: var(--at-r-sm);
-    color: var(--at-ink-2);
-    font: var(--at-type-caption);
-    font-weight: 500;
-    text-decoration: none;
-  }
-
-  .at-footer-nav a:hover {
-    color: var(--at-ink);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
   .at-lang {
     position: relative;
     display: flex;

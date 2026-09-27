@@ -41,6 +41,7 @@ export default {
       // The extension's four stylesheets name their off-scale values once at the top of each file (--at-ext-*).
       files: [
         '**/styles/shell.css',
+        '**/styles/footer.css',
         '**/styles/content.css',
         '**/styles/article/*.css',
         '**/styles/hub.css',
