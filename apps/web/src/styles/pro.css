@@ -37,6 +37,7 @@
   --at-pro-dev-row: 64px;
   --at-pro-lapse-remove-col: 140px;
   --at-pro-act-col: 620px;
+  --at-pro-act-side: 280px;
   --at-pro-ok-ring: 48px;
   --at-pro-copy-min: 104px;
   --at-pro-key-max: 520px;
@@ -2177,7 +2178,7 @@
   @media (width >= 1024px) {
     .at-pro-act-main {
       display: grid;
-      grid-template-columns: minmax(0, var(--at-pro-act-col)) minmax(0, 1fr);
+      grid-template-columns: minmax(0, var(--at-pro-act-col)) minmax(var(--at-pro-act-side), 1fr);
       align-items: start;
       column-gap: var(--at-s-24);
       max-inline-size: none;

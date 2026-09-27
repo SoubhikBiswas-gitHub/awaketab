@@ -229,7 +229,7 @@
 
 @media (width >= 1024px) {
   .at-404 main.at-main {
-    grid-template-columns: 540px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 540px) minmax(0, var(--at-tl-below));
     column-gap: var(--at-s-24);
     padding-block-start: var(--at-s-12);
   }
