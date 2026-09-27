@@ -1,49 +1,208 @@
-# AwakeTab — documentation set
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme/hero-dark.svg">
+  <img alt="AwakeTab: the ring logo with its glowing lamp bead, the AwakeTab wordmark, the line Keeps your screen awake, honestly, and a status pill that says Screen awake" src=".github/readme/hero-light.svg" width="100%">
+</picture>
 
-Complete product and engineering documentation for **AwakeTab** (awaketab.com), a browser tab that keeps your screen awake — honestly. Drop this folder into the repository root (`docs/` plus the two agent files) and point Cursor at it.
+<h3 align="center">A browser tab that keeps your screen awake, and tells you honestly when it can't.</h3>
 
-Version 1.0 · 7 Sep 2026 · Owner: Soubhik
+<p align="center">
+  <a href="https://github.com/SoubhikBiswas-gitHub/awaketab/actions/workflows/ci.yml"><img alt="CI status" src="https://github.com/SoubhikBiswas-gitHub/awaketab/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-087B87"></a>
+  <a href="https://awaketab.pages.dev"><img alt="Live site: awaketab.pages.dev" src="https://img.shields.io/badge/live-awaketab.pages.dev-5A47CF"></a>
+</p>
 
-## How the set fits together
+<p align="center">
+  <a href="https://awaketab.pages.dev"><b>Open AwakeTab</b></a> ·
+  <a href="#use-it">Use it</a> ·
+  <a href="#develop-locally">Develop locally</a> ·
+  <a href="CONTRIBUTING.md">Contribute</a>
+</p>
 
-| # | Document | What it answers | Read it when |
-|---|---|---|---|
-| 00 | [Conventions and canonical facts](docs/00-conventions.md) | The exact names of everything: states, keys, routes, plans, gates, budgets, config | **Always first.** Every other doc defers to it |
-| — | [Blueprint](awaketab-blueprint.md) | Why: incumbent teardown, market, scenarios, SEO plan, monetization decision | Before the BRD, and whenever a "why" comes up |
-| 01 | [BRD](docs/01-brd.md) | Business objectives, scope, requirements BR-##, budget, revenue scenarios, risks | Kick-off; investor/partner conversations |
-| 02 | [PRD](docs/02-prd.md) | Personas, journeys, every FR/NFR with acceptance criteria, edge cases, release criteria | Before building any feature |
-| 03 | [Architecture](docs/03-architecture.md) | System context, monorepo, runtime, build, security, ADR-001…012 | Before E0; when questioning a stack choice |
-| 04 | [Engine spec](docs/04-engine-spec.md) | The seven lock states and transition table; session, tick, stats, multi-tab, capability probe | E1, E2; any bug in the lock or timer |
-| 05 | [Frontend spec](docs/05-frontend-spec.md) | Tokens, components, state → UI matrix, keyboard, a11y, PWA, PiP, URL params | E3, E4, E10 |
-| 06 | [Content and SEO spec](docs/06-content-seo-spec.md) | Page templates, frontmatter, JSON-LD, hreflang, sitemaps, slug lists with intents, editorial workflow | E5, E7 |
-| 07 | [i18n](docs/07-i18n.md) | Locales, string files, formatting, translation workflow, localized keywords, QA | E6, E7 |
-| 08 | [Data and storage](docs/08-data-storage.md) | Every localStorage key schema, licence token, KV model, Analytics Engine columns, privacy map | E2, E8, E9 |
-| 09 | [Monetization implementation](docs/09-monetization-impl.md) | Polar licensing end-to-end, ads loader and placement contract, sponsor card, affiliates, Business licences | E9, E10, gates G1–G5 |
-| 10 | [Extension spec](docs/10-extension-spec.md) | MV3 manifest, `chrome.power`, popup/options, licence reuse, store listing | E11 |
-| 11 | [Embed spec](docs/11-embed-spec.md) | Cook Mode widget loader, iframe, `allow="screen-wake-lock"`, postMessage API, licence binding | E12 |
-| 12 | [Library spec](docs/12-library-spec.md) | `@awaketab/wake` API, package layout, comparison with NoSleep.js, release | E1, E12 |
-| 13 | [Testing strategy](docs/13-testing-strategy.md) | Test pyramid, T## transition tests, e2e journeys, SEO/perf/a11y checks, device matrix | Every epic |
-| 14 | [DevOps](docs/14-devops.md) | Environments, Cloudflare setup, `_headers`, CI workflows, monitoring, incidents, backups, costs | E0, launch, operations |
-| 15 | [Implementation plan](docs/15-implementation-plan.md) | Epics E0–E12, ~110 tickets with estimates and acceptance criteria, 10-week sprint plan, risks, cut list | Planning each sprint |
-| 16 | [Cursor prompts](docs/16-cursor-prompts.md) | `.cursorrules`, `CLAUDE.md`, one prompt per epic, four utility prompts | Every coding session |
-| 17 | [Launch checklists](docs/17-launch-checklist.md) | P0–P3 checklists, gate checklists, launch-day runbook, 7-day watch | Phase exits and launch |
-| 18 | [Analytics and KPIs](docs/18-analytics-kpis.md) | North star, KPI tree, event mapping, SQL, tracked queries, targets, alerts, experiments | E8 and every weekly review |
-| 19 | [Master production build prompt](docs/19-master-build-prompt.md) | One Cursor Agent prompt that builds M0–M9 to production with checkpoints; resume prompt; follow-ups | Kick-off of the build; after any context reset |
+## Why AwakeTab
 
-Repo-root files included here: `.cursorrules` and `CLAUDE.md` (also reproduced in doc 16).
+Most "keep awake" pages press a button and hope. Browsers quietly release a wake lock when you switch tabs or lock the phone, and refuse one when a site setting blocks it, when a page is embedded without permission, or in Safari before your first tap. The page keeps saying it works.
 
-## Working rules
+AwakeTab never guesses. It asks the browser for a [screen wake lock](https://developer.mozilla.org/docs/Web/API/Screen_Wake_Lock_API), and a status pill reports only what the browser actually did. There are exactly seven states:
 
-1. `docs/00-conventions.md` is the single source of truth. Change an identifier there first, then grep the docs and the code.
-2. Requirements are testable; every FR in the PRD has acceptance criteria, and `13-testing-strategy.md` says how each is proven.
-3. The product's one promise — *the pill never lies* — is a contract in 04 and 05. Do not simplify the seven states.
-4. Money rules are contracts too: Google ads never on the awake screen, `/pip`, `/embed/*` or the extension; never auto-refresh under AdSense.
-5. Numbers from the revenue model are estimates; targets in 18 say so.
+| State         | The pill says              | What is going on                                                                     |
+| ------------- | -------------------------- | ------------------------------------------------------------------------------------ |
+| `idle`        | Ready                      | Nothing requested yet                                                                |
+| `requesting`  | Starting…                  | Waiting for the browser to answer                                                    |
+| `held`        | Screen awake               | The browser granted the lock and it is alive                                         |
+| `lost`        | Paused — tab hidden        | The browser released the lock (tab hidden, or the system). It asks again when you return |
+| `denied`      | Blocked — here's the fix   | The request was refused, for example by a site setting or an embed without permission. The page explains the fix     |
+| `unsupported` | Tap to use the fallback    | This browser has no wake lock API. One tap starts a tiny video fallback              |
+| `fallback`    | Awake via video fallback   | The fallback video is playing and keeps the screen on                                |
 
-## Suggested reading order for a new contributor
+Colour is never the only signal: each state has its own text, glyph and ring pattern, amber always means paused and red always means blocked. Only `held` and `fallback` ever show a running timer.
 
-00 → Blueprint (skim §01, §04, §05, §11) → 02 §1–§4 → 03 §1–§6 → 04 → 05 → then the doc for your epic, with 13 and 16 open beside it.
+## What's inside
 
-## Open decisions (owner: Soubhik)
+| Part | What it does |
+| --- | --- |
+| **The web tool** | Keep a screen awake for 15 minutes to 4 hours, until a time, a custom length of up to 7 days, or until you stop. It works offline once installed, has a Picture-in-Picture window, and speaks 8 languages. |
+| **Ambient modes** | Clock, Cook, Focus (Pomodoro), Night, Minimal and Message, for a screen you glance at from across the room, with a burn-in guard. |
+| **AwakeTab for Chrome** | A Manifest V3 extension that keeps the screen, or only the computer, awake while Chrome runs, even when the tab is hidden or the window is minimised. The toolbar badge shows the minutes left. A closed laptop lid still sleeps. |
+| **Embed widget** | Cook Mode for recipe sites: one script tag adds a small widget that keeps the reader's screen on while they cook. |
+| **`@awaketab/wake`** | The lock layer as a small library: the seven-state machine, automatic re-request when the tab returns, and a video fallback in at most 3.4 KB gzipped, with React, Preact and Vue adapters. |
+| **Pro (optional)** | Keeping a screen awake is free and stays free. Pro adds Mint and Sky lamp colours, your own message on the awake screen, 12 weeks of stats with CSV export, extension schedules and auto-start, and no ads on the guides. Checkout runs in Polar's sandbox for now, so Pro cannot be bought yet. |
 
-Name confirmation (AwakeTab), open-source scope (engine + library MIT vs. whole repo), stack confirmation (Astro + Cloudflare), launch locales (8 listed), weekly capacity assumption (20–25 h). Each is flagged where it matters; the docs assume the recommended option.
+## How it works
+
+The lock layer is one state machine, specified in [docs/04-engine-spec.md](docs/04-engine-spec.md). The pill is derived only from the browser's answers and events, never from what the page intended.
+
+```mermaid
+stateDiagram-v2
+    [*] --> idle
+    idle --> requesting: request()
+    idle --> unsupported: no wake lock API
+    requesting --> held: lock granted
+    requesting --> fallback: video plays
+    requesting --> denied: refused
+    requesting --> unsupported: video blocked
+    held --> lost: tab hidden or system release
+    held --> denied: 3 releases in 10 s
+    fallback --> lost
+    fallback --> unsupported: video stopped
+    lost --> requesting: visible again
+    denied --> requesting: retry or request()
+    unsupported --> requesting: tap
+    note left of idle: release() or destroy() from any state returns here
+```
+
+The fallback video pauses when the tab is hidden, so `fallback` moves to `lost` too. A refused request is retried at most three times (after 1, 2 and 4 seconds), only while the tab is visible and only when the cause may be temporary. A lock that the browser releases three times within 10 seconds while the tab is visible counts as refused.
+
+## Screenshots
+
+**A guide page, [/for/cooking](https://awaketab.pages.dev/for/cooking)**
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/readme/screens/for-cooking-desktop-dark.png">
+  <img alt="The Keep your screen on while cooking guide on a desktop: header with the AwakeTab logo and navigation, an on-this-page list, the title, an honest introduction, and the embedded tool showing the Ready pill and the length presets" src=".github/readme/screens/for-cooking-desktop-light.png" width="100%">
+</picture>
+
+**AwakeTab Pro, [/pro](https://awaketab.pages.dev/pro)**
+
+<table>
+  <tr>
+    <td width="68%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/readme/screens/pro-desktop-dark.png">
+        <img alt="The Pro page on a desktop: One evening with AwakeTab, the See the plans button, and a lamp colour ring previewing Mint with the Aqua, Violet, Mint and Sky swatches" src=".github/readme/screens/pro-desktop-light.png" width="100%">
+      </picture>
+    </td>
+    <td width="32%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/readme/screens/pro-phone-dark.png">
+        <img alt="The Pro page on a phone, with the same heading, plan button and lamp colour preview stacked in one column" src=".github/readme/screens/pro-phone-light.png" width="100%">
+      </picture>
+    </td>
+  </tr>
+</table>
+
+**AwakeTab for Chrome** (store images)
+
+<table>
+  <tr>
+    <td width="50%"><img alt="The extension popup over a web page: a countdown ring with the time left and its end time, the Screen awake pill, and the toolbar badge with the minutes left" src="apps/extension/store/images/screenshot-1-popup.png" width="100%"></td>
+    <td width="50%"><img alt="Two extension popups side by side: Screen level shows Screen awake, System level shows System awake with the note Screen may dim or lock" src="apps/extension/store/images/screenshot-2-screen-or-system.png" width="100%"></td>
+  </tr>
+</table>
+
+**The tool page**
+
+Tool page screenshot coming soon — the tool page is being rebuilt.
+
+## Use it
+
+### On the web
+
+Open **[awaketab.pages.dev](https://awaketab.pages.dev)**, pick a length and start. That address is the live preview of `main`; the planned domain, awaketab.com, is not attached yet. Leave the tab in front: browsers release every wake lock when the tab is hidden, and the pill will say so.
+
+### AwakeTab for Chrome
+
+The extension is not in the Chrome Web Store yet. To try it, build it and load it unpacked:
+
+```bash
+pnpm run setup
+pnpm -F extension build
+```
+
+Then open `chrome://extensions`, turn on **Developer mode**, choose **Load unpacked** and pick `apps/extension/.output/chrome-mv3`.
+
+### Embed widget
+
+The [/embed](https://awaketab.pages.dev/embed) page builds the snippet. The default one is a single tag:
+
+```html
+<script async src="https://awaketab.com/embed.js" data-mode="cook" data-theme="auto" data-size="compact"></script>
+```
+
+The loader adds the iframe with `allow="screen-wake-lock"` and a small "Keep awake by AwakeTab" credit line. It takes its origin from its own `src`, so until awaketab.com is attached you can test it with `https://awaketab.pages.dev/embed.js`. The host page must be served over HTTPS. Options and the iframe-only version are in [docs/11-embed-spec.md](docs/11-embed-spec.md).
+
+### The `@awaketab/wake` library
+
+It is not published to npm yet. Use it from this workspace:
+
+```jsonc
+// package.json of another workspace package
+"dependencies": { "@awaketab/wake": "workspace:*" }
+```
+
+```ts
+import { createWakeLock } from '@awaketab/wake';
+
+const lock = createWakeLock();
+lock.on('change', ({ to }) => {
+  status.textContent = to; // idle, requesting, held, lost, denied, unsupported or fallback
+});
+button.addEventListener('click', () => lock.request());
+```
+
+To use it in a project outside the repository, build a tarball with `pnpm -F @awaketab/wake build`, then `cd packages/wake && pnpm pack`, and install the `.tgz` file. The full API is in [packages/wake/README.md](packages/wake/README.md).
+
+## Develop locally
+
+You need Node.js 22. One command sets up the rest (pnpm 9.15.9 through Corepack, dependencies, and `apps/web/.dev.vars` from its example):
+
+```bash
+git clone https://github.com/SoubhikBiswas-gitHub/awaketab.git
+cd awaketab
+node scripts/setup.mjs        # works before pnpm is installed; later: pnpm run setup
+pnpm dev                      # http://localhost:4321
+```
+
+Add `--with-browsers` to also install Playwright Chromium for the end-to-end tests. Use `pnpm run setup` rather than `pnpm setup`: the latter is a built-in pnpm command.
+
+| Command                | What it does                                              |
+| ---------------------- | --------------------------------------------------------- |
+| `pnpm dev`             | Site and tool with hot reload                             |
+| `pnpm -F extension dev` | The extension in development mode                        |
+| `pnpm test`            | Unit tests and Pages Functions tests                      |
+| `pnpm build`           | Build every package, the site and the extension           |
+| `pnpm test:seo`        | Checks on the built site (after `pnpm build`)             |
+| `pnpm test:e2e`        | Playwright end-to-end tests (after `pnpm build`)          |
+| `pnpm lint` · `pnpm typecheck` · `pnpm size` | Code rules, types and bundle budgets |
+
+## Project structure
+
+| Path | What it is |
+| --- | --- |
+| [`apps/web`](apps/web) | The website and tool: Astro 5 with a vanilla TypeScript island, plus Cloudflare Pages Functions for the licence API, embed configuration and events |
+| [`apps/extension`](apps/extension) | AwakeTab for Chrome, a Manifest V3 extension built with WXT |
+| [`packages/wake`](packages/wake) | `@awaketab/wake`: the wake lock state machine and video fallback |
+| [`packages/core`](packages/core) | `@awaketab/core`: sessions, timers, stats, licence checks and the multi-tab protocol |
+| [`docs`](docs) | Product, engineering and design specs. Start with [docs/00-conventions.md](docs/00-conventions.md) |
+| [`design`](design) | The Clear Night design canvas boards behind [DESIGN.md](DESIGN.md) |
+
+## Tech stack
+
+Astro 5 with zero hydration and a vanilla TypeScript island · Tailwind CSS 4 over the Clear Night `--at-*` tokens · self-hosted Geist, Geist Mono and Space Grotesk · Cloudflare Pages, Pages Functions and KV · Polar for licences · WXT for the Chrome extension · tsup for the packages · Vitest, Playwright and axe for tests · size-limit and Lighthouse CI for budgets.
+
+## Contributing
+
+Bug reports, ideas and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, the house rules and how to send a change, and please follow the [Code of Conduct](CODE_OF_CONDUCT.md). Report security problems privately as described in [SECURITY.md](SECURITY.md).
+
+## License
+
+[MIT](LICENSE) © 2026 Soubhik Biswas
