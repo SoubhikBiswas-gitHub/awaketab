@@ -1,0 +1,101 @@
+.at-fx-rg-box {
+  position: relative;
+  inline-size: calc(320 * var(--u));
+  block-size: calc(320 * var(--u));
+}
+
+.at-fx-rg-art {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+
+.at-fx-rg-0 {
+  --at-fx-rc: var(--at-face-c);
+}
+
+.at-fx-rg-1 {
+  --at-fx-rc: color-mix(in oklab, var(--at-face-c) 76%, var(--at-ink));
+}
+
+.at-fx-rg-2 {
+  --at-fx-rc: color-mix(in oklab, var(--at-face-c) 56%, var(--at-ink));
+}
+
+.at-fx-rg-track,
+.at-fx-rg-arc {
+  fill: none;
+  stroke: var(--at-fx-rc);
+  stroke-width: 20;
+}
+
+.at-fx-rg-track {
+  stroke-opacity: 0.16;
+}
+
+.at-island[data-fb] .at-fx-rg-track {
+  stroke-dasharray: 3 9;
+}
+
+.at-fx-rg-arc {
+  stroke-linecap: round;
+  stroke-dasharray: max(0.01px, calc(var(--at-fx-len) * var(--at-fx-v, 0))) var(--at-fx-len);
+  transition: stroke-dasharray 1s linear;
+}
+
+.at-fx-rg-arc[data-jump] {
+  transition: none;
+}
+
+.at-island:is([data-status="awake"], [data-status="fallback"], [data-status="starting"]) .at-fx-rg-arc {
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--at-fx-rc) 55%, transparent));
+}
+
+.at-island:is([data-status="ready"], [data-batt]) .at-fx-rg-arc {
+  stroke-opacity: 0.5;
+}
+
+.at-island[data-status="paused"] .at-fx-rg-arc {
+  stroke-dasharray: 14px 16px;
+}
+
+.at-island[data-status="blocked"] .at-fx-rg-arc {
+  stroke-dasharray: 0 30px;
+}
+
+.at-island[data-status="ended"]:not([data-batt]) .at-fx-rg-arc {
+  stroke-opacity: 0;
+}
+
+.at-fx-rg-mid {
+  position: absolute;
+  inset: 26%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(6 * var(--u));
+  text-align: center;
+}
+
+.at-fx-rg-mid .at-kick {
+  font-size: calc(11 * var(--u));
+}
+
+.at-fx-rg-mid .at-digits {
+  font-size: calc(38 * var(--u));
+}
+
+.at-island[data-units="h"] .at-fx-rg-mid .at-digits {
+  font-size: calc(28 * var(--u));
+}
+
+.at-island[data-units="d"] .at-fx-rg-mid .at-digits {
+  font-size: calc(19 * var(--u));
+}
+
+.at-fx-rg-mid .at-fx-meta {
+  font-size: calc(11 * var(--u));
+}

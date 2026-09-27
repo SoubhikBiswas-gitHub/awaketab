@@ -85,7 +85,9 @@ The product uses the canvas's fonts (decision D-R26, replacing the earlier "syst
 | UI text | `--at-font`: Geist (variable 100–900), then "Geist Fallback", then the system stack | Every UI string |
 | Code, keys, file names, URLs, small counters (≤ 28 px: PiP, embed, extension badge text) | `--at-font-mono`: Geist Mono (variable), then fallback, then `ui-monospace` | Plain (unslashed) zero only |
 | Display digits (Ring, Tide, Kiosk, OG, store, popup) | Geist weight 200–300, `font-variant-numeric: tabular-nums`, no slashed zero | |
-| Bold face digits | `--at-font-display`: Space Grotesk 600 (digits-only subset: 0–9 : . , space d h m), letter-spacing −0.06em, `tabular-nums` | Used by the Bold face only |
+| Bold and Flip face digits | `--at-font-display`: Space Grotesk 600 (digits-only subset: 0–9 : . , space d h m), letter-spacing −0.06em, `tabular-nums` | Used by the Bold and Flip faces only |
+| Nixie face digits | Nixie One 400 (SIL OFL, self-hosted, unmodified) | Loaded only with the Nixie face |
+| LCD face digits | DSEG7 Classic Italic (SIL OFL, self-hosted, unmodified) | Loaded only with the LCD face |
 | Horizon / Tide digits | Geist weight 200 | |
 
 Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · button 15–17 · date/time line 15 · digits: ring 76 (60 with hours), bold 128 (96), horizon 64 (48), tide 84 (64); desktop scales the face ×1.55. Bold digits are capped to the face width (`min(128px, 34cqi)`, `min(96px, 22cqi)` with hours, `min(62px, 16cqi)` multi-day) so a wide system font never clips them.
@@ -139,6 +141,16 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 2. **Bold:** huge digits (seconds dimmed), 12 px bar draining with a 3.8 s shimmer, `of 30 min` and `until` beneath.
 3. **Horizon:** a living sky. The sun (moon at night) travels an arc and touches the horizon exactly when the session ends; sky warms as it sets; clouds drift (90 s / 130 s), stars twinkle at night and dawn, the sun glints on the water. Phase follows the real local time (dawn 5–8, day 8–17, dusk 17–20, night). Digits sit on the water so they never collide with the sun.
 4. **Tide:** water level equals time left; two wave layers (9 s / 15 s), rising bubbles; digits are drawn twice and clipped at the waterline so they stay readable above and below the surface.
+5. **Flip:** split-flap cards that really turn on each digit change (the top leaf falls, the bottom leaf lands, 660 ms, shaded as they go); a 1 px hinge with side notches, a soft shadow and a lamp under-glow while the screen is held; seconds on smaller cards.
+6. **Rolling:** odometer drums that roll to the next digit (downward while counting down) in a sunken window, with a hairline of time left beneath.
+7. **Analog:** an SVG dial showing the local time, with a sweeping lamp second hand and time left drawn as an arc on the bezel. Two styles in Settings: Minimal (twelve indices) and Luxe (minute ticks, heavier indices, lume dots, hand inlays, a fine sunburst plate).
+8. **Rings:** three concentric arcs in graded lamp tints, like activity rings: time left of the session (hours awake with no limit), minutes, seconds; the time sits inside.
+9. **Words:** a letter grid that lights "IT IS HALF PAST TEN" for the local time in five-minute steps, with corner dots for the minutes between; lit letters glow softly. One table per language, English first.
+10. **Nixie:** glowing tube digits on a base, with a faint wire mesh and the unlit cathodes as ghost numerals. The glow is a warm-white core with a halo in the lamp colour, amber only while paused.
+11. **LCD:** a seven-segment display on lamp-tinted glass with every unlit segment faintly visible, seconds smaller, an outlined annunciator for the state word.
+12. **LED:** a dot-matrix panel of unlit dots with the digits lit in the lamp colour.
+
+All twelve are free. The newer eight load only when chosen, keep the face box reserved (no layout shift on a switch or a saved face), follow every state through the lamp (`--at-face-c`) with the Ring's arc patterns where they have an arc, respect light, dark and OLED, shift 2 px a minute while the screen is held, and stop flipping, rolling, sweeping and fading under reduced motion. The face tabs show Ring · Bold · Horizon · Tide · More; More opens a small popover with the other eight, and Settings → Clock face shows all twelve as tiles.
 
 ## 8. Motion
 

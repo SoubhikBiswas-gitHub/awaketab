@@ -1,0 +1,101 @@
+.at-fx-roll {
+  --at-fx-rs: calc(72 * var(--u));
+
+  gap: calc(14 * var(--u));
+}
+
+.at-island[data-units="h"] .at-fx-roll {
+  --at-fx-rs: calc(56 * var(--u));
+}
+
+.at-island[data-units="d"] .at-fx-roll {
+  --at-fx-rs: calc(38 * var(--u));
+}
+
+.at-fx-drum {
+  position: relative;
+  padding-block: calc(10 * var(--u));
+  padding-inline: calc(22 * var(--u));
+  overflow: hidden;
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-r-lg);
+  background: color-mix(in srgb, var(--at-face-c) 4%, var(--at-sunken));
+  box-shadow: 0 0 calc(34 * var(--u)) color-mix(in srgb, var(--at-face-c) calc(var(--at-fx-glow) * 14%), transparent);
+  transition: box-shadow 0.6s var(--at-ease);
+}
+
+:root[data-theme="oled"] .at-fx-drum {
+  background: var(--at-ground);
+}
+
+.at-fx-drum::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--at-fx-shade) 0%, transparent 28%, transparent 72%, var(--at-fx-shade) 100%);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.at-fx-rd {
+  --number-flow-mask-height: 0.3em;
+
+  display: flex;
+  align-items: baseline;
+  font-size: var(--at-fx-rs);
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+
+.at-fx-rd > [hidden] {
+  display: none;
+}
+
+.at-fx-rgap {
+  inline-size: 0.25em;
+}
+
+.at-fx-rsep {
+  padding-inline: 0.04em;
+  opacity: 0.7;
+}
+
+.at-fx-rtail {
+  display: flex;
+  align-items: baseline;
+}
+
+.at-fx-rline {
+  position: relative;
+  inline-size: calc(200 * var(--u));
+  block-size: calc(3 * var(--u));
+  overflow: hidden;
+  border-radius: var(--at-r-pill);
+  background: var(--at-track);
+}
+
+.at-fx-rline > div {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--at-r-pill);
+  background: var(--at-face-c);
+  transform: scaleX(var(--at-p));
+  transform-origin: left center;
+  transition: transform 1s linear;
+}
+
+[dir="rtl"] .at-fx-rline > div {
+  transform-origin: right center;
+}
+
+.at-island[data-status="paused"] .at-fx-rline > div {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--at-face-c) 0 calc(10 * var(--u)),
+    transparent 0 calc(16 * var(--u))
+  );
+}
+
+.at-island[data-status="ended"]:not([data-batt]) .at-fx-rline > div {
+  opacity: 0;
+}

@@ -28,7 +28,7 @@ export interface ISettings {
   v: 1;
   theme: 'auto' | 'light' | 'dark' | 'oled';        // default 'auto'
   accent: string;                                   // lamp light-theme hex, default '#087B87'; one of '#087B87' (aqua) · '#5A47CF' (violet) · '#167A50' (mint, ambient.packs) · '#255FBD' (sky, ambient.packs); legacy values migrate on read: '#B86E00' amber → aqua, '#4F46E5' indigo → violet, '#0F766E' teal → mint, '#BE123C' rose → sky; unknown or unlicensed values render as aqua; the next settings save writes the lamp hex — dark variants come from tokens.css (05-frontend-spec.md §1.1a)
-  face: 'ring' | 'bold' | 'horizon' | 'tide';       // default 'ring' — the remembered clock face (DESIGN.md §7); the face tabs and Settings → Clock face write it, src/boot/boot.js paints <html data-face> from it before first frame (absent for ring); an unknown value shows the Ring face
+  face: TFace;                                      // 'ring' | 'bold' | 'horizon' | 'tide' | 'flip' | 'rolling' | 'analog' | 'rings' | 'word' | 'nixie' | 'lcd' | 'matrix'; default 'ring' — the remembered clock face (DESIGN.md §7); the face tabs and Settings → Clock face write it, src/boot/boot.js paints <html data-face> from it before first frame (absent for ring); an unknown value shows the Ring face
   defaultPreset: TPresetId;                          // 'p15'|'p30'|'p45'|'p60'|'p120'|'p240'|'pinf'|'custom'|'until'; default 'pinf'
   lastCustomMs: number;                             // default 90 * 60_000
   lastUntilWall: string | null;                     // 'HH:MM', default null
@@ -54,7 +54,7 @@ export interface ISettings {
 }
 ```
 
-Additive fields (28 September 2026; still `v: 1`, missing fields read as their defaults): `faceStyles` (per-face style id, `{}`) · `palette` (`clear-night` | `paper` | `nord` | `solarized` | `midnight` | `forest` | `sunset` | `mono` | `contrast`, default `clear-night`) · `pattern` (`none` | `grain` | `dots` | `grid` | `topo` | `waves` | `aurora` | `stars` | `drift`, default `none`) · `vibrate` (`true`) · `tick` (`false`) · `focusSound { kind, volume 0.5, mix {}, stopAtEnd true }` (`kind`: `none` | `brown` | `pink` | `white` | `rain` | `cafe` | `fire` | `lofi` | `track:<id>`) · `intention` (≤ 80 chars, `''`) · `worldClock` (IANA zone or `null`) · `pomodoro { autoCycle false, longBreakMin 15 }`. `face` gains `flip` · `rolling` · `analog` · `rings` · `word` · `nixie` · `lcd` · `matrix`; `sound.id` gains `digital` · `birds`; `ambient.mode` gains `breathe`. A Pro item being previewed is never written here.
+Additive fields (28 September 2026; still `v: 1`, missing fields read as their defaults): `faceStyles` (per-face style id, `{}`; today only `analog`: `minimal` (read when absent) or `luxe`) · `palette` (`clear-night` | `paper` | `nord` | `solarized` | `midnight` | `forest` | `sunset` | `mono` | `contrast`, default `clear-night`) · `pattern` (`none` | `grain` | `dots` | `grid` | `topo` | `waves` | `aurora` | `stars` | `drift`, default `none`) · `vibrate` (`true`) · `tick` (`false`) · `focusSound { kind, volume 0.5, mix {}, stopAtEnd true }` (`kind`: `none` | `brown` | `pink` | `white` | `rain` | `cafe` | `fire` | `lofi` | `track:<id>`) · `intention` (≤ 80 chars, `''`) · `worldClock` (IANA zone or `null`) · `pomodoro { autoCycle false, longBreakMin 15 }`. `face` gains `flip` · `rolling` · `analog` · `rings` · `word` · `nixie` · `lcd` · `matrix`; `sound.id` gains `digital` · `birds`; `ambient.mode` gains `breathe`. A Pro item being previewed is never written here.
 
 ### 2.1a `at.v1.notes` (IndexedDB)
 

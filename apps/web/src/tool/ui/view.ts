@@ -224,6 +224,15 @@ export function mountView(ctx: IToolCtx): () => void {
     set('[data-act="why"]', 'aria-expanded', () => ui.why);
     if (face === 'ring') delete html.dataset.face;
     else html.dataset.face = face;
+    // The eight newer faces live in the faces pack, loaded the first time one is chosen.
+    if (!/^(?:ring|bold|horizon|tide)$/u.test(face))
+      load(
+        8,
+        () =>
+          void import('../packs/faces/index.js').then((m) => {
+            m.mountFaces(ctx);
+          }),
+      );
     if (pill) {
       const lk = st === 'ready' ? 'idle' : s.lock;
       pill.dataset.lock = lk;

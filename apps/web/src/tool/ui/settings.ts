@@ -10,7 +10,20 @@ import { applyTheme } from '../theme.js';
 import { openDialog } from './dialog.js';
 
 const MODES = new Set<TAmbientMode>(['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook']);
-const FACES = new Set<TFace>(['ring', 'bold', 'horizon', 'tide']);
+const FACES = new Set<TFace>([
+  'ring',
+  'bold',
+  'horizon',
+  'tide',
+  'flip',
+  'rolling',
+  'analog',
+  'rings',
+  'word',
+  'nixie',
+  'lcd',
+  'matrix',
+]);
 
 type TField = HTMLInputElement | HTMLSelectElement;
 
