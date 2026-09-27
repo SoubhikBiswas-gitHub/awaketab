@@ -41,13 +41,13 @@ jobs:
       - name: Check configuration
         if: env.INDEXNOW_KEY == ''
         run: echo "::notice title=IndexNow skipped::The INDEXNOW_KEY secret is not set, so nothing was submitted (LAUNCH-AUDIT N-07)."
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: env.INDEXNOW_KEY != ''
         with:
           ref: ${{ github.event.deployment.sha || github.sha }}
           fetch-depth: 2
       # scripts/indexnow.mjs uses Node built-ins only: no install step.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: env.INDEXNOW_KEY != ''
         with:
           node-version: 22
