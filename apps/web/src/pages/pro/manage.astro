@@ -63,7 +63,7 @@ const ICONS = {
           </div>
           <div class="at-pro-meter-wrap" data-meter>
             <div class="at-pro-meter-head">
-              <span id="meter-label" aria-live="polite" data-meter-label data-tpl={m('meter')}></span>
+              <span id="meter-label" aria-live="polite" data-meter-label data-tpl={m('meter')} data-loading={m('loading')}>{m('loading')}</span>
               <span class="at-pro-small at-pro-muted" data-meter-left data-tpl={m('left')} data-one={m('left.one')} data-none={m('left.none')}></span>
             </div>
             <div role="meter" class="at-pro-meter" aria-labelledby="meter-label" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0" data-meter-bar>
@@ -102,7 +102,7 @@ const ICONS = {
           </div>
         </section>
 
-        <div class="at-card at-pro-devices" data-devices-wrap hidden>
+        <div class="at-card at-pro-devices" data-devices-wrap>
           <div role="table" aria-labelledby="manage-title">
             <div role="rowgroup">
               <div role="row" class="at-pro-dev-head">
@@ -111,7 +111,17 @@ const ICONS = {
                 <div role="columnheader"><span class="sr-only">{t('page.pro.manage.remove')}</span></div>
               </div>
             </div>
-            <div role="rowgroup" class="at-pro-dev-body" data-devices></div>
+            <div role="rowgroup" class="at-pro-dev-body" data-devices>
+              {
+                [0, 1, 2].map((i) => (
+                  <div class="at-pro-dev at-pro-dev-skel" aria-hidden="true" data-last={i === 2 ? '' : undefined}>
+                    <div class="at-pro-dev-name"><span class="at-pro-skel" /></div>
+                    <div class="at-pro-dev-at"><span class="at-pro-skel" /></div>
+                    <div class="at-pro-dev-act"><span class="at-pro-skel" /></div>
+                  </div>
+                ))
+              }
+            </div>
           </div>
         </div>
 
@@ -147,7 +157,7 @@ const ICONS = {
         <span hidden data-confirm-here>{m('confirm.here')}</span>
         <span hidden data-confirm-other data-tpl={m('confirm.other')} data-aria={m('confirm.aria')}></span>
 
-        <div role="status" class="at-card at-pro-empty" data-manage-empty hidden>
+        <div role="status" class="at-card at-pro-empty" data-manage-empty tabindex="-1" hidden>
           <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path><circle cx="24" cy="9" r="4.2"></circle></svg>
           <p>{t('page.pro.manage.empty')}</p>
           <div class="at-pro-empty-actions">
@@ -156,10 +166,14 @@ const ICONS = {
           </div>
         </div>
 
-        <div role="alert" class="at-card at-pro-empty" data-manage-offline hidden>
-          <p>{t('license.error.offline')}</p>
-          <div class="at-pro-empty-actions">
-            <Button variant="secondary" data-manage-retry>{t('page.pro.activate.retry')}</Button>
+        <div role="alert" class="at-pro-err" data-tone="warn" data-manage-offline tabindex="-1" hidden>
+          <p class="at-pro-err-title">
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path class="at-pro-err-pause" d="M2.5 1.5h2.5v9H2.5zM7 1.5h2.5v9H7z"></path></svg>
+            {t('page.pro.activate.err.offline')}
+          </p>
+          <p class="at-pro-err-text">{t('license.error.offline')}</p>
+          <div class="at-pro-err-actions">
+            <Button variant="stop" size="md" data-manage-retry>{t('page.pro.activate.retry')}</Button>
           </div>
         </div>
 

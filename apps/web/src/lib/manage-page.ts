@@ -68,7 +68,17 @@ export function bootManagePage(root: HTMLElement, now = Date.now()): void {
     root.dataset.state = state;
     if (empty) empty.hidden = state !== 'empty';
     if (offline) offline.hidden = state !== 'offline';
-    if ((state === 'empty' || state === 'offline') && wrap) wrap.hidden = true;
+    if (wrap && (state === 'loading' || state === 'empty' || state === 'offline')) wrap.hidden = state !== 'loading';
+    const label = root.querySelector<HTMLElement>('[data-meter-label]');
+    if (state === 'loading' && label) label.textContent = label.dataset.loading ?? '';
+  };
+
+  // After a row goes away, keep keyboard focus on the page: the row now in its place, or the empty card.
+  const focusAfter = (index: number) => {
+    const buttons = list.querySelectorAll<HTMLElement>('[data-device-remove]');
+    const next = buttons[Math.min(index, buttons.length - 1)];
+    if (next) next.focus();
+    else if (empty && !empty.hidden) empty.focus();
   };
 
   const raw = localStorage.getItem(LICENSE_KEY);
@@ -173,11 +183,13 @@ export function bootManagePage(root: HTMLElement, now = Date.now()): void {
                 // This browser is no longer an activation: its stored licence is dead (manage-page, board note).
                 localStorage.removeItem(LICENSE_KEY);
                 list.replaceChildren();
-                if (wrap) wrap.hidden = true;
                 setState('empty');
+                empty?.focus();
                 return;
               }
-              void paint(res.activations);
+              void paint(res.activations).then(() => {
+                focusAfter(index);
+              });
             } else {
               for (const b of tr.querySelectorAll<HTMLButtonElement>('button')) b.disabled = false;
             }
@@ -213,7 +225,7 @@ export function bootManagePage(root: HTMLElement, now = Date.now()): void {
     });
   };
 
-  const load = () => {
+  const load = (retry = false) => {
     setState('loading');
     void fetchActivations(token).then(
       (data) => {
@@ -227,14 +239,19 @@ export function bootManagePage(root: HTMLElement, now = Date.now()): void {
         const expSec = typeof fresh.exp === 'number' ? fresh.exp : record.exp;
         lapse = lapseState(fresh.plan ?? record.plan, expSec, now);
         if (lapse && typeof expSec === 'number') paintLapse(lapse, expSec);
-        void paint(Array.isArray(data.activations) ? data.activations : []);
+        void paint(Array.isArray(data.activations) ? data.activations : []).then(() => {
+          if (retry) focusAfter(0);
+        });
       },
       // Offline or the API is down: say so with a retry, never an empty list that looks like "no devices".
       () => {
         setState('offline');
+        if (retry) offline?.focus();
       },
     );
   };
-  root.querySelector('[data-manage-retry]')?.addEventListener('click', load);
+  root.querySelector('[data-manage-retry]')?.addEventListener('click', () => {
+    load(true);
+  });
   load();
 }
