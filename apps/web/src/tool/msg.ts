@@ -1,15 +1,8 @@
 export function sanitizeMsg(raw: string): string {
-  const nfc = raw.normalize('NFC');
-  const stripped = Array.from(nfc)
-    .filter((ch) => {
-      const c = ch.codePointAt(0) ?? 0;
-      if (c < 32 || (c >= 127 && c < 160)) return false;
-      if (c >= 0x202a && c <= 0x202e) return false;
-      if (c >= 0x2066 && c <= 0x2069) return false;
-      return true;
-    })
-    .join('')
+  const clean = raw
+    .normalize('NFC')
+    .replace(/[\p{Cc}\u202a-\u202e\u2066-\u2069]/gu, '')
     .replace(/\s+/g, ' ')
     .trim();
-  return Array.from(stripped).slice(0, 80).join('');
+  return Array.from(clean).slice(0, 80).join('');
 }

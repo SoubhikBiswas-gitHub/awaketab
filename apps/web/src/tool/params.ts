@@ -12,13 +12,12 @@ export const PRESET_ROUTES: Record<string, TPresetId | 'eight'> = {
 
 export const EIGHT_H_MS = 480 * 60_000;
 export const EXTEND_AUTO_STOP_MS = 60_000;
-export const CUSTOM_MIN_MS = 60_000;
 
-const LOCALES = new Set(['es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi']);
-const THEMES = new Set<TTheme>(['auto', 'light', 'dark', 'oled']);
-const MODES = new Set<TAmbientMode>(['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook']);
-const PRESETS = new Set<TPresetId>(['p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf']);
-const UNTIL_RE = /^([01]\d|2[0-3])-([0-5]\d)$/;
+const LOCALE_RE = /^(es|pt-br|de|fr|ja|zh|hi)$/;
+const THEME_RE = /^(auto|light|dark|oled)$/;
+const MODE_RE = /^(standard|clock|focus|minimal|night|message|cook)$/;
+const PRESET_RE = /^p(15|30|45|60|120|240|inf)$/;
+const UNTIL_RE = /^([01]\d|2[0-3])-[0-5]\d$/;
 const REF_RE = /^[a-z0-9_-]{1,32}$/;
 
 export interface IUrlParams {
@@ -41,16 +40,12 @@ export interface IUrlParams {
 export function stripLocale(pathname: string): string {
   const parts = pathname.replace(/\/+$/, '') || '/';
   const segs = parts.split('/').filter(Boolean);
-  if (segs[0] && LOCALES.has(segs[0])) {
-    const rest = `/${segs.slice(1).join('/')}`;
-    return rest === '/' ? '/' : rest;
-  }
-  return parts === '' ? '/' : parts;
+  return segs[0] && LOCALE_RE.test(segs[0]) ? `/${segs.slice(1).join('/')}` : parts;
 }
 
 export function canonicalPathname(pathname: string): string {
   const trimmed = pathname.replace(/(.)\/+$/u, '$1');
-  return LOCALES.has(trimmed.slice(1)) ? `${trimmed}/` : trimmed;
+  return LOCALE_RE.test(trimmed.slice(1)) ? `${trimmed}/` : trimmed;
 }
 
 // sanitizeMsg lives in its own module so the boot chunk does not carry it (the message mode and Settings load it).
@@ -59,41 +54,20 @@ export { sanitizeMsg } from './msg.js';
 export function parseToolParams(loc: Pick<Location, 'pathname' | 'search'>, dataset: DOMStringMap): IUrlParams {
   const path = stripLocale(loc.pathname);
   const q = new URLSearchParams(loc.search);
-  const themeRaw = q.get('theme');
-  const modeRaw = q.get('mode') ?? dataset.mode ?? null;
-  const presetRaw = q.get('preset') ?? dataset.preset ?? null;
-  const untilQ = q.get('until');
-  const refRaw = q.get('ref');
-  const sourceRaw = q.get('source');
-  const untilMatch = path.match(/^\/until\/([0-2]\d-[0-5]\d)$/);
   const routePreset = PRESET_ROUTES[path] ?? null;
   const invalid: string[] = [];
-
-  const theme =
-    themeRaw && THEMES.has(themeRaw as TTheme) ? (themeRaw as TTheme) : themeRaw ? (invalid.push('theme'), null) : null;
-  const mode =
-    modeRaw && MODES.has(modeRaw as TAmbientMode)
-      ? (modeRaw as TAmbientMode)
-      : modeRaw
-        ? (invalid.push('mode'), null)
-        : null;
-  let preset: TPresetId | null = null;
-  if (presetRaw) {
-    if (PRESETS.has(presetRaw as TPresetId)) preset = presetRaw as TPresetId;
-    else invalid.push('preset');
-  }
-  let until: string | null = null;
-  if (untilQ) {
-    if (UNTIL_RE.test(untilQ)) until = untilQ.replace('-', ':');
-    else invalid.push('until');
-  }
-  const routeUntil = untilMatch && UNTIL_RE.test(untilMatch[1] ?? '') ? (untilMatch[1] ?? '').replace('-', ':') : null;
-  const ref = refRaw && REF_RE.test(refRaw) ? refRaw : refRaw ? (invalid.push('ref'), null) : null;
-  const source = sourceRaw && REF_RE.test(sourceRaw) ? sourceRaw : sourceRaw ? (invalid.push('source'), null) : null;
-  if (invalid.length > 0) {
-    // sampled later; keep a flag on dataset for tests
-    dataset.atBadParam = invalid.join(',');
-  }
+  const pick = (name: string, re: RegExp, raw = q.get(name)): string | null =>
+    raw ? (re.test(raw) ? raw : (invalid.push(name), null)) : null;
+  const theme = pick('theme', THEME_RE) as TTheme | null;
+  const mode = pick('mode', MODE_RE, q.get('mode') ?? dataset.mode) as TAmbientMode | null;
+  const preset = pick('preset', PRESET_RE, q.get('preset') ?? dataset.preset) as TPresetId | null;
+  const until = pick('until', UNTIL_RE)?.replace('-', ':') ?? null;
+  const ref = pick('ref', REF_RE);
+  const source = pick('source', REF_RE);
+  const wall = path.slice(7);
+  const routeUntil = path.startsWith('/until/') && UNTIL_RE.test(wall) ? wall.replace('-', ':') : null;
+  // sampled later; keep a flag on dataset for tests
+  if (invalid.length > 0) dataset.atBadParam = invalid.join(',');
 
   const isPip = path === '/pip' || dataset.pip === '1';
   const isContent = /\/(for|on|vs|guides|learn)(\/|$)/.test(path);
@@ -124,8 +98,4 @@ export function parseToolParams(loc: Pick<Location, 'pathname' | 'search'>, data
     // (the one directory index Cloudflare Pages serves; docs/14 §2.1).
     canonicalPath: canonicalPathname(loc.pathname),
   };
-}
-
-export function wallFromHyphen(s: string): string {
-  return s.includes(':') ? s : s.replace('-', ':');
 }

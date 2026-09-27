@@ -101,10 +101,9 @@ export interface ICookTimer {
 }
 
 function isCookTimer(v: unknown): v is ICookTimer {
-  if (!v || typeof v !== 'object') return false;
-  const o = v as Record<string, unknown>;
+  const o = v as Partial<ICookTimer> | null;
   return (
-    typeof o.id === 'string' &&
+    typeof o?.id === 'string' &&
     typeof o.name === 'string' &&
     typeof o.durationMs === 'number' &&
     typeof o.endsAt === 'number' &&

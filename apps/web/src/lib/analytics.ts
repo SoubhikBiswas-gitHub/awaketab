@@ -1,30 +1,10 @@
 const MAX_BATCH = 20;
 const MAX_BYTES = 8 * 1024;
-const ALLOWED = new Set([
-  'page_view',
-  'session_start',
-  'session_end',
-  'lock_state',
-  'lock_denied',
-  'fallback_used',
-  'resume_shown',
-  'resume_accepted',
-  'pwa_install',
-  'pip_open',
-  'share_click',
-  'pro_view',
-  'pro_checkout_click',
-  'pro_activated',
-  'rating_prompt',
-  'extension_click',
-  'ad_slot_loaded',
-  'sponsor_view',
-  'sponsor_click',
-  'client_error',
-  'session_extend',
-  'affiliate_click',
-  'rating_submitted',
-]);
+const ALLOWED = new Set(
+  'page_view session_start session_end lock_state lock_denied fallback_used resume_shown resume_accepted pwa_install pip_open share_click pro_view pro_checkout_click pro_activated rating_prompt extension_click ad_slot_loaded sponsor_view sponsor_click client_error session_extend affiliate_click rating_submitted'.split(
+    ' ',
+  ),
+);
 
 export interface IAnalyticsEvent {
   event: string;
@@ -73,32 +53,28 @@ export function tabSid(): string {
   return sid;
 }
 
-export function uaClass(ua = typeof navigator === 'undefined' ? '' : navigator.userAgent): string {
-  const chrome = /Chrome\/(\d+)/u.exec(ua);
-  const firefox = /Firefox\/(\d+)/u.exec(ua);
-  const safari = /Version\/(\d+).*Safari/u.exec(ua);
-  const ios = /iPhone|iPad|iPod/u.test(ua);
-  const android = /Android/u.test(ua);
-  const mac = /Mac/u.test(ua);
-  const win = /Windows/u.test(ua);
-  const os = ios ? 'ios' : android ? 'android' : mac ? 'mac' : win ? 'win' : 'other';
-  const chromeVer = chrome?.[1] ?? '0';
-  const firefoxVer = firefox?.[1] ?? '0';
-  const safariVer = safari?.[1] ?? '0';
-  if (chrome && !/Edg\//u.test(ua)) return `chrome-${chromeVer}/${os}`;
-  if (firefox) return `firefox-${firefoxVer}/${os}`;
-  if (safari) return `safari-${safariVer}/${os}`;
-  return `other/${os}`;
+export function uaClass(ua = navigator.userAgent): string {
+  const os = /iPhone|iPad|iPod/u.test(ua)
+    ? 'ios'
+    : /Android/u.test(ua)
+      ? 'android'
+      : /Mac/u.test(ua)
+        ? 'mac'
+        : /Windows/u.test(ua)
+          ? 'win'
+          : 'other';
+  const c = !/Edg\//u.test(ua) && /Chrome\/(\d+)/u.exec(ua);
+  const f = /Firefox\/(\d+)/u.exec(ua);
+  const s = /Version\/(\d+).*Safari/u.exec(ua);
+  return `${c ? `chrome-${String(c[1])}` : f ? `firefox-${String(f[1])}` : s ? `safari-${String(s[1])}` : 'other'}/${os}`;
 }
 
-export function viewportClass(width = typeof innerWidth === 'undefined' ? 1024 : innerWidth): string {
-  if (width < 640) return 'sm';
-  if (width < 1024) return 'md';
-  return 'lg';
+export function viewportClass(width = innerWidth): string {
+  return width < 640 ? 'sm' : width < 1024 ? 'md' : 'lg';
 }
 
 function bindFlush(): void {
-  if (hooksBound || typeof document === 'undefined') return;
+  if (hooksBound) return;
   hooksBound = true;
   const send = () => {
     void flush(true);
@@ -120,23 +96,20 @@ export function track(
   bindFlush();
   const row: IAnalyticsEvent = {
     event,
-    path: (opts.path ?? (typeof location === 'undefined' ? '/' : location.pathname)).split('?')[0] ?? '/',
+    path: (opts.path ?? location.pathname).split('?')[0] ?? '/',
     locale: opts.locale,
     ua: uaClass(),
     source: opts.source,
     sid: tabSid(),
     viewport: viewportClass(),
-    ver: typeof document === 'undefined' ? 'dev' : (document.documentElement.dataset.ver ?? 'dev'),
+    ver: document.documentElement.dataset.ver ?? 'dev',
     ts: Date.now(),
   };
-  for (const [key, value] of Object.entries(params)) {
-    if (typeof value === 'boolean') row[key] = value ? 1 : 0;
-    else row[key] = value;
-  }
+  for (const [key, value] of Object.entries(params)) row[key] = typeof value === 'boolean' ? +value : value;
   queue.push(row);
   const encoded = new TextEncoder().encode(JSON.stringify({ events: queue })).length;
   if (queue.length >= MAX_BATCH || encoded >= MAX_BYTES) void flush(true);
-  else if (!flushTimer && typeof window !== 'undefined') {
+  else if (!flushTimer) {
     flushTimer = window.setTimeout(() => {
       flushTimer = 0;
       void flush(false);
@@ -145,20 +118,18 @@ export function track(
 }
 
 export function bindClientErrors(opts: ITrackOptions): void {
-  if (typeof window === 'undefined') return;
-  addEventListener('error', () => {
+  const report = () => {
     track('client_error', { code: 'state_mismatch' }, opts);
-  });
-  addEventListener('unhandledrejection', () => {
-    track('client_error', { code: 'state_mismatch' }, opts);
-  });
+  };
+  addEventListener('error', report);
+  addEventListener('unhandledrejection', report);
 }
 
 export async function flush(useBeacon: boolean): Promise<void> {
   if (!queue.length) return;
   const events = queue.splice(0, MAX_BATCH);
   const body = JSON.stringify({ events });
-  if (useBeacon && typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+  if (useBeacon && typeof navigator.sendBeacon === 'function') {
     navigator.sendBeacon('/api/e', new Blob([body], { type: 'application/json' }));
     return;
   }

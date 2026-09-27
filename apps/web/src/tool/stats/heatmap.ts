@@ -1,4 +1,5 @@
 import { dayKey } from '@awaketab/core';
+import { pad } from '../format.js';
 
 export const HEATMAP_WEEKS = 12;
 export const FREE_HISTORY_DAYS = 7;
@@ -21,8 +22,7 @@ function localDay(base: Date, offset: number): Date {
 }
 
 function ymd(date: Date): string {
-  const p = (n: number) => String(n).padStart(2, '0');
-  return `${String(date.getFullYear())}-${p(date.getMonth() + 1)}-${p(date.getDate())}`;
+  return `${String(date.getFullYear())}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
 function todayLocal(now: number, timeZone?: string): Date {
