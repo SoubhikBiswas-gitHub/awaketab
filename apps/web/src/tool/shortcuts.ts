@@ -1,6 +1,6 @@
 import type { TPresetId } from '@awaketab/core';
 import type { IToolCtx } from './ctx.js';
-import { act, cycleTheme, help, notes, pip, toggleFullscreen } from './ui/actions.js';
+import { act, cycleTheme, help, notes, notesTyping, pip, toggleFullscreen } from './ui/actions.js';
 import { sound } from './ui/settings.js';
 
 const PRESET_KEYS: Record<string, Exclude<TPresetId, 'custom' | 'until'>> = {
@@ -52,6 +52,10 @@ export function keyHandler(
     // Esc closing a header menu must not also stop the session.
     if (e.target instanceof Element && e.target.closest('.at-hm-panel, [popovertarget]')) return;
     if ('showPopover' in root && document.querySelector('.at-hm-panel:popover-open')) return;
+    if (notesTyping(e.key)) {
+      e.preventDefault();
+      return;
+    }
     // The open <dialog> is the truth; the ambient layer is a <dialog> too but is a mode, not a dialog.
     const dialogOpen = root.querySelector('dialog[open]:not([data-ambient])');
     if (key === 'escape') {

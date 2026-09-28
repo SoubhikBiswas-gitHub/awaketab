@@ -244,11 +244,24 @@ export function open(ctx: IToolCtx, el: HTMLElement): void {
   else help(ctx, true, el);
 }
 
+let typed: string | undefined;
+
+// Keys pressed while the notes pack loads belong to the note, not to other shortcuts.
+export function notesTyping(key: string): boolean {
+  if (typed === undefined || key.length !== 1) return false;
+  typed += key;
+  return true;
+}
+
 // The notes pack (editor, storage, voice) loads the first time the drawer opens.
 export function notes(ctx: IToolCtx, opener?: Element | null): void {
-  void import('../packs/notes/index.js').then((m) => {
-    m.openNotes(ctx, opener);
-  });
+  typed ??= '';
+  const take = (): string => {
+    const text = typed ?? '';
+    typed = undefined;
+    return text;
+  };
+  void import('../packs/notes/index.js').then((m) => m.openNotes(ctx, opener, take)).finally(take);
 }
 
 export function pip(ctx: IToolCtx): void {

@@ -331,15 +331,19 @@ export function boot(root: HTMLElement): () => void {
   });
   // Single-key shortcuts load with the first key press; Space on the page must not scroll meanwhile.
   let onKey: ((e: KeyboardEvent) => void) | undefined;
+  const early: KeyboardEvent[] = [];
   window.addEventListener('keydown', (e) => {
     if (onKey) {
       onKey(e);
       return;
     }
     if (e.key === ' ' && e.target === document.body) e.preventDefault();
-    void import('./shortcuts.js').then((m) => {
-      (onKey ??= m.keyHandler(ctx, toggle, startPreset))(e);
-    });
+    // Keys pressed while the shortcuts load replay in order; separate import() promises may settle in any order.
+    if (early.push(e) === 1)
+      void import('./shortcuts.js').then((m) => {
+        onKey = m.keyHandler(ctx, toggle, startPreset);
+        for (const k of early) onKey(k);
+      });
   });
 
   // The header theme switch is run by the inline boot script (it also works on pages without the island);

@@ -58,6 +58,24 @@
     text-decoration: none;
   }
 
+  .at-site-header[data-tool] .at-logo {
+    flex-wrap: wrap;
+    align-content: flex-start;
+    column-gap: 0;
+    block-size: var(--at-h-control);
+    min-inline-size: var(--at-h-control);
+    overflow: clip;
+  }
+
+  .at-site-header[data-tool] .at-logo::before {
+    content: "";
+    block-size: var(--at-h-control);
+  }
+
+  .at-site-header[data-tool] .at-logo-word {
+    margin-inline-start: var(--at-gap-tight);
+  }
+
   .at-logo-mark {
     inline-size: 26px;
     block-size: 26px;
@@ -348,6 +366,16 @@
 
     .at-logo-word {
       display: none;
+    }
+  }
+
+  @media (width < 360px) {
+    .at-site-header[data-tool] {
+      gap: var(--at-s-2);
+    }
+
+    .at-site-header[data-tool] .at-header-end {
+      gap: var(--at-s-1);
     }
   }
 

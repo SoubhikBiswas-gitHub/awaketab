@@ -391,7 +391,7 @@
 
   .at-hy-word {
     display: grid;
-    grid-template-columns: repeat(var(--at-hy-cols), 1fr);
+    grid-template-columns: repeat(var(--at-hy-cols), minmax(0, 1fr));
     inline-size: 82%;
     color: color-mix(in srgb, var(--at-ink) 18%, transparent);
     font: var(--at-pg-type-hy-sm);
