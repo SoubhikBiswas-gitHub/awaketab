@@ -211,8 +211,39 @@ svg {
 }
 
 .at-logo-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--at-s-1);
   font-weight: 500;
   color: var(--at-muted);
+}
+
+.at-duo-f {
+  fill: var(--at-duo-c, var(--at-accent));
+  opacity: 0.22;
+}
+
+[data-theme="dark"] .at-duo-f,
+[data-theme="oled"] .at-duo-f {
+  opacity: 0.28;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .at-duo-f {
+    opacity: 0.28;
+  }
+}
+
+.at-duo-state {
+  --at-duo-c: var(--ext-tone, var(--at-accent));
+}
+
+.at-duo-good {
+  --at-duo-c: var(--at-good);
+}
+
+.at-duo-bad {
+  --at-duo-c: var(--at-bad);
 }
 
 .at-pill {

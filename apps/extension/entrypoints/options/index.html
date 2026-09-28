@@ -15,11 +15,11 @@
             <circle class="at-logo-bead" cx="24" cy="9" r="7.5" opacity="0.28"></circle>
             <circle class="at-logo-bead" cx="24" cy="9" r="4.2"></circle>
           </svg>
-          <span data-i18n="app.name"></span><span class="at-logo-sub" data-i18n="ext.options.forChrome"></span>
+          <span data-i18n="app.name"></span><span class="at-logo-sub"><svg data-logo="chrome" width="16" height="16"></svg><span data-i18n="ext.options.forChrome"></span></span>
         </div>
         <div class="op-head-end">
           <output class="op-saved" data-saved aria-live="polite"></output>
-          <a class="at-link op-open" href="https://awaketab.com/?source=ext" target="_blank" rel="noopener"><span data-i18n="ext.popup.open"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg></a>
+          <a class="at-link op-open" href="https://awaketab.com/?source=ext" target="_blank" rel="noopener"><span data-i18n="ext.popup.open"></span><svg data-icon="arrow-square-out" width="16" height="16"></svg></a>
         </div>
       </header>
 
@@ -54,13 +54,13 @@
                 <div class="op-levels">
                   <label class="op-levelcard">
                     <input class="at-sr" type="radio" name="level" value="display" />
-                    <span class="op-levelcard-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18v11H3zM9 20h6M12 16v4"></path></svg></span>
+                    <span class="op-levelcard-icon"><svg data-icon="monitor" width="20" height="20"></svg></span>
                     <span class="op-levelcard-text"><span class="op-levelcard-name" data-i18n="ext.level.display"></span><span class="op-levelcard-help" data-i18n="ext.level.display.help"></span></span>
                     <span class="op-radio" aria-hidden="true"></span>
                   </label>
                   <label class="op-levelcard">
                     <input class="at-sr" type="radio" name="level" value="system" />
-                    <span class="op-levelcard-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14v12H5zM3 20h18M9 10h6"></path></svg></span>
+                    <span class="op-levelcard-icon"><svg data-icon="cpu" width="20" height="20"></svg></span>
                     <span class="op-levelcard-text"><span class="op-levelcard-name" data-i18n="ext.level.system"></span><span class="op-levelcard-help" data-i18n="ext.level.system.help"></span></span>
                     <span class="op-radio" aria-hidden="true"></span>
                   </label>
@@ -144,7 +144,7 @@
                   </span>
                   <span class="op-lang-now">
                     <span data-lang-now></span>
-                    <svg class="op-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+                    <svg data-icon="caret-down" width="16" height="16" class="op-chev"></svg>
                   </span>
                 </button>
                 <div class="op-lang-list at-in" id="lang-list" role="radiogroup" aria-labelledby="lang-btn" data-lang-list hidden></div>
@@ -176,7 +176,7 @@
             </div>
             <p class="op-lead" data-schedules-intro></p>
             <p class="op-locked" data-locked hidden>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+              <svg data-icon="lock" width="20" height="20"></svg>
               <span><span data-i18n="ext.pro.locked"></span> <span data-i18n="ext.options.lockedMore"></span></span>
               <a href="https://awaketab.com/pro" target="_blank" rel="noopener" data-i18n="pro.see"></a>
             </p>
@@ -288,7 +288,7 @@
             <h2 id="h-license" data-i18n="ext.license.title"></h2>
             <div class="op-card op-card-pad">
               <div class="op-licence at-in" data-license-active hidden>
-                <span class="op-licence-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+                <span class="op-licence-icon" aria-hidden="true"><svg data-icon="seal-check" width="24" height="24" class="at-duo-good"></svg></span>
                 <div class="op-text">
                   <div class="op-label" data-i18n="pro.activated"></div>
                   <div class="op-help op-tight" data-license-plan></div>

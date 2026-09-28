@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'wxt';
 import { polarDefines } from '../web/scripts/polar-server.mjs';
 import { awaketabExtension, localeMessages } from './scripts/i18n.mjs';
+import { awaketabIcons } from './scripts/svg-icons.mjs';
 
 const TEST_BUILD = process.env.AT_EXT_TEST === '1';
 const here = (relative: string) => fileURLToPath(new URL(relative, import.meta.url));
@@ -55,7 +56,7 @@ export default defineConfig({
     },
   },
   vite: () => ({
-    plugins: [awaketabExtension()],
+    plugins: [awaketabExtension(), awaketabIcons()],
     // PUBLIC_POLAR_SERVER=production (set by `pnpm -F extension zip`) drops the dev licence key (LAUNCH-AUDIT N-03).
     define: { __AT_TEST__: JSON.stringify(TEST_BUILD), ...polarDefines() },
     resolve: {
