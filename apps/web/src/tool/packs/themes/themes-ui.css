@@ -174,14 +174,35 @@ html[data-pv-fade]::view-transition-new(root) {
   font-weight: 600;
 }
 
-.at-lk-opt > .at-tag {
+.at-cz-star {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  inline-size: var(--at-icon-md);
+  block-size: var(--at-icon-md);
+  border-radius: var(--at-r-pill);
+  color: var(--at-accent-text);
+}
+
+.at-cz-star[hidden] {
+  display: none;
+}
+
+.at-lk-opt > .at-cz-star {
   position: absolute;
   inset-block-start: var(--at-s-2);
   inset-inline-end: var(--at-s-2);
   background: var(--at-surface);
+  box-shadow: 0 0 0 1px var(--at-line);
 }
 
-.at-lk-opt > .at-tag[hidden] {
+.at-lk-note {
+  display: flex;
+  align-items: center;
+  gap: var(--at-gap-tight);
+}
+
+.at-lk-note[hidden] {
   display: none;
 }
 

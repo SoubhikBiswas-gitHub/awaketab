@@ -123,7 +123,7 @@ export default defineConfig({
             // The sound pack's synth engine and track player load when something first plays, not with its panel.
             const snd = /\/src\/tool\/packs\/sound\/(engine|player)\./u.exec(id)?.[1];
             if (snd) return snd === 'engine' ? 'pack-sound-tone' : 'pack-sound-howler';
-            const own = /\/src\/tool\/packs\/(faces|sound|notes|themes|extras)\//u.exec(id)?.[1];
+            const own = /\/src\/tool\/packs\/(faces|sound|notes|themes|extras|customize)\//u.exec(id)?.[1];
             if (own) return `pack-${own}`;
             const lib = PACK_LIBS.find(([re]) => re.test(id));
             if (lib) return `pack-${lib[1]}`;
