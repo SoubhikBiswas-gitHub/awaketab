@@ -27,9 +27,9 @@ const COLOUR_FILES = [
   'apps/web/src/styles/tool*.css',
   'apps/web/src/tool/packs/**/*.css',
   'apps/web/public/assets/faces.css',
+];
 // docs/05 §1: the content, marketing and extension stylesheets take every colour from a var(--at-*) token. A mask
 // reads alpha only, so it may name #000; drawings that keep fixed colours opt out in marked blocks.
-const RAW_COLOUR = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/iu;
 const COLOUR_SHEETS = [
   '**/styles/content.css',
   '**/styles/article/*.css',
