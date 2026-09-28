@@ -2,11 +2,11 @@
 
 :root,
 [data-theme="light"] {
-  --at-am-bg: radial-gradient(120% 70% at 50% 26%, #fff 0%, #f2f6fa 60%, #eef3f8 100%);
-  --at-am-flat: #f2f6fa;
-  --at-am-pip-bg: radial-gradient(120% 90% at 30% 20%, #fff 0%, #f2f6fa 70%);
-  --at-am-good: #167a50;
-  --at-am-alt: #5a47cf;
+  --at-am-bg: radial-gradient(120% 70% at 50% 26%, var(--at-lift) 0%, var(--at-ground) 60%, var(--at-ground-end) 100%);
+  --at-am-flat: var(--at-ground);
+  --at-am-pip-bg: radial-gradient(120% 90% at 30% 20%, var(--at-lift) 0%, var(--at-ground) 70%);
+  --at-am-good: var(--at-good);
+  --at-am-alt: var(--at-lamp-violet-light);
   --at-am-aura-a: 9%;
   --at-am-pip-aura-a: 10%;
   --at-am-tap-a: 70%;
@@ -15,30 +15,16 @@
 
 [data-theme="dark"],
 [data-theme="oled"] {
-  --at-am-bg: radial-gradient(120% 70% at 50% 26%, #13203a 0%, #0a0e16 58%, #070a11 100%);
-  --at-am-flat: #0a0e16;
-  --at-am-pip-bg: radial-gradient(120% 90% at 30% 20%, #13203a 0%, #0a0e16 70%);
-  --at-am-good: #7ef0b8;
-  --at-am-alt: #a594ff;
+  --at-am-alt: var(--at-lamp-violet-dark);
   --at-am-aura-a: 13%;
   --at-am-pip-aura-a: 16%;
   --at-am-tap-a: 55%;
   --at-am-good-a: 10%;
 }
 
-[data-theme="oled"] {
-  --at-am-bg: #000;
-  --at-am-flat: #000;
-  --at-am-pip-bg: #000;
-}
-
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --at-am-bg: radial-gradient(120% 70% at 50% 26%, #13203a 0%, #0a0e16 58%, #070a11 100%);
-    --at-am-flat: #0a0e16;
-    --at-am-pip-bg: radial-gradient(120% 90% at 30% 20%, #13203a 0%, #0a0e16 70%);
-    --at-am-good: #7ef0b8;
-    --at-am-alt: #a594ff;
+    --at-am-alt: var(--at-lamp-violet-dark);
     --at-am-aura-a: 13%;
     --at-am-pip-aura-a: 16%;
     --at-am-tap-a: 55%;
@@ -47,11 +33,11 @@
 }
 
 [data-accent="violet"] {
-  --at-am-alt: #087b87;
+  --at-am-alt: var(--at-lamp-aqua-light);
 }
 
 [data-accent="violet"]:is([data-theme="dark"], [data-theme="oled"]) {
-  --at-am-alt: #5be0e8;
+  --at-am-alt: var(--at-lamp-aqua-dark);
 }
 
 :root {
@@ -844,25 +830,27 @@
   --at-ink: var(--at-night-ink-2);
   --at-ink-2: var(--at-night-muted);
   --at-muted: var(--at-night-muted);
-  --at-surface: #0a0a0a;
+  --at-surface: var(--at-night-surface);
   --at-line: var(--at-night-line);
   --at-line-strong: var(--at-night-line);
   --at-raised: var(--at-night-line);
   --at-track: var(--at-night-line);
   --at-tick: var(--at-night-line);
-  --at-sunken: #000;
+  --at-sunken: var(--at-night-ground);
   --at-input-border: var(--at-night-muted);
   --at-accent: var(--at-night-muted);
+  --at-accent-text: var(--at-night-muted);
+  --at-on-accent: var(--at-night-ground);
   --at-focus: var(--at-night-muted);
   --at-am-primary-ink: var(--at-night-muted);
   --at-am-bead: var(--at-am-logo-dot);
-  --card: #0a0a0a;
+  --card: var(--at-night-surface);
   --card-foreground: var(--at-night-ink-2);
   --foreground: var(--at-night-ink-2);
   --muted-foreground: var(--at-night-muted);
   --border: var(--at-night-line);
 
-  background: #000;
+  background: var(--at-night-ground);
 }
 
 .at-ambient.at-ambient[data-mode="night"][open] {
@@ -1179,7 +1167,7 @@
   position: absolute;
   inset-block: 0;
   inline-size: 26%;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 50%), transparent);
+  background: linear-gradient(90deg, transparent, var(--at-sheen), transparent);
   animation: am-shim 3.8s var(--at-am-ease) infinite;
 }
 
@@ -1320,7 +1308,7 @@
   border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
-  box-shadow: 0 24px 64px -24px rgb(0 0 0 / 45%);
+  box-shadow: var(--at-shadow-float);
   text-align: start;
   animation-delay: 0.08s;
 }

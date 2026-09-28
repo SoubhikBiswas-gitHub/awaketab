@@ -19,7 +19,9 @@ export function applyTheme(theme: TTheme, nightForceOled = false): 'light' | 'da
   document.documentElement.dataset.themePref = theme;
   document.documentElement.style.colorScheme = resolved === 'light' ? 'light' : 'dark';
   const meta = document.querySelector('meta[name="theme-color"]:not([media])');
-  if (meta) meta.setAttribute('content', GROUND[resolved]);
+  // The page ground of the colour theme in use; the Clear Night value until themes.css has loaded.
+  const ground = getComputedStyle(document.documentElement).getPropertyValue('--at-ground').trim();
+  if (meta) meta.setAttribute('content', ground || GROUND[resolved]);
   return resolved;
 }
 

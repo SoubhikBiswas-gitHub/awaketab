@@ -1,6 +1,7 @@
 :is(.at-face-x, .at-fg-host) {
   --at-fx-ink: var(--at-ink-2);
   --at-fx-glow: 0;
+  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- face art: the inner shadow of a face panel */
   --at-fx-shade: rgb(14 23 38 / 22%);
 
   place-items: center;
@@ -25,6 +26,7 @@
 }
 
 :root:is([data-theme="dark"], [data-theme="oled"]) :is(.at-face-x, .at-fg-host) {
+  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- face art: the inner shadow of a face panel */
   --at-fx-shade: rgb(0 0 0 / 55%);
 }
 

@@ -43,13 +43,14 @@ Additional tokens (from the design critique, 27 Sep 2026):
 |---|---|---|---|
 | `--at-raised` | `#26324B` | `#E3E9F1` | Neutral selected segment (theme switch), raised tile |
 | `--at-sunken` | `#0D131F` | `#F6F9FC` | Code blocks, timer wells, URL outputs, input fill |
-| `--at-input-border` | `#5A6781` | `#818C9C` | Input, select and textarea borders (≥ 3:1, decision O-56; light was `#8C98AA`, only 2.7:1 on ground, B1) |
+| `--at-input-border` | `#606D88` | `#818C9C` | Input, select and textarea borders (≥ 3:1 on ground, surface, sunken and the page lift; light was `#8C98AA`, only 2.7:1 on ground; dark was `#5A6781`, 2.85:1 on the lift) |
+| `--at-on-tone` | `#0A0E16` | `#FFFFFF` | Text and icons on a solid good, warn or bad fill |
 | `--at-horizon-ink` | `#F6F2EA` | `#F6F2EA` | Digits on the Horizon sky and water |
 | `--at-halo` | lamp 18 % → 0, radial 50 % 26 % | lamp 10 % → 0 | The single status halo behind pill/face on every surface |
 
 Extension toolbar badge (Chrome draws it; white text): Screen level `#087B87` (5.0:1), System level `#2B3A67` (11:1). Replaces the amber display badge in docs/00 `BADGE_COLORS` and docs/10, because amber means paused.
 
-Night mode (OLED, red digits): `--at-night-ink #FF5A3C`, `--at-night-ink-2 #E8563C`, `--at-night-muted #A89690`, `--at-night-line #3A2E2A`; ground `#000`. Scrim is always `rgba(4,7,12,.55)`.
+Night mode (OLED, red digits): `--at-night-ink #FF5A3C`, `--at-night-ink-2 #E8563C`, `--at-night-muted #A89690`, `--at-night-line #3A2E2A`; ground `--at-night-ground #000`, cards `--at-night-surface #0A0A0A`. Scrim is always `rgba(4,7,12,.55)`. Success (a finished cook timer, success toasts) is `--at-good`, never a lamp. Every colour in the tool and shell comes from a token; `test/tool/colour-pairs.test.ts` checks each pair for AA in every theme, colour theme and lamp.
 
 ### 2.2 Lamp colours (user choice)
 

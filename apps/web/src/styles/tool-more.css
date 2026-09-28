@@ -358,7 +358,7 @@
 }
 
 .at-toast-success .at-toast-i {
-  color: var(--at-accent);
+  color: var(--at-good);
 }
 
 .at-toast[inert] {
@@ -1905,10 +1905,6 @@
   background: color-mix(in srgb, var(--at-accent) 90%, transparent);
 }
 
-:root[data-theme="light"]:not([data-accent]) .at-heat-cell[data-level="4"] {
-  --dot-ink: var(--at-ink);
-}
-
 .at-heat-cell[data-locked] {
   background: repeating-linear-gradient(135deg, var(--at-track) 0 3px, transparent 3px 6px);
   box-shadow: inset 0 0 0 1px var(--at-line);
@@ -2431,7 +2427,7 @@
   background: var(--at-raised);
 }
 
-:root:is([data-theme="dark"], [data-theme="oled"]):not([data-accent="violet"]) .at-heat-cell[data-level="3"] {
+:root:is([data-theme="dark"], [data-theme="oled"]) .at-heat-cell[data-level="3"] {
   --dot-ink: var(--at-on-accent);
 }
 

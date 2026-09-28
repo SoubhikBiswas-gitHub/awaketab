@@ -29,10 +29,11 @@ Clear Night palette (`DESIGN.md` §2.1; redesign B1). Tinted neutrals plus one l
 | `--at-tick` | `#CCD5E1` | `#2A3752` | `#2A3752` | Ring minute ticks |
 | `--at-raised` | `#E3E9F1` | `#26324B` | `#26324B` | Neutral selected segment, Stop and strong neutral buttons (D-R20) |
 | `--at-sunken` | `#F6F9FC` | `#0D131F` | `#0D131F` | Code blocks, timer wells, URL outputs, input fill |
-| `--at-input-border` | `#818C9C` | `#5A6781` | `#5A6781` | Input, select and textarea borders (≥ 3:1 on ground and surface, O-56) |
+| `--at-input-border` | `#818C9C` | `#606D88` | `#606D88` | Input, select and textarea borders (≥ 3:1 on ground, surface, sunken and the page lift; dark was `#5A6781`, 2.85:1 on the lift) |
 | `--at-accent` | lamp light value | lamp dark value | lamp dark value | Ring progress, held state, primary buttons (§1.1a; default Aqua `#087B87` / `#5BE0E8`) |
 | `--at-accent-text` | lamp light value | lamp dark value | lamp dark value | Accent-coloured text (≥ 4.5:1 on ground and surface) and the filled primary button (`--primary`) |
 | `--at-on-accent` | `#FFFFFF` | `#04232A` | `#04232A` | Text on lamp-filled buttons (≥ 4.5:1 for every lamp) |
+| `--at-on-tone` | `#FFFFFF` | `#0A0E16` | `#0A0E16` | Text and icons on a solid good, warn or bad fill (shadcn `--destructive-foreground`, `--success-foreground`, `--warning-foreground`); ≥ 4.5:1 on every colour theme, which inherit it |
 | `--at-focus` | lamp light value | lamp dark value | lamp dark value | 2 px outline, ≥ 3:1 against the page |
 | `--at-night` | `#2B3A67` | `#9DB0FF` | `#9DB0FF` | Night indigo accents |
 | `--at-good` | `#1E7B4D` | `#5FD39A` | `#5FD39A` | Completed flash, success toasts |
@@ -41,13 +42,15 @@ Clear Night palette (`DESIGN.md` §2.1; redesign B1). Tinted neutrals plus one l
 
 Fonts: Geist and Geist Mono (© The Geist Project Authors) and Space Grotesk (© The Space Grotesk Project Authors), all SIL Open Font License 1.1; licence texts ship as `/fonts/OFL-Geist.txt` and `/fonts/OFL-SpaceGrotesk.txt`, no Reserved Font Name, so the subset keeps its name (§1.2).
 
-Theme-independent: `--at-horizon-ink` `#F6F2EA` (Horizon digits) · night mode `--at-night-digit` / `--at-night-ink` `#FF5A3C`, `--at-night-ink-2` `#E8563C`, `--at-night-muted` `#A89690`, `--at-night-line` `#3A2E2A` (ground `#000`) · `--at-scrim` `rgb(4 7 12 / 55%)`.
+Theme-independent: `--at-horizon-ink` `#F6F2EA` (Horizon digits) · night mode `--at-night-digit` / `--at-night-ink` `#FF5A3C`, `--at-night-ink-2` `#E8563C`, `--at-night-muted` `#A89690`, `--at-night-line` `#3A2E2A`, `--at-night-ground` `#000`, `--at-night-surface` `#0A0A0A` (Night mode maps ink, lines, lamp, accent text, on-accent and focus onto these, so nothing in it glows another colour) · `--at-scrim` `rgb(4 7 12 / 55%)` · `--at-sheen` `rgb(255 255 255 / 50%)` (the moving highlight on progress fills).
 
 `--at-warn`, `--at-bad` and `--at-input-border` in `light` are darker than the first `DESIGN.md` §2.1 draft (`#B7791F` 3.4:1, `#D14343` 4.2:1, `#8C98AA` 2.7:1 on ground) so tone text passes 4.5:1 and input borders 3:1.
 
 Page ground (B2): `body` paints `radial-gradient(120% 70% at 50% 26%, var(--at-lift) 0%, var(--at-ground) 62%, var(--at-ground-end) 100%)` over `--at-ground` (`shell.css`). `--at-lift` `#FFFFFF` / `#13203A` / `#000000` · `--at-ground-end` `#EEF3F8` (O-57) / `#0A0E16` / `#000000` · `--at-elev` `0 1px 2px rgb(14 23 38 / 6%)` in `light`, `none` in `dark` and `oled` (cards). The status halo stays with the tool face (B3).
 
-State-tinted surfaces are derived, never hand-picked: `color-mix(in srgb, var(--at-accent) 12%, var(--at-surface))` for the `held` pill, `--at-warn` 12% for `lost`, `--at-bad` 12% for `denied`. Every text/background pair used in the island must be listed in `13-testing-strategy.md`'s contrast test fixture; CI fails below WCAG 2.2 AA (4.5:1 text, 3:1 UI/large text). `test/tool/accent.test.ts` checks the four `tokens.css` lamps in every theme and the neutral/tone text tokens; `test/tool/looks.test.ts` checks every colour theme × lamp × theme with `culori` (§1.1b).
+State-tinted surfaces are derived, never hand-picked: `color-mix(in srgb, var(--at-accent) 12%, var(--at-surface))` for the `held` pill, `--at-warn` 12% for `lost`, `--at-bad` 12% for `denied`. Every text/background pair used in the island must be listed in `13-testing-strategy.md`'s contrast test fixture; CI fails below WCAG 2.2 AA (4.5:1 text, 3:1 UI/large text). `test/tool/accent.test.ts` checks the four `tokens.css` lamps in every theme and the neutral/tone text tokens; `test/tool/looks.test.ts` checks every colour theme × lamp × theme with `culori` (§1.1b); `test/tool/colour-pairs.test.ts` checks every pair the tool and shell paint (ink, ink-2 and muted on ground, surface, lift, sunken, raised and the secondary fill; accent text, tone text, lamp, focus ring and input borders on each ground; text on selected items, pills, tags, warning cards and the finished cook timer; labels on lamp and tone fills; arcs on the ring track; heat-map dots; the Focus break colour; Night mode) for the 9 colour themes × 12 lamps and 6 fitted custom lamps × light, dark and OLED, and that auto in a dark system paints the dark tokens.
+
+Where the colours come from: accent text is AA only on ground, surface, sunken and lift, so text on a lamp tint is `--at-ink` or `--at-ink-2` (the preview chip is `--at-surface` so its accent-text action stays AA); success is `--at-good` (toasts, the finished cook timer), paused `--at-warn`, blocked `--at-bad`, and the lamp only means awake or selected. Stylelint's `declaration-property-value-disallowed-list` rule rejects raw colours (hex, `rgb()`, `hsl()`, `oklch()` and the rest, and named colours) in the tool and shell stylesheets (`base`, `shell`, `footer`, `header-menus`, `update-banner`, `icon-motion`, `ambient`, `tool*.css`, the pack stylesheets and `public/assets/faces.css`); masks are exempt because they only read alpha, and face art (Horizon, Tide, Nixie glass, LCD glare, flip hinge, face shadows, the custom-lamp wheel) opts out in marked blocks.
 
 ### 1.1a Lamp colours (accent)
 
@@ -159,8 +162,8 @@ Only `button` and `badge` exist in `components/ui/` today (the rest were removed
 | `--primary-foreground` | `--at-on-accent` | |
 | `--secondary` · `--muted` | `color-mix(in srgb, var(--at-ink) 6%, var(--at-surface))` | `--secondary-foreground` → `--at-ink`; `--muted-foreground` → `--at-muted` |
 | `--accent` | `color-mix(in srgb, var(--at-accent) 12%, var(--at-surface))` | The §1.1 state-tint rule; `--accent-foreground` → `--at-ink` |
-| `--destructive` | `--at-bad` | `--destructive-foreground` `#fff` |
-| `--success` · `--warning` · `--night` | `--at-good` · `--at-warn` · `--at-night` | Custom (not in stock shadcn); foregrounds `#fff` |
+| `--destructive` | `--at-bad` | `--destructive-foreground` → `--at-on-tone` (was `#fff`, 2.2:1 on the dark red) |
+| `--success` · `--warning` · `--night` | `--at-good` · `--at-warn` · `--at-night` | Custom (not in stock shadcn); foregrounds → `--at-on-tone` |
 | `--border` | `--at-line` | `@layer base` applies `border-border outline-ring/50` to `*` |
 | `--input` | `--at-input-border` | Was `--at-line` until B2; form borders need ≥ 3:1 (decision O-56). Outline buttons in `dark` (`dark:border-input`, `dark:bg-input/30`) follow it |
 | `--ring` | `--at-focus` | |

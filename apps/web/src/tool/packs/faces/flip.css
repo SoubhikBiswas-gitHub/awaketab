@@ -16,6 +16,7 @@
 :root[data-theme="dark"] .at-fx-flip {
   --at-fx-top: color-mix(in srgb, var(--at-ink) 8%, var(--at-surface));
   --at-fx-bot: color-mix(in srgb, var(--at-ink) 3%, var(--at-surface));
+  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- face art: the flip card hinge */
   --at-fx-hinge: rgb(0 0 0 / 60%);
 }
 
