@@ -1308,7 +1308,7 @@ const eight = ready.chip === 'custom';
         <span class="at-sg-text">
           <span class="at-sg-title">{t('settings.g.timer')}</span>
           <span class="at-sg-now"
-            ><span>{
+            ><span data-sg-end></span><span>{
               sumEnd.map(([v, k]) => <span data-v={v}>{t(k)}</span>)
             }</span> · <span>{
               endSounds.map((id) => (

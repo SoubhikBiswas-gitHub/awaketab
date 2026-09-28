@@ -1,8 +1,9 @@
 import type { ISettings } from '@awaketab/core';
 import type { IToolCtx } from '../../ctx.js';
 import type * as TPreviewMod from '../themes/preview.js';
-import { hm } from '../../format.js';
+import { dateLong, dayDiff, dtf, hm } from '../../format.js';
 import { t } from '../../i18n.js';
+import { liveSession, plannedSec } from '../../ui/view.js';
 import { breathOf } from './breathe.js';
 import { mountLines } from './lines.js';
 import { autoOn, autoPreviewing, cleanIntention, el, INTENTION_MAX, isPro, save, setAutoPreview } from './common.js';
@@ -158,12 +159,33 @@ function build(ctx: IToolCtx, form: HTMLElement): HTMLElement {
 
   let preview: TPreview | undefined;
   const shows = form.querySelector('[data-t="nowShows"]');
+  const endLine = form.querySelector('[data-sg-end]');
+  // Timer's first fragment: when the running session, or the chosen length started now, would end.
+  const ends = (at: number, c24: boolean | null): string => {
+    const st = store.get();
+    const live = liveSession(st);
+    const sec = live ? 0 : plannedSec(st, ctx.params.routeUntil, at);
+    const end = live ? live.endsAt : sec ? at + sec * 1000 : null;
+    if (end === null) return t('settings.sum.untilStop');
+    const ms = Math.round(end / 60_000) * 60_000;
+    const d = dayDiff(ms, at);
+    const time = hm(ms, c24);
+    if (d < 1) return t('settings.sum.ends', { time });
+    return d === 1
+      ? t('settings.sum.endsTomorrow', { time })
+      : t('settings.sum.endsDay', { day: dtf({ weekday: 'long' }).format(ms), time });
+  };
   const paintNow = () => {
     const s = settings();
     const z = validZone(s.worldClock) ? s.worldClock : null;
     now.hidden = !z;
     const at = Date.now();
-    if (shows) shows.textContent = t('settings.clock.now', { time: hm(at, s.ambient.clock24h, s.ambient.showSeconds) });
+    const c24 = s.ambient.clock24h;
+    if (shows)
+      shows.textContent = t('settings.clock.now', {
+        time: `${dateLong(at)} · ${hm(at, c24, s.ambient.showSeconds)}`,
+      });
+    if (endLine) endLine.textContent = `${ends(at, c24)} · `;
     if (zoneLine) zoneLine.textContent = z ? ` · ${cityOf(z)} ${diffText(diffMin(z, at))}` : '';
     if (z) {
       nowText.textContent = t('settings.focus.zoneNow', {

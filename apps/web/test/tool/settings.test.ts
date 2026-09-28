@@ -70,7 +70,8 @@ const SETTINGS_HTML = `
       <label><input type="checkbox" name="keyboardShortcuts" checked /> Shortcuts</label>
       <label><input type="checkbox" name="keyboardHints" checked /> Hints</label>
       <label><input type="checkbox" name="reduceMotion" /> Reduce motion</label>
-      <details data-sg="timer"><summary>Timer</summary></details>
+      <details data-sg="timer"><summary>Timer <span data-sg-end></span></summary></details>
+      <span data-t="nowShows"></span>
       <details data-sg="device"><summary>Device</summary></details>
       <button type="button" data-dialog-close>Close</button>
       <details class="at-sg-reset">
@@ -299,7 +300,7 @@ describe('openSettings', () => {
   });
 
   it('opens the group it is asked for, and Reset asks inline before it resets', async () => {
-    const { ctx, root, storage } = makeCtx({ html: SETTINGS_HTML, settings: STORED });
+    const { ctx, root, store, storage } = makeCtx({ html: SETTINGS_HTML, settings: STORED });
     openSettings(ctx, undefined, 'device');
     const dialog = root.querySelector<HTMLDialogElement>('[data-dialog="settings"]') as HTMLDialogElement;
     await vi.waitFor(() => {
@@ -309,6 +310,17 @@ describe('openSettings', () => {
     expect(open('device')).toBe(true);
     expect(open('timer')).toBe(false);
     expect(root.querySelector<HTMLElement>('[data-looks]')?.hidden).toBe(true);
+
+    // Timer leads with the consequence of the chosen length (1 h here); Clock's "Now shows" has the full date.
+    const end = () => root.querySelector('[data-sg-end]')?.textContent ?? '';
+    await vi.waitFor(() => {
+      expect(end()).toMatch(/^Ends (tomorrow )?at \d{1,2}:\d{2}\s[AP]M · $/u);
+    });
+    expect(root.querySelector('[data-t="nowShows"]')?.textContent).toMatch(
+      /^Now shows [A-Z][a-z]+day, \d{1,2} [A-Z][a-z]+ \d{4} · \d{1,2}:\d{2}:\d{2}\s[AP]M$/u,
+    );
+    store.set({ selectedPreset: 'pinf' });
+    expect(end()).toBe('Until you stop · ');
 
     const box = root.querySelector<HTMLDetailsElement>('.at-sg-reset') as HTMLDetailsElement;
     box.open = true;
