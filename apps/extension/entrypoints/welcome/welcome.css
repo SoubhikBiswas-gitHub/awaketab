@@ -500,18 +500,14 @@
   color: var(--bar-ink);
 }
 
-.wl-pin svg path {
-  fill: none;
-}
-
 .wl-pin[aria-pressed="true"] {
   border-color: color-mix(in srgb, var(--at-accent) 60%, transparent);
   background: color-mix(in srgb, var(--at-accent) 16%, transparent);
   color: var(--at-accent);
 }
 
-.wl-pin[aria-pressed="true"] svg path {
-  fill: currentcolor;
+.wl-pin[aria-pressed="true"] .at-duo-f {
+  opacity: 1;
 }
 
 .wl-pin[aria-pressed="false"],

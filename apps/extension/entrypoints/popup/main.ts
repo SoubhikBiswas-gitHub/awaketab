@@ -43,11 +43,6 @@ const GLYPH = {
     'M6 3.4a2.6 2.6 0 1 1 0 5.2a2.6 2.6 0 1 1 0-5.2zM6 .6a5.4 5.4 0 1 1 0 10.8a5.4 5.4 0 1 1 0-10.8zm0 1.4a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
   half: 'M6 .8a5.2 5.2 0 1 1 0 10.4a5.2 5.2 0 1 1 0-10.4zM6 2.3a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 1 1 0-7.4zM6 2.3a3.7 3.7 0 0 0 0 7.4z',
 } as const;
-const ICON = {
-  calendar: 'M4 6.5h16v13H4zM4 10.5h16M8.5 3.5v5M15.5 3.5v5',
-  power: 'M12 3v8M6.4 6.6a8 8 0 1 0 11.2 0',
-  site: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM3.5 12h17M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18',
-} as const;
 
 type TMode = 'ready' | 'starting' | 'held' | 'ended' | 'blocked';
 
@@ -85,7 +80,7 @@ async function boot(): Promise<void> {
     pillGlyph: q(root, '[data-pill-glyph]', SVGPathElement),
     extra: q(root, '[data-pill-extra]'),
     origin: q(root, '[data-origin]'),
-    originIcon: q(root, '[data-origin-icon]', SVGPathElement),
+    originIcons: [...root.querySelectorAll<SVGSVGElement>('[data-origin-icon]')],
     originText: q(root, '[data-origin-text]'),
     meta: q(root, '[data-meta]'),
     meta2: q(root, '[data-meta2]'),
@@ -280,10 +275,8 @@ async function boot(): Promise<void> {
     const originKey = held && origin && origin !== 'user' && origin !== 'command' ? `ext.origin.${origin}` : null;
     if (show(el.origin, originKey !== null)) {
       el.originText.textContent = t(originKey ?? '');
-      el.originIcon.setAttribute(
-        'd',
-        origin === 'startup' ? ICON.power : origin === 'autostart' ? ICON.site : ICON.calendar,
-      );
+      const shown = origin === 'startup' || origin === 'autostart' ? origin : 'schedule';
+      for (const icon of el.originIcons) icon.toggleAttribute('hidden', icon.dataset.originIcon !== shown);
     }
 
     // Meta lines under the pill.
