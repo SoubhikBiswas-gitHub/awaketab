@@ -42,6 +42,17 @@
     font-weight: 600;
   }
 
+  .at-brand-cell {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--at-s-2);
+  }
+
+  .at-brand-cell > svg {
+    flex-shrink: 0;
+    margin-block-start: 0.2em;
+  }
+
   .at-cp .at-md tr:last-child > td {
     border-block-end: 0;
   }

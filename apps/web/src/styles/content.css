@@ -127,11 +127,10 @@
   .at-crumb-sep svg {
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  }
+
+  [dir="rtl"] .at-crumb-sep svg {
+    scale: -1 1;
   }
 
   .at-art {
@@ -195,15 +194,13 @@
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
     flex-shrink: 0;
-    fill: none;
-    stroke: var(--at-accent);
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    color: var(--at-accent-text);
   }
 
   .at-meta-stale svg {
-    stroke: var(--at-warn);
+    --at-tone: var(--at-warn);
+
+    color: var(--at-ink);
   }
 
   .at-meta .at-meta-stale {
@@ -232,7 +229,7 @@
 
   .at-meta-pending svg {
     margin-block-start: calc(var(--at-s-1) / 2);
-    stroke: currentcolor;
+    color: currentcolor;
   }
 
   .at-meta-pending a {
@@ -449,8 +446,19 @@
     font: var(--at-type-small);
   }
 
+  .at-facts li {
+    align-items: center;
+  }
+
   .at-facts span {
     color: var(--at-ink-2);
+  }
+
+  .at-logo-in {
+    display: inline-block;
+    flex-shrink: 0;
+    margin-inline-end: var(--at-s-2);
+    vertical-align: -0.2em;
   }
 
   .at-facts strong {
@@ -534,10 +542,7 @@
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
     margin-block-start: calc(var(--at-s-1) / 2);
-    fill: none;
-    stroke: var(--at-ink-2);
-    stroke-width: 1.8;
-    stroke-linecap: round;
+    color: var(--at-ink-2);
   }
 
   .at-note > div {
@@ -600,11 +605,7 @@
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
     flex-shrink: 0;
-    fill: none;
-    stroke: var(--at-muted);
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    color: var(--at-muted);
     transition: transform var(--at-d-slide) var(--at-ease);
   }
 
@@ -731,10 +732,6 @@
   .at-faq-icon svg {
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
     transition: transform var(--at-d-slide) var(--at-ease);
   }
 

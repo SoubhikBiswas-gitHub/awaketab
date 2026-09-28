@@ -1241,9 +1241,10 @@
     block-size: var(--at-h-tag);
   }
 
-  .at-legal-dates .at-tag > svg {
-    stroke: var(--at-accent);
-    stroke-width: 2.2;
+  .at-legal-dates .at-tag > .at-duo {
+    fill: currentcolor;
+    stroke: none;
+    color: var(--at-accent-text);
   }
 
   .at-legal-lede {
@@ -1347,11 +1348,7 @@
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
     margin-block-start: var(--at-s-1);
-    fill: none;
-    stroke: var(--at-accent);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
+    color: var(--at-accent-text);
   }
 
   .at-legal-short p {

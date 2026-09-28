@@ -7,9 +7,12 @@ import '../styles/pick-gallery.css';
 import '../styles/tilt.css';
 import Button from './shell/Button.astro';
 import StatusPill from './shell/StatusPill.astro';
+import Icon from './icons/Icon.astro';
+import Brand from './icons/Brand.astro';
 import { t } from '../i18n/load';
 import { articleSchema, itemListSchema, type TSchemaNode } from '../lib/seo';
 import { HUBS, type IHubItem } from '../lib/hubs';
+import { brandsIn } from '../lib/brands';
 
 interface Props {
   kind: 'vs' | 'guides';
@@ -30,32 +33,23 @@ for (const entry of await getCollection(kind)) {
   if (entry.data.locale === 'en') entries.set(entry.id.replace(/^en\//u, ''), entry);
 }
 
-const ICON = {
-  tab: 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM3 9h18',
-  code: 'M9 7l-5 5 5 5M15 7l5 5-5 5',
-  laptop: 'M6 5h12a1 1 0 0 1 1 1v9H5V6a1 1 0 0 1 1-1zM3 18h18',
-  terminal: 'M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM7 10l3 2.5L7 15M13 15h4',
-  monitor: 'M4 4h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zM9 20h6M12 16v4',
-  mouse: 'M12 3a6 6 0 0 1 6 6v6a6 6 0 0 1-12 0V9a6 6 0 0 1 6-6zM12 7v3',
-  phone: 'M8 2.5h8A1.5 1.5 0 0 1 17.5 4v16a1.5 1.5 0 0 1-1.5 1.5H8A1.5 1.5 0 0 1 6.5 20V4A1.5 1.5 0 0 1 8 2.5zM11 18.5h2',
-} as const;
-const ICON_OF: Record<string, keyof typeof ICON> = {
-  'nosleep-page': 'tab',
+// What kind of tool or fix a card is; a tag that names a browser or system shows that brand's logo instead.
+const ICON_OF: Record<string, string> = {
+  'nosleep-page': 'browser',
   'nosleep-js': 'code',
   amphetamine: 'laptop',
   caffeine: 'laptop',
-  'caffeinate-command': 'terminal',
+  'caffeinate-command': 'terminal-window',
   'powertoys-awake': 'monitor',
   'mouse-jigglers': 'mouse',
-  'iphone-auto-lock-never-greyed-out': 'phone',
-  'android-screen-timeout-one-app': 'phone',
+  'iphone-auto-lock-never-greyed-out': 'device-mobile',
+  'android-screen-timeout-one-app': 'device-mobile',
   'windows-11-screen-turns-off-after-1-minute': 'monitor',
   'lock-screen-vs-sleep': 'monitor',
   'mac-prevent-sleep-lid-closed': 'laptop',
-  'chrome-energy-saver': 'tab',
+  'chrome-energy-saver': 'browser',
   'second-monitor-turns-off': 'monitor',
 };
-const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
 
 interface ICard {
   href: string;
@@ -82,7 +76,7 @@ const toCard = (item: IHubItem): ICard | null => {
     href: `/${kind}/${item.slug}`,
     name: d.crumb ?? d.h1,
     title: d.h1,
-    icon: ICON[ICON_OF[item.slug] ?? (kind === 'vs' ? 'tab' : 'monitor')],
+    icon: ICON_OF[item.slug] ?? (kind === 'vs' ? 'browser' : 'monitor'),
     tags: (item.meta ?? []).filter(Boolean),
     fix: d.description,
     pick: pick ?? item.line,
@@ -135,7 +129,7 @@ const schema = {
           <li><a href="/">{t('app.name')}</a></li>
           <li aria-current="page">
             <span class="at-crumb-sep" data-slot="breadcrumb-separator" aria-hidden="true">
-              <svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
+              <Icon name="caret-right" size={16} tone="ink" />
             </span>
             <span>{hub.crumb}</span>
           </li>
@@ -160,7 +154,7 @@ const schema = {
           Opens the tool and keeps the screen awake until you stop. Keep that tab visible and watch its pill: a hidden tab
           releases the wake lock, and Safari needs a tap before it grants one.
         </p>
-        <a class="at-try-link" href="/">Open the full tool <span aria-hidden="true">→</span></a>
+        <a class="at-try-link" href="/">Open the full tool <Icon name="arrow-right" size={16} /></a>
       </section>
 
       <nav class="at-jump" aria-label={hub.jumpAria} data-spy style={`--at-n: ${String(groups.length)}; --at-i: 0`}>
@@ -202,16 +196,17 @@ const schema = {
                   </h3>
                   {card.tags.length > 0 && (
                     <ul class="at-pick-tags" role="list">
-                      {card.tags.map((tag, i) => (
-                        <li class="at-tag">
-                          {i === 0 && (
-                            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
-                              <path d={card.icon} />
-                            </svg>
-                          )}
-                          {tag}
-                        </li>
-                      ))}
+                      {card.tags.map((tag, i) => {
+                        const logos = brandsIn(tag);
+                        return (
+                          <li class="at-tag">
+                            {logos.length > 0
+                              ? logos.map((logo) => <Brand logo={logo} />)
+                              : i === 0 && <Icon name={card.icon} size={16} />}
+                            {tag}
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                   {kind === 'vs' ? (
@@ -234,9 +229,7 @@ const schema = {
                   )}
                   <span class="at-pick-more" aria-hidden="true">
                     {t(`page.hub.${kind}.more`)}
-                    <svg class="at-go" viewBox="0 0 24 24" width="20" height="20" focusable="false">
-                      <path d={ICON_ARROW} />
-                    </svg>
+                    <Icon name="arrow-right" size={20} class="at-go" />
                   </span>
                 </li>
               ))}

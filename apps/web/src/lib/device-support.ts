@@ -1,8 +1,10 @@
 import matrix from '../data/support-matrix.json';
+import { browserMark, type TBrand } from './brands';
 
 export interface ISupportTag {
   label: string;
   native: boolean;
+  logo: TBrand | null;
 }
 
 const BROWSER_ID: Record<string, string> = { 'samsung-internet': 'samsung' };
@@ -25,7 +27,13 @@ export function supportTags(slug: string, browsers: readonly string[], os: reado
   if (contextId) {
     const context = matrix.contexts.find((c) => c.id === contextId);
     return context
-      ? [{ label: `${context.name} ${version(context.minimumVersion)}`.trim(), native: context.mechanism === 'native' }]
+      ? [
+          {
+            label: `${context.name} ${version(context.minimumVersion)}`.trim(),
+            native: context.mechanism === 'native',
+            logo: browserMark(context.id)?.logo ?? null,
+          },
+        ]
       : [];
   }
   const platforms = new Set(os.map((o) => PLATFORM[o]).filter(Boolean));
@@ -34,7 +42,11 @@ export function supportTags(slug: string, browsers: readonly string[], os: reado
     const row = matrix.browsers.find((b) => b.id === (BROWSER_ID[id] ?? id));
     if (!row) continue;
     if (platforms.size > 0 && !row.platforms.some((p) => platforms.has(p))) continue;
-    tags.push({ label: `${row.name} ${version(row.minimumVersion)}`.trim(), native: row.mechanism === 'native' });
+    tags.push({
+      label: `${row.name} ${version(row.minimumVersion)}`.trim(),
+      native: row.mechanism === 'native',
+      logo: browserMark(row.id)?.logo ?? null,
+    });
   }
   return tags;
 }

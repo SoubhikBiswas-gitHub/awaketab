@@ -29,8 +29,7 @@
     display: block;
   }
 
-  .at-lc-e path,
-  .at-lc-edge path {
+  .at-lc-e path {
     fill: none;
     stroke: var(--at-muted);
     stroke-width: 1.5;
@@ -119,12 +118,12 @@
 
   .at-lc-edge svg {
     inline-size: var(--at-icon-sm);
-    block-size: var(--at-s-3);
+    block-size: var(--at-icon-sm);
+    color: var(--at-muted);
   }
 
-  .at-lc-edge path {
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  [dir="rtl"] .at-lc-edge svg {
+    scale: -1 1;
   }
 
   .at-lc figcaption {

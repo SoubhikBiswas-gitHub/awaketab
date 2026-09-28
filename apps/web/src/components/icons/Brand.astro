@@ -1,0 +1,16 @@
+---
+import BrandIcon from './BrandIcon.astro';
+import Icon from './Icon.astro';
+import type { TBrand } from '../../lib/brands';
+
+interface Props {
+  logo: TBrand | null;
+  size?: number;
+  class?: string;
+}
+
+const { logo, size = 16, class: className } = Astro.props;
+const extra = className ? { class: className } : {};
+---
+
+{logo ? <BrandIcon name={logo} size={size} {...extra} /> : <Icon name="browser" size={size} {...extra} />}

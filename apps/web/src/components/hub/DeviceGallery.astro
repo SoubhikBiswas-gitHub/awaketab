@@ -1,7 +1,9 @@
 ---
-import DeviceIcon from '../icons/DeviceIcon.astro';
+import Brand from '../icons/Brand.astro';
+import Icon from '../icons/Icon.astro';
 import { t } from '../../i18n/load';
 import { supportTags } from '../../lib/device-support';
+import { browserMark, systemMark, type TBrand } from '../../lib/brands';
 
 interface IDeviceCard {
   slug: string;
@@ -17,7 +19,14 @@ interface Props {
 }
 
 const { cards } = Astro.props;
-const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
+// The system a device page is about, then its one browser; a browser page shows that browser alone.
+const heroLogos = (browsers: readonly string[], os: readonly string[]): Array<TBrand | null> => {
+  const system = os.length === 1 ? [systemMark(os[0] ?? '')?.logo] : [];
+  const browser = browsers.length === 1 ? [browserMark(browsers[0] ?? '')?.logo ?? null] : [];
+  const logos = [...system, ...browser].filter((logo) => logo !== undefined);
+  return [...new Set(logos.length > 0 ? logos : [systemMark(os[0] ?? '')?.logo ?? null])];
+};
+const HOME_SCREEN: Array<TBrand | null> = ['apple'];
 ---
 
 <ul class="at-gal at-gal-dev">
@@ -29,14 +38,14 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
         <li class="at-gal-card" style={`--at-k: ${String(i)}`} data-tilt>
           <a class="at-gal-link" href={card.href}>
             <span class="at-gal-top">
-              <span class="at-gal-icon" data-tilt-z>
-                <DeviceIcon name={card.slug} />
+              <span class="at-gal-logos" aria-hidden="true" data-tilt-z>
+                {(card.slug === 'ios-home-screen' ? HOME_SCREEN : heroLogos(card.browsers, card.os)).map((logo) => (
+                  <Brand logo={logo} size={32} />
+                ))}
               </span>
               {native && (
                 <span class="at-tag at-tag-tone at-gal-native">
-                  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
-                    <path d="m3.5 8.5 3 3 6-7" />
-                  </svg>
+                  <Icon name="check-circle" size={16} tone="state" />
                   {t('page.hub.native')}
                 </span>
               )}
@@ -45,14 +54,17 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
             {tags.length > 0 && (
               <span class="at-gal-browsers">
                 {tags.map((tag) => (
-                  <span class="at-tag">{tag.label}</span>
+                  <span class="at-tag">
+                    <Brand logo={tag.logo} />
+                    {tag.label}
+                  </span>
                 ))}
               </span>
             )}
             <span class="at-gal-line">{card.line}</span>
             <span class="at-gal-read">
               {t('page.hub.readGuide')}
-              <svg class="at-go" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+              <Icon name="arrow-right" size={20} class="at-go" />
             </span>
           </a>
         </li>

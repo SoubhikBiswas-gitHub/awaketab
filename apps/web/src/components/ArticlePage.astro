@@ -4,6 +4,8 @@ import ContentLayout from '../layouts/ContentLayout.astro';
 import ToolIsland from './ToolIsland.astro';
 import Button from './shell/Button.astro';
 import Limit from './article/Limit.astro';
+import Icon from './icons/Icon.astro';
+import Brand from './icons/Brand.astro';
 import ArticleParts from './article/ArticleParts.astro';
 import { createT, t as tEn } from '../i18n/load';
 import '../styles/tool-embed.css';
@@ -19,6 +21,7 @@ import {
 import { articleCss, minifyCss } from '../lib/article-css';
 import tableSheet from '../styles/article/table.css?raw';
 import { HUBS } from '../lib/hubs';
+import { rowBrands } from '../lib/brands';
 import {
   contentIndex,
   pageAlternates,
@@ -218,10 +221,6 @@ const toc = notesAfterTool
       ...toolEntry,
     ];
 const author = 'Soubhik Biswas';
-const ICON_CHECK = 'M8 12.5l2.7 2.7L16.5 9.5';
-const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
-const ICON_TICK = 'M5 12.5l4.5 4.5L19 7.5';
-const ICON_TRANSLATE = 'M4 5h8M8 3v2M5.5 5c.8 3 3 5.5 6 7M10.5 5c-.6 3.4-2.8 6.2-6.5 8M12.5 20l4-9 4 9M13.8 17h5.4';
 const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
 ---
 
@@ -298,9 +297,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
               >
                 <span class="at-step-n" aria-hidden="true">
                   <span>{i + 1}</span>
-                  <svg viewBox="0 0 24 24" width="16" height="16" focusable="false">
-                    <path d={ICON_TICK} />
-                  </svg>
+                  <Icon name="check" size={16} tone="ink" />
                 </span>
                 <span>{step.short ?? step.title}</span>
               </a>
@@ -308,7 +305,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
           ))}
         </ol>
         <a class="at-jump-tool" href="#tool">
-          {t('content.jumpTool')} <span aria-hidden="true">↓</span>
+          {t('content.jumpTool')} <Icon name="arrow-down" size={16} />
         </a>
       </nav>
     ) : (
@@ -351,7 +348,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
             00:00
           </span>
           <span class="at-toc-back">
-            {t('content.backToTool')} <span aria-hidden="true">↑</span>
+            {t('content.backToTool')} <Icon name="arrow-up" size={16} />
           </span>
         </a>
       </nav>
@@ -366,7 +363,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
             <li aria-current={crumb.href ? undefined : 'page'} data-crumb={i}>
               {i > 0 && (
                 <span class="at-crumb-sep" data-slot="breadcrumb-separator" aria-hidden="true">
-                  <svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
+                  <Icon name="caret-right" size={16} tone="ink" />
                 </span>
               )}
               {crumb.href ? <a href={crumb.href}>{crumb.label}</a> : <span>{crumb.label}</span>}
@@ -385,7 +382,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
       {
         verified && (
           <span class="at-meta-verified">
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d={ICON_CHECK} /></svg>
+            <Icon name="seal-check" size={16} />
             {t('content.verified', { date: verified })}
           </span>
         )
@@ -393,7 +390,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
       {
         stale && (
           <span class="at-meta-stale">
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M20 12a8 8 0 1 1-2.3-5.6" /><path d="M20 4v4.5h-4.5" /></svg>
+            <Icon name="clock-counter-clockwise" size={16} tone="state" />
             {t('content.stale')}
           </span>
         )
@@ -401,7 +398,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
       {
         !english && !data.reviewed && (
           <p class="at-meta-pending" role="note" data-translation-pending>
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d={ICON_TRANSLATE} /></svg>
+            <Icon name="translate" size={16} />
             <span>
               {t('content.translation.pending')}{' '}
               {englishHref && (
@@ -425,6 +422,9 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
         <ul class="at-facts">
           {data.facts.map((fact) => (
             <li>
+              {rowBrands(fact.label).map((logo) => (
+                <Brand logo={logo} />
+              ))}
               <span>{fact.label}</span>
               <strong>{fact.value}</strong>
             </li>
@@ -481,7 +481,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
               <li>
                 <a class="at-link-row" href={link.href} hreflang={link.lang} lang={link.lang}>
                   <span>{link.label}</span>
-                  <svg class="at-go" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+                  <Icon name="arrow-right" size={20} class="at-go" />
                 </a>
               </li>
             ))}
@@ -503,7 +503,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
                 <h3 class="at-faq-q">{item.q}</h3>
                 <span class="at-faq-icon" aria-hidden="true">
                   <span>
-                    <svg viewBox="0 0 24 24" width="16" height="16" focusable="false"><path d="M12 5v14M5 12h14" /></svg>
+                    <Icon name="plus" size={16} tone="ink" />
                   </span>
                 </span>
               </summary>
