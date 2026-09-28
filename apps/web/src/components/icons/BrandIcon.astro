@@ -1,0 +1,37 @@
+---
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+
+interface Props {
+  name: string;
+  size?: number;
+  official?: boolean;
+  class?: string;
+}
+
+const { name, size = 20, official = false, class: className } = Astro.props;
+// Simple Icons brand marks (CC0), read at build time; currentColor unless a brand button asks for the brand's colour.
+const require = createRequire(`${process.cwd()}/package.json`);
+const file = readFileSync(require.resolve(`simple-icons/icons/${name}.svg`), 'utf8');
+const body = /<svg[^>]*>([\s\S]*)<\/svg>/u.exec(file)?.[1]?.replace(/<title>[\s\S]*?<\/title>/u, '') ?? '';
+const data = official
+  ? (JSON.parse(readFileSync(require.resolve('simple-icons/data/simple-icons.json'), 'utf8')) as Array<{
+      slug?: string;
+      title: string;
+      hex: string;
+    }>)
+  : [];
+const slug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]/gu, '');
+const hex = data.find((d) => (d.slug ?? slug(d.title)) === name)?.hex;
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill={hex ? `#${hex}` : 'currentColor'}
+  aria-hidden="true"
+  focusable="false"
+  set:html={body}
+/>
