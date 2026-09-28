@@ -367,7 +367,7 @@ Accepted on 2026-09-11 (owner-directed; `03-architecture.md` ADR-013). Proposed 
 | `apps/web/src/components/ui/*.tsx` | shadcn/ui primitives (new-york style, neutral base, CSS variables): `button` · `badge` (the pages use their `buttonVariants()` and `badgeVariants()` helpers; the unused primitives were removed). Add more with `pnpm dlx shadcn@4.21.0 add <name>` from `apps/web`. Rendered by Astro at build time only — no `client:*` directive anywhere; interactive primitives that need client JS (Dialog, Sheet, Tabs, Accordion, Tooltip, Select, DropdownMenu, …) are not used |
 | `@/*` path alias | `./src/*` in `apps/web/tsconfig.json`; `components.json` aliases `@/components`, `@/components/ui`, `@/lib`, `@/lib/utils`, `@/hooks` |
 | shadcn semantic variables | Aliases of `--at-*`, never new colours: `--background`→`--at-ground` · `--foreground`→`--at-ink` · `--card`/`--popover`→`--at-surface` · `--primary`→`--at-accent-text` · `--primary-foreground`→`--at-on-accent` · `--secondary`/`--muted`→`color-mix(in srgb, var(--at-ink) 6%, var(--at-surface))` · `--muted-foreground`→`--at-muted` · `--accent`→`color-mix(in srgb, var(--at-accent) 12%, var(--at-surface))` · `--destructive`→`--at-bad` · `--border`/`--input`→`--at-line` · `--ring`→`--at-focus` · `--radius`→`--at-r-md` · `--font-sans`→`--at-font`. Full table with radius scale in `05-frontend-spec.md` §1.5 |
-| `--success` · `--warning` · `--night` | Custom semantic variables (not in stock shadcn) → `--at-good` · `--at-warn` · `--at-night` |
+| `--success` · `--warning` · `--night` | Custom semantic variables (not in stock shadcn) → `--at-good` · `--at-warn` · `--at-night`; `--destructive-foreground`, `--success-foreground` and `--warning-foreground` → `--at-on-tone` |
 | `@custom-variant dark` | `[data-theme="dark"]`, `[data-theme="oled"]`, and `prefers-color-scheme: dark` when no `data-theme` is set |
 | `hydrated` · `reactChunks` | Fields in the `scripts/size.mjs` report; both must be `[]` (§11) |
 | `scripts/prune-unreferenced.mjs` · `scripts/locked.mjs` | Build steps in `apps/web`: prune deletes `dist/_astro/*.js` chunks nothing references (runs after `astro build`, before `sitemap.mjs`); `locked.mjs -- <cmd>` holds a `mkdir` lock at `apps/web/.build-lock` so concurrent builds do not race |
@@ -414,6 +414,9 @@ Accepted on 2026-09-26 with the M6 implementation; confirmed by owner decision D
 |---|---|
 | `--at-t-ambient` | `clamp(4.5rem, 22vw, 15rem)` |
 | `--at-night-digit` | `#FF5A3C` (night-mode digits) |
+| `--at-night-ground` · `--at-night-surface` | `#000` · `#0A0A0A` (night-mode page and cards) |
+| `--at-on-tone` | Text and icons on a solid `--at-good` / `--at-warn` / `--at-bad` fill: `#FFFFFF` light, `#0A0E16` dark and OLED (`05-frontend-spec.md` §1.1) |
+| `--at-sheen` | `rgb(255 255 255 / 50%)`, the moving highlight on progress fills |
 | `--at-d-slow` | `320ms` |
 | `[data-accent="violet\|mint\|sky"]` blocks | Override `--at-accent`, `--at-accent-text`, `--at-on-accent`, `--at-focus` per lamp, with `dark`/`oled` variants (`05-frontend-spec.md` §1.1a) |
 

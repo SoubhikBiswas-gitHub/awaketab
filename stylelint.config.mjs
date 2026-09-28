@@ -9,6 +9,21 @@ const SPACING_TOKENS =
 // --at-pg-type-* (pages.css), --at-am-type-* (ambient.css), --at-embed-type-* (embed.css) and --at-tl-* (the tool
 // stylesheets) are named off-scale values, each defined once at the top of its file.
 const TYPE_TOKENS = /^(?:inherit|var\(--at-(?:pg-|am-|embed-|tl-)?type-[a-z0-9-]+\))$/u;
+// docs/05 §1.1: tool and shell colours come from the --at-* tokens (and color-mix over them), so every theme, colour
+// theme and lamp stays AA. Masks only read alpha and are exempt; face art opts out in marked blocks.
+const RAW_COLOUR = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/iu;
+const COLOUR_FILES = [
+  'apps/web/src/styles/base.css',
+  'apps/web/src/styles/shell.css',
+  'apps/web/src/styles/footer.css',
+  'apps/web/src/styles/header-menus.css',
+  'apps/web/src/styles/update-banner.css',
+  'apps/web/src/styles/icon-motion.css',
+  'apps/web/src/styles/ambient.css',
+  'apps/web/src/styles/tool*.css',
+  'apps/web/src/tool/packs/**/*.css',
+  'apps/web/public/assets/faces.css',
+];
 
 export default {
   extends: ['stylelint-config-standard'],
@@ -34,6 +49,18 @@ export default {
   },
   overrides: [
     { files: ['**/styles/tokens.css'], rules: { 'declaration-property-value-allowed-list': null } },
+    {
+      files: COLOUR_FILES,
+      rules: {
+        'color-named': 'never',
+        'declaration-property-value-disallowed-list': [
+          { '/^(?!(-webkit-)?mask)/': [RAW_COLOUR] },
+          {
+            message: (prop, value) => `${prop}: ${value} uses a raw colour; use an --at-* colour token (docs/05 §1.1)`,
+          },
+        ],
+      },
+    },
     {
       // shell.css, content.css, the site pages, Pro, the embed page and the ambient modes. pages.css and ambient.css
       // name their few off-scale sizes once as --at-pg-* / --at-am-* custom properties and use them by name. The

@@ -19,7 +19,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ext": "playwright test -c apps/extension/playwright.config.ts",
     "test:seo": "vitest run --config vitest.seo.config.ts",
-    "lint": "node scripts/comments.mjs && prettier --check . --log-level warn && knip && pnpm -F @awaketab/wake build > /dev/null && pnpm -F web exec astro sync > /dev/null && eslint . && stylelint \"apps/web/src/**/*.css\" \"apps/extension/**/*.css\"",
+    "lint": "node scripts/comments.mjs && prettier --check . --log-level warn && knip && pnpm -F @awaketab/wake build > /dev/null && pnpm -F web exec astro sync > /dev/null && eslint . && stylelint \"apps/web/src/**/*.css\" \"apps/extension/**/*.css\" apps/web/public/assets/faces.css",
     "format": "prettier --write . --log-level warn",
     "knip": "knip",
     "typecheck": "pnpm -r typecheck",

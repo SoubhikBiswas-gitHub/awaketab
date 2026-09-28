@@ -8,7 +8,7 @@
   padding-inline: 0 var(--at-s-1);
   border: var(--at-border) solid color-mix(in srgb, var(--at-accent) 38%, transparent);
   border-radius: var(--at-r-pill);
-  background: color-mix(in srgb, var(--at-accent) 10%, var(--at-surface));
+  background: var(--at-surface);
   color: var(--at-ink);
   font: var(--at-type-small);
   font-weight: 500;
@@ -60,7 +60,7 @@
 }
 
 .at-pv-keep:hover {
-  background: color-mix(in srgb, var(--at-accent) 12%, transparent);
+  background: var(--at-sunken);
 }
 
 .at-pv[data-min] {
@@ -298,6 +298,7 @@ html[data-pv-fade]::view-transition-new(root) {
 }
 
 .at-lk-opt[data-id="custom"] .at-lk-mini {
+  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- swatch art: the custom lamp wheel shows any colour */
   background: conic-gradient(from 200deg, #5be0e8, #a594ff, #ff9cc6, #ffaf6b, #b5e36a, #5be0e8);
 }
 

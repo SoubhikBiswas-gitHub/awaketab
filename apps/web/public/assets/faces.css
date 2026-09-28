@@ -1,3 +1,5 @@
+/* stylelint-disable no-descending-specificity -- face and state rules refine the base rule above them. */
+
 .at-face-bold {
   flex-direction: column;
   justify-content: center;
@@ -105,7 +107,7 @@
   inset-block: 0;
   inline-size: 26%;
   display: none;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 55%), transparent);
+  background: linear-gradient(90deg, transparent, var(--at-sheen), transparent);
   animation: at-shim 3.8s var(--at-ease) infinite;
 }
 
@@ -133,6 +135,7 @@
   font-weight: 600;
 }
 
+/* stylelint-disable declaration-property-value-disallowed-list, color-named -- Horizon and Tide face art: sky, sun, hills, water, glints and bubbles */
 .at-face-horizon {
   --hz-sky: linear-gradient(180deg, #2c68b8 0%, #4f8fd8 34%, #8cc0ee 68%, #cfe6f8 90%, #e8f3fa 100%);
   --hz-warm: rgb(255 170 120 / 60%);
@@ -374,7 +377,7 @@
 }
 
 .at-hz-text .at-secs {
-  color: rgb(246 242 234 / 72%);
+  color: color-mix(in srgb, var(--at-hz-ink) 72%, transparent);
 }
 
 .at-hz-meta {
@@ -473,6 +476,8 @@
   background: radial-gradient(circle at 35% 30%, rgb(255 255 255 / 45%), transparent 60%);
   animation: at-bub 11s ease-in infinite;
 }
+
+/* stylelint-enable declaration-property-value-disallowed-list, color-named */
 
 .at-tide-text {
   position: absolute;
