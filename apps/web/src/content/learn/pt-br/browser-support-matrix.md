@@ -103,4 +103,3 @@ Se você usa iPhone, veja [tela do iPhone sempre acesa no Safari](/pt-br/on/ipho
 
 ::rows limits
 
-::limit inline

@@ -1217,9 +1217,10 @@
     block-size: var(--at-h-tag);
   }
 
-  .at-legal-dates .at-tag > svg {
-    stroke: var(--at-accent);
-    stroke-width: 2.2;
+  .at-legal-dates .at-tag > .at-duo {
+    fill: currentcolor;
+    stroke: none;
+    color: var(--at-accent-text);
   }
 
   .at-legal-lede {

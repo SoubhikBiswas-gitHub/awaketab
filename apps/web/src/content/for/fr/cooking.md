@@ -97,4 +97,3 @@ D’après notre matrice du 9 septembre 2026, Safari à partir de 16.4, Chrome e
 
 AwakeTab garde un écran allumé ; ce n’est ni une minuterie de sécurité ni un moniteur. Un portable posé dans la cuisine se met en veille dès que vous fermez le capot, quoi que fasse l’onglet. Et sur un écran OLED, laisser la même image affichée des heures n’est jamais sans risque : le mode nuit décale légèrement les pixels, ce qui réduit le marquage sans le supprimer.
 
-::limit

@@ -83,18 +83,11 @@
     text-align: end;
   }
 
-  .at-note-lamp path {
-    fill: none;
-    stroke: var(--at-accent);
-    stroke-width: 4.5;
-    stroke-linecap: round;
+  .at-note-tip > svg {
+    color: var(--at-accent-text);
   }
 
-  .at-note-lamp circle {
-    fill: var(--at-accent);
-  }
-
-  .at-cp .at-note-lamp .at-kicker {
+  .at-cp .at-note-tip .at-kicker {
     margin: 0;
   }
 }

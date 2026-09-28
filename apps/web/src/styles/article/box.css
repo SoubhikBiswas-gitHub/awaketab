@@ -18,11 +18,6 @@
   .at-box svg {
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-linejoin: round;
     opacity: 0;
   }
 

@@ -99,4 +99,3 @@ Un coup d’œil suffit.
 
 Pour un écran secondaire qui s’éteint tout seul, voyez notre page sur le second moniteur ; pour les réglages système, consultez [Windows 11](/fr/on/windows-11) ou [macOS](/fr/on/macos).
 
-::limit

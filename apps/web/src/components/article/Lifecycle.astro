@@ -1,6 +1,7 @@
 ---
 import type { TLockState } from '@awaketab/wake';
 import StatusPill from '../shell/StatusPill.astro';
+import Icon from '../icons/Icon.astro';
 
 interface Props {
   data: {
@@ -170,9 +171,7 @@ const ARROW = 'M0 0L8 4L0 8z';
             ) : (
               <span class="at-lc-edge">
                 {node.mono ? <code>{node.edge}</code> : node.edge}
-                <svg viewBox="0 0 16 10" width="16" height="10" aria-hidden="true" focusable="false">
-                  <path d="M0 5H13M9 1l4 4-4 4" />
-                </svg>
+                <Icon name="arrow-right" size={16} tone="ink" class="at-lc-go" />
               </span>
             ),
           )}

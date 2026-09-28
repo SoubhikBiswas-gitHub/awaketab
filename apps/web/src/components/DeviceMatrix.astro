@@ -9,6 +9,9 @@ import raw from '../../../../docs/metrics/device-matrix.json';
 import { parseDeviceMatrix, type TDeviceVerdict } from '../lib/device-matrix';
 import support from '../data/support-matrix.json';
 import { t } from '../i18n/load';
+import Icon from './icons/Icon.astro';
+import Brand from './icons/Brand.astro';
+import { browserMark, rowBrands } from '../lib/brands';
 
 const matrix = parseDeviceMatrix(raw);
 const names = new Map([...support.browsers, ...support.contexts].map((row) => [row.id, row.name]));
@@ -29,7 +32,7 @@ const updated = matrix.updatedAt
   {
     matrix.status === 'pending' ? (
       <div role="note" class="at-note" data-results-pending>
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.01" /></svg>
+        <Icon name="hourglass-medium" size={20} />
         <div>
           <p class="at-kicker">{t('research.pending')}</p>
           <p>{t('research.pending.body')}</p>
@@ -59,11 +62,15 @@ const updated = matrix.updatedAt
           matrix.rows.map((row) => (
             <tr data-row={row.id}>
               <td>
+                {rowBrands(row.os).map((logo) => (
+                  <Brand logo={logo} class="at-logo-in" />
+                ))}
                 {row.device}
                 <br />
                 <span class="at-muted">{row.os}</span>
               </td>
               <td>
+                {browserMark(row.browser) && <Brand logo={browserMark(row.browser)?.logo ?? null} class="at-logo-in" />}
                 {names.get(row.browser) ?? row.browser}
                 {row.version && <span class="at-muted"> {row.version}</span>}
               </td>

@@ -224,3 +224,8 @@ The owner delegated all open questions to the lead ("you take the decision"). Pr
 | O-85 | **Yes** to both. |
 | O-86 | **Confirm framing**; author line becomes "Builds AwakeTab" until device results are published. |
 | O-87 | **Align Main to ∞**. |
+
+## Owner requests (29 Sep 2026)
+
+- **One article pattern.** Every content page follows one order (docs/06 §24). Decided (coordinator, 29 Sep 2026): on `/for` and `/on` the tool comes right after the lead and meta row, before the contents and body, because people land there to start it; on `/vs`, `/guides` and `/learn` it follows the body and honest limit, where the reading is the point and the side rail's tool card links down to it.
+- **Brand logos.** Real full-colour SVG Logos wherever a browser or system is named. Decided: the macOS and iOS entries are wordmarks that would repeat the text beside them and shrink to 4 px tall at tag size, so Apple systems use the Apple mark; Samsung Internet has no logo in the set and uses the Phosphor `browser` icon; ChromeOS uses the Chrome logo.

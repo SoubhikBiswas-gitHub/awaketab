@@ -88,8 +88,6 @@ Laut unserer Support-Matrix vom 9. September 2026 klappt der native Lock ab Safa
 
 Unter Android legen Sie die normale Abschaltzeit unter Einstellungen → Display → Bildschirm-Timeout fest (Pixel: „Display & touch“); einige Hersteller schicken außerdem Apps über eigene Listen schlafen.
 
-::limit
-
 ## Akku und Sicherheit am Herd
 
 Ein leuchtendes Display verbraucht Strom. In Chromium-Browsern kann AwakeTab bei einem von Ihnen festgelegten Akkustand selbst stoppen; andere Browser bieten das womöglich nicht. Ein Handy ersetzt keinen Blick in den Topf. Weitere Szenarien mit Rezeptbuch oder Noten finden Sie beim [Lesen am Bildschirm](/for/reading).

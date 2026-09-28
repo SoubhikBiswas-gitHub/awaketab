@@ -1,5 +1,7 @@
 ---
+import Brand from '../icons/Brand.astro';
 import { inline } from '../../lib/article';
+import { rowBrands } from '../../lib/brands';
 
 interface Props {
   matrix: {
@@ -21,7 +23,12 @@ const { matrix } = Astro.props;
     {
       matrix.rows.map((row) => (
         <div role="row">
-          <span role="rowheader" set:html={inline(row.what)} />
+          <span role="rowheader">
+            {rowBrands(row.what).map((logo) => (
+              <Brand logo={logo} class="at-logo-in" />
+            ))}
+            <Fragment set:html={inline(row.what)} />
+          </span>
           <span role="cell">
             <span
               class:list={[

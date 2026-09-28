@@ -6,6 +6,7 @@ import '../styles/hub.css';
 import '../styles/tilt.css';
 import Button from './shell/Button.astro';
 import StatusPill from './shell/StatusPill.astro';
+import Icon from './icons/Icon.astro';
 import DeviceGallery from './hub/DeviceGallery.astro';
 import UseCaseGallery from './hub/UseCaseGallery.astro';
 import { t } from '../i18n/load';
@@ -81,7 +82,6 @@ const groups = hub.groups
     return { ...group, rows };
   })
   .filter((group) => group.rows.length > 0);
-const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
 ---
 
 <BaseLayout
@@ -109,7 +109,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
           <li><a href="/">{t('app.name')}</a></li>
           <li aria-current="page">
             <span class="at-crumb-sep" data-slot="breadcrumb-separator" aria-hidden="true">
-              <svg viewBox="0 0 16 16" width="16" height="16" focusable="false"><path d="M6.5 4.5L10 8l-3.5 3.5" /></svg>
+              <Icon name="caret-right" size={16} tone="ink" />
             </span>
             <span>{hub.crumb}</span>
           </li>
@@ -131,7 +131,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
           Opens the tool and keeps the screen awake until you stop. Keep that tab visible and watch its pill: a hidden tab
           releases the wake lock, and Safari needs a tap before it grants one.
         </p>
-        <a class="at-try-link" href="/">Open the full tool <span aria-hidden="true">→</span></a>
+        <a class="at-try-link" href="/">Open the full tool <Icon name="arrow-right" size={16} /></a>
       </section>
 
       <nav class="at-jump" aria-label={hub.jumpAria} data-spy style={`--at-n: ${String(groups.length)}; --at-i: 0`}>
@@ -182,7 +182,7 @@ const ICON_ARROW = 'M5 12h13M13 6l6 6-6 6';
                           </span>
                         )}
                       </span>
-                      <svg class="at-go" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ICON_ARROW} /></svg>
+                      <Icon name="arrow-right" size={20} class="at-go" />
                     </a>
                   </li>
                 ))}

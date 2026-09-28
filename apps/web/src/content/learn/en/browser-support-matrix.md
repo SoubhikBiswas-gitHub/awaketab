@@ -155,4 +155,3 @@ All checked 26 September 2026.
 
 A row here means the browser has the API, not that the screen stays on in every case. Every browser releases the lock when the tab is hidden. Closing a laptop lid still sleeps it, apart from a Mac in clamshell mode (with power and an external display) or a Chromebook with "Sleep when cover is closed" turned off. And our own device results are still pending.
 
-::limit inline

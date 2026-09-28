@@ -13,11 +13,9 @@ const body = [
   '<p>::ad</p>',
   '<h2 id="what-to-expect">What to expect &#x26; why</h2>',
   '<p>::pills</p>',
-  '<p>::limit</p>',
   '<h2 id="code">Code</h2>',
   '<p>::code wake-lock.js</p>',
   '<p>::rows blockers</p>',
-  '<p>::limit inline</p>',
 ].join('\n');
 
 describe('splitArticle', () => {
@@ -29,7 +27,6 @@ describe('splitArticle', () => {
       'section:set-up',
       'ad',
       'section:what-to-expect',
-      'limit',
       'section:code',
     ]);
   });
@@ -39,15 +36,8 @@ describe('splitArticle', () => {
     expect(expect_?.kind === 'section' && expect_.title).toBe('What to expect & why');
   });
 
-  it('lists placed blocks with their keys; `limit inline` stays inside its section', () => {
-    expect(placedBlocks(parts)).toEqual([
-      'steps',
-      'figures',
-      'pills',
-      'code wake-lock.js',
-      'rows blockers',
-      'limit inline',
-    ]);
+  it('lists placed blocks with their keys', () => {
+    expect(placedBlocks(parts)).toEqual(['steps', 'figures', 'pills', 'code wake-lock.js', 'rows blockers']);
   });
 
   it('drops the marker paragraphs from the section HTML', () => {

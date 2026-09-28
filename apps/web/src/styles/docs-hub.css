@@ -79,11 +79,6 @@
   .at-docs .at-docs-go {
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
   }
 
   .at-cp .at-docs h3 {

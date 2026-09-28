@@ -84,4 +84,3 @@ Não feche a tampa do notebook achando que o monitor externo segura tudo: fechar
 
 No notebook da palestra, o que conta (segundo a documentação dos navegadores, conferida em 26 de setembro de 2026): Edge ou Chrome a partir da versão 84, Firefox a partir da 126 e Safari a partir da 16.4, todos com Wake Lock nativo. A janela flutuante de verdade precisa de Chrome ou Edge 116+ ou de Firefox 151+ no computador; o Safari não tem. Em Firefox mais antigo, o vídeo alternativo começa depois de um toque e gasta mais energia — deixe o notebook na tomada durante a palestra.
 
-::limit

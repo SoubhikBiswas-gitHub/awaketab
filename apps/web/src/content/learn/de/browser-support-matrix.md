@@ -108,4 +108,3 @@ Außerdem zielt der Lock auf das Display.
 
 Die Anwesenheit in Teams oder Slack beeinflusst der Lock ebenfalls nicht, weil diese Dienste auf Eingaben achten.
 
-::limit inline

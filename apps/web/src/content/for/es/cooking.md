@@ -98,4 +98,3 @@ Según la documentación de los navegadores, revisada el 26 de septiembre de 202
 
 Si lo que buscas es leer un libro o hacer ejercicio con el teléfono enfrente, las páginas relacionadas de abajo cubren esos casos.
 
-::limit
