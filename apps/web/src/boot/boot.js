@@ -182,6 +182,13 @@
       e.preventDefault();
       keys.click();
     }
+    // Back to top scrolls to the very top (smoothly unless motion is reduced) and hands focus to the skip target.
+    const top = el.closest('[data-top]') && document.getElementById('content');
+    if (top) {
+      e.preventDefault();
+      scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      top.focus({ preventScroll: true });
+    }
     const wrap = el.closest('[data-lang]');
     if (wrap instanceof HTMLElement) {
       const r = el.getBoundingClientRect();

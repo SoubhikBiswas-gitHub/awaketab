@@ -119,6 +119,29 @@ test.describe('header and footer on every surface', () => {
     });
   }
 
+  test('footer: the band and the wordmark stay out of the accessibility tree; Back to top returns focus to the skip target', async ({
+    page,
+  }) => {
+    for (const path of ['/about', '/']) {
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.goto(path);
+      const footer = page.locator('footer.at-site-footer');
+      await expect(footer.locator('.at-foot-band')).toHaveAttribute('aria-hidden', 'true');
+      await expect(footer.locator('.at-foot-mark')).toHaveAttribute('aria-hidden', 'true');
+      await expect(footer.locator('a.at-foot-badge')).toHaveAttribute(
+        'href',
+        'https://github.com/SoubhikBiswas-gitHub/awaketab',
+      );
+      await page.evaluate(() => {
+        window.scrollTo(0, document.documentElement.scrollHeight);
+      });
+      await footer.getByRole('link', { name: 'Back to top' }).click();
+      await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+      expect(await page.evaluate(() => document.activeElement?.id)).toBe('content');
+      expect(new URL(page.url()).hash).toBe('');
+    }
+  });
+
   test('the current section is marked in the nav (ink 600 + lamp dot, aria-current)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/for/cooking');

@@ -2,8 +2,11 @@
 import { createT } from '../../i18n/load';
 import { localePath, type TLocale } from '../../i18n/locales';
 import { VERSION } from '../../lib/version';
+import BrandIcon from '../icons/BrandIcon.astro';
+import Icon from '../icons/Icon.astro';
+import Button from './Button.astro';
 import LangSwitch from './LangSwitch.astro';
-import '../../styles/footer.css';
+import footerCss from '../../styles/footer.css?url';
 
 interface Props {
   locale: TLocale;
@@ -13,6 +16,9 @@ interface Props {
 interface ILink {
   href: string;
   label: string;
+  icon?: string;
+  brand?: string;
+  dot?: boolean;
   external?: boolean;
   keys?: boolean;
   more?: boolean;
@@ -23,96 +29,141 @@ const t = createT(locale);
 const home = localePath(locale, '/');
 const trim = (path: string): string => path.replace(/(.)\/$/u, '$1');
 const here = trim(Astro.url.pathname);
+const repo = 'https://github.com/SoubhikBiswas-gitHub/awaketab';
+const year = /^\d{4}/u.exec(VERSION)?.[0] ?? String(new Date().getFullYear());
+const words = ['awake', 'faces', 'sounds', 'notes', 'pomodoro', 'honest', 'account', 'open'].map((k) =>
+  t(`footer.band.${k}`),
+);
 
 // Hubs, product and legal pages are English-only routes.
-const columns: Array<{ title: string; items: ILink[] }> = [
+const columns: Array<{ title: string; icon: string; items: ILink[] }> = [
   {
     title: t('footer.col.product'),
+    icon: 'cube',
     items: [
-      { href: home, label: t('footer.start') },
-      { href: '/extension', label: t('header.nav.extension') },
-      { href: '/pro', label: t('header.nav.pro') },
-      { href: '/embed', label: t('footer.embed') },
-      { href: '/kiosk', label: t('footer.kiosk') },
-      { href: '/library', label: t('footer.library') },
+      { href: home, label: t('footer.start'), icon: 'power' },
+      { href: '/extension', label: t('header.nav.extension'), icon: 'puzzle-piece' },
+      { href: '/pro', label: t('header.nav.pro'), dot: true },
+      { href: '/embed', label: t('footer.embed'), icon: 'code' },
+      { href: '/kiosk', label: t('footer.kiosk'), icon: 'television-simple' },
+      { href: '/library', label: t('footer.library'), icon: 'package' },
     ],
   },
   {
     title: t('footer.col.for'),
+    icon: 'list-checks',
     items: [
-      { href: '/for/cooking', label: t('footer.for.cooking') },
-      { href: '/for/reading', label: t('footer.for.reading') },
-      { href: '/for/presentations', label: t('footer.for.presentations') },
-      { href: '/for/dashboards', label: t('footer.for.dashboards') },
-      { href: '/for/video-calls', label: t('footer.for.videoCalls') },
-      { href: '/for/downloads', label: t('footer.for.downloads') },
-      { href: '/for', label: t('footer.for.all'), more: true },
+      { href: '/for/cooking', label: t('footer.for.cooking'), icon: 'cooking-pot' },
+      { href: '/for/reading', label: t('footer.for.reading'), icon: 'book-open' },
+      { href: '/for/presentations', label: t('footer.for.presentations'), icon: 'presentation-chart' },
+      { href: '/for/dashboards', label: t('footer.for.dashboards'), icon: 'chart-line' },
+      { href: '/for/video-calls', label: t('footer.for.videoCalls'), icon: 'video-camera' },
+      { href: '/for/downloads', label: t('footer.for.downloads'), icon: 'cloud-arrow-down' },
+      { href: '/for', label: t('footer.for.all'), icon: 'squares-four', more: true },
     ],
   },
   {
     title: t('footer.col.on'),
+    icon: 'device-mobile',
     items: [
-      { href: '/on/iphone-safari', label: 'iPhone' },
-      { href: '/on/ipad', label: 'iPad' },
-      { href: '/on/android-chrome', label: 'Android' },
-      { href: '/on/macos', label: 'Mac' },
-      { href: '/on/windows-11', label: 'Windows 11' },
-      { href: '/on/chromebook', label: 'Chromebook' },
-      { href: '/on', label: t('footer.on.all'), more: true },
+      { href: '/on/iphone-safari', label: 'iPhone', brand: 'apple' },
+      { href: '/on/ipad', label: 'iPad', brand: 'apple' },
+      { href: '/on/android-chrome', label: 'Android', brand: 'android-icon' },
+      { href: '/on/macos', label: 'Mac', brand: 'apple' },
+      { href: '/on/windows-11', label: 'Windows 11', brand: 'microsoft-windows-icon' },
+      { href: '/on/chromebook', label: 'Chromebook', brand: 'chrome' },
+      { href: '/on', label: t('footer.on.all'), icon: 'squares-four', more: true },
     ],
   },
   {
     title: t('footer.col.resources'),
+    icon: 'books',
     items: [
-      { href: '/guides', label: t('footer.guides') },
-      { href: '/learn', label: t('footer.docs') },
-      { href: '/vs', label: t('footer.compare') },
-      { href: '/changelog', label: t('footer.changelog') },
+      { href: '/guides', label: t('footer.guides'), icon: 'compass' },
+      { href: '/learn', label: t('footer.docs'), icon: 'book-open-text' },
+      { href: '/vs', label: t('footer.compare'), icon: 'scales' },
+      { href: '/changelog', label: t('footer.changelog'), icon: 'clock-counter-clockwise' },
     ],
   },
   {
     title: t('footer.col.about'),
+    icon: 'info',
     items: [
-      { href: '/about', label: t('footer.about') },
-      { href: '/privacy', label: t('footer.privacy') },
-      { href: '/terms', label: t('footer.terms') },
-      { href: `${home}#keys`, label: t('footer.shortcuts'), keys: true },
-      { href: 'https://github.com/SoubhikBiswas-gitHub/awaketab', label: t('footer.github'), external: true },
-      { href: 'https://buymeacoffee.com/awaketab', label: t('footer.donate'), external: true },
+      { href: '/about', label: t('footer.about'), icon: 'user-circle' },
+      { href: '/privacy', label: t('footer.privacy'), icon: 'shield-check' },
+      { href: '/terms', label: t('footer.terms'), icon: 'scroll' },
+      { href: `${home}#keys`, label: t('footer.shortcuts'), icon: 'keyboard', keys: true },
+      { href: repo, label: t('footer.github'), brand: 'github-icon', external: true },
+      { href: 'https://buymeacoffee.com/awaketab', label: t('footer.donate'), icon: 'coffee', external: true },
     ],
   },
 ];
 ---
 
 <footer class="at-site-footer">
-  <div class="at-foot-top">
-    <div class="at-foot-brand">
-      <a class="at-logo at-wordmark" href={home} aria-label={t('header.home')}>
-        <svg class="at-logo-mark" viewBox="0 0 48 48" width="26" height="26" aria-hidden="true" focusable="false">
-          <path class="at-logo-ring" d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path>
-          <circle class="at-logo-halo" cx="24" cy="9" r="7.5"></circle>
-          <circle class="at-logo-bead" cx="24" cy="9" r="4.2"></circle>
-        </svg>
-        {t('app.name')}
-      </a>
-      <p class="at-foot-promise">{t('footer.promise')}</p>
-      <p class="at-foot-license">{t('footer.license')}</p>
-      <p class="at-foot-license" data-version>{t('footer.version', { version: VERSION })}</p>
+  <link rel="stylesheet" href={footerCss} />
+  <div class="at-foot-band" aria-hidden="true">
+    <div class="at-foot-strip">
+      <div class="at-foot-track">
+        {
+          [0, 1, 2].map(() => (
+            <ul class="at-foot-words" role="list">
+              {words.map((word) => (
+                <li>
+                  <span class="at-foot-spark" />
+                  {word}
+                </li>
+              ))}
+            </ul>
+          ))
+        }
+      </div>
     </div>
-    <nav class="at-foot-map" aria-label={t('footer.nav')}>
+  </div>
+  <div class="at-foot-in">
+    <div class="at-foot-mark" aria-hidden="true">
       {
-        columns.map((col) => (
-          <details class="at-foot-col" name="at-foot">
-            <summary class="at-foot-sum">
-              {col.title}
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                <path d="M6 9l6 6 6-6"></path>
-              </svg>
-            </summary>
-            <h2 class="at-foot-h">{col.title}</h2>
-            <ul class="at-foot-list" role="list">
-              {
-                col.items.map((item) => (
+        [false, true].map((glint) => {
+          const art = (
+            <svg class="at-foot-art" viewBox="0 0 1000 124" focusable="false">
+              <text x="2" y="122" font-size="168" textLength="934" lengthAdjust="spacing">AWAKETAB</text>
+              <circle class="at-foot-bead" cx="972" cy="107" r="14" />
+            </svg>
+          );
+          return glint ? <div class="at-foot-glint">{art}</div> : art;
+        })
+      }
+    </div>
+    <div class="at-foot-top">
+      <div class="at-foot-brand">
+        <a class="at-logo at-wordmark" href={home} aria-label={t('header.home')}>
+          <svg class="at-logo-mark" viewBox="0 0 48 48" width="26" height="26" aria-hidden="true" focusable="false">
+            <path class="at-logo-ring" d="M32.8 11.4A16 16 0 1 1 15.2 11.4"></path>
+            <circle class="at-logo-halo" cx="24" cy="9" r="7.5"></circle>
+            <circle class="at-logo-bead" cx="24" cy="9" r="4.2"></circle>
+          </svg>
+          {t('app.name')}
+        </a>
+        <p class="at-foot-promise">{t('footer.promise')}</p>
+        <p class="at-footer-line">
+          <Icon name="seal-check" size={16} />
+          {t('footer.honest')}
+        </p>
+      </div>
+      <nav class="at-foot-map" aria-label={t('footer.nav')}>
+        {
+          columns.map((col) => (
+            <details class="at-foot-col" name="at-foot">
+              <summary class="at-foot-sum">
+                <Icon name={col.icon} size={20} />
+                <span class="at-foot-sum-t">{col.title}</span>
+                <svg class="at-foot-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M6 9l6 6 6-6"></path>
+                </svg>
+              </summary>
+              <h2 class="at-foot-h">{col.title}</h2>
+              <ul class="at-foot-list" role="list">
+                {col.items.map((item) => (
                   <li>
                     <a
                       href={item.href}
@@ -121,20 +172,49 @@ const columns: Array<{ title: string; items: ILink[] }> = [
                       data-keys={item.keys ? '' : undefined}
                       aria-current={!item.external && !item.keys && trim(item.href) === here ? 'page' : undefined}
                     >
-                      {item.label}
-                      {item.more && <span aria-hidden="true">→</span>}
+                      <span class="at-foot-ico">
+                        {item.brand ? (
+                          <BrandIcon name={item.brand} size={16} />
+                        ) : item.dot ? (
+                          <span class="at-foot-dot" />
+                        ) : (
+                          <Icon name={item.icon ?? 'circle'} size={16} />
+                        )}
+                      </span>
+                      <span class="at-foot-txt">{item.label}</span>
+                      {item.more && (
+                        <span class="at-foot-more" aria-hidden="true">
+                          →
+                        </span>
+                      )}
                     </a>
                   </li>
-                ))
-              }
-            </ul>
-          </details>
-        ))
-      }
-    </nav>
-  </div>
-  <div class="at-foot-base">
-    <p class="at-footer-line">{t('footer.honest')}</p>
-    <LangSwitch locale={locale} links={links} />
+                ))}
+              </ul>
+            </details>
+          ))
+        }
+      </nav>
+    </div>
+    <div class="at-foot-base">
+      <p class="at-foot-legal">
+        <span class="at-foot-copy">{t('footer.copyright', { year })}</span>
+        <span class="at-foot-ver" data-version>{t('footer.version', { version: VERSION })}</span>
+      </p>
+      <div class="at-foot-acts">
+        <a class="at-foot-badge" href={repo} rel="noopener" target="_blank">
+          <Icon name="heart" size={16} />
+          <span>{t('footer.made')}</span>
+          <span class="at-foot-sep" aria-hidden="true"></span>
+          <BrandIcon name="github-icon" size={16} />
+          <span>{t('footer.source')}</span>
+        </a>
+        <LangSwitch locale={locale} links={links} />
+        <Button size="sm" href="#content" class="at-foot-top-btn" data-top>
+          <Icon name="arrow-up" size={16} tone="ink" />
+          {t('footer.top')}
+        </Button>
+      </div>
+    </div>
   </div>
 </footer>
