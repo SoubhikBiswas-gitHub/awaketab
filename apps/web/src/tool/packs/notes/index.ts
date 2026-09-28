@@ -25,6 +25,15 @@ import href from './notes.css?url';
 import { countWords, dayLabel, toMarkdown, toText } from './text.js';
 import { createVoice, speechLang, type TVoiceState, voiceSupported } from './voice.js';
 
+const TASK = '<ul data-type="taskList"><li data-type="taskItem" data-checked="false"><p></p></li></ul>';
+const esc = (w: string) => w.replace(/[&<>"]/gu, (c) => `&#${String(c.charCodeAt(0))};`);
+function starter(id: string, words: string[]): string {
+  const [title = '', agenda = '', actions = ''] = words.map(esc);
+  if (id === 'todo') return `<h1>${title}</h1>${TASK}`;
+  if (id === 'meeting') return `<h1>${title}</h1><h2>${agenda}</h2><ul><li><p></p></li></ul><h2>${actions}</h2>${TASK}`;
+  return `<h1>${title}</h1><ul><li><p></p></li></ul>`;
+}
+
 const SAVE_MS = 600;
 const SHIFT_MS = 60_000;
 const UNDO_MS = 10_000;
@@ -646,7 +655,7 @@ function mount(ctx: IToolCtx, d: HTMLDialogElement): IPanel {
     b.addEventListener('click', () => {
       const tpl = q(`template[data-notes-tpl-html="${b.dataset.notesTpl ?? ''}"]`) as HTMLTemplateElement | null;
       if (!tpl || !editable()) return;
-      ed.commands.setContent(tpl.dataset.html ?? '');
+      ed.commands.setContent(starter(b.dataset.notesTpl ?? '', JSON.parse(tpl.dataset.words ?? '[]') as string[]));
       let at = -1;
       ed.state.doc.descendants((n, p) => {
         if (at < 0 && n.isTextblock && !n.content.size) at = p + 1;

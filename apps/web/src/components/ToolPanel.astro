@@ -161,12 +161,11 @@ const extend = [
   ['extend', 'add15'],
   ['extend30', 'add30'],
 ] as const;
-// Starter notes live in data attributes, so their headings never count as page headings.
-const task = '<ul data-type="taskList"><li data-type="taskItem" data-checked="false"><p></p></li></ul>';
+// Starter notes carry only their words; the notes pack builds the blocks, so no heading lands in the page.
 const NOTE_TEMPLATES = {
-  todo: `<h1>${t('notes.start.todo')}</h1>${task}`,
-  meeting: `<h1>${t('notes.start.meeting')}</h1><h2>${t('notes.tpl.agenda')}</h2><ul><li><p></p></li></ul><h2>${t('notes.tpl.actions')}</h2>${task}`,
-  ideas: `<h1>${t('notes.start.ideas')}</h1><ul><li><p></p></li></ul>`,
+  todo: [t('notes.start.todo')],
+  meeting: [t('notes.start.meeting'), t('notes.tpl.agenda'), t('notes.tpl.actions')],
+  ideas: [t('notes.start.ideas')],
 };
 ---
 
@@ -1723,7 +1722,7 @@ const NOTE_TEMPLATES = {
         </ul>
         <p class="at-caption at-notes-slash-none" data-notes-slash-none hidden>{t('notes.block.none')}</p>
       </div>
-      {Object.entries(NOTE_TEMPLATES).map(([id, html]) => <template data-notes-tpl-html={id} data-html={html}></template>)}
+      {Object.entries(NOTE_TEMPLATES).map(([id, words]) => <template data-notes-tpl-html={id} data-words={JSON.stringify(words)}></template>)}
       <template data-notes-pin-icon><Icon name="push-pin" size={20} /></template>
       <Fragment slot="footer">
         <div class="at-notes-foot">
