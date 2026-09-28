@@ -169,6 +169,33 @@
     }
   }
 
+  .at-duo {
+    flex-shrink: 0;
+  }
+
+  .at-duo .at-duo-f {
+    fill: var(--at-duo-c, var(--at-accent));
+    opacity: 0.28;
+  }
+
+  :root[data-theme="light"] .at-duo .at-duo-f {
+    opacity: 0.22;
+  }
+
+  .at-duo-state {
+    --at-duo-c: var(--at-tone, var(--at-accent));
+  }
+
+  .at-duo-ink {
+    --at-duo-c: currentcolor;
+  }
+
+  @media (forced-colors: active) {
+    .at-duo .at-duo-f {
+      fill: CanvasText;
+    }
+  }
+
   :root[data-swap] * {
     transition: none !important;
   }
