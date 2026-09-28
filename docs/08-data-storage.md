@@ -28,6 +28,9 @@ export interface ISettings {
   v: 1;
   theme: 'auto' | 'light' | 'dark' | 'oled';        // default 'auto'
   accent: string;                                   // lamp light-theme hex, default '#087B87'; one of '#087B87' (aqua) · '#5A47CF' (violet) · '#167A50' (mint, ambient.packs) · '#255FBD' (sky, ambient.packs); legacy values migrate on read: '#B86E00' amber → aqua, '#4F46E5' indigo → violet, '#0F766E' teal → mint, '#BE123C' rose → sky; unknown or unlicensed values render as aqua; the next settings save writes the lamp hex — dark variants come from tokens.css (05-frontend-spec.md §1.1a)
+  face: TFace;                                      // 'ring' | 'bold' | 'horizon' | 'tide' | 'flip' | 'rolling' | 'analog' | 'rings' | 'word' | 'nixie' | 'lcd' | 'matrix'; default 'ring' — the remembered clock face (DESIGN.md §7); the face tabs and Settings → Clock face write it, src/boot/boot.js paints <html data-face> from it before first frame (absent for ring); an unknown value shows the Ring face
+
+  accent: string;                                   // lamp light-theme hex, default '#087B87' (aqua); the twelve lamps are LAMPS in src/tool/packs/themes/looks.ts (free: aqua, violet '#5A47CF', amber '#A34F00', teal '#0A7565'); any other '#RRGGBB' is a custom lamp (ambient.packs, fitted for AA before it is stored); legacy values migrate on read: '#B86E00' amber → aqua, '#4F46E5' indigo → violet, '#0F766E' teal → mint, '#BE123C' rose → sky; invalid or unlicensed values render as aqua and stay stored; dark variants come from tokens.css / public/assets/themes.css (05-frontend-spec.md §1.1a)
   face: 'ring' | 'bold' | 'horizon' | 'tide';       // default 'ring' — the remembered clock face (DESIGN.md §7); the face tabs and Settings → Clock face write it, src/boot/boot.js paints <html data-face> from it before first frame (absent for ring); an unknown value shows the Ring face
   defaultPreset: TPresetId;                          // 'p15'|'p30'|'p45'|'p60'|'p120'|'p240'|'pinf'|'custom'|'until'; default 'pinf'
   lastCustomMs: number;                             // default 90 * 60_000
@@ -53,6 +56,30 @@ export interface ISettings {
   reduceMotion: 'system' | 'on' | 'off';            // default 'system'
 }
 ```
+
+Additive fields (28 September 2026; still `v: 1`, missing fields read as their defaults): `faceStyles` (per-face style id, `{}`; today only `analog`: `minimal` (read when absent) or `luxe`) · `palette` (`clear-night` | `paper` | `nord` | `solarized` | `midnight` | `forest` | `sunset` | `mono` | `contrast`, default `clear-night`) · `pattern` (`none` | `grain` | `dots` | `grid` | `topo` | `waves` | `aurora` | `stars` | `drift`, default `none`) · `vibrate` (`true`) · `tick` (`false`) · `focusSound { kind, volume 0.5, mix {}, stopAtEnd true }` (`kind`: `none` | `brown` | `pink` | `white` | `rain` | `cafe` | `fire` | `lofi` | `track:<id>`) · `intention` (≤ 80 chars, `''`) · `worldClock` (IANA zone or `null`) · `pomodoro { autoCycle false, longBreakMin 15 }` (`autoCycle` needs `ambient.packs`; `longBreakMin` 5–45, free) · `breathe` (`'478'` \| `'box'`, optional: absent reads as `'478'`, so it has no default entry). `intention` and `worldClock` are read defensively (an unknown zone or a non-string reads as unset). `face` gains `flip` · `rolling` · `analog` · `rings` · `word` · `nixie` · `lcd` · `matrix`; `sound.id` gains `digital` · `birds`; `ambient.mode` gains `breathe`. A Pro item being previewed is never written here. How the sound fields are used (28 September 2026, `05-frontend-spec.md` §3.34): `sound.volume` is written by Settings → End sound volume; `focusSound.kind` is the last chosen focus sound (it never starts playing on load); a non-empty `focusSound.mix` (Pro) plays instead of `kind` and is cleared by picking a single sound; the pack reads every nested `focusSound` field defensively (`readFocus`: unknown kinds read as `none`, out-of-range levels and volumes are dropped).
+
+### 2.1a `at.v1.notes` (IndexedDB)
+
+Notes live in IndexedDB (`idb-keyval`, database `awaketab`, store `notes`, key `at.v1.notes`), never in localStorage and never sent anywhere. Written by the notes pack (`src/tool/packs/notes/data.ts`) 600 ms after the last keystroke, and at once when the drawer closes, the tab hides or the page goes away.
+
+```ts
+interface INotesData {
+  v: 1;
+  notes: Array<{
+    id: string;           // crypto.randomUUID()
+    title: string;        // ≤ 120 chars, '' when untitled (titles are a Pro feature)
+    doc: JSONContent | null; // Tiptap/ProseMirror document JSON; null until something is written
+    createdAt: number;    // ms epoch
+    updatedAt: number;    // ms epoch, the list sorts on it
+    pinned?: true;        // Pro; pinned notes list first
+  }>;                     // creation order: notes[0] is the free note
+  current?: string;       // id of the note the drawer opens on
+  voiceOk?: true;         // the dictation notice was read and accepted once
+}
+```
+
+Reads are defensive (`parseNotes`): a damaged record, a duplicate id or a non-document `doc` is dropped, never thrown. Free: one editable note, the first in the array; with `ambient.packs`, or during a five-minute preview, every note is editable. Notes written during a preview stay (readable, copyable, exportable) and are read only after it ends; nothing is deleted except by the user (Clear with an inline confirm, or Delete note when there are several). Clearing the site's data in the browser deletes them; there is no server copy and no sync.
 
 ### 2.2 `at.v1.session`
 
@@ -81,7 +108,7 @@ export interface ISession {
   endedAt: number | null;
   endReason: TEndReason | null;
   awakeSeconds: number;     // seconds spent in lock `held` or `fallback`
-  modeState: Record<string, unknown>; // per-mode data merged by engine.updateSession(): { cookTimers?: ICookTimer[]; focusBlock?: true }
+  modeState: Record<string, unknown>; // per-mode data merged by engine.updateSession(): { cookTimers?: ICookTimer[]; focusBlock?: boolean; plus the focus keys below }
   source: 'web' | 'pwa' | 'pip' | 'ext' | 'embed';
 }
 ```
@@ -97,7 +124,7 @@ export interface ICookTimer {
 }
 ```
 
-`modeState.focusBlock` (M6 follow-ups) is `true` on a session started by focus mode's "Start a focus block". It is what makes the session count toward `at.v1.stats.dayFocus` when it completes (§2.3).
+`modeState.focusBlock` (M6 follow-ups) is `true` on a session started by focus mode's "Start a focus block". It is what makes the session count toward `at.v1.stats.dayFocus` when it completes (§2.3). Focus tools (28 September 2026) add, all optional and read defensively: `focusAuto` (`true` for an auto-cycle session, which is `indefinite` and has `focusBlock: false`) · `focusCfg` (`{ workMin, breakMin, cycles, longMin }` frozen at start) · `focusSkip` · `focusPauseAt` (epoch ms while the Pomodoro timer is paused, else 0) · `focusPaused` (ms paused so far) · `focusAdded` (ms added to a single block's end during the current pause) · `focusRounds` (auto-cycle blocks already counted). An auto-cycle session adds one to `dayFocus` for each block it finishes, whatever its end reason.
 
 At most 3 timers. The reader is defensive: a non-array or malformed entry is dropped (localStorage is user-editable). Focus-mode phases are not stored — they are derived from `startedAt`, `pausedMs` and `settings.ambient.focus` on every repaint. Since M6 the session also changes through `addTime(ms)` (an `until` plan may become a `duration` plan with the same deadline) and `pause({ keepLock: true })` (cook mode; `04-engine-spec.md` §9).
 
@@ -286,6 +313,8 @@ Columns: `date,awake_minutes,sessions` (one row per local day, ISO dates; the ro
 | Data | Where | Why | Leaves the device? |
 |---|---|---|---|
 | Settings, session, stats, onboarding | localStorage / chrome.storage | The product works offline and without an account | No |
+| Notes (`at.v1.notes`) | IndexedDB | A notepad that works offline and without an account | No (export and copy are the user's own action) |
+| Dictation audio (notes mic) | The browser's speech service while the mic listens (Google in Chrome, Microsoft in Edge, Apple in Safari) | Voice typing; AwakeTab never receives the audio or the text | Yes, by the browser, after an inline notice; not by AwakeTab |
 | Licence token + random `deviceId` | localStorage / chrome.storage.local | Prove a Pro purchase; count activations (max 5) | Token only, to `/api/license/*` |
 | Anonymous usage events | Analytics Engine, 90 days | Reliability (does the lock hold?) and product decisions | Yes — no IP stored, no ids beyond a per-tab random `sid`; toggle in Settings |
 | Licence record | KV | Fulfil purchases, handle refunds, stop abuse | Held by us; purchase details are with Polar (merchant of record) |

@@ -934,6 +934,49 @@
     list-style: none;
   }
 
+  .at-about-credits {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0;
+    border-block-start: var(--at-border) solid var(--at-line);
+  }
+
+  .at-about-credits > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0 var(--at-s-4);
+    align-items: baseline;
+    padding-block: var(--at-s-3);
+    border-block-end: var(--at-border) solid var(--at-line);
+  }
+
+  .at-about-credits dt {
+    color: var(--at-ink);
+    font: var(--at-type-ui);
+    font-weight: 600;
+  }
+
+  .at-about-credits dd {
+    grid-column: 1;
+    margin: 0;
+    color: var(--at-ink-2);
+    font: var(--at-type-small);
+  }
+
+  .at-about-credits .at-about-licence {
+    grid-row: 1;
+    grid-column: 2;
+    font: var(--at-type-caption);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (width >= 600px) {
+    .at-about-credits {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--at-s-8);
+    }
+  }
+
   .at-about-principles {
     display: flex;
     flex-direction: column;

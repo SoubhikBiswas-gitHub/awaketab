@@ -52,7 +52,10 @@ async function shellAssets(dist) {
       if (src.startsWith('/_astro/')) entries.add(path.join(dist, src.slice(1)));
     }
   }
-  const scripts = await closure([...entries], { dynamic: true });
+  // Feature packs load on first use and are cached then, so a visitor never downloads a feature they do not open.
+  const scripts = [...(await closure([...entries], { dynamic: true }))].filter(
+    (f) => !/(?:^|\/)pack-/u.test(path.basename(f)),
+  );
   const styles = new Set();
   for (const file of scripts) {
     for (const m of (await readFile(file, 'utf8')).matchAll(/["'](\/_astro\/[^"'?#]+\.css)["']/gu)) {

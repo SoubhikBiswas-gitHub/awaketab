@@ -2,13 +2,24 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mount as mountCook } from '../../src/tool/ambient/cook.js';
 import { at, digits, short, split } from '../../src/tool/ambient/fmt.js';
 import { dateLong } from '../../src/tool/format.js';
-import { mount as mountFocus } from '../../src/tool/ambient/focus.js';
+import { KIT } from '../../src/tool/ambient/shell.js';
+import { mountFocus as mountFocusMode } from '../../src/tool/packs/extras/focus.js';
 import { mount as mountMessage } from '../../src/tool/ambient/message.js';
 import { togglePip } from '../../src/tool/ambient/pip-window.js';
 import { license, makeCtx } from './ctx-helper.js';
+import type * as TLooks from '../../src/tool/packs/themes/looks.js';
 
 // The layer's lazily loaded stylesheet: a data URL, so the test DOM never fetches from a server.
 vi.mock('../../src/styles/ambient.css?url', () => ({ default: 'data:text/css,' }));
+vi.mock('../../src/tool/packs/extras/extras.css?url', () => ({ default: 'data:text/css,' }));
+const mountFocus = (stage: HTMLElement, ctx: Parameters<typeof mountFocusMode>[1]) => mountFocusMode(stage, ctx, KIT);
+// The preview helper opens the Pro sheet through ui/dialog.ts, which links tool-more.css on import.
+vi.mock('../../src/tool/ui/more-css.js', () => ({ moreCss: async () => undefined }));
+vi.mock('../../src/tool/packs/themes/looks.js', async (load) => ({
+  ...(await load<typeof TLooks>()),
+  themesCss: async () => undefined,
+  uiCss: async () => undefined,
+}));
 
 // B4 (Clear Night ambient + floating window): the canvas behaviours added on top of the M6 modes.
 
@@ -59,7 +70,8 @@ describe('focus mode (Ambient canvas)', () => {
     expect(q('.at-am-kicker')?.textContent).toBe('Focus block');
     expect(q('[data-focus-digits]')?.innerHTML).toBe('25<span>:00</span>');
     expect(q('[data-focus-label]')?.hidden).toBe(true);
-    expect(q('[data-focus-skip]')?.hidden).toBe(true);
+    // Skip and Pause share one row, hidden until a block runs.
+    expect(q('[data-focus-skip]')?.closest('[hidden]')).not.toBeNull();
 
     q('[data-focus-start]')?.click();
     await vi.waitFor(() => {
@@ -161,20 +173,25 @@ describe('cook mode (Ambient canvas)', () => {
 });
 
 describe('message mode (Ambient canvas)', () => {
-  it('a shared link previews with the Pro tag and a countdown', () => {
+  it('a shared link runs the five-minute Pro preview, then goes back to Clock', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(SAT_5PM);
-    const { ctx } = makeCtx({ search: '?mode=message&msg=Back%20soon' });
+    const { ctx, store } = makeCtx({ search: '?mode=message&msg=Back%20soon' });
+    store.set({ ui: { mode: 'message' } });
     const stage = document.createElement('div');
     const off = mountMessage(stage, ctx);
     expect(stage.querySelector('[data-message]')?.textContent).toBe('Back soon');
-    const preview = stage.querySelector('.at-am-preview');
-    expect(preview?.querySelector('.at-am-tag')?.textContent).toBe('Pro');
-    expect(preview?.textContent).toContain('60 s preview · 60 s left');
-    vi.advanceTimersByTime(18_000);
-    expect(preview?.textContent).toContain('60 s preview · 42 s left');
-    expect(preview?.textContent).toContain('Preview · 42 s');
+    expect(stage.querySelector('.at-am-preview .at-am-tag')?.textContent).toBe('Pro');
     expect(stage.querySelector('.at-am-meta time')?.textContent).toMatch(/^\d{1,2}:\d{2}/u);
+    const { activePreview, PREVIEW_MS } = await import('../../src/tool/packs/themes/preview.js');
+    await vi.waitFor(() => {
+      expect(activePreview()?.id).toBe('message');
+    });
+    await vi.advanceTimersByTimeAsync(PREVIEW_MS);
+    expect(store.get().ui.mode).toBe('clock');
+    expect(store.get().ui.toasts.find((x) => x.id === 'preview')?.text).toBe(
+      'Preview ended, back to Clock. Get Pro to keep Message.',
+    );
     off();
   });
 

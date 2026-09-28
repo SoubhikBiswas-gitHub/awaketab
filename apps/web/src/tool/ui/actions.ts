@@ -6,7 +6,7 @@ import { hm, mins, nextWall, stepCustom, wallOf, when } from '../format.js';
 import { t } from '../i18n.js';
 import { applyTheme, nextTheme } from '../theme.js';
 import { openDialog } from './dialog.js';
-import { openSettings } from './settings.js';
+import { openSettings, sound } from './settings.js';
 import { toast } from './toast.js';
 import { moreCss } from './more-css.js';
 import { liveSession } from './view.js';
@@ -137,6 +137,15 @@ export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
       extendAsk(ctx, { add15: 15, add30: 30, add60: 60 }[name] * 60_000);
     else if (name === 'askStop') finishAsk(ctx);
     else if (name === 'battSettings') openSettings(ctx, el);
+    else if (name === 'sound') void sound(ctx, 'open', el);
+    else if (name.startsWith('face'))
+      void import('../packs/faces/index.js').then((m) => {
+        m.faceAct(ctx, name, el);
+      });
+    else if (name === 'intention')
+      void import('../packs/extras/index.js').then((m) => {
+        m.intention(ctx);
+      });
   });
 }
 
@@ -231,7 +240,28 @@ export function open(ctx: IToolCtx, el: HTMLElement): void {
   else if ('openStats' in d) openStats(ctx, el);
   else if ('openShare' in d) openShare(ctx, el);
   else if ('openPip' in d) pip(ctx);
+  else if ('openNotes' in d) notes(ctx, el);
   else help(ctx, true, el);
+}
+
+let typed: string | undefined;
+
+// Keys pressed while the notes pack loads belong to the note, not to other shortcuts.
+export function notesTyping(key: string): boolean {
+  if (typed === undefined || key.length !== 1) return false;
+  typed += key;
+  return true;
+}
+
+// The notes pack (editor, storage, voice) loads the first time the drawer opens.
+export function notes(ctx: IToolCtx, opener?: Element | null): void {
+  typed ??= '';
+  const take = (): string => {
+    const text = typed ?? '';
+    typed = undefined;
+    return text;
+  };
+  void import('../packs/notes/index.js').then((m) => m.openNotes(ctx, opener, take)).finally(take);
 }
 
 export function pip(ctx: IToolCtx): void {

@@ -1,93 +1,32 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import {
-  accentHex,
-  ACCENTS,
-  accentId,
-  applyAccent,
-  DEFAULT_ACCENT,
-  LEGACY_ACCENTS,
-  PACK_ACCENTS,
-} from '../../src/tool/accent.js';
+import { gateLooks } from '../../src/tool/accent.js';
 
-describe('accentId (DESIGN.md §2.2, docs/05 §1.1a)', () => {
-  it('maps the stored light-theme hex to a lamp id, case-insensitively', () => {
-    expect(accentId('#087B87', false)).toBe('aqua');
-    expect(accentId('#5a47cf', false)).toBe('violet');
-    expect(accentId('#167A50', true)).toBe('mint');
-    expect(accentId('#255fbd', true)).toBe('sky');
-  });
-
-  it('pack lamps need ambient.packs; unknown values fall back to aqua', () => {
-    expect(accentId('#167A50', false)).toBe('aqua');
-    expect(accentId('#255FBD', false)).toBe('aqua');
-    expect(accentId('#123456', true)).toBe('aqua');
-    expect(accentId('', true)).toBe('aqua');
-    expect(ACCENTS[DEFAULT_ACCENT]).toBe('aqua');
-    expect([...PACK_ACCENTS].map((h) => ACCENTS[h as keyof typeof ACCENTS])).toEqual(['mint', 'sky']);
-  });
-});
-
-describe('legacy palette migration (docs/08 §2.1)', () => {
-  // Stored value → [lamp hex, id with ambient.packs, id without].
-  const TABLE: Array<[string, string, string, string]> = [
-    ['#B86E00', '#087B87', 'aqua', 'aqua'], // amber → aqua (default)
-    ['#4F46E5', '#5A47CF', 'violet', 'violet'], // indigo → violet
-    ['#0F766E', '#167A50', 'mint', 'aqua'], // teal → mint
-    ['#BE123C', '#255FBD', 'sky', 'aqua'], // rose → sky
-    ['#b86e00', '#087B87', 'aqua', 'aqua'],
-    ['#123456', '#087B87', 'aqua', 'aqua'], // unknown → aqua
-    ['not a colour', '#087B87', 'aqua', 'aqua'],
-  ];
-
-  it.each(TABLE)('%s → %s (%s, or %s without packs)', (stored, hex, withPacks, withoutPacks) => {
-    expect(accentHex(stored)).toBe(hex);
-    expect(accentId(stored, true)).toBe(withPacks);
-    expect(accentId(stored, false)).toBe(withoutPacks);
-  });
-
-  it('covers exactly the four old palettes and targets current lamps', () => {
-    expect(Object.keys(LEGACY_ACCENTS).sort()).toEqual(['#0F766E', '#4F46E5', '#B86E00', '#BE123C']);
-    for (const lamp of Object.values(LEGACY_ACCENTS)) expect(ACCENTS[lamp]).toBeDefined();
-  });
-
-  it('the inline boot script mirrors the lamp and legacy maps (aqua sets no attribute)', () => {
-    const boot = readFileSync(path.join(import.meta.dirname, '../../src/boot/boot.js'), 'utf8');
-    const literal = /const accents = (\{[^}]*\});/u.exec(boot)?.[1] ?? '{}';
-    const map = Object.fromEntries([...literal.matchAll(/'(#[0-9A-F]{6})':\s*'(\w+)'/gu)].map((m) => [m[1], m[2]]));
-    const expected: Record<string, string> = {};
-    for (const [hex, id] of Object.entries(ACCENTS)) if (id !== 'aqua') expected[hex] = id;
-    for (const [hex, lamp] of Object.entries(LEGACY_ACCENTS))
-      if (ACCENTS[lamp] !== 'aqua') expected[hex] = ACCENTS[lamp];
-    expect(map).toEqual(expected);
-  });
-});
-
-describe('applyAccent', () => {
+describe('gateLooks (a lapsed licence falls back to the free look)', () => {
+  const html = document.documentElement;
   afterEach(() => {
-    delete document.documentElement.dataset.accent;
+    for (const k of ['accent', 'palette', 'pattern', 'preview']) html.removeAttribute(`data-${k}`);
   });
 
-  it('sets data-accent for non-default lamps and removes it for aqua', () => {
-    expect(applyAccent('#5A47CF', false)).toBe('violet');
-    expect(document.documentElement.dataset.accent).toBe('violet');
-    expect(applyAccent('#087B87', false)).toBe('aqua');
-    expect(document.documentElement.hasAttribute('data-accent')).toBe(false);
+  it('keeps free lamps, colour themes and patterns and drops Pro ones without ambient.packs', () => {
+    Object.assign(html.dataset, { accent: 'amber', palette: 'nord', pattern: 'grid' });
+    gateLooks(false);
+    expect({ ...html.dataset }).toMatchObject({ accent: 'amber', palette: 'nord', pattern: 'grid' });
+    Object.assign(html.dataset, { accent: 'coral', palette: 'midnight', pattern: 'stars' });
+    gateLooks(false);
+    expect(
+      html.hasAttribute('data-accent') || html.hasAttribute('data-palette') || html.hasAttribute('data-pattern'),
+    ).toBe(false);
   });
 
-  it('removes a pack lamp the licence no longer covers', () => {
-    applyAccent('#167A50', true);
-    expect(document.documentElement.dataset.accent).toBe('mint');
-    applyAccent('#167A50', false);
-    expect(document.documentElement.hasAttribute('data-accent')).toBe(false);
-  });
-
-  it('applies the lamp that replaced a legacy palette', () => {
-    expect(applyAccent('#4F46E5', false)).toBe('violet');
-    expect(document.documentElement.dataset.accent).toBe('violet');
-    expect(applyAccent('#B86E00', false)).toBe('aqua');
-    expect(document.documentElement.hasAttribute('data-accent')).toBe(false);
+  it('leaves everything with Pro, and leaves a running preview alone', () => {
+    Object.assign(html.dataset, { accent: 'custom', palette: 'mono' });
+    gateLooks(true);
+    expect(html.dataset.accent).toBe('custom');
+    html.dataset.preview = 'palette';
+    gateLooks(false);
+    expect(html.dataset.palette).toBe('mono');
   });
 });
 
@@ -144,7 +83,7 @@ const THEMES = {
   oled: block('[data-theme="oled"]'),
 };
 
-const PALETTES = Object.values(ACCENTS).flatMap((id) =>
+const PALETTES = ['aqua', 'violet', 'mint', 'sky'].flatMap((id) =>
   (['light', 'dark', 'oled'] as const).map((theme) => {
     const base = THEMES[theme];
     let over: Record<string, string> = {};
@@ -184,7 +123,8 @@ describe('lamp colours meet WCAG AA (tokens.css, DESIGN.md §2.2)', () => {
   });
 
   it('the light lamp values are the stored settings hexes (DESIGN.md §2.2)', () => {
-    for (const [hex, id] of Object.entries(ACCENTS)) {
+    const lamps = { '#087B87': 'aqua', '#5A47CF': 'violet', '#167A50': 'mint', '#255FBD': 'sky' };
+    for (const [hex, id] of Object.entries(lamps)) {
       const vars = PALETTES.find((p) => p.name === `${id} / light`)?.vars ?? {};
       expect(vars['--at-accent']?.toUpperCase(), id).toBe(hex);
       expect(vars['--at-accent-text']?.toUpperCase(), id).toBe(hex);

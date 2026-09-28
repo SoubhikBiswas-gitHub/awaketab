@@ -56,19 +56,27 @@ describe('watchUpdates (FR-PWA-01)', () => {
     expect(env.swToasts()[0]).toMatchObject({
       kind: 'info',
       sticky: true,
-      text: 'Update ready. Reload when you finish.',
+      text: 'A new version of AwakeTab is ready.',
     });
     expect(env.swToasts()[0]?.action?.label).toBe('Reload');
   });
 
-  it('never interrupts an active session, and offers once it ends', () => {
+  it('never reloads an active session: says so once, then offers Reload when it ends', () => {
     const env = setup('active');
     cleanup = env.off;
-    expect(env.swToasts()).toHaveLength(0);
+    expect(env.swToasts()).toHaveLength(1);
+    expect(env.swToasts()[0]).toMatchObject({
+      kind: 'info',
+      sticky: false,
+      text: "A new version of AwakeTab is ready. Reload when you're done.",
+    });
+    expect(env.swToasts()[0]?.action).toBeUndefined();
+    env.store.set({ ui: { toasts: [] } });
     env.setStatus('paused');
     expect(env.swToasts()).toHaveLength(0);
     env.setStatus('inactive');
     expect(env.swToasts()).toHaveLength(1);
+    expect(env.swToasts()[0]?.action?.label).toBe('Reload');
     // Offered once: later store changes do not push it again.
     env.store.set({ ui: { toasts: [] } });
     env.setStatus('completed');

@@ -7,8 +7,7 @@ import { applyTheme } from '../theme.js';
 import { toast } from '../ui/toast.js';
 import { mount as clock } from './clock.js';
 import { mount as cook } from './cook.js';
-import { ambientCss, at, short } from './fmt.js';
-import { mount as focus } from './focus.js';
+import { ambientCss, at, digits, short } from './fmt.js';
 import { activeElapsed, modeAllowed, nextMode, pixelShift, PIXEL_SHIFT_MS, shouldDim } from './logic.js';
 import { mount as message } from './message.js';
 import { el, everySecond } from './tick.js';
@@ -20,8 +19,34 @@ export type TModeMount = (stage: HTMLElement, ctx: IToolCtx) => () => void;
 
 // One lazy chunk for the whole layer (shell + modes): the modes are small and share most of their code, so a
 // single gzip stream is ~1.4 KB lighter than one chunk per mode against the 40 KB page budget (docs/00 §11).
-const MODES: Partial<Record<TAmbientMode, TModeMount>> = { clock, night: clock, focus, message, cook };
-const BAR: readonly TAmbientMode[] = ['clock', 'focus', 'minimal', 'night', 'message', 'cook'];
+// Helpers the extras pack borrows, passed in so its chunk never pulls this layer's modules into itself.
+export const KIT = { el, every: everySecond, at, digits, elapsed: activeElapsed };
+export type TKit = typeof KIT;
+
+// Focus and Breathe are the extras pack, fetched when the mode first opens.
+const pack =
+  (name: 'focus' | 'breathe'): TModeMount =>
+  (stage, ctx) => {
+    let off: (() => void) | undefined;
+    let gone = false;
+    void import('../packs/extras/index.js').then((m) => {
+      if (!gone) off = m[name](stage, ctx, KIT);
+    });
+    return () => {
+      gone = true;
+      off?.();
+    };
+  };
+
+const MODES: Partial<Record<TAmbientMode, TModeMount>> = {
+  clock,
+  night: clock,
+  focus: pack('focus'),
+  breathe: pack('breathe'),
+  message,
+  cook,
+};
+const BAR: readonly TAmbientMode[] = ['clock', 'focus', 'breathe', 'minimal', 'night', 'message', 'cook'];
 
 let warnedGate = false;
 
@@ -207,7 +232,9 @@ export function mountAmbient(ctx: IToolCtx): () => void {
     const s = store.get();
     if (mode === 'night' || prev === 'night') applyTheme(s.settings.theme, mode === 'night');
     const session = ctx.engine.session;
-    if (session && (session.status === 'active' || session.status === 'paused')) ctx.engine.updateSession({ mode });
+    // A locked mode on preview is never written into the stored session.
+    if (session && (session.status === 'active' || session.status === 'paused'))
+      ctx.engine.updateSession({ mode: modeAllowed(mode, has(ctx)) ? mode : 'standard' });
     if (mode === 'standard') {
       exit();
       return;

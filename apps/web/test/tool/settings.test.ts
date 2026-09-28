@@ -3,9 +3,15 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { fillSettings, openSettings, readSettings } from '../../src/tool/ui/settings.js';
 import en from '../../src/i18n/en.json';
 import { dialogSettled, makeCtx } from './ctx-helper.js';
+import type * as TLooks from '../../src/tool/packs/themes/looks.js';
 
-// Sheets wait for tool-more.css (ui/dialog.ts); happy-dom never loads the stylesheet.
+// Sheets wait for tool-more.css (ui/dialog.ts) and the themes pack for its sheets; happy-dom never loads them.
 vi.mock('../../src/tool/ui/more-css.js', () => ({ moreCss: async () => undefined }));
+vi.mock('../../src/tool/packs/themes/looks.js', async (load) => ({
+  ...(await load<typeof TLooks>()),
+  themesCss: async () => undefined,
+  uiCss: async () => undefined,
+}));
 
 // happy-dom's RadioNodeList has a `value` getter only; browsers also have the setter fillSettings relies on
 // (check the first radio whose value matches, else change nothing — HTML §4.10.21.3).
@@ -29,8 +35,7 @@ afterAll(() => {
   if (radioValue) Object.defineProperty(RadioNodeList.prototype, 'value', radioValue);
 });
 
-const ACCENTS = ['#087B87', '#5A47CF', '#167A50', '#255FBD'];
-const MODES = ['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook'];
+const MODES = ['standard', 'clock', 'focus', 'breathe', 'minimal', 'night', 'message', 'cook'];
 
 // Mirrors the settings form in src/components/ToolPanel.astro (names, types, defaults and checked states).
 const SETTINGS_HTML = `
@@ -42,15 +47,15 @@ const SETTINGS_HTML = `
         <label><input type="radio" name="theme" value="dark" /> Dark</label>
         <label><input type="radio" name="theme" value="oled" /> OLED</label>
       </fieldset>
-      <fieldset class="at-accents">
-        ${ACCENTS.map((hex) => `<label><input type="radio" name="accent" value="${hex}" ${hex === '#087B87' ? 'checked' : ''} /></label>`).join('')}
-        <p data-pack-gate></p><span data-lamp-note></span>
-      </fieldset>
+      <div data-appearance></div>
       <fieldset>${['ring', 'bold', 'horizon', 'tide'].map((v) => `<label><input type="radio" name="face" value="${v}" ${v === 'ring' ? 'checked' : ''} /></label>`).join('')}</fieldset>
       <select name="defaultPreset">
         ${['p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf'].map((p) => `<option value="${p}">${p}</option>`).join('')}
       </select>
-      <select name="sound"><option value="chime">Chime</option><option value="none">None</option></select>
+      <fieldset>${['chime', 'bell', 'soft', 'digital', 'birds', 'none'].map((v) => `<label><input type="radio" name="sound" value="${v}" ${v === 'chime' ? 'checked' : ''} /></label>`).join('')}</fieldset>
+      <input type="range" name="soundVolume" min="0" max="100" step="5" value="60" />
+      <label data-vibrate-row hidden><input type="checkbox" name="vibrate" checked /> Vibrate</label>
+      <label><input type="checkbox" name="tick" /> Tick</label>
       <label><input type="checkbox" name="notifications" /> Notify</label>
       <p data-notifications-note hidden></p>
       <fieldset>
@@ -143,31 +148,37 @@ describe('fillSettings → readSettings', () => {
   });
 });
 
-describe('readSettings gates', () => {
-  it('refuses a pack accent without ambient.packs', () => {
+describe('end sound, vibrate and tick', () => {
+  it('round-trips every end sound, its volume and both switches', () => {
     const f = form();
-    const cur = { ...STORED, accent: '#087B87' };
-    fillSettings(f, { ...cur, accent: '#167A50' });
-    expect(readSettings(f, cur, NONE).accent).toBe('#087B87');
-    expect(readSettings(f, cur, { packs: true, message: false }).accent).toBe('#167A50');
-    // A free lamp is always accepted.
-    fillSettings(f, { ...cur, accent: '#5A47CF' });
-    expect(readSettings(f, cur, NONE).accent).toBe('#5A47CF');
+    for (const id of ['chime', 'bell', 'soft', 'digital', 'birds', 'none'] as const) {
+      const s: ISettings = { ...STORED, sound: { id, volume: 0.45 }, vibrate: false, tick: true };
+      fillSettings(f, s);
+      expect(readSettings(f, s, ALL), id).toEqual(s);
+    }
   });
 
-  it('migrates a legacy palette hex to its lamp when the form is filled (docs/08 §2.1)', () => {
+  it('keeps a stored sound no radio offers only while nothing is picked', () => {
     const f = form();
-    for (const [legacy, lamp] of [
-      ['#B86E00', '#087B87'],
-      ['#4f46e5', '#5A47CF'],
-      ['#0F766E', '#167A50'],
-      ['#BE123C', '#255FBD'],
-      ['#123456', '#087B87'],
-    ] as const) {
-      const cur = { ...STORED, accent: legacy };
-      fillSettings(f, cur);
-      expect(readSettings(f, cur, ALL).accent, legacy).toBe(lamp);
-    }
+    for (const r of f.querySelectorAll<HTMLInputElement>('input[name="sound"]')) r.checked = false;
+    const cur: ISettings = { ...STORED, sound: { id: 'custom:x', volume: 0.5 } };
+    expect(readSettings(f, cur, ALL).sound.id).toBe('custom:x');
+  });
+});
+
+describe('readSettings gates', () => {
+  it('never stores Message mode without ambient.message (a locked mode is only previewed)', () => {
+    const f = form();
+    fillSettings(f, STORED);
+    (f.elements.namedItem('ambientMode') as HTMLSelectElement).value = 'message';
+    expect(readSettings(f, STORED, NONE).ambient.mode).toBe('clock');
+    expect(readSettings(f, STORED, { packs: false, message: true }).ambient.mode).toBe('message');
+  });
+
+  it('leaves the lamp to the Appearance gallery (the stored hex is kept)', () => {
+    const f = form();
+    fillSettings(f, STORED);
+    expect(readSettings(f, { ...STORED, accent: '#B1452F' }, NONE).accent).toBe('#B1452F');
   });
 
   it('ignores the ambient message without ambient.message and sanitises it with it', () => {
@@ -227,8 +238,8 @@ describe('readSettings gates', () => {
 
 describe('openSettings', () => {
   afterEach(() => {
-    delete document.documentElement.dataset.theme;
-    delete document.documentElement.dataset.accent;
+    for (const k of ['theme', 'accent', 'palette', 'pattern', 'preview'])
+      document.documentElement.removeAttribute(`data-${k}`);
   });
 
   it('opens on the stored values and a change keeps them (no default overwrite)', async () => {
@@ -239,6 +250,10 @@ describe('openSettings', () => {
     openSettings(ctx);
     await dialogSettled();
     const dialog = root.querySelector<HTMLDialogElement>('[data-dialog="settings"]') as HTMLDialogElement;
+    // The sheet waits (briefly) for the themes pack's Appearance gallery.
+    await vi.waitFor(() => {
+      expect(dialog.open).toBe(true);
+    });
     const f = dialog.querySelector('form') as HTMLFormElement;
     expect(dialog.open).toBe(true);
     expect((f.elements.namedItem('theme') as RadioNodeList).value).toBe('oled');
@@ -257,15 +272,41 @@ describe('openSettings', () => {
     expect(document.documentElement.dataset.theme).toBe('oled');
     expect(document.documentElement.dataset.accent).toBe('violet');
 
-    // Without a licence a pack lamp previews on the clock (canvas: "Tap one to preview it") but is never stored,
-    // and closing the sheet puts the stored lamp back.
-    expect(root.querySelector<HTMLElement>('[data-pack-gate]')?.hidden).toBe(false);
-    const mint = f.querySelector<HTMLInputElement>('input[name="accent"][value="#167A50"]') as HTMLInputElement;
-    mint.checked = true;
-    mint.dispatchEvent(new Event('change', { bubbles: true }));
-    expect(document.documentElement.dataset.accent).toBe('mint');
-    expect(root.querySelector('[data-lamp-note]')?.textContent).toBe('Mint · Pro preview');
+    // The Appearance gallery (themes pack): without a licence a Pro lamp previews for five minutes, is never stored,
+    // and keeps running when the sheet closes; a free lamp is stored at once.
+    await vi.waitFor(() => {
+      expect(root.querySelector('[data-appearance] input[name="lk-accent"][value="mint"]')).not.toBeNull();
+    });
+    const pick = (kind: string, id: string) => {
+      const r = root.querySelector<HTMLInputElement>(`[data-appearance] input[name="lk-${kind}"][value="${id}"]`);
+      if (!r) throw new Error(`${kind} ${id}`);
+      r.checked = true;
+      r.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    expect(root.querySelector<HTMLInputElement>('input[name="lk-accent"][value="violet"]')?.checked).toBe(true);
+    pick('accent', 'mint');
+    await vi.waitFor(() => {
+      expect(document.documentElement.dataset.accent).toBe('mint');
+    });
+    expect(document.documentElement.dataset.preview).toBe('accent');
     expect(storage.settings().accent).toBe('#5A47CF');
+    pick('palette', 'midnight');
+    await vi.waitFor(() => {
+      expect(document.documentElement.dataset.palette).toBe('midnight');
+    });
+    // One preview at a time: the Pro lamp went back when the colour theme started its own.
+    expect(document.documentElement.dataset.accent).toBe('violet');
+    expect(storage.settings().palette).toBe('clear-night');
+    pick('accent', 'amber');
+    await vi.waitFor(() => {
+      expect(storage.settings().accent).toBe('#A34F00');
+    });
+    expect(document.documentElement.dataset.palette).toBe('midnight');
+    pick('palette', 'paper');
+    await vi.waitFor(() => {
+      expect(storage.settings().palette).toBe('paper');
+    });
+    expect(document.documentElement.hasAttribute('data-preview')).toBe(false);
 
     // The clock face is a setting too (docs/08 §2.1).
     const bold = f.querySelector<HTMLInputElement>('input[name="face"][value="bold"]') as HTMLInputElement;
@@ -275,6 +316,7 @@ describe('openSettings', () => {
 
     dialog.querySelector<HTMLButtonElement>('[data-dialog-close]')?.click();
     expect(dialog.open).toBe(false);
-    expect(document.documentElement.dataset.accent).toBe('violet');
+    expect(document.documentElement.dataset.accent).toBe('amber');
+    expect(document.documentElement.dataset.palette).toBe('paper');
   });
 });

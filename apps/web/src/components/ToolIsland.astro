@@ -7,6 +7,7 @@ import SiteHeader from './shell/SiteHeader.astro';
 import { POLAR_PORTAL_URL } from '../lib/pro-common';
 import { toolReady } from '../lib/tool-ready';
 import { stripLocale } from '../tool/params';
+import { FACE_ORDER } from '../tool/packs/faces/order';
 
 interface Props {
   heading: string;
@@ -100,6 +101,7 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
   data-chip={until ? t('tool.chip.untilAt') : undefined}
   data-tmr={t('tool.when.tomorrow')}
   data-sky={['dawn', 'day', 'dusk', 'night'].map((p) => t(`tool.sky.${p}`)).join('|')}
+  data-fnames={FACE_ORDER.map((f) => t(`tool.face.${f}`)).join('|')}
   data-manifest={embed ? undefined : localePath(locale, '/manifest.webmanifest')}
 >
   {auto && <noscript><style is:inline>{'.at-pillline{visibility:visible!important}'}</style></noscript>}
@@ -289,6 +291,33 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
               <>
                 <rect x="2.5" y="5" width="19" height="14" rx="2.5" />
                 <rect x="12" y="11" width="6.5" height="5" rx="1.5" />
+              </>
+            </svg>
+          </button>
+          <button
+            class="at-icon-button at-snd-btn"
+            type="button"
+            data-act="sound"
+            aria-label={t('tool.header.sound')}
+            title={t('tool.header.sound')}
+            aria-haspopup="dialog"
+            aria-keyshortcuts="S"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <>
+                <path d="M5 10v4" />
+                <path d="M9.5 6v12" />
+                <path d="M14 8.5v7" />
+                <path d="M18.5 11v2" />
               </>
             </svg>
           </button>

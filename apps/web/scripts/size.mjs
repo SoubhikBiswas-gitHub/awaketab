@@ -18,6 +18,8 @@ const limits = {
   totalJs: 40 * 1024,
   embedJs: 25 * 1024,
   loaderJs: 3 * 1024,
+  // Feature packs load only when a visitor opens that feature, so each has its own budget outside totalJs.
+  packs: { faces: 30 * 1024, sound: 110 * 1024, notes: 120 * 1024, themes: 25 * 1024, extras: 15 * 1024 },
 };
 
 async function walk(dir) {
@@ -37,7 +39,15 @@ async function walk(dir) {
 // scripts) to the tool page's 40 KB budget.
 const tool = await pageJs(DIST, servedFile('/'));
 const criticalJs = tool.criticalBytes;
-const totalJs = tool.totalBytes;
+// A pack may split into named chunks (pack-faces-flip); they count toward their pack.
+const packOf = (f) => /(?:^|\/)pack-([a-z]+)(?:-[a-z]+)?\.[\w-]+\.js$/u.exec(f)?.[1];
+const packs = {};
+for (const f of tool.all) {
+  const name = packOf(f);
+  if (name) packs[name] = (packs[name] ?? 0) + gz(await readFile(f));
+}
+const totalJs = tool.totalBytes - Object.values(packs).reduce((a, b) => a + b, 0);
+const packOver = Object.entries(packs).filter(([name, bytes]) => bytes > (limits.packs[name] ?? 0));
 
 // Embed iframe app (docs/11 §2, ≤ 25 KB gz): same full closure, from its own page.
 const embed = await pageJs(DIST, servedFile('/embed/cook'));
@@ -72,6 +82,7 @@ const report = {
   totalJs,
   embedJs,
   loaderJs,
+  packs,
   files: tool.files(tool.critical),
   lazyFiles: tool.files(tool.all).filter((f) => !tool.files(tool.critical).includes(f)),
   embedFiles: embed.files(embed.all),
@@ -82,6 +93,7 @@ const report = {
 process.stdout.write(`${JSON.stringify(report)}\n`);
 if (
   totalJs > limits.totalJs ||
+  packOver.length > 0 ||
   criticalJs > limits.criticalJs ||
   totalCss > limits.css ||
   embedJs > limits.embedJs ||

@@ -18,6 +18,7 @@ export interface IToastItem {
   kind: 'info' | 'success' | 'warn' | 'error' | 'offline';
   text: string;
   action?: { label: string; onClick: () => void };
+  alt?: { label: string; onClick: () => void };
   sticky?: boolean;
 }
 

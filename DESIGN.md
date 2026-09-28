@@ -15,7 +15,7 @@ Contracts that do **not** change: the seven lock states and their exact pill cop
 
 ## 2. Colour
 
-Strategy: **restrained**. Tinted neutrals plus one lamp colour for "awake". Amber and red keep their aviation meanings (caution = paused, alert = blocked) and are never offered as lamp colours.
+Strategy: **restrained**. Tinted neutrals plus one lamp colour for "awake". Amber and red keep their aviation meanings (caution = paused, alert = blocked); a lamp is never a saturated red, and the warm lamps (Amber, Coral, Gold) are told apart from the paused tone by the pill text, glyph and ring pattern, never by colour alone. Colour themes (§2.4) re-map the neutrals, not these meanings.
 
 ### 2.1 Theme tokens (map onto existing `--at-*` names)
 
@@ -51,16 +51,25 @@ Extension toolbar badge (Chrome draws it; white text): Screen level `#087B87` (5
 
 Night mode (OLED, red digits): `--at-night-ink #FF5A3C`, `--at-night-ink-2 #E8563C`, `--at-night-muted #A89690`, `--at-night-line #3A2E2A`; ground `#000`. Scrim is always `rgba(4,7,12,.55)`.
 
-### 2.2 Lamp colours (user choice — replaces the docs/05 §1.1a amber/indigo/teal/rose set)
+### 2.2 Lamp colours (user choice)
 
-| Id | Dark | Light (ring, fills and accent text) | White-on-fill contrast | Gate (proposal) |
-|---|---|---|---|---|
-| `aqua` (default) | `#5BE0E8` | `#087B87` | 5.0:1 | free |
-| `violet` | `#A594FF` | `#5A47CF` | 6.5:1 | free |
-| `mint` | `#7EF0B8` | `#167A50` | 5.3:1 | `ambient.packs` |
-| `sky` | `#7CB8FF` | `#255FBD` | 6.1:1 | `ambient.packs` |
+| Id | Dark | Light (ring, fills and accent text) | Gate |
+|---|---|---|---|
+| `aqua` (default) | `#5BE0E8` | `#087B87` | free |
+| `violet` | `#A594FF` | `#5A47CF` | free |
+| `amber` | `#FFAF6B` | `#A34F00` | free |
+| `teal` | `#4FD8BE` | `#0A7565` | free |
+| `mint` | `#7EF0B8` | `#167A50` | `ambient.packs` |
+| `sky` | `#7CB8FF` | `#255FBD` | `ambient.packs` |
+| `ice` | `#A8DDF5` | `#2A6A8A` | `ambient.packs` |
+| `lavender` | `#CDB8FF` | `#7446B0` | `ambient.packs` |
+| `rose` | `#FF9CC6` | `#B0366A` | `ambient.packs` |
+| `coral` | `#FF9B85` | `#B1452F` | `ambient.packs` |
+| `gold` | `#EBCB5A` | `#7F6400` | `ambient.packs` |
+| `lime` | `#B5E36A` | `#4D7300` | `ambient.packs` |
+| custom | the light value mixed 40 % with white | any colour, fitted | `ambient.packs` |
 
-Light values are the darker accent-text shades because lighter fills (for example `#0A8F9B`, 3.9:1) fail AA for white button text. Rules: lamp hues stay in the blue–green–violet band so they never read as amber/red status; accent ≥ 3:1 on ground, accent-text ≥ 4.5:1; the picker shows a live preview on the ring and is in Settings → Appearance (swatches with names, not colour alone). Gate split decided (O-01): Aqua and Violet free, Mint and Sky in Pro; a lapsed licence falls back to Aqua.
+Light values are the darker accent-text shades because lighter fills (for example `#0A8F9B`, 3.9:1) fail AA for white button text. Rules: lamps are calm and **never a saturated red**, so a lamp cannot read as "blocked"; state is never colour alone (pill text, glyph, ring pattern), so a warm lamp next to the amber paused tone stays honest. Every lamp on every colour theme (§2.4) in light, dark and OLED: accent ≥ 3:1 on ground, accent-text ≥ 4.5:1 on ground and surface, label ≥ 4.5:1 on the fill (checked with culori). The custom lamp is fitted (same hue, lightness moved the least, red capped at 55 % saturation) until it passes on every theme. The picker is Settings → Appearance → Lamp colour: named swatches drawn as a mini ring, never colour alone. A lapsed licence falls back to Aqua. Old stored hexes (amber `#B86E00`, indigo, teal `#0F766E`, rose `#BE123C`) keep mapping to Aqua, Violet, Mint and Sky; the new lamps use other hexes.
 
 ### 2.3 State colour map
 
@@ -76,6 +85,26 @@ Light values are the darker accent-text shades because lighter fills (for exampl
 
 The logo bead in the header takes the current tone, so the brand mark is itself a status light. The tab favicon and title mirror it (`● 24:18 left`).
 
+### 2.4 Theme layer (colour themes, backgrounds, presets)
+
+A colour theme re-maps the same tokens; it never adds names. `html[data-palette="<id>"]` with `data-theme` sets the neutrals and tones of §2.1 (`ground`, `surface`, `line`, `line-strong`, `ink`, `ink-2`, `muted`, `track`, `tick`, `raised`, `sunken`, `input-border`, `warn`, `bad`, `good`, `lift`, `ground-end`), so the shadcn aliases, the ambient ground and every component follow. Each theme has light and dark; OLED keeps the theme's inks on pure black. The lamp, night mode and the Horizon art are not re-mapped.
+
+| Theme | Character | Light ground · ink | Dark ground · ink | Gate |
+|---|---|---|---|---|
+| Clear Night | the default (§2.1) | `#F2F6FA` · `#0E1726` | `#0A0E16` · `#EAF0F7` | free |
+| Paper | warm sepia, like a notebook | `#F8F3E9` · `#2B2118` | `#15110C` · `#F2E9DA` | free |
+| Nord | cool arctic greys | `#F1F3F7` · `#2E3440` | `#242933` · `#ECEFF4` | free |
+| Solarized | Schoonover's base tones | `#FDF6E3` · `#073642` | `#002B36` · `#FDF6E3` | Pro |
+| Midnight | deep indigo night | `#F2F3FA` · `#0B1030` | `#070B1A` · `#E8ECFF` | Pro |
+| Forest | moss and pine | `#F2F6F1` · `#13221A` | `#0B130F` · `#E6F0E8` | Pro |
+| Sunset | dusk rose | `#FBF2ED` · `#2A1418` | `#160E14` · `#FBECE6` | Pro |
+| Mono | pure greys | `#F4F4F4` · `#111111` | `#0B0B0B` · `#EDEDED` | Pro |
+| High contrast | black and white, strong lines | `#FFFFFF` · `#000000` | `#000000` · `#FFFFFF` | Pro |
+
+Backgrounds sit behind the page and every ambient mode but Night and Minimal: None, Grain, Dots, Grid (free), Contours, Waves, Aurora, Stars, Drift (Pro). They are drawn from tokens (ink at 7 %, 60 % of that on OLED; lamp at ≤ 8 % for Aurora and Drift), so text stays AA over them; they move only by slow transform or opacity (a 240 s drift keeps them burn-in safe; Stars twinkle over 11 s, Drift rises over 320 s), stop under reduced motion and hide under forced colours. Presets are one-tap theme + lamp + background: Classic, Library, Fjord (free), Night desk, Kitchen, Focus, Campfire, Northern lights (Pro).
+
+The boot script paints the stored theme, lamp and background before the first frame (a parser-inserted link to `public/assets/themes.css` only when one is set), so nothing flashes. Settings → Appearance shows every option as a live mini (ground, background, lamp ring, a card with two lines), drawn with the real tokens on the tile itself. A Pro option previews for 5 minutes: a calm chip above the dock ("Previewing Nord · 4:59 left · Keep it with Pro", folds to a dot), a toast at 1 minute, then a slow cross-fade back to the last free choice. Nothing is stored and a session is never touched; while a session runs the chip carries no Pro link (D-R15).
+
 ## 3. Type
 
 The product uses the canvas's fonts (decision D-R26, replacing the earlier "system fonts only" rule). All three are SIL OFL 1.1 and **self-hosted** from `/fonts` (Latin woff2, licence files alongside); no third-party font request, and a metric-matched local fallback face per font (size-adjust and ascent/descent/line-gap overrides). Only Geist is preloaded, with `font-display: optional`: it paints when it arrives in time and otherwise the page keeps its fallback rather than swapping text under the reader. Geist Mono and Space Grotesk load after the first paint with `swap`; their fallbacks match their advances, so the swap never moves layout. Scripts outside Latin (ja, zh, hi) fall through to the system stack.
@@ -85,10 +114,12 @@ The product uses the canvas's fonts (decision D-R26, replacing the earlier "syst
 | UI text | `--at-font`: Geist (variable 100–900), then "Geist Fallback", then the system stack | Every UI string |
 | Code, keys, file names, URLs, small counters (≤ 28 px: PiP, embed, extension badge text) | `--at-font-mono`: Geist Mono (variable), then fallback, then `ui-monospace` | Plain (unslashed) zero only |
 | Display digits (Ring, Tide, Kiosk, OG, store, popup) | Geist weight 200–300, `font-variant-numeric: tabular-nums`, no slashed zero | |
-| Bold face digits | `--at-font-display`: Space Grotesk 600 (digits-only subset: 0–9 : . , space d h m), letter-spacing −0.06em, `tabular-nums` | Used by the Bold face only |
-| Horizon / Tide digits | Geist weight 200 | |
+| Bold and Flip face digits | `--at-font-display`: Space Grotesk 600 (digits-only subset: 0–9 : . , space d h m), letter-spacing −0.06em, `tabular-nums` | Used by the Bold and Flip faces only |
+| Nixie face digits | Nixie One 400 (SIL OFL, self-hosted, unmodified) | Loaded only with the Nixie face |
+| LCD face digits | DSEG7 Classic Italic (SIL OFL, self-hosted, unmodified) | Loaded only with the LCD face |
+| Ring / Horizon / Tide digits | Geist weight 250 (Ring, Horizon) and 200 (Tide) | Horizon and Tide go 100 heavier in the final minute |
 
-Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · button 15–17 · date/time line 15 · digits: ring 76 (60 with hours), bold 128 (96), horizon 64 (48), tide 84 (64); desktop scales the face ×1.55. Bold digits are capped to the face width (`min(128px, 34cqi)`, `min(96px, 22cqi)` with hours, `min(62px, 16cqi)` multi-day) so a wide system font never clips them.
+Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · button 15–17 · date/time line 15 · digits (in face units, 358 × 340 box): ring 80 (62 with hours, 42 with days), bold 168 (112, 64) with seconds at 36 %, horizon 64 (48, 34), tide 88 (64, 50); desktop scales the face ×1.55. All digits are tabular with tight display tracking (−0.045em Geist, −0.065em Space Grotesk); the face box scales with its cell, so the widest value (12:59:59, 1d 02:15:00) always fits.
 
 ## 4. Time and dates
 
@@ -104,9 +135,9 @@ Scale: kicker 12/uppercase/0.16em tracking · caption 13 · body 14–16 · butt
 
 | Size | Width | Tool layout |
 |---|---|---|
-| Phone | 360–599 | Single column: header · date line · face tabs · pill · face (340 tall) · note · spacer · length block · 20 px gap · actions at the very bottom |
+| Phone | 360–599 | Single column: header · date line · face switch · pill · face (340 tall) · note · spacer · length block · 20 px gap · actions at the very bottom |
 | Tablet | 600–1023 | Single column centred, face scaled ×1.35, controls max 520 wide, actions stay bottom |
-| Desktop | ≥ 1024 | Two columns: face left (×1.55), right column pill · note · length block · actions · face tabs |
+| Desktop | ≥ 1024 | Two columns: face left (×1.55), right column pill · note · length block · actions · face switch |
 
 Responsive contract (owner requirement, 27 Sep 2026): every screen is responsive at every width, not only at the drawn ones.
 
@@ -125,7 +156,7 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 ## 6. Components
 
 - **Header:** logo lockup (ring + lamp bead) · three menus (Use it for ▾, Devices ▾, Resources ▾, native popovers that rise in with a lamp glow; use cases carry their suggested length as a ring around the icon) · Extension · Pro · theme switch (Light · Dark · Auto, sliding indicator, 44 px segments) · Add to Chrome (Add to Edge, or Add to Home Screen on iOS). Narrower headers and every tool page fold the menus into one Menu button: a bottom sheet on phones, an anchored panel from 600. The tool header keeps Stats (desktop) and Settings.
-- **Segmented bars** (face tabs, presets, theme): surface pill with one sliding indicator (`translateX(index × 100%)`, 600 ms ease-out), selected text ink 600, others ink-2 500.
+- **Segmented bars** (presets, theme): surface pill with one sliding indicator (`translateX(index × 100%)`, 600 ms ease-out), selected text ink 600, others ink-2 500.
 - **Status pill:** see §11.4 pill sizes; tone 12 % fill + 38 % border, glyph 12 px, `<output aria-live="polite">`.
 - **Primary CTA:** lamp fill, on-accent text, logo glyph, soft lamp shadow. **Stop** (and every strong neutral action: Retry, Stop for today, Send, Install, Exit): `raised` fill + 1 px `line-strong` + `ink` text, so it follows the theme (dark button on dark, light button on light; decision D-R20). **Secondary:** surface + strong line.
 - **Inline panels, not modals:** Until a time (4 half-hour slots with `today`/`tomorrow` sub-labels) and Custom (± 5 min stepper) replace the preset bar in place.
@@ -133,12 +164,33 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 - **Settings sheet:** bottom sheet on phone, side sheet on desktop; sections Appearance (theme, lamp colour, clock face), Time (12/24 h, show seconds), Behaviour (existing settings from docs/05 §3.18).
 - **Dialogs, sheets and drawers** (one set: `components/ui/Dialog.astro`, `Sheet.astro`, `Drawer.astro`, native `<dialog>`, docs/05 §3.30): surface fill, 1 px line, `--at-shadow-float`, backdrop `--at-scrim`; header = 36 × 4 grab handle (phones), title 20/28 600, optional description (small, ink-2) and a labelled 44 × 44 Close at the end; body scrolls inside; footer holds the actions, primary last. Phones always get a bottom sheet in the thumb zone (r28 top corners, above the safe area and the keyboard). From 600: `Dialog` is a centred card (r28), `Sheet` a full-height side sheet (inner corners r28, 1 px line on the leading edge), a docked card (share, rating) sits in the tool dock and keeps the page live. Motion: slides up or in from its side while the backdrop fades, `--at-d-slide` in and `--at-d-slow` out, ease-out, no bounce, instant under reduced motion. One layer at a time; the page behind never scrolls. Still a last resort: inline panels come first.
 
+- **Notes drawer** (docs/05 §3.34): the one `Sheet` for notes, end side from 600 (30rem from 1024, scrim at 45 % so the face column stays readable), full-height bottom drawer on phones. First row: a bead in the state tone with the pill text and time left, then All notes · New note. The page of text is a sunken r16 sheet with a faint 24 px dot grid (ink 7 %), body 16/26; a sticky toolbar of 44 px icon buttons (selected = lamp 14 % fill + lamp 45 % line); the mic sits last and fills with the lamp while listening, with a breathing ring (still under reduced motion). Inline panels (r16, lamp 7 % tint) carry the voice notice and the Pro offer; Clear confirms inline with the strong neutral button, never red. Footer: word count and a check-marked "Saved at 10:42 PM", then Copy · .md · .txt · Clear.
+
 ## 7. Clock faces (user-switchable, remembered)
 
-1. **Ring:** 60 minute ticks, depleting arc with glow, bright tip bead with a 3.4 s halo, slow 16 s conic light sweep while awake.
-2. **Bold:** huge digits (seconds dimmed), 12 px bar draining with a 3.8 s shimmer, `of 30 min` and `until` beneath.
-3. **Horizon:** a living sky. The sun (moon at night) travels an arc and touches the horizon exactly when the session ends; sky warms as it sets; clouds drift (90 s / 130 s), stars twinkle at night and dawn, the sun glints on the water. Phase follows the real local time (dawn 5–8, day 8–17, dusk 17–20, night). Digits sit on the water so they never collide with the sun.
-4. **Tide:** water level equals time left; two wave layers (9 s / 15 s), rising bubbles; digits are drawn twice and clipped at the waterline so they stay readable above and below the surface.
+1. **Ring:** a watch dial. 60 fine minute ticks with 12 longer hour ticks, the depleting lamp arc with its glow, a bright tip bead with a 3.4 s halo, a soft lamp glow inside the dial, and a one-minute second sweep: a band of light circling the tick ring once a minute with a bright leading edge (it starts with the session, so the edge passes the top as the seconds read :00; it holds still, amber, while paused). Digits Geist 250, tracking −0.045em, seconds muted.
+2. **Bold:** editorial and left-aligned. A kicker with a state dot, display numerals (Space Grotesk 600, 168; the seconds a raised small figure beside them), a 6 px bar in a lamp gradient that glows while held (dashed while paused, dotted while blocked, like the Ring), then "until 10:30 PM" with the time in ink and "of 30 min" muted.
+3. **Horizon:** a living sky. Five-stop skies for dawn, day, dusk and night; the sun (a lit core; a crescent moon at night) travels a faint dotted arc and sets behind two layers of hills exactly when the session ends, at a small mark on the ridge; the sky warms as it sets; clouds drift (90 s / 130 s), stars twinkle at night and dawn, and the sun lays a broken glint on water with fine reflection lines. Phase follows the real local time (dawn 5–8, day 8–17, dusk 17–20, night). Digits (Geist 250) sit on the water so they never collide with the sun.
+4. **Tide:** water level equals time left. The water has depth (the lamp darkening towards the bottom, a soft light under the surface), a bright meniscus on the front wave, a gently bobbing back wave (13 s / 21 s), glassy rising bubbles; digits are drawn twice and clipped at the waterline so they stay readable above and below the surface.
+5. **Flip:** split-flap cards that really turn on each digit change (the top leaf falls, the bottom leaf lands, 660 ms, shaded as they go); a 1 px hinge with side notches, a soft shadow and a lamp under-glow while the screen is held; seconds on smaller cards.
+6. **Rolling:** odometer drums that roll to the next digit (downward while counting down) in a sunken window, with a hairline of time left beneath.
+7. **Analog:** an SVG dial showing the local time, with a sweeping lamp second hand and time left drawn as an arc on the bezel. Two styles in Settings: Minimal (twelve indices) and Luxe (minute ticks, heavier indices, lume dots, hand inlays, a fine sunburst plate).
+8. **Rings:** three concentric arcs in graded lamp tints, like activity rings: time left of the session (hours awake with no limit), minutes, seconds; the time sits inside.
+9. **Words:** a letter grid that lights "IT IS HALF PAST TEN" for the local time in five-minute steps, with corner dots for the minutes between; lit letters glow softly. One table per language, English first.
+10. **Nixie:** glowing tube digits on a base, with a faint wire mesh and the unlit cathodes as ghost numerals. The glow is a warm-white core with a halo in the lamp colour, amber only while paused.
+11. **LCD:** a seven-segment display on lamp-tinted glass with every unlit segment faintly visible, seconds smaller, an outlined annunciator for the state word.
+12. **LED:** a dot-matrix panel of unlit dots with the digits lit in the lamp colour.
+
+All twelve are free. The newer eight load only when chosen, keep the face box reserved (no layout shift on a switch or a saved face), follow every state through the lamp (`--at-face-c`) with the Ring's arc patterns where they have an arc, respect light, dark and OLED, shift 2 px a minute while the screen is held, and stop flipping, rolling, sweeping and fading under reduced motion.
+
+**Choosing a face.** The order is the gallery's, in three groups: Classic (Ring, Bold, Horizon, Tide), Retro (Flip, Nixie, LCD, LED), Modern (Rolling, Analog, Rings, Words).
+
+- *Face switch* (where the tabs were): one surface pill, Previous · Clock face *name* · Next, 44 px segments, the four-dials icon in the state tone. Previous and Next step at once.
+- *Gallery* (a sheet: bottom on phones, side from 600): every face as a live miniature of the real thing, in the current state, lamp and theme, two per row under kicker headings; still at rest, playing while pointed at or focused, never under reduced motion. The face in use has a lamp border and an "In use" tag; Analog carries its Minimal · Luxe switch. Arrow keys move between tiles, Enter picks and closes.
+- *Swipe* on the clock (touch, trackpad, mouse drag): the face follows the finger and fades while the neighbour's name slides in; past halfway it changes, otherwise it springs back. Page scroll and the dock are never affected.
+- *Keyboard:* `C` next face, `Shift+C` previous (`F` stays fullscreen).
+- Settings → Clock face still shows all twelve as tiles.
+- A switch never shows an empty or unstyled box: the old face stays until the new one is ready.
 
 ## 8. Motion
 
@@ -156,7 +208,7 @@ Spacing, radii and control sizes: see §11 (the only source). Targets ≥ 44 px 
 
 ## 9. Theme behaviour
 
-`auto` follows `prefers-color-scheme` live (listener on the media query). Horizon's sky phase is independent of theme and follows local time. The boot script applies theme and lamp before first paint (no flash).
+`auto` follows `prefers-color-scheme` live (listener on the media query). Horizon's sky phase is independent of theme and follows local time. The boot script applies theme, colour theme, lamp and background before first paint (no flash). Every colour theme has a light and a dark variant, so Auto switches both live.
 
 ## 10. Do and don't
 

@@ -1,0 +1,625 @@
+[data-palette="paper"][data-theme="light"] {
+  color-scheme: light;
+  --at-ground: #f8f3e9;
+  --at-surface: #fffdf7;
+  --at-line: #e8dfcf;
+  --at-line-strong: #d6c9b3;
+  --at-ink: #2b2118;
+  --at-ink-2: #4f4234;
+  --at-muted: #6b5d4c;
+  --at-track: #efe7d8;
+  --at-tick: #dbcfba;
+  --at-raised: #efe7d8;
+  --at-sunken: #fcf9f2;
+  --at-input-border: #8c7e6a;
+  --at-warn: #87570f;
+  --at-bad: #ae382c;
+  --at-good: #2d683d;
+  --at-lift: #fffdf8;
+  --at-ground-end: #f3ecdf;
+}
+
+[data-palette="paper"]:is([data-theme="dark"], [data-theme="oled"]) {
+  color-scheme: dark;
+  --at-ground: #15110c;
+  --at-surface: #1d1812;
+  --at-line: #32291f;
+  --at-line-strong: #4a3d2e;
+  --at-ink: #f2e9da;
+  --at-ink-2: #cfc3af;
+  --at-muted: #a69782;
+  --at-track: #282017;
+  --at-tick: #3d3226;
+  --at-raised: #3a3024;
+  --at-sunken: #110e0a;
+  --at-input-border: #7c6d59;
+  --at-warn: #efb257;
+  --at-bad: #ff8c7c;
+  --at-good: #8fd6a0;
+  --at-lift: #2a2117;
+  --at-ground-end: #110e0a;
+  --at-elev: none;
+}
+
+[data-palette="nord"][data-theme="light"] {
+  color-scheme: light;
+  --at-ground: #f1f3f7;
+  --at-surface: #ffffff;
+  --at-line: #d8dee9;
+  --at-line-strong: #c3cbd9;
+  --at-ink: #2e3440;
+  --at-ink-2: #3b4252;
+  --at-muted: #4c566a;
+  --at-track: #e0e5ee;
+  --at-tick: #c9d1de;
+  --at-raised: #e0e5ee;
+  --at-sunken: #f5f7fa;
+  --at-input-border: #7b879e;
+  --at-warn: #8c5f12;
+  --at-bad: #a63f48;
+  --at-good: #3f6b2e;
+  --at-lift: #ffffff;
+  --at-ground-end: #e5e9f0;
+}
+
+[data-palette="nord"]:is([data-theme="dark"], [data-theme="oled"]) {
+  color-scheme: dark;
+  --at-ground: #242933;
+  --at-surface: #2e3440;
+  --at-line: #3b4252;
+  --at-line-strong: #4c566a;
+  --at-ink: #eceff4;
+  --at-ink-2: #d8dee9;
+  --at-muted: #abb5c7;
+  --at-track: #353c4a;
+  --at-tick: #4c566a;
+  --at-raised: #434c5e;
+  --at-sunken: #20242d;
+  --at-input-border: #818ea6;
+  --at-warn: #ebcb8b;
+  --at-bad: #eb9aa1;
+  --at-good: #a3be8c;
+  --at-lift: #2e3440;
+  --at-ground-end: #1f232b;
+  --at-elev: none;
+}
+
+[data-palette="solarized"][data-theme="light"] {
+  color-scheme: light;
+  --at-ground: #fdf6e3;
+  --at-surface: #fffbf0;
+  --at-line: #eee8d5;
+  --at-line-strong: #ddd5bf;
+  --at-ink: #073642;
+  --at-ink-2: #34525a;
+  --at-muted: #4f646b;
+  --at-track: #eee8d5;
+  --at-tick: #dcd4be;
+  --at-raised: #eee8d5;
+  --at-sunken: #f9f2de;
+  --at-input-border: #7b8b8b;
+  --at-warn: #875f00;
+  --at-bad: #b42f2b;
+  --at-good: #566e00;
+  --at-lift: #fffcf3;
+  --at-ground-end: #f6efda;
+}
+
+[data-palette="solarized"]:is([data-theme="dark"], [data-theme="oled"]) {
+  color-scheme: dark;
+  --at-ground: #002b36;
+  --at-surface: #073642;
+  --at-line: #0e4250;
+  --at-line-strong: #28535e;
+  --at-ink: #fdf6e3;
+  --at-ink-2: #eee8d5;
+  --at-muted: #a6b3b3;
+  --at-track: #0a3a47;
+  --at-tick: #1f4f5b;
+  --at-raised: #164653;
+  --at-sunken: #00232c;
+  --at-input-border: #6e878c;
+  --at-warn: #d9ac3a;
+  --at-bad: #f77b73;
+  --at-good: #a7bc3f;
+  --at-lift: #0a3a47;
+  --at-ground-end: #00222b;
+  --at-elev: none;
+}
+
+[data-palette="midnight"][data-theme="light"] {
+  color-scheme: light;
+  --at-ground: #f2f3fa;
+  --at-surface: #ffffff;
+  --at-line: #d9ddf0;
+  --at-line-strong: #c0c6e2;
+  --at-ink: #0b1030;
+  --at-ink-2: #333a63;
+  --at-muted: #545b83;
+  --at-track: #e1e4f4;
+  --at-tick: #c9cee8;
+  --at-raised: #e1e4f4;
+  --at-sunken: #f6f7fd;
+  --at-input-border: #7f86aa;
+  --at-warn: #93601a;
+  --at-bad: #c23d3d;
+  --at-good: #1e7b4d;
+  --at-lift: #ffffff;
+  --at-ground-end: #e8ebf8;
+}
+
+[data-palette="midnight"]:is([data-theme="dark"], [data-theme="oled"]) {
+  color-scheme: dark;
+  --at-ground: #070b1a;
+  --at-surface: #0e1428;
+  --at-line: #1b2340;
+  --at-line-strong: #2c3760;
+  --at-ink: #e8ecff;
+  --at-ink-2: #b5bddf;
+  --at-muted: #8c95bb;
+  --at-track: #151c36;
+  --at-tick: #26305a;
+  --at-raised: #222c52;
+  --at-sunken: #050815;
+  --at-input-border: #5b6690;
+  --at-warn: #f2b34c;
+  --at-bad: #ff7a7a;
+  --at-good: #5fd39a;
+  --at-lift: #121b3d;
+  --at-ground-end: #04060f;
+  --at-elev: none;
+}
+
+[data-palette="forest"][data-theme="light"] {
+  color-scheme: light;
+  --at-ground: #f2f6f1;
+  --at-surface: #fbfdfa;
+  --at-line: #d8e3d6;
+  --at-line-strong: #bfcfbc;
+  --at-ink: #13221a;
+  --at-ink-2: #34483b;
+  --at-muted: #516454;
+  --at-track: #e0e9de;
+  --at-tick: #c6d4c3;
+  --at-raised: #e0e9de;
+  --at-sunken: #f6f9f5;
+  --at-input-border: #7d8f80;
+  --at-warn: #8a5c16;
+  --at-bad: #b63a33;
+  --at-good: #1d6f43;
+  --at-lift: #ffffff;
+  --at-ground-end: #e8efe6;
+}
+
+[data-palette="forest"]:is([data-theme="dark"], [data-theme="oled"]) {
+  color-scheme: dark;
+  --at-ground: #0b130f;
+  --at-surface: #111c16;
+  --at-line: #1d2c23;
+  --at-line-strong: #2f4436;
+  --at-ink: #e6f0e8;
+  --at-ink-2: #b6c8bb;
+  --at-muted: #8fa596;
+  --at-track: #16231b;
+  --at-tick: #28392f;
+  --at-raised: #243629;
+  --at-sunken: #08100c;
+  --at-input-border: #5b7363;
+  --at-warn: #edb85a;
+  --at-bad: #ff8577;
+  --at-good: #7fd89e;
+  --at-lift: #14251b;
+  --at-ground-end: #070d0a;
+  --at-elev: none;
+}
+
+[data-palette="sunset"][data-theme="light"] {
+  color-scheme: light;
+  --at-ground: #fbf2ed;
+  --at-surface: #fffaf7;
+  --at-line: #efddd5;
+  --at-line-strong: #e0c7bc;
+  --at-ink: #2a1418;
+  --at-ink-2: #55363a;
+  --at-muted: #71525a;
+  --at-track: #f3e4dd;
+  --at-tick: #e4ccc2;
+  --at-raised: #f3e4dd;
+  --at-sunken: #fdf7f4;
+  --at-input-border: #9a7c80;
+  --at-warn: #8a560f;
+  --at-bad: #b3322c;
+  --at-good: #2a6b45;
+  --at-lift: #ffffff;
+  --at-ground-end: #f7e8e1;
+}
+
+[data-palette="sunset"]:is([data-theme="dark"], [data-theme="oled"]) {
+  color-scheme: dark;
+  --at-ground: #160e14;
+  --at-surface: #20141c;
+  --at-line: #33202c;
+  --at-line-strong: #4b3040;
+  --at-ink: #fbece6;
+  --at-ink-2: #dcc2bd;
+  --at-muted: #b39893;
+  --at-track: #2a1a24;
+  --at-tick: #432b39;
+  --at-raised: #3a2633;
+  --at-sunken: #100a0e;
+  --at-input-border: #7d6070;
+  --at-warn: #f5b85a;
+  --at-bad: #ff8a80;
+  --at-good: #86d9a6;
+  --at-lift: #2b1824;
+  --at-ground-end: #0e080c;
+  --at-elev: none;
+}
+
+[data-palette="mono"][data-theme="light"] {
+  color-scheme: light;
+  --at-ground: #f4f4f4;
+  --at-surface: #ffffff;
+  --at-line: #e0e0e0;
+  --at-line-strong: #c8c8c8;
+  --at-ink: #111111;
+  --at-ink-2: #3b3b3b;
+  --at-muted: #5c5c5c;
+  --at-track: #e6e6e6;
+  --at-tick: #cfcfcf;
+  --at-raised: #e6e6e6;
+  --at-sunken: #fafafa;
+  --at-input-border: #858585;
+  --at-warn: #93601a;
+  --at-bad: #c23d3d;
+  --at-good: #1e7b4d;
+  --at-lift: #ffffff;
+  --at-ground-end: #eeeeee;
+}
+
+[data-palette="mono"]:is([data-theme="dark"], [data-theme="oled"]) {
+  color-scheme: dark;
+  --at-ground: #0b0b0b;
+  --at-surface: #141414;
+  --at-line: #242424;
+  --at-line-strong: #3a3a3a;
+  --at-ink: #ededed;
+  --at-ink-2: #bfbfbf;
+  --at-muted: #999999;
+  --at-track: #1c1c1c;
+  --at-tick: #303030;
+  --at-raised: #2e2e2e;
+  --at-sunken: #080808;
+  --at-input-border: #6b6b6b;
+  --at-warn: #f2b34c;
+  --at-bad: #ff7a7a;
+  --at-good: #5fd39a;
+  --at-lift: #1a1a1a;
+  --at-ground-end: #070707;
+  --at-elev: none;
+}
+
+[data-palette="contrast"][data-theme="light"] {
+  color-scheme: light;
+  --at-ground: #ffffff;
+  --at-surface: #ffffff;
+  --at-line: #6b6b6b;
+  --at-line-strong: #3d3d3d;
+  --at-ink: #000000;
+  --at-ink-2: #1a1a1a;
+  --at-muted: #3a3a3a;
+  --at-track: #d0d0d0;
+  --at-tick: #8a8a8a;
+  --at-raised: #e8e8e8;
+  --at-sunken: #f5f5f5;
+  --at-input-border: #3d3d3d;
+  --at-warn: #6e4600;
+  --at-bad: #a11f1f;
+  --at-good: #0d5a33;
+  --at-lift: #ffffff;
+  --at-ground-end: #ffffff;
+}
+
+[data-palette="contrast"]:is([data-theme="dark"], [data-theme="oled"]) {
+  color-scheme: dark;
+  --at-ground: #000000;
+  --at-surface: #0a0a0a;
+  --at-line: #8a8a8a;
+  --at-line-strong: #b0b0b0;
+  --at-ink: #ffffff;
+  --at-ink-2: #f0f0f0;
+  --at-muted: #d6d6d6;
+  --at-track: #333333;
+  --at-tick: #6e6e6e;
+  --at-raised: #262626;
+  --at-sunken: #000000;
+  --at-input-border: #c8c8c8;
+  --at-warn: #ffc94d;
+  --at-bad: #ff9c9c;
+  --at-good: #7cf0b0;
+  --at-lift: #000000;
+  --at-ground-end: #000000;
+  --at-elev: none;
+}
+
+[data-palette][data-theme="oled"] {
+  --at-ground: #000;
+  --at-surface: #0a0a0a;
+  --at-sunken: #000;
+  --at-lift: #000;
+  --at-ground-end: #000;
+}
+
+[data-palette][data-theme] {
+  --at-am-bg: radial-gradient(120% 70% at 50% 26%, var(--at-lift) 0%, var(--at-ground) 60%, var(--at-ground-end) 100%);
+  --at-am-flat: var(--at-ground);
+  --at-am-pip-bg: radial-gradient(120% 90% at 30% 20%, var(--at-lift) 0%, var(--at-ground) 70%);
+}
+
+[data-palette][data-theme="oled"] {
+  --at-am-bg: #000;
+  --at-am-flat: #000;
+  --at-am-pip-bg: #000;
+}
+
+[data-theme][data-accent="amber"] {
+  --at-accent: #a34f00;
+  --at-accent-text: #a34f00;
+  --at-on-accent: #ffffff;
+  --at-focus: #a34f00;
+}
+
+[data-accent="amber"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #ffaf6b;
+  --at-accent-text: #ffaf6b;
+  --at-on-accent: #2a1502;
+  --at-focus: #ffaf6b;
+}
+
+[data-theme][data-accent="coral"] {
+  --at-accent: #b1452f;
+  --at-accent-text: #b1452f;
+  --at-on-accent: #ffffff;
+  --at-focus: #b1452f;
+}
+
+[data-accent="coral"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #ff9b85;
+  --at-accent-text: #ff9b85;
+  --at-on-accent: #2a0e08;
+  --at-focus: #ff9b85;
+}
+
+[data-theme][data-accent="rose"] {
+  --at-accent: #b0366a;
+  --at-accent-text: #b0366a;
+  --at-on-accent: #ffffff;
+  --at-focus: #b0366a;
+}
+
+[data-accent="rose"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #ff9cc6;
+  --at-accent-text: #ff9cc6;
+  --at-on-accent: #2a0816;
+  --at-focus: #ff9cc6;
+}
+
+[data-theme][data-accent="gold"] {
+  --at-accent: #7f6400;
+  --at-accent-text: #7f6400;
+  --at-on-accent: #ffffff;
+  --at-focus: #7f6400;
+}
+
+[data-accent="gold"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #ebcb5a;
+  --at-accent-text: #ebcb5a;
+  --at-on-accent: #221a00;
+  --at-focus: #ebcb5a;
+}
+
+[data-theme][data-accent="lime"] {
+  --at-accent: #4d7300;
+  --at-accent-text: #4d7300;
+  --at-on-accent: #ffffff;
+  --at-focus: #4d7300;
+}
+
+[data-accent="lime"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #b5e36a;
+  --at-accent-text: #b5e36a;
+  --at-on-accent: #142000;
+  --at-focus: #b5e36a;
+}
+
+[data-theme][data-accent="teal"] {
+  --at-accent: #0a7565;
+  --at-accent-text: #0a7565;
+  --at-on-accent: #ffffff;
+  --at-focus: #0a7565;
+}
+
+[data-accent="teal"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #4fd8be;
+  --at-accent-text: #4fd8be;
+  --at-on-accent: #04232a;
+  --at-focus: #4fd8be;
+}
+
+[data-theme][data-accent="ice"] {
+  --at-accent: #2a6a8a;
+  --at-accent-text: #2a6a8a;
+  --at-on-accent: #ffffff;
+  --at-focus: #2a6a8a;
+}
+
+[data-accent="ice"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #a8ddf5;
+  --at-accent-text: #a8ddf5;
+  --at-on-accent: #04232a;
+  --at-focus: #a8ddf5;
+}
+
+[data-theme][data-accent="lavender"] {
+  --at-accent: #7446b0;
+  --at-accent-text: #7446b0;
+  --at-on-accent: #ffffff;
+  --at-focus: #7446b0;
+}
+
+[data-accent="lavender"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: #cdb8ff;
+  --at-accent-text: #cdb8ff;
+  --at-on-accent: #1a0e2e;
+  --at-focus: #cdb8ff;
+}
+
+[data-theme][data-accent="custom"] {
+  --at-accent: var(--at-custom);
+  --at-accent-text: var(--at-custom);
+  --at-on-accent: #fff;
+  --at-focus: var(--at-custom);
+}
+
+[data-accent="custom"]:is([data-theme="dark"], [data-theme="oled"]) {
+  --at-accent: color-mix(in srgb, var(--at-custom) 40%, #fff);
+  --at-accent-text: color-mix(in srgb, var(--at-custom) 40%, #fff);
+  --at-on-accent: #04232a;
+  --at-focus: color-mix(in srgb, var(--at-custom) 40%, #fff);
+}
+
+[data-pattern] {
+  --at-pat-a: 0.07;
+  --at-pat-k: 1;
+  --at-pat-bg: var(--at-ink);
+  --at-pat-bg-size: auto;
+  --at-pat-anim: at-pat-drift 240s linear infinite alternate;
+}
+
+[data-theme="oled"][data-pattern],
+[data-theme="oled"] [data-pattern] {
+  --at-pat-k: 0.6;
+}
+
+[data-pattern="grain"] {
+  --at-pat: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.6 0 0 0 -.3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+  --at-pat-size: 160px;
+}
+
+[data-pattern="dots"] {
+  --at-pat: url("/assets/patterns/dots.svg?v=1");
+  --at-pat-size: 24px;
+}
+
+[data-pattern="grid"] {
+  --at-pat: url("/assets/patterns/grid.svg?v=1");
+  --at-pat-size: 100px;
+}
+
+[data-pattern="topo"] {
+  --at-pat: url("/assets/patterns/topo.svg?v=1");
+  --at-pat-size: 480px;
+}
+
+[data-pattern="waves"] {
+  --at-pat: url("/assets/patterns/waves.svg?v=1");
+  --at-pat-size: 52px 26px;
+}
+
+[data-pattern="aurora"] {
+  --at-pat: none;
+  --at-pat-a: 1;
+  --at-pat-bg:
+    radial-gradient(70% 45% at 18% 0%, color-mix(in srgb, var(--at-accent) 8%, transparent), transparent 70%),
+    radial-gradient(55% 40% at 86% 14%, color-mix(in srgb, var(--at-accent) 6%, transparent), transparent 70%),
+    radial-gradient(60% 38% at 50% 104%, color-mix(in srgb, var(--at-ink-2) 5%, transparent), transparent 70%);
+  --at-pat-anim: at-pat-aurora 96s ease-in-out infinite alternate;
+}
+
+[data-pattern="stars"] {
+  --at-pat: none;
+  --at-pat-a: 0.55;
+  --at-pat-bg:
+    radial-gradient(1px 1px at 23px 41px, var(--at-ink-2) 99%, transparent),
+    radial-gradient(1px 1px at 131px 97px, var(--at-ink-2) 99%, transparent),
+    radial-gradient(1.5px 1.5px at 71px 163px, var(--at-ink-2) 99%, transparent),
+    radial-gradient(1px 1px at 190px 22px, var(--at-ink-2) 99%, transparent),
+    radial-gradient(1.5px 1.5px at 260px 180px, var(--at-ink-2) 99%, transparent),
+    radial-gradient(1px 1px at 97px 250px, var(--at-ink-2) 99%, transparent);
+  --at-pat-bg-size: 173px 181px, 229px 197px, 211px 223px, 311px 293px, 331px 347px, 283px 271px;
+  --at-pat-anim: at-pat-drift 600s linear infinite alternate, at-pat-twinkle 11s ease-in-out infinite alternate;
+}
+
+[data-pattern="drift"] {
+  --at-pat: none;
+  --at-pat-a: 1;
+  --at-pat-bg:
+    radial-gradient(56px 56px at 80px 120px, color-mix(in srgb, var(--at-accent) 8%, transparent), transparent),
+    radial-gradient(40px 40px at 320px 60px, color-mix(in srgb, var(--at-ink-2) 6%, transparent), transparent),
+    radial-gradient(72px 72px at 260px 360px, color-mix(in srgb, var(--at-accent) 7%, transparent), transparent),
+    radial-gradient(32px 32px at 420px 250px, color-mix(in srgb, var(--at-accent) 8%, transparent), transparent),
+    radial-gradient(24px 24px at 150px 420px, color-mix(in srgb, var(--at-ink-2) 6%, transparent), transparent);
+  --at-pat-bg-size: 480px 480px;
+  --at-pat-anim: at-pat-rise 320s linear infinite;
+}
+
+[data-pattern] body {
+  isolation: isolate;
+}
+
+[data-pattern] body::before,
+[data-pattern] .at-ambient:not([data-mode="night"], [data-mode="minimal"])::after {
+  content: "";
+  position: fixed;
+  inset: -64px -64px -544px;
+  z-index: -1;
+  background: var(--at-pat-bg);
+  background-size: var(--at-pat-bg-size);
+  opacity: calc(var(--at-pat-a) * var(--at-pat-k));
+  pointer-events: none;
+  -webkit-mask: var(--at-pat) 0 0 / var(--at-pat-size) repeat;
+  mask: var(--at-pat) 0 0 / var(--at-pat-size) repeat;
+  animation: var(--at-pat-anim);
+}
+
+@keyframes at-pat-drift {
+  to {
+    transform: translate(24px, 16px);
+  }
+}
+
+@keyframes at-pat-rise {
+  to {
+    transform: translateY(-480px);
+  }
+}
+
+@keyframes at-pat-aurora {
+  50% {
+    transform: translate(3%, 2%) scale(1.05);
+  }
+
+  to {
+    transform: translate(-3%, 3%) scale(1.02);
+  }
+}
+
+@keyframes at-pat-twinkle {
+  to {
+    opacity: calc(var(--at-pat-a) * var(--at-pat-k) * 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-pattern] body::before,
+  [data-pattern] .at-ambient::after {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  [data-pattern] body::before,
+  [data-pattern] .at-ambient::after {
+    content: none;
+  }
+}

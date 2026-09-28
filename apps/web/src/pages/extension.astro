@@ -43,7 +43,7 @@ const perms = [
   ['notifications', 'Optional', 'Tell you when a timer ends.'],
   ['optional_host_permissions', 'Optional, one site at a time', 'Site access, so it can start automatically on sites you pick. None by default.'],
 ] as const;
-const faq = [1, 2, 3, 4].map((n) => ({ n, q: t(`page.extension.faq.q${n}`), a: t(`page.extension.faq.a${n}`) }));
+const faq = [1, 2, 3, 5, 4].map((n) => ({ n, q: t(`page.extension.faq.q${n}`), a: t(`page.extension.faq.a${n}`) }));
 const days = [
   ['M', 'Monday', true],
   ['T', 'Tuesday', true],

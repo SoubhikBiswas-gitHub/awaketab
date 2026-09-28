@@ -6,6 +6,7 @@ import bootJs from '../boot/boot.js?raw';
 import SeoHead from '../components/SeoHead.astro';
 import SiteHeader from '../components/shell/SiteHeader.astro';
 import SiteFooter from '../components/shell/SiteFooter.astro';
+import UpdateBanner from '../components/shell/UpdateBanner.astro';
 import { createT } from '../i18n/load';
 import { localeFromPath, localePath, LOCALE_META, textDirection, type TLocale } from '../i18n/locales';
 import type { TSchemaNode } from '../lib/seo';
@@ -73,8 +74,8 @@ const t = createT(locale);
       schema={schema}
       alternates={alternates}
     />
-    <script is:inline set:html={bootJs} />
     {wholeTool && <link rel="expect" href="#at-tool-parsed" blocking="render" />}
+    <script is:inline set:html={bootJs} />
     {header && <link rel="expect" href="#at-hm-menu" blocking="render" />}
     <slot name="head" />
   </head>
@@ -96,6 +97,7 @@ const t = createT(locale);
             )
           }
           <SiteFooter locale={locale} links={localeLinks} />
+          {header && <UpdateBanner locale={locale} />}
         </>
       )
     }

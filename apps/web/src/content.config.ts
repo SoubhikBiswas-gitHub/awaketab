@@ -3,7 +3,7 @@ import { glob } from 'astro/loaders';
 
 const locales = ['en', 'es', 'pt-br', 'de', 'fr', 'ja', 'zh', 'hi'] as const;
 const presets = ['p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf', 'custom', 'until'] as const;
-const modes = ['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook'] as const;
+const modes = ['standard', 'clock', 'focus', 'breathe', 'minimal', 'night', 'message', 'cook'] as const;
 const browsers = ['chrome', 'edge', 'firefox', 'safari', 'samsung-internet', 'opera', 'brave'] as const;
 const operatingSystems = ['windows', 'macos', 'linux', 'chromeos', 'android', 'ios', 'ipados'] as const;
 

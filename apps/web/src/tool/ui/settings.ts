@@ -1,6 +1,6 @@
 import type { ISettings, TAmbientMode, TFace, TTheme } from '@awaketab/core';
+import type { TSoundAction } from '../packs/sound/index.js';
 import { DEFAULT_SETTINGS } from '@awaketab/core';
-import { ACCENTS, accentHex, applyAccent, PACK_ACCENTS } from '../accent.js';
 import { hasFeature, type IToolCtx } from '../ctx.js';
 import { hm } from '../format.js';
 import { t } from '../i18n.js';
@@ -9,10 +9,29 @@ import { notificationsState } from '../signal.js';
 import { applyTheme } from '../theme.js';
 import { openDialog } from './dialog.js';
 
-const MODES = new Set<TAmbientMode>(['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook']);
-const FACES = new Set<TFace>(['ring', 'bold', 'horizon', 'tide']);
+const MODES = new Set<TAmbientMode>(['standard', 'clock', 'focus', 'breathe', 'minimal', 'night', 'message', 'cook']);
+const FACES = new Set<TFace>([
+  'ring',
+  'bold',
+  'horizon',
+  'tide',
+  'flip',
+  'rolling',
+  'analog',
+  'rings',
+  'word',
+  'nixie',
+  'lcd',
+  'matrix',
+]);
 
 type TField = HTMLInputElement | HTMLSelectElement;
+
+// The sound pack (panel, focus sounds, the richer end sounds) loads the first time any of it is used.
+export const sound = (ctx: IToolCtx, what: TSoundAction, el?: Element | null): Promise<void> =>
+  import('../packs/sound/index.js').then((m) => {
+    m.run(ctx, what, el);
+  });
 
 function field(form: HTMLFormElement, name: string): TField | RadioNodeList | null {
   return (form.elements.namedItem(name) as TField | RadioNodeList | null) ?? null;
@@ -31,11 +50,12 @@ function setValue(form: HTMLFormElement, name: string, value: string | boolean):
 
 export function fillSettings(form: HTMLFormElement, s: ISettings): void {
   setValue(form, 'theme', s.theme);
-  // A legacy palette hex (amber, indigo, teal, rose) selects the lamp that replaced it (docs/08 §2.1).
-  setValue(form, 'accent', accentHex(s.accent));
   setValue(form, 'face', s.face);
   setValue(form, 'defaultPreset', s.defaultPreset);
-  setValue(form, 'sound', s.sound.id === 'none' ? 'none' : 'chime');
+  setValue(form, 'sound', s.sound.id);
+  setValue(form, 'soundVolume', String(Math.round(s.sound.volume * 100)));
+  setValue(form, 'vibrate', s.vibrate);
+  setValue(form, 'tick', s.tick);
   setValue(form, 'notifications', s.notifications);
   setValue(form, 'endBehaviour', s.endBehaviour);
   setValue(form, 'batteryAuto', s.battery.autoStop);
@@ -59,7 +79,6 @@ export function readSettings(
     const v = data.get(k);
     return typeof v === 'string' ? v : '';
   };
-  const accent = str('accent').toUpperCase() || cur.accent;
   const mode = str('ambientMode') as TAmbientMode;
   const clock = str('clock24h');
   const threshold = Math.min(30, Math.max(5, Math.round(Number(str('batteryThreshold')) || cur.battery.threshold)));
@@ -69,7 +88,6 @@ export function readSettings(
   return {
     ...cur,
     theme: (['auto', 'light', 'dark', 'oled'].includes(str('theme')) ? str('theme') : cur.theme) as TTheme,
-    accent: PACK_ACCENTS.has(accent) && !gates.packs ? cur.accent : accent,
     face: FACES.has(str('face') as TFace) ? (str('face') as TFace) : cur.face,
     defaultPreset: (str('defaultPreset') || cur.defaultPreset) as ISettings['defaultPreset'],
     telemetry: data.get('telemetry') === 'on',
@@ -77,7 +95,9 @@ export function readSettings(
     keyboardHints: data.get('keyboardHints') === 'on',
     notifications: notifDisabled ? cur.notifications : data.get('notifications') === 'on',
     endBehaviour: str('endBehaviour') === 'stop' ? 'stop' : 'prompt_extend',
-    sound: { ...cur.sound, id: str('sound') === 'none' ? 'none' : 'chime' },
+    sound: { id: (str('sound') || cur.sound.id) as ISettings['sound']['id'], volume: Number(str('soundVolume')) / 100 },
+    vibrate: data.get('vibrate') === 'on',
+    tick: data.get('tick') === 'on',
     battery: {
       ...cur.battery,
       autoStop: data.get('batteryAuto') === 'on',
@@ -85,7 +105,8 @@ export function readSettings(
     },
     ambient: {
       ...cur.ambient,
-      mode: MODES.has(mode) ? mode : cur.ambient.mode,
+      // A locked mode is never stored without its licence (docs/02 FR-AMBIENT-01); Message needs ambient.message.
+      mode: MODES.has(mode) && (mode !== 'message' || gates.message) ? mode : cur.ambient.mode,
       message: gates.message && data.has('ambientMessage') ? sanitizeMsg(str('ambientMessage')) : cur.ambient.message,
       showSeconds: data.get('showSeconds') === 'on',
       clock24h: clock === '24' ? true : clock === '12' ? false : null,
@@ -116,15 +137,6 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
 
   const refresh = () => {
     const s = ctx.store.get().settings;
-    const picked = (form.elements.namedItem('accent') as RadioNodeList | null)?.value ?? s.accent;
-    const hex = accentHex(picked);
-    const preview = PACK_ACCENTS.has(hex) && !gates().packs;
-    applyAccent(hex, true);
-    const name = t(`settings.accent.${ACCENTS[hex]}`);
-    const note = q('[data-lamp-note]');
-    if (note) note.textContent = preview ? t('settings.lamp.preview', { name }) : name;
-    const packGate = q('[data-pack-gate]');
-    if (packGate) packGate.hidden = gates().packs;
     const notif = field(form, 'notifications');
     const state = notificationsState();
     if (notif instanceof HTMLInputElement) notif.disabled = state === 'unavailable';
@@ -137,6 +149,8 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
             ? t('settings.notifications.blocked')
             : t('settings.notifications.help');
     }
+    const vib = q('[data-vibrate-row]');
+    if (vib) vib.hidden = !('vibrate' in navigator);
     const hasBattery = 'getBattery' in navigator;
     const batt = q('[data-battery-fields]');
     if (batt) batt.hidden = !hasBattery;
@@ -162,6 +176,10 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
     bound = true;
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+    });
+    form.addEventListener('click', (e) => {
+      const b = e.target instanceof Element ? e.target.closest<HTMLElement>('[data-sound]') : null;
+      if (b) void sound(ctx, b.dataset.sound === 'open' ? 'open' : 'play', b);
     });
     form.addEventListener('input', (e) => {
       // The threshold slider reads its value live while dragging.
@@ -196,6 +214,9 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
       }
       save(next);
       refresh();
+      // Hearing a pick is the point of picking it; turning the tick on starts it without a reload.
+      const n = target instanceof HTMLInputElement ? target.name : '';
+      if (n === 'sound' || n === 'soundVolume' || n === 'tick') void sound(ctx, n === 'tick' ? 'mount' : 'play');
     });
     const reset = dialog.querySelector<HTMLButtonElement>('[data-settings-reset]');
     reset?.addEventListener('click', () => {
@@ -211,13 +232,23 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
       fillSettings(form, next);
       refresh();
     });
-    // A previewed pack lamp is never kept: closing puts the stored lamp back.
-    dialog.addEventListener('close', () => {
-      applyAccent(ctx.store.get().settings.accent, gates().packs);
-    });
   }
 
   fillSettings(form, ctx.store.get().settings);
   refresh();
-  openDialog(dialog, opener);
+  // Colour themes, lamps, patterns and presets are the themes pack, loaded on first open; the sheet waits briefly
+  // for it so the section does not pop in.
+  const looks = q('[data-appearance]');
+  const tools = q('[data-focus-tools]');
+  const ready = Promise.all([
+    looks && import('../packs/themes/appearance.js').then((m) => m.mountAppearance(ctx, looks)),
+    tools &&
+      import('../packs/extras/index.js').then((m) => {
+        m.panel(ctx, tools);
+      }),
+  ]);
+  // A failed pack load still opens the sheet; only the gallery is missing.
+  void Promise.race([ready.catch(() => undefined), new Promise((r) => setTimeout(r, 400))]).then(() => {
+    openDialog(dialog, opener);
+  });
 }

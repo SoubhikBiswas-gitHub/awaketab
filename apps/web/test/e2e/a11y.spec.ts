@@ -123,6 +123,14 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     },
   },
   {
+    name: 'clock face gallery',
+    open: async (page) => {
+      await openTool(page, '/?autostart=0');
+      await page.locator('#awaketab-tool .at-fc-open:visible').first().click();
+      await expect(page.locator('dialog[data-dialog="faces"] [data-pick="analog"] .at-fx')).toBeVisible();
+    },
+  },
+  {
     name: 'Pro sheet',
     open: async (page) => {
       await openTool(page, '/?autostart=0');

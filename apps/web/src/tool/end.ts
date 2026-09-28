@@ -6,6 +6,7 @@ import { EXTEND_AUTO_STOP_MS } from './params.js';
 import { chime, notify } from './signal.js';
 import type { IDone } from './store.js';
 import { maybeShowRating } from './ui/rating.js';
+import { sound } from './ui/settings.js';
 import { toast } from './ui/toast.js';
 
 export const TITLE_FLASH_MS = 1000;
@@ -102,7 +103,11 @@ export function onEnded(ctx: IToolCtx, reason: TEndReason, session: ISession): v
   const label = planLabel(session.presetId, s.eightHour);
   if (reason === 'completed') bumpSessionCount(ctx, session);
 
-  chime(ctx, 'end');
+  // The richer end sounds live in the sound pack; the default chime stays here so it never waits for a download.
+  const id = s.settings.sound.id;
+  if (id === 'chime' || id === 'none') chime(ctx, 'end');
+  else void sound(ctx, 'end').catch(() => chime(ctx, 'end'));
+  if (s.settings.vibrate && 'vibrate' in navigator) navigator.vibrate([180, 90, 180]);
   const body =
     reason === 'completed'
       ? t('end.notify.body', { label })

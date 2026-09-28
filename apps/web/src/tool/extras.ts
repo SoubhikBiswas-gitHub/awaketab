@@ -5,9 +5,10 @@ import { mountPwa } from './pwa.js';
 import { mountSponsor } from './sponsor.js';
 import { act } from './ui/actions.js';
 import { openDialog } from './ui/dialog.js';
+import { sound } from './ui/settings.js';
 import { mountLangSuggest } from './ui/lang-suggest.js';
 import { moreCss } from './ui/more-css.js';
-import { applyAccent } from './accent.js';
+import { gateLooks } from './accent.js';
 import { t } from './i18n.js';
 import type { IStore } from './store.js';
 import { toast as pushToast } from './ui/toast.js';
@@ -43,8 +44,7 @@ export function mountExtras(ctx: Pick<IToolCtx, 'store' | 'storage'>): () => voi
   const proBadge = document.querySelector<HTMLElement>('[data-pro-badge]');
   const syncPro = () => {
     if (proBadge) proBadge.hidden = !(hasFeature(ctx, 'ads.free') || hasFeature(ctx, 'ambient.packs'));
-    // Pack lamps need `ambient.packs`; a lapsed licence falls back to aqua (the boot script applied it pre-paint).
-    applyAccent(store.get().settings.accent, hasFeature(ctx, 'ambient.packs'));
+    gateLooks(hasFeature(ctx, 'ambient.packs'));
   };
   syncPro();
   void import('../lib/license.js').then(async (mod) => {
@@ -116,6 +116,14 @@ export function mountLate(ctx: IToolCtx): () => void {
   void moreCss().then(() => {
     mountLangSuggest(root, ctx.storage);
   });
+  // A touch or a sideways trackpad swipe on the clock loads the faces pack's swipe, so the next swipe changes the face.
+  const wake = (e: Event) => {
+    if (!(e instanceof WheelEvent) || Math.abs(e.deltaX) > Math.abs(e.deltaY))
+      void import('./packs/faces/index.js').then((m) => {
+        m.armSwipe(ctx);
+      });
+  };
+  for (const k of ['touchstart', 'wheel']) root.querySelector('.at-dial')?.addEventListener(k, wake, { passive: true });
   // The length links below a preset page's tool switch a running session in place instead of reloading the page
   // (which would drop the lock); "Until a time…" opens the Until panel. Without a session they open their page.
   root.addEventListener('click', (e) => {
@@ -128,6 +136,14 @@ export function mountLate(ctx: IToolCtx): () => void {
     else act(ctx, id, root);
   });
   if (root.querySelector('[data-sponsor]')) void mountSponsor(ctx).then((u) => offs.push(u));
+  // The tick-tock was turned on in an earlier visit: its pack waits for a session, then asks for a tap if needed.
+  const saved = store.get().settings;
+  if (saved.tick) void sound(ctx, 'mount');
+  // An intention or a second time zone from an earlier visit: the extras pack draws them under the clock.
+  if (saved.intention || saved.worldClock)
+    void import('./packs/extras/index.js').then((m) => {
+      m.lines(ctx);
+    });
   return () => {
     for (const off of offs) off();
   };

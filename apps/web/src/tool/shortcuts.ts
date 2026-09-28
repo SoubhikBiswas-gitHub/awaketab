@@ -1,6 +1,7 @@
 import type { TPresetId } from '@awaketab/core';
 import type { IToolCtx } from './ctx.js';
-import { act, cycleTheme, help, pip, toggleFullscreen } from './ui/actions.js';
+import { act, cycleTheme, help, notes, notesTyping, pip, toggleFullscreen } from './ui/actions.js';
+import { sound } from './ui/settings.js';
 
 const PRESET_KEYS: Record<string, Exclude<TPresetId, 'custom' | 'until'>> = {
   '1': 'p15',
@@ -51,6 +52,10 @@ export function keyHandler(
     // Esc closing a header menu must not also stop the session.
     if (e.target instanceof Element && e.target.closest('.at-hm-panel, [popovertarget]')) return;
     if ('showPopover' in root && document.querySelector('.at-hm-panel:popover-open')) return;
+    if (notesTyping(e.key)) {
+      e.preventDefault();
+      return;
+    }
     // The open <dialog> is the truth; the ambient layer is a <dialog> too but is a mode, not a dialog.
     const dialogOpen = root.querySelector('dialog[open]:not([data-ambient])');
     if (key === 'escape') {
@@ -90,6 +95,11 @@ export function keyHandler(
       run(() => {
         toggleFullscreen(store);
       });
+    // F was already fullscreen, so C (clock face) steps through the faces; Shift+C goes back.
+    else if (key === 'c')
+      run(() => {
+        act(ctx, e.shiftKey ? 'facePrev' : 'faceNext', root);
+      });
     // The theme is read when the press is handled, so two quick presses advance two steps.
     else if (key === 'd')
       run(() => {
@@ -106,5 +116,21 @@ export function keyHandler(
       run(() => {
         pip(ctx);
       });
+    else if (key === 's')
+      run(() => {
+        void sound(ctx, 'open');
+      });
+    else if (key === 'n')
+      run(() => {
+        notes(ctx);
+      });
+    // B breathe, I intention, T focus timer: the extras pack.
+    else if (key.length === 1 && 'bit'.includes(key))
+      run(
+        () =>
+          void import('./packs/extras/index.js').then((m) => {
+            m.key(ctx, key);
+          }),
+      );
   };
 }

@@ -77,10 +77,13 @@ export function mountToasts(region: HTMLElement, store: IStore): () => void {
       el.append(b);
       return b;
     };
-    if (item.action)
-      button('at-toast-act', item.action.label, () => {
-        shown.get(item.id)?.item.action?.onClick();
-      });
+    for (const k of ['action', 'alt'] as const) {
+      const a = item[k];
+      if (a)
+        button('at-toast-act', a.label, () => {
+          shown.get(item.id)?.item[k]?.onClick();
+        });
+    }
     const x = button('at-icon-button at-toast-x', '', () => undefined);
     x.setAttribute('aria-label', t('tool.toast.dismiss'));
     x.innerHTML = svg('M6 6l12 12M18 6L6 18', '', 16);

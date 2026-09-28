@@ -170,6 +170,7 @@ export function mountView(ctx: IToolCtx): () => void {
       cta,
       of: inf ? t('tool.noLimit') : t('tool.ofTotal', { length: len }),
       hz: `${t(`tool.sky.${phase}`)} · ${nowT}`,
+      fn: t(`tool.face.${settings.face}`),
       date: dateLong(now),
       now: nowT,
       nowShows: t('settings.clock.now', { time: nowT }),
@@ -220,10 +221,16 @@ export function mountView(ctx: IToolCtx): () => void {
     const face = settings.face;
     set('[data-preset]', 'aria-pressed', (n) => n.dataset.preset === pre);
     set('[data-act="more"]', 'aria-pressed', () => pre === 'until' || pre === 'custom');
-    set('[role="tab"][data-face]', 'aria-selected', (n) => n.dataset.face === face);
     set('[data-act="why"]', 'aria-expanded', () => ui.why);
-    if (face === 'ring') delete html.dataset.face;
-    else html.dataset.face = face;
+    // The faces pack puts a face on screen once it is ready: any change from the face boot.js painted, or a newer one.
+    if (face !== (html.dataset.face ?? 'ring') || !/^(?:ring|bold|horizon|tide)$/u.test(face))
+      load(
+        8,
+        () =>
+          void import('../packs/faces/index.js').then((m) => {
+            m.mountFaces(ctx);
+          }),
+      );
     if (pill) {
       const lk = st === 'ready' ? 'idle' : s.lock;
       pill.dataset.lock = lk;
@@ -266,18 +273,12 @@ export function mountView(ctx: IToolCtx): () => void {
 
   root.addEventListener('click', (e) => {
     const el =
-      e.target instanceof Element
-        ? e.target.closest<HTMLElement>('[data-act],[data-preset],[data-face],[data-slot]')
-        : null;
+      e.target instanceof Element ? e.target.closest<HTMLElement>('[data-act],[data-preset],[data-slot]') : null;
     if (!el || el.closest('dialog')) return;
-    const { act: a, preset: pre, face } = el.dataset;
+    const { act: a, preset: pre } = el.dataset;
     const s = store.get();
     const act = liveSession(s);
-    if (face) {
-      const next = { ...s.settings, face: face as typeof s.settings.face };
-      ctx.storage.writeSettings(next);
-      store.set({ settings: next });
-    } else if (pre && pre !== 'until' && pre !== 'custom') {
+    if (pre && pre !== 'until' && pre !== 'custom') {
       const id = pre as Exclude<TPresetId, 'custom' | 'until'>;
       // Length changes apply at once while a session runs (DESIGN.md §5); otherwise they choose what Start runs.
       if (!act) store.set({ selectedPreset: id, eightHour: false });

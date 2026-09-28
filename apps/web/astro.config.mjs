@@ -2,8 +2,27 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
-import { bootInline, BOOT_FILE } from './scripts/boot-inline.mjs';
+import { bootInline, BOOT_FILE, facesHref, themesHref } from './scripts/boot-inline.mjs';
+import { versionDefines } from './scripts/build-version.mjs';
 import { polarDefines } from './scripts/polar-server.mjs';
+
+// Libraries each feature pack owns; they never enter the tool's own chunks.
+const PACK_LIBS = [
+  [/\/node_modules\/.*@pqina/u, 'faces'],
+  [/\/node_modules\/.*(?:embla-carousel|wheel-gestures)/u, 'faces-swipe'],
+  [/\/node_modules\/.*\/(?:number-flow|esm-env)\//u, 'faces-rolling'],
+  [
+    /\/node_modules\/(?:.*\/(?:tone|standardized-audio-context|automation-events|tslib)|@babel\/runtime)\//u,
+    'sound-tone',
+  ],
+  [/\/node_modules\/.*\/howler\//u, 'sound-howler'],
+  [
+    /\/node_modules\/.*(?:@tiptap|prosemirror-|orderedmap|rope-sequence|w3c-keyname|linkifyjs|idb-keyval|annyang)/u,
+    'notes',
+  ],
+  [/\/node_modules\/.*vanilla-colorful/u, 'themes'],
+  [/\/node_modules\/.*(?:dayjs|easytimer|hotkeys-js)/u, 'extras'],
+];
 
 export default defineConfig({
   site: process.env.PUBLIC_SITE_URL ?? 'https://awaketab.com',
@@ -47,9 +66,25 @@ export default defineConfig({
           return undefined;
         },
       },
+      {
+        // Terser's unsafe_arrows turns rope-sequence's empty constructor expression into an arrow, which has no
+        // prototype, so the notes editor threw on load; a declaration is left alone.
+        name: 'at-rope-sequence',
+        transform(code, id) {
+          if (!/\/rope-sequence\/dist\/index\.js$/u.test(id)) return undefined;
+          const from = 'var RopeSequence = function RopeSequence () {};';
+          if (!code.includes(from)) throw new Error('rope-sequence changed: re-check the unsafe_arrows workaround');
+          return code.replace(from, 'function RopeSequence () {}');
+        },
+      },
     ],
     // F-06: PUBLIC_POLAR_SERVER picks CHECKOUT_LINKS and whether the bundles trust the dev licence key.
-    define: polarDefines(),
+    define: {
+      ...polarDefines(),
+      ...versionDefines(),
+      __AT_THEMES__: JSON.stringify(themesHref()),
+      __AT_FACES__: JSON.stringify(facesHref()),
+    },
     build: {
       // No __vitePreload wrapper or deps map: it put a shared helper chunk and a dependency table on the
       // island's critical path (docs/00 §11: ≤ 15 KB gz). Lazy chunks are small and load on first use.
@@ -79,6 +114,19 @@ export default defineConfig({
           // dozen small ones: every chunk repeats its import header and compresses alone, which cost more of the
           // 40 KB total budget than the code itself. It still loads only on first use, never on the boot path.
           manualChunks(id) {
+            // Feature packs (src/tool/packs/<name>/ and their libraries) load on first use under their own budgets.
+            // Each clock face is its own chunk (pack-faces-<id>), so picking one never downloads the others.
+            const face = /\/src\/tool\/packs\/faces\/(flip|rolling|analog|rings|word|nixie|lcd|matrix|swipe)[.-]/u.exec(
+              id,
+            )?.[1];
+            if (face) return `pack-faces-${face}`;
+            // The sound pack's synth engine and track player load when something first plays, not with its panel.
+            const snd = /\/src\/tool\/packs\/sound\/(engine|player)\./u.exec(id)?.[1];
+            if (snd) return snd === 'engine' ? 'pack-sound-tone' : 'pack-sound-howler';
+            const own = /\/src\/tool\/packs\/(faces|sound|notes|themes|extras)\//u.exec(id)?.[1];
+            if (own) return `pack-${own}`;
+            const lib = PACK_LIBS.find(([re]) => re.test(id));
+            if (lib) return `pack-${lib[1]}`;
             // The boot path's shared modules are named first, so the lazy chunk never pulls them in.
             if (
               /\/packages\/core\/src\/(?!license|capability)|\/packages\/wake\/src\/|\/src\/tool\/(?:main|format|i18n|store|params|ctx|ui\/(?:view|toast))\.ts/u.test(

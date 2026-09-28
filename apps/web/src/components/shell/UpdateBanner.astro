@@ -1,0 +1,29 @@
+---
+import { createT } from '../../i18n/load';
+import type { TLocale } from '../../i18n/locales';
+
+interface Props {
+  locale: TLocale;
+}
+
+const t = createT(Astro.props.locale);
+---
+
+<template id="at-update">
+  <div class="at-upd" role="status">
+    <span class="at-upd-dot" aria-hidden="true"></span>
+    <p class="at-upd-text">{t('update.banner')}</p>
+    <button class="at-button at-button-sm" type="button" data-update-reload>{t('tool.toast.update.action')}</button>
+    <button class="at-icon-button at-upd-x" type="button" data-update-close aria-label={t('update.close')}>
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
+        <path d="M6 6l12 12M18 6L6 18"></path>
+      </svg>
+    </button>
+  </div>
+</template>
+
+<script>
+  import { watchSiteUpdates } from '../../lib/update-banner';
+
+  watchSiteUpdates();
+</script>

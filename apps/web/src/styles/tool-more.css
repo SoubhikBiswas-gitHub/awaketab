@@ -11,7 +11,6 @@
   --at-tl-mark: 32px;
   --at-tl-badge: 40px;
   --at-tl-star: 28px;
-  --at-tl-swatch: 20px;
   --at-tl-switch-w: 52px;
   --at-tl-switch-h: 32px;
   --at-tl-heat: 16px;
@@ -1135,65 +1134,6 @@
   font-weight: 500;
 }
 
-.at-lamps {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--at-gap-tight);
-}
-
-.at-lamp {
-  --c: var(--at-lamp-aqua-light);
-
-  display: flex;
-  align-items: center;
-  gap: var(--at-gap-item);
-  block-size: var(--at-h-button);
-  padding-inline: var(--at-s-3);
-  border: 1px solid var(--at-line);
-  border-radius: var(--at-r-lg);
-  color: var(--at-ink);
-  font: var(--at-type-small);
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.at-lamp[data-lamp="violet"] {
-  --c: var(--at-lamp-violet-light);
-}
-
-.at-lamp[data-lamp="mint"] {
-  --c: var(--at-lamp-mint-light);
-}
-
-.at-lamp[data-lamp="sky"] {
-  --c: var(--at-lamp-sky-light);
-}
-
-.at-lamp:has(:checked) {
-  border-color: color-mix(in srgb, var(--c) 45%, transparent);
-  background: color-mix(in srgb, var(--c) 14%, transparent);
-  font-weight: 600;
-}
-
-.at-lamp:has(:focus-visible) {
-  outline: 2px solid var(--at-focus);
-  outline-offset: 2px;
-}
-
-.at-swatch {
-  flex-shrink: 0;
-  inline-size: var(--at-tl-swatch);
-  block-size: var(--at-tl-swatch);
-  border-radius: 50%;
-  background: var(--c);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 18%, transparent);
-}
-
-.at-lamp-name {
-  flex: 1;
-  min-inline-size: 0;
-}
-
 .at-switchrow {
   display: flex;
   align-items: center;
@@ -1202,6 +1142,10 @@
   min-block-size: var(--at-h-row);
   padding-block: var(--at-s-2);
   cursor: pointer;
+}
+
+.at-notes-setrow {
+  cursor: default;
 }
 
 .at-switch-text {
@@ -1728,7 +1672,7 @@
 
   .at-keys {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(5, auto);
+    grid-template-rows: repeat(6, auto);
     grid-auto-flow: column;
   }
 
@@ -1736,7 +1680,7 @@
     min-block-size: var(--at-h-row);
   }
 
-  .at-keys > div:nth-child(5) {
+  .at-keys > div:nth-child(6) {
     border-block-end: 0;
   }
 }
@@ -1980,22 +1924,69 @@
   background: var(--at-raised);
 }
 
-:root:is([data-theme="dark"], [data-theme="oled"]) .at-lamp {
-  --c: var(--at-lamp-aqua-dark);
-}
-
-:root:is([data-theme="dark"], [data-theme="oled"]) .at-lamp[data-lamp="violet"] {
-  --c: var(--at-lamp-violet-dark);
-}
-
-:root:is([data-theme="dark"], [data-theme="oled"]) .at-lamp[data-lamp="mint"] {
-  --c: var(--at-lamp-mint-dark);
-}
-
-:root:is([data-theme="dark"], [data-theme="oled"]) .at-lamp[data-lamp="sky"] {
-  --c: var(--at-lamp-sky-dark);
-}
-
 :root:is([data-theme="dark"], [data-theme="oled"]):not([data-accent="violet"]) .at-heat-cell[data-level="3"] {
   --dot-ink: var(--at-on-accent);
+}
+
+.at-fc > .at-seg-item:hover {
+  background: var(--at-raised);
+  color: var(--at-ink);
+}
+
+.at-face-opt > svg {
+  flex-shrink: 0;
+  inline-size: var(--at-icon-md);
+  block-size: var(--at-icon-md);
+  color: var(--at-accent-text);
+}
+
+.at-face-opt:has(:checked) {
+  border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--at-accent) 14%, var(--at-surface));
+  color: var(--at-ink);
+  font-weight: 600;
+}
+
+.at-face-pick {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--at-s-2);
+}
+
+.at-face-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--at-s-1);
+  min-block-size: var(--at-h-cook);
+  padding: var(--at-s-2);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-r-md);
+  background: var(--at-surface);
+  color: var(--at-ink-2);
+  font: var(--at-type-caption);
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+}
+
+.at-face-opt:hover {
+  border-color: var(--at-line-strong);
+  color: var(--at-ink);
+}
+
+.at-face-opt:has(:focus-visible) {
+  outline: 2px solid var(--at-focus);
+  outline-offset: 2px;
+}
+
+.at-settings:not(:has(input[name="face"][value="analog"]:checked)) .at-field-astyle {
+  display: none;
+}
+
+@media (width >= 600px) {
+  .at-face-pick {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }

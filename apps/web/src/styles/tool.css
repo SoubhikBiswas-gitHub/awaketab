@@ -3,7 +3,6 @@
 :root {
   --at-tl-sponsor-w: 300px;
   --at-tl-sponsor-h: 100px;
-  --at-tl-tabs: 440px;
   --at-tl-dock-end: clamp(40px, 3.636vw + 18.18px, 48px);
   --at-tl-type-card: 600 1rem/1.5rem var(--at-font);
   --at-tl-type-display-s: 300 1.5rem/2rem var(--at-font);
@@ -139,28 +138,40 @@
 .at-tabs {
   grid-area: tabs;
   justify-self: center;
-  inline-size: 100%;
   min-inline-size: 0;
+  max-inline-size: 100%;
 }
 
-.at-faces {
-  --at-seg-n: 4;
+.at-fc {
+  grid-template-columns: repeat(3, auto);
 }
 
-.at-faces .at-seg-ind {
-  border-color: color-mix(in srgb, var(--at-tone) 45%, transparent);
-  background: color-mix(in srgb, var(--at-tone) 14%, transparent);
-}
-
-.at-faces .at-seg-item,
+.at-fc > .at-seg-item,
 .at-bar .at-seg-item {
   padding-inline: 0;
   font: var(--at-type-small);
   font-weight: 500;
 }
 
-.at-faces .at-seg-item[aria-selected="true"],
+.at-fc .at-fc-open {
+  padding-inline: var(--at-s-3) var(--at-s-4);
+}
+
+.at-fc-step {
+  inline-size: var(--at-h-control);
+}
+
+.at-fc-open > svg {
+  color: var(--at-tone);
+}
+
+[dir="rtl"] .at-fc-step > svg {
+  scale: -1 1;
+}
+
+.at-fc [data-t="fn"],
 .at-bar .at-seg-item[aria-pressed="true"] {
+  color: var(--at-ink);
   font-weight: 600;
 }
 
@@ -307,14 +318,12 @@
   display: none;
 }
 
-.at-face-ring,
-:root[data-face="bold"] .at-face-bold,
-:root[data-face="horizon"] .at-face-horizon,
-:root[data-face="tide"] .at-face-tide {
+.at-face-ring {
   display: grid;
+  place-items: center;
 }
 
-:root:is([data-face="bold"], [data-face="horizon"], [data-face="tide"]) .at-face-ring {
+:root[data-face] .at-face-ring {
   display: none;
 }
 
@@ -363,14 +372,18 @@
   font-weight: 500;
 }
 
-.at-face-ring {
-  place-items: center;
-}
-
 .at-ring {
   position: relative;
   inline-size: calc(320 * var(--u));
   block-size: calc(320 * var(--u));
+}
+
+.at-ring::before {
+  content: "";
+  position: absolute;
+  inset: 16%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--at-face-c) 9%, transparent), transparent);
 }
 
 .at-ring-art {
@@ -384,9 +397,16 @@
 .at-ticks {
   fill: none;
   stroke: var(--at-tick);
-  stroke-width: 6;
-  stroke-dasharray: 2.702 10.807;
-  stroke-dashoffset: 1.351;
+  stroke-width: 5;
+  stroke-dasharray: 1.4 12.2136;
+  stroke-dashoffset: 0.7;
+}
+
+.at-ticks-h {
+  stroke: color-mix(in srgb, var(--at-muted) 60%, transparent);
+  stroke-width: 11;
+  stroke-dasharray: 2.6 65.468;
+  stroke-dashoffset: 1.3;
 }
 
 .at-track {
@@ -466,27 +486,25 @@
 
 .at-sweep {
   position: absolute;
-  inset: 8.75%;
+  inset: 7.5%;
   display: none;
   border-radius: 50%;
   background: conic-gradient(
-    from 0deg,
-    transparent 0deg 240deg,
-    color-mix(in srgb, var(--at-face-c) 12%, transparent) 360deg
+    transparent 0 276deg,
+    color-mix(in srgb, var(--at-face-c) 16%, transparent) 358deg,
+    color-mix(in srgb, var(--at-face-c) 75%, transparent) 0
   );
-  animation: at-spin 16s linear infinite;
+  mask: radial-gradient(closest-side, transparent 77%, #000 78%);
+  animation: at-spin 60s linear infinite;
 }
 
-:root:is([data-theme="dark"], [data-theme="oled"]) .at-sweep {
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg 240deg,
-    color-mix(in srgb, var(--at-face-c) 16%, transparent) 360deg
-  );
-}
-
-.at-island:is([data-status="awake"], [data-status="fallback"], [data-status="starting"]) .at-sweep {
+.at-island:is([data-status="awake"], [data-status="fallback"], [data-status="starting"], [data-status="paused"])
+  .at-sweep {
   display: block;
+}
+
+.at-island[data-status="paused"] .at-sweep {
+  animation-play-state: paused;
 }
 
 .at-face-text {
@@ -500,11 +518,13 @@
 }
 
 .at-face-ring .at-digits {
-  font-size: calc(76 * var(--u));
+  font-size: calc(80 * var(--u));
+  font-weight: 250;
+  letter-spacing: -0.045em;
 }
 
 .at-island[data-units="h"] .at-face-ring .at-digits {
-  font-size: calc(60 * var(--u));
+  font-size: calc(62 * var(--u));
 }
 
 .at-island[data-units="d"] .at-face-ring .at-digits {
@@ -880,10 +900,7 @@
   }
 
   .at-tabs,
-  .at-face-ring .at-kick,
-  .at-face-tide .at-kick,
-  .at-face-bold .at-kick,
-  .at-hz-name {
+  .at-face-ring .at-kick {
     display: none;
   }
 
@@ -965,11 +982,6 @@
     justify-content: center;
     row-gap: var(--at-gap-group);
     padding-block: var(--at-s-6) var(--at-tl-dock-end);
-  }
-
-  .at-tabs {
-    inline-size: var(--at-tl-tabs);
-    max-inline-size: 100%;
   }
 
   .at-len {
