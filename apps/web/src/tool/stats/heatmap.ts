@@ -75,6 +75,7 @@ export interface IStatsSummary {
   todayMinutes: number;
   todaySessions: number;
   weekMinutes: number;
+  days: Array<{ date: Date; minutes: number }>;
   streakDays: number;
   totalMinutes: number;
   sessions: number;
@@ -93,13 +94,16 @@ export function summarise(
   timeZone?: string,
 ): IStatsSummary {
   const base = todayLocal(now, timeZone);
-  let week = 0;
-  for (let i = 0; i < 7; i += 1) week += stats.days[ymd(localDay(base, -i))] ?? 0;
+  const days = [6, 5, 4, 3, 2, 1, 0].map((i) => {
+    const date = localDay(base, -i);
+    return { date, minutes: stats.days[ymd(date)] ?? 0 };
+  });
   const today = dayKey(now, timeZone);
   return {
     todayMinutes: stats.days[today] ?? 0,
     todaySessions: stats.daySessions?.[today] ?? 0,
-    weekMinutes: week,
+    weekMinutes: days.reduce((a, d) => a + d.minutes, 0),
+    days,
     streakDays: stats.currentStreakDays,
     totalMinutes: stats.totalMinutes,
     sessions: stats.sessions,

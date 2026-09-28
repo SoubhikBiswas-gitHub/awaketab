@@ -9,6 +9,7 @@ import {
 import FaceSwitch from './FaceSwitch.astro';
 import SponsorCard from './SponsorCard.astro';
 import Button from './shell/Button.astro';
+import Icon from './icons/Icon.astro';
 import Dialog from './ui/Dialog.astro';
 import Sheet from './ui/Sheet.astro';
 import StatusPill from './shell/StatusPill.astro';
@@ -73,23 +74,38 @@ const endSounds = Object.keys(END_ICON) as Array<keyof typeof END_ICON>;
 const mmss = (sec: number) => `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, '0')}`;
 // SponsorCard slot (docs/05 §3.23): rendered only when the flag is on at build time, so CLS stays 0 when off.
 const sponsorEnabled = import.meta.env.PUBLIC_SPONSOR_ENABLED === '1';
-const shortcuts = [
-  ['Space', '', t('tool.shortcuts.space')],
-  ['1', '6', t('tool.shortcuts.presets')],
-  ['0', '', t('tool.shortcuts.pinf')],
-  ['U', '', t('tool.shortcuts.until')],
-  ['F', '', t('tool.shortcuts.fullscreen')],
-  ['C', '', t('tool.shortcuts.face')],
-  ['D', '', t('tool.shortcuts.theme')],
-  ['M', '', t('tool.shortcuts.mode')],
-  ['P', '', t('tool.shortcuts.pip')],
-  ['S', '', t('tool.shortcuts.sound')],
-  ['N', '', t('tool.shortcuts.notes')],
-  ['T', '', t('tool.shortcuts.focus')],
-  ['B', '', t('tool.shortcuts.breathe')],
-  ['I', '', t('tool.shortcuts.intention')],
-  ['Esc', '', t('tool.shortcuts.esc')],
-  ['?', '', t('tool.shortcuts.help')],
+const shortcutGroups = [
+  [
+    'session',
+    [
+      ['Space', '', t('tool.shortcuts.space')],
+      ['1', '6', t('tool.shortcuts.presets')],
+      ['0', '', t('tool.shortcuts.pinf')],
+      ['U', '', t('tool.shortcuts.until')],
+      ['Esc', '', t('tool.shortcuts.esc')],
+    ],
+  ],
+  [
+    'screen',
+    [
+      ['F', '', t('tool.shortcuts.fullscreen')],
+      ['C', '', t('tool.shortcuts.face')],
+      ['D', '', t('tool.shortcuts.theme')],
+      ['M', '', t('tool.shortcuts.mode')],
+      ['P', '', t('tool.shortcuts.pip')],
+    ],
+  ],
+  [
+    'tools',
+    [
+      ['S', '', t('tool.shortcuts.sound')],
+      ['N', '', t('tool.shortcuts.notes')],
+      ['T', '', t('tool.shortcuts.focus')],
+      ['B', '', t('tool.shortcuts.breathe')],
+      ['I', '', t('tool.shortcuts.intention')],
+      ['?', '', t('tool.shortcuts.help')],
+    ],
+  ],
 ] as const;
 
 // Notes drawer: toolbar commands with their Tiptap shortcut (the Mod key is added on the client) and 24 px icons.
@@ -153,8 +169,6 @@ const keysHelp = t('settings.shortcuts.help', {
 });
 const close = t('tool.close');
 const X = 'M6 6l12 12M18 6L6 18';
-const ICON_SHARE =
-  'M12 3.5v11M8 7.5l4-4 4 4M5.5 12v6.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12';
 const here = LOCALE_META[locale];
 const untilWall = until?.replace('-', ':');
 const a = untilWall ? '' : ready.a;
@@ -516,18 +530,7 @@ const eight = ready.chip === 'custom';
     </div>
     <div class="at-card-tone at-lowbatt" role="status">
       <h2>
-        <svg width="20" height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-          ><rect x="2.5" y="7" width="17" height="10" rx="2.5"></rect><path
-            d="M21.5 10.5v3"></path><path d="M5.5 10v4" stroke-width="2.6"
-          ></path></svg
-        >
+        <Icon name="battery-warning" size={20} tone="ink" />
         {t('tool.battery.title')}
       </h2>
       <p data-t="battBody"></p>
@@ -747,32 +750,23 @@ const eight = ready.chip === 'custom';
     <div class="at-lpanel at-lp-until">
       <div class="at-lp-head">
         <label class="at-lp-title" for="at-until-time"
-          >{t('tool.until.title')}</label
+          ><Icon name="clock" size={20} />{t('tool.until.title')}</label
         >
-        <div class="at-lp-tools">
-          <input
-            class="at-input at-until-input"
-            id="at-until-time"
-            type="time"
-            data-until-input
-            aria-describedby="at-until-hint"
-          />
-          <button
-            class="at-icon-button"
-            type="button"
-            data-act="close"
-            aria-label={close}
-            ><svg width="20" height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              aria-hidden="true"><path d={X}></path></svg
-            ></button
-          >
-        </div>
+        <button
+          class="at-icon-button"
+          type="button"
+          data-act="close"
+          aria-label={close}
+          ><Icon name="x" size={20} tone="ink" class="at-duo-bare" /></button
+        >
       </div>
+      <input
+        class="at-input at-until-input"
+        id="at-until-time"
+        type="time"
+        data-until-input
+        aria-describedby="at-until-hint"
+      />
       <span class="at-sr" id="at-until-hint">{t('tool.until.hint')}</span>
       <div class="at-past" role="status">
         <p data-t="pastQ"></p>
@@ -799,24 +793,21 @@ const eight = ready.chip === 'custom';
           ))
         }
       </div>
+      <p class="at-lp-then">
+        <Icon name="flag-checkered" size={16} />
+        <span><span data-t="ma">{meta}</span> <b data-t="mb"></b></span>
+      </p>
     </div>
 
     <div class="at-lpanel at-lp-custom">
       <div class="at-lp-head">
-        <span class="at-lp-title">{t('tool.custom.title')}</span>
+        <span class="at-lp-title"><Icon name="timer" size={20} />{t('tool.custom.title')}</span>
         <button
           class="at-icon-button"
           type="button"
           data-act="close"
           aria-label={close}
-          ><svg width="20" height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            aria-hidden="true"><path d={X}></path></svg
-          ></button
+          ><Icon name="x" size={20} tone="ink" class="at-duo-bare" /></button
         >
       </div>
       <div class="at-stepper">
@@ -825,14 +816,7 @@ const eight = ready.chip === 'custom';
           data-act="less"
           data-l="lessAria"
           aria-label={t('tool.custom.less5')}
-          ><svg width="20" height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            aria-hidden="true"><path d="M5 12h14"></path></svg
-          ></button
+          ><Icon name="minus" size={20} tone="ink" class="at-duo-bare" /></button
         >
         <output data-t="customWords" aria-live="polite"></output>
         <button
@@ -840,16 +824,13 @@ const eight = ready.chip === 'custom';
           data-act="more5"
           data-l="moreAria5"
           aria-label={t('tool.custom.more5')}
-          ><svg width="20" height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            aria-hidden="true"><path d="M5 12h14M12 5v14"></path></svg
-          ></button
+          ><Icon name="plus" size={20} tone="ink" class="at-duo-bare" /></button
         >
       </div>
+      <p class="at-lp-then">
+        <Icon name="flag-checkered" size={16} />
+        <span><span data-t="ma">{meta}</span> <b data-t="mb"></b></span>
+      </p>
     </div>
 
     <section
@@ -859,19 +840,7 @@ const eight = ready.chip === 'custom';
       hidden
     >
       <div class="at-dockcard-head">
-        <span class="at-dockcard-icon at-dockcard-lamp" aria-hidden="true"
-          ><svg width="20" height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            ><path
-              d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4.5v3.6h3.6M12 8.5V12l2.5 1.8"
-            ></path></svg
-          ></span
-        >
+        <span class="at-dockcard-icon at-dockcard-lamp" aria-hidden="true"><Icon name="clock-counter-clockwise" size={20} /></span>
         <div>
           <h2 id="at-resume-h">
             <span data-resume-title></span>
@@ -895,17 +864,7 @@ const eight = ready.chip === 'custom';
       hidden
     >
       <div class="at-dockcard-head">
-        <span class="at-dockcard-icon" aria-hidden="true"
-          ><svg width="20" height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linejoin="round"
-            ><rect x="3" y="7.5" width="13" height="12" rx="2.5"></rect><path
-              d="M7.5 4.5h11a2.5 2.5 0 0 1 2.5 2.5v9"></path></svg
-          ></span
-        >
+        <span class="at-dockcard-icon" aria-hidden="true"><Icon name="browsers" size={20} tone="ink" /></span>
         <div>
           <h2 id="at-second-h">{t('tool.secondTab.title')}</h2>
           <p>{t('tool.secondTab.body')}</p>
@@ -924,44 +883,41 @@ const eight = ready.chip === 'custom';
       title={t('tool.share.title')}
       titleId="share-title"
       closeLabel={close}
+      class="at-share"
       docked
+      autofocus
     >
-      <span slot="description" data-share-label></span>
-      <div class="at-field">
-        <label class="at-caption" for="at-share-url"
-          >{t('tool.share.link')}</label
-        >
+      <div class="at-share-card">
+        <div class="at-share-look">
+          <svg class="at-share-ring" width="56" height="56" viewBox="0 0 56 56" aria-hidden="true" focusable="false">
+            <circle class="at-share-track" cx="28" cy="28" r="23"></circle>
+            <circle class="at-share-arc" cx="28" cy="28" r="23" pathLength="100"></circle>
+            <circle class="at-share-bead" cx="28" cy="5" r="3.5"></circle>
+          </svg>
+          <div class="at-share-what">
+            <span class="at-share-pill" aria-hidden="true">
+              <span class="at-share-off">{t('tool.pill.idle')}</span><span class="at-share-on">{t('tool.pill.held')}</span>
+            </span>
+            <p class="at-share-label" data-share-label></p>
+            <p class="at-caption">
+              <span class="at-share-off">{t('tool.share.look.waits')}</span><span class="at-share-on">{t('tool.share.look.starts')}</span>
+            </p>
+          </div>
+        </div>
         <div class="at-share-row">
-          <input
-            class="at-input at-share-url"
-            id="at-share-url"
-            data-share-url
-            readonly
-          />
-          <button
-            class="at-button at-button-sm at-copy"
-            type="button"
+          <label class="sr-only" for="at-share-url">{t('tool.share.link')}</label>
+          <input class="at-share-url" id="at-share-url" data-share-url readonly />
+          <Button
+            variant="stop"
+            size="sm"
+            class="at-copy"
             data-share-copy
             aria-label={t('tool.share.copyAria')}
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-              ><path class="at-copy-i" d="M9 9h10.5v10.5H9zM15 9V4.5H4.5V15H9"
-              ></path><path class="at-copied-i" d="M5 12.5l4.5 4.5L19 7.5"
-              ></path></svg
-            >
-            <span class="at-copy-t">{t('tool.share.copy')}</span><span
-              class="at-copied-t">{t('tool.share.copied')}</span
-            >
-          </button>
+            <Icon name="copy" size={16} class="at-copy-i" />
+            <Icon name="check" size={16} class="at-copied-i" />
+            <span class="at-copy-t">{t('tool.share.copy')}</span><span class="at-copied-t">{t('tool.share.copied')}</span>
+          </Button>
         </div>
       </div>
       <label class="at-switchrow">
@@ -977,21 +933,13 @@ const eight = ready.chip === 'custom';
           data-share-auto
         />
       </label>
-      <button class="at-button" type="button" data-share-native>
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"><path d={ICON_SHARE}></path></svg
-        >
-        {t('tool.share.native')}
-      </button>
       <p class="at-caption at-share-msg" role="status" data-share-msg></p>
+      <Fragment slot="footer">
+        <Button data-share-native>
+          <Icon name="share-network" size={20} />
+          {t('tool.share.native')}
+        </Button>
+      </Fragment>
     </Dialog>
 
     <Dialog
@@ -999,7 +947,10 @@ const eight = ready.chip === 'custom';
       title={t('rating.title')}
       titleId="rating-title"
       closeLabel={close}
+      class="at-rate"
+      size="sm"
       docked
+      autofocus
     >
       <form class="at-rating" data-rating-form>
         <div class="at-rate-top">
@@ -1014,15 +965,13 @@ const eight = ready.chip === 'custom';
                     name="stars"
                     value={String(n)}
                   />
-                  <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 17l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" />
-                  </svg>
+                  <Icon name="star" size={28} />
                   <span class="sr-only">{t('rating.star', { n })}</span>
                 </label>
               ))
             }
           </fieldset>
-          <span class="at-caption at-star-word"
+          <span class="at-caption at-star-word" aria-hidden="true"
             ><span>{t('rating.stars')}</span>{
               [1, 2, 3, 4, 5].map((n) => (
                 <span data-n={String(n)}>{t('rating.star', { n })}</span>
@@ -1030,32 +979,24 @@ const eight = ready.chip === 'custom';
             }</span
           >
         </div>
-        <p class="at-error" data-rating-error role="alert"></p>
-        <div class="at-field">
-          <label class="at-rate-label" for="at-rate-note"
-            >{t('rating.text')}</label
-          >
-          <textarea
-            class="at-input at-textarea"
-            id="at-rate-note"
-            name="text"
-            maxlength="280"
-            rows="3"></textarea>
+        <div class="at-rate-more">
+          <p class="at-error" data-rating-error role="alert"></p>
+          <div class="at-field">
+            <label class="at-rate-label" for="at-rate-note"
+              >{t('rating.text')}</label
+            >
+            <textarea
+              class="at-input at-textarea"
+              id="at-rate-note"
+              name="text"
+              maxlength="280"
+              rows="2"></textarea>
+          </div>
+          <Button variant="stop" size="md" type="submit">{t('rating.send')}</Button>
         </div>
-        <button class="at-button at-button-stop" type="submit"
-          >{t('rating.send')}</button
-        >
         <div class="at-rate-later">
-          <button
-            class="at-button at-button-quiet at-button-sm"
-            type="button"
-            data-rating-later>{t('rating.later')}</button
-          >
-          <button
-            class="at-button at-button-quiet at-button-sm"
-            type="button"
-            data-rating-never>{t('rating.never')}</button
-          >
+          <Button variant="quiet" size="sm" data-rating-later>{t('rating.later')}</Button>
+          <Button variant="quiet" size="sm" data-rating-never>{t('rating.never')}</Button>
         </div>
       </form>
     </Dialog>
@@ -1948,68 +1889,51 @@ const eight = ready.chip === 'custom';
   title={t('stats.title')}
   titleId="stats-title"
   closeLabel={t('stats.closeSr')}
+  class="at-stats"
+  autofocus
 >
-  <p class="at-caption" data-stats-empty hidden>{t('stats.empty')}</p>
+  <p class="at-stats-empty" data-stats-empty hidden>{t('stats.empty')}</p>
   <dl class="at-figs">
+    <div class="at-fig-hero"><dt class="at-kicker">{t('stats.week')}</dt><dd data-stats-week></dd></div>
     <div><dt>{t('stats.today')}</dt><dd data-stats-today></dd></div>
-    <div><dt>{t('stats.week')}</dt><dd data-stats-week></dd></div>
-    <div><dt>{t('stats.streakLabel')}</dt><dd data-stats-streak></dd></div>
+    <div class="at-fig-streak">
+      <dt>{t('stats.streakLabel')}</dt>
+      <dd><Icon name="fire" size={20} /><span data-stats-streak></span></dd>
+    </div>
     <div><dt>{t('stats.total')}</dt><dd data-stats-total></dd></div>
   </dl>
-  <section class="at-heat-sec" aria-labelledby="st-heat">
-    <div class="at-field-top">
-      <h3 class="at-kicker" id="st-heat">{t('stats.heat.title')}</h3><span
-        class="at-caption">{t('stats.heat.sub')}</span>
-    </div>
-    <div class="at-heat" role="img" data-stats-heatmap>
-      <div class="at-heat-lock" data-stats-locked>
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          aria-hidden="true"
-          ><rect x="5" y="11" width="14" height="10" rx="2"></rect><path
-            d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg
+  <section class="at-st-chart" aria-labelledby="st-heat">
+    <div class="at-st-top">
+      <h3 class="sr-only" id="st-heat">{t('stats.heat.sub')}</h3>
+      <div class="at-seg at-st-view" role="radiogroup" aria-labelledby="st-heat">
+        <span class="at-seg-ind" aria-hidden="true"></span>
+        <label class="at-seg-item"
+          ><input class="sr-only" type="radio" name="at-st-view" value="week" checked />{t('stats.view.week')}</label
         >
-        {t('stats.heatmap.locked')}
+        <label class="at-seg-item"
+          ><input class="sr-only" type="radio" name="at-st-view" value="weeks" />{t('stats.heat.title')}</label
+        >
+      </div>
+      <div class="at-heat-legend" aria-hidden="true">
+        <span>{t('stats.heat.less')}</span><i></i><i></i><i></i><i></i><i
+        ></i><span>{t('stats.heat.more')}</span>
       </div>
     </div>
-    <div class="at-heat-legend" aria-hidden="true">
-      <span>{t('stats.heat.less')}</span><i></i><i></i><i></i><i></i><i
-      ></i><span>{t('stats.heat.more')}</span>
-    </div>
+    <div class="at-st-days" role="img" data-stats-days></div>
+    <div class="at-heat" role="img" data-stats-heatmap></div>
+    <p class="at-caption at-heat-lock" data-stats-locked>
+      <Icon name="lock-simple" size={16} tone="ink" />
+      <span>{t('stats.heatmap.pro')} <a href="/pro">{t('pro.see')}</a></span>
+    </p>
   </section>
-  <div class="at-stats-foot">
-    <button
-      class="at-button at-export"
-      type="button"
-      data-stats-export
-      aria-describedby="st-csv-note"
-    >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.8"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-        ><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg
-      >
+  <Fragment slot="footer">
+    <p class="at-caption at-dialog-start" id="st-csv-note">{t('stats.export.note')}</p>
+    <Button class="at-export" data-stats-export aria-describedby="st-csv-note">
+      <Icon name="download-simple" size={20} />
       {t('stats.export')}
       <span class="at-tag" data-export-pro>{t('pro.badge')}</span>
-    </button>
-    <p class="at-caption" id="st-csv-note">
-      {t('stats.export.note')}
-      <a href="/pro">{t('pro.see')}</a>
-    </p>
-  </div>
+    </Button>
+  </Fragment>
 </Sheet>
 
 {
@@ -2184,40 +2108,38 @@ const eight = ready.chip === 'custom';
   titleId="shortcuts-title"
   closeLabel={close}
   size="lg"
+  class="at-keysheet"
+  autofocus
 >
   <p class="at-keys-note" role="note">
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.8"
-      stroke-linecap="round"
-      aria-hidden="true"
-      ><rect x="2.5" y="6" width="19" height="12" rx="2.5"></rect><path
-        d="M6.5 10h1M10.5 10h1M14.5 10h1M17.5 10h.5M7.5 14h9"></path></svg
-    >
+    <Icon name="keyboard" size={20} />
     <span>{t('tool.shortcuts.phoneNote')}</span>
   </p>
-  <dl class="at-keys">
+  <div class="at-keys-groups">
     {
-      shortcuts.map(([k1, k2, label]) => (
-        <div>
-          <dt>
-            <kbd class="at-kbd">{k1}</kbd>
-            {k2 && (
-              <>
-                <span aria-hidden="true">–</span>
-                <kbd class="at-kbd">{k2}</kbd>
-              </>
-            )}
-          </dt>
-          <dd>{label}</dd>
-        </div>
+      shortcutGroups.map(([group, keys]) => (
+        <section class="at-keys-group" aria-labelledby={`at-keys-${group}`}>
+          <h3 class="at-kicker" id={`at-keys-${group}`}>{t(`tool.shortcuts.group.${group}`)}</h3>
+          <dl class="at-keys">
+            {keys.map(([k1, k2, label]) => (
+              <div>
+                <dt>
+                  <kbd class="at-kbd">{k1}</kbd>
+                  {k2 && (
+                    <>
+                      <span aria-hidden="true">–</span>
+                      <kbd class="at-kbd">{k2}</kbd>
+                    </>
+                  )}
+                </dt>
+                <dd>{label}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
       ))
     }
-  </dl>
+  </div>
   <p class="at-caption at-keys-foot">
     <span class="at-phone-hide">{t('tool.shortcuts.foot')}</span><span
       class="at-phone-only">{t('tool.shortcuts.footPhone')}</span>
@@ -2229,11 +2151,32 @@ const eight = ready.chip === 'custom';
   title={t('pro.title')}
   titleId="pro-sheet-title"
   closeLabel={close}
+  class="at-prosheet"
+  autofocus
 >
-  <p>{t('pro.card')}</p>
+  <div class="at-pro-value">
+    <p class="at-pro-price"><span class="at-pro-amount">{t('pro.sheet.amount')}</span> {t('pro.sheet.per')}</p>
+    <ul class="at-pro-list">
+      {
+        (
+          [
+            ['palette', 'looks'],
+            ['waveform', 'mixer'],
+            ['note-pencil', 'notes'],
+            ['timer', 'pomodoro'],
+            ['chat-text', 'message'],
+            ['chart-bar', 'stats'],
+          ] as const
+        ).map(([icon, key]) => (
+          <li><Icon name={icon} size={20} />{t(`pro.sheet.${key}`)}</li>
+        ))
+      }
+    </ul>
+  </div>
+  <p class="at-caption">{t('pro.sheet.free')}</p>
   <Fragment slot="footer">
+    <a class="at-textlink at-dialog-start" href="/pro/activate">{t('pro.activate')}</a>
     <Button variant="primary" href="/pro" glyph={false}>{t('pro.cta')}</Button>
-    <a class="at-textlink" href="/pro/activate">{t('pro.activate')}</a>
   </Fragment>
 </Sheet>
 

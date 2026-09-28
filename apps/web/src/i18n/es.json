@@ -1616,5 +1616,21 @@
   "settings.focus.autoHelp": "After the long break the next block starts on its own, until you stop. Pause or skip any time.",
   "settings.focus.autoHelpFree": "After the long break the next block starts on its own. Part of Pro; turn it on to try it for 5 minutes.",
   "settings.focus.breathe": "Breathing pattern",
-  "settings.focus.breatheHelp": "Breathe mode (B) guides each breath with the ring."
+  "settings.focus.breatheHelp": "Breathe mode (B) guides each breath with the ring.",
+  "tool.share.look.waits": "Espera un toque para empezar.",
+  "tool.share.look.starts": "Mantiene la pantalla despierta en cuanto se abre.",
+  "stats.view.week": "Semana",
+  "stats.days.aria": "Tiempo despierta en cada uno de los últimos 7 días: {length} en total.",
+  "tool.shortcuts.group.session": "Sesión",
+  "tool.shortcuts.group.screen": "Pantalla",
+  "tool.shortcuts.group.tools": "Herramientas",
+  "pro.sheet.amount": "12 $",
+  "pro.sheet.per": "al año",
+  "pro.sheet.looks": "Más temas, lámparas y fondos",
+  "pro.sheet.mixer": "Un mezclador de sonidos",
+  "pro.sheet.notes": "Más notas",
+  "pro.sheet.pomodoro": "Un Pomodoro que se repite",
+  "pro.sheet.message": "Modo mensaje",
+  "pro.sheet.stats": "12 semanas de estadísticas",
+  "pro.sheet.free": "Mantener la pantalla despierta sigue siendo gratis, sin anuncios en la pantalla despierta."
 }

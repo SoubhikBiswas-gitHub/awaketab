@@ -1616,5 +1616,21 @@
   "settings.focus.autoHelp": "After the long break the next block starts on its own, until you stop. Pause or skip any time.",
   "settings.focus.autoHelpFree": "After the long break the next block starts on its own. Part of Pro; turn it on to try it for 5 minutes.",
   "settings.focus.breathe": "Breathing pattern",
-  "settings.focus.breatheHelp": "Breathe mode (B) guides each breath with the ring."
+  "settings.focus.breatheHelp": "Breathe mode (B) guides each breath with the ring.",
+  "tool.share.look.waits": "タップするまで待ちます。",
+  "tool.share.look.starts": "開いたらすぐ画面をオンに保ちます。",
+  "stats.view.week": "週",
+  "stats.days.aria": "直近7日間の毎日の画面オン時間：合計{length}。",
+  "tool.shortcuts.group.session": "セッション",
+  "tool.shortcuts.group.screen": "画面",
+  "tool.shortcuts.group.tools": "ツール",
+  "pro.sheet.amount": "12ドル",
+  "pro.sheet.per": "／年",
+  "pro.sheet.looks": "テーマ、ランプ、背景の追加",
+  "pro.sheet.mixer": "サウンドミキサー",
+  "pro.sheet.notes": "メモの追加",
+  "pro.sheet.pomodoro": "繰り返すポモドーロ",
+  "pro.sheet.message": "メッセージモード",
+  "pro.sheet.stats": "12週間の統計",
+  "pro.sheet.free": "画面をオンに保つ機能は無料のまま。画面オン中に広告は出ません。"
 }

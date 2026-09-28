@@ -1616,5 +1616,21 @@
   "settings.focus.autoHelp": "After the long break the next block starts on its own, until you stop. Pause or skip any time.",
   "settings.focus.autoHelpFree": "After the long break the next block starts on its own. Part of Pro; turn it on to try it for 5 minutes.",
   "settings.focus.breathe": "Breathing pattern",
-  "settings.focus.breatheHelp": "Breathe mode (B) guides each breath with the ring."
+  "settings.focus.breatheHelp": "Breathe mode (B) guides each breath with the ring.",
+  "tool.share.look.waits": "Attend un appui pour démarrer.",
+  "tool.share.look.starts": "Garde l'écran allumé dès l'ouverture.",
+  "stats.view.week": "Semaine",
+  "stats.days.aria": "Temps d'éveil sur chacun des 7 derniers jours : {length} au total.",
+  "tool.shortcuts.group.session": "Session",
+  "tool.shortcuts.group.screen": "Écran",
+  "tool.shortcuts.group.tools": "Outils",
+  "pro.sheet.amount": "12 $",
+  "pro.sheet.per": "par an",
+  "pro.sheet.looks": "Plus de thèmes, de lampes et de fonds",
+  "pro.sheet.mixer": "Un mélangeur de sons",
+  "pro.sheet.notes": "Plus de notes",
+  "pro.sheet.pomodoro": "Un Pomodoro qui se répète",
+  "pro.sheet.message": "Mode message",
+  "pro.sheet.stats": "12 semaines de statistiques",
+  "pro.sheet.free": "Garder l'écran allumé reste gratuit, sans publicité sur l'écran allumé."
 }
