@@ -12,6 +12,27 @@ import { LOCK_GLYPH, LOCK_STATES } from '../lib/page-glyphs';
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const COFFEE = 'https://buymeacoffee.com/awaketab';
 const journeys = ['Acquisition', 'Denial', 'Release on hidden tabs', 'Reacquisition', 'Fallback behaviour', 'Multi-tab warnings'];
+const LICENCES = {
+  MIT: 'https://opensource.org/license/mit',
+  'Apache 2.0': 'https://www.apache.org/licenses/LICENSE-2.0',
+  'CC BY 4.0': 'https://creativecommons.org/licenses/by/4.0/',
+  'SIL OFL 1.1': 'https://openfontlicense.org/',
+} as const;
+const credits = [
+  { name: 'Tone.js', href: 'https://tonejs.github.io/', use: 'Focus sounds and end sounds, made live in your browser', licence: 'MIT' },
+  { name: 'howler.js', href: 'https://howlerjs.com/', use: 'Plays recorded tracks in the lo-fi library', licence: 'MIT' },
+  { name: 'NumberFlow', href: 'https://number-flow.barvian.me/', use: 'The rolling digits of the Rolling face', licence: 'MIT' },
+  { name: 'Embla Carousel', href: 'https://www.embla-carousel.com/', use: 'Swiping between clock faces', licence: 'MIT' },
+  { name: 'Tiptap and ProseMirror', href: 'https://tiptap.dev/', use: 'The notepad editor', licence: 'MIT' },
+  { name: 'idb-keyval', href: 'https://github.com/jakearchibald/idb-keyval', use: 'Keeps notes in this browser', licence: 'Apache 2.0' },
+  { name: 'annyang', href: 'https://github.com/TalAter/annyang', use: 'Voice commands while you dictate a note', licence: 'MIT' },
+  { name: 'vanilla-colorful', href: 'https://github.com/web-padawan/vanilla-colorful', use: 'The custom lamp colour picker', licence: 'MIT' },
+  { name: 'Hero Patterns', href: 'https://heropatterns.com/', use: 'The Dots, Grid and Waves backgrounds, by Steve Schoger', licence: 'CC BY 4.0' },
+  { name: 'Nixie One', href: 'https://fonts.google.com/specimen/Nixie+One', use: 'The Nixie face, by Jovanny Lemonad', licence: 'SIL OFL 1.1' },
+  { name: 'DSEG', href: 'https://www.keshikan.net/fonts-e.html', use: 'The LCD face, by keshikan', licence: 'SIL OFL 1.1' },
+  { name: 'Geist and Geist Mono', href: 'https://vercel.com/font', use: 'The interface type, by Vercel', licence: 'SIL OFL 1.1' },
+  { name: 'Space Grotesk', href: 'https://github.com/floriankarsten/space-grotesk', use: 'The numerals of the Bold face, by Florian Karsten', licence: 'SIL OFL 1.1' },
+] as const;
 const principles = [
   ['A tab is not a system setting', 'A normal browser tab cannot guarantee operation while hidden, prevent system sleep after a laptop lid closes, or override battery-saving policy.'],
   ['No fake input', 'AwakeTab does not simulate mouse movement or keystrokes and does not claim to keep chat presence indicators available.'],
@@ -126,15 +147,23 @@ const principles = [
       <section class="at-pg-stack-16" id="credits" aria-labelledby="ab-credits">
         <h2 id="ab-credits" class="at-pg-h2">Credits</h2>
         <p class="at-pg-body at-pg-measure">
-          The Dots, Grid and Waves backgrounds are <a class="at-pg-link" href="https://heropatterns.com/" rel="noopener" target="_blank">Hero Patterns</a>
-          by Steve Schoger, used under <a class="at-pg-link" href="https://creativecommons.org/licenses/by/4.0/" rel="noopener" target="_blank">CC BY 4.0</a>.
-          The custom lamp colour picker is <a class="at-pg-link" href="https://github.com/web-padawan/vanilla-colorful" rel="noopener" target="_blank">vanilla-colorful</a>
-          (MIT). The notepad is built on <a class="at-pg-link" href="https://tiptap.dev/" rel="noopener" target="_blank">Tiptap</a>
-          and <a class="at-pg-link" href="https://prosemirror.net/" rel="noopener" target="_blank">ProseMirror</a> (MIT), stores notes with
-          <a class="at-pg-link" href="https://github.com/jakearchibald/idb-keyval" rel="noopener" target="_blank">idb-keyval</a> (Apache 2.0) and
-          listens for voice commands with <a class="at-pg-link" href="https://github.com/TalAter/annyang" rel="noopener" target="_blank">annyang</a> (MIT).
-          Geist, Geist Mono and Space Grotesk are under the SIL Open Font License.
+          AwakeTab stands on open-source work. Each of these loads only with the feature that uses it.
         </p>
+        <dl class="at-about-credits">
+          {
+            credits.map((c) => (
+              <div>
+                <dt>
+                  <a class="at-pg-link" href={c.href} rel="noopener" target="_blank">{c.name}</a>
+                </dt>
+                <dd>{c.use}</dd>
+                <dd class="at-about-licence">
+                  <a class="at-pg-link" href={LICENCES[c.licence]} rel="noopener" target="_blank">{c.licence}</a>
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
       </section>
 
       <section class="at-pg-stack-16" id="contact" aria-labelledby="ab-contact">

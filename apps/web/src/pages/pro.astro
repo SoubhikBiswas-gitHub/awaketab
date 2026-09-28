@@ -38,10 +38,32 @@ const groups: Array<{ id: string; title: string; rows: TRow[] }> = [
       { label: p('cmp.r.lengths'), free: true, pro: true },
       { label: p('cmp.r.faces'), free: true, pro: true },
       { label: p('cmp.r.offline'), free: true, pro: true },
-      { label: p('cmp.r.lamps'), free: p('cmp.v.lamps.free'), pro: p('cmp.v.lamps.pro') },
-      { label: p('cmp.r.msg'), free: p('cmp.v.msg.free'), pro: true },
       { label: p('cmp.r.stats'), free: p('cmp.v.stats.free'), pro: p('cmp.v.stats.pro') },
       { label: p('cmp.r.pip'), free: true, pro: p('cmp.v.pip.pro') },
+    ],
+  },
+  {
+    id: 'looks',
+    title: p('cmp.g.looks'),
+    rows: [
+      { label: p('cmp.r.themes'), free: p('cmp.v.themes.free'), pro: p('cmp.v.themes.pro') },
+      { label: p('cmp.r.lamps'), free: p('cmp.v.lamps.free'), pro: p('cmp.v.lamps.pro') },
+      { label: p('cmp.r.patterns'), free: p('cmp.v.patterns.free'), pro: p('cmp.v.patterns.pro') },
+      { label: p('cmp.r.presets'), free: p('cmp.v.presets.free'), pro: p('cmp.v.presets.pro') },
+      { label: p('cmp.r.msg'), free: p('cmp.v.msg.free'), pro: true },
+      { label: p('cmp.r.preview'), free: true, pro: p('cmp.v.preview.pro') },
+    ],
+  },
+  {
+    id: 'focus',
+    title: p('cmp.g.focus'),
+    rows: [
+      { label: p('cmp.r.sounds'), free: true, pro: true },
+      { label: p('cmp.r.mixer'), free: p('cmp.v.mixer.free'), pro: true },
+      { label: p('cmp.r.library'), free: p('cmp.v.library.free'), pro: p('cmp.v.library.pro') },
+      { label: p('cmp.r.notes'), free: p('cmp.v.notes.free'), pro: p('cmp.v.notes.pro') },
+      { label: p('cmp.r.tools'), free: true, pro: true },
+      { label: p('cmp.r.pomo'), free: p('cmp.v.pomo.free'), pro: p('cmp.v.pomo.pro') },
     ],
   },
   {
@@ -64,7 +86,10 @@ const groups: Array<{ id: string; title: string; rows: TRow[] }> = [
 ];
 
 const gets = [
-  { id: 'lamps', d: 'M12 3.5c3.3 3.7 5.5 6.6 5.5 9.5a5.5 5.5 0 0 1-11 0c0-2.9 2.2-5.8 5.5-9.5z' },
+  { id: 'looks', d: 'M12 3.5c3.3 3.7 5.5 6.6 5.5 9.5a5.5 5.5 0 0 1-11 0c0-2.9 2.2-5.8 5.5-9.5z' },
+  { id: 'sound', d: 'M5 20v-6M5 10V4M12 20v-8M12 8V4M19 20v-4M19 12V4M3 14h4M10 8h4M17 16h4' },
+  { id: 'notes', d: 'M6 3.5h9l3.5 3.5v13.5H6zM9 11.5l2 2 3.5-3.5M9 17h6' },
+  { id: 'pomo', d: 'M12 20.5a7.5 7.5 0 1 1 7.1-10M19.5 4.5v5.5H14M12 9v4l2.5 1.5' },
   { id: 'msg', d: 'M4 5h16v11h-9l-4.5 3.5V16H4zM8 9h8M8 12h5' },
   { id: 'stats', d: 'M4 20h16M6.5 16.5V12M11 16.5V7M15.5 16.5V10M20 16.5V5' },
   { id: 'pip', d: 'M3.5 5h17v14h-17zM12.5 11.5h5.5v5h-5.5z' },

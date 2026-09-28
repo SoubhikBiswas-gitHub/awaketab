@@ -3,6 +3,7 @@ import Button from './shell/Button.astro';
 import UseCaseIcon from './icons/UseCaseIcon.astro';
 import HomeExtension from './home/HomeExtension.astro';
 import HomeLevels from './home/HomeLevels.astro';
+import HomeYours from './home/HomeYours.astro';
 import homeCss from '../styles/home.css?url';
 import { createT } from '../i18n/load';
 import { localePath, type TLocale } from '../i18n/locales';
@@ -87,6 +88,8 @@ const ARROW = 'M5 12h14M13 6l6 6-6 6';
       ))}
     </ul>
   </section>
+
+  <HomeYours locale={locale} />
 
   <HomeExtension locale={locale} />
 
