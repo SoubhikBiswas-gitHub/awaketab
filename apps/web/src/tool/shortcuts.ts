@@ -1,7 +1,6 @@
 import type { TPresetId } from '@awaketab/core';
 import type { IToolCtx } from './ctx.js';
-import { act, cycleTheme, help, notes, notesTyping, pip, toggleFullscreen } from './ui/actions.js';
-import { sound } from './ui/settings.js';
+import { act, cycleTheme, help, notes, notesTyping, openCustomize, pip, toggleFullscreen } from './ui/actions.js';
 
 const PRESET_KEYS: Record<string, Exclude<TPresetId, 'custom' | 'until'>> = {
   '1': 'p15',
@@ -118,7 +117,7 @@ export function keyHandler(
       });
     else if (key === 's')
       run(() => {
-        void sound(ctx, 'open');
+        openCustomize(ctx, 'sound');
       });
     else if (key === 'n')
       run(() => {

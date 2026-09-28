@@ -1198,38 +1198,6 @@
   gap: var(--at-gap-item);
 }
 
-.at-sg-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--at-gap-item);
-}
-
-.at-sg-ctl {
-  display: flex;
-  align-items: center;
-  gap: var(--at-gap-tight);
-}
-
-.at-select {
-  inline-size: auto;
-  min-inline-size: calc(3 * var(--at-h-control));
-  padding-inline-end: var(--at-s-8);
-  background:
-    linear-gradient(45deg, transparent 50%, var(--at-muted) 50%) no-repeat calc(100% - 18px) 50% / 6px 6px,
-    linear-gradient(135deg, var(--at-muted) 50%, transparent 50%) no-repeat calc(100% - 12px) 50% / 6px 6px,
-    var(--at-sunken);
-  font: var(--at-type-ui);
-  appearance: none;
-  cursor: pointer;
-}
-
-.at-select:focus-visible {
-  outline: 2px solid var(--at-focus);
-  outline-offset: 3px;
-}
-
 .at-sg-links {
   display: flex;
   flex-wrap: wrap;
@@ -1279,12 +1247,6 @@
 
 .at-settings:has([name="endBehaviour"][value="prompt_extend"]:checked) [data-v="end-ask"],
 .at-settings:has([name="endBehaviour"][value="stop"]:checked) [data-v="end-stop"],
-.at-settings:has([name="sound"] [value="chime"]:checked) [data-v="snd-chime"],
-.at-settings:has([name="sound"] [value="bell"]:checked) [data-v="snd-bell"],
-.at-settings:has([name="sound"] [value="soft"]:checked) [data-v="snd-soft"],
-.at-settings:has([name="sound"] [value="digital"]:checked) [data-v="snd-digital"],
-.at-settings:has([name="sound"] [value="birds"]:checked) [data-v="snd-birds"],
-.at-settings:has([name="sound"] [value="none"]:checked) [data-v="snd-none"],
 .at-settings:has([name="notifications"]:checked) [data-v="nt-on"],
 .at-settings:has([name="notifications"]:not(:checked)) [data-v="nt-off"],
 .at-settings:has([name="clock24h"][value="auto"]:checked) [data-v="fmt-auto"],

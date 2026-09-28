@@ -69,6 +69,14 @@ function paint(look: ILook): Promise<void> {
   });
 }
 
+// The Pro mark, the same four-point star as CustomizeSheet.astro draws.
+function star(): HTMLElement {
+  const s = h('span', { class: 'at-cz-star', 'aria-hidden': 'true' });
+  s.innerHTML =
+    '<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M6 0 7.3 4.7 12 6 7.3 7.3 6 12 4.7 7.3 0 6 4.7 4.7Z"/></svg>';
+  return s;
+}
+
 // A mini scene drawn with the real tokens: ground, pattern, a lamp ring with its bead, and a card with two lines.
 function mini(): HTMLElement {
   return h(
@@ -96,8 +104,12 @@ export async function mountAppearance(ctx: IToolCtx, host: HTMLElement): Promise
   host.dispatchEvent(new Event('at-sync'));
 }
 
+let hosts = 0;
+
 function build(ctx: IToolCtx, host: HTMLElement): void {
   host.dataset.built = '';
+  // Settings and Customize may both hold a gallery; their label ids must not collide.
+  const uid = hosts++ ? String(hosts) : '';
   const packs = () => hasFeature(ctx, 'ambient.packs');
   const stored = () => ctx.store.get().settings;
   const options: Array<IOption & { input: HTMLInputElement; scene: HTMLElement; tag: HTMLElement | null }> = [];
@@ -112,7 +124,7 @@ function build(ctx: IToolCtx, host: HTMLElement): void {
 
   const group = (kind: TPick, cls: string, items: Array<Omit<IOption, 'kind'>>) => {
     const id = `lk-${kind}`;
-    const box = h('div', { class: `at-lk-group ${cls}`, role: 'radiogroup', 'aria-labelledby': `${id}-l` });
+    const box = h('div', { class: `at-lk-group ${cls}`, role: 'radiogroup', 'aria-labelledby': `${id}-l${uid}` });
     for (const it of items) {
       const name = label(kind, it.id);
       const input = h('input', {
@@ -123,7 +135,7 @@ function build(ctx: IToolCtx, host: HTMLElement): void {
         'aria-label': it.free ? name : `${name}, ${t('pro.badge')}`,
       });
       const scene = mini();
-      const tag = it.free ? null : h('span', { class: 'at-tag', 'aria-hidden': 'true' }, t('pro.badge'));
+      const tag = it.free ? null : star();
       const opt = h(
         'label',
         { class: 'at-lk-opt', 'data-kind': kind, 'data-id': it.id },
@@ -145,7 +157,7 @@ function build(ctx: IToolCtx, host: HTMLElement): void {
       h(
         'div',
         { class: 'at-field-top' },
-        h('span', { class: 'at-label', id: `lk-${kind}-l` }, t(`settings.looks.${kind}`)),
+        h('span', { class: 'at-label', id: `lk-${kind}-l${uid}` }, t(`settings.looks.${kind}`)),
         ...(extra ? [extra] : []),
       ),
       body,
@@ -179,7 +191,7 @@ function build(ctx: IToolCtx, host: HTMLElement): void {
     PATTERNS.map(([id, free]) => ({ id, free, look: () => ({ ...displayed(), pattern: id }) })),
   );
   const lampName = h('span', { class: 'at-caption' });
-  const note = h('p', { class: 'at-caption' }, t('settings.looks.note'));
+  const note = h('p', { class: 'at-caption at-lk-note' }, star(), t('tool.customize.proNote'));
 
   // Custom lamp (Pro): vanilla-colorful's picker, fitted live so every theme keeps AA text and 3:1 rings.
   const picker = h('div', { class: 'at-lk-picker', hidden: '' });
@@ -187,13 +199,16 @@ function build(ctx: IToolCtx, host: HTMLElement): void {
   const customHex = () =>
     lastCustom || (lampOf(stored().accent).id === CUSTOM ? lampOf(stored().accent).hex : fitLamp('#3F7FBF'));
 
-  host.append(
+  // One tap first (presets), then the theme the host page drew (Customize → Look), then each part on its own.
+  const theme = host.querySelector('[data-lk-theme]');
+  host.replaceChildren(
     status,
+    note,
     field('preset', presets),
+    ...(theme ? [theme] : []),
     field('palette', palettes),
     field('accent', h('div', {}, lamps, picker), lampName),
     field('pattern', patterns),
-    note,
   );
 
   const pick = (kind: TPick, id: string, value?: ILook) => {

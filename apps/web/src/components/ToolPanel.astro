@@ -6,6 +6,7 @@ import {
   localePath,
   type TLocale,
 } from '../i18n/locales';
+import CustomizeSheet from './CustomizeSheet.astro';
 import FaceSwitch from './FaceSwitch.astro';
 import Icon from './icons/Icon.astro';
 import SponsorCard from './SponsorCard.astro';
@@ -14,8 +15,7 @@ import Dialog from './ui/Dialog.astro';
 import Sheet from './ui/Sheet.astro';
 import StatusPill from './shell/StatusPill.astro';
 import type { IToolReady } from '../lib/tool-ready';
-import { FACE_GROUPS, FACE_ORDER } from '../tool/packs/faces/order';
-import { TRACKS } from '../tool/packs/sound/tracks';
+import type { FACE_ORDER } from '../tool/packs/faces/order';
 import { VERSION } from '../lib/version';
 
 interface Props {
@@ -34,9 +34,8 @@ const catalogJson = JSON.stringify(islandCatalog(locale)).replaceAll(
   '\\u003c',
 );
 const presets = ['p15', 'p30', 'p45', 'p60', 'p120', 'p240'] as const;
-const allFaces = FACE_ORDER;
-// One 24 px line drawing per face, shared by the face gallery, the swipe hint and Settings.
-const FACE_ICON: Record<(typeof allFaces)[number], string> = {
+// One 24 px line drawing per face, shared by the face gallery and the swipe hint.
+const FACE_ICON: Record<(typeof FACE_ORDER)[number], string> = {
   ring: 'M12 3.5a8.5 8.5 0 1 1-8.5 8.5M12 3.5h.01',
   bold: 'M5 6h5v9H5zM14 6h5v9h-5zM4 19h16',
   horizon: 'M3 16h18M7 16a5 5 0 0 1 10 0M12 7V5M6.4 10.4 5 9M17.6 10.4 19 9',
@@ -51,23 +50,10 @@ const FACE_ICON: Record<(typeof allFaces)[number], string> = {
   matrix:
     'M6 6h.01M10 6h.01M14 6h.01M18 6h.01M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M10 14h.01M14 14h.01M18 14h.01M6 18h.01M10 18h.01M14 18h.01M18 18h.01',
 };
-// Focus sounds (generated in the sound pack) and end sounds, one 24 px line drawing each.
-const SOUND_ICON = {
-  brown: 'M3 14c3-3 6 3 9 0s6 3 9 0',
-  pink: 'M3 12c1.5-2 3 2 4.5 0S10.5 10 12 12s3 2 4.5 0 3-2 4.5 0',
-  white: 'M3 12l2.5-5 3 10 3-8 3 6 3-7 2.5 4',
-  rain: 'M7 15a4 4 0 0 1 .5-8 5 5 0 0 1 9.5 1.5 3 3 0 0 1 0 6.5H7M8 18v2M12 18v3M16 18v2',
-  cafe: 'M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5zM16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5v2M11 3.5v2M14 3.5v2',
-  fire: 'M12 21a6 6 0 0 0 6-6c0-4-3-5.5-4-9-2 1.5-3.5 3.5-3 6-1-.5-2-1.5-2-3-2 1.5-3 3.5-3 6a6 6 0 0 0 6 6z',
-  lofi: 'M4 15v-3a8 8 0 0 1 16 0v3M4 15h3v5H4zM17 15h3v5h-3z',
-} as const;
-const gens = Object.keys(SOUND_ICON) as Array<keyof typeof SOUND_ICON>;
-const endSounds = ['chime', 'bell', 'soft', 'digital', 'birds', 'none'] as const;
 const sumEnd = [
   ['end-ask', 'settings.endBehaviour.prompt_extend'],
   ['end-stop', 'settings.endBehaviour.stop'],
 ] as const;
-const mmss = (sec: number) => `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, '0')}`;
 // SponsorCard slot (docs/05 §3.23): rendered only when the flag is on at build time, so CLS stays 0 when off.
 const sponsorEnabled = import.meta.env.PUBLIC_SPONSOR_ENABLED === '1';
 const shortcuts = [
@@ -1216,92 +1202,6 @@ const eight = ready.chip === 'custom';
       </span>
       <Icon name="caret-right" size={20} tone="ink" class="at-sg-chev at-sg-go" />
     </button>
-    <div class="at-sg-body at-looks" data-looks hidden>
-      <div class="at-field">
-        <span class="at-label" id="lb-theme">{t('settings.theme')}</span>
-        <div
-          class="at-seg at-sseg"
-          role="radiogroup"
-          aria-labelledby="lb-theme"
-          style="--at-seg-n:4"
-        >
-          <span class="at-seg-ind" aria-hidden="true"></span>
-          {
-            (['auto', 'light', 'dark', 'oled'] as const).map((v) => (
-              <label class="at-seg-item">
-                <input
-                  class="sr-only"
-                  type="radio"
-                  name="theme"
-                  value={v}
-                  checked={v === 'auto'}
-                />
-                {t(`settings.theme.${v}`)}
-              </label>
-            ))
-          }
-        </div>
-      </div>
-      <div data-appearance></div>
-      <div class="at-field">
-        <span class="at-label" id="lb-face">{t('settings.face')}</span>
-        <div class="at-face-pick" role="radiogroup" aria-labelledby="lb-face">
-          {
-            allFaces.map((f) => (
-              <label class="at-face-opt">
-                <input
-                  class="sr-only"
-                  type="radio"
-                  name="face"
-                  value={f}
-                  checked={f === 'ring'}
-                />
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d={FACE_ICON[f]} />
-                </svg>
-                <span>{t(`tool.face.${f}`)}</span>
-              </label>
-            ))
-          }
-        </div>
-      </div>
-      <div class="at-field at-field-astyle">
-        <span class="at-label" id="lb-astyle">{t('settings.face.analogStyle')}</span>
-        <div
-          class="at-seg at-sseg"
-          role="radiogroup"
-          aria-labelledby="lb-astyle"
-          style="--at-seg-n:2"
-        >
-          <span class="at-seg-ind" aria-hidden="true"></span>
-          {
-            (['minimal', 'luxe'] as const).map((v) => (
-              <label class="at-seg-item">
-                <input
-                  class="sr-only"
-                  type="radio"
-                  name="analogStyle"
-                  value={v}
-                  checked={v === 'minimal'}
-                />
-                {t(`settings.face.analog.${v}`)}
-              </label>
-            ))
-          }
-        </div>
-      </div>
-    </div>
-
     <details class="at-sg" name="at-settings" data-sg="timer">
       <summary class="at-sg-sum">
         <span class="at-sg-ico"><Icon name="hourglass-medium" size={24} /></span>
@@ -1310,11 +1210,7 @@ const eight = ready.chip === 'custom';
           <span class="at-sg-now"
             ><span data-sg-end></span><span>{
               sumEnd.map(([v, k]) => <span data-v={v}>{t(k)}</span>)
-            }</span> · <span>{
-              endSounds.map((id) => (
-                <span data-v={`snd-${id}`}>{t(id === 'none' ? 'settings.sum.silent' : `settings.sound.${id}`)}</span>
-              ))
-            }</span> · <span
+            }</span> · <span data-sg-snd></span> · <span
               ><span data-v="nt-on">{t('settings.sum.notifyOn')}</span><span data-v="nt-off"
                 >{t('settings.sum.notifyOff')}</span
               ></span
@@ -1352,54 +1248,15 @@ const eight = ready.chip === 'custom';
             >
           </div>
         </div>
-        <div class="at-sg-row">
-          <label class="at-label" for="at-end-sound">{t('settings.sound')}</label>
-          <span class="at-sg-ctl">
-            <select class="at-input at-select" id="at-end-sound" name="sound">
-              {endSounds.map((id) => <option value={id} selected={id === 'chime'}>{t(`settings.sound.${id}`)}</option>)}
-            </select>
-            <button
-              class="at-button at-button-sm"
-              type="button"
-              data-sound="play"
-              aria-describedby="at-end-sound">{t('settings.sound.play')}</button
-            >
+        <div class="at-switchrow at-notes-setrow">
+          <span class="at-switch-text">
+            <span class="at-label">{t('settings.sound')}</span>
+            <span class="at-caption" data-sg-snd-now>{t('settings.sum.soundHelp')}</span>
           </span>
-        </div>
-        <div class="at-range">
-          <label class="at-label" for="at-sound-vol">{t('settings.sound.volume')}</label>
-          <input
-            id="at-sound-vol"
-            type="range"
-            name="soundVolume"
-            min="0"
-            max="100"
-            step="5"
-            value="60"
-          />
-        </div>
-        <label class="at-switchrow" data-vibrate-row hidden>
-          <span class="at-switch-text"
-            ><span class="at-label">{t('settings.vibrate')}</span><span
-              class="at-caption">{t('settings.vibrate.help')}</span
-            ></span
+          <button class="at-button at-button-sm" type="button" data-act="customize" data-tab="sound"
+            >{t('settings.sum.soundOpen')}</button
           >
-          <input
-            class="at-switch"
-            type="checkbox"
-            role="switch"
-            name="vibrate"
-            checked
-          />
-        </label>
-        <label class="at-switchrow">
-          <span class="at-switch-text"
-            ><span class="at-label">{t('settings.tick')}</span><span
-              class="at-caption">{t('settings.tick.help')}</span
-            ></span
-          >
-          <input class="at-switch" type="checkbox" role="switch" name="tick" />
-        </label>
+        </div>
         <label class="at-switchrow">
           <span class="at-switch-text"
             ><span class="at-label">{t('settings.notifications')}</span><span
@@ -1731,288 +1588,7 @@ const eight = ready.chip === 'custom';
   </div>
 </Sheet>
 
-<Sheet
-  name="faces"
-  title={t('tool.gallery.title')}
-  titleId="faces-title"
-  description={t('tool.gallery.lead')}
-  closeLabel={close}
-  bodyClass="at-fg"
->
-  {
-    FACE_GROUPS.map(([g, ids]) => (
-      <section class="at-fg-group" aria-labelledby={`fg-${g}`}>
-        <h3 class="at-kicker" id={`fg-${g}`}>{t(`tool.gallery.${g}`)}</h3>
-        <ul class="at-fg-list">
-          {ids.map((f) => (
-            <li class="at-fg-card">
-              <button class="at-fg-pick" type="button" data-pick={f} aria-pressed={f === 'ring' ? 'true' : 'false'}>
-                <span class="at-fg-thumb" data-thumb={f} aria-hidden="true">
-                  <span class="at-fg-stage">
-                    <svg class="at-fg-ph" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                      <path d={FACE_ICON[f]} />
-                    </svg>
-                  </span>
-                </span>
-                <span class="at-fg-name">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d={FACE_ICON[f]} />
-                  </svg>
-                  <span>{t(`tool.face.${f}`)}</span>
-                </span>
-                <span class="at-fg-on">{t('tool.gallery.current')}</span>
-              </button>
-              {f === 'analog' && (
-                <div class="at-seg at-sseg at-fg-style" role="radiogroup" aria-label={t('settings.face.analogStyle')} style="--at-seg-n:2">
-                  <span class="at-seg-ind" aria-hidden="true"></span>
-                  {(['minimal', 'luxe'] as const).map((v) => (
-                    <label class="at-seg-item">
-                      <input class="sr-only" type="radio" name="analogStyle" value={v} checked={v === 'minimal'} />
-                      {t(`settings.face.analog.${v}`)}
-                    </label>
-                  ))}
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
-    ))
-  }
-</Sheet>
-
-<Sheet
-  name="sound"
-  title={t('tool.sound.title')}
-  titleId="sound-title"
-  description={t('tool.sound.honest')}
-  closeLabel={close}
-  bodyClass="at-settings at-snd"
->
-  <div class="at-snd-now">
-    <svg
-      class="at-snd-eq"
-      viewBox="0 0 44 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="3"
-      stroke-linecap="round"
-      aria-hidden="true"
-    >
-      {[6, 14, 22, 30, 38].map((x) => <line x1={x} y1="3" x2={x} y2="21" />)}
-    </svg>
-    <div class="at-snd-now-text">
-      <p class="at-snd-title" data-snd-title>{t('tool.sound.pick')}</p>
-      <p class="at-caption" data-snd-sub role="status">{t('tool.sound.state.idle')}</p>
-    </div>
-    <div class="at-snd-deck">
-      <button
-        class="at-icon-button"
-        type="button"
-        data-snd="prev"
-        aria-label={t('tool.sound.prev')}
-        hidden
-        ><svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"><path d="M7 5v14M18 6l-8 6 8 6z"></path></svg
-        ></button
-      >
-      <button
-        class="at-snd-play"
-        type="button"
-        data-snd="toggle"
-        aria-label={t('tool.sound.play')}
-        ><svg class="at-snd-i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-          ><path d="M8 5.5v13a1 1 0 0 0 1.5.9l10.4-6.5a1 1 0 0 0 0-1.8L9.5 4.6A1 1 0 0 0 8 5.5z"></path></svg
-        ><svg class="at-snd-i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-          ><rect x="6" y="5" width="4" height="14" rx="1.5"></rect><rect
-            x="14"
-            y="5"
-            width="4"
-            height="14"
-            rx="1.5"></rect></svg
-        ></button
-      >
-      <button
-        class="at-icon-button"
-        type="button"
-        data-snd="next"
-        aria-label={t('tool.sound.next')}
-        hidden
-        ><svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"><path d="M17 5v14M6 6l8 6-8 6z"></path></svg
-        ></button
-      >
-    </div>
-  </div>
-  <div class="at-range at-snd-vol">
-    <div class="at-field-top">
-      <label class="at-label" for="at-snd-vol">{t('tool.sound.volume')}</label><output
-        class="at-label at-tabnum"
-        for="at-snd-vol"
-        data-snd-vol-out>50%</output>
-    </div>
-    <input
-      id="at-snd-vol"
-      type="range"
-      min="0"
-      max="100"
-      step="1"
-      value="50"
-      data-snd-vol
-    />
-  </div>
-
-  <section aria-labelledby="snd-k-focus">
-    <h3 class="at-kicker" id="snd-k-focus">{t('tool.sound.focus')}</h3>
-    <div class="at-snd-grid" role="group" aria-labelledby="snd-k-focus">
-      {
-        gens.map((g) => (
-          <button
-            class="at-snd-tile"
-            type="button"
-            data-snd-kind={g}
-            aria-pressed="false"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d={SOUND_ICON[g]} />
-            </svg>
-            <span class="at-snd-tile-name">{t(`tool.sound.kind.${g}`)}</span>
-            <span class="at-snd-tile-sub">{t(`tool.sound.sub.${g}`)}</span>
-          </button>
-        ))
-      }
-    </div>
-    <label class="at-switchrow">
-      <span class="at-switch-text"
-        ><span class="at-label">{t('tool.sound.stopAtEnd')}</span><span
-          class="at-caption">{t('tool.sound.stopAtEnd.help')}</span
-        ></span
-      >
-      <input
-        class="at-switch"
-        type="checkbox"
-        role="switch"
-        data-snd-stop
-        checked
-      />
-    </label>
-  </section>
-
-  <section aria-labelledby="snd-k-mix">
-    <div class="at-field-top">
-      <h3 class="at-kicker" id="snd-k-mix">{t('tool.sound.mix')}</h3>
-      <span class="at-tag">{t('pro.badge')}</span>
-    </div>
-    <p class="at-caption">{t('tool.sound.mix.help')}</p>
-    <div class="at-snd-lock">
-      <p>{t('tool.sound.mix.locked')}</p>
-      <div class="at-snd-lock-row">
-        <button class="at-button at-button-sm" type="button" data-snd="try">{t('tool.sound.mix.try')}</button>
-        <a class="at-button at-button-sm at-button-quiet" href="/pro" data-snd-see>{t('pro.see')}</a>
-      </div>
-    </div>
-    <p class="at-caption at-snd-pv" data-snd-pv aria-hidden="true"></p>
-    <ul class="at-snd-mix" aria-labelledby="snd-k-mix">
-      {
-        gens.map((g) => (
-          <li>
-            <label class="at-label" for={`at-snd-m-${g}`}>{t(`tool.sound.kind.${g}`)}</label>
-            <input
-              id={`at-snd-m-${g}`}
-              type="range"
-              min="0"
-              max="100"
-              step="1"
-              value="0"
-              data-snd-mix={g}
-            />
-          </li>
-        ))
-      }
-    </ul>
-  </section>
-
-  <section aria-labelledby="snd-k-lib">
-    <div class="at-field-top">
-      <h3 class="at-kicker" id="snd-k-lib">{t('tool.sound.library')}</h3>
-      <span class="at-tag">{t('pro.badge')}</span>
-    </div>
-    <ol class="at-snd-list">
-      <li>
-        <button
-          class="at-snd-track"
-          type="button"
-          data-snd-track="lofi"
-          aria-pressed="false"
-          ><span class="at-snd-track-n" aria-hidden="true">1</span><span
-            class="at-snd-track-t"
-            ><span>{t('tool.sound.lofi.title')}</span><span class="at-caption"
-              >{t('tool.sound.lofi.by')}</span
-            ></span
-          ><span class="at-caption">{t('tool.sound.lofi.len')}</span></button
-        >
-      </li>
-      {
-        TRACKS.map((tr, i) => (
-          <li>
-            <button
-              class="at-snd-track"
-              type="button"
-              data-snd-track={`track:${tr.id}`}
-              aria-pressed="false"
-            >
-              <span class="at-snd-track-n" aria-hidden="true">{i + 2}</span>
-              <span class="at-snd-track-t">
-                <span>{tr.title}</span>
-                <span class="at-caption">{`${tr.artist} · ${tr.licence}`}</span>
-              </span>
-              <span class="at-caption">{mmss(tr.duration)}</span>
-              <span class="at-tag">{t('pro.badge')}</span>
-            </button>
-          </li>
-        ))
-      }
-    </ol>
-    <p class="at-caption">
-      {t(TRACKS.length ? 'tool.sound.library.help' : 'tool.sound.library.empty')}
-    </p>
-    <p class="at-caption" data-snd-lib-lock>
-      {t('tool.sound.library.locked')}
-      <a href="/pro">{t('pro.see')}</a>
-    </p>
-  </section>
-  <Fragment slot="footer">
-    <button class="at-textlink" type="button" data-snd="settings"
-      >{t('tool.sound.endSettings')}</button
-    >
-  </Fragment>
-</Sheet>
+<CustomizeSheet locale={locale} faceIcon={FACE_ICON} />
 
 <Sheet
   name="stats"

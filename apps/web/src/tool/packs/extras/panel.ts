@@ -160,6 +160,8 @@ function build(ctx: IToolCtx, form: HTMLElement): HTMLElement {
   let preview: TPreview | undefined;
   const shows = form.querySelector('[data-t="nowShows"]');
   const endLine = form.querySelector('[data-sg-end]');
+  const sndLine = form.querySelector('[data-sg-snd]');
+  const sndNow = form.querySelector('[data-sg-snd-now]');
   // Timer's first fragment: when the running session, or the chosen length started now, would end.
   const ends = (at: number, c24: boolean | null): string => {
     const st = store.get();
@@ -186,6 +188,12 @@ function build(ctx: IToolCtx, form: HTMLElement): HTMLElement {
         time: `${dateLong(at)} · ${hm(at, c24, s.ambient.showSeconds)}`,
       });
     if (endLine) endLine.textContent = `${ends(at, c24)} · `;
+    const id = s.sound.id;
+    const name = t(id === 'none' ? 'settings.sum.silent' : `settings.sound.${id}`);
+    if (sndLine) sndLine.textContent = name;
+    if (sndNow)
+      sndNow.textContent =
+        id === 'none' ? name : t('settings.sum.soundNow', { name, percent: Math.round(s.sound.volume * 100) });
     if (zoneLine) zoneLine.textContent = z ? ` · ${cityOf(z)} ${diffText(diffMin(z, at))}` : '';
     if (z) {
       nowText.textContent = t('settings.focus.zoneNow', {

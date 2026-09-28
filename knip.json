@@ -33,12 +33,12 @@
       ],
       "ignore": ["src/components/icons/BrandIcon.astro"],
       "ignoreDependencies": [
-        "@iconify-json/logos",
-        "@phosphor-icons/core",
         "@fontsource/inter",
         "@fontsource/noto-sans-devanagari",
         "@fontsource/noto-sans-jp",
-        "@fontsource/noto-sans-sc"
+        "@fontsource/noto-sans-sc",
+        "@iconify-json/logos",
+        "@phosphor-icons/core"
       ],
       "ignoreIssues": {
         "src/components/ui/*.tsx": ["exports"],
