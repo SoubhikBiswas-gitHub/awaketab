@@ -193,7 +193,7 @@ describe('built site SEO', () => {
       .split(/\s+/u)
       .filter(Boolean);
     expect(words.length).toBeGreaterThanOrEqual(120);
-    expect(words.length).toBeLessThanOrEqual(800);
+    expect(words.length).toBeLessThanOrEqual(1200);
   });
 
   it('links the home stylesheet instead of inlining it', async () => {

@@ -239,15 +239,19 @@ describe('localized chrome (E6-T05)', () => {
     const fonts = all
       .filter((file) => /\.(?:woff2?|ttf|otf)$/u.test(file))
       .map((file) => path.relative(distPath, file).split(path.sep).join('/'));
-    // D-R26: Geist, Geist Mono and the Space Grotesk digits subset, Latin woff2 only, all under /fonts.
+    // The UI fonts plus the two clock-face fonts, which load only with their face; woff2 only, all under /fonts.
     expect(fonts.sort()).toEqual([
+      'fonts/dseg7-classic-italic.woff2',
       'fonts/geist-latin-wght-normal.woff2',
       'fonts/geist-mono-latin-wght-normal.woff2',
+      'fonts/nixie-one-latin-400-normal.woff2',
       'fonts/space-grotesk-digits-600.woff2',
     ]);
     const rel = all.map((file) => path.relative(distPath, file).split(path.sep).join('/'));
     expect(rel).toContain('fonts/OFL-Geist.txt');
     expect(rel).toContain('fonts/OFL-SpaceGrotesk.txt');
+    expect(rel).toContain('fonts/OFL-NixieOne.txt');
+    expect(rel).toContain('fonts/OFL-DSEG.txt');
   });
 });
 
