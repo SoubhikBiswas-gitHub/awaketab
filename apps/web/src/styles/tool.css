@@ -983,25 +983,10 @@
   gap: var(--at-gap-item);
 }
 
-.at-dock .at-acts > .at-button {
-  white-space: normal;
-  min-block-size: var(--at-h-primary);
-  padding-inline: var(--at-s-2);
-  font: var(--at-type-action);
-}
-
-.at-dock .at-dockcard .at-acts > .at-button:not(.at-button-primary) {
-  min-block-size: var(--at-h-button);
-  font: var(--at-type-ui);
-  font-weight: 600;
-}
-
 .at-cta {
   inline-size: 100%;
-  padding-inline: var(--at-s-4);
   white-space: normal;
   text-wrap: balance;
-  min-block-size: var(--at-h-primary);
   box-shadow: 0 10px 30px -8px var(--at-lamp-glow);
 }
 
@@ -1211,7 +1196,6 @@
 
   .at-dock .at-acts-run > .at-extend {
     display: inline-flex;
-    padding-inline: var(--at-s-6);
     animation: at-rise var(--at-d-rise) var(--at-ease) both;
   }
 

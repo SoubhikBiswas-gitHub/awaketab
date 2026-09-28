@@ -1005,7 +1005,6 @@
 
 .at-share-row .at-copy {
   flex-shrink: 0;
-  padding-inline: var(--at-s-3) var(--at-s-4);
 }
 
 .at-share-row .at-copy[data-done] {
@@ -1120,11 +1119,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0 var(--at-s-2);
-  margin-inline-start: calc(-1 * var(--at-s-3));
-}
-
-.at-rate-later .at-button {
-  padding-inline: var(--at-s-3);
+  margin-inline-start: calc(-1 * var(--at-s-4));
 }
 
 .at-keys-note {
@@ -1661,10 +1656,6 @@
   cursor: pointer;
 }
 
-.at-settings-foot .at-button {
-  padding-inline: var(--at-s-6);
-}
-
 .at-stats .at-dialog-body,
 .at-prosheet .at-dialog-body {
   gap: var(--at-gap-group-lg);
@@ -2007,10 +1998,6 @@
   color: var(--at-accent-text);
 }
 
-.at-prosheet .at-dialog-footer .at-button {
-  padding-inline: var(--at-s-8);
-}
-
 .at-lang-banner {
   position: fixed;
   inset-inline: var(--at-s-4);
@@ -2035,8 +2022,6 @@
 }
 
 .at-lang-banner .at-button {
-  block-size: auto;
-  min-block-size: var(--at-h-control);
   white-space: normal;
   text-wrap: balance;
 }

@@ -1373,10 +1373,6 @@
     padding-block-start: var(--at-s-1);
   }
 
-  .at-pro .at-pro-err-actions .at-button {
-    padding-inline: var(--at-s-6);
-  }
-
   .at-pro-ok {
     display: none;
     flex-direction: column;
@@ -1474,7 +1470,6 @@
 
   .at-pro-ok-actions > .at-button:not(.at-button-primary) {
     flex: 1 1 160px;
-    padding-inline: var(--at-s-6);
   }
 
   .at-pro-reset {
@@ -1525,7 +1520,6 @@
   .at-pro .at-pro-copy {
     flex: 0 0 auto;
     min-inline-size: var(--at-pro-copy-min);
-    padding-inline: var(--at-s-5);
     box-shadow: none;
   }
 
@@ -1770,7 +1764,6 @@
 
   .at-pro .at-pro-co-key > .at-pro-copy {
     min-inline-size: 0;
-    padding-inline: var(--at-s-4);
   }
 
   .at-pro-co-list li {
@@ -2269,7 +2262,6 @@
 
   .at-pro-empty-actions > .at-button:not(.at-button-primary) {
     flex: 1 1 180px;
-    padding-inline: var(--at-s-6);
   }
 
   .at-pro-man-key {
@@ -2315,10 +2307,6 @@
     align-items: center;
     gap: var(--at-gap-item);
     padding-block-start: var(--at-s-1);
-  }
-
-  .at-pro-lapse-actions > .at-button:not(.at-button-primary) {
-    padding-inline: var(--at-s-5);
   }
 
   .at-pro-man:is([data-state="grace"], [data-state="lapsed"]) .at-pro-devices {

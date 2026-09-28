@@ -13,7 +13,6 @@ import SponsorCard from './SponsorCard.astro';
 import Button from './shell/Button.astro';
 import Dialog from './ui/Dialog.astro';
 import Sheet from './ui/Sheet.astro';
-import Icon from './icons/Icon.astro';
 import StatusPill from './shell/StatusPill.astro';
 import type { IToolReady } from '../lib/tool-ready';
 import type { FACE_ORDER } from '../tool/packs/faces/order';
@@ -109,9 +108,6 @@ const NOTE_BLOCKS = [
   ['quote', 'quotes', '>', 'quote blockquote citation'],
   ['hr', 'minus', '---', 'divider rule line separator hr'],
 ] as const;
-const NOTE_ICON = {
-  pad: 'M6.5 3.5h8l3 3v14h-11zM14.5 3.5v3h3M9 11h6M9 14.5h6M9 18h3.5',
-} as const;
 
 // Horizon stars and Tide waves: the canvas's deterministic art (Main.dc.html starList / wave), drawn once here.
 function stars(
@@ -943,6 +939,7 @@ const extend = [
     <Button
       class="at-cta"
       variant="primary"
+      size="lg"
       data-act="start"
       data-l="cta"
       aria-label={cta}
@@ -957,18 +954,18 @@ const extend = [
       <Button size="lg" data-act="battSettings"
         >{t('tool.battery.settings')}</Button
       >
-      <Button variant="primary" glyph={false} data-act="start"
+      <Button variant="primary" size="lg" glyph={false} data-act="start"
         >{t('tool.battery.anyway')}</Button
       >
     </div>
 
     <div class="at-acts at-acts-run">
       {extend.map(([ms, key]) => (
-        <Button class="at-extend" data-act={ms} aria-label={t(`tool.extend.${key}.sr`)}>
+        <Button class="at-extend" size="lg" data-act={ms} aria-label={t(`tool.extend.${key}.sr`)}>
           {t(`tool.extend.${key}`)}
         </Button>
       ))}
-      <Button class="at-stop" data-stop data-act="stop" kbd="Space" aria-keyshortcuts="Space">
+      <Button class="at-stop" size="lg" data-stop data-act="stop" kbd="Space" aria-keyshortcuts="Space">
         {t('tool.ring.stop')}
       </Button>
     </div>
@@ -1016,13 +1013,14 @@ const extend = [
       <Button size="lg" data-act="fallback"
         >{t('tool.fallback.consent.accept')}</Button
       >
-      <Button variant="stop" data-act="retry">{t('tool.advice.retry')}</Button>
+      <Button variant="stop" size="lg" data-act="retry">{t('tool.advice.retry')}</Button>
     </div>
 
     <div class="at-acts at-acts-tap">
       <Button size="lg" data-act="stop">{t('tool.ring.stop')}</Button>
       <Button
         variant="primary"
+        size="lg"
         glyph={false}
         class="at-float"
         data-act="fallback">{t('tool.fallback.consent.start')}</Button

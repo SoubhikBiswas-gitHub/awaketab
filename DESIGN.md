@@ -347,7 +347,7 @@ Every button is the shared button: `Button.astro` or the `at-button` classes on 
 - Variants: `primary` (lamp fill, one per screen), `secondary` (surface + `line-strong`), `stop` (raised + `line-strong`), `quiet` (no fill, no border), and icon-only (`at-icon-button`, 44 × 44, 20 px icon).
 - Cook mode scales every target to 64 (`at-button-cook`); it is a mode, not a fourth size.
 - Buttons side by side share one size. A store button is the same button with the store's mark; it is never a custom block.
-- A row of equal buttons that fills a grid (the dock pairs, `.at-acts`; `.at-btn-row` in the extension) keeps its size's height and type, uses 8 inline padding and may wrap its label. Only the button stylesheet (`shell.css`, the extension's `base.css`) sets this.
+- A row of equal buttons that fills a grid (the dock pairs, `.at-acts`; `.at-btn-row` in the extension) keeps its size's height and type, uses 8 inline padding and may wrap its label; the +15 / +30 min buttons, which hug their label from 600, keep their size's padding. Only the button stylesheet (`shell.css`, the extension's `base.css`) sets this.
 - No other stylesheet sets a height, padding, font or radius on a button: stylelint's `awaketab/button-geometry` rule rejects those declarations on `at-button*`, `at-btn*` and on any class that sits on a button in the markup.
 
 ### 11.9 Section rhythm

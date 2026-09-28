@@ -34,7 +34,7 @@
     z-index: -1;
     border-block-end: var(--at-border) solid var(--at-line);
     background: color-mix(in srgb, var(--at-ground) 90%, transparent);
-    box-shadow: 0 8px 24px -16px rgb(4 7 12 / 35%);
+    box-shadow: 0 8px 24px -16px color-mix(in srgb, var(--at-shadow-color) 35%, transparent);
     opacity: 0;
     transform-origin: top;
     backdrop-filter: blur(14px) saturate(1.2);
@@ -641,7 +641,7 @@
     padding-inline: var(--at-s-4);
   }
 
-  .at-acts > .at-button {
+  .at-acts > .at-button:not(:where(.at-extend)) {
     padding-inline: var(--at-s-2);
     white-space: normal;
     text-wrap: balance;
