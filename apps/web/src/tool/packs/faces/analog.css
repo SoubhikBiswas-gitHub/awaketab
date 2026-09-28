@@ -7,7 +7,7 @@
 .at-fx-an-plate {
   position: absolute;
   inset: 5.625%;
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: 50%;
   background: radial-gradient(
     circle at 50% 32%,

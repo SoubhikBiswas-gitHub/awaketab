@@ -22,7 +22,7 @@
   grid-template-columns: var(--at-icon-md) minmax(0, 1fr);
   column-gap: var(--at-gap-item);
   padding: var(--at-card-pad);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
 }
@@ -125,11 +125,11 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   column-gap: var(--at-s-8);
-  border-block-start: 1px solid var(--at-line);
+  border-block-start: var(--at-border) solid var(--at-line);
 }
 
 .at-guides li {
-  border-block-end: 1px solid var(--at-line);
+  border-block-end: var(--at-border) solid var(--at-line);
 }
 
 .at-guide-row {
@@ -190,7 +190,7 @@
   flex-direction: column;
   gap: var(--at-s-1);
   padding: var(--at-s-4);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
   color: var(--at-ink);

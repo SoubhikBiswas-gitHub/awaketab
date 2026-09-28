@@ -167,7 +167,7 @@
 
     .at-pick-card:has(.at-pick-title a:focus-visible) {
       border-color: var(--at-line-strong);
-      outline: 2px solid var(--at-focus);
+      outline: var(--at-ring) solid var(--at-focus);
       outline-offset: 3px;
     }
   }

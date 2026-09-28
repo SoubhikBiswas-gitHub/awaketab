@@ -30,8 +30,8 @@
   min-block-size: var(--at-h-control);
   padding-block: 0;
   padding-inline: var(--at-s-3) var(--at-s-4);
-  border: 1px solid transparent;
-  border-radius: var(--at-r-pill);
+  border: var(--at-border) solid transparent;
+  border-radius: var(--at-r-md);
   background: transparent;
   color: var(--at-ink);
   font: var(--at-type-small);
@@ -56,7 +56,7 @@
 }
 
 .at-intent:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 2px;
 }
 
@@ -114,7 +114,7 @@
 
 .at-world-diff {
   padding-inline: var(--at-s-2);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-pill);
   color: var(--at-muted);
 }
@@ -147,7 +147,7 @@
 .at-fx-hold[data-on] {
   --at-am-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7.5 5.2 19 12 7.5 18.8z'/%3E%3C/svg%3E");
 
-  border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
+  border-color: var(--at-selected-line);
   background: color-mix(in srgb, var(--at-accent) 14%, transparent);
 }
 
@@ -225,7 +225,7 @@
 .at-br-disc {
   position: absolute;
   inset: 7%;
-  border: 1px solid color-mix(in srgb, var(--at-accent) 40%, transparent);
+  border: var(--at-border) solid color-mix(in srgb, var(--at-accent) 40%, transparent);
   border-radius: 50%;
   background: radial-gradient(
     closest-side,
@@ -335,7 +335,7 @@
   gap: var(--at-s-3);
   padding-block: var(--at-s-1);
   padding-inline: var(--at-s-4) var(--at-s-1);
-  border: 1px solid color-mix(in srgb, var(--at-accent) 45%, transparent);
+  border: var(--at-border) solid color-mix(in srgb, var(--at-accent) 45%, transparent);
   border-radius: var(--at-r-lg);
   background: color-mix(in srgb, var(--at-accent) 7%, transparent);
   color: var(--at-ink);
@@ -356,7 +356,7 @@
   margin: 0;
   padding: var(--at-s-1);
   overflow-y: auto;
-  border: 1px solid var(--at-line-strong);
+  border: var(--at-border) solid var(--at-line-strong);
   border-radius: var(--at-r-lg);
   background: var(--at-raised, var(--at-surface));
   box-shadow: var(--at-shadow-float, var(--at-elev));
@@ -386,7 +386,7 @@
 }
 
 .at-fx-opt[aria-selected="true"] {
-  outline: 1px solid color-mix(in srgb, var(--at-accent) 45%, transparent);
+  outline: var(--at-border) solid var(--at-selected-line);
 }
 
 .at-fx-optmain {
@@ -432,7 +432,7 @@
   align-items: center;
   gap: var(--at-s-2);
   min-block-size: var(--at-h-row);
-  border-block-end: 1px solid var(--at-line);
+  border-block-end: var(--at-border) solid var(--at-line);
 }
 
 .at-fx-stepname {
@@ -443,8 +443,7 @@
 .at-fx-stepbtn {
   inline-size: var(--at-h-control);
   block-size: var(--at-h-control);
-  border: 1px solid var(--at-line-strong);
-  border-radius: 50%;
+  border: var(--at-border) solid var(--at-line-strong);
   font: var(--at-type-ui);
   font-weight: 600;
 }

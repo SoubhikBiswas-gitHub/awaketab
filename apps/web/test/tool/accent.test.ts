@@ -156,3 +156,18 @@ describe('Clear Night neutrals and tones meet WCAG AA (DESIGN.md §2.1)', () => 
     expect(contrast(vars['--at-input-border'], surface)).toBeGreaterThanOrEqual(3);
   });
 });
+
+describe('the selected state is one solid lamp line that shows on every card (DESIGN.md §11.2)', () => {
+  const sel = block(':root, [data-theme], [data-accent], [data-palette]');
+
+  it('draws the selected line in accent-text and keeps the soft lamp fill', () => {
+    expect(sel['--at-selected-line']).toBe('var(--at-accent-text)');
+    expect(sel['--at-selected-fill']).toBe('color-mix(in srgb, var(--at-accent) 14%, transparent)');
+  });
+
+  it.each(PALETTES)('$name: 3:1 against the card, the page and a sunken well', ({ vars }) => {
+    for (const k of ['--at-surface', '--at-ground', '--at-sunken']) {
+      expect(contrast(vars['--at-accent-text'], vars[k]), k).toBeGreaterThanOrEqual(3);
+    }
+  });
+});

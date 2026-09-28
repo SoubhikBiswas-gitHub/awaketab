@@ -18,7 +18,7 @@
 .at-fx-mx-plate {
   inline-size: calc(340 * var(--u));
   padding: calc(12 * var(--u));
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-fx-plate);
   box-shadow:

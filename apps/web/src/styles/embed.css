@@ -86,7 +86,7 @@ body.at-embed-body {
 }
 
 .at-embed :focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 3px;
 }
 
@@ -428,7 +428,7 @@ body.at-embed-body {
   block-size: var(--at-h-control);
   padding: 0;
   border: 0;
-  border-radius: var(--at-r-md);
+  border-radius: calc(var(--at-r-md) - var(--at-border));
   background: transparent;
   color: var(--at-muted);
   cursor: pointer;
@@ -568,7 +568,7 @@ body.at-embed-body {
   inline-size: var(--at-embed-toggle-w-full);
   block-size: var(--at-embed-h-primary);
   margin: 0;
-  border-radius: var(--at-r-xl);
+  border-radius: var(--at-r-md);
   font: var(--at-type-action);
 }
 

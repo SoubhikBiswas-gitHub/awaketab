@@ -17,7 +17,7 @@
   padding-block: calc(10 * var(--u));
   padding-inline: calc(22 * var(--u));
   overflow: hidden;
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: color-mix(in srgb, var(--at-face-c) 4%, var(--at-sunken));
   box-shadow: 0 0 calc(34 * var(--u)) color-mix(in srgb, var(--at-face-c) calc(var(--at-fx-glow) * 14%), transparent);

@@ -115,14 +115,14 @@ Code block: `background: {{t.sunken}}; border: 1px solid {{t.line}}; border-radi
 <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{t.muted}}">Kicker</span>
 ```
 
-## P-CTA (primary 60 r20, label 17/24 600; secondary 52 r20; small 44 r12; cook 64 r20)
+## P-CTA (every button r12; lg 60 label 17/24 600, the tool only; md 52 page CTAs; sm 44; cook 64)
 Every button sets an explicit padding on the scale (the UA default 1px 6px is a checker hit): theme items `padding: 0`, CTAs `padding: 0 16px`.
 
 ```html
-<button style="width: 100%; height: 60px; padding: 0 16px; border-radius: 20px; border: 0; background: {{p.lampFill}}; color: {{p.lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}">…</button>
+<button style="width: 100%; height: 60px; padding: 0 16px; border-radius: 12px; border: 0; background: {{p.lampFill}}; color: {{p.lampInk}}; font-size: 17px; line-height: 24px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 30px -8px {{lampGlow}}">…</button>
 ```
 Stop: same geometry, `border: 1px solid {{t.primaryLine}}; background: {{t.primaryBg}}; color: {{t.primaryInk}}`, no glow. primaryBg = `raised` (dark #26324B / light #E3E9F1), primaryLine = `line-strong` (#33405C / #C3CDDA), primaryInk = `ink` (#EAF0F7 / #0E1726). It follows the theme; never an inverted ink slab (D-R20). 2b boards name the same values stopBg / stopLine / stopInk.
-Secondary: `height: 52px; border-radius: 20px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600`.
+Secondary (md): `height: 52px; padding: 0 20px; border-radius: 12px; border: 1px solid {{t.line2}}; background: {{t.surface}}; color: {{t.ink}}; font-size: 15px; line-height: 22px; font-weight: 600`.
 Small: `height: 44px; border-radius: 12px; padding: 0 16px;` + secondary colours. Chips: 44 r999.
 One lamp-filled action per screen.
 
@@ -180,7 +180,7 @@ Spacing only 4 8 12 16 20 24 32 40 48 64 96 (padding, gap, margins between block
 (never 6 10 14 18 22 24). Borders 1 px (focus ring 2 px is the only exception). Dashed 1 px line-strong only on
 "choose / add" affordances (Until a time…, Custom…, Add timer); a screenshot placeholder in a mock must carry
 `data-placeholder` and is exempt. No side stripes (sheet leading edge, column divider, timeline rule are allowed).
-Selected item = 1 px lamp 45 % border + lamp 14 % fill.
+Selected item = solid 1 px `--at-selected-line` border or inset ring (lamp `accent-text`, ≥ 3:1 on the card) + `--at-selected-fill` (lamp 14 %) + ink 600. Every selectable component uses it (DESIGN.md §11.2).
 
 ## Motion
 Keep the file's `@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}`
@@ -197,7 +197,7 @@ Numbers:
 - **Row:** a real `<a>` to the same page in that locale (`/`, `/es/`, `/pt-br/`, `/de/`, `/fr/`, `/ja/`, `/zh/`, `/hi/` + the path; es, pt-br, de and fr translate the slug through `src/i18n/slugs.json`). Each row carries `lang` and `hreflang` (`pt-BR`, `zh-Hans` per locales.ts). When no translation of this page exists, the row links to that locale's home and keeps `hreflang`: on a link it names the language of the page it points to, and that home page is in that language (decided 27 Sep 2026; the keyboard handler also finds rows by `a[hreflang]`). docs/07 §2's rule, that hreflang lists only existing pages, applies to the `<link rel="alternate">` tags in the page head, not to these links.
   - Geometry: min-height 48, padding 0 12, r12, grid `20px 1fr auto`, gap 12. Name 15/22, 500 (600 on the current row).
   - Radio-style mark: a 20 px ring. It uses `input-border` (≥ 3:1) on other rows, and a lamp ring with an 8 px lamp dot on the current row.
-  - Current row: the selected-item rule (1 px lamp 45 % border + lamp 14 % fill), `aria-current="true"`, and the note "Current" (13/18, `ink2`).
+  - Current row: the selected-item rule (solid `--at-selected-line` + `--at-selected-fill`), `aria-current="true"`, and the note "Current" (13/18, `ink2`).
   - Locales with `reviewed: false`: the note "Translation in review" (13/18, `muted`).
   - The note is in the page's language, so its span carries the page `lang`.
 - **Panel, tablet and desktop:** an inline, non-modal disclosure anchored above the trigger at its end edge (`bottom: calc(100% + 8px)`). Width 360 (fits "Português (Brasil)" and its note on one line), padding 4, r16 (rows r12 = 16 − 4), `surface`, 1 px `line`, floating-panel shadow `0 24px 64px -24px rgba(0,0,0,.45)`. It has a P-KICKER title "Language" (padding 8 12) and no scrim; the page stays live.

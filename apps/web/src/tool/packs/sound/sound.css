@@ -11,8 +11,8 @@
   align-items: center;
   gap: var(--at-gap-item) var(--at-gap-group);
   padding: var(--at-card-pad);
-  border: 1px solid var(--at-line);
-  border-radius: var(--at-r-xl);
+  border: var(--at-border) solid var(--at-line);
+  border-radius: var(--at-r-lg);
   background:
     radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--at-accent) 16%, transparent), transparent 70%),
     var(--at-surface);
@@ -67,8 +67,8 @@
   inline-size: var(--at-h-primary);
   block-size: var(--at-h-primary);
   padding: 0;
-  border: 1px solid transparent;
-  border-radius: var(--at-r-pill);
+  border: var(--at-border) solid transparent;
+  border-radius: var(--at-r-md);
   background: var(--at-accent);
   color: var(--at-on-accent);
   cursor: pointer;
@@ -84,7 +84,7 @@
 }
 
 .at-snd-play:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 3px;
 }
 
@@ -138,7 +138,7 @@
   gap: 0 var(--at-gap-item);
   min-block-size: var(--at-h-cook);
   padding: var(--at-s-3);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
   color: var(--at-ink);
@@ -168,7 +168,7 @@
 
 .at-snd-tile[aria-pressed="true"],
 .at-snd-track[aria-pressed="true"] {
-  border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
+  border-color: var(--at-selected-line);
   background: color-mix(in srgb, var(--at-accent) 14%, var(--at-surface));
 }
 
@@ -183,7 +183,7 @@
   justify-content: space-between;
   gap: var(--at-gap-item);
   padding: var(--at-s-4);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-raised);
 }
@@ -210,7 +210,7 @@
   align-items: center;
   gap: var(--at-gap-item);
   min-block-size: var(--at-h-row);
-  border-block-end: 1px solid var(--at-line);
+  border-block-end: var(--at-border) solid var(--at-line);
 }
 
 .at-snd-mix li:last-child {
@@ -239,7 +239,7 @@
   min-block-size: var(--at-h-row);
   padding-block: var(--at-s-2);
   padding-inline: var(--at-s-3);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-md);
   background: var(--at-surface);
   color: var(--at-ink);
@@ -273,7 +273,7 @@
 
 .at-snd-tile:focus-visible,
 .at-snd-track:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 3px;
 }
 

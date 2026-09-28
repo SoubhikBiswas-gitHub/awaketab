@@ -137,11 +137,10 @@
   .at-done {
     align-self: flex-start;
     gap: var(--at-s-3);
-    padding-inline: var(--at-s-3) var(--at-s-4);
   }
 
   .at-done[aria-checked="true"] {
-    border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
+    border-color: var(--at-selected-line);
     background: color-mix(in srgb, var(--at-accent) 14%, transparent);
   }
 
