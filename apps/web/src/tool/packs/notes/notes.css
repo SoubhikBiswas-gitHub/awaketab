@@ -48,10 +48,6 @@
   margin-inline-start: auto;
 }
 
-.at-notes-nav .at-button {
-  padding-inline: var(--at-s-3);
-}
-
 .at-notes-count {
   min-inline-size: var(--at-h-tag);
   padding-inline: var(--at-s-2);
@@ -86,7 +82,7 @@
   flex-direction: column;
   gap: var(--at-gap-tight);
   padding: var(--at-s-4);
-  border: 1px solid var(--at-lamp-line);
+  border: var(--at-border) solid var(--at-lamp-line);
   border-radius: var(--at-r-lg);
   background: color-mix(in srgb, var(--at-accent) 7%, var(--at-surface));
   animation: at-nt-rise var(--at-d-slide) var(--at-ease) both;
@@ -137,7 +133,7 @@
   display: flex;
   align-items: center;
   gap: var(--at-gap-tight);
-  border-block-end: 1px solid var(--at-line);
+  border-block-end: var(--at-border) solid var(--at-line);
 }
 
 .at-notes-item:last-child {
@@ -168,6 +164,7 @@
 
 .at-notes-pick[aria-current="true"] {
   background: var(--at-lamp-soft);
+  box-shadow: inset 0 0 0 var(--at-border) var(--at-selected-line);
 }
 
 .at-notes-name {
@@ -210,7 +207,7 @@
   gap: var(--at-gap-tight);
   margin: 0;
   padding: var(--at-s-3);
-  border: 1px solid var(--at-line-strong);
+  border: var(--at-border) solid var(--at-line-strong);
   border-radius: var(--at-r-md);
   background: var(--at-raised);
   color: var(--at-ink);
@@ -229,7 +226,7 @@
   padding-block: 0;
   padding-inline: var(--at-s-1);
   border: 0;
-  border-block-end: 1px solid var(--at-line);
+  border-block-end: var(--at-border) solid var(--at-line);
   background: transparent;
   color: var(--at-ink);
   font: var(--at-type-h3);
@@ -253,7 +250,7 @@
   align-items: center;
   gap: var(--at-s-1);
   padding: var(--at-s-1);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
 }
@@ -265,7 +262,7 @@
   inline-size: var(--at-h-control);
   block-size: var(--at-h-control);
   padding: 0;
-  border: 1px solid transparent;
+  border: var(--at-border) solid transparent;
   border-radius: var(--at-r-md);
   background: transparent;
   color: var(--at-ink-2);
@@ -282,7 +279,7 @@
 }
 
 .at-notes-tool[aria-pressed="true"] {
-  border-color: var(--at-lamp-line);
+  border-color: var(--at-selected-line);
   background: var(--at-lamp-soft);
   color: var(--at-ink);
 }
@@ -293,7 +290,7 @@
 }
 
 .at-notes-tool:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 2px;
 }
 
@@ -362,8 +359,10 @@
 .at-notes-listen:not([data-kind="listening"]) .at-notes-listen-i {
   inline-size: 0;
   block-size: 0;
+  /* stylelint-disable declaration-property-value-allowed-list -- a warning triangle drawn with borders */
   border-block-end: 8px solid var(--at-warn);
   border-inline: 5px solid transparent;
+  /* stylelint-enable declaration-property-value-allowed-list */
   border-radius: 0;
   background: none;
 }
@@ -374,7 +373,7 @@
   flex: 1 0 auto;
   flex-direction: column;
   min-block-size: 12rem;
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background:
     radial-gradient(circle, var(--at-nt-dot) 1px, transparent 1.5px) 0 0 / var(--at-s-6) var(--at-s-6),
@@ -412,7 +411,7 @@
 }
 
 .at-notes-paper:has(.at-notes-doc:focus-visible) {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 3px;
 }
 
@@ -529,7 +528,7 @@
   inline-size: 24px;
   block-size: 24px;
   margin: 0;
-  border: 1px solid var(--at-input-border);
+  border: var(--at-border) solid var(--at-input-border);
   border-radius: var(--at-r-sm);
   background: var(--at-surface);
   cursor: pointer;
@@ -543,8 +542,10 @@
   content: "";
   inline-size: 12px;
   block-size: 7px;
+  /* stylelint-disable declaration-property-value-allowed-list -- the check mark drawn with borders */
   border-block-end: 2px solid var(--at-on-accent);
   border-inline-start: 2px solid var(--at-on-accent);
+  /* stylelint-enable declaration-property-value-allowed-list */
   opacity: 0;
   transform: translateY(-1px) rotate(-45deg) scale(0.6);
   transition:
@@ -563,7 +564,7 @@
 }
 
 .at-notes-doc input[type="checkbox"]:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 3px;
 }
 
@@ -658,8 +659,10 @@
   inline-size: 9px;
   block-size: 5px;
   margin-inline-end: var(--at-s-2);
+  /* stylelint-disable declaration-property-value-allowed-list -- the check mark drawn with borders */
   border-block-end: 1.5px solid var(--at-accent-text);
   border-inline-start: 1.5px solid var(--at-accent-text);
+  /* stylelint-enable declaration-property-value-allowed-list */
   vertical-align: 0.2em;
   transform: rotate(-45deg);
 }
@@ -673,8 +676,10 @@
   content: "";
   display: inline-block;
   margin-inline-end: var(--at-s-2);
+  /* stylelint-disable declaration-property-value-allowed-list -- a warning triangle drawn with borders */
   border-block-end: 9px solid var(--at-warn);
   border-inline: 5px solid transparent;
+  /* stylelint-enable declaration-property-value-allowed-list */
   vertical-align: -0.05em;
 }
 
@@ -682,15 +687,6 @@
   min-block-size: var(--at-h-control);
   font: var(--at-type-caption);
   font-weight: 600;
-}
-
-.at-notes-foot .at-button > svg {
-  inline-size: var(--at-icon-sm);
-  block-size: var(--at-icon-sm);
-}
-
-.at-notes-foot .at-button {
-  padding-inline: var(--at-s-3);
 }
 
 .at-notes-clear {

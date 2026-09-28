@@ -31,7 +31,7 @@
     block-size: var(--at-ad-h);
     overflow: hidden;
     border: var(--at-border) solid var(--at-line);
-    border-radius: var(--at-r-md);
+    border-radius: var(--at-r-lg);
     background: var(--at-hatch), color-mix(in srgb, var(--at-surface) 58%, transparent);
   }
 

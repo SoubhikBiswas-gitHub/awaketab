@@ -9,10 +9,14 @@ const SPACING_TOKENS =
 // --at-pg-type-* (pages.css), --at-am-type-* (ambient.css), --at-embed-type-* (embed.css) and --at-tl-* (the tool
 // stylesheets) are named off-scale values, each defined once at the top of its file.
 const TYPE_TOKENS = /^(?:inherit|var\(--at-(?:pg-|am-|embed-|tl-)?type-[a-z0-9-]+\))$/u;
+// DESIGN.md §11.2: every border and outline width is --at-border (1 px hairline) or --at-ring (2 px focus), never a
+// raw length. Drawings made of borders opt out in marked lines.
+const LINE_PROPS = '/^(border(-(top|right|bottom|left|block|inline)(-(start|end))?)?(-width)?|outline(-width)?)$/';
+const LINE_TOKENS = /^(?![\s\S]*(?<![\w.-])\d*\.?\d+(?:px|rem|em)(?![\w-]))[\s\S]*$/u;
 
 export default {
   extends: ['stylelint-config-standard'],
-  plugins: ['stylelint-use-logical-spec'],
+  plugins: ['stylelint-use-logical-spec', './scripts/stylelint-button-geometry.mjs'],
   rules: {
     'at-rule-no-unknown': [
       true,
@@ -28,12 +32,20 @@ export default {
       },
     ],
     'declaration-property-value-allowed-list': [
-      { '/^border(-[a-z]+)*-radius$/': [RADIUS_TOKENS] },
-      { message: (prop, value) => `${prop}: ${value} is not a radius token; use var(--at-r-*) (DESIGN.md §12.4)` },
+      { '/^border(-[a-z]+)*-radius$/': [RADIUS_TOKENS], [LINE_PROPS]: [LINE_TOKENS] },
+      {
+        message: (prop, value) =>
+          `${prop}: ${value} is not a token; use var(--at-r-*) for radii and var(--at-border) or var(--at-ring) for widths (DESIGN.md §11.2, §12.4)`,
+      },
     ],
+    'awaketab/button-geometry': true,
   },
   overrides: [
     { files: ['**/styles/tokens.css'], rules: { 'declaration-property-value-allowed-list': null } },
+    {
+      files: ['**/styles/shell.css', 'apps/extension/src/styles/base.css'],
+      rules: { 'awaketab/button-geometry': null },
+    },
     {
       // shell.css, content.css, the site pages, Pro, the embed page and the ambient modes. pages.css and ambient.css
       // name their few off-scale sizes once as --at-pg-* / --at-am-* custom properties and use them by name. The
@@ -74,6 +86,7 @@ export default {
         'declaration-property-value-allowed-list': [
           {
             '/^border(-[a-z]+)*-radius$/': [RADIUS_TOKENS],
+            [LINE_PROPS]: [LINE_TOKENS],
             '/^(padding|margin|gap|row-gap|column-gap)(-[a-z]+)*$/': [SPACING_TOKENS],
             '/^(min-|max-)?(block|inline)-size$/': [
               /^(?!.*\d+(?:\.\d+)?(?:px|rem|em)\b).*$/u,

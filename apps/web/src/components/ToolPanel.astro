@@ -1063,6 +1063,7 @@ const eight = ready.chip === 'custom';
     <Button
       class="at-cta"
       variant="primary"
+      size="lg"
       data-act="start"
       data-l="cta"
       aria-label={cta}
@@ -1077,7 +1078,7 @@ const eight = ready.chip === 'custom';
       <Button size="lg" data-act="battSettings"
         >{t('tool.battery.settings')}</Button
       >
-      <Button variant="primary" glyph={false} data-act="start"
+      <Button variant="primary" size="lg" glyph={false} data-act="start"
         >{t('tool.battery.anyway')}</Button
       >
     </div>
@@ -1088,6 +1089,7 @@ const eight = ready.chip === 'custom';
       >
       <Button
         variant="stop"
+        size="lg"
         data-stop
         data-act="stop"
         kbd="Space"
@@ -1138,13 +1140,14 @@ const eight = ready.chip === 'custom';
       <Button size="lg" data-act="fallback"
         >{t('tool.fallback.consent.accept')}</Button
       >
-      <Button variant="stop" data-act="retry">{t('tool.advice.retry')}</Button>
+      <Button variant="stop" size="lg" data-act="retry">{t('tool.advice.retry')}</Button>
     </div>
 
     <div class="at-acts at-acts-tap">
       <Button size="lg" data-act="stop">{t('tool.ring.stop')}</Button>
       <Button
         variant="primary"
+        size="lg"
         glyph={false}
         class="at-float"
         data-act="fallback">{t('tool.fallback.consent.start')}</Button

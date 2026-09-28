@@ -51,7 +51,7 @@
     min-inline-size: 0;
     gap: var(--at-gap-tight);
     min-block-size: var(--at-h-control);
-    border-radius: var(--at-r-sm);
+    border-radius: var(--at-r-md);
     color: var(--at-ink);
     font: var(--at-type-action);
     letter-spacing: -0.01em;
@@ -191,7 +191,7 @@
     inset-inline-start: var(--at-s-1);
     inline-size: calc((100% - 2 * var(--at-s-1)) / var(--at-seg-n));
     block-size: var(--at-h-control);
-    border: var(--at-border) solid color-mix(in srgb, var(--at-accent) 45%, transparent);
+    border: var(--at-border) solid var(--at-selected-line);
     border-radius: var(--at-r-pill);
     background: color-mix(in srgb, var(--at-accent) 14%, transparent);
     transform: translateX(calc(var(--at-seg-i) * var(--at-seg-dir) * 100%));
@@ -225,7 +225,7 @@
   }
 
   :is(.at-seg-item, .at-theme-item):has(:focus-visible) {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 0;
   }
 
@@ -306,11 +306,6 @@
     --at-seg-i: 2;
 
     grid-template-columns: repeat(3, var(--at-h-control));
-  }
-
-  .at-theme .at-seg-ind {
-    border: 0;
-    background: var(--at-raised);
   }
 
   .at-theme-item {
@@ -476,7 +471,7 @@
   }
 
   .at-lang-row[aria-current="true"] {
-    border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
+    border-color: var(--at-selected-line);
     background: color-mix(in srgb, var(--at-accent) 14%, transparent);
   }
 
@@ -641,7 +636,7 @@
     padding-block: 0;
     padding-inline: var(--at-s-5);
     border: var(--at-border) solid var(--at-line-strong);
-    border-radius: var(--at-r-xl);
+    border-radius: var(--at-r-md);
     background: var(--at-surface);
     color: var(--at-ink);
     font: var(--at-type-ui);
@@ -666,7 +661,12 @@
   .at-button-sm {
     min-block-size: var(--at-h-control);
     padding-inline: var(--at-s-4);
-    border-radius: var(--at-r-md);
+  }
+
+  .at-acts > .at-button {
+    padding-inline: var(--at-s-2);
+    white-space: normal;
+    text-wrap: balance;
   }
 
   .at-button-primary {
@@ -785,7 +785,7 @@
   }
 
   .at-chip:is([aria-pressed="true"], [aria-checked="true"], [aria-selected="true"]) {
-    border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
+    border-color: var(--at-selected-line);
     background: color-mix(in srgb, var(--at-accent) 14%, var(--at-surface));
     color: var(--at-ink);
     font-weight: 600;
@@ -838,7 +838,7 @@
   }
 
   .at-input:focus-within {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 

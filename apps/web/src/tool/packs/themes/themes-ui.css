@@ -168,7 +168,7 @@ html[data-pv-fade]::view-transition-new(root) {
 }
 
 .at-lk-opt:has(:checked) {
-  border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
+  border-color: var(--at-selected-line);
   background: color-mix(in srgb, var(--at-accent) 14%, var(--at-surface));
   color: var(--at-ink);
   font-weight: 600;
@@ -377,7 +377,7 @@ html[data-pv-fade]::view-transition-new(root) {
 .at-pv :focus-visible,
 .at-lk-opt:has(:focus-visible),
 .at-lk-picker :focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 3px;
 }
 
@@ -390,6 +390,6 @@ html[data-pv-fade]::view-transition-new(root) {
 
 @media (forced-colors: active) {
   .at-lk-opt:has(:checked) {
-    outline: 2px solid Highlight;
+    outline: var(--at-ring) solid Highlight;
   }
 }

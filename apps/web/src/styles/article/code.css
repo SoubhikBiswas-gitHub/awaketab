@@ -41,8 +41,6 @@
   }
 
   .at-copy {
-    padding-inline: var(--at-s-3);
-    font: var(--at-type-small);
     font-weight: 600;
     transition:
       background-color var(--at-d-slow) var(--at-ease),
@@ -81,7 +79,7 @@
   }
 
   .at-code:focus-visible {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: -2px;
   }
 

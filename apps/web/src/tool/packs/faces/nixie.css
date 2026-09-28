@@ -92,7 +92,7 @@
   inline-size: var(--at-fx-tw);
   block-size: var(--at-fx-th);
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--at-face-c) 18%, var(--at-line-strong));
+  border: var(--at-border) solid color-mix(in srgb, var(--at-face-c) 18%, var(--at-line-strong));
   border-start-start-radius: var(--at-r-pill);
   border-start-end-radius: var(--at-r-pill);
   border-end-start-radius: var(--at-r-xs);

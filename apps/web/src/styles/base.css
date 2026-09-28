@@ -19,7 +19,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--ring);
+    outline: var(--at-ring) solid var(--ring);
     outline-offset: 3px;
   }
 
@@ -46,8 +46,8 @@
     z-index: 40;
     padding-block: var(--at-s-2);
     padding-inline: var(--at-s-4);
-    border: 1px solid var(--border);
-    border-radius: var(--at-r-sm);
+    border: var(--at-border) solid var(--border);
+    border-radius: var(--at-r-md);
     background: var(--card);
     color: var(--card-foreground);
     text-decoration: none;
@@ -137,8 +137,8 @@
     align-items: center;
     min-block-size: var(--at-h-control);
     padding-inline: var(--at-s-4);
-    border: 1px solid var(--border);
-    border-radius: var(--at-r-sm);
+    border: var(--at-border) solid var(--border);
+    border-radius: var(--at-r-md);
     background: var(--card);
     color: var(--card-foreground);
     font: var(--at-type-small);

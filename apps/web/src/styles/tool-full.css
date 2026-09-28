@@ -113,8 +113,8 @@
   block-size: var(--at-h-control);
   padding-block: 0;
   padding-inline: var(--at-s-3) var(--at-s-4);
-  border: 1px solid var(--at-line-strong);
-  border-radius: var(--at-r-pill);
+  border: var(--at-border) solid var(--at-line-strong);
+  border-radius: var(--at-r-md);
   background: transparent;
   color: var(--at-ink);
   font: var(--at-type-small);

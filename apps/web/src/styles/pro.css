@@ -518,7 +518,7 @@
   }
 
   .at-pro-swatch:has(:checked) {
-    border-color: color-mix(in srgb, var(--at-pro-sw) 45%, transparent);
+    border-color: var(--at-pro-sw);
     background: color-mix(in srgb, var(--at-pro-sw) 14%, transparent);
     font-weight: 600;
   }
@@ -528,7 +528,7 @@
   }
 
   .at-pro-swatch:has(:focus-visible) {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 
@@ -562,7 +562,7 @@
   }
 
   .at-pro-cmp-wrap:focus-visible {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 
@@ -954,7 +954,7 @@
   }
 
   .at-pro-faq-list summary:focus-visible {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 
@@ -1213,7 +1213,7 @@
   .at-pro-act-main {
     display: flex;
     flex-direction: column;
-    gap: var(--at-s-12);
+    gap: var(--at-section);
     padding-block-start: calc(var(--at-s-6) - var(--at-s-4));
   }
 
@@ -1393,10 +1393,6 @@
     padding-block-start: var(--at-s-1);
   }
 
-  .at-pro .at-pro-err-actions .at-button {
-    padding-inline: var(--at-s-6);
-  }
-
   .at-pro-ok {
     display: none;
     flex-direction: column;
@@ -1498,7 +1494,6 @@
 
   .at-pro-ok-actions > .at-button:not(.at-button-primary) {
     flex: 1 1 160px;
-    padding-inline: var(--at-s-6);
   }
 
   .at-pro-reset {
@@ -1549,7 +1544,6 @@
   .at-pro .at-pro-copy {
     flex: 0 0 auto;
     min-inline-size: var(--at-pro-copy-min);
-    padding-inline: var(--at-s-5);
     box-shadow: none;
   }
 
@@ -1559,11 +1553,6 @@
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 2;
-  }
-
-  .at-pro .at-pro-copy > svg {
-    inline-size: var(--at-icon-sm);
-    block-size: var(--at-icon-sm);
   }
 
   .at-pro-copied-icon,
@@ -1814,7 +1803,6 @@
 
   .at-pro .at-pro-co-key > .at-pro-copy {
     min-inline-size: 0;
-    padding-inline: var(--at-s-4);
   }
 
   .at-pro-co-list li {
@@ -1895,7 +1883,7 @@
     gap: var(--at-gap-tight);
     padding-block: var(--at-s-3);
     padding-inline: var(--at-s-4);
-    border-radius: var(--at-r-sm);
+    border-radius: var(--at-r-md);
     background: var(--at-sunken);
     color: var(--at-ink);
   }
@@ -2004,7 +1992,7 @@
   .at-pro-man-main {
     display: flex;
     flex-direction: column;
-    gap: var(--at-s-12);
+    gap: var(--at-section);
     padding-block-start: calc(var(--at-s-6) - var(--at-s-4));
   }
 
@@ -2320,7 +2308,6 @@
 
   .at-pro-empty-actions > .at-button:not(.at-button-primary) {
     flex: 1 1 180px;
-    padding-inline: var(--at-s-6);
   }
 
   .at-pro-man-key {
@@ -2366,10 +2353,6 @@
     align-items: center;
     gap: var(--at-gap-item);
     padding-block-start: var(--at-s-1);
-  }
-
-  .at-pro-lapse-actions > .at-button:not(.at-button-primary) {
-    padding-inline: var(--at-s-5);
   }
 
   .at-pro-man:is([data-state="grace"], [data-state="lapsed"]) .at-pro-devices {

@@ -47,7 +47,7 @@
     justify-content: space-between;
     gap: var(--at-gap-item);
     min-block-size: var(--at-h-input);
-    border-radius: var(--at-r-sm);
+    border-radius: var(--at-r-md);
     color: var(--at-ink);
     font: var(--at-type-ui);
     list-style: none;
@@ -88,7 +88,7 @@
     gap: var(--at-s-1);
     min-block-size: var(--at-h-control);
     min-inline-size: var(--at-h-control);
-    border-radius: var(--at-r-sm);
+    border-radius: var(--at-r-md);
     color: var(--at-ink-2);
     font: var(--at-type-caption);
     font-weight: 500;

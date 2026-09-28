@@ -228,21 +228,36 @@ Scale: `4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64 · 96` px.
 - Below the last row or button of a sheet, panel or dock: 20. **Exception, the extension popup:** it is a fixed 360 × 600 frame (Chrome caps a popup at 600 px and scrolls anything taller), so it keeps **8** below its last row inside that frame instead of 20. The tallest states end on the frame's last 8 px; a longer translation scrolls inside the frame rather than growing it.
 
 ### 11.2 Borders
-- Width is always **1 px** (focus ring is the only 2 px line, offset 3 px).
+- Width is always **1 px**, written `var(--at-border)`; the focus ring is the only 2 px line, written `var(--at-ring)`, offset 3 px. No 1.5, 1.6 or 2 px borders anywhere (stylelint rejects a raw width in any `border*` or `outline*` value; drawings made of borders, such as a CSS check mark, opt out line by line).
 - `line` for card edges, dividers and bars; `line-strong` for secondary buttons and inputs.
 - **Dashed** 1 px `line-strong` only for "choose / add" affordances (Until a time…, Custom…, Add timer, Add schedule). Never decorative.
-- State borders: tone at 38 % alpha (pill, blocked card at 32 %). Selected item: 1 px lamp at 45 % + lamp 14 % fill.
+- State borders: tone at 38 % alpha (pill, blocked card at 32 %). Selected item (one rule for every selectable component: chips, segmented items and their sliding indicator, tabs, menu and list rows, tiles, days, swatches): a solid 1 px `--at-selected-line` border or inset ring (`--at-accent-text`, which meets 4.5:1, so at least 3:1, against the card in every theme, colour theme and lamp) + `--at-selected-fill` (lamp 14 %) + `ink` text at weight 600. Never the lamp at 45 %.
 - No side-stripe borders, no double borders, no border + heavy shadow together.
 - Allowed single-side rules: the leading edge of a side sheet, a 1 px `line` column divider between two content columns, and a 1 px timeline rule. An "active" indicator is never a side stripe (use ink 600 + lamp dot).
 - Illustrations and device mocks (`aria-hidden` art, browser or OS chrome placeholders marked `data-placeholder`) are exempt from border, colour and radius rules.
 
 ### 11.3 Radii
-`4` micro (inline code, heatmap cells, legend swatches) · `8` inputs, code blocks, kbd, checkboxes · `12` icon buttons, small buttons (44), small tiles, toolbar/PiP windows · `16` cards, list containers, inline panels, selectable tiles · `20` large buttons (52/60/64) · `28` clock faces, sheets (top corners), hero panels (including the embedded tool card) · `999` pills, tags, segmented bars, chips, switches, progress tracks.
-Never 14, 18, 22 or 24.
-Nested radius rule: inner radius = outer radius − padding (e.g. bar 999 → item 999; card 16 with 8 padding → inner 8).
+One radius per component role. The shape tells the role: **a rounded rectangle acts, a pill chooses or reports.**
+
+| Role | Radius | Token |
+|---|---|---|
+| Every button: primary, secondary, stop, quiet, icon-only, store, extend (+15 min), dock, header, toast action, cook mode; every size | 12 | `--at-r-md` |
+| Chips, segmented bars and their items and indicator, switches, tags and badges, count bubbles, progress tracks | 999 | `--at-r-pill` |
+| Status pill M, and any status line that may wrap to two lines (one line still reads as a full pill) | 20 | `--at-r-xl` |
+| Status pill L, S and XS (fixed height, one line) | 999 | `--at-r-pill` |
+| Inputs, selects, textareas, checkboxes, kbd caps, code blocks, file paths | 8 | `--at-r-sm` |
+| Rows inside a menu, list or panel (menu rows, options, language rows, nav links, footer links); decorative icon tiles | 12 | `--at-r-md` |
+| Cards, list containers, inline panels, notes and callouts, banners, toasts, selectable tiles (time slots, faces, looks), popovers and menus, docked panels, figures | 16 | `--at-r-lg` |
+| Sheets (top corners on phones, the inner edge of a side sheet), centred dialogs, clock faces, hero panels, the embedded tool card | 28 | `--at-r-2xl` |
+| Micro: inline code, heatmap cells, legend swatches | 4 | `--at-r-xs` |
+| Dots, beads, avatars, ring drawings | round | `50%` |
+
+- Focus rings follow the element: `outline` takes the element's own radius and the 3 px offset; never set a different radius on `:focus-visible` (inline text links, which have none, get 4).
+- Nested rule: inner radius = outer radius − padding (bar 999 → item 999; a wrapped segmented bar 20 with 4 padding → items 16; a bordered row 12 with a flush button → `calc(var(--at-r-md) - var(--at-border))`). When the padding is as large as the outer radius, the inner surface uses a smaller step of the scale than its container, never a larger one.
+- Values are always tokens: `var(--at-r-*)`, `0`, `50%`, `inherit` or a `calc()` over tokens. Illustrations and device mocks keep their own geometry in marked blocks (§11.2). Never 14, 18, 22 or 24.
 
 ### 11.4 Control sizes
-- Height: chip / segmented item / icon button / small button **44**; input **48**; medium button **52**; primary action **60**; cook mode targets **64**.
+- Height: chip / segmented item / icon button / small button **44**; input **48**; medium button **52**; primary action **60**; cook mode targets **64**. Buttons come in exactly three sizes (§11.8).
 - Segmented bar = 1 px border + 4 px padding + 44 px items (54 total). Sliding indicator same height as items, inset 4 px. Theme switch is a segmented bar (no 3 px padding).
 - Status pill (not a control): **L 48** (kiosk ≥ 1180 wide, xl; text 20) · **M 38** (tool; text 15/600, padding 0 16 0 12, gap 8) · **S 32** (extension popup, PiP, full embed; text 14/600, padding 0 12 0 8) · **XS 26** (compact embed; text 13/600, padding 0 8, gap 4).
 - Tag (non-interactive: Pro, Free, Proposed, Release, licence): height 24, 12/16 weight 600, r999, padding 0 8, 1 px `line-strong` or tone 12 % fill.
@@ -293,6 +308,28 @@ TV / kiosk scale (≥ 1920 wide): meta 32, date 40, message 96–128, clock digi
 - Toasts: one region above the dock, newest nearest it; a distinct icon shape per kind (check, info ring, triangle, octagon); errors stay until dismissed; while a sheet, dialog or menu is open they rise above it at the bottom centre instead of hiding behind it (docs/05 §3.7).
 - Canvas boards: height ≤ 8000; a board's default `layout` prop must match its width.
 
+### 11.8 Buttons
+Every button is the shared button: `Button.astro` or the `at-button` classes on the site, `at-btn` in the extension. Three sizes, one radius (12), gap 8, 1 px border, weight 600.
+
+| Size | Height | Inline padding | Type | Icon | Use |
+|---|---|---|---|---|---|
+| `sm` | 44 | 16 | `ui` 15/22 | 16 | header, toolbars, cards, rows, toasts, sheet bodies, extend rows, copy buttons |
+| `md` (default) | 52 | 20 | `ui` 15/22 | 20 | page CTAs, hero CTAs (primary and secondary alike), store buttons, sheet and dialog footers, dock cards |
+| `lg` | 60 | 24 | `action` 17/24 | 20 | the tool's own primary actions only: the lamp CTA, Stop, +15 min and the dock pairs; the popup's main button |
+
+- Variants: `primary` (lamp fill, one per screen), `secondary` (surface + `line-strong`), `stop` (raised + `line-strong`), `quiet` (no fill, no border), and icon-only (`at-icon-button`, 44 × 44, 20 px icon).
+- Cook mode scales every target to 64 (`at-button-cook`); it is a mode, not a fourth size.
+- Buttons side by side share one size. A store button is the same button with the store's mark; it is never a custom block.
+- A row of equal buttons that fills a grid (the dock pairs, `.at-acts`; `.at-btn-row` in the extension) keeps its size's height and type, uses 8 inline padding and may wrap its label. Only the button stylesheet (`shell.css`, the extension's `base.css`) sets this.
+- No other stylesheet sets a height, padding, font or radius on a button: stylelint's `awaketab/button-geometry` rule rejects those declarations on `at-button*`, `at-btn*` and on any class that sits on a button in the markup.
+
+### 11.9 Section rhythm
+- Page sections are separated by `--at-section` only: 48 on phones, 64 from 600, 96 from 1024. The parent stack sets it with `gap`; no section adds its own margin.
+- Heading → body inside a section: 12 (`--at-gap-item`) for h2 → paragraph, 20 / 24 (`--at-gap-group`) before the section's content block (cards, lists, a table).
+- Card padding: `--at-card-pad` (20 on phones, 24 from 600). Inner groups use dividers or spacing, never a nested card.
+- A section is either boxed (a card or a hero panel) or open (heading and content on the page background); neighbours of the same kind look alike. Separate sections with space, not with a border: a 1 px `line` rule only divides items inside a section (list rows, FAQ, footer top).
+- Long reading (articles, guides, legal) keeps its own measure and heading rhythm inside one section.
+
 ## 12. Token system (scalable, responsive; how §11 is built)
 
 §11 lists the allowed values. This section names them, so code and canvas use **names, never raw numbers**. It is one system for the web app, content pages, Pro, the extension and the embed.
@@ -328,7 +365,7 @@ Primitives: `--at-s-N` = N × 4 px: `s-1` 4 · `s-2` 8 · `s-3` 12 · `s-4` 16 �
 Gaps are fixed at every width and chosen by relationship: `--at-gap-tight` 8 (inside a control, icon + label) · `--at-gap-item` 12 (related items) · `--at-gap-group` 20 (between groups) · `--at-gap-group-lg` 24 (between groups in a card or wide column). Max content width `--at-content-max` 1200; reading measure `--at-measure` 68ch.
 
 ### 12.4 Radius
-`--at-r-xs` 4 · `--at-r-sm` 8 · `--at-r-md` 12 · `--at-r-lg` 16 · `--at-r-xl` 20 · `--at-r-2xl` 28 · `--at-r-pill` 999. What each is for: §11.3. Radii do not change per breakpoint. Nested rule: inner = outer − padding, so an inner radius is always a smaller step of the same scale.
+`--at-r-xs` 4 · `--at-r-sm` 8 · `--at-r-md` 12 · `--at-r-lg` 16 · `--at-r-xl` 20 · `--at-r-2xl` 28 · `--at-r-pill` 999. What each is for: §11.3. Line widths: `--at-border` 1 and `--at-ring` 2 (§11.2). Radii do not change per breakpoint. Nested rule: inner = outer − padding, so an inner radius is always a smaller step of the same scale.
 
 ### 12.5 Type
 Each role is one `font` shorthand token (weight, size/line-height, family), in rem so the user's browser font size scales everything (1rem = 16 px). Use `font: var(--at-type-body)`.
@@ -364,4 +401,4 @@ Where §11.5 gives a weight range (caption and small 400–500, ui 500–600), t
 
 ### 12.8 Gates
 - **Canvas:** every board, rendered with the real canvas runtime, follows §11 (radius, spacing, gap, type size and weight, control height, borders, colours, no nested cards) and has no empty board, overflow, dropped style or control within 12 px of an edge. The render and audit scripts that checked this were removed with the canvas sources; `docs/redesign/CANVASES.md` says how to restore them from git history.
-- **Code:** a stylelint rule rejects raw px or rem for `padding`, `margin`, `gap`, `border-radius`, `font-size`, `line-height`, `height` of controls and `font` outside `tokens.css` (allowed: 0, 1px borders, percentages, `auto`). Plus the responsive sweep in §5 (every route, every 40 px from 320 to 2560). Both run in CI and block the release.
+- **Code:** a stylelint rule rejects raw px or rem for `padding`, `margin`, `gap`, `border-radius`, `font-size`, `line-height`, `height` of controls and `font` outside `tokens.css` (allowed: 0, 1px borders, percentages, `auto`); radii must be `--at-r-*` tokens, border and outline widths `--at-border` or `--at-ring`, and `awaketab/button-geometry` keeps button sizes in the button stylesheet (§11.8). Plus the responsive sweep in §5 (every route, every 40 px from 320 to 2560). Both run in CI and block the release.

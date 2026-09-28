@@ -47,7 +47,7 @@
     gap: var(--at-s-2);
     block-size: var(--at-shot-h);
     border: var(--at-border) dashed var(--at-line-strong);
-    border-radius: var(--at-r-xl);
+    border-radius: var(--at-r-lg);
     background: var(--at-hatch), var(--at-sunken);
     color: var(--at-muted);
     font: var(--at-type-kicker);

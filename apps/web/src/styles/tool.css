@@ -31,7 +31,7 @@
     block-size: var(--at-tl-sponsor-h);
     padding: var(--at-s-3);
     overflow: hidden;
-    border: 1px solid var(--border);
+    border: var(--at-border) solid var(--border);
     border-radius: var(--at-r-md);
     background: var(--card);
     font: var(--at-type-small);
@@ -52,7 +52,7 @@
 
   @media (forced-colors: active) {
     .at-sponsor {
-      border: 1px solid CanvasText;
+      border: var(--at-border) solid CanvasText;
     }
   }
 }
@@ -595,7 +595,7 @@
   flex-direction: column;
   gap: var(--at-gap-tight);
   padding: var(--at-card-pad);
-  border: 1px solid color-mix(in srgb, var(--c) 32%, transparent);
+  border: var(--at-border) solid color-mix(in srgb, var(--c) 32%, transparent);
   border-radius: var(--at-r-lg);
   background: color-mix(in srgb, var(--c) 8%, transparent);
   color: var(--at-ink-2);
@@ -760,7 +760,7 @@
 }
 
 .at-len .at-chip[aria-pressed="true"] {
-  border-color: var(--at-lamp-line);
+  border-color: var(--at-selected-line);
   background: var(--at-lamp-soft);
   color: var(--at-ink);
   font-weight: 600;
@@ -772,7 +772,7 @@
 
 .at-chip-choose[aria-pressed="true"] {
   border-style: solid;
-  border-color: var(--at-lamp-line);
+  border-color: var(--at-selected-line);
   background: var(--at-lamp-soft);
   color: var(--at-ink);
   font-weight: 600;
@@ -792,25 +792,10 @@
   gap: var(--at-gap-item);
 }
 
-.at-dock .at-acts > .at-button {
-  white-space: normal;
-  min-block-size: var(--at-h-primary);
-  padding-inline: var(--at-s-2);
-  font: var(--at-type-action);
-}
-
-.at-dock .at-dockcard .at-acts > .at-button:not(.at-button-primary) {
-  min-block-size: var(--at-h-button);
-  font: var(--at-type-ui);
-  font-weight: 600;
-}
-
 .at-cta {
   inline-size: 100%;
-  padding-inline: var(--at-s-4);
   white-space: normal;
   text-wrap: balance;
-  min-block-size: var(--at-h-primary);
   box-shadow: 0 10px 30px -8px var(--at-lamp-glow);
 }
 
@@ -1167,6 +1152,6 @@
   .at-ask,
   .at-slot,
   .at-switch {
-    border: 1px solid CanvasText;
+    border: var(--at-border) solid CanvasText;
   }
 }

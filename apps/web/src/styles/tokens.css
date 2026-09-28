@@ -319,6 +319,7 @@
   --at-icon-md: 20px;
   --at-icon-lg: 24px;
   --at-border: 1px;
+  --at-ring: 2px;
   --at-d-fast: 120ms;
   --at-d-base: 200ms;
   --at-d-slow: 320ms;
@@ -442,6 +443,14 @@
   --at-accent-text: #7cb8ff;
   --at-on-accent: #04232a;
   --at-focus: #7cb8ff;
+}
+
+:root,
+[data-theme],
+[data-accent],
+[data-palette] {
+  --at-selected-line: var(--at-accent-text);
+  --at-selected-fill: color-mix(in srgb, var(--at-accent) 14%, transparent);
 }
 
 :root:is(:lang(ja), :lang(zh), :lang(hi)) {

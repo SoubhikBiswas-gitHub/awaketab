@@ -37,7 +37,7 @@
   padding: var(--at-s-5);
   overflow-y: auto;
   overscroll-behavior: contain;
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
   box-shadow: var(--at-elev);
@@ -75,7 +75,7 @@
   grid-template-columns: 16px minmax(0, 1fr);
   column-gap: var(--at-gap-item);
   padding-block: var(--at-s-3);
-  border-block-start: 1px solid var(--at-line);
+  border-block-start: var(--at-border) solid var(--at-line);
 }
 
 .at-why-list li > span:last-child {
@@ -104,7 +104,7 @@
   inline-size: var(--at-tl-dot);
   block-size: var(--at-tl-dot);
   margin-block-start: calc(var(--at-s-3) / 2);
-  border: 1px solid var(--c);
+  border: var(--at-border) solid var(--c);
   border-radius: 50%;
   background: var(--c);
 }
@@ -187,7 +187,7 @@
 
 .at-receipt-bar > .at-seg-p,
 .at-lg-paused {
-  border: 1px solid var(--at-warn);
+  border: var(--at-border) solid var(--at-warn);
   background: repeating-linear-gradient(
     135deg,
     color-mix(in srgb, var(--at-warn) 55%, transparent) 0 3px,
@@ -307,7 +307,7 @@
   place-items: center;
   inline-size: var(--at-tl-mark);
   block-size: var(--at-tl-mark);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-md);
   background: var(--at-sunken);
 }
@@ -342,7 +342,7 @@
   min-block-size: var(--at-h-primary);
   padding-block: var(--at-s-2);
   padding-inline: var(--at-s-4) var(--at-s-2);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
   box-shadow: var(--at-elev);
@@ -473,7 +473,7 @@
   gap: var(--at-gap-tight);
   padding-block: var(--at-s-4) var(--at-s-5);
   padding-inline: var(--at-s-4);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
   text-align: start;
@@ -534,8 +534,8 @@
   justify-content: center;
   block-size: var(--at-h-button);
   padding: 0;
-  border: 1px solid var(--at-line);
-  border-radius: var(--at-r-md);
+  border: var(--at-border) solid var(--at-line);
+  border-radius: var(--at-r-lg);
   background: transparent;
   color: var(--at-ink);
   font: var(--at-type-small);
@@ -546,7 +546,7 @@
 }
 
 .at-slot[aria-pressed="true"] {
-  border-color: var(--at-lamp-line);
+  border-color: var(--at-selected-line);
   background: var(--at-lamp-soft);
   font-weight: 600;
 }
@@ -563,7 +563,7 @@
   gap: var(--at-s-1);
   padding-block: var(--at-s-4) var(--at-s-2);
   padding-inline: var(--at-s-4);
-  border-radius: var(--at-r-md);
+  border-radius: var(--at-r-lg);
   background: var(--at-lamp-soft);
   animation: at-in 0.7s var(--at-ease) both;
 }
@@ -618,8 +618,8 @@
   place-items: center;
   block-size: var(--at-h-button);
   padding: 0;
-  border: 1px solid var(--at-line-strong);
-  border-radius: var(--at-r-xl);
+  border: var(--at-border) solid var(--at-line-strong);
+  border-radius: var(--at-r-md);
   background: transparent;
   color: var(--at-ink);
   cursor: pointer;
@@ -702,7 +702,7 @@
   place-items: center;
   inline-size: var(--at-tl-badge);
   block-size: var(--at-tl-badge);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: 50%;
   background: var(--at-sunken);
   color: var(--at-ink-2);
@@ -736,7 +736,7 @@
   gap: var(--at-gap-item);
   padding-block: var(--at-s-4) var(--at-s-5);
   padding-inline: var(--at-s-4);
-  border: 1px solid var(--at-lamp-line);
+  border: var(--at-border) solid var(--at-lamp-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
   box-shadow: 0 18px 40px -24px var(--at-lamp-glow);
@@ -792,8 +792,8 @@
 .at-ask-opts button {
   block-size: var(--at-h-button);
   padding: 0;
-  border: 1px solid var(--at-lamp-line);
-  border-radius: var(--at-r-xl);
+  border: var(--at-border) solid var(--at-lamp-line);
+  border-radius: var(--at-r-md);
   background: var(--at-lamp-soft);
   color: var(--at-ink);
   font: var(--at-type-ui);
@@ -842,12 +842,12 @@
   gap: var(--at-s-2) var(--at-s-6);
   padding-block: var(--at-s-4) var(--at-s-5);
   padding-inline: var(--at-card-pad);
-  border-block-start: 1px solid var(--at-line);
+  border-block-start: var(--at-border) solid var(--at-line);
 }
 
 .at-dialog:is([data-side="end"], [data-side="start"]) .at-dialog-header {
   padding-block-end: var(--at-s-3);
-  border-block-end: 1px solid var(--at-line);
+  border-block-end: var(--at-border) solid var(--at-line);
 }
 
 .at-dialog:is([data-side="end"], [data-side="start"]) .at-dialog-body {
@@ -873,12 +873,6 @@
 .at-share-row .at-copy {
   border-color: transparent;
   background: var(--at-raised);
-  padding-inline: var(--at-s-3) var(--at-s-4);
-}
-
-.at-share-row .at-copy > svg {
-  inline-size: var(--at-icon-md);
-  block-size: var(--at-icon-md);
 }
 
 .at-share-row .at-copy[data-done] {
@@ -959,7 +953,7 @@
 }
 
 .at-stars label:has(input:focus-visible) {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 0;
 }
 
@@ -991,8 +985,8 @@
   margin: 0;
   padding-block: var(--at-s-3);
   padding-inline: var(--at-s-4);
-  border: 1px solid var(--at-line);
-  border-radius: var(--at-r-md);
+  border: var(--at-border) solid var(--at-line);
+  border-radius: var(--at-r-lg);
   background: var(--at-sunken);
   color: var(--at-ink-2);
   font: var(--at-type-small);
@@ -1017,7 +1011,7 @@
   align-items: center;
   gap: var(--at-gap-item);
   min-block-size: var(--at-h-input);
-  border-block-end: 1px solid var(--at-line);
+  border-block-end: var(--at-border) solid var(--at-line);
 }
 
 .at-keys > div:last-child {
@@ -1113,12 +1107,6 @@
   --at-seg-i: 3;
 }
 
-.at-sseg .at-seg-ind {
-  border: 0;
-  background: var(--at-surface);
-  box-shadow: var(--at-elev);
-}
-
 .at-sseg .at-seg-item {
   padding-inline: 0;
   font: var(--at-tl-type-seg);
@@ -1160,7 +1148,7 @@
   inline-size: var(--at-tl-switch-w);
   block-size: var(--at-tl-switch-h);
   margin: 0;
-  border: 1px solid var(--at-line-strong);
+  border: var(--at-border) solid var(--at-line-strong);
   border-radius: var(--at-r-pill);
   background:
     radial-gradient(circle closest-side, var(--at-muted) 97%, transparent 100%) no-repeat 3px center / 24px 24px,
@@ -1190,7 +1178,7 @@
 }
 
 .at-switch:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 3px;
 }
 
@@ -1255,7 +1243,7 @@
 
 .at-langrow-list {
   padding-block: var(--at-s-2);
-  border-block-end: 1px solid var(--at-line);
+  border-block-end: var(--at-border) solid var(--at-line);
 }
 
 .at-settings-foot,
@@ -1264,7 +1252,7 @@
   flex-direction: column;
   gap: var(--at-gap-item);
   padding-block-start: var(--at-s-5);
-  border-block-start: 1px solid var(--at-line);
+  border-block-start: var(--at-border) solid var(--at-line);
 }
 
 .at-settings-links {
@@ -1289,16 +1277,12 @@
   cursor: pointer;
 }
 
-.at-settings-foot .at-button {
-  padding-inline: var(--at-s-6);
-}
-
 .at-figs {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: var(--at-gap-group);
   margin: 0;
-  border-block-start: 1px solid var(--at-line);
+  border-block-start: var(--at-border) solid var(--at-line);
 }
 
 .at-figs > div {
@@ -1306,7 +1290,7 @@
   flex-direction: column;
   gap: var(--at-s-1);
   padding-block: var(--at-s-4);
-  border-block-end: 1px solid var(--at-line);
+  border-block-end: var(--at-border) solid var(--at-line);
 }
 
 .at-figs dt {
@@ -1424,7 +1408,7 @@
   gap: var(--at-gap-tight);
   block-size: var(--at-h-pill-s);
   padding-inline: var(--at-s-3);
-  border: 1px solid var(--at-line-strong);
+  border: var(--at-border) solid var(--at-line-strong);
   border-radius: var(--at-r-pill);
   background: var(--at-surface);
   color: var(--at-ink-2);
@@ -1474,7 +1458,6 @@
 
 .at-export {
   inline-size: 100%;
-  padding-inline: var(--at-s-6);
 }
 
 .at-export > svg {
@@ -1510,8 +1493,6 @@
 }
 
 .at-lang-banner .at-button {
-  block-size: auto;
-  min-block-size: var(--at-h-control);
   white-space: normal;
   text-wrap: balance;
 }
@@ -1623,7 +1604,7 @@
     max-block-size: calc(100dvh - 2 * var(--at-s-8));
     margin: auto;
     padding: 0;
-    border-block-end: 1px solid var(--at-line);
+    border-block-end: var(--at-border) solid var(--at-line);
     border-radius: var(--at-r-2xl);
   }
 
@@ -1637,7 +1618,7 @@
     max-block-size: none;
     padding: 0;
     border: 0;
-    border-inline-start: 1px solid var(--at-line);
+    border-inline-start: var(--at-border) solid var(--at-line);
     border-radius: 0;
     border-start-start-radius: var(--at-r-2xl);
     border-end-start-radius: var(--at-r-2xl);
@@ -1648,7 +1629,7 @@
 
     inset-inline: 0 auto;
     border-inline-start: 0;
-    border-inline-end: 1px solid var(--at-line);
+    border-inline-end: var(--at-border) solid var(--at-line);
     border-radius: 0;
     border-start-end-radius: var(--at-r-2xl);
     border-end-end-radius: var(--at-r-2xl);
@@ -1715,7 +1696,7 @@
   display: grid;
   gap: var(--at-gap-item);
   padding: var(--at-card-pad);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
   color: var(--at-ink);
@@ -1920,10 +1901,6 @@
   resize: none;
 }
 
-:root:is([data-theme="dark"], [data-theme="oled"]) .at-sseg .at-seg-ind {
-  background: var(--at-raised);
-}
-
 :root:is([data-theme="dark"], [data-theme="oled"]):not([data-accent="violet"]) .at-heat-cell[data-level="3"] {
   --dot-ink: var(--at-on-accent);
 }
@@ -1941,7 +1918,7 @@
 }
 
 .at-face-opt:has(:checked) {
-  border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
+  border-color: var(--at-selected-line);
   background: color-mix(in srgb, var(--at-accent) 14%, var(--at-surface));
   color: var(--at-ink);
   font-weight: 600;
@@ -1961,8 +1938,8 @@
   gap: var(--at-s-1);
   min-block-size: var(--at-h-cook);
   padding: var(--at-s-2);
-  border: 1px solid var(--at-line);
-  border-radius: var(--at-r-md);
+  border: var(--at-border) solid var(--at-line);
+  border-radius: var(--at-r-lg);
   background: var(--at-surface);
   color: var(--at-ink-2);
   font: var(--at-type-caption);
@@ -1977,7 +1954,7 @@
 }
 
 .at-face-opt:has(:focus-visible) {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 2px;
 }
 

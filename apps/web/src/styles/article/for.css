@@ -117,7 +117,7 @@
   }
 
   .at-check input:focus-visible + .at-box {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 

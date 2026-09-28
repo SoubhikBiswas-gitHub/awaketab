@@ -457,10 +457,6 @@ body {
 
 .pp-main {
   inline-size: 100%;
-  min-block-size: var(--at-h-primary);
-  padding-inline: var(--at-s-6);
-  border-radius: var(--at-r-xl);
-  font: var(--at-type-action);
 }
 
 .pp-main[data-live="0"] {
@@ -564,7 +560,7 @@ body {
 }
 
 .pp-chip[aria-pressed="true"] {
-  border-color: var(--ext-lamp-line);
+  border-color: var(--at-selected-line);
   background: var(--ext-lamp-soft);
   font-weight: 600;
   color: var(--at-ink);
@@ -708,7 +704,7 @@ body {
   block-size: var(--at-h-button);
   padding-inline: var(--at-s-4) var(--at-s-3);
   border: var(--at-border) solid var(--at-line);
-  border-radius: var(--at-r-xl);
+  border-radius: var(--at-r-md);
   background: transparent;
   font: var(--at-type-small);
   font-weight: 600;
@@ -771,10 +767,6 @@ body {
   gap: var(--at-s-2);
 }
 
-.pp-pro-actions .at-btn {
-  padding-inline: var(--at-s-3);
-}
-
 .pp-key {
   color: var(--at-ink);
   text-decoration: underline;
@@ -799,7 +791,6 @@ body {
 .pp-tips-ok {
   border: 0;
   background: var(--at-raised);
-  font: var(--at-type-small);
   font-weight: 600;
 }
 
@@ -834,7 +825,7 @@ body {
   inset-inline-start: var(--at-s-4);
   block-size: var(--at-s-4);
   padding-inline: var(--at-s-1);
-  border-radius: var(--at-r-xs);
+  border-radius: var(--at-r-pill);
   background: var(--at-lamp-aqua-light);
   font: var(--at-type-kicker);
   color: var(--at-ext-badge-ink);

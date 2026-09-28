@@ -14,7 +14,7 @@ interface Props extends HTMLAttributes<'button'> {
 
 const { variant = 'secondary', size, href, kbd, glyph = variant === 'primary', class: className, type = 'button', ...rest } =
   Astro.props;
-const resolvedSize = size ?? (variant === 'primary' || variant === 'stop' ? 'lg' : 'md');
+const resolvedSize = size ?? 'md';
 const classes = [
   'at-button',
   `at-button-${variant}`,

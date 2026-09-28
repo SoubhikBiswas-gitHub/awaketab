@@ -170,10 +170,6 @@
     stroke-width: 2;
   }
 
-  .at-hx-edge {
-    min-block-size: var(--at-h-primary);
-  }
-
   .at-hx-note {
     max-inline-size: var(--at-measure);
     margin: 0;
@@ -761,7 +757,7 @@
     block-size: calc(var(--at-hx-q) * 60);
     margin-block-start: calc(var(--at-hx-q) * 12);
     border: var(--at-border) solid var(--at-line-strong);
-    border-radius: calc(var(--at-hx-q) * 20);
+    border-radius: calc(var(--at-hx-q) * 12);
     background: var(--at-raised);
     font: 600 calc(var(--at-hx-q) * 17) / calc(var(--at-hx-q) * 24) var(--at-font);
   }
@@ -808,7 +804,8 @@
   }
 
   .at-hx-opt-on {
-    background: var(--at-raised);
+    background: var(--at-selected-fill);
+    box-shadow: inset 0 0 0 var(--at-border) var(--at-selected-line);
     color: var(--at-ink);
     font-weight: 600;
   }

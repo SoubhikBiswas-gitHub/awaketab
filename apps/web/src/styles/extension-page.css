@@ -38,7 +38,6 @@
 
   .at-ext-ctas > .at-button {
     max-inline-size: 100%;
-    padding-block: var(--at-s-2);
     white-space: normal;
     text-align: center;
     text-wrap: balance;
@@ -204,7 +203,7 @@
   }
 
   .at-ext-faq-list summary:focus-visible {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 
