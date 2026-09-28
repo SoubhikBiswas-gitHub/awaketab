@@ -936,7 +936,8 @@
     background: var(--at-accent);
   }
 
-  .at-hy-box svg {
+  :where(.at-hy-done) .at-hy-box svg {
+    background: var(--at-accent);
     color: var(--at-on-accent);
   }
 

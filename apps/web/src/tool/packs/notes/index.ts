@@ -424,7 +424,7 @@ function mount(ctx: IToolCtx, d: HTMLDialogElement): IPanel {
     } else {
       d.removeAttribute('data-list');
       main.inert = listOpen;
-      // The list is the first pane; scroll positions run negative in right-to-left pages.
+      // The list is the first pane; scroll positions run negative on RTL pages.
       const end = (panes.scrollWidth - panes.clientWidth) * (getComputedStyle(d).direction === 'rtl' ? -1 : 1);
       panes.scrollTo({ left: listOpen ? 0 : end, behavior: jump || still() ? 'instant' : 'smooth' });
     }
