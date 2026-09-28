@@ -344,7 +344,7 @@ test.describe('layout stability', { tag: '@stability' }, () => {
             if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
           });
           const html = page.locator('html');
-          const gallery = page.locator('dialog[data-dialog="faces"]');
+          const gallery = page.locator('dialog[data-dialog="customize"]');
           const menu = page.locator('#at-hm-menu');
           const steps: Array<[string, () => Promise<void>]> = [
             [
@@ -367,9 +367,11 @@ test.describe('layout stability', { tag: '@stability' }, () => {
                 await page.locator('#awaketab-tool .at-fc-open:visible').first().click();
                 await expect(gallery).toBeVisible();
                 await gallery.locator(`[data-pick="${name}"]`).click();
-                await expect(gallery).toBeHidden();
+                // The sheet stays open while the clock behind it changes; Esc closes it.
                 if (name === 'ring') await expect(html).not.toHaveAttribute('data-face');
                 else await expect(html).toHaveAttribute('data-face', name);
+                await page.keyboard.press('Escape');
+                await expect(gallery).toBeHidden();
               },
             ]),
             [

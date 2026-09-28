@@ -48,7 +48,7 @@ function canonicalPathname(pathname: string): string {
   return LOCALE_RE.test(trimmed.slice(1)) ? `${trimmed}/` : trimmed;
 }
 
-// sanitizeMsg lives in its own module so the boot chunk does not carry it (the message mode and Settings load it).
+// sanitizeMsg lives in its own module so the boot chunk does not carry it (the message mode loads it).
 export { sanitizeMsg } from './msg.js';
 
 export function parseToolParams(loc: Pick<Location, 'pathname' | 'search'>, dataset: DOMStringMap): IUrlParams {

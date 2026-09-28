@@ -86,6 +86,7 @@
     if (at > 0 && at < 4 && document.querySelector('link[href="#at-tool-parsed"]'))
       document.write(`<link rel="stylesheet" href="${FACES_CSS}" data-at-faces>`);
     if (saved && saved.keyboardHints === false) root.dataset.hints = 'off';
+    if (saved && saved.reduceMotion === 'on') root.dataset.motion = 'reduce';
     const clock = /** @type {{ clock24h?: unknown; showSeconds?: unknown } | undefined} */ (saved?.ambient);
     const h24 = clock?.clock24h;
     if (typeof h24 === 'boolean') c24 = h24;

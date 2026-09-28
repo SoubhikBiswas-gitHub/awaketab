@@ -124,11 +124,31 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     },
   },
   {
-    name: 'clock face gallery',
+    name: 'Customize, Face',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
       await page.locator('#awaketab-tool .at-fc-open:visible').first().click();
-      await expect(page.locator('dialog[data-dialog="faces"] [data-pick="analog"] .at-fx')).toBeVisible();
+      await expect(page.locator('dialog[data-dialog="customize"] [data-pick="analog"] .at-fx')).toBeVisible();
+    },
+  },
+  {
+    name: 'Customize, Look',
+    open: async (page) => {
+      await openTool(page, '/?autostart=0');
+      await page.locator('#awaketab-tool .at-fc-open:visible').first().click();
+      const sheet = page.locator('dialog[data-dialog="customize"]');
+      await sheet.locator('[data-cz-tab="look"]').click();
+      await expect(sheet.locator('input[name="lk-accent"][value="violet"]')).toBeAttached();
+    },
+  },
+  {
+    name: 'Customize, Sound',
+    open: async (page) => {
+      await openTool(page, '/?autostart=0');
+      await page.keyboard.press('s');
+      const sheet = page.locator('dialog[data-dialog="customize"]');
+      await expect(sheet.locator('[data-cz-tab="sound"]')).toHaveAttribute('aria-selected', 'true');
+      await expect(sheet.locator('[data-cz-pane="sound"] [data-snd-kind="rain"]')).toBeVisible();
     },
   },
   {
@@ -137,6 +157,8 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
       await openTool(page, '/?autostart=0');
       await page.locator('#awaketab-tool header [data-more-open]').click();
       await page.locator('#at-more [data-open-settings]').click();
+      // Pro lives in the Device and privacy group of Settings.
+      await page.locator('dialog[data-dialog="settings"] [data-sg="device"] > summary').click();
       await page.locator('dialog[data-dialog="settings"] [data-open-pro]').click();
       await expect(page.locator('dialog[data-dialog="pro"]')).toBeVisible();
     },

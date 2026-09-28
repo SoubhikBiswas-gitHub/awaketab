@@ -1361,6 +1361,14 @@
   }
 }
 
+:root[data-motion="reduce"] :is(.at-island, dialog) *,
+:root[data-motion="reduce"] :is(.at-island, dialog) ::before,
+:root[data-motion="reduce"] :is(.at-island, dialog) ::after,
+:root[data-motion="reduce"] dialog {
+  animation: none !important;
+  transition: none !important;
+}
+
 @media (forced-colors: active) {
   .at-track,
   .at-arc,

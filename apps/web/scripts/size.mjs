@@ -19,7 +19,14 @@ const limits = {
   embedJs: 25 * 1024,
   loaderJs: 3 * 1024,
   // Feature packs load only when a visitor opens that feature, so each has its own budget outside totalJs.
-  packs: { faces: 30 * 1024, sound: 110 * 1024, notes: 120 * 1024, themes: 25 * 1024, extras: 15 * 1024 },
+  packs: {
+    faces: 30 * 1024,
+    sound: 110 * 1024,
+    notes: 120 * 1024,
+    themes: 25 * 1024,
+    extras: 15 * 1024,
+    customize: 2 * 1024,
+  },
 };
 
 async function walk(dir) {

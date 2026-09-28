@@ -1048,16 +1048,229 @@
   gap: var(--at-gap-group);
 }
 
-.at-settings > section[data-battery-fields] {
+.at-settings [hidden] {
+  display: none;
+}
+
+.at-sg-list {
+  display: flex;
+  flex-direction: column;
+  interpolate-size: allow-keywords;
+}
+
+.at-sg-list + .at-settings-foot {
+  padding-block-start: 0;
+  border-block-start: 0;
+}
+
+.at-sg-body > .at-langrow > .at-langrow-btn {
+  min-block-size: var(--at-h-control);
+  padding-block: 0;
+  border-block-end: 0;
+}
+
+.at-sg-body > .at-langrow > .at-langrow-list {
+  border-block-end: 0;
+}
+
+.at-sg,
+.at-sg-door {
+  border-block-end: 1px solid var(--at-line);
+}
+
+.at-sg-sum {
+  display: grid;
+  grid-template-columns: var(--at-h-control) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--at-gap-item);
+  inline-size: 100%;
+  min-block-size: calc(var(--at-h-row) + var(--at-s-4));
+  padding-block: var(--at-s-3);
+  padding-inline: 0;
+  border: 0;
+  border-radius: var(--at-r-md);
+  background: none;
+  color: var(--at-ink);
+  font: var(--at-type-ui);
+  text-align: start;
+  list-style: none;
+  cursor: pointer;
+}
+
+.at-sg-sum::-webkit-details-marker {
+  display: none;
+}
+
+.at-sg-sum:focus-visible {
+  outline: 2px solid var(--at-focus);
+  outline-offset: 3px;
+}
+
+.at-sg-ico {
+  display: grid;
+  place-items: center;
+  inline-size: var(--at-h-control);
+  block-size: var(--at-h-control);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-r-md);
+  background: var(--at-sunken);
+  transition: background-color var(--at-d-slide) var(--at-ease);
+}
+
+.at-sg-sum:hover .at-sg-ico,
+.at-sg[open] > .at-sg-sum .at-sg-ico {
+  background: var(--at-raised);
+}
+
+.at-sg-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--at-s-1);
+  min-inline-size: 0;
+}
+
+.at-sg-title {
+  font-weight: 600;
+}
+
+.at-sg-now {
+  color: var(--at-ink-2);
+  font: var(--at-type-small);
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+.at-sg-now > span {
+  white-space: nowrap;
+}
+
+.at-sg-chev {
+  color: var(--at-muted);
+  transition: transform var(--at-d-slide) var(--at-ease);
+}
+
+.at-sg[open] > .at-sg-sum .at-sg-chev {
+  transform: rotate(180deg);
+}
+
+[dir="rtl"] .at-sg-go {
+  transform: scaleX(-1);
+}
+
+.at-sg::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size var(--at-d-slide) var(--at-ease),
+    content-visibility var(--at-d-slide) allow-discrete;
+}
+
+.at-sg[open]::details-content {
+  block-size: auto;
+}
+
+.at-sg-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--at-gap-group);
+  padding-block: var(--at-s-2) var(--at-s-6);
+}
+
+.at-sg[open] > .at-sg-body {
+  animation: at-sg-rise var(--at-d-rise) var(--at-ease);
+}
+
+@keyframes at-sg-rise {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--at-s-2)));
+  }
+}
+
+.at-sg-body .at-switchrow {
+  min-block-size: var(--at-h-control);
+  padding-block: 0;
+}
+
+.at-sg-part {
+  display: flex;
+  flex-direction: column;
   gap: var(--at-gap-item);
 }
 
-.at-settings > section.at-tight {
+.at-sg-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0 var(--at-s-4);
+}
+
+.at-sg-reset {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--at-gap-item);
+  padding-block-start: var(--at-s-5);
+  border-block-start: 1px solid var(--at-line);
+}
+
+.at-sg-reset > summary {
+  padding-inline: var(--at-s-6);
+  list-style: none;
+  cursor: pointer;
+}
+
+.at-sg-reset > summary::-webkit-details-marker {
+  display: none;
+}
+
+.at-sg-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--at-gap-item);
+  padding: var(--at-s-4);
+  border: 1px solid var(--at-line-strong);
+  border-radius: var(--at-r-lg);
+  background: var(--at-sunken);
+}
+
+.at-sg-confirm-row {
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--at-gap-tight);
 }
 
-.at-settings > [hidden] {
+.at-settings [data-v],
+.at-settings:has([data-battery-fields][hidden]) .at-sg-batt {
   display: none;
+}
+
+.at-settings:has([name="endBehaviour"][value="prompt_extend"]:checked) [data-v="end-ask"],
+.at-settings:has([name="endBehaviour"][value="stop"]:checked) [data-v="end-stop"],
+.at-settings:has([name="notifications"]:checked) [data-v="nt-on"],
+.at-settings:has([name="notifications"]:not(:checked)) [data-v="nt-off"],
+.at-settings:has([name="clock24h"][value="auto"]:checked) [data-v="fmt-auto"],
+.at-settings:has([name="clock24h"][value="12"]:checked) [data-v="fmt-12"],
+.at-settings:has([name="clock24h"][value="24"]:checked) [data-v="fmt-24"],
+.at-settings:has([name="showSeconds"]:checked) [data-v="sec-on"],
+.at-settings:has([name="showSeconds"]:not(:checked)) [data-v="sec-off"],
+.at-settings:has([name="batteryAuto"]:checked) :is([data-v="bt-on"], [data-v="bh-on"]),
+.at-settings:has([name="batteryAuto"]:not(:checked)) :is([data-v="bt-off"], [data-v="bh-off"]),
+.at-settings:has([name="keyboardShortcuts"]:checked) [data-v="ks-on"],
+.at-settings:has([name="keyboardShortcuts"]:not(:checked)) [data-v="ks-off"],
+.at-settings:has([name="telemetry"]:checked) [data-v="us-on"],
+.at-settings:has([name="telemetry"]:not(:checked)) [data-v="us-off"] {
+  display: inline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .at-sg::details-content {
+    transition: none;
+  }
+}
+
+:root[data-motion="reduce"] .at-sg::details-content {
+  transition: none;
 }
 
 .at-field {
@@ -1287,10 +1500,6 @@
   text-decoration: underline;
   text-underline-offset: 4px;
   cursor: pointer;
-}
-
-.at-settings-foot .at-button {
-  padding-inline: var(--at-s-6);
 }
 
 .at-figs {

@@ -6,7 +6,7 @@ import { hm, mins, nextWall, stepCustom, wallOf, when } from '../format.js';
 import { t } from '../i18n.js';
 import { applyTheme, nextTheme } from '../theme.js';
 import { openDialog } from './dialog.js';
-import { openSettings, sound } from './settings.js';
+import { openSettings } from './settings.js';
 import { toast } from './toast.js';
 import { moreCss } from './more-css.js';
 import { liveSession } from './view.js';
@@ -171,11 +171,16 @@ export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
     else if (name === 'add15' || name === 'add30' || name === 'add60')
       extendAsk(ctx, { add15: 15, add30: 30, add60: 60 }[name] * 60_000);
     else if (name === 'askStop') finishAsk(ctx);
-    else if (name === 'battSettings') openSettings(ctx, el);
-    else if (name === 'sound') void sound(ctx, 'open', el);
+    else if (name === 'battSettings') openSettings(ctx, el, 'device');
+    else if (name === 'customize' || name === 'faces' || name === 'sound')
+      openCustomize(
+        ctx,
+        name === 'customize' ? (el.dataset.tab as TCustomizeTab) : name === 'faces' ? 'face' : name,
+        el,
+      );
     else if (name.startsWith('face'))
       void import('../packs/faces/index.js').then((m) => {
-        m.faceAct(ctx, name, el);
+        m.faceAct(ctx, name);
       });
     else if (name === 'intention')
       void import('../packs/extras/index.js').then((m) => {
@@ -299,6 +304,15 @@ export function notes(ctx: IToolCtx, opener?: Element | null): void {
     return text;
   };
   void import('../packs/notes/index.js').then((m) => m.openNotes(ctx, opener, take)).finally(take);
+}
+
+export type TCustomizeTab = 'face' | 'look' | 'sound';
+
+// The Customize sheet (Face · Look · Sound) is its own pack; with no tab it shows the last one of this visit.
+export function openCustomize(ctx: IToolCtx, tab?: TCustomizeTab, opener?: Element | null): void {
+  void import('../packs/customize/index.js').then((m) => {
+    m.openCustomize(ctx, tab, opener);
+  });
 }
 
 export function pip(ctx: IToolCtx): void {

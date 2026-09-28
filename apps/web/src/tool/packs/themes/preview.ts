@@ -164,7 +164,11 @@ function tick(): void {
 
 // A swap back runs as a slow cross-fade where the browser can, and at once under reduced motion.
 function fade(fn: () => unknown): void {
-  if (!('startViewTransition' in document) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (
+    !('startViewTransition' in document) ||
+    matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    html.dataset.motion
+  ) {
     void fn();
     return;
   }

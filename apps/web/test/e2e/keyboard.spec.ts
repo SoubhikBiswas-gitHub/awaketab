@@ -471,3 +471,34 @@ test('stats dialog: opens from the keyboard, Tab reaches Close, Esc closes and r
   expect(await focusedMatches(page, '#awaketab-tool header [data-more-open]')).toBe(true);
   await expectVisibleFocus(page);
 });
+
+test('Customize: S opens Sound, arrow keys move between the tabs, a pick keeps the sheet open', async ({ page }) => {
+  await open(page, '/?autostart=0');
+  await page.keyboard.press('s');
+  const dlg = page.locator('dialog[data-dialog="customize"]');
+  await expect(dlg).toBeVisible();
+  const tab = (id: string) => dlg.locator(`[data-cz-tab="${id}"]`);
+  await expect(tab('sound')).toHaveAttribute('aria-selected', 'true');
+  await expect(tab('sound')).toBeFocused();
+  await expectVisibleFocus(page);
+  // Right from the last tab wraps to the first; Home and End jump to the ends.
+  await page.keyboard.press('ArrowRight');
+  await expect(tab('face')).toHaveAttribute('aria-selected', 'true');
+  await expect(dlg.locator('[data-cz-pane="face"]')).toBeVisible();
+  await expect(dlg.locator('[data-cz-pane="sound"]')).toBeHidden();
+  await page.keyboard.press('ArrowRight');
+  await expect(tab('look')).toHaveAttribute('aria-selected', 'true');
+  await expect(tab('look')).toBeFocused();
+  await expect(dlg.locator('input[name="cz-theme"][value="auto"]')).toBeChecked();
+  await page.keyboard.press('End');
+  await expect(tab('sound')).toHaveAttribute('aria-selected', 'true');
+  await page.keyboard.press('Home');
+  await expect(tab('face')).toHaveAttribute('aria-selected', 'true');
+  // Enter on a face picks it and the clock behind changes while the sheet stays open.
+  await dlg.locator('[data-pick="bold"]').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('html')).toHaveAttribute('data-face', 'bold', { timeout: 10_000 });
+  await expect(dlg).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dlg).toBeHidden();
+});

@@ -31,15 +31,13 @@
         "functions/**/*.ts",
         "test/**/*.ts"
       ],
-      "ignore": ["src/components/icons/BrandIcon.astro"],
       "ignoreDependencies": [
         "@iconify-json/logos",
         "@phosphor-icons/core",
         "@fontsource/inter",
         "@fontsource/noto-sans-devanagari",
         "@fontsource/noto-sans-jp",
-        "@fontsource/noto-sans-sc",
-        "@phosphor-icons/core"
+        "@fontsource/noto-sans-sc"
       ],
       "ignoreIssues": {
         "src/components/ui/*.tsx": ["exports"],
