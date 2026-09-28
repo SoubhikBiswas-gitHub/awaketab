@@ -42,6 +42,7 @@ const themes = [
 ---
 
 {css && <style is:inline set:html={css} />}
+<i class="at-stuck-probe" aria-hidden="true"></i>
 <header class="at-site-header" data-tool={tool ? '' : undefined}>
   <a class="at-logo at-wordmark" href={localePath(locale, '/')} aria-label={t('header.home')}>
     <svg class="at-logo-mark" viewBox="0 0 48 48" width="26" height="26" aria-hidden="true" focusable="false">
@@ -82,15 +83,19 @@ const themes = [
     )
   }
   <div class="at-header-end">
-    <ThemeSwitch locale={locale} compact={tool} />
+    {!tool && <ThemeSwitch locale={locale} />}
     <slot />
     {!tool && <HeaderAdd locale={locale} store={first !== 'extension'} />}
-    <button class="at-icon-button at-hm-open" type="button" popovertarget="at-hm-menu" style="anchor-name:--at-hm-menu" aria-label={t('header.menu')} title={t('header.menu')}>
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
-        <path d="M4 6.5h16M4 12h16M4 17.5h10" />
-        <circle cx="19" cy="17.5" r="1.9" fill="currentColor" stroke="none" />
-      </svg>
-    </button>
+    {
+      !tool && (
+        <button class="at-icon-button at-hm-open" type="button" popovertarget="at-hm-menu" style="anchor-name:--at-hm-menu" aria-label={t('header.menu')} title={t('header.menu')}>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
+            <path d="M4 6.5h16M4 12h16M4 17.5h10" />
+            <circle cx="19" cy="17.5" r="1.9" fill="currentColor" stroke="none" />
+          </svg>
+        </button>
+      )
+    }
     <div class="at-hm-panel at-hm-menu" id="at-hm-menu" popover style="position-anchor:--at-hm-menu">
       <div class="at-hm-head">
         <p class="at-hm-title">{t('header.menu')}</p>

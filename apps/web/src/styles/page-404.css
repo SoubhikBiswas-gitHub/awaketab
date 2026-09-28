@@ -146,7 +146,7 @@
   display: contents;
 }
 
-.at-404 :is(.at-dateline, .at-tabs, .at-len, .at-why-btn, .at-tabs-late),
+.at-404 :is(.at-tabs, .at-len, .at-why-btn),
 .at-404
   .at-site-header
   :is(

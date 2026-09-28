@@ -106,10 +106,10 @@ function setCustom(ctx: IToolCtx, up: boolean): void {
     ?.setAttribute('aria-label', t(m >= 720 ? 'tool.custom.more60' : 'tool.custom.more5'));
 }
 
-function openPanel(ctx: IToolCtx, panel: 'until' | 'custom' | 'more'): void {
+function openPanel(ctx: IToolCtx, panel: 'until' | 'custom'): void {
   bindPanels(ctx);
   const s = ctx.store.get();
-  if (!liveSession(s) && panel !== 'more') {
+  if (!liveSession(s)) {
     if (panel === 'until' && !(s.selectedPreset === 'until' && s.settings.lastUntilWall))
       setUntil(ctx, wallOf(untilSlots()[0] ?? Date.now()));
     else ctx.store.set({ selectedPreset: panel, eightHour: false });
@@ -119,11 +119,46 @@ function openPanel(ctx: IToolCtx, panel: 'until' | 'custom' | 'more'): void {
   box?.querySelector<HTMLElement>(panel === 'until' ? '.at-slot' : 'button')?.focus();
 }
 
+let lengthsBound = false;
+
+// While a session runs the length row is folded into one line; Change unfolds it until a length is picked.
+function openLengths(ctx: IToolCtx): void {
+  const { root, store } = ctx;
+  if (!lengthsBound) {
+    lengthsBound = true;
+    root.querySelector('.at-bar')?.addEventListener('click', (e) => {
+      if ((e.target as Element).closest('[data-preset]')) delete root.dataset.lenopen;
+    });
+    store.subscribe((s) => {
+      if (!liveSession(s)) delete root.dataset.lenopen;
+    });
+  }
+  root.dataset.lenopen = '';
+  root.querySelector<HTMLElement>('.at-bar [aria-pressed="true"], .at-bar button')?.focus();
+}
+
+export type TCustomizeTab = 'face' | 'look' | 'sound';
+
+// One entry point for every way into Customize (header button, face name, lamp dot, the live sound icon).
+export function openCustomize(ctx: IToolCtx, tab?: TCustomizeTab, opener?: Element | null): void {
+  if (tab === 'sound') void sound(ctx, 'open', opener);
+  else if (tab === 'face')
+    void import('../packs/faces/index.js').then((m) => {
+      m.faceAct(ctx, 'faces', opener);
+    });
+  else openSettings(ctx, opener);
+}
+
 export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
   // Panels and sheets style from the on-demand sheet; they open once it is in.
   void moreCss().then(() => {
     const { store } = ctx;
-    if (name === 'until' || name === 'custom' || name === 'more') openPanel(ctx, name);
+    if (name === 'until' || name === 'custom') openPanel(ctx, name);
+    else if (name === 'change') openLengths(ctx);
+    else if (name === 'extend30') {
+      ctx.engine.addTime(1_800_000);
+      ctx.syncLock();
+    } else if (name === 'customize') openCustomize(ctx, el.dataset.tab as TCustomizeTab | undefined, el);
     else if (name === 'close') {
       store.set({ ui: { open: '', past: false } });
       ctx.root.querySelector<HTMLElement>('[data-chips] [aria-pressed="true"], [data-chips] button')?.focus();
@@ -234,8 +269,10 @@ export function help(ctx: IToolCtx, show?: boolean, opener?: Element | null): vo
   else openDialog(dlg, opener);
 }
 
-export function open(ctx: IToolCtx, el: HTMLElement): void {
-  const d = el.dataset;
+export function open(ctx: IToolCtx, item: HTMLElement): void {
+  const d = item.dataset;
+  // A row of the More menu hands focus back to the More button, since the menu has closed.
+  const el = item.closest('[popover]') ? (document.querySelector<HTMLElement>('[data-more-open]') ?? item) : item;
   if ('openSettings' in d) openSettings(ctx, el);
   else if ('openStats' in d) openStats(ctx, el);
   else if ('openShare' in d) openShare(ctx, el);

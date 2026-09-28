@@ -118,7 +118,8 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     name: 'settings dialog',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.locator('#awaketab-tool header [data-open-settings]').click();
+      await page.locator('#awaketab-tool header [data-more-open]').click();
+      await page.locator('#at-more [data-open-settings]').click();
       await expect(page.locator('dialog[data-dialog="settings"]')).toBeVisible();
     },
   },
@@ -134,7 +135,8 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     name: 'Pro sheet',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.locator('#awaketab-tool header [data-open-settings]').click();
+      await page.locator('#awaketab-tool header [data-more-open]').click();
+      await page.locator('#at-more [data-open-settings]').click();
       await page.locator('dialog[data-dialog="settings"] [data-open-pro]').click();
       await expect(page.locator('dialog[data-dialog="pro"]')).toBeVisible();
     },
@@ -143,7 +145,8 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     name: 'stats dialog',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.locator('#awaketab-tool header [data-open-stats]').click();
+      await page.locator('#awaketab-tool header [data-more-open]').click();
+      await page.locator('#at-more [data-open-stats]').click();
       await expect(page.locator('dialog[data-dialog="stats"] .at-heat-cell')).toHaveCount(84);
     },
   },
@@ -151,7 +154,8 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     name: 'shortcuts overlay',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.locator('#awaketab-tool header [data-open-shortcuts]').click();
+      await page.locator('#awaketab-tool header [data-more-open]').click();
+      await page.locator('#at-more [data-open-shortcuts]').click();
       await expect(page.locator('dialog[data-dialog="shortcuts"]')).toBeVisible();
     },
   },
@@ -175,7 +179,8 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     name: 'share dialog',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.locator('#awaketab-tool header [data-open-share]').click();
+      await page.locator('#awaketab-tool header [data-more-open]').click();
+      await page.locator('#at-more [data-open-share]').click();
       await expect(page.locator('dialog[data-dialog="share"] [data-share-url]')).toHaveValue(/^http/u);
     },
   },

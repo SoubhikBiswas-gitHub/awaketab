@@ -1,27 +1,27 @@
 ---
 import { createT } from '../i18n/load';
 import type { TLocale } from '../i18n/locales';
+import Icon from './icons/Icon.astro';
 
 interface Props {
   locale: TLocale;
 }
 
 const t = createT(Astro.props.locale);
-// Four small dials: the clock face gallery.
-const FACES_ICON =
-  'M4 7.5a3.5 3.5 0 1 0 7 0 3.5 3.5 0 1 0-7 0M13 7.5a3.5 3.5 0 1 0 7 0 3.5 3.5 0 1 0-7 0M4 16.5a3.5 3.5 0 1 0 7 0 3.5 3.5 0 1 0-7 0M13 16.5a3.5 3.5 0 1 0 7 0 3.5 3.5 0 1 0-7 0';
 ---
 
-<div class="at-seg at-fc" role="group" aria-label={t('tool.face.label')}>
-  <button class="at-seg-item at-fc-step" type="button" data-act="facePrev" aria-label={t('tool.face.prev')} aria-keyshortcuts="Shift+C">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+<div class="at-fc" role="group" aria-label={t('tool.face.label')}>
+  <button class="at-fc-step" type="button" data-act="facePrev" aria-label={t('tool.face.prev')} aria-keyshortcuts="Shift+C" title={t('tool.face.prev')}>
+    <Icon name="caret-circle-left" />
   </button>
-  <button class="at-seg-item at-fc-open" type="button" data-act="faces" aria-haspopup="dialog">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d={FACES_ICON}></path></svg>
-    <span>{t('tool.face.label')}</span>
+  <button class="at-fc-open" type="button" data-act="customize" data-tab="face" aria-haspopup="dialog" title={t('tool.face.choose')}>
+    <span class="sr-only">{t('tool.face.label')}</span>
     <span data-t="fn" aria-live="polite">{t('tool.face.ring')}</span>
   </button>
-  <button class="at-seg-item at-fc-step" type="button" data-act="faceNext" aria-label={t('tool.face.next')} aria-keyshortcuts="C">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+  <button class="at-fc-step" type="button" data-act="faceNext" aria-label={t('tool.face.next')} aria-keyshortcuts="C" title={t('tool.face.next')}>
+    <Icon name="caret-circle-right" />
   </button>
 </div>
+<button class="at-fc-lamp" type="button" data-act="customize" data-tab="look" aria-haspopup="dialog" aria-label={t('tool.face.look')} title={t('tool.face.look')}>
+  <span class="at-fc-dot" aria-hidden="true"></span>
+</button>

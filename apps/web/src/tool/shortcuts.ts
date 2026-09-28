@@ -50,8 +50,9 @@ export function keyHandler(
     if (!s.settings.keyboardShortcuts && e.key !== 'Escape') return;
     if (typingTarget(e.target)) return;
     // Esc closing a header menu must not also stop the session.
-    if (e.target instanceof Element && e.target.closest('.at-hm-panel, [popovertarget]')) return;
-    if ('showPopover' in root && document.querySelector('.at-hm-panel:popover-open')) return;
+    if (e.target instanceof Element && e.target.closest('.at-hm-panel, .at-more, .at-lenmore, [popovertarget]')) return;
+    if ('showPopover' in root && document.querySelector(':is(.at-hm-panel, .at-more, .at-lenmore):popover-open'))
+      return;
     if (notesTyping(e.key)) {
       e.preventDefault();
       return;
@@ -66,6 +67,7 @@ export function keyHandler(
         if (dialogOpen instanceof HTMLDialogElement) dialogOpen.close();
         else if (ui.mode !== 'standard') store.set({ ui: { mode: 'standard' } });
         else if (ui.open || ui.why) store.set({ ui: { open: '', why: false } });
+        else if ('lenopen' in root.dataset) delete root.dataset.lenopen;
         else if (ui.ask) toggle();
         else ctx.stop();
       });

@@ -38,7 +38,7 @@ test.beforeEach(async ({ page }) => {
 
 test.describe('header and footer on every surface', () => {
   for (const path of SURFACES) {
-    test(`${path}: one header (60 / 68 px), menus from 1160 (Menu on the tool), one footer in the fixed order`, async ({
+    test(`${path}: one header (60 / 68 px), menus from 1160 (More on the tool), one footer in the fixed order`, async ({
       page,
     }) => {
       const tool = path === '/' || path === '/es/';
@@ -46,7 +46,8 @@ test.describe('header and footer on every surface', () => {
       await page.goto(path);
       const header = page.locator('header.at-site-header');
       const nav = header.locator('nav.at-nav');
-      const menu = header.locator('button.at-hm-open');
+      // The tool header folds the site menu into its More menu.
+      const menu = header.locator(tool ? 'button[data-more-open]' : 'button.at-hm-open');
       await expect(header).toHaveCount(1);
       expect((await header.boundingBox())?.height).toBe(60);
       await expect(nav).toBeHidden();
@@ -166,47 +167,94 @@ test.describe('header and footer on every surface', () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/');
     await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake', { timeout: 4000 });
-    await page.locator('#awaketab-tool header button.at-hm-open').click();
+    await page.locator('#awaketab-tool header button[data-more-open]').click();
+    await page.locator('#at-more button[popovertarget="at-hm-menu"]').click();
     await expect(page.locator('#at-hm-menu')).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page.locator('#at-hm-menu')).toBeHidden();
     await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake');
   });
 
-  test('tool header: Stats from 600, Settings always, Menu always; the compact theme button below 768 px', async ({
+  test('tool header: the clock, Customize and More; More holds every tool action with its key, and the site menu', async ({
     page,
     browserName,
   }) => {
     test.skip(browserName !== 'chromium', 'layout check, engine-independent');
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/?autostart=0');
+    await page.locator('#awaketab-tool[data-booted]').waitFor();
     const header = page.locator('#awaketab-tool header.at-site-header');
-    await expect(header.locator('[data-open-stats]')).toBeVisible();
-    await expect(header.locator('[data-open-settings]')).toBeVisible();
-    await page.setViewportSize({ width: 390, height: 800 });
-    await expect(header.locator('[data-open-stats]')).toBeHidden();
-    // Phones reach Stats, Share and Shortcuts from the Settings footer (canvas ToolSettings; decision D-R27).
-    await header.locator('[data-open-settings]').click();
-    const sheet = page.locator('dialog[data-dialog="settings"]');
-    await expect(sheet.locator('[data-open-stats]')).toBeVisible();
-    await expect(sheet.locator('[data-open-share]')).toBeVisible();
-    await expect(sheet.locator('[data-open-shortcuts]')).toBeVisible();
+    // Theme lives in Customize now; the header keeps only the clock, Customize and More (the sound icon only plays).
+    await expect(header.getByRole('radiogroup')).toHaveCount(0);
+    await expect(header.locator('[data-theme-cycle]')).toHaveCount(0);
+    await expect(header.locator('.at-snd-btn')).toBeHidden();
+    await expect(header.locator('[data-t="now"]')).toHaveText(/\d{1,2}:\d{2}:\d{2}/u);
+    await expect(header.locator('[data-t="date"]')).toBeVisible();
+    const customize = header.getByRole('button', { name: 'Customize' });
+    await expect(customize).toBeVisible();
+    await expect(customize).toContainText('Customize');
+    const more = header.locator('button[data-more-open]');
+    await expect(more).toHaveAccessibleName('More');
+    await more.click();
+    const menu = page.locator('#at-more');
+    await expect(menu).toBeVisible();
+    for (const name of [
+      'Share this session',
+      'Floating window',
+      'Your stats',
+      'Keyboard shortcuts',
+      'Settings',
+      'Guides and devices',
+    ])
+      await expect(menu.getByRole('button', { name })).toBeVisible();
+    // Notes and Intention sit in the dock from 1024 px, so the menu leaves them out there.
+    await expect(menu.getByRole('button', { name: 'Notes' })).toBeHidden();
+    await menu.getByRole('button', { name: 'Your stats' }).click();
+    await expect(menu).toBeHidden();
+    await expect(page.locator('dialog[data-dialog="stats"]')).toBeVisible();
     await page.keyboard.press('Escape');
-    await expect(sheet).toBeHidden();
-    await expect(header.locator('button.at-hm-open')).toBeVisible();
-    await page.setViewportSize({ width: 820, height: 800 });
-    await expect(header.getByRole('radiogroup')).toBeVisible();
-    await expect(header.locator('[data-theme-cycle]')).toBeHidden();
+    await expect(more).toBeFocused();
+
+    await page.setViewportSize({ width: 390, height: 800 });
+    await expect(customize).toBeVisible();
+    expect((await customize.boundingBox())?.width).toBe(44);
+    await expect(header.locator('[data-t="date"]')).toBeHidden();
+    await more.click();
+    await expect(menu).toBeVisible();
+    // A bottom sheet in the thumb zone on phones; phones have no floating window but reach Notes and Intention here.
+    await expect
+      .poll(async () => {
+        const box = await menu.boundingBox();
+        return Math.round((box?.y ?? 0) + (box?.height ?? 0));
+      })
+      .toBe(800);
+    await expect(menu.getByRole('button', { name: 'Floating window' })).toBeHidden();
+    await expect(menu.getByRole('button', { name: 'Notes' })).toBeVisible();
+    await expect(menu.getByRole('button', { name: 'Intention' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+
     await page.setViewportSize({ width: 320, height: 568 });
-    await expect(header.getByRole('radiogroup')).toBeHidden();
     await expect(header.locator('.at-logo-word')).toBeHidden();
-    await expect(header.locator('button.at-hm-open')).toBeVisible();
-    const cycle = header.locator('[data-theme-cycle]');
-    await expect(cycle).toBeVisible();
-    await expect(cycle).toHaveAccessibleName('Theme: Auto, follows your system. Change theme');
-    await cycle.click();
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-    await expect(cycle).toHaveAccessibleName('Theme: Light. Change theme');
+    await expect(more).toBeVisible();
+    await expect(customize).toBeVisible();
+    for (const b of [customize, more]) {
+      const box = await b.boundingBox();
+      expect(box?.width).toBeGreaterThanOrEqual(44);
+      expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(320 - 16);
+    }
+  });
+
+  test('tool header: sticky, and it turns solid once the page scrolls', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/?autostart=0');
+    const html = page.locator('html');
+    await expect(html).not.toHaveAttribute('data-stuck', '');
+    await page.mouse.wheel(0, 600);
+    await expect(html).toHaveAttribute('data-stuck', '');
+    expect(Math.round((await page.locator('#awaketab-tool header.at-site-header').boundingBox())?.y ?? -1)).toBe(0);
+    await page.mouse.wheel(0, -600);
+    await expect(html).not.toHaveAttribute('data-stuck', '');
   });
 });
 
@@ -277,17 +325,18 @@ test.describe('theme switch', () => {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   });
 
-  test('tool: the header switch keeps the island in step (D continues from the picked theme)', async ({ page }) => {
+  test('tool: D steps the theme and the island stores it (the switch lives in Customize)', async ({ page }) => {
     await page.goto('/?autostart=0');
     await page.locator('#awaketab-tool[data-booted]').waitFor();
-    await page.locator('.at-theme-item[data-v="dark"]').click();
-    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await page.locator('h1').click();
+    // auto → light → dark → oled.
     await page.keyboard.press('d');
-    // auto → light → dark → oled: D after Dark is OLED; the switch shows OLED as Dark.
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await page.keyboard.press('d');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await page.keyboard.press('d');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'oled');
     await expect(page.locator('html')).toHaveAttribute('data-theme-pref', 'oled');
-    await expect(page.getByRole('radio', { name: 'Dark' })).toBeChecked();
     await expect
       .poll(() =>
         page.evaluate(() => (JSON.parse(localStorage.getItem('at.v1.settings') ?? '{}') as { theme?: string }).theme),
@@ -474,9 +523,7 @@ test.describe('status pill and logo bead', () => {
   });
 
   for (const theme of ['light', 'dark'] as const) {
-    test(`Stop is the raised neutral (D-R20): raised fill, line-strong border, ink text, 60 px, ${theme}`, async ({
-      page,
-    }) => {
+    test(`Stop is the calm outline: no fill, line-strong border, ink text, 60 px, ${theme}`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: theme });
       await page.goto('/');
       const stop = page.locator('#awaketab-tool [data-stop]');
@@ -497,7 +544,7 @@ test.describe('status pill and logo bead', () => {
           return c;
         };
         return {
-          bg: cs.backgroundColor === probe('--at-raised'),
+          bg: cs.backgroundColor === 'rgba(0, 0, 0, 0)',
           border: cs.borderTopColor === probe('--at-line-strong'),
           ink: cs.color === probe('--at-ink'),
           h: el.getBoundingClientRect().height,

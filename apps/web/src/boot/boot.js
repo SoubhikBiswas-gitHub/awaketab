@@ -37,7 +37,7 @@
   let face = '';
   /** @type {boolean | null} */
   let c24 = null;
-  let secs = false;
+  let secs = true;
   try {
     const allowed = ['auto', 'light', 'dark', 'oled'];
     const q = new URLSearchParams(location.search).get('theme');
@@ -89,7 +89,7 @@
     const clock = /** @type {{ clock24h?: unknown; showSeconds?: unknown } | undefined} */ (saved?.ambient);
     const h24 = clock?.clock24h;
     if (typeof h24 === 'boolean') c24 = h24;
-    secs = clock?.showSeconds === true;
+    secs = clock?.showSeconds !== false;
   } catch {
     // private mode
   }
@@ -300,6 +300,12 @@
   // lands before the largest paint.
   addEventListener('DOMContentLoaded', () => {
     sync();
+    // The header turns solid once the page scrolls past a probe 8 px from the top.
+    const probe = document.querySelector('.at-stuck-probe');
+    if (probe && 'IntersectionObserver' in window)
+      new IntersectionObserver(([e]) => {
+        root.toggleAttribute('data-stuck', !e?.isIntersecting);
+      }).observe(probe);
     let started = false;
     const go = () => {
       if (started) return;
