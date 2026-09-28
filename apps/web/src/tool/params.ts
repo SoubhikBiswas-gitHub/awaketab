@@ -15,7 +15,7 @@ export const EXTEND_AUTO_STOP_MS = 60_000;
 
 const LOCALE_RE = /^(es|pt-br|de|fr|ja|zh|hi)$/;
 const THEME_RE = /^(auto|light|dark|oled)$/;
-const MODE_RE = /^(standard|clock|focus|minimal|night|message|cook)$/;
+const MODE_RE = /^(standard|clock|focus|breathe|minimal|night|message|cook)$/;
 const PRESET_RE = /^p(15|30|45|60|120|240|inf)$/;
 const UNTIL_RE = /^([01]\d|2[0-3])-[0-5]\d$/;
 const REF_RE = /^[a-z0-9_-]{1,32}$/;

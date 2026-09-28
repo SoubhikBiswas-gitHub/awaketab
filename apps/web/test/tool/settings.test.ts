@@ -35,7 +35,7 @@ afterAll(() => {
   if (radioValue) Object.defineProperty(RadioNodeList.prototype, 'value', radioValue);
 });
 
-const MODES = ['standard', 'clock', 'focus', 'minimal', 'night', 'message', 'cook'];
+const MODES = ['standard', 'clock', 'focus', 'breathe', 'minimal', 'night', 'message', 'cook'];
 
 // Mirrors the settings form in src/components/ToolPanel.astro (names, types, defaults and checked states).
 const SETTINGS_HTML = `

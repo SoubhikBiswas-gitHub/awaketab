@@ -90,6 +90,8 @@ export interface ISettings {
   intention: string;
   worldClock: string | null;
   pomodoro: { autoCycle: boolean; longBreakMin: number };
+  // Absent until chosen; reads as '478'.
+  breathe?: '478' | 'box';
 }
 
 export interface IStats {

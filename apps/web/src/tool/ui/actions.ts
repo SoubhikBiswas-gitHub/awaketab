@@ -142,6 +142,10 @@ export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
       void import('../packs/faces/index.js').then((m) => {
         m.faceAct(ctx, name, el);
       });
+    else if (name === 'intention')
+      void import('../packs/extras/index.js').then((m) => {
+        m.intention(ctx);
+      });
   });
 }
 

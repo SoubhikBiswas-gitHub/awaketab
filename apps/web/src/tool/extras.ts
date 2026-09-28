@@ -137,7 +137,13 @@ export function mountLate(ctx: IToolCtx): () => void {
   });
   if (root.querySelector('[data-sponsor]')) void mountSponsor(ctx).then((u) => offs.push(u));
   // The tick-tock was turned on in an earlier visit: its pack waits for a session, then asks for a tap if needed.
-  if (store.get().settings.tick) void sound(ctx, 'mount');
+  const saved = store.get().settings;
+  if (saved.tick) void sound(ctx, 'mount');
+  // An intention or a second time zone from an earlier visit: the extras pack draws them under the clock.
+  if (saved.intention || saved.worldClock)
+    void import('./packs/extras/index.js').then((m) => {
+      m.lines(ctx);
+    });
   return () => {
     for (const off of offs) off();
   };

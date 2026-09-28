@@ -120,5 +120,13 @@ export function keyHandler(
       run(() => {
         notes(ctx);
       });
+    // B breathe, I intention, T focus timer: the extras pack.
+    else if (key.length === 1 && 'bit'.includes(key))
+      run(
+        () =>
+          void import('./packs/extras/index.js').then((m) => {
+            m.key(ctx, key);
+          }),
+      );
   };
 }
