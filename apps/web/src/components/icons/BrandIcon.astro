@@ -5,32 +5,40 @@ import { createRequire } from 'node:module';
 interface Props {
   name: string;
   size?: number;
-  official?: boolean;
   class?: string;
 }
 
-const { name, size = 20, official = false, class: className } = Astro.props;
-// Simple Icons brand marks (CC0), read at build time; currentColor unless a brand button asks for the brand's colour.
+interface ISet {
+  width?: number;
+  height?: number;
+  icons: Record<string, { body: string; width?: number; height?: number }>;
+  aliases?: Record<string, { parent: string }>;
+}
+
+const { name, size = 20, class: className } = Astro.props;
+// SVG Logos (CC0), full colour and unaltered, read at build time from the Iconify set.
 const require = createRequire(`${process.cwd()}/package.json`);
-const file = readFileSync(require.resolve(`simple-icons/icons/${name}.svg`), 'utf8');
-const body = /<svg[^>]*>([\s\S]*)<\/svg>/u.exec(file)?.[1]?.replace(/<title>[\s\S]*?<\/title>/u, '') ?? '';
-const data = official
-  ? (JSON.parse(readFileSync(require.resolve('simple-icons/data/simple-icons.json'), 'utf8')) as Array<{
-      slug?: string;
-      title: string;
-      hex: string;
-    }>)
-  : [];
-const slug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]/gu, '');
-const hex = data.find((d) => (d.slug ?? slug(d.title)) === name)?.hex;
+const set = JSON.parse(readFileSync(require.resolve('@iconify-json/logos/icons.json'), 'utf8')) as ISet;
+const icon = set.icons[set.aliases?.[name]?.parent ?? name];
+if (!icon) throw new Error(`Unknown logo: ${name}`);
+const w = icon.width ?? set.width ?? 256;
+const h = icon.height ?? set.height ?? 256;
+// Gradient ids get a per-use suffix, so two copies on one page never point at a hidden twin.
+const n = (globalThis as { __atLogo?: number }).__atLogo = ((globalThis as { __atLogo?: number }).__atLogo ?? 0) + 1;
+const body = icon.body
+  .replace(/id="([^"]+)"/gu, `id="$1-${String(n)}"`)
+  .replace(/url\(#([^)]+)\)/gu, `url(#$1-${String(n)})`)
+  .replace(/href="#([^"]+)"/gu, `href="#$1-${String(n)}"`);
+// Single-colour marks (Apple, GitHub) have no fill of their own and follow the text colour, as their guidelines allow.
+const mono = !/fill=/u.test(icon.body);
 ---
 
 <svg
   class={className}
-  width={size}
-  height={size}
-  viewBox="0 0 24 24"
-  fill={hex ? `#${hex}` : 'currentColor'}
+  width={Math.round((size * w) / Math.max(w, h))}
+  height={Math.round((size * h) / Math.max(w, h))}
+  viewBox={`0 0 ${String(w)} ${String(h)}`}
+  fill={mono ? 'currentColor' : undefined}
   aria-hidden="true"
   focusable="false"
   set:html={body}
