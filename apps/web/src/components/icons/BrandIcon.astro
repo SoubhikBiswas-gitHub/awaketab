@@ -25,12 +25,15 @@ const w = icon.width ?? set.width ?? 256;
 const h = icon.height ?? set.height ?? 256;
 // Gradient ids get a per-use suffix, so two copies on one page never point at a hidden twin.
 const n = (globalThis as { __atLogo?: number }).__atLogo = ((globalThis as { __atLogo?: number }).__atLogo ?? 0) + 1;
+// Single-colour marks (Apple, and GitHub's near-black) follow the text colour, as their guidelines allow.
+const dark = /^(?:#000|#000000|#161614|#181717)$/iu;
+const fills = [...icon.body.matchAll(/fill="([^"]+)"/gu)].map((m) => m[1] ?? '');
+const mono = fills.every((f) => dark.test(f));
 const body = icon.body
   .replace(/id="([^"]+)"/gu, `id="$1-${String(n)}"`)
   .replace(/url\(#([^)]+)\)/gu, `url(#$1-${String(n)})`)
-  .replace(/href="#([^"]+)"/gu, `href="#$1-${String(n)}"`);
-// Single-colour marks (Apple, GitHub) have no fill of their own and follow the text colour, as their guidelines allow.
-const mono = !/fill=/u.test(icon.body);
+  .replace(/href="#([^"]+)"/gu, `href="#$1-${String(n)}"`)
+  .replace(/fill="([^"]+)"/gu, (m: string, f: string) => (mono && dark.test(f) ? 'fill="currentColor"' : m));
 ---
 
 <svg
