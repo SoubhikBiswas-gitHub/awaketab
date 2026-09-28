@@ -66,6 +66,17 @@ export default defineConfig({
           return undefined;
         },
       },
+      {
+        // Terser's unsafe_arrows turns rope-sequence's empty constructor expression into an arrow, which has no
+        // prototype, so the notes editor threw on load; a declaration is left alone.
+        name: 'at-rope-sequence',
+        transform(code, id) {
+          if (!/\/rope-sequence\/dist\/index\.js$/u.test(id)) return undefined;
+          const from = 'var RopeSequence = function RopeSequence () {};';
+          if (!code.includes(from)) throw new Error('rope-sequence changed: re-check the unsafe_arrows workaround');
+          return code.replace(from, 'function RopeSequence () {}');
+        },
+      },
     ],
     // F-06: PUBLIC_POLAR_SERVER picks CHECKOUT_LINKS and whether the bundles trust the dev licence key.
     define: {

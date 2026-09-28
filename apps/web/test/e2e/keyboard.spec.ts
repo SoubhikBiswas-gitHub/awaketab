@@ -125,8 +125,9 @@ test('journey 1 (keyboard): autostart, skip link, and the whole page tabs throug
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/#content$/u);
 
-  // The last focusable element of the page (the footer's language switcher), which Tab must reach.
-  const lastFocusable = await page.evaluate(() => {
+  // The last focusable element of the page (the footer's language switcher), which Tab must reach. It is tagged
+  // rather than remembered by index: late lazy links in <head> shift every index while the walk runs.
+  await page.evaluate(() => {
     const els = [
       ...document.querySelectorAll<HTMLElement>(
         'a[href], button:not([disabled]), input, select, textarea, summary, [tabindex]',
@@ -137,8 +138,9 @@ test('journey 1 (keyboard): autostart, skip link, and the whole page tabs throug
         el.closest('[hidden], dialog:not([open]), [inert]') === null &&
         el.getClientRects().length > 0,
     );
-    return [...document.querySelectorAll('*')].indexOf(els[els.length - 1] as Element);
+    els[els.length - 1]?.setAttribute('data-e2e-last', '');
   });
+  let reached = false;
 
   // Walk forward through every focusable control; each shows focus and focus keeps moving to the end.
   const seen: number[] = [];
@@ -154,10 +156,11 @@ test('journey 1 (keyboard): autostart, skip link, and the whole page tabs throug
     if (last !== undefined && id < last) break; // wrapped back to the top: no trap
     expect(id, `focus stuck on ${info.desc}`).not.toBe(last);
     seen.push(id);
-    if (id === lastFocusable) break;
+    reached = await page.evaluate(() => document.activeElement?.hasAttribute('data-e2e-last') ?? false);
+    if (reached) break;
   }
   expect(seen.length).toBeGreaterThan(20);
-  expect(seen).toContain(lastFocusable);
+  expect(reached, 'Tab reaches the last focusable control').toBe(true);
 
   // Shift+Tab walks back up.
   await page.keyboard.press(keys.shiftTab);

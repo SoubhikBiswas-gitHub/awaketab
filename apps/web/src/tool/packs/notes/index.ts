@@ -1,4 +1,5 @@
 import type { Editor } from '@tiptap/core';
+import { closeHistory } from '@tiptap/pm/history';
 import { hasFeature, type IToolCtx } from '../../ctx.js';
 import { dateLong, dayDiff, hm } from '../../format.js';
 import { t } from '../../i18n.js';
@@ -36,22 +37,22 @@ function sheet(): Promise<void> {
 }
 
 interface IPanel {
-  open: (opener?: Element | null) => void;
+  open: (opener?: Element | null, take?: () => string) => Promise<void>;
 }
 
 let panel: IPanel | undefined;
 
-export function openNotes(ctx: IToolCtx, opener?: Element | null): void {
+// `take` hands over the keys pressed while the pack loaded, typed in as the drawer opens.
+export async function openNotes(ctx: IToolCtx, opener?: Element | null, take?: () => string): Promise<void> {
   const d = document.querySelector<HTMLDialogElement>('[data-dialog="notes"]');
   if (!d) return;
   if (d.open) {
     d.querySelector<HTMLElement>('.at-notes-doc')?.focus();
     return;
   }
-  void Promise.all([sheet(), moreCss()]).then(() => {
-    panel ??= mount(ctx, d);
-    panel.open(opener);
-  });
+  await Promise.all([sheet(), moreCss()]);
+  panel ??= mount(ctx, d);
+  await panel.open(opener, take);
 }
 
 function mount(ctx: IToolCtx, d: HTMLDialogElement): IPanel {
@@ -540,7 +541,15 @@ function mount(ctx: IToolCtx, d: HTMLDialogElement): IPanel {
       ed.commands.focus('end');
       return;
     }
-    ed.chain().focus().clearContent(true).run();
+    // Its own history step, or Undo would also take back the typing just before it.
+    ed.chain()
+      .focus()
+      .command(({ tr }) => {
+        closeHistory(tr);
+        return true;
+      })
+      .clearContent(true)
+      .run();
     acts.hidden = false;
     confirm.hidden = true;
     const undo = need('[data-notes-undo]') as HTMLButtonElement;
@@ -649,9 +658,9 @@ function mount(ctx: IToolCtx, d: HTMLDialogElement): IPanel {
   let ready: Promise<void> | undefined;
 
   return {
-    open: (opener) => {
+    open: (opener, take) => {
       ready = ready ? refresh() : load();
-      void ready.then(() => {
+      return ready.then(() => {
         announced = false;
         const kept = stored(cur);
         if (!failed) {
@@ -667,11 +676,24 @@ function mount(ctx: IToolCtx, d: HTMLDialogElement): IPanel {
         loops = [window.setInterval(mirror, 1000), window.setInterval(nudge, SHIFT_MS)];
         lastInput = Date.now();
         openDialog(d, opener ?? document.activeElement);
-        // Keyboards land in the text; touch screens keep the keyboard closed until the page is tapped.
-        if (matchMedia('(hover: hover) and (pointer: fine)').matches)
+        return new Promise<void>((resolve) => {
           requestAnimationFrame(() => {
-            if (d.open) ed.commands.focus('end');
+            const typed = take?.() ?? '';
+            // Keyboards land in the text; touch screens keep the keyboard closed until the page is tapped.
+            if (d.open && (typed || matchMedia('(hover: hover) and (pointer: fine)').matches)) {
+              ed.chain()
+                .focus('end')
+                .command(({ tr }) => {
+                  if (typed && ed.isEditable) tr.insertText(typed);
+                  return true;
+                })
+                .run();
+              // Focus now, not a frame later, so the next key already lands in the text.
+              ed.view.focus();
+            }
+            resolve();
           });
+        });
       });
     },
   };
