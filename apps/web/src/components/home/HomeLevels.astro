@@ -7,6 +7,8 @@ import { usd } from '../../lib/pro-common';
 import matrix from '../../data/support-matrix.json';
 // Linked, not scoped: inline styles on / count against the tool CSS budget.
 import sheet from '../../styles/home-levels.css?url';
+import Icon from '../icons/Icon.astro';
+import BrandIcon from '../icons/BrandIcon.astro';
 
 interface Props {
   locale?: TLocale;
@@ -66,7 +68,6 @@ const levels: ILevel[] = [
     rec: false,
   },
 ];
-const CHECK = 'M5 12.5l4.2 4.2L19 7';
 ---
 
 <section class="at-hl" aria-labelledby="home-levels-h">
@@ -88,12 +89,20 @@ const CHECK = 'M5 12.5l4.2 4.2L19 7';
               <span class="at-hl-figure">{level.price}</span>
               <span class="at-hl-per">{level.per}</span>
             </p>
-            <p class="at-hl-sub">{level.sub}</p>
+            <p class="at-hl-sub">
+              {level.id === 'ext' && (
+                <span class="at-hl-logos">
+                  <BrandIcon name="chrome" size={16} />
+                  <BrandIcon name="microsoft-edge" size={16} />
+                </span>
+              )}
+              {level.sub}
+            </p>
           </div>
           <ul class="at-hl-gains">
             {level.gains.map((gain) => (
               <li>
-                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={CHECK} /></svg>
+                <Icon name="check-circle" size={20} />
                 {typeof gain === 'string' ? (
                   <span>{gain}</span>
                 ) : (

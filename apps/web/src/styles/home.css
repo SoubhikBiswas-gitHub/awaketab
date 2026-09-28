@@ -64,11 +64,6 @@
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
     flex-shrink: 0;
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
     scale: var(--at-hb-dir) 1;
     transition: translate var(--at-d-slow) var(--at-ease);
   }

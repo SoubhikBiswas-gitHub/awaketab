@@ -337,6 +337,10 @@
     display: none;
   }
 
+  .at-theme-cycle-i > svg {
+    display: block;
+  }
+
   :root:not([data-theme-pref="light"], [data-theme-pref="dark"], [data-theme-pref="oled"])
     .at-theme-cycle
     [data-v="auto"],

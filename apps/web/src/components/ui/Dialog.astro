@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
+import Icon from '../icons/Icon.astro';
 
 type TSide = 'center' | 'bottom' | 'end' | 'start';
 type TSize = 'sm' | 'md' | 'lg';
@@ -58,9 +59,7 @@ const native = { closedby: 'any' } as Record<string, string>;
         {hasDescription && <p class="at-dialog-description" id={descriptionId}>{description}<slot name="description" /></p>}
       </div>
       <button class="at-icon-button at-dialog-close" type="button" data-dialog-close aria-label={closeLabel} {...closeAttrs}>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
-          <path d="M6 6l12 12M18 6L6 18"></path>
-        </svg>
+        <Icon name="x" size={24} />
       </button>
     </div>
   </div>

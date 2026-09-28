@@ -8,6 +8,7 @@ import { t } from '../i18n/load';
 import { CONTACT_EMAIL, CONTACT_MAILTO } from '../lib/contact';
 import { personSchema } from '../lib/seo';
 import { LOCK_GLYPH, LOCK_STATES } from '../lib/page-glyphs';
+import Icon from '../components/icons/Icon.astro';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const COFFEE = 'https://buymeacoffee.com/awaketab';
@@ -17,6 +18,7 @@ const LICENCES = {
   'Apache 2.0': 'https://www.apache.org/licenses/LICENSE-2.0',
   'CC BY 4.0': 'https://creativecommons.org/licenses/by/4.0/',
   'SIL OFL 1.1': 'https://openfontlicense.org/',
+  'CC0 1.0': 'https://creativecommons.org/publicdomain/zero/1.0/',
 } as const;
 const credits = [
   { name: 'Tone.js', href: 'https://tonejs.github.io/', use: 'Focus sounds and end sounds, made live in your browser', licence: 'MIT' },
@@ -32,6 +34,8 @@ const credits = [
   { name: 'DSEG', href: 'https://www.keshikan.net/fonts-e.html', use: 'The LCD face, by keshikan', licence: 'SIL OFL 1.1' },
   { name: 'Geist and Geist Mono', href: 'https://vercel.com/font', use: 'The interface type, by Vercel', licence: 'SIL OFL 1.1' },
   { name: 'Space Grotesk', href: 'https://github.com/floriankarsten/space-grotesk', use: 'The numerals of the Bold face, by Florian Karsten', licence: 'SIL OFL 1.1' },
+  { name: 'Phosphor Icons', href: 'https://phosphoricons.com/', use: 'The interface icons, by Helena Zhang and Tobias Fried', licence: 'MIT' },
+  { name: 'SVG Logos', href: 'https://svglogos.dev/', use: 'The browser and platform logos, by Gil Barbara', licence: 'CC0 1.0' },
 ] as const;
 const principles = [
   ['A tab is not a system setting', 'A normal browser tab cannot guarantee operation while hidden, prevent system sleep after a laptop lid closes, or override battery-saving policy.'],
@@ -70,13 +74,13 @@ const principles = [
       <p class="at-pg-ui">Messages go to Soubhik directly.</p>
       <div class="at-about-links">
         <a href={CONTACT_MAILTO}>
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"></rect><path d="M4 7l8 6 8-6"></path></svg>{CONTACT_EMAIL}
+          <Icon name="envelope-simple" size={20} />{CONTACT_EMAIL}
         </a>
         <a href={COFFEE} rel="noopener" target="_blank">
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"></path><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5v2.5M11 3.5v2.5"></path></svg>Buy Soubhik a coffee<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+          <Icon name="coffee" size={20} />Buy Soubhik a coffee<Icon name="arrow-up-right" size={16} class="at-pg-arrow" />
         </a>
         <a href="/changelog">
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 4v16M6 7h12M6 12h9M6 17h11"></path></svg>Changelog
+          <Icon name="list-bullets" size={20} />Changelog
         </a>
       </div>
     </aside>
@@ -109,7 +113,7 @@ const principles = [
           {
             journeys.map((label) => (
               <li class="at-tag at-pg-tag">
-                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                <Icon name="check" size={16} />
                 {label}
               </li>
             ))
@@ -164,6 +168,9 @@ const principles = [
             ))
           }
         </dl>
+        <p class="at-pg-ui at-pg-muted at-pg-measure">
+          Icons: Phosphor (MIT); brand logos: SVG Logos (CC0); logos are trademarks of their owners.
+        </p>
       </section>
 
       <section class="at-pg-stack-16" id="contact" aria-labelledby="ab-contact">
