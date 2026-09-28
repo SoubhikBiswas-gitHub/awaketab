@@ -471,7 +471,7 @@
   inset-inline-start: calc(var(--x) * var(--u));
   inline-size: calc(var(--s) * var(--u));
   block-size: calc(var(--s) * var(--u));
-  border: 1px solid rgb(255 255 255 / 70%);
+  border: var(--at-border) solid rgb(255 255 255 / 70%);
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, rgb(255 255 255 / 45%), transparent 60%);
   animation: at-bub 11s ease-in infinite;
@@ -611,6 +611,6 @@
 @media (forced-colors: active) {
   .at-face-horizon,
   .at-face-tide {
-    border: 1px solid CanvasText;
+    border: var(--at-border) solid CanvasText;
   }
 }

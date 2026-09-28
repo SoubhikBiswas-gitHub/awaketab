@@ -82,6 +82,8 @@ export default {
     {
       files: ['**/styles/shell.css', 'apps/extension/src/styles/base.css'],
       rules: { 'awaketab/button-geometry': null },
+    },
+    {
       files: COLOUR_FILES,
       rules: {
         'color-named': 'never',

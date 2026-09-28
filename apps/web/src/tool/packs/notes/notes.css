@@ -143,8 +143,10 @@
 .at-notes-state[data-kind="fail"]::before {
   inline-size: 0;
   block-size: 0;
+  /* stylelint-disable declaration-property-value-allowed-list -- a warning triangle drawn with borders */
   border-block-end: 9px solid var(--at-warn);
   border-inline: 5px solid transparent;
+  /* stylelint-enable declaration-property-value-allowed-list */
   border-radius: 0;
   background: none;
 }
@@ -1183,8 +1185,10 @@
 .at-notes-listen:not([data-kind="listening"]) .at-notes-listen-i {
   inline-size: 0;
   block-size: 0;
+  /* stylelint-disable declaration-property-value-allowed-list -- a warning triangle drawn with borders */
   border-block-end: 8px solid var(--at-warn);
   border-inline: 5px solid transparent;
+  /* stylelint-enable declaration-property-value-allowed-list */
   border-radius: 0;
   background: none;
 }
