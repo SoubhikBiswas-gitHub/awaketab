@@ -302,11 +302,10 @@
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
     flex-shrink: 0;
-    fill: none;
-    stroke: var(--at-accent);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2.4;
+  }
+
+  .at-pg-tag > .at-duo {
+    color: var(--at-accent-text);
   }
 
   .at-crumbs ol {
@@ -585,14 +584,11 @@
 
   .at-pg-note > svg,
   .at-pg-icon {
+    flex-shrink: 0;
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
     margin-block-start: var(--at-s-1);
-    fill: none;
-    stroke: var(--at-warn);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
+    color: var(--at-warn);
   }
 
   .at-pg-note p {
@@ -632,11 +628,7 @@
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
     flex-shrink: 0;
-    fill: none;
-    stroke: var(--at-muted);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
+    color: var(--at-muted);
   }
 
   .at-pg-field {
@@ -706,10 +698,7 @@
     inset-inline-end: var(--at-s-4);
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
-    fill: none;
-    stroke: var(--at-ink-2);
-    stroke-linecap: round;
-    stroke-width: 2;
+    color: var(--at-ink-2);
     pointer-events: none;
   }
 
@@ -743,14 +732,6 @@
   .at-pg-switch[data-on]::after {
     background: var(--at-on-accent);
     transform: translateX(calc(var(--at-seg-dir) * var(--at-s-5)));
-  }
-
-  .at-button.at-pg-copy > svg {
-    fill: none;
-    stroke: currentcolor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
   }
 
   .at-pg-status {
@@ -877,11 +858,7 @@
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
     flex-shrink: 0;
-    fill: none;
-    stroke: var(--at-ink-2);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
+    color: var(--at-ink-2);
   }
 
   .at-about-body {
@@ -1086,8 +1063,7 @@
   .at-cl-tag > svg {
     inline-size: var(--at-icon-xs);
     block-size: var(--at-icon-xs);
-    stroke: var(--at-tone);
-    stroke-width: 2.6;
+    color: var(--at-tone);
   }
 
   .at-cl-parts {
@@ -1344,14 +1320,11 @@
   }
 
   .at-legal-short > svg {
+    flex-shrink: 0;
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
     margin-block-start: var(--at-s-1);
-    fill: none;
-    stroke: var(--at-accent);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
+    color: var(--at-accent-text);
   }
 
   .at-legal-short p {
@@ -1429,7 +1402,6 @@
     padding-block-start: var(--at-s-1);
   }
 
-  .at-ext-ctas svg,
   .at-ext-stage svg {
     fill: none;
     stroke: currentcolor;
@@ -1437,8 +1409,18 @@
     stroke-linejoin: round;
   }
 
-  .at-ext-ctas svg {
-    stroke-width: 2;
+  .at-ext-stage .at-duo {
+    fill: currentcolor;
+    stroke: none;
+  }
+
+  .at-ext-logos {
+    display: inline-flex;
+    gap: var(--at-s-2);
+    align-items: center;
+    margin: 0;
+    margin-inline-end: var(--at-s-2);
+    vertical-align: -0.2em;
   }
 
   .at-ext-ctas > .at-button {
@@ -2491,6 +2473,9 @@
   .at-k-mark > svg {
     inline-size: calc(var(--u) * 16);
     block-size: calc(var(--u) * 16);
+  }
+
+  .at-k-mark > svg {
     fill: none;
     stroke: currentcolor;
     stroke-width: 1.8;
@@ -2781,10 +2766,6 @@
     block-size: var(--at-icon-sm);
     flex-shrink: 0;
     margin-block-start: calc(var(--at-s-1) / 2);
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2.4;
   }
 
   .at-k-y {
@@ -2792,7 +2773,7 @@
   }
 
   .at-k-y > svg {
-    stroke: var(--at-accent);
+    color: var(--at-accent-text);
   }
 
   .at-k-n {
@@ -2800,7 +2781,7 @@
   }
 
   .at-k-n > svg {
-    stroke: var(--at-muted);
+    color: var(--at-muted);
   }
 
   .at-k-i {
@@ -2808,7 +2789,7 @@
   }
 
   .at-k-i > svg {
-    stroke: var(--at-ink-2);
+    color: var(--at-ink-2);
   }
 
   .at-k-prices {

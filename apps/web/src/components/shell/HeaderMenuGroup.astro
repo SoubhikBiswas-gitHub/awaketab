@@ -2,8 +2,10 @@
 import { createT } from '../../i18n/load';
 import type { TLocale } from '../../i18n/locales';
 import { contentIndex } from '../../lib/content-i18n';
-import { arc, menuLink, MENU_FOR, MENU_ON, MENU_RES, ring } from '../../lib/header-menu';
+import { arc, DEVICE_BRAND, menuLink, MENU_FOR, MENU_ON, MENU_RES, ring } from '../../lib/header-menu';
+import BrandIcon from '../icons/BrandIcon.astro';
 import DeviceIcon from '../icons/DeviceIcon.astro';
+import Icon from '../icons/Icon.astro';
 import UseCaseIcon from '../icons/UseCaseIcon.astro';
 
 interface Props {
@@ -32,13 +34,14 @@ if (kind === 'for') {
 
 const rows =
   kind === 'res'
-    ? MENU_RES.map((r) => ({ id: r.id, href: r.href, en: english, icon: r.icon, preset: '' }))
+    ? MENU_RES.map((r) => ({ id: r.id, href: r.href, en: english, icon: r.icon, preset: '', brand: '' }))
     : await Promise.all(
         (kind === 'for' ? MENU_FOR : MENU_ON).map(async (slug) => ({
           id: slug,
           ...(await menuLink(kind, slug, locale)),
           icon: '',
           preset: presets.get(slug) ?? '',
+          brand: kind === 'on' ? (DEVICE_BRAND[slug] ?? '') : '',
         })),
       );
 const hub = kind === 'for' ? '/for' : kind === 'on' ? '/on' : '';
@@ -61,9 +64,7 @@ const dial = arc(50, 19, 24);
           <span class="at-hm-label">{t('header.menu.start')}</span>
           <span class="at-hm-hint">{t('header.menu.start.line')}</span>
         </span>
-        <svg class="at-hm-go" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-          <path d="M5 12h14M13 6l6 6-6 6" />
-        </svg>
+        <Icon name="arrow-right" size={20} class="at-hm-go" />
         {english && <span class="sr-only"> {t('header.nav.english')}</span>}
       </a>
     )
@@ -86,14 +87,15 @@ const dial = arc(50, 19, 24);
                 {kind === 'for' && <UseCaseIcon name={row.id} size={20} />}
                 {kind === 'on' && <DeviceIcon name={row.id} size={32} />}
                 {kind === 'res' && (
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                    <path d={row.icon} />
-                  </svg>
+                  <Icon name={row.icon} size={20} />
                 )}
               </span>
               <span class="at-hm-text">
                 <span class="at-hm-label">
-                  {t(`header.menu.${kind}.${row.id}`)}
+                  <span class="at-hm-name">
+                    {row.brand && <BrandIcon name={row.brand} size={16} />}
+                    {t(`header.menu.${kind}.${row.id}`)}
+                  </span>
                   {row.preset && (
                     <span class="at-tag at-hm-len" aria-hidden="true">
                       {t(`tool.preset.${row.preset}`)}
@@ -114,9 +116,7 @@ const dial = arc(50, 19, 24);
     hub && (
       <a class="at-hm-all" href={hub} hreflang={english ? 'en' : undefined} aria-current={path === hub ? 'page' : undefined}>
         {kind === 'for' ? t('header.menu.all.for', { count }) : t('header.menu.all.on')}
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-          <path d="M5 12h14M13 6l6 6-6 6" />
-        </svg>
+        <Icon name="arrow-right" size={16} />
         {english && <span class="sr-only"> {t('header.nav.english')}</span>}
       </a>
     )

@@ -119,6 +119,13 @@
     font: var(--at-type-caption);
   }
 
+  .at-hl-logos {
+    display: inline-flex;
+    gap: var(--at-s-1);
+    margin-inline-end: var(--at-s-2);
+    vertical-align: -0.2em;
+  }
+
   .at-hl-gains {
     display: flex;
     flex-direction: column;
@@ -144,11 +151,7 @@
   .at-hl-gains svg {
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
-    fill: none;
-    stroke: var(--at-accent-text);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
+    color: var(--at-accent-text);
   }
 
   .at-hl-keys {

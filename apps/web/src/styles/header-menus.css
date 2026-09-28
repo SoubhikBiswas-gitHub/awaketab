@@ -350,6 +350,12 @@
     hyphens: auto;
   }
 
+  .at-hm-name {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--at-s-2);
+  }
+
   .at-hm-hint {
     color: var(--at-muted);
     font: var(--at-type-caption);

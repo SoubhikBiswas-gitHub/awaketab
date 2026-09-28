@@ -10,6 +10,8 @@ import { t } from '../i18n/load';
 import { softwareSchema } from '../lib/seo';
 import { EXTENSION_LISTED, EXTENSION_STORE_URLS } from '../lib/extension';
 import matrix from '../data/support-matrix.json';
+import BrandIcon from '../components/icons/BrandIcon.astro';
+import Icon from '../components/icons/Icon.astro';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const canonical = `${site}/extension`;
@@ -23,7 +25,7 @@ const storeNote = t('page.extension.cta.note', { browsers, version: support.mini
 const chromeLabel = t(EXTENSION_LISTED ? 'page.extension.cta.chrome' : 'page.extension.cta.chromeSearch');
 const edgeLabel = t(EXTENSION_LISTED ? 'page.extension.cta.edge' : 'page.extension.cta.edgeSearch');
 
-type TSeg = string | { kbd: string };
+type TSeg = string | { kbd: string } | { logos: true };
 const adds: Array<[string, TSeg[], TSeg[]]> = [
   ['With the tab hidden or the window minimised', ['Pauses until you come back'], ['Keeps going while Chrome is running']],
   ['What stays awake', ['The screen'], ['The screen, or only the computer']],
@@ -31,7 +33,7 @@ const adds: Array<[string, TSeg[], TSeg[]]> = [
   ['Status at a glance', ['The pill in the tab'], ['The popup pill and a toolbar badge: ON, SYS or minutes left']],
   ['Shortcut', [{ kbd: 'Space' }, ', while the tab is in front'], [{ kbd: 'Alt' }, '+', { kbd: 'Shift' }, '+', { kbd: 'A' }, ' from any tab']],
   ['Schedules and auto-start', ['No'], ['With Pro']],
-  ['Install', ['Nothing to install'], ['Chrome or Edge']],
+  ['Install', ['Nothing to install'], [{ logos: true }, 'Chrome or Edge']],
 ];
 const facts = ['page.extension.fact.hidden', 'page.extension.fact.level', 'page.extension.fact.private'] as const;
 const steps = ['install', 'pin', 'press'] as const;
@@ -43,7 +45,8 @@ const perms = [
   ['notifications', 'Optional', 'Tell you when a timer ends.'],
   ['optional_host_permissions', 'Optional, one site at a time', 'Site access, so it can start automatically on sites you pick. None by default.'],
 ] as const;
-const faq = [1, 2, 3, 5, 4].map((n) => ({ n, q: t(`page.extension.faq.q${n}`), a: t(`page.extension.faq.a${n}`) }));
+// Answers that name the browsers show their logos.
+const faq = [1, 2, 3, 5, 4].map((n) => ({ n, q: t(`page.extension.faq.q${n}`), a: t(`page.extension.faq.a${n}`), logos: n === 4 }));
 const days = [
   ['M', 'Monday', true],
   ['T', 'Tuesday', true],
@@ -54,8 +57,6 @@ const days = [
   ['S', 'Sunday', false],
 ] as const;
 const chips = ['15 min', '30 min', '45 min', '1 h', '2 h', '4 h', '∞'];
-const ICON_SCREEN = 'M3 5h18v11H3zM9 20h6M12 16v4';
-const ICON_SYSTEM = 'M5 4h14v12H5zM3 20h18M9 10h6';
 // Ring geometry of the preview (r 56): 1 h preset with 44:18 left.
 const C = 2 * Math.PI * 56;
 const P = 2658 / 3600;
@@ -87,7 +88,7 @@ const P = 2658 / 3600;
           {
             facts.map((key) => (
               <li>
-                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                <Icon name="check-circle" size={16} />
                 {t(key)}
               </li>
             ))
@@ -95,15 +96,16 @@ const P = 2658 / 3600;
         </ul>
         <div class="at-ext-ctas" data-install>
           <a class="at-button at-button-primary at-button-lg" href={EXTENSION_STORE_URLS.chrome} rel="noopener" target="_blank" data-store="chrome" aria-describedby="ext-store-note">
-            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+            <BrandIcon name="chrome" size={20} />
             {chromeLabel}
           </a>
           <a class="at-button at-ext-edge" href={EXTENSION_STORE_URLS.edge} rel="noopener" target="_blank" data-store="edge" aria-describedby="ext-store-note">
+            <BrandIcon name="microsoft-edge" size={20} />
             {edgeLabel}
           </a>
         </div>
         <div id="ext-store-note" class="at-pg-small at-pg-stack-4" data-install>
-          <span>{storeNote}</span>
+          <span><span class="at-ext-logos"><BrandIcon name="chrome" size={16} /><BrandIcon name="microsoft-edge" size={16} /></span>{storeNote}</span>
           {!EXTENSION_LISTED && <span>{t('page.extension.cta.pending')}</span>}
         </div>
         <div class="at-ext-alt">
@@ -121,7 +123,7 @@ const P = 2658 / 3600;
               <svg viewBox="0 0 48 48" width="26" height="26"><path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" class="at-xp-ring"></path><circle cx="24" cy="9" r="7.5" class="at-xp-halo"></circle><circle cx="24" cy="9" r="4.2" class="at-xp-bead"></circle></svg>
               AwakeTab
             </span>
-            <span class="at-xp-icon"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></span>
+            <span class="at-xp-icon"><Icon name="gear-six" size={20} /></span>
           </div>
           <div class="at-xp-status">
             <div class="at-xp-face">
@@ -150,7 +152,7 @@ const P = 2658 / 3600;
               </span>
               <span class="at-xp-meta at-xp-screen">Started 9:30 PM</span>
               <span class="at-xp-meta at-xp-system at-xp-caveat">
-                <svg viewBox="0 0 12 12" width="12" height="12"><path d="M10.4 7.6A4.6 4.6 0 1 1 4.4 1.6a3.7 3.7 0 0 0 6 6z"></path></svg>
+                <Icon name="moon" size={12} />
                 Screen may dim or lock
               </span>
             </div>
@@ -161,8 +163,8 @@ const P = 2658 / 3600;
             <span>Keep awake</span>
             <div class="at-xp-seg">
               <span class="at-xp-ind"></span>
-              <span class="at-xp-opt at-xp-opt-screen"><svg viewBox="0 0 24 24" width="16" height="16"><path d={ICON_SCREEN}></path></svg>Screen</span>
-              <span class="at-xp-opt at-xp-opt-system"><svg viewBox="0 0 24 24" width="16" height="16"><path d={ICON_SYSTEM}></path></svg>System</span>
+              <span class="at-xp-opt at-xp-opt-screen"><Icon name="monitor" size={16} />Screen</span>
+              <span class="at-xp-opt at-xp-opt-system"><Icon name="cpu" size={16} />System</span>
             </div>
           </div>
           <div class="at-xp-chips">
@@ -170,7 +172,7 @@ const P = 2658 / 3600;
             <span class="at-xp-until">Until…</span>
           </div>
           <div class="at-xp-foot">
-            Open AwakeTab<svg viewBox="0 0 24 24" width="16" height="16"><path d="M7 17L17 7M9 7h8v8"></path></svg>
+            Open AwakeTab<Icon name="arrow-up-right" size={16} />
           </div>
         </div>
       </div>
@@ -188,7 +190,7 @@ const P = 2658 / 3600;
           <StatusPill as="span" size="S" state="lost" label={t('tool.pill.lost')} />
         </li>
         <li class="at-ext-vs-ext at-ext-reveal">
-          <span class="at-ext-vs-name">AwakeTab for Chrome</span>
+          <span class="at-ext-vs-name"><BrandIcon name="chrome" size={16} />AwakeTab for Chrome</span>
           <span class="at-ext-vs-when">{t('page.extension.compare.hidden')}</span>
           <StatusPill as="span" size="S" state="held" label={t('tool.pill.held')} />
         </li>
@@ -197,14 +199,14 @@ const P = 2658 / 3600;
         <div class="at-pg-tr at-pg-th" role="row">
           <span role="columnheader"><span class="sr-only">Feature</span></span>
           <span role="columnheader" class="at-pg-ink2">The web app</span>
-          <span role="columnheader" class="at-pg-th-lamp">AwakeTab for Chrome</span>
+          <span role="columnheader" class="at-pg-th-lamp"><BrandIcon name="chrome" size={16} class="at-ext-th-logo" />AwakeTab for Chrome</span>
         </div>
         {
           adds.map(([label, web, ext]) => (
             <div class="at-pg-tr" role="row">
               <span role="rowheader" class="at-pg-rowhead">{label}</span>
-              <span role="cell" class="at-pg-ink2">{web.map((s) => (typeof s === 'string' ? s : <kbd class="at-kbd">{s.kbd}</kbd>))}</span>
-              <span role="cell" class="at-pg-ink">{ext.map((s) => (typeof s === 'string' ? s : <kbd class="at-kbd">{s.kbd}</kbd>))}</span>
+              <span role="cell" class="at-pg-ink2">{web.map((s) => (typeof s === 'string' ? s : 'kbd' in s ? <kbd class="at-kbd">{s.kbd}</kbd> : <span class="at-ext-logos"><BrandIcon name="chrome" size={16} /><BrandIcon name="microsoft-edge" size={16} /></span>))}</span>
+              <span role="cell" class="at-pg-ink">{ext.map((s) => (typeof s === 'string' ? s : 'kbd' in s ? <kbd class="at-kbd">{s.kbd}</kbd> : <span class="at-ext-logos"><BrandIcon name="chrome" size={16} /><BrandIcon name="microsoft-edge" size={16} /></span>))}</span>
             </div>
           ))
         }
@@ -214,8 +216,8 @@ const P = 2658 / 3600;
           adds.map(([label, web, ext]) => (
             <div>
               <dt>{label}</dt>
-              <dd><span class="at-pg-dl-label at-pg-lampdot">Extension</span><span>{ext.map((s) => (typeof s === 'string' ? s : <kbd class="at-kbd">{s.kbd}</kbd>))}</span></dd>
-              <dd><span class="at-pg-dl-label">Web app</span><span>{web.map((s) => (typeof s === 'string' ? s : <kbd class="at-kbd">{s.kbd}</kbd>))}</span></dd>
+              <dd><span class="at-pg-dl-label at-pg-lampdot">Extension</span><span>{ext.map((s) => (typeof s === 'string' ? s : 'kbd' in s ? <kbd class="at-kbd">{s.kbd}</kbd> : <span class="at-ext-logos"><BrandIcon name="chrome" size={16} /><BrandIcon name="microsoft-edge" size={16} /></span>))}</span></dd>
+              <dd><span class="at-pg-dl-label">Web app</span><span>{web.map((s) => (typeof s === 'string' ? s : 'kbd' in s ? <kbd class="at-kbd">{s.kbd}</kbd> : <span class="at-ext-logos"><BrandIcon name="chrome" size={16} /><BrandIcon name="microsoft-edge" size={16} /></span>))}</span></dd>
             </div>
           ))
         }
@@ -280,6 +282,12 @@ const P = 2658 / 3600;
             <li class="at-ext-reveal">
               <span class="at-ext-stepn" aria-hidden="true">{i + 1}</span>
               <h3 class="at-pg-h3">{t(`page.extension.steps.${step}.title`)}</h3>
+              {step === 'install' && (
+                <p class="at-ext-logos at-ext-steplogos">
+                  <BrandIcon name="chrome-web-store" size={24} />
+                  <BrandIcon name="microsoft-edge" size={24} />
+                </p>
+              )}
               {step === 'press' && (
                 <p class="at-ext-keys">
                   <kbd class="at-kbd">Alt</kbd>+<kbd class="at-kbd">Shift</kbd>+<kbd class="at-kbd">A</kbd>
@@ -349,7 +357,7 @@ const P = 2658 / 3600;
           {
             limits.map((key) => (
               <li>
-                <svg class="at-pg-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M8 12h8"></path></svg>
+                <Icon name="minus-circle" size={20} tone="ink" class="at-pg-icon" />
                 {t(key)}
               </li>
             ))
@@ -357,6 +365,10 @@ const P = 2658 / 3600;
         </ul>
       </section>
       <section class="at-card at-pg-stack-16 at-ext-ff" aria-labelledby="ext-ff" data-unsupported-note>
+        <p class="at-ext-logos at-ext-fflogos">
+          <BrandIcon name="firefox" size={24} />
+          <BrandIcon name="safari" size={24} />
+        </p>
         <h2 id="ext-ff" class="at-pg-h3">{t('page.extension.firefox.title')}</h2>
         <p class="at-pg-ui">{t('page.extension.firefox.body')}</p>
         <a class="at-pg-link at-pg-textlink" href="/on/firefox">{t('page.extension.firefox.link')}</a>
@@ -372,10 +384,13 @@ const P = 2658 / 3600;
               <summary>
                 <h3>{q.q}</h3>
                 <span class="at-ext-faq-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 5v14M5 12h14"></path></svg>
+                  <Icon name="plus-circle" size={20} />
                 </span>
               </summary>
-              <p>{q.a}</p>
+              <p>
+                {q.logos && <span class="at-ext-logos"><BrandIcon name="chrome" size={16} /><BrandIcon name="microsoft-edge" size={16} /></span>}
+                {q.a}
+              </p>
             </details>
           ))
         }
@@ -387,14 +402,15 @@ const P = 2658 / 3600;
         <h2 id="ext-band" class="at-pg-h2">{t('page.extension.band.title')}</h2>
         <div class="at-ext-ctas">
           <a class="at-button at-button-primary at-button-lg" href={EXTENSION_STORE_URLS.chrome} rel="noopener" target="_blank" data-store="chrome" aria-describedby="ext-band-note">
-            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+            <BrandIcon name="chrome" size={20} />
             {chromeLabel}
           </a>
           <a class="at-button at-ext-edge" href={EXTENSION_STORE_URLS.edge} rel="noopener" target="_blank" data-store="edge" aria-describedby="ext-band-note">
+            <BrandIcon name="microsoft-edge" size={20} />
             {edgeLabel}
           </a>
         </div>
-        <p id="ext-band-note" class="at-pg-small">{storeNote}</p>
+        <p id="ext-band-note" class="at-pg-small"><span class="at-ext-logos"><BrandIcon name="chrome" size={16} /><BrandIcon name="microsoft-edge" size={16} /></span>{storeNote}</p>
       </div>
       <div class="at-ext-band-web">
         <p class="at-pg-body at-pg-ink">{t('page.extension.web')}</p>

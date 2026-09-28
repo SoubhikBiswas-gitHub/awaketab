@@ -1,0 +1,48 @@
+---
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+
+interface Props {
+  name: string;
+  size?: number;
+  class?: string;
+}
+
+interface ISet {
+  width?: number;
+  height?: number;
+  icons: Record<string, { body: string; width?: number; height?: number }>;
+  aliases?: Record<string, { parent: string }>;
+}
+
+const { name, size = 20, class: className } = Astro.props;
+// SVG Logos (CC0), full colour and unaltered, read at build time from the Iconify set.
+const require = createRequire(`${process.cwd()}/package.json`);
+const set = JSON.parse(readFileSync(require.resolve('@iconify-json/logos/icons.json'), 'utf8')) as ISet;
+const icon = set.icons[set.aliases?.[name]?.parent ?? name];
+if (!icon) throw new Error(`Unknown logo: ${name}`);
+const w = icon.width ?? set.width ?? 256;
+const h = icon.height ?? set.height ?? 256;
+// Gradient ids get a per-use suffix, so two copies on one page never point at a hidden twin.
+const n = (globalThis as { __atLogo?: number }).__atLogo = ((globalThis as { __atLogo?: number }).__atLogo ?? 0) + 1;
+// Single-colour marks (Apple, and GitHub's near-black) follow the text colour, as their guidelines allow.
+const dark = /^(?:#000|#000000|#161614|#181717)$/iu;
+const fills = [...icon.body.matchAll(/fill="([^"]+)"/gu)].map((m) => m[1] ?? '');
+const mono = fills.every((f) => dark.test(f));
+const body = icon.body
+  .replace(/id="([^"]+)"/gu, `id="$1-${String(n)}"`)
+  .replace(/url\(#([^)]+)\)/gu, `url(#$1-${String(n)})`)
+  .replace(/href="#([^"]+)"/gu, `href="#$1-${String(n)}"`)
+  .replace(/fill="([^"]+)"/gu, (m: string, f: string) => (mono && dark.test(f) ? 'fill="currentColor"' : m));
+---
+
+<svg
+  class={className}
+  width={Math.round((size * w) / Math.max(w, h))}
+  height={Math.round((size * h) / Math.max(w, h))}
+  viewBox={`0 0 ${String(w)} ${String(h)}`}
+  fill={mono ? 'currentColor' : undefined}
+  aria-hidden="true"
+  focusable="false"
+  set:html={body}
+/>

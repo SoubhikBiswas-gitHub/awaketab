@@ -69,11 +69,7 @@
     flex-shrink: 0;
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
-    fill: none;
-    stroke: var(--at-accent-text);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
+    color: var(--at-accent-text);
   }
 
   .at-ext-vs {
@@ -227,10 +223,6 @@
   .at-ext-faq-icon > svg {
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
-    fill: none;
-    stroke: currentcolor;
-    stroke-linecap: round;
-    stroke-width: 2;
     transition: transform var(--at-d-slide) var(--at-ease);
   }
 

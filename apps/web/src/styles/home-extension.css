@@ -46,6 +46,9 @@
   }
 
   .at-hx-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--at-s-2);
     margin: 0;
     color: var(--at-muted);
     font: var(--at-type-kicker);
@@ -115,11 +118,7 @@
   .at-hx-list > li > svg {
     inline-size: var(--at-icon-lg);
     block-size: var(--at-icon-lg);
-    fill: none;
-    stroke: var(--at-accent-text);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
+    color: var(--at-accent-text);
   }
 
   .at-hx-item {
@@ -181,6 +180,13 @@
     font: var(--at-type-caption);
   }
 
+  .at-hx-logos {
+    display: inline-flex;
+    gap: var(--at-s-1);
+    margin-inline-end: var(--at-s-2);
+    vertical-align: -0.2em;
+  }
+
   .at-hx-more {
     display: inline-flex;
     align-items: center;
@@ -201,11 +207,6 @@
   .at-hx-more > svg {
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
-    fill: none;
-    stroke: currentcolor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
   }
 
   /* stylelint-disable declaration-property-value-allowed-list -- illustration geometry in container units */

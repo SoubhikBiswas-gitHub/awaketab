@@ -1,6 +1,7 @@
 ---
 import { createT } from '../../i18n/load';
 import { LOCALE_META, LOCALES, localePath, type TLocale } from '../../i18n/locales';
+import Icon from '../icons/Icon.astro';
 import Drawer from '../ui/Drawer.astro';
 
 interface Props {
@@ -23,14 +24,9 @@ const pageLang = here.htmlLang;
     aria-controls="at-lang-list"
     aria-label={`${t('footer.language')}: ${here.label}`}
   >
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="12" r="9"></circle>
-      <path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9M12 3c-2.5 2.6-3.8 5.6-3.8 9s1.3 6.4 3.8 9"></path>
-    </svg>
+    <Icon name="globe" size={16} />
     {here.label}
-    <svg class="at-lang-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-      <path d="M6 9l6 6 6-6"></path>
-    </svg>
+    <Icon name="caret-down" size={16} class="at-lang-chev" />
   </button>
   <Drawer
     class="at-lang-panel"

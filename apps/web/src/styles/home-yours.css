@@ -918,11 +918,7 @@
   }
 
   .at-hy-box svg {
-    fill: none;
-    stroke: var(--at-on-accent);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2.6;
+    color: var(--at-on-accent);
   }
 
   .at-hy-caret {
@@ -936,10 +932,7 @@
   }
 
   .at-hy-mic svg {
-    fill: none;
-    stroke: var(--at-accent);
-    stroke-linecap: round;
-    stroke-width: 1.8;
+    color: var(--at-accent-text);
   }
 
   .at-hy-tools {

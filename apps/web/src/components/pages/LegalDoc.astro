@@ -1,6 +1,7 @@
 ---
 import Crumbs from './Crumbs.astro';
 import { changelogLongDate } from '../../lib/changelog';
+import Icon from '../icons/Icon.astro';
 
 interface Props {
   title: string;
@@ -21,7 +22,7 @@ const { title, updated, effective, lede, toc, other, email, mailto } = Astro.pro
     <h1 class="at-pg-h1">{title}</h1>
     <div class="at-legal-dates">
       <span class="at-tag at-pg-tag">
-        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Last updated <time datetime={updated}>{changelogLongDate(updated)}</time>
+        <Icon name="clock-counter-clockwise" size={16} />Last updated <time datetime={updated}>{changelogLongDate(updated)}</time>
       </span>
       <span class="at-pg-small"><span>Effective <time datetime={effective}>{changelogLongDate(effective)}</time></span></span>
     </div>
