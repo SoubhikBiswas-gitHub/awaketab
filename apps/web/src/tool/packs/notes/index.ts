@@ -646,7 +646,7 @@ function mount(ctx: IToolCtx, d: HTMLDialogElement): IPanel {
     b.addEventListener('click', () => {
       const tpl = q(`template[data-notes-tpl-html="${b.dataset.notesTpl ?? ''}"]`) as HTMLTemplateElement | null;
       if (!tpl || !editable()) return;
-      ed.commands.setContent(tpl.innerHTML);
+      ed.commands.setContent(tpl.dataset.html ?? '');
       let at = -1;
       ed.state.doc.descendants((n, p) => {
         if (at < 0 && n.isTextblock && !n.content.size) at = p + 1;
