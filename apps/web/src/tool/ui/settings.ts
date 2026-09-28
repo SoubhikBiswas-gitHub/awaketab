@@ -1,29 +1,12 @@
-import type { ISettings, TAmbientMode, TFace, TTheme } from '@awaketab/core';
+import type { ISettings } from '@awaketab/core';
 import type { TSoundAction } from '../packs/sound/index.js';
 import { DEFAULT_SETTINGS } from '@awaketab/core';
-import { hasFeature, type IToolCtx } from '../ctx.js';
-import { hm } from '../format.js';
+import type { IToolCtx } from '../ctx.js';
+import type { TCustomizeTab } from './actions.js';
 import { t } from '../i18n.js';
-import { sanitizeMsg } from '../params.js';
 import { notificationsState } from '../signal.js';
 import { applyTheme } from '../theme.js';
 import { openDialog } from './dialog.js';
-
-const MODES = new Set<TAmbientMode>(['standard', 'clock', 'focus', 'breathe', 'minimal', 'night', 'message', 'cook']);
-const FACES = new Set<TFace>([
-  'ring',
-  'bold',
-  'horizon',
-  'tide',
-  'flip',
-  'rolling',
-  'analog',
-  'rings',
-  'word',
-  'nixie',
-  'lcd',
-  'matrix',
-]);
 
 type TField = HTMLInputElement | HTMLSelectElement;
 
@@ -49,37 +32,24 @@ function setValue(form: HTMLFormElement, name: string, value: string | boolean):
 }
 
 export function fillSettings(form: HTMLFormElement, s: ISettings): void {
-  setValue(form, 'theme', s.theme);
-  setValue(form, 'face', s.face);
-  setValue(form, 'defaultPreset', s.defaultPreset);
-  setValue(form, 'sound', s.sound.id);
-  setValue(form, 'soundVolume', String(Math.round(s.sound.volume * 100)));
-  setValue(form, 'vibrate', s.vibrate);
-  setValue(form, 'tick', s.tick);
   setValue(form, 'notifications', s.notifications);
   setValue(form, 'endBehaviour', s.endBehaviour);
   setValue(form, 'batteryAuto', s.battery.autoStop);
   setValue(form, 'batteryThreshold', String(s.battery.threshold));
-  setValue(form, 'ambientMode', s.ambient.mode);
-  setValue(form, 'ambientMessage', s.ambient.message);
   setValue(form, 'showSeconds', s.ambient.showSeconds);
   setValue(form, 'clock24h', s.ambient.clock24h === null ? 'auto' : s.ambient.clock24h ? '24' : '12');
   setValue(form, 'telemetry', s.telemetry);
   setValue(form, 'keyboardShortcuts', s.keyboardShortcuts);
   setValue(form, 'keyboardHints', s.keyboardHints);
+  setValue(form, 'reduceMotion', s.reduceMotion === 'on');
 }
 
-export function readSettings(
-  form: HTMLFormElement,
-  cur: ISettings,
-  gates: { packs: boolean; message: boolean },
-): ISettings {
+export function readSettings(form: HTMLFormElement, cur: ISettings): ISettings {
   const data = new FormData(form);
   const str = (k: string) => {
     const v = data.get(k);
     return typeof v === 'string' ? v : '';
   };
-  const mode = str('ambientMode') as TAmbientMode;
   const clock = str('clock24h');
   const threshold = Math.min(30, Math.max(5, Math.round(Number(str('batteryThreshold')) || cur.battery.threshold)));
   // A disabled control is absent from FormData; it must not read as "off" and overwrite the stored value.
@@ -87,17 +57,12 @@ export function readSettings(
   const notifDisabled = notif instanceof HTMLInputElement && notif.disabled;
   return {
     ...cur,
-    theme: (['auto', 'light', 'dark', 'oled'].includes(str('theme')) ? str('theme') : cur.theme) as TTheme,
-    face: FACES.has(str('face') as TFace) ? (str('face') as TFace) : cur.face,
-    defaultPreset: (str('defaultPreset') || cur.defaultPreset) as ISettings['defaultPreset'],
     telemetry: data.get('telemetry') === 'on',
     keyboardShortcuts: data.get('keyboardShortcuts') === 'on',
     keyboardHints: data.get('keyboardHints') === 'on',
+    reduceMotion: data.get('reduceMotion') === 'on' ? 'on' : 'system',
     notifications: notifDisabled ? cur.notifications : data.get('notifications') === 'on',
     endBehaviour: str('endBehaviour') === 'stop' ? 'stop' : 'prompt_extend',
-    sound: { id: (str('sound') || cur.sound.id) as ISettings['sound']['id'], volume: Number(str('soundVolume')) / 100 },
-    vibrate: data.get('vibrate') === 'on',
-    tick: data.get('tick') === 'on',
     battery: {
       ...cur.battery,
       autoStop: data.get('batteryAuto') === 'on',
@@ -105,25 +70,17 @@ export function readSettings(
     },
     ambient: {
       ...cur.ambient,
-      // A locked mode is never stored without its licence (docs/02 FR-AMBIENT-01); Message needs ambient.message.
-      mode: MODES.has(mode) && (mode !== 'message' || gates.message) ? mode : cur.ambient.mode,
-      message: gates.message && data.has('ambientMessage') ? sanitizeMsg(str('ambientMessage')) : cur.ambient.message,
       showSeconds: data.get('showSeconds') === 'on',
       clock24h: clock === '24' ? true : clock === '12' ? false : null,
     },
   };
 }
 
-let bound = false;
-
-export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
+// `group` opens one of the four groups: timer, clock, focus or device.
+export function openSettings(ctx: IToolCtx, opener?: Element | null, group?: string): void {
   const dialog = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="settings"]');
   const form = dialog?.querySelector('form');
   if (!dialog || !form) return;
-  const gates = () => ({
-    packs: hasFeature(ctx, 'ambient.packs'),
-    message: hasFeature(ctx, 'ambient.message'),
-  });
   const q = (sel: string) => dialog.querySelector<HTMLElement>(sel);
   const html = document.documentElement;
 
@@ -133,6 +90,8 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
     applyTheme(next.theme, ctx.store.get().ui.mode === 'night');
     if (next.keyboardHints) delete html.dataset.hints;
     else html.dataset.hints = 'off';
+    if (next.reduceMotion === 'on') html.dataset.motion = 'reduce';
+    else delete html.dataset.motion;
   };
 
   const refresh = () => {
@@ -149,8 +108,6 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
             ? t('settings.notifications.blocked')
             : t('settings.notifications.help');
     }
-    const vib = q('[data-vibrate-row]');
-    if (vib) vib.hidden = !('vibrate' in navigator);
     const hasBattery = 'getBattery' in navigator;
     const batt = q('[data-battery-fields]');
     if (batt) batt.hidden = !hasBattery;
@@ -163,23 +120,33 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
       label.textContent = t('settings.battery.value', {
         percent: s.battery.threshold,
       });
-    const hint = q('[data-battery-hint]');
-    if (hint) hint.textContent = t(s.battery.autoStop ? 'settings.battery.on' : 'settings.battery.off');
-    const now = q('[data-t="nowShows"]');
-    if (now)
-      now.textContent = t('settings.clock.now', {
-        time: hm(Date.now(), s.ambient.clock24h, s.ambient.showSeconds),
-      });
   };
 
-  if (!bound) {
-    bound = true;
+  if (!form.dataset.bound) {
+    form.dataset.bound = '1';
     form.addEventListener('submit', (e) => {
       e.preventDefault();
     });
     form.addEventListener('click', (e) => {
-      const b = e.target instanceof Element ? e.target.closest<HTMLElement>('[data-sound]') : null;
-      if (b) void sound(ctx, b.dataset.sound === 'open' ? 'open' : 'play', b);
+      const b = e.target instanceof Element ? e.target.closest<HTMLElement>('[data-reset],[data-act]') : null;
+      if (!b) return;
+      const r = b.dataset.reset;
+      if (!r)
+        void import('./actions.js').then((m) => {
+          m.openCustomize(ctx, b.dataset.tab as TCustomizeTab, b);
+        });
+      else {
+        const box = b.closest('details');
+        if (box) box.open = false;
+        q('[data-settings-reset]')?.focus();
+        if (r !== 'yes') return;
+        const next = structuredClone(DEFAULT_SETTINGS);
+        save(next);
+        fillSettings(form, next);
+        refresh();
+        const done = q('[data-reset-done]');
+        if (done) done.textContent = t('settings.reset.done');
+      }
     });
     form.addEventListener('input', (e) => {
       // The threshold slider reads its value live while dragging.
@@ -193,7 +160,7 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
       }
     });
     form.addEventListener('change', (e) => {
-      const next = readSettings(form, ctx.store.get().settings, gates());
+      const next = readSettings(form, ctx.store.get().settings);
       const target = e.target;
       const asked =
         target instanceof HTMLInputElement && target.name === 'notifications' && target.checked
@@ -214,40 +181,17 @@ export function openSettings(ctx: IToolCtx, opener?: Element | null): void {
       }
       save(next);
       refresh();
-      // Hearing a pick is the point of picking it; turning the tick on starts it without a reload.
-      const n = target instanceof HTMLInputElement ? target.name : '';
-      if (n === 'sound' || n === 'soundVolume' || n === 'tick') void sound(ctx, n === 'tick' ? 'mount' : 'play');
-    });
-    const reset = dialog.querySelector<HTMLButtonElement>('[data-settings-reset]');
-    reset?.addEventListener('click', () => {
-      if (reset.dataset.confirm !== '1') {
-        reset.dataset.confirm = '1';
-        reset.textContent = t('settings.reset.confirm');
-        return;
-      }
-      delete reset.dataset.confirm;
-      reset.textContent = t('settings.reset');
-      const next = structuredClone(DEFAULT_SETTINGS);
-      save(next);
-      fillSettings(form, next);
-      refresh();
     });
   }
 
   fillSettings(form, ctx.store.get().settings);
   refresh();
-  // Colour themes, lamps, patterns and presets are the themes pack, loaded on first open; the sheet waits briefly
-  // for it so the section does not pop in.
-  const looks = q('[data-appearance]');
-  const tools = q('[data-focus-tools]');
-  const ready = Promise.all([
-    looks && import('../packs/themes/appearance.js').then((m) => m.mountAppearance(ctx, looks)),
-    tools &&
-      import('../packs/extras/index.js').then((m) => {
-        m.panel(ctx, tools);
-      }),
-  ]);
-  // A failed pack load still opens the sheet; only the gallery is missing.
+  for (const d of dialog.querySelectorAll<HTMLDetailsElement>('[data-sg]')) if (group) d.open = d.dataset.sg === group;
+  // The focus tools, the second time zone and the lines with numbers are the extras pack; the sheet waits briefly for
+  // it so nothing pops in, and a failed load still opens the sheet.
+  const ready = import('../packs/extras/index.js').then((m) => {
+    m.panel(ctx, form);
+  });
   void Promise.race([ready.catch(() => undefined), new Promise((r) => setTimeout(r, 400))]).then(() => {
     openDialog(dialog, opener);
   });

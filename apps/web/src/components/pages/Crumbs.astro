@@ -1,4 +1,6 @@
 ---
+import Icon from '../icons/Icon.astro';
+
 interface Props {
   current: string;
 }
@@ -7,7 +9,7 @@ const { current } = Astro.props;
 
 <nav class="at-crumbs" aria-label="Breadcrumb">
   <ol>
-    <li><a href="/">AwakeTab</a><span aria-hidden="true">›</span></li>
+    <li><a href="/">AwakeTab</a><Icon name="caret-right" size={16} tone="ink" class="at-crumb-caret" /></li>
     <li aria-current="page">{current}</li>
   </ol>
 </nav>

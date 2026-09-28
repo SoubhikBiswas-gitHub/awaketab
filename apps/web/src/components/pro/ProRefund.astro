@@ -1,5 +1,6 @@
 ---
 import { t } from '../../i18n/load';
+import Icon from '../icons/Icon.astro';
 
 interface Props {
   card?: boolean;
@@ -8,6 +9,6 @@ const { card = false } = Astro.props;
 ---
 
 <p class:list={['at-pro-refund', card && 'at-card']} role={card ? 'note' : undefined}>
-  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"></path><path d="M4 4v4h4"></path></svg>
+  <Icon name="arrow-counter-clockwise" size={20} />
   <span><strong>{t('page.pro.refund.lead')}</strong> {t('page.pro.refund.rest')}</span>
 </p>

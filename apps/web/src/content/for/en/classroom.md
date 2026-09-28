@@ -107,8 +107,6 @@ If the timeout is too short for teaching, ask IT whether teacher devices can hav
 
 If your school allows extensions, [AwakeTab for Chrome](/extension) keeps the screen on even with the tab hidden behind full-screen slides.
 
-::limit
-
 ## Before the lesson starts
 
 ::checklist

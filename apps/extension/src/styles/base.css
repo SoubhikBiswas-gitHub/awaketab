@@ -45,7 +45,7 @@
   --ext-lift-end: var(--at-ground-end);
   --ext-halo: 12%;
   --ext-shadow: var(--at-elev);
-  --ext-float: 0 18px 40px -14px rgb(14 23 38 / 28%);
+  --ext-float: 0 18px 40px -14px color-mix(in srgb, var(--at-shadow-color) 28%, transparent);
   --ext-ease: var(--at-ease);
   --ext-lamp-soft: color-mix(in srgb, var(--at-accent) 14%, transparent);
   --ext-lamp-line: color-mix(in srgb, var(--at-accent) 45%, transparent);
@@ -55,28 +55,28 @@
   --at-type-ext-root: 16px var(--at-font);
   --at-type-ext-label: 600 1rem/1.5rem var(--at-font);
   --at-type-ext-kbd: 500 0.75rem/1rem var(--at-font-mono);
-  --at-ext-ring-width: 2px;
+  --at-ext-ring-width: var(--at-ring);
   --at-ext-ring-offset: 3px;
   --at-ext-rise: 10px;
   --at-ext-lamp-lift: 0 10px 30px -8px;
   --at-ext-switch-target: 60px;
   --at-ext-switch-w: 52px;
   --at-ext-switch-h: 32px;
-  --at-ext-thumb-on: #fff;
-  --at-ext-thumb-shadow: 0 1px 3px rgb(0 0 0 / 30%);
-  --at-ext-badge-ink: #fff;
+  --at-ext-thumb-on: var(--at-on-accent);
+  --at-ext-thumb-shadow: 0 1px 3px color-mix(in srgb, var(--at-shadow-color) 30%, transparent);
+  --at-ext-badge-ink: var(--at-badge-ink);
 }
 
 [data-theme="dark"],
 [data-theme="oled"] {
   --ext-halo: 18%;
-  --ext-float: 0 18px 40px -12px rgb(0 0 0 / 70%);
+  --ext-float: 0 18px 40px -12px color-mix(in srgb, var(--at-shadow-color) 70%, transparent);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     --ext-halo: 18%;
-    --ext-float: 0 18px 40px -12px rgb(0 0 0 / 70%);
+    --ext-float: 0 18px 40px -12px color-mix(in srgb, var(--at-shadow-color) 70%, transparent);
   }
 }
 
@@ -211,8 +211,39 @@ svg {
 }
 
 .at-logo-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--at-s-1);
   font-weight: 500;
   color: var(--at-muted);
+}
+
+.at-duo-f {
+  fill: var(--at-duo-c, var(--at-accent));
+  opacity: 0.22;
+}
+
+[data-theme="dark"] .at-duo-f,
+[data-theme="oled"] .at-duo-f {
+  opacity: 0.28;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .at-duo-f {
+    opacity: 0.28;
+  }
+}
+
+.at-duo-state {
+  --at-duo-c: var(--ext-tone, var(--at-accent));
+}
+
+.at-duo-good {
+  --at-duo-c: var(--at-good);
+}
+
+.at-duo-bad {
+  --at-duo-c: var(--at-bad);
 }
 
 .at-pill {
@@ -226,7 +257,7 @@ svg {
   padding-block: var(--at-s-1);
   padding-inline: var(--at-s-2) var(--at-s-3);
   border: var(--at-border) solid color-mix(in srgb, var(--tone) 38%, transparent);
-  border-radius: var(--at-r-lg);
+  border-radius: var(--at-r-xl);
   background: color-mix(in srgb, var(--tone) 12%, transparent);
   font: var(--at-type-small);
   font-weight: 600;
@@ -303,13 +334,9 @@ svg {
 }
 
 .at-btn-lamp {
-  min-block-size: var(--at-h-primary);
-  padding-inline: var(--at-s-6);
   border: 0;
-  border-radius: var(--at-r-xl);
   background: var(--at-accent);
   color: var(--at-on-accent);
-  font: var(--at-type-action);
   box-shadow: var(--at-ext-lamp-lift) var(--ext-lamp-glow);
 }
 
@@ -322,14 +349,18 @@ svg {
 .at-btn-big {
   min-block-size: var(--at-h-primary);
   padding-inline: var(--at-s-6);
-  border-radius: var(--at-r-xl);
   font: var(--at-type-action);
 }
 
 .at-btn-medium {
   min-block-size: var(--at-h-button);
-  padding-inline: var(--at-s-6);
-  border-radius: var(--at-r-xl);
+  padding-inline: var(--at-s-5);
+}
+
+.at-btn-row > .at-btn {
+  padding-inline: var(--at-s-2);
+  white-space: normal;
+  text-wrap: balance;
 }
 
 .at-btn-sec {
@@ -392,19 +423,15 @@ svg {
   inset-inline-start: var(--at-s-1);
   inline-size: calc((100% - var(--at-s-2)) / var(--n));
   block-size: var(--at-h-control);
+  border: var(--at-border) solid var(--at-selected-line);
   border-radius: var(--at-r-pill);
-  background: var(--at-raised);
+  background: var(--at-selected-fill);
   transform: translateX(calc(var(--i) * 100%));
   transition: transform 0.6s var(--ext-ease);
 }
 
 [dir="rtl"] .at-seg-ind {
   transform: translateX(calc(var(--i) * -100%));
-}
-
-.at-seg-lamp .at-seg-ind {
-  border: var(--at-border) solid var(--ext-lamp-line);
-  background: var(--ext-lamp-soft);
 }
 
 .at-seg:has(> :nth-child(3) > input:checked) {

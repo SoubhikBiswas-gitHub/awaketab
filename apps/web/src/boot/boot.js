@@ -37,7 +37,7 @@
   let face = '';
   /** @type {boolean | null} */
   let c24 = null;
-  let secs = false;
+  let secs = true;
   try {
     const allowed = ['auto', 'light', 'dark', 'oled'];
     const q = new URLSearchParams(location.search).get('theme');
@@ -86,10 +86,11 @@
     if (at > 0 && at < 4 && document.querySelector('link[href="#at-tool-parsed"]'))
       document.write(`<link rel="stylesheet" href="${FACES_CSS}" data-at-faces>`);
     if (saved && saved.keyboardHints === false) root.dataset.hints = 'off';
+    if (saved && saved.reduceMotion === 'on') root.dataset.motion = 'reduce';
     const clock = /** @type {{ clock24h?: unknown; showSeconds?: unknown } | undefined} */ (saved?.ambient);
     const h24 = clock?.clock24h;
     if (typeof h24 === 'boolean') c24 = h24;
-    secs = clock?.showSeconds === true;
+    secs = clock?.showSeconds !== false;
   } catch {
     // private mode
   }
@@ -181,6 +182,13 @@
     if (keys instanceof HTMLElement) {
       e.preventDefault();
       keys.click();
+    }
+    // Back to top scrolls to the very top (smoothly unless motion is reduced) and hands focus to the skip target.
+    const top = el.closest('[data-top]') && document.getElementById('content');
+    if (top) {
+      e.preventDefault();
+      scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      top.focus({ preventScroll: true });
     }
     const wrap = el.closest('[data-lang]');
     if (wrap instanceof HTMLElement) {
@@ -300,6 +308,12 @@
   // lands before the largest paint.
   addEventListener('DOMContentLoaded', () => {
     sync();
+    // The header turns solid once the page scrolls past a probe 8 px from the top.
+    const probe = document.querySelector('.at-stuck-probe');
+    if (probe && 'IntersectionObserver' in window)
+      new IntersectionObserver(([e]) => {
+        root.toggleAttribute('data-stuck', !e?.isIntersecting);
+      }).observe(probe);
     let started = false;
     const go = () => {
       if (started) return;

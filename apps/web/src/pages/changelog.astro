@@ -20,6 +20,7 @@ import {
   type TChangelogType,
 } from '../lib/changelog';
 import { articleSchema } from '../lib/seo';
+import Icon from '../components/icons/Icon.astro';
 
 const sorted = sortChangelog(await getCollection('changelog'));
 const entries = await Promise.all(
@@ -40,11 +41,7 @@ const parts = release ? releaseParts(release.body) : null;
 const latest = entries[0]?.date;
 
 const LABEL: Record<TChangelogType, string> = { new: 'New', fixed: 'Fixed', changed: 'Changed' };
-const GLYPH: Record<TChangelogType, string> = {
-  new: 'M12 5v14M5 12h14',
-  fixed: 'M5 12.5l4.5 4.5L19 7.5',
-  changed: 'M4 9h13l-3.5-3.5M20 15H7l3.5 3.5',
-};
+const GLYPH: Record<TChangelogType, string> = { new: 'sparkle', fixed: 'wrench', changed: 'arrows-clockwise' };
 const count = (type: TChangelogType) => rest.filter((e) => e.type === type).length + (type === 'new' && release ? 1 : 0);
 const filters = [
   { value: 'all', label: 'All', count: entries.length },
@@ -136,9 +133,7 @@ const canonical = `${site}/changelog`;
               {g.items.map((e) => (
                 <li class="at-cl-entry" data-changelog-entry={e.id} data-date={e.date} data-type={e.type}>
                   <span class={`at-tag at-tag-tone at-pg-tag at-cl-tag at-cl-tag-${e.type}`}>
-                    <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
-                      <path d={GLYPH[e.type]} />
-                    </svg>
+                    <Icon name={GLYPH[e.type]} size={12} tone="state" />
                     {LABEL[e.type]}
                   </span>
                   <h3 class="at-pg-h3 at-pg-balance" data-changelog-title>

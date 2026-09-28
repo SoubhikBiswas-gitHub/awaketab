@@ -9,7 +9,7 @@
   gap: var(--at-gap-item);
   padding-block: var(--at-s-4) var(--at-s-5);
   padding-inline: var(--at-gutter);
-  border-block-end: 1px solid var(--at-line-strong);
+  border-block-end: var(--at-border) solid var(--at-line-strong);
   background: var(--at-surface);
 }
 

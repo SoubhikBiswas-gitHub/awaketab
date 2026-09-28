@@ -58,7 +58,7 @@
 @property --at-pro-lamp {
   syntax: "<color>";
   inherits: true;
-  initial-value: #087b87;
+  initial-value: transparent;
 }
 
 :root:has(.at-pro-page) {
@@ -528,7 +528,7 @@
   }
 
   .at-pro-swatch:has(:focus-visible) {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 
@@ -562,7 +562,7 @@
   }
 
   .at-pro-cmp-wrap:focus-visible {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 
@@ -666,11 +666,17 @@
     display: block;
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
-    fill: none;
-    stroke: currentcolor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
+  }
+
+  .at-pro-cmp-table caption .at-pro-cmp-logos svg {
+    display: inline;
+  }
+
+  .at-pro-cmp-logos {
+    display: inline-flex;
+    gap: var(--at-s-1);
+    margin-inline-end: var(--at-s-2);
+    vertical-align: -0.15em;
   }
 
   .at-pro-cmp-table > tbody td.at-pro-cmp-pro.at-pro-cmp-yes {
@@ -714,11 +720,6 @@
   .at-pro-icon > svg {
     inline-size: var(--at-icon-lg);
     block-size: var(--at-icon-lg);
-    fill: none;
-    stroke: currentcolor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
   }
 
   .at-pro-plans {
@@ -801,11 +802,7 @@
     flex-shrink: 0;
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
-    fill: none;
-    stroke: var(--at-accent);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
+    color: var(--at-accent-text);
   }
 
   .at-pro-refund strong {
@@ -954,7 +951,7 @@
   }
 
   .at-pro-faq-list summary:focus-visible {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 
@@ -974,10 +971,6 @@
   .at-pro-faq-icon > svg {
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
-    fill: none;
-    stroke: currentcolor;
-    stroke-linecap: round;
-    stroke-width: 2;
     transition: transform var(--at-d-slide) var(--at-ease);
   }
 
@@ -1238,11 +1231,6 @@
   .at-pro-back > svg {
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
-    fill: none;
-    stroke: currentcolor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
   }
 
   .at-pro-act-head {
@@ -1285,15 +1273,7 @@
   .at-pro-spin {
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
-    fill: none;
-    stroke: currentcolor;
-    stroke-linecap: round;
-    stroke-width: 2.4;
     animation: at-pro-spin 0.9s linear infinite;
-  }
-
-  .at-pro-spin > circle {
-    stroke-opacity: 0.3;
   }
 
   .at-pro-act[data-state="checking"] .at-pro-submit {
@@ -1393,10 +1373,6 @@
     padding-block-start: var(--at-s-1);
   }
 
-  .at-pro .at-pro-err-actions .at-button {
-    padding-inline: var(--at-s-6);
-  }
-
   .at-pro-ok {
     display: none;
     flex-direction: column;
@@ -1478,11 +1454,7 @@
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
     margin-block-start: calc(var(--at-s-1) - var(--at-border));
-    fill: none;
-    stroke: var(--at-accent);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2.4;
+    color: var(--at-accent-text);
   }
 
   .at-pro-ok-actions {
@@ -1498,7 +1470,6 @@
 
   .at-pro-ok-actions > .at-button:not(.at-button-primary) {
     flex: 1 1 160px;
-    padding-inline: var(--at-s-6);
   }
 
   .at-pro-reset {
@@ -1549,16 +1520,7 @@
   .at-pro .at-pro-copy {
     flex: 0 0 auto;
     min-inline-size: var(--at-pro-copy-min);
-    padding-inline: var(--at-s-5);
     box-shadow: none;
-  }
-
-  .at-pro-copy > svg {
-    fill: none;
-    stroke: currentcolor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
   }
 
   .at-pro .at-pro-copy > svg {
@@ -1682,21 +1644,10 @@
     background: color-mix(in srgb, var(--at-accent) 14%, transparent);
   }
 
-  .at-pro-rail svg,
-  .at-pro-co-glyph svg,
-  .at-pro-co-list svg,
-  .at-pro-co-callout svg {
-    fill: none;
-    stroke: currentcolor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
   .at-pro-rail svg {
     inline-size: var(--at-icon-xs);
     block-size: var(--at-icon-xs);
-    color: var(--at-accent);
-    stroke-width: 3;
+    color: var(--at-accent-text);
   }
 
   .at-pro-co-head {
@@ -1723,7 +1674,6 @@
   .at-pro-co-glyph svg {
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
-    stroke-width: 1.8;
   }
 
   [data-co="cancelled"] .at-pro-co-glyph {
@@ -1814,7 +1764,6 @@
 
   .at-pro .at-pro-co-key > .at-pro-copy {
     min-inline-size: 0;
-    padding-inline: var(--at-s-4);
   }
 
   .at-pro-co-list li {
@@ -1832,7 +1781,6 @@
     block-size: var(--at-icon-sm);
     margin-block-start: var(--at-s-1);
     color: var(--at-muted);
-    stroke-width: 1.8;
   }
 
   .at-pro-co-actions {
@@ -1906,7 +1854,6 @@
     block-size: var(--at-icon-sm);
     margin-block-start: calc(var(--at-s-1) / 2);
     color: var(--at-ink-2);
-    stroke-width: 1.8;
   }
 
   .at-pro-co-link {
@@ -2141,16 +2088,16 @@
     min-inline-size: 0;
   }
 
-  .at-pro-dev-name > svg {
+  .at-pro-dev-name > .at-pro-dev-ic {
     display: none;
     flex-shrink: 0;
+    color: var(--at-muted);
+  }
+
+  .at-pro-dev-ic > svg {
+    display: block;
     inline-size: var(--at-pro-dev-icon);
     block-size: var(--at-pro-dev-icon);
-    fill: none;
-    stroke: var(--at-muted);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.7;
   }
 
   .at-pro-dev-label {
@@ -2228,12 +2175,7 @@
   .at-button.at-pro-confirm-remove:hover {
     border-color: transparent;
     background: var(--at-bad);
-    color: var(--at-surface);
-  }
-
-  :root:is([data-theme="dark"], [data-theme="oled"])
-    :is(.at-button.at-pro-confirm-remove, .at-button.at-pro-confirm-remove:hover) {
-    color: var(--at-ground);
+    color: light-dark(var(--at-surface), var(--at-ground));
   }
 
   .at-pro-dev-act .at-button:disabled,
@@ -2320,7 +2262,6 @@
 
   .at-pro-empty-actions > .at-button:not(.at-button-primary) {
     flex: 1 1 180px;
-    padding-inline: var(--at-s-6);
   }
 
   .at-pro-man-key {
@@ -2366,10 +2307,6 @@
     align-items: center;
     gap: var(--at-gap-item);
     padding-block-start: var(--at-s-1);
-  }
-
-  .at-pro-lapse-actions > .at-button:not(.at-button-primary) {
-    padding-inline: var(--at-s-5);
   }
 
   .at-pro-man:is([data-state="grace"], [data-state="lapsed"]) .at-pro-devices {
@@ -2564,7 +2501,7 @@
       grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) var(--at-pro-lapse-remove-col);
     }
 
-    .at-pro-man:is([data-state="grace"], [data-state="lapsed"]) .at-pro-dev-name > svg {
+    .at-pro-man:is([data-state="grace"], [data-state="lapsed"]) .at-pro-dev-name > .at-pro-dev-ic {
       display: none;
     }
 

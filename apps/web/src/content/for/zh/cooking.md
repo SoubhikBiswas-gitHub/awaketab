@@ -94,8 +94,6 @@ AwakeTab 在安全（HTTPS）且可见的页面中调用 `navigator.wakeLock.req
 
 根据 2026年9月9日的支持矩阵，原生唤醒锁的最低版本是 Chrome 84、Edge 84、Firefox 126、Safari 16.4 和 Samsung Internet 14；添加到 iOS 主屏幕的 App 需要 iOS 18.4。更旧的 Firefox 可以在你点按之后启动视频备用方案，但它比原生唤醒锁更耗电。
 
-::limit
-
 ## 电量与安全
 
 ::checklist

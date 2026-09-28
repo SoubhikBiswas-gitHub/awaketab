@@ -14,6 +14,7 @@
   --at-fx-sh: calc(80 * var(--u));
   --at-fx-sf: calc(58 * var(--u));
   --at-fx-glass: color-mix(in srgb, var(--at-face-c) 8%, var(--at-ink));
+  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- face art: the hot filament core */
   --at-fx-hot: color-mix(in oklab, var(--at-face-c) calc(100% - var(--at-fx-glow) * 42%), rgb(255 246 232));
   --at-fx-base: linear-gradient(
     180deg,
@@ -92,7 +93,7 @@
   inline-size: var(--at-fx-tw);
   block-size: var(--at-fx-th);
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--at-face-c) 18%, var(--at-line-strong));
+  border: var(--at-border) solid color-mix(in srgb, var(--at-face-c) 18%, var(--at-line-strong));
   border-start-start-radius: var(--at-r-pill);
   border-start-end-radius: var(--at-r-pill);
   border-end-start-radius: var(--at-r-xs);
@@ -107,6 +108,7 @@
   transition: box-shadow 0.6s var(--at-ease);
 }
 
+/* stylelint-disable declaration-property-value-disallowed-list -- face art: tube glass and mesh */
 .at-fx-tube::before {
   content: "";
   position: absolute;
@@ -134,6 +136,7 @@
     repeating-linear-gradient(-60deg, rgb(255 255 255 / 6%) 0 0.5px, transparent 0.5px calc(5 * var(--u)));
   pointer-events: none;
 }
+/* stylelint-enable declaration-property-value-disallowed-list */
 
 .at-fx-ghost {
   position: absolute;
@@ -146,6 +149,7 @@
   grid-area: 1 / 1;
   color: transparent;
   font-style: normal;
+  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- face art: unlit cathodes */
   -webkit-text-stroke: calc(0.8 * var(--u)) color-mix(in srgb, var(--at-face-c) 22%, rgb(255 255 255 / 8%));
 }
 

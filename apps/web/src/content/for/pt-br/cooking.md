@@ -91,8 +91,6 @@ No Android, o tempo limite fica em Configurações → Tela → Tempo limite da 
 
 Na cozinha, o que costuma estar à mão é um celular ou tablet. No iPhone e no iPad, vale o Safari 16.4 ou mais novo. No Android, o Chrome desde a versão 84, o Samsung Internet desde a 14 e o Firefox desde a 126. Se você instalou o AwakeTab na Tela de Início do iPhone, o iOS precisa estar na versão 18.4 ou mais nova. Firefox antigo pode usar o vídeo alternativo, que só começa depois de um toque seu. Esses números seguem a documentação dos navegadores, conferida em 26 de setembro de 2026.
 
-::limit
-
 ## Antes de ir para o fogão
 
 ::checklist

@@ -3,6 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ICON_SIZES, ringPng } from '../../scripts/icons.mjs';
+import { inlineIcons } from '../../scripts/svg-icons.mjs';
 import {
   BG_KEYS,
   bgCatalogs,
@@ -179,6 +180,36 @@ describe('icons', () => {
       expect(a.equals(b)).toBe(true);
       expect(a.readUInt32BE(16)).toBe(size);
       expect(a.subarray(1, 4).toString()).toBe('PNG');
+    }
+  });
+});
+
+describe('inline icons', () => {
+  it('inlines Phosphor duotone icons with the lamp fill layer and keeps their viewBox', () => {
+    const html = inlineIcons('<svg data-icon="gear-six" width="20" height="20" class="at-duo-bad" data-x></svg>');
+    expect(html).toMatch(/^<svg class="at-duo at-duo-bad" width="20" height="20" viewBox="0 0 256 256"/u);
+    expect(html).toContain(' data-x aria-hidden="true" focusable="false">');
+    expect(html).toMatch(/<path d="[^"]+" class="at-duo-f"\/>/u);
+    expect(html).not.toContain('opacity=');
+  });
+
+  it('inlines full-colour brand logos unaltered', () => {
+    const html = inlineIcons('<svg data-logo="chrome" width="16" height="16"></svg>');
+    expect(html).toContain('viewBox="0 0 256 256"');
+    expect(html).toContain('fill="#1a73e8"');
+    expect(html).not.toContain('currentColor');
+  });
+
+  it('fails the build on an unknown name or a missing size', () => {
+    expect(() => inlineIcons('<svg data-icon="no-such-icon" width="16" height="16"></svg>')).toThrow();
+    expect(() => inlineIcons('<svg data-logo="no-such-logo" width="16" height="16"></svg>')).toThrow();
+    expect(() => inlineIcons('<svg data-icon="x" width="16"></svg>')).toThrow(/width and height/u);
+  });
+
+  it('leaves no placeholder in any extension page', async () => {
+    for (const page of ['popup', 'options', 'welcome']) {
+      const html = inlineIcons(await readFile(path.join(EXT, `entrypoints/${page}/index.html`), 'utf8'));
+      expect(html, page).not.toMatch(/data-(?:icon|logo)=/u);
     }
   });
 });

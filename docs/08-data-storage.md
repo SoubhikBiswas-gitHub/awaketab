@@ -68,7 +68,7 @@ interface INotesData {
   v: 1;
   notes: Array<{
     id: string;           // crypto.randomUUID()
-    title: string;        // ≤ 120 chars, '' when untitled (titles are a Pro feature)
+    title: string;        // ≤ 120 chars; '' for new notes, whose title is their first line
     doc: JSONContent | null; // Tiptap/ProseMirror document JSON; null until something is written
     createdAt: number;    // ms epoch
     updatedAt: number;    // ms epoch, the list sorts on it
@@ -79,7 +79,7 @@ interface INotesData {
 }
 ```
 
-Reads are defensive (`parseNotes`): a damaged record, a duplicate id or a non-document `doc` is dropped, never thrown. Free: one editable note, the first in the array; with `ambient.packs`, or during a five-minute preview, every note is editable. Notes written during a preview stay (readable, copyable, exportable) and are read only after it ends; nothing is deleted except by the user (Clear with an inline confirm, or Delete note when there are several). Clearing the site's data in the browser deletes them; there is no server copy and no sync.
+Reads are defensive (`parseNotes`): a damaged record, a duplicate id or a non-document `doc` is dropped, never thrown. Free: one editable note, the first in the array; with `ambient.packs`, or during a five-minute preview, every note is editable. An older note that still has a `title` gets it as its first line (a level 1 heading) the first time it opens editable, and the field is emptied; read-only notes keep it and Copy and Export put it on top. Notes written during a preview stay (readable, copyable, exportable) and are read only after it ends; nothing is deleted except by the user (Clear with an inline confirm, or Delete note when there are several). Clearing the site's data in the browser deletes them; there is no server copy and no sync.
 
 ### 2.2 `at.v1.session`
 

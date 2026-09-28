@@ -1,6 +1,5 @@
 import type { TFace } from '@awaketab/core';
 import type { IToolCtx } from '../../ctx.js';
-import { openDialog } from '../../ui/dialog.js';
 import { moreCss } from '../../ui/more-css.js';
 import href from './gallery.css?url';
 import type { IFaces } from './index.js';
@@ -29,8 +28,10 @@ function clone(root: HTMLElement, id: TFace): HTMLElement | null {
   return copy;
 }
 
-function bind(ctx: IToolCtx, f: IFaces, d: HTMLDialogElement): () => void {
+function bind(ctx: IToolCtx, f: IFaces, d: HTMLElement): () => void {
   const { root, store } = ctx;
+  const dlg = d.closest('dialog');
+  const shown = () => !!dlg?.open && !d.hidden;
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const picks = [...d.querySelectorAll<HTMLButtonElement>('[data-pick]')];
   const newer = new Map<TFace, IFace>();
@@ -98,8 +99,8 @@ function bind(ctx: IToolCtx, f: IFaces, d: HTMLDialogElement): () => void {
   d.addEventListener('click', (e) => {
     const p = (e.target as Element).closest<HTMLElement>('[data-pick]');
     if (!p) return;
+    // The sheet stays open: the clock behind it changes at once, so faces can be compared in place.
     void f.set(p.dataset.pick as TFace);
-    d.close();
   });
   // Choosing an Analog style also makes Analog the face; index.ts stores the style itself.
   d.addEventListener('change', (e) => {
@@ -136,37 +137,35 @@ function bind(ctx: IToolCtx, f: IFaces, d: HTMLDialogElement): () => void {
     picks[Math.min(picks.length - 1, Math.max(0, to))]?.focus();
   });
 
-  d.addEventListener('close', () => {
+  // The miniatures tick only while the Face tab is on screen.
+  const rest = () => {
     window.clearInterval(timer);
     for (const n of d.querySelectorAll('[data-live]')) n.removeAttribute('data-live');
     paint();
-  });
+  };
+  dlg?.addEventListener('close', rest);
   store.subscribe(() => {
-    if (d.open) paint();
+    if (shown()) paint();
   });
   return () => {
     paint();
     window.clearInterval(timer);
-    timer = window.setInterval(paint, 1000);
+    timer = window.setInterval(() => {
+      if (shown()) paint();
+      else rest();
+    }, 1000);
   };
 }
 
 let start: (() => void) | undefined;
 
-// The gallery sheet (components/ui/Sheet.astro, rendered in ToolPanel): every face as a live miniature, grouped.
-export function openGallery(ctx: IToolCtx, f: IFaces, opener?: Element | null): void {
-  const d = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="faces"]');
-  if (!d) return;
-  void Promise.all([sheet(href), f.art(), moreCss()]).then(() => {
+// The Face tab of the Customize sheet: every face as a live miniature, grouped.
+export function showGallery(ctx: IToolCtx, f: IFaces, pane: HTMLElement): Promise<void> {
+  return Promise.all([sheet(href), f.art(), moreCss()]).then(() => {
     if (!bound) {
       bound = true;
-      start = bind(ctx, f, d);
+      start = bind(ctx, f, pane);
     }
     start?.();
-    openDialog(d, opener);
-    // openDialog shows the sheet a task later; then the face in use takes focus, so arrows start from it.
-    window.setTimeout(() => {
-      d.querySelector<HTMLElement>('[data-pick][aria-pressed="true"]')?.focus();
-    }, 0);
   });
 }

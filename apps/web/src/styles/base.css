@@ -19,7 +19,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--ring);
+    outline: var(--at-ring) solid var(--ring);
     outline-offset: 3px;
   }
 
@@ -46,8 +46,8 @@
     z-index: 40;
     padding-block: var(--at-s-2);
     padding-inline: var(--at-s-4);
-    border: 1px solid var(--border);
-    border-radius: var(--at-r-sm);
+    border: var(--at-border) solid var(--border);
+    border-radius: var(--at-r-md);
     background: var(--card);
     color: var(--card-foreground);
     text-decoration: none;
@@ -137,8 +137,8 @@
     align-items: center;
     min-block-size: var(--at-h-control);
     padding-inline: var(--at-s-4);
-    border: 1px solid var(--border);
-    border-radius: var(--at-r-sm);
+    border: var(--at-border) solid var(--border);
+    border-radius: var(--at-r-md);
     background: var(--card);
     color: var(--card-foreground);
     font: var(--at-type-small);
@@ -166,6 +166,33 @@
       animation-duration: 1ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 1ms !important;
+    }
+  }
+
+  .at-duo {
+    flex-shrink: 0;
+  }
+
+  .at-duo .at-duo-f {
+    fill: var(--at-duo-c, var(--at-accent));
+    opacity: 0.28;
+  }
+
+  :root[data-theme="light"] .at-duo .at-duo-f {
+    opacity: 0.22;
+  }
+
+  .at-duo-state {
+    --at-duo-c: var(--at-tone, var(--at-accent));
+  }
+
+  .at-duo-ink {
+    --at-duo-c: currentcolor;
+  }
+
+  @media (forced-colors: active) {
+    .at-duo .at-duo-f {
+      fill: CanvasText;
     }
   }
 

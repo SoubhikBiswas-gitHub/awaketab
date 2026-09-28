@@ -65,14 +65,8 @@
   }
 
   .at-pick-tags svg {
-    inline-size: var(--at-icon-sm);
-    block-size: var(--at-icon-sm);
     flex-shrink: 0;
-    fill: none;
-    stroke: var(--at-accent-text);
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    color: var(--at-accent-text);
   }
 
   .at-cp .at-pick-title {
@@ -149,7 +143,7 @@
   }
 
   .at-pick-more .at-go {
-    stroke: currentcolor;
+    color: currentcolor;
   }
 
   @media (hover: hover) {
@@ -173,7 +167,7 @@
 
     .at-pick-card:has(.at-pick-title a:focus-visible) {
       border-color: var(--at-line-strong);
-      outline: 2px solid var(--at-focus);
+      outline: var(--at-ring) solid var(--at-focus);
       outline-offset: 3px;
     }
   }

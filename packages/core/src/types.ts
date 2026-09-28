@@ -164,7 +164,7 @@ export const DEFAULT_SETTINGS: ISettings = {
     mode: 'standard',
     message: '',
     clock24h: null,
-    showSeconds: false,
+    showSeconds: true,
     pixelShift: true,
     autoHideMs: 3000,
     focus: { workMin: 25, breakMin: 5, cycles: 4 },

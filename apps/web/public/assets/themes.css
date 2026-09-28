@@ -17,6 +17,8 @@
   --at-good: #2d683d;
   --at-lift: #fffdf8;
   --at-ground-end: #f3ecdf;
+  --at-shadow-color: #2b2118;
+  --at-bezel: #15110c;
 }
 
 [data-palette="paper"]:is([data-theme="dark"], [data-theme="oled"]) {
@@ -39,6 +41,8 @@
   --at-lift: #2a2117;
   --at-ground-end: #110e0a;
   --at-elev: none;
+  --at-shadow-color: #000000;
+  --at-bezel: #080604;
 }
 
 [data-palette="nord"][data-theme="light"] {
@@ -60,6 +64,8 @@
   --at-good: #3f6b2e;
   --at-lift: #ffffff;
   --at-ground-end: #e5e9f0;
+  --at-shadow-color: #2e3440;
+  --at-bezel: #242933;
 }
 
 [data-palette="nord"]:is([data-theme="dark"], [data-theme="oled"]) {
@@ -82,6 +88,8 @@
   --at-lift: #2e3440;
   --at-ground-end: #1f232b;
   --at-elev: none;
+  --at-shadow-color: #000000;
+  --at-bezel: #0e1014;
 }
 
 [data-palette="solarized"][data-theme="light"] {
@@ -96,13 +104,15 @@
   --at-track: #eee8d5;
   --at-tick: #dcd4be;
   --at-raised: #eee8d5;
-  --at-sunken: #f9f2de;
+  --at-sunken: #fbf5e4;
   --at-input-border: #7b8b8b;
   --at-warn: #875f00;
   --at-bad: #b42f2b;
   --at-good: #566e00;
   --at-lift: #fffcf3;
   --at-ground-end: #f6efda;
+  --at-shadow-color: #073642;
+  --at-bezel: #002b36;
 }
 
 [data-palette="solarized"]:is([data-theme="dark"], [data-theme="oled"]) {
@@ -125,6 +135,8 @@
   --at-lift: #0a3a47;
   --at-ground-end: #00222b;
   --at-elev: none;
+  --at-shadow-color: #000000;
+  --at-bezel: #001014;
 }
 
 [data-palette="midnight"][data-theme="light"] {
@@ -146,6 +158,8 @@
   --at-good: #1e7b4d;
   --at-lift: #ffffff;
   --at-ground-end: #e8ebf8;
+  --at-shadow-color: #0b1030;
+  --at-bezel: #070b1a;
 }
 
 [data-palette="midnight"]:is([data-theme="dark"], [data-theme="oled"]) {
@@ -161,13 +175,15 @@
   --at-tick: #26305a;
   --at-raised: #222c52;
   --at-sunken: #050815;
-  --at-input-border: #5b6690;
+  --at-input-border: #5e6993;
   --at-warn: #f2b34c;
   --at-bad: #ff7a7a;
   --at-good: #5fd39a;
   --at-lift: #121b3d;
   --at-ground-end: #04060f;
   --at-elev: none;
+  --at-shadow-color: #000000;
+  --at-bezel: #020409;
 }
 
 [data-palette="forest"][data-theme="light"] {
@@ -189,6 +205,8 @@
   --at-good: #1d6f43;
   --at-lift: #ffffff;
   --at-ground-end: #e8efe6;
+  --at-shadow-color: #13221a;
+  --at-bezel: #0b130f;
 }
 
 [data-palette="forest"]:is([data-theme="dark"], [data-theme="oled"]) {
@@ -211,6 +229,8 @@
   --at-lift: #14251b;
   --at-ground-end: #070d0a;
   --at-elev: none;
+  --at-shadow-color: #000000;
+  --at-bezel: #040705;
 }
 
 [data-palette="sunset"][data-theme="light"] {
@@ -232,6 +252,8 @@
   --at-good: #2a6b45;
   --at-lift: #ffffff;
   --at-ground-end: #f7e8e1;
+  --at-shadow-color: #2a1418;
+  --at-bezel: #160e14;
 }
 
 [data-palette="sunset"]:is([data-theme="dark"], [data-theme="oled"]) {
@@ -254,6 +276,8 @@
   --at-lift: #2b1824;
   --at-ground-end: #0e080c;
   --at-elev: none;
+  --at-shadow-color: #000000;
+  --at-bezel: #070406;
 }
 
 [data-palette="mono"][data-theme="light"] {
@@ -275,6 +299,8 @@
   --at-good: #1e7b4d;
   --at-lift: #ffffff;
   --at-ground-end: #eeeeee;
+  --at-shadow-color: #111111;
+  --at-bezel: #0b0b0b;
 }
 
 [data-palette="mono"]:is([data-theme="dark"], [data-theme="oled"]) {
@@ -297,6 +323,8 @@
   --at-lift: #1a1a1a;
   --at-ground-end: #070707;
   --at-elev: none;
+  --at-shadow-color: #000000;
+  --at-bezel: #040404;
 }
 
 [data-palette="contrast"][data-theme="light"] {
@@ -318,6 +346,8 @@
   --at-good: #0d5a33;
   --at-lift: #ffffff;
   --at-ground-end: #ffffff;
+  --at-shadow-color: #000000;
+  --at-bezel: #000000;
 }
 
 [data-palette="contrast"]:is([data-theme="dark"], [data-theme="oled"]) {
@@ -340,6 +370,8 @@
   --at-lift: #000000;
   --at-ground-end: #000000;
   --at-elev: none;
+  --at-shadow-color: #000000;
+  --at-bezel: #000000;
 }
 
 [data-palette][data-theme="oled"] {

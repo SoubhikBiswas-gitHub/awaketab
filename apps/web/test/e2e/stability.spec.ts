@@ -297,13 +297,10 @@ function report(moved: IShift[]): string {
 }
 
 async function pickTheme(page: Page, theme: 'light' | 'dark'): Promise<void> {
+  // The tool header has no theme switch any more (it lives in Customize); D steps auto → light → dark → oled.
   const html = page.locator('html');
-  const item = page.locator(`#awaketab-tool header .at-theme-item[data-v="${theme}"]:visible`).first();
-  if ((await item.count()) > 0) await item.click();
-  else {
-    const cycle = page.locator('#awaketab-tool header [data-theme-cycle]');
-    for (let i = 0; i < 4 && (await html.getAttribute('data-theme-pref')) !== theme; i += 1) await cycle.click();
-  }
+  for (let i = 0; i < 4 && (await html.getAttribute('data-theme-pref')) !== theme; i += 1)
+    await page.keyboard.press('d');
   await expect(html).toHaveAttribute('data-theme-pref', theme);
 }
 
@@ -347,7 +344,7 @@ test.describe('layout stability', { tag: '@stability' }, () => {
             if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
           });
           const html = page.locator('html');
-          const gallery = page.locator('dialog[data-dialog="faces"]');
+          const gallery = page.locator('dialog[data-dialog="customize"]');
           const menu = page.locator('#at-hm-menu');
           const steps: Array<[string, () => Promise<void>]> = [
             [
@@ -370,9 +367,11 @@ test.describe('layout stability', { tag: '@stability' }, () => {
                 await page.locator('#awaketab-tool .at-fc-open:visible').first().click();
                 await expect(gallery).toBeVisible();
                 await gallery.locator(`[data-pick="${name}"]`).click();
-                await expect(gallery).toBeHidden();
+                // The sheet stays open while the clock behind it changes; Esc closes it.
                 if (name === 'ring') await expect(html).not.toHaveAttribute('data-face');
                 else await expect(html).toHaveAttribute('data-face', name);
+                await page.keyboard.press('Escape');
+                await expect(gallery).toBeHidden();
               },
             ]),
             [
@@ -386,14 +385,15 @@ test.describe('layout stability', { tag: '@stability' }, () => {
             ['theme dark', () => pickTheme(page, 'dark')],
             ['theme light', () => pickTheme(page, 'light')],
             [
-              'open the header Menu',
+              'open the site menu from More',
               async () => {
-                await page.locator('#awaketab-tool header button.at-hm-open').click();
+                await page.locator('#awaketab-tool header button[data-more-open]').click();
+                await page.locator('#at-more button[popovertarget="at-hm-menu"]').click();
                 await expect(menu).toBeVisible();
               },
             ],
             [
-              'close the header Menu',
+              'close the site menu',
               async () => {
                 await page.keyboard.press('Escape');
                 await expect(menu).toBeHidden();
@@ -461,9 +461,13 @@ test.describe('layout stability', { tag: '@stability' }, () => {
               .slice(0, 40)
               .map((f) => `  ${String(f.t)} ms ${JSON.stringify({ ...f, t: undefined })}`)
               .join('\n');
+            // Once the lock is granted the length row folds into "Until you stop · Change" by design, so the
+            // preset is only held still until then.
+            const granted = frames.findIndex((f) => f.pill === 'Screen awake');
             for (const key of ['face', 'digits', 'tab', 'preset'] as const) {
-              const seen = [...new Set(frames.map((f) => f[key]))];
-              expect.soft(seen, `${key} changed after first paint on ${path}:\n${log}`).toEqual([last[key]]);
+              const span = key === 'preset' && granted > 0 ? frames.slice(0, granted) : frames;
+              const seen = [...new Set(span.map((f) => f[key]))];
+              expect.soft(seen, `${key} changed after first paint on ${path}:\n${log}`).toEqual([span.at(-1)?.[key]]);
             }
             // The pill may wait for the browser's answer on a route that starts on load (it never guesses),
             // but once shown its text never changes and it never hides again.

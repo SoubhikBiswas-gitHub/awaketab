@@ -2,8 +2,7 @@ import type { ISettings, TFocusSound } from '@awaketab/core';
 import { hasFeature, type IToolCtx } from '../../ctx.js';
 import { t } from '../../i18n.js';
 import { chime } from '../../signal.js';
-import { openDialog } from '../../ui/dialog.js';
-import { openSettings } from '../../ui/settings.js';
+import { openCustomize } from '../../ui/actions.js';
 import { dismiss, toast } from '../../ui/toast.js';
 import { liveSession } from '../../ui/view.js';
 import type * as Engine from './engine.js';
@@ -33,8 +32,9 @@ const put = (n: Element | null | undefined, text: string) => {
 
 function create(ctx: IToolCtx) {
   const { root, store } = ctx;
-  const dlg = root.querySelector<HTMLDialogElement>('[data-dialog="sound"]');
-  const box = dlg?.querySelector<HTMLElement>('.at-snd') ?? null;
+  // The Sound tab of the Customize sheet.
+  const box = root.querySelector<HTMLElement>('[data-cz-pane="sound"]');
+  const dlg = box?.closest('dialog');
   const css = new Promise<void>((resolve) => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
@@ -134,8 +134,6 @@ function create(ctx: IToolCtx) {
     box.dataset.state = state;
     box.toggleAttribute('data-pro', pro());
     box.toggleAttribute('data-pv', !!pv);
-    const see = q('[data-snd-see]');
-    if (see) see.hidden = !!liveSession(store.get());
     put(q('[data-snd-title]'), title(f));
     put(q('[data-snd-sub]'), sub(f));
     const tg = q('[data-snd="toggle"]');
@@ -158,6 +156,18 @@ function create(ctx: IToolCtx) {
       const v = mixing(f) ? (f.mix[g as TGen] ?? 0) : g === f.kind ? 1 : 0;
       if (document.activeElement !== n) n.value = String(Math.round(v * 100));
     }
+    // The end sound, its volume, vibration and the tick are ordinary settings, drawn from the store.
+    const s = settings();
+    const endPct = String(Math.round(s.sound.volume * 100));
+    for (const n of box.querySelectorAll<HTMLInputElement>('input[name^="cz-"]')) {
+      if (n.name === 'cz-sound') n.checked = n.value === s.sound.id;
+      else if (n.name === 'cz-vibrate') n.checked = s.vibrate;
+      else if (n.name === 'cz-tick') n.checked = s.tick;
+      else if (document.activeElement !== n) n.value = endPct;
+    }
+    put(q('[data-cz-end-out]'), t('settings.battery.value', { percent: endPct }));
+    const vib = q('[data-vibrate-row]');
+    if (vib) vib.hidden = !('vibrate' in navigator);
   };
 
   const session = () => {
@@ -288,7 +298,13 @@ function create(ctx: IToolCtx) {
 
   const choose = (k: string) => {
     const f = focus();
-    if (trackOf(k) && !pro()) return;
+    // A Pro track tapped without Pro starts the five-minute preview and plays it.
+    if (trackOf(k) && !pro()) {
+      tryPro(() => {
+        choose(k);
+      });
+      return;
+    }
     if (k === f.kind && !mixing(f) && live()) {
       void pause();
       return;
@@ -310,17 +326,18 @@ function create(ctx: IToolCtx) {
     paint();
   };
 
-  function tryPro(): void {
+  function tryPro(then?: () => void): void {
     void import('../themes/preview.js').then((m) => {
       m.startPreview(ctx, {
         kind: 'sound',
         id: 'mixer',
-        label: t('tool.sound.mix.proName'),
+        label: t('tool.customize.proSounds'),
         back: t('tool.sound.mix.proBack'),
         apply: () => {
           pv = {};
           paint();
-          box?.querySelector<HTMLElement>('input[data-snd-mix]')?.focus();
+          if (then) then();
+          else box?.querySelector<HTMLElement>('input[data-snd-mix]')?.focus();
         },
         revert: () => {
           pv = null;
@@ -364,13 +381,15 @@ function create(ctx: IToolCtx) {
     else if (snd === 'toggle') void (live() ? pause() : play());
     else if (snd === 'next' || snd === 'prev') step(snd === 'next' ? 1 : -1);
     else if (snd === 'try') tryPro();
-  });
-  dlg?.querySelector('[data-snd="settings"]')?.addEventListener('click', () => {
-    openSettings(ctx);
+    else if (snd === 'end') api?.preview();
   });
   box?.addEventListener('input', (e) => {
     const n = e.target;
     if (!(n instanceof HTMLInputElement) || n.type !== 'range') return;
+    if (n.name === 'cz-sound-vol') {
+      put(box.querySelector('[data-cz-end-out]'), t('settings.battery.value', { percent: n.value }));
+      return;
+    }
     const v = Number(n.value) / 100;
     if (n.dataset.sndMix) {
       remix(n.dataset.sndMix as TGen, v);
@@ -389,6 +408,25 @@ function create(ctx: IToolCtx) {
     if (!(n instanceof HTMLInputElement)) return;
     if ('sndVol' in n.dataset) save({ volume: Number(n.value) / 100 });
     if ('sndStop' in n.dataset) save({ stopAtEnd: n.checked });
+    if (!n.name.startsWith('cz-')) return;
+    const cur = settings();
+    const next: ISettings =
+      n.name === 'cz-vibrate'
+        ? { ...cur, vibrate: n.checked }
+        : n.name === 'cz-tick'
+          ? { ...cur, tick: n.checked }
+          : {
+              ...cur,
+              sound:
+                n.name === 'cz-sound'
+                  ? { ...cur.sound, id: n.value as ISettings['sound']['id'] }
+                  : { ...cur.sound, volume: Number(n.value) / 100 },
+            };
+    ctx.storage.writeSettings(next);
+    store.set({ settings: next });
+    // Hearing a pick is the point of picking it; turning the tick on starts it at once.
+    if (n.name === 'cz-tick') syncTick();
+    else if (n.name !== 'cz-vibrate') api?.preview();
   });
 
   // The session ending pauses the sound when asked to; the pill and the wake lock never hear about any of this.
@@ -403,12 +441,7 @@ function create(ctx: IToolCtx) {
   syncTick();
 
   return {
-    open(el?: Element | null) {
-      void css.then(() => {
-        paint();
-        if (dlg) openDialog(dlg, el);
-      });
-    },
+    show: () => css.then(paint),
     preview() {
       const s = settings();
       if (s.vibrate && 'vibrate' in navigator) navigator.vibrate(BUZZ);
@@ -431,8 +464,17 @@ function create(ctx: IToolCtx) {
 let api: ReturnType<typeof create> | null = null;
 
 export function run(ctx: IToolCtx, what: TSoundAction, el?: Element | null): void {
+  if (what === 'open') {
+    openCustomize(ctx, 'sound', el);
+    return;
+  }
   api ??= create(ctx);
-  if (what === 'open') api.open(el);
-  else if (what === 'play') api.preview();
+  if (what === 'play') api.preview();
   else if (what === 'end') api.end();
+}
+
+// Customize → Sound shown: its stylesheet in, then every control drawn from the store.
+export function showSound(ctx: IToolCtx): Promise<void> {
+  api ??= create(ctx);
+  return api.show();
 }

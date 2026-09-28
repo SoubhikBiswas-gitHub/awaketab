@@ -7,19 +7,21 @@ export const MENU_FOR = ['cooking', 'reading', 'presentations', 'dashboards', 'v
 export const MENU_ON = ['iphone-safari', 'ipad', 'android-chrome', 'macos', 'windows-11', 'chromebook'] as const;
 
 export const MENU_RES = [
-  { id: 'guides', href: '/guides', icon: 'M12 20.5v-17M12 5.5h5.5l2 2-2 2H12M12 11.5H6.5l-2 2 2 2H12' },
-  {
-    id: 'docs',
-    href: '/learn',
-    icon: 'M7 3.5h6.5l4 4v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2zM13.5 3.5v4h4M8.5 12.5h7M8.5 16h4.5',
-  },
-  {
-    id: 'compare',
-    href: '/vs',
-    icon: 'M12 4v16M8 20h8M5 7.5h14M5 7.5l-2.5 6a2.5 2.5 0 0 0 5 0zM19 7.5l-2.5 6a2.5 2.5 0 0 0 5 0z',
-  },
-  { id: 'changelog', href: '/changelog', icon: 'M4.5 7h2M4.5 12h2M4.5 17h2M9.5 7h10M9.5 12h10M9.5 17h6' },
+  { id: 'guides', href: '/guides', icon: 'signpost' },
+  { id: 'docs', href: '/learn', icon: 'article' },
+  { id: 'compare', href: '/vs', icon: 'scales' },
+  { id: 'changelog', href: '/changelog', icon: 'list-bullets' },
 ] as const;
+
+// Real platform logos beside each device row (SVG Logos names); ChromeOS has none, so Chromebook shows Chrome.
+export const DEVICE_BRAND: Record<string, string> = {
+  'iphone-safari': 'apple',
+  ipad: 'apple',
+  'android-chrome': 'android-icon',
+  macos: 'apple',
+  'windows-11': 'microsoft-windows-icon',
+  chromebook: 'chrome',
+};
 
 export const RES_SECTIONS: readonly string[] = ['guides', 'learn', 'vs', 'changelog'];
 

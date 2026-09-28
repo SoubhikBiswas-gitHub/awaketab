@@ -1,0 +1,31 @@
+---
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+
+interface Props {
+  name: string;
+  size?: number;
+  tone?: 'accent' | 'state' | 'ink';
+  class?: string;
+  label?: string;
+}
+
+const { name, size = 20, tone = 'accent', class: className, label } = Astro.props;
+// Phosphor duotone (MIT), read at build time; the page ships only the inline paths.
+const require = createRequire(`${process.cwd()}/package.json`);
+const file = readFileSync(require.resolve(`@phosphor-icons/core/assets/duotone/${name}-duotone.svg`), 'utf8');
+const body = (/<svg[^>]*>([\s\S]*)<\/svg>/u.exec(file)?.[1] ?? '').replaceAll(' opacity="0.2"', ' class="at-duo-f"');
+---
+
+<svg
+  class:list={['at-duo', tone !== 'accent' && `at-duo-${tone}`, className]}
+  width={size}
+  height={size}
+  viewBox="0 0 256 256"
+  fill="currentColor"
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  focusable="false"
+  set:html={body}
+/>

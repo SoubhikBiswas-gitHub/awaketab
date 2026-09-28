@@ -1,19 +1,15 @@
 ---
 import { createT } from '../../i18n/load';
 import type { TLocale } from '../../i18n/locales';
+import Icon from '../icons/Icon.astro';
 
 interface Props {
   locale: TLocale;
-  compact?: boolean;
 }
 
-const { locale, compact = false } = Astro.props;
+const { locale } = Astro.props;
 const t = createT(locale);
-const ICONS = {
-  light: ['M12 8a4 4 0 1 1 0 8a4 4 0 1 1 0-8zM12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4', ''],
-  dark: ['M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z', ''],
-  auto: ['M12 4a8 8 0 1 1 0 16a8 8 0 1 1 0-16z', 'M12 4a8 8 0 0 1 0 16z'],
-} as const;
+const ICONS = { light: 'sun', dark: 'moon', auto: 'circle-half' } as const;
 const themes = [
   ['light', t('settings.theme.light'), t('settings.theme.light')],
   ['dark', t('settings.theme.dark'), t('settings.theme.dark')],
@@ -27,28 +23,8 @@ const themes = [
     themes.map(([value, label, title]) => (
       <label class="at-theme-item" data-v={value} title={title}>
         <input class="sr-only" type="radio" name="at-theme" value={value} aria-label={label} checked={value === 'auto'} />
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-          <path d={ICONS[value][0]} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-          {ICONS[value][1] && <path d={ICONS[value][1]} fill="currentColor" />}
-        </svg>
+        <Icon name={ICONS[value]} size={20} />
       </label>
     ))
   }
 </div>
-{
-  compact && (
-    <button class="at-icon-button at-theme-cycle" type="button" data-theme-cycle>
-      <span class="sr-only">{t('settings.theme')}: </span>
-      {themes.map(([value, label]) => (
-        <span class="sr-only" data-v={value}>{label}. </span>
-      ))}
-      <span class="sr-only">{t('header.theme.change')}</span>
-      {themes.map(([value]) => (
-        <svg data-v={value} viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-          <path d={ICONS[value][0]} fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-          {ICONS[value][1] && <path d={ICONS[value][1]} fill="currentColor" />}
-        </svg>
-      ))}
-    </button>
-  )
-}

@@ -111,8 +111,6 @@ OLED and some LCD panels can keep a faint image of anything that sits still for 
 
 For a reception screen, a shop or a row of wall displays, the [Kiosk licence](/kiosk) adds your logo. It costs $19 once for one site or $49 for five, where a site is one location with any number of screens. AwakeTab is not a kiosk browser: it doesn't lock the device down or launch itself, so pair it with your operating system's kiosk mode.
 
-::limit
-
 ## Before you leave it on the wall
 
 ::checklist

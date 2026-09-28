@@ -8,7 +8,7 @@
   padding-inline: 0 var(--at-s-1);
   border: var(--at-border) solid color-mix(in srgb, var(--at-accent) 38%, transparent);
   border-radius: var(--at-r-pill);
-  background: color-mix(in srgb, var(--at-accent) 10%, var(--at-surface));
+  background: var(--at-surface);
   color: var(--at-ink);
   font: var(--at-type-small);
   font-weight: 500;
@@ -60,7 +60,7 @@
 }
 
 .at-pv-keep:hover {
-  background: color-mix(in srgb, var(--at-accent) 12%, transparent);
+  background: var(--at-sunken);
 }
 
 .at-pv[data-min] {
@@ -168,20 +168,41 @@ html[data-pv-fade]::view-transition-new(root) {
 }
 
 .at-lk-opt:has(:checked) {
-  border-color: color-mix(in srgb, var(--at-accent) 45%, transparent);
+  border-color: var(--at-selected-line);
   background: color-mix(in srgb, var(--at-accent) 14%, var(--at-surface));
   color: var(--at-ink);
   font-weight: 600;
 }
 
-.at-lk-opt > .at-tag {
+.at-cz-star {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  inline-size: var(--at-icon-md);
+  block-size: var(--at-icon-md);
+  border-radius: var(--at-r-pill);
+  color: var(--at-accent-text);
+}
+
+.at-cz-star[hidden] {
+  display: none;
+}
+
+.at-lk-opt > .at-cz-star {
   position: absolute;
   inset-block-start: var(--at-s-2);
   inset-inline-end: var(--at-s-2);
   background: var(--at-surface);
+  box-shadow: 0 0 0 1px var(--at-line);
 }
 
-.at-lk-opt > .at-tag[hidden] {
+.at-lk-note {
+  display: flex;
+  align-items: center;
+  gap: var(--at-gap-tight);
+}
+
+.at-lk-note[hidden] {
   display: none;
 }
 
@@ -298,6 +319,7 @@ html[data-pv-fade]::view-transition-new(root) {
 }
 
 .at-lk-opt[data-id="custom"] .at-lk-mini {
+  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- swatch art: the custom lamp wheel shows any colour */
   background: conic-gradient(from 200deg, #5be0e8, #a594ff, #ff9cc6, #ffaf6b, #b5e36a, #5be0e8);
 }
 
@@ -377,7 +399,7 @@ html[data-pv-fade]::view-transition-new(root) {
 .at-pv :focus-visible,
 .at-lk-opt:has(:focus-visible),
 .at-lk-picker :focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 3px;
 }
 
@@ -390,6 +412,6 @@ html[data-pv-fade]::view-transition-new(root) {
 
 @media (forced-colors: active) {
   .at-lk-opt:has(:checked) {
-    outline: 2px solid Highlight;
+    outline: var(--at-ring) solid Highlight;
   }
 }

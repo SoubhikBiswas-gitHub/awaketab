@@ -115,4 +115,3 @@ Plenty of software keeps its own clock, and a wake lock does not reach any of it
 
 AwakeTab is instant and needs no installation, which makes it right for a recipe, a talk or a dashboard you can see. A native utility beats it when the screen must stay on with the browser out of sight, or when the whole machine must stay awake. The [comparisons](/vs) set out, with dated facts, when each tool is the better pick. For everything AwakeTab does do, [open the tool](/) and read the pill.
 
-::limit inline

@@ -5,15 +5,15 @@
 @layer components {
   .at-hx {
     --at-hx-max: 720px;
-    --at-hx-shell: light-dark(#cfd8e3, #1e2638);
-    --at-hx-notch: light-dark(#b7c3d1, #2a3550);
-    --at-hx-bezel: light-dark(#1a2230, #05070b);
-    --at-hx-strip: light-dark(#dfe5ec, #0b1019);
-    --at-hx-toolbar: light-dark(#fff, #151d2c);
-    --at-hx-field: light-dark(#eef2f7, #0d131f);
-    --at-hx-dot: light-dark(#c3cdda, #33405c);
-    --at-hx-badge: #087b87;
-    --at-hx-badge-ink: #fff;
+    --at-hx-shell: light-dark(var(--at-tick), var(--at-line));
+    --at-hx-notch: var(--at-line-strong);
+    --at-hx-bezel: var(--at-bezel);
+    --at-hx-strip: light-dark(var(--at-raised), var(--at-sunken));
+    --at-hx-toolbar: var(--at-surface);
+    --at-hx-field: light-dark(var(--at-ground-end), var(--at-sunken));
+    --at-hx-dot: var(--at-line-strong);
+    --at-hx-badge: var(--at-badge-screen);
+    --at-hx-badge-ink: var(--at-badge-ink);
 
     container: at-hx / inline-size;
     color: var(--at-ink);
@@ -46,6 +46,9 @@
   }
 
   .at-hx-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--at-s-2);
     margin: 0;
     color: var(--at-muted);
     font: var(--at-type-kicker);
@@ -115,11 +118,7 @@
   .at-hx-list > li > svg {
     inline-size: var(--at-icon-lg);
     block-size: var(--at-icon-lg);
-    fill: none;
-    stroke: var(--at-accent-text);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
+    color: var(--at-accent-text);
   }
 
   .at-hx-item {
@@ -170,15 +169,18 @@
     stroke-width: 2;
   }
 
-  .at-hx-edge {
-    min-block-size: var(--at-h-primary);
-  }
-
   .at-hx-note {
     max-inline-size: var(--at-measure);
     margin: 0;
     color: var(--at-muted);
     font: var(--at-type-caption);
+  }
+
+  .at-hx-logos {
+    display: inline-flex;
+    gap: var(--at-s-1);
+    margin-inline-end: var(--at-s-2);
+    vertical-align: -0.2em;
   }
 
   .at-hx-more {
@@ -201,11 +203,6 @@
   .at-hx-more > svg {
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
-    fill: none;
-    stroke: currentcolor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2;
   }
 
   /* stylelint-disable declaration-property-value-allowed-list -- illustration geometry in container units */
@@ -235,7 +232,8 @@
     border: var(--at-border) solid var(--at-hx-shell);
     border-radius: calc(var(--at-hx-u) * 22) calc(var(--at-hx-u) * 22) calc(var(--at-hx-u) * 6) calc(var(--at-hx-u) * 6);
     background: var(--at-hx-bezel);
-    box-shadow: 0 calc(var(--at-hx-u) * 30) calc(var(--at-hx-u) * 60) calc(var(--at-hx-u) * -30) rgb(3 6 12 / 45%);
+    box-shadow: 0 calc(var(--at-hx-u) * 30) calc(var(--at-hx-u) * 60) calc(var(--at-hx-u) * -30)
+      color-mix(in srgb, var(--at-shadow-color) 45%, transparent);
   }
 
   .at-hx-lid::before {
@@ -264,7 +262,7 @@
     border-radius: 0 0 calc(var(--at-hx-u) * 30) calc(var(--at-hx-u) * 30) / 0 0 calc(var(--at-hx-u) * 16)
       calc(var(--at-hx-u) * 16);
     background: linear-gradient(180deg, var(--at-hx-shell) 0%, var(--at-hx-notch) 100%);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 25%);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--at-lift) 25%, transparent);
   }
 
   .at-hx-base > span {
@@ -499,8 +497,9 @@
       var(--at-ground-end) 100%
     );
     box-shadow:
-      0 calc(var(--at-hx-q) * 24) calc(var(--at-hx-q) * 64) calc(var(--at-hx-q) * -24) rgb(0 0 0 / 45%),
-      0 calc(var(--at-hx-q) * 2) calc(var(--at-hx-q) * 6) rgb(0 0 0 / 12%);
+      0 calc(var(--at-hx-q) * 24) calc(var(--at-hx-q) * 64) calc(var(--at-hx-q) * -24)
+        color-mix(in srgb, var(--at-shadow-color) 45%, transparent),
+      0 calc(var(--at-hx-q) * 2) calc(var(--at-hx-q) * 6) color-mix(in srgb, var(--at-shadow-color) 12%, transparent);
     color: var(--at-ink);
     overflow: hidden;
     transform-origin: 100% 0;
@@ -761,7 +760,7 @@
     block-size: calc(var(--at-hx-q) * 60);
     margin-block-start: calc(var(--at-hx-q) * 12);
     border: var(--at-border) solid var(--at-line-strong);
-    border-radius: calc(var(--at-hx-q) * 20);
+    border-radius: calc(var(--at-hx-q) * 12);
     background: var(--at-raised);
     font: 600 calc(var(--at-hx-q) * 17) / calc(var(--at-hx-q) * 24) var(--at-font);
   }
@@ -808,7 +807,8 @@
   }
 
   .at-hx-opt-on {
-    background: var(--at-raised);
+    background: var(--at-selected-fill);
+    box-shadow: inset 0 0 0 var(--at-border) var(--at-selected-line);
     color: var(--at-ink);
     font-weight: 600;
   }

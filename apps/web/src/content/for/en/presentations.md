@@ -109,8 +109,6 @@ A projector or second monitor follows your laptop's display timeout, so it stays
 
 A work lock policy is different: if your laptop locks during a long Q&A, AwakeTab won't prevent that. [Lock screen versus display sleep](/guides/lock-screen-vs-sleep) explains the difference. Teaching a class? See [keep the classroom screen on while you teach](/for/classroom).
 
-::limit
-
 ## Before the talk starts
 
 ::checklist

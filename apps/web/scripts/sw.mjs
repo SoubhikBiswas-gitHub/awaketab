@@ -47,16 +47,21 @@ const urlOf = (dist, file) => `/${path.relative(dist, file).split(path.sep).join
 // those chunks load by URL (the ambient CSS). Other pages' scripts are cached when those pages are visited.
 async function shellAssets(dist) {
   const entries = new Set();
+  const styles = new Set();
   for (const { file } of SHELL_PAGES) {
-    for (const src of entryScripts(await readFile(path.join(dist, file), 'utf8'))) {
+    const html = await readFile(path.join(dist, file), 'utf8');
+    for (const src of entryScripts(html)) {
       if (src.startsWith('/_astro/')) entries.add(path.join(dist, src.slice(1)));
+    }
+    // Sheets the page links after the tool (the footer, the home sections), so an offline page keeps its styles.
+    for (const m of html.matchAll(/<link rel="stylesheet" href="(\/_astro\/[^"?#]+\.css)"/gu)) {
+      styles.add(path.join(dist, m[1].slice(1)));
     }
   }
   // Feature packs load on first use and are cached then, so a visitor never downloads a feature they do not open.
   const scripts = [...(await closure([...entries], { dynamic: true }))].filter(
     (f) => !/(?:^|\/)pack-/u.test(path.basename(f)),
   );
-  const styles = new Set();
   for (const file of scripts) {
     for (const m of (await readFile(file, 'utf8')).matchAll(/["'](\/_astro\/[^"'?#]+\.css)["']/gu)) {
       styles.add(path.join(dist, m[1].slice(1)));

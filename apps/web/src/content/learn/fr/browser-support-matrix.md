@@ -105,4 +105,3 @@ Ce tableau ne concerne que l’écran.
 
 Le détail par système figure sur les pages [Windows 11](/fr/on/windows-11) et [macOS](/fr/on/macos).
 
-::limit inline

@@ -125,4 +125,3 @@ All checked 26 September 2026.
 
 A source check says what the browser is built to do, not what your device did today. Every browser still releases the lock when the tab is hidden, a closed laptop lid usually still sleeps the computer, and the device matrix below is still pending.
 
-::limit inline

@@ -135,7 +135,8 @@ test('stats panel shows today, a 7-row heatmap and the free-tier limits', async 
   });
   await page.goto('/?autostart=0');
   await page.locator('#awaketab-tool[data-booted]').waitFor();
-  await page.getByRole('button', { name: 'Your stats', exact: true }).click();
+  await page.locator('#awaketab-tool header [data-more-open]').click();
+  await page.locator('#at-more [data-open-stats]').click();
   const dlg = page.locator('dialog[data-dialog="stats"]');
   await expect(dlg).toBeVisible();
   await expect(dlg.locator('[data-stats-today]')).toHaveText('42 min');
@@ -177,7 +178,8 @@ test('rating prompt after the 5th counted session, once only', async ({ page }) 
   const runFiveMinutes = async () => {
     await page.goto('/?autostart=0');
     await page.locator('#awaketab-tool[data-booted]').waitFor();
-    await page.getByRole('button', { name: 'Custom length' }).click();
+    await page.locator('#awaketab-tool .at-len-more').click();
+    await page.locator('#at-lenmore [data-preset="custom"]').click();
     await expect(page.locator('.at-lp-custom')).toBeVisible();
     await page.locator('#awaketab-tool .at-cta').click();
     await expect(pillText(page)).toHaveText('Screen awake');
@@ -229,9 +231,11 @@ test('the /pip popup opens in the page language and mirrors the owner there', as
   await page.addInitScript(() => {
     Object.defineProperty(window, 'documentPictureInPicture', { configurable: true, value: undefined });
   });
-  await page.goto('/es/');
+  // Without autostart the length row is open (a running session folds it into "Until you stop · Change").
+  await page.goto('/es/?autostart=0');
   await page.locator('#awaketab-tool[data-booted]').waitFor();
   await page.locator('[data-preset="p30"]').click();
+  await page.locator('#awaketab-tool .at-cta').click();
   await expect(pillText(page)).toHaveText('Pantalla despierta', { timeout: 4000 });
 
   const [popup] = await Promise.all([page.waitForEvent('popup'), page.keyboard.press('p')]);
@@ -344,7 +348,8 @@ test.describe('axe on M6 surfaces', () => {
     test(`stats dialog, ${theme}`, async ({ page }) => {
       await page.goto(`/?autostart=0&theme=${theme}`);
       await page.locator('#awaketab-tool[data-booted]').waitFor();
-      await page.getByRole('button', { name: 'Your stats', exact: true }).click();
+      await page.locator('#awaketab-tool header [data-more-open]').click();
+      await page.locator('#at-more [data-open-stats]').click();
       await expect(page.locator('dialog[data-dialog="stats"] .at-heat-cell')).toHaveCount(84);
       await settled(page);
       const results = await new AxeBuilder({ page }).analyze();
@@ -354,7 +359,8 @@ test.describe('axe on M6 surfaces', () => {
     test(`settings dialog, ${theme}`, async ({ page }) => {
       await page.goto(`/?autostart=0&theme=${theme}`);
       await page.locator('#awaketab-tool[data-booted]').waitFor();
-      await page.getByRole('button', { name: 'Settings', exact: true }).click();
+      await page.locator('#awaketab-tool header [data-more-open]').click();
+      await page.locator('#at-more [data-open-settings]').click();
       await expect(page.locator('dialog[data-dialog="settings"]')).toBeVisible();
       await settled(page);
       const results = await new AxeBuilder({ page }).analyze();

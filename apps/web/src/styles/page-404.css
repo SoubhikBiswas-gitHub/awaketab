@@ -35,11 +35,7 @@
   .at-404-full > svg,
   .at-404-guides svg {
     flex-shrink: 0;
-    fill: none;
-    stroke: var(--at-muted);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
+    color: var(--at-muted);
   }
 
   .at-404-full > svg {
@@ -146,7 +142,7 @@
   display: contents;
 }
 
-.at-404 :is(.at-dateline, .at-tabs, .at-len, .at-why-btn, .at-tabs-late),
+.at-404 :is(.at-tabs, .at-len, .at-why-btn),
 .at-404
   .at-site-header
   :is(

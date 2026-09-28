@@ -7,6 +7,7 @@
   --at-tl-hdr-short: 60px;
   --at-tl-col-gap: clamp(48px, 6.25vw - 16px, 64px);
   --at-tl-land-col: 344px;
+  --at-tl-menu-w: 16rem;
 }
 
 @layer components {
@@ -63,76 +64,216 @@
 
 .at-first {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   min-block-size: calc(100dvh - var(--at-h-header));
   overflow-x: clip;
-}
-
-.at-first > .at-tool {
-  grid-row: 2;
-}
-
-.at-dateline {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--at-gap-item);
-  min-block-size: 1lh;
-  margin: 0;
-  padding-inline: var(--at-gutter);
-  font: var(--at-type-ui);
-  font-weight: 400;
-}
-
-.at-date {
-  color: var(--at-ink-2);
-}
-
-.at-now {
-  color: var(--at-ink);
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-
-.at-dateline-hdr {
-  display: none;
-}
-
-.at-tabs-late {
-  display: none;
 }
 
 .at-pillline {
   flex-wrap: nowrap;
 }
 
-.at-install-btn {
+.at-hclock {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: 0;
+  margin-inline-end: var(--at-s-2);
+  white-space: nowrap;
+}
+
+.at-hclock .at-now {
+  color: var(--at-ink);
+  font: var(--at-type-ui);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.at-hclock .at-date {
+  color: var(--at-muted);
+  font: var(--at-type-caption);
+}
+
+.at-snd-btn {
   display: none;
+}
+
+.at-island:is([data-snd="playing"], [data-snd="loading"], [data-snd="paused"]) .at-snd-btn {
+  display: inline-grid;
+  color: var(--at-accent-text);
+}
+
+.at-hbtn {
+  display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
+  justify-content: center;
   gap: var(--at-gap-tight);
   block-size: var(--at-h-control);
-  padding-block: 0;
-  padding-inline: var(--at-s-3) var(--at-s-4);
-  border: 1px solid var(--at-line-strong);
+  min-inline-size: var(--at-h-control);
+  padding: 0;
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-pill);
-  background: transparent;
+  background: var(--at-surface);
   color: var(--at-ink);
-  font: var(--at-type-small);
+  font: var(--at-type-ui);
   font-weight: 600;
   cursor: pointer;
 }
 
-.at-install-btn > svg {
-  inline-size: var(--at-icon-md);
-  block-size: var(--at-icon-md);
+.at-hbtn:hover {
+  border-color: var(--at-line-strong);
+  background: var(--at-raised);
 }
 
-.at-site-header [data-install][hidden] {
+.at-hbtn-t {
   display: none;
 }
 
-.at-site-header .at-icon-button[aria-expanded="true"] {
+.at-more-btn:is([aria-expanded="true"], :hover) {
   background: var(--at-raised);
+  color: var(--at-ink);
+}
+
+.at-more-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--at-s-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.at-more-list > li:has(> [hidden]) {
+  display: none;
+}
+
+.at-more-sep {
+  block-size: var(--at-border);
+  margin-block: var(--at-s-1);
+  background: var(--at-line);
+}
+
+.at-more {
+  position: fixed;
+  inset-block: auto 0;
+  inset-inline: 0;
+  inline-size: 100%;
+  max-inline-size: none;
+  max-block-size: calc(100dvh - var(--at-s-12));
+  padding-block: var(--at-s-6) var(--at-s-5);
+  padding-inline: var(--at-s-4);
+  overflow-y: auto;
+  border-block-end: 0;
+  border-radius: var(--at-r-2xl) var(--at-r-2xl) 0 0;
+}
+
+.at-more::before {
+  content: "";
+  position: absolute;
+  inset-block-start: var(--at-s-2);
+  inset-inline: 0;
+  inline-size: 36px;
+  block-size: 4px;
+  margin-inline: auto;
+  border-radius: var(--at-r-pill);
+  background: var(--at-line-strong);
+}
+
+.at-more::backdrop {
+  background: var(--at-scrim);
+}
+
+.at-more:popover-open {
+  animation: at-sheet-rise var(--at-d-slide) var(--at-ease) both;
+}
+
+@media (width < 360px) {
+  .at-hclock .at-now {
+    font: var(--at-type-caption);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (width < 1024px) {
+  .at-hclock .at-date {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-end: 0;
+    padding-block: var(--at-s-1);
+    padding-inline: var(--at-s-2);
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-sm);
+    background: var(--at-surface);
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity var(--at-d-slow) var(--at-ease),
+      visibility var(--at-d-slow) allow-discrete;
+  }
+
+  .at-hclock:hover .at-date {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+@media (width < 600px) {
+  .at-hclock .at-date {
+    display: none;
+  }
+}
+
+@media (width >= 600px) {
+  .at-hbtn {
+    padding-inline: var(--at-s-3) var(--at-s-4);
+  }
+
+  .at-hbtn-t {
+    display: inline;
+  }
+
+  .at-more {
+    position: fixed;
+    inset-block: calc(var(--at-h-header) - var(--at-s-2)) auto;
+    inset-inline: auto var(--at-gutter);
+    inline-size: max-content;
+    min-inline-size: var(--at-tl-menu-w);
+    max-inline-size: calc(100vw - 2 * var(--at-s-4));
+    padding: var(--at-s-2);
+    border-block-end: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-lg);
+  }
+
+  .at-more::before {
+    display: none;
+  }
+
+  .at-more::backdrop {
+    background: transparent;
+  }
+
+  .at-more:popover-open {
+    animation: at-pop var(--at-d-slow) var(--at-ease) both;
+  }
+
+  @supports (position-area: block-end) {
+    .at-more {
+      inset: auto;
+      margin-block: var(--at-s-2) 0;
+      position-area: block-end span-inline-start;
+      position-try-fallbacks: flip-inline;
+    }
+  }
+}
+
+@keyframes at-sheet-rise {
+  from {
+    transform: translateY(100%);
+  }
 }
 
 .at-below {
@@ -181,57 +322,51 @@
   display: none;
 }
 
-@media (width < 360px) {
-  .at-dateline {
-    font: var(--at-type-caption);
-  }
-}
-
-@media (width >= 600px) {
-  .at-install-btn:not([hidden]) {
-    display: inline-flex;
-  }
-}
-
 @media (width >= 1024px) {
   .at-tool {
-    --at-u-max: clamp(1.15px, 0.1563vw - 0.45px, 1.55px);
+    --at-u-max: min(clamp(1.15px, 0.1563vw - 0.45px, 1.55px), (100dvh - 172px) / 340);
 
     grid-template:
       "face ." 1fr
       "face pill" auto
       "face note" auto
       "face dock" auto
-      "face tabs" auto
       "face toast" 1fr / clamp(412px, 81.25vw - 420px, 620px) minmax(0, 1fr);
     justify-content: stretch;
     column-gap: var(--at-tl-col-gap);
     padding-block: var(--at-s-2) var(--at-s-10);
   }
 
-  .at-tabs-early {
-    display: none;
+  .at-face-cell {
+    padding-block-end: calc(var(--at-h-control) + var(--at-s-3));
   }
 
-  .at-tabs-late {
-    display: block;
-    justify-self: start;
+  .at-tabs {
+    grid-area: face;
+    align-self: center;
+    translate: 0 calc(170 * var(--at-u-max) - 2px);
+  }
+
+  .at-island:is([data-why], [data-status="ended"]:not([data-batt])) .at-tabs {
+    visibility: hidden;
   }
 
   .at-dock-tools {
     display: flex;
     order: 1;
-    justify-content: center;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--at-s-1);
+  }
+
+  .at-desk-hide {
+    display: none;
   }
 }
 
 @media (width >= 1024px) and (pointer: coarse) {
-  .at-dateline {
-    font: var(--at-tl-type-body-s);
-  }
-
   .at-tool {
-    --at-u-max: 1.5px;
+    --at-u-max: min(1.5px, (100dvh - 164px) / 340);
 
     grid-template-columns: min(537px, 50vw) minmax(0, 1fr);
     gap: var(--at-gap-group-lg) var(--at-s-12);
@@ -240,12 +375,8 @@
 }
 
 @media (width >= 1600px) {
-  .at-dateline {
-    font: var(--at-type-lead);
-  }
-
   .at-tool {
-    --at-u-max: 1.9px;
+    --at-u-max: min(1.9px, (100dvh - 196px) / 340);
 
     grid-template-columns: 680px 456px;
     justify-content: center;
@@ -264,31 +395,31 @@
 
 @media (360px <= width < 600px) {
   .at-tool {
-    --at-u-max: clamp(0.44px, (100dvh - 482px) / 340, 1px);
+    --at-u-max: clamp(0.44px, (100dvh - 450px) / 340, 1px);
   }
 
   .at-island[data-status="timesup"] .at-tool {
-    --at-u-max: clamp(0.44px, (100dvh - 498px) / 340, 1px);
+    --at-u-max: clamp(0.44px, (100dvh - 466px) / 340, 1px);
   }
 
   .at-island:is(:not([data-open=""]), [data-deferred], [data-toast], [data-status="blocked"]) .at-tool {
-    --at-u-max: clamp(0.44px, (100dvh - 482px) / 340, 0.86px);
+    --at-u-max: clamp(0.44px, (100dvh - 450px) / 340, 0.86px);
   }
 }
 
 @media (600px <= width < 1024px) {
   .at-tool {
-    --at-u-max: clamp(0.44px, (100dvh - 554px) / 340, clamp(1.2px, 0.7909px + 0.0682vw, 1.35px));
+    --at-u-max: clamp(0.44px, (100dvh - 522px) / 340, clamp(1.2px, 0.7909px + 0.0682vw, 1.35px));
   }
 }
 
 @media (600px <= width < 1024px) and (500px < height < 1100px) {
   .at-island:is(:not([data-open=""]), [data-deferred], [data-status="timesup"]) .at-tool {
-    --at-u-max: clamp(0.44px, (100dvh - 560px) / 340, 1px);
+    --at-u-max: clamp(0.44px, (100dvh - 528px) / 340, 1px);
   }
 
   .at-island:is([data-toast], [data-past], [data-status="blocked"]:not([data-cause])) .at-tool {
-    --at-u-max: clamp(0.44px, (100dvh - 560px) / 340, 0.9px);
+    --at-u-max: clamp(0.44px, (100dvh - 528px) / 340, 0.9px);
   }
 }
 
@@ -316,30 +447,6 @@
     min-block-size: calc(100dvh - var(--at-tl-hdr-short));
   }
 
-  .at-first > .at-dateline {
-    display: none;
-  }
-
-  .at-dateline-hdr {
-    display: flex;
-    flex: 1;
-    order: -1;
-    justify-content: center;
-    min-inline-size: 0;
-    padding: 0;
-    overflow: clip;
-    font: var(--at-type-caption);
-    white-space: nowrap;
-  }
-
-  .at-island .at-header-end {
-    flex: 1;
-  }
-
-  .at-island .at-site-header :is([data-open-share], [data-open-shortcuts], [data-open-pip]) {
-    display: none;
-  }
-
   .at-settings .at-settings-links > :is([data-open-share], [data-open-shortcuts]) {
     display: inline-flex;
   }
@@ -359,13 +466,8 @@
     padding-inline: var(--at-s-4);
   }
 
-  .at-tabs-early {
-    display: block;
+  .at-tabs {
     justify-self: end;
-  }
-
-  .at-tabs-late {
-    display: none;
   }
 
   .at-pillline .at-why-btn {
@@ -403,15 +505,9 @@
   }
 }
 
-@media (orientation: landscape) and (height <= 500px) and (width < 700px) {
-  .at-dateline-hdr {
-    visibility: hidden;
-  }
-}
-
 .at-tool-until .at-tabs,
 .at-tool-until .at-why-btn,
-.at-tool-until .at-site-header .at-header-end > :not(.at-theme, .at-theme-cycle, .at-hm-open, .at-hm-panel) {
+.at-tool-until .at-site-header .at-header-end > :is(.at-snd-btn, .at-cz-btn) {
   display: none;
 }
 

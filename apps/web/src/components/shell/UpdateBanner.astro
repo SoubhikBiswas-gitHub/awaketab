@@ -1,6 +1,7 @@
 ---
 import { createT } from '../../i18n/load';
 import type { TLocale } from '../../i18n/locales';
+import Icon from '../icons/Icon.astro';
 
 interface Props {
   locale: TLocale;
@@ -15,9 +16,7 @@ const t = createT(Astro.props.locale);
     <p class="at-upd-text">{t('update.banner')}</p>
     <button class="at-button at-button-sm" type="button" data-update-reload>{t('tool.toast.update.action')}</button>
     <button class="at-icon-button at-upd-x" type="button" data-update-close aria-label={t('update.close')}>
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false">
-        <path d="M6 6l12 12M18 6L6 18"></path>
-      </svg>
+      <Icon name="x" size={20} />
     </button>
   </div>
 </template>

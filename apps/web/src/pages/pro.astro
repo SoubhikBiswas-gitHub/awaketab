@@ -10,6 +10,8 @@ import { CHECKOUT_LINKS } from '../lib/checkout';
 import { PLAN_PRICES, PRO_LAUNCH_END } from '../lib/license';
 import { LAMPS, usd } from '../lib/pro-common';
 import '../styles/pro.css';
+import BrandIcon from '../components/icons/BrandIcon.astro';
+import Icon from '../components/icons/Icon.astro';
 
 const p = (key: string, vars?: Record<string, string | number>) => t(`page.pro.${key}`, vars);
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
@@ -86,29 +88,27 @@ const groups: Array<{ id: string; title: string; rows: TRow[] }> = [
 ];
 
 const gets = [
-  { id: 'looks', d: 'M12 3.5c3.3 3.7 5.5 6.6 5.5 9.5a5.5 5.5 0 0 1-11 0c0-2.9 2.2-5.8 5.5-9.5z' },
-  { id: 'sound', d: 'M5 20v-6M5 10V4M12 20v-8M12 8V4M19 20v-4M19 12V4M3 14h4M10 8h4M17 16h4' },
-  { id: 'notes', d: 'M6 3.5h9l3.5 3.5v13.5H6zM9 11.5l2 2 3.5-3.5M9 17h6' },
-  { id: 'pomo', d: 'M12 20.5a7.5 7.5 0 1 1 7.1-10M19.5 4.5v5.5H14M12 9v4l2.5 1.5' },
-  { id: 'msg', d: 'M4 5h16v11h-9l-4.5 3.5V16H4zM8 9h8M8 12h5' },
-  { id: 'stats', d: 'M4 20h16M6.5 16.5V12M11 16.5V7M15.5 16.5V10M20 16.5V5' },
-  { id: 'pip', d: 'M3.5 5h17v14h-17zM12.5 11.5h5.5v5h-5.5z' },
-  { id: 'sched', d: 'M4 6h16v14H4zM4 10.5h16M8.5 3.5v4M15.5 3.5v4M8.5 15l2 2 4-4' },
-  { id: 'ads', d: 'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17zM6 6l12 12' },
+  { id: 'looks', icon: 'palette' },
+  { id: 'sound', icon: 'waveform' },
+  { id: 'notes', icon: 'note-pencil' },
+  { id: 'pomo', icon: 'timer' },
+  { id: 'msg', icon: 'chat-centered-text' },
+  { id: 'stats', icon: 'chart-bar' },
+  { id: 'pip', icon: 'picture-in-picture' },
+  { id: 'sched', icon: 'calendar-check' },
+  { id: 'ads', icon: 'prohibit' },
 ].map((g) => ({ ...g, h: p(`get.${g.id}.h`), text: p(`get.${g.id}.p`) }));
 
 const steps = [1, 2, 3, 4].map((n) => ({ n, h: p(`how.s${n}.h`), text: p(`how.s${n}.p`) }));
 
 const trust = [
-  { id: 'polar', d: 'M3.5 6h17v12h-17zM3.5 10h17M7 14.5h4' },
-  { id: 'cancel', d: 'M4 6h16v14H4zM4 10.5h16M8.5 3.5v4M15.5 3.5v4M10 13.5l4 4M14 13.5l-4 4' },
-  { id: 'privacy', d: 'M12 3.5l7 3v5c0 4.3-3 7.8-7 9-4-1.2-7-4.7-7-9v-5zM9 12l2 2 4-4' },
+  { id: 'polar', icon: 'credit-card' },
+  { id: 'cancel', icon: 'calendar-x' },
+  { id: 'privacy', icon: 'shield-check' },
 ].map((x) => ({ ...x, h: p(`trust.${x.id}.h`), text: p(`trust.${x.id}.p`) }));
 
 const faq = [1, 5, 2, 3, 6, 7].map((n, i) => ({ i, q: p(`faq.q${n}`), a: p(`faq.a${n}`, { yearly }) }));
 
-const CHECK = 'M5 12.5l4.5 4.5L19 7.5';
-const DASH = 'M7 12h10';
 ---
 
 <BaseLayout
@@ -204,7 +204,15 @@ const DASH = 'M7 12h10';
           {
             groups.map((g) => (
               <table class="at-pro-cmp-table">
-                <caption>{g.title}</caption>
+                <caption>
+                  {g.id === 'ext' && (
+                    <span class="at-pro-cmp-logos">
+                      <BrandIcon name="chrome" size={20} />
+                      <BrandIcon name="microsoft-edge" size={20} />
+                    </span>
+                  )}
+                  {g.title}
+                </caption>
                 <colgroup>
                   <col class="at-pro-cmp-col-feature" />
                   <col />
@@ -233,9 +241,7 @@ const DASH = 'M7 12h10';
                             v
                           ) : (
                             <>
-                              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                                <path d={v ? CHECK : DASH} />
-                              </svg>
+                              <Icon name={v ? 'check-circle' : 'minus'} size={20} tone={v ? 'accent' : 'ink'} />
                               <span class="sr-only">{p(v ? 'cmp.yes' : 'cmp.no')}</span>
                             </>
                           )}
@@ -260,9 +266,7 @@ const DASH = 'M7 12h10';
             gets.map((g) => (
               <li class="at-pro-get-item">
                 <span class="at-pro-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path d={g.d} />
-                  </svg>
+                  <Icon name={g.icon} size={24} />
                 </span>
                 <h3 class="at-pro-h3">{g.h}</h3>
                 <p class="at-pro-small at-pro-ink2">{g.text}</p>
@@ -358,9 +362,7 @@ const DASH = 'M7 12h10';
             trust.map((x) => (
               <li class="at-pro-trust-item">
                 <p class="at-pro-refund">
-                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                    <path d={x.d} />
-                  </svg>
+                  <Icon name={x.icon} size={20} />
                   <span>
                     <strong>{x.h}</strong> {x.text}
                   </span>
@@ -380,7 +382,7 @@ const DASH = 'M7 12h10';
                 <summary>
                   <h3>{q.q}</h3>
                   <span class="at-pro-faq-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 5v14M5 12h14" /></svg>
+                    <Icon name="plus-circle" size={20} />
                   </span>
                 </summary>
                 <p>{q.a}</p>

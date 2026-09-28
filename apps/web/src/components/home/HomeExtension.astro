@@ -6,6 +6,8 @@ import { EXTENSION_LISTED, EXTENSION_STORE_URLS } from '../../lib/extension';
 import matrix from '../../data/support-matrix.json';
 // Linked, not scoped: inline styles on / count against the tool CSS budget.
 import sheet from '../../styles/home-extension.css?url';
+import BrandIcon from '../icons/BrandIcon.astro';
+import Icon from '../icons/Icon.astro';
 
 interface Props {
   locale?: TLocale;
@@ -25,9 +27,9 @@ const withKeys = (key: string): [string, string] => {
 const shortcut = withKeys('page.home.ext.shortcut.body');
 
 const benefits = [
-  { id: 'hidden', icon: 'M8 4h12v10H8zM4 8v12h12' },
-  { id: 'system', icon: 'M5 4h14v12H5zM3 20h18M9 10h6' },
-  { id: 'badge', icon: 'M3 7h13v10H3zM20 7v.01M20 12v.01M20 17v.01' },
+  { id: 'hidden', icon: 'browsers' },
+  { id: 'system', icon: 'cpu' },
+  { id: 'badge', icon: 'puzzle-piece' },
 ] as const;
 
 const clock = new Intl.DateTimeFormat(lang, { hour: 'numeric', minute: '2-digit', timeZone: 'UTC', numberingSystem: 'latn' });
@@ -56,7 +58,7 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
   <div class="at-hx-grid">
     <div class="at-hx-head">
       <div class="at-hx-kick">
-        <p class="at-hx-kicker">{t('page.home.ext.kicker')}</p>
+        <p class="at-hx-kicker"><BrandIcon name="chrome" size={16} />{t('page.home.ext.kicker')}</p>
         <span class="at-tag at-tag-tone">{t('page.home.ext.free')}</span>
       </div>
       <h2 id="home-ext-h">{t('page.home.ext.title')}</h2>
@@ -161,7 +163,7 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
       {
         benefits.map((b) => (
           <li>
-            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d={b.icon} /></svg>
+            <Icon name={b.icon} size={24} />
             <span class="at-hx-item">
               <strong>{t(`page.home.ext.${b.id}.title`)}</strong>
               <span>{t(`page.home.ext.${b.id}.body`)}</span>
@@ -170,7 +172,7 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
         ))
       }
       <li>
-        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M3 7h18v10H3zM7 10.5v.01M11 10.5v.01M15 10.5v.01M8 14h8" /></svg>
+        <Icon name="keyboard" size={24} />
         <span class="at-hx-item">
           <strong>{t('page.home.ext.shortcut.title')}</strong>
           <span>{shortcut[0]}<span class="at-hx-keys">{KEYS.map((k, i) => <>{i > 0 && '+'}<kbd class="at-kbd">{k}</kbd></>)}</span>{shortcut[1]}</span>
@@ -184,10 +186,11 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
           EXTENSION_LISTED ? (
             <>
               <a class="at-button at-button-primary at-button-lg" href={EXTENSION_STORE_URLS.chrome} rel="noopener" target="_blank">
-                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg>
+                <BrandIcon name="chrome" size={20} />
                 {t('page.extension.cta.chrome')}
               </a>
               <a class="at-button at-hx-edge" href={EXTENSION_STORE_URLS.edge} rel="noopener" target="_blank">
+                <BrandIcon name="microsoft-edge" size={20} />
                 {t('page.home.ext.cta.edge')}
               </a>
             </>
@@ -199,13 +202,17 @@ const badge = [roll(TENS, 1, 600, 281), roll(UNITS, 4, 60, 41)];
         }
       </div>
       <p class="at-hx-note">
+        <span class="at-hx-logos">
+          <BrandIcon name="chrome" size={16} />
+          <BrandIcon name="microsoft-edge" size={16} />
+        </span>
         {t('page.home.ext.note', { browsers: list(stores), version: support.minimumChromeVersion, others: list(support.unsupported) })}
       </p>
       {
         EXTENSION_LISTED && (
           <a class="at-hx-more" href="/extension">
             {t('page.home.ext.more')}
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+            <Icon name="arrow-right" size={16} />
           </a>
         )
       }

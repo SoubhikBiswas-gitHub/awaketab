@@ -85,7 +85,7 @@
   }
 
   .at-gal-read .at-go {
-    stroke: currentcolor;
+    color: currentcolor;
   }
 
   :is(a.at-gal-read, .at-gal-link):hover .at-go {
@@ -127,11 +127,19 @@
   .at-gal-native > svg {
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  }
+
+  .at-gal-logos {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--at-s-3);
+    min-block-size: var(--at-h-control);
+  }
+
+  .at-gal-logos > svg {
+    flex-shrink: 0;
+    color: var(--at-ink);
   }
 
   .at-gal-browsers {

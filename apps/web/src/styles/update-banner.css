@@ -11,7 +11,7 @@
   margin-inline: auto;
   padding-block: var(--at-s-1);
   padding-inline: var(--at-s-4) var(--at-s-1);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
   box-shadow: var(--at-elev);

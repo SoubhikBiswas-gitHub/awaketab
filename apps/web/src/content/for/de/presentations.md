@@ -95,8 +95,6 @@ Präsentieren Sie vom iPad oder einem Android-Tablet, gilt dieselbe Regel: Der L
 
 Der Beamer folgt der Abschaltzeit des Betriebssystems, sobald kein Lock gehalten wird. Klappen Sie den Laptop zu, schläft er ein; dagegen hilft kein Browser-Tab. Hardware mit eigener Abschaltung, etwa ein Monitor, der ohne Signal einschläft, oder eine Sperrbildschirm-Richtlinie Ihrer Firma liegen außerhalb dessen, was ein Browser steuern kann.
 
-::limit
-
 ## Checkliste fünf Minuten vor dem Vortrag
 
 ::checklist

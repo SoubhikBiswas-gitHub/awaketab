@@ -11,9 +11,9 @@ import Picks from './Picks.astro';
 import CodeBlock from './CodeBlock.astro';
 import Note from './Note.astro';
 import Lifecycle from './Lifecycle.astro';
-import Limit from './Limit.astro';
 import type { ISection, TArticlePart } from '../../lib/article';
 import type { TContentKind } from '../../lib/content-i18n';
+import { brandCells } from '../../lib/logo-svg';
 
 interface Props {
   list: TArticlePart[];
@@ -61,9 +61,7 @@ const fail = (name: string, arg: string): never => {
 
 {
   list.map((part) =>
-    part.kind === 'limit' ? (
-      <Limit text={data.honestLimit} label={t('content.limit')} />
-    ) : part.kind === 'section' ? (
+    part.kind === 'section' ? (
       <section class="at-sec at-md" aria-labelledby={part.id}>
         {part.heading &&
           (counter(part) ? (
@@ -92,7 +90,7 @@ const fail = (name: string, arg: string): never => {
           ))}
         {part.parts.map((p) =>
           p.kind === 'html' ? (
-            <Fragment set:html={p.html} />
+            <Fragment set:html={brandCells(p.html)} />
           ) : p.name === 'steps' ? (
             data.steps ? (
               <Steps
@@ -166,14 +164,10 @@ const fail = (name: string, arg: string): never => {
             ) : (
               fail(p.name, p.arg)
             )
-          ) : p.name === 'lifecycle' ? (
-            data.lifecycle ? (
-              <Lifecycle data={data.lifecycle} t={t} />
-            ) : (
-              fail(p.name, p.arg)
-            )
+          ) : data.lifecycle ? (
+            <Lifecycle data={data.lifecycle} t={t} />
           ) : (
-            <Limit text={data.honestLimit} label={t('content.limit')} inline />
+            fail(p.name, p.arg)
           ),
         )}
       </section>

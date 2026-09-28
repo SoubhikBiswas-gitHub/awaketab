@@ -1,7 +1,7 @@
 import type { ISettings, TFace } from '@awaketab/core';
 import type { IToolCtx } from '../../ctx.js';
 import href from './faces.css?url';
-import { openGallery } from './gallery.js';
+import { showGallery as gallery } from './gallery.js';
 import { type IFace, type IFrame, sheet } from './kit.js';
 import { ART_FACES, stepFace } from './order.js';
 import { FACES } from './registry.js';
@@ -164,9 +164,11 @@ export function armSwipe(ctx: IToolCtx): void {
   });
 }
 
-// The face switch (Previous · the gallery · Next) and the C key (Shift+C goes back).
-export function faceAct(ctx: IToolCtx, name: string, opener?: Element | null): void {
-  const f = mountFaces(ctx);
-  if (name === 'faces') openGallery(ctx, f, opener);
-  else void f.set(stepFace(ctx.store.get().settings.face, name === 'facePrev' ? -1 : 1));
+// The face switch's Previous and Next, and the C key (Shift+C goes back).
+export function faceAct(ctx: IToolCtx, name: string): void {
+  void mountFaces(ctx).set(stepFace(ctx.store.get().settings.face, name === 'facePrev' ? -1 : 1));
+}
+
+export function showGallery(ctx: IToolCtx, pane: HTMLElement): Promise<void> {
+  return gallery(ctx, mountFaces(ctx), pane);
 }

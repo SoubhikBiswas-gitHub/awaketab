@@ -8,6 +8,7 @@ import { LAMPS, PALETTES, PATTERNS } from '../../tool/packs/themes/looks';
 import { GENS } from '../../tool/packs/sound/catalog';
 // Linked, not scoped: inline styles on / count against the tool CSS budget.
 import sheet from '../../styles/home-yours.css?url';
+import Icon from '../icons/Icon.astro';
 
 interface Props {
   locale?: TLocale;
@@ -45,8 +46,6 @@ const mix = [
   ['cafe', 38],
   ['brown', 54],
 ] as const;
-const ARROW = 'M5 12h14M13 6l6 6-6 6';
-const CHECK = 'M5 12.5l4.2 4.2L19 7';
 ---
 
 <section id="home-yours" class="at-hy" aria-labelledby="h-yours">
@@ -58,7 +57,7 @@ const CHECK = 'M5 12.5l4.2 4.2L19 7';
     </div>
     <a class="at-hb-more" href="/pro#compare" hreflang={locale === 'en' ? undefined : 'en'}>
       <span>{y('compare')}</span>
-      <svg class="at-hb-arrow" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d={ARROW} /></svg>
+      <Icon name="arrow-right" size={20} class="at-hb-arrow" />
     </a>
   </div>
 
@@ -288,7 +287,7 @@ const CHECK = 'M5 12.5l4.2 4.2L19 7';
               <li class:list={[n === 1 && 'at-hy-done']}>
                 <span class="at-hy-box">
                   {n === 1 && (
-                    <svg viewBox="0 0 24 24" width="14" height="14"><path d={CHECK} /></svg>
+                    <Icon name="check" size={14} tone="ink" />
                   )}
                 </span>
                 {y(`notes.sample.${n}`)}
@@ -298,7 +297,7 @@ const CHECK = 'M5 12.5l4.2 4.2L19 7';
           }
         </ul>
         <p class="at-hy-mic">
-          <svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 4a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V7a3 3 0 0 1 3-3zM6 11.5a6 6 0 0 0 12 0M12 17.5V20" /></svg>
+          <Icon name="microphone" size={16} />
           {y('notes.listening')}
         </p>
       </div>

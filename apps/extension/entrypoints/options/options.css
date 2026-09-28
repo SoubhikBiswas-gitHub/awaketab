@@ -98,7 +98,7 @@
   block-size: var(--at-icon-sm);
   background: var(--at-accent);
   content: "";
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cpath d='M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z' opacity='0.28'/%3E%3Cpath d='M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z'/%3E%3C/svg%3E")
     center / contain no-repeat;
 }
 
@@ -383,7 +383,7 @@
 }
 
 .op-levelcard:has(input:checked) {
-  border-color: var(--ext-lamp-line);
+  border-color: var(--at-selected-line);
   background: var(--ext-lamp-soft);
 }
 
@@ -463,7 +463,7 @@
   }
 
   .op-seg7 .at-seg-item:has(input:checked) {
-    box-shadow: inset 0 0 0 var(--at-border) var(--ext-lamp-line);
+    box-shadow: inset 0 0 0 var(--at-border) var(--at-selected-line);
     background: var(--ext-lamp-soft);
   }
 }
@@ -543,7 +543,7 @@
 }
 
 .op-lang-row:has(input:checked) {
-  border-color: var(--ext-lamp-line);
+  border-color: var(--at-selected-line);
   background: var(--ext-lamp-soft);
 }
 
@@ -825,7 +825,6 @@
 
 .op-remove {
   border: 0;
-  font: var(--at-type-small);
   font-weight: 600;
   color: var(--at-ink-2);
 }
@@ -903,7 +902,7 @@
 }
 
 .op-day[aria-pressed="true"] {
-  border-color: var(--ext-lamp-line);
+  border-color: var(--at-selected-line);
   background: var(--ext-lamp-soft);
   color: var(--at-ink);
 }
@@ -963,12 +962,6 @@
   gap: var(--at-s-4);
 }
 
-.op-add {
-  min-block-size: var(--at-h-button);
-  font: var(--at-type-ui);
-  font-weight: 600;
-}
-
 .op-sites-head {
   display: flex;
   flex-direction: column;
@@ -998,7 +991,6 @@
 
 .op-addsite {
   border-style: dashed;
-  padding-inline: var(--at-s-5);
 }
 
 .op-siteform-error {

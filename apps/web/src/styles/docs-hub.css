@@ -5,7 +5,7 @@
   .at-docs {
     display: flex;
     flex-direction: column;
-    gap: var(--at-s-12);
+    gap: var(--at-section);
   }
 
   .at-docs-head {
@@ -62,7 +62,7 @@
     block-size: var(--at-s-10);
     border-radius: var(--at-r-md);
     background: color-mix(in srgb, var(--at-accent) 12%, transparent);
-    color: var(--at-accent-text);
+    color: var(--at-accent);
   }
 
   .at-docs-icon {
@@ -79,11 +79,6 @@
   .at-docs .at-docs-go {
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
   }
 
   .at-cp .at-docs h3 {
@@ -124,7 +119,7 @@
   }
 
   .at-cp .at-docs h3 a:focus-visible::after {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 
@@ -265,10 +260,6 @@
   }
 
   @media (width >= 600px) {
-    .at-docs {
-      gap: var(--at-s-16);
-    }
-
     .at-docs-groups {
       gap: var(--at-s-12);
     }

@@ -93,4 +93,3 @@ Para presentar desde la laptop sirven Chrome 84+, Edge 84+, Safari 16.4+, Firefo
 
 AwakeTab no mueve el mouse, no avanza tus diapositivas y no cambia tu estado en Teams. Tampoco evita que el equipo se suspenda si cierras la tapa. Su trabajo es uno: que la pantalla no se apague mientras presentas, y decirte con honestidad cuándo lo está logrando.
 
-::limit

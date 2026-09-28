@@ -78,13 +78,13 @@
 
   .at-cp .at-lead {
     margin: 0;
-    color: var(--at-ink-2);
+    color: var(--at-ink);
     font: var(--at-type-lead);
     text-wrap: pretty;
   }
 
   .at-cp :is(a, summary, .at-table):focus-visible {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
     border-radius: var(--at-r-xs);
   }
@@ -127,24 +127,22 @@
   .at-crumb-sep svg {
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  }
+
+  [dir="rtl"] .at-crumb-sep svg {
+    scale: -1 1;
   }
 
   .at-art {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "head" "tool" "body";
-    row-gap: var(--at-s-8);
+    grid-template-areas: "head" "contents" "body" "tool" "tail";
+    row-gap: var(--at-section);
     align-items: start;
   }
 
-  .at-art[data-tool-at="after"] {
-    grid-template-areas: "head" "body" "tool" "tail";
-    row-gap: var(--at-section);
+  .at-art[data-tool="first"] {
+    grid-template-areas: "head" "tool" "contents" "body" "tail";
   }
 
   .at-head {
@@ -176,11 +174,23 @@
     grid-area: toc;
   }
 
+  .at-family {
+    display: flex;
+    align-items: center;
+    gap: var(--at-s-3);
+    margin: 0;
+  }
+
+  .at-family > svg {
+    flex-shrink: 0;
+    color: var(--at-ink);
+  }
+
   .at-meta {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--at-s-1) var(--at-s-4);
+    gap: var(--at-s-2) var(--at-s-3);
     color: var(--at-muted);
     font: var(--at-type-small);
   }
@@ -195,15 +205,13 @@
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
     flex-shrink: 0;
-    fill: none;
-    stroke: var(--at-accent);
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    color: var(--at-accent-text);
   }
 
   .at-meta-stale svg {
-    stroke: var(--at-warn);
+    --at-tone: var(--at-warn);
+
+    color: var(--at-ink);
   }
 
   .at-meta .at-meta-stale {
@@ -232,7 +240,7 @@
 
   .at-meta-pending svg {
     margin-block-start: calc(var(--at-s-1) / 2);
-    stroke: currentcolor;
+    color: currentcolor;
   }
 
   .at-meta-pending a {
@@ -243,11 +251,7 @@
     text-underline-offset: 3px;
   }
 
-  .at-art[data-variant="guide"] .at-meta {
-    gap: var(--at-s-2) var(--at-s-3);
-  }
-
-  .at-art[data-variant="guide"] .at-meta-verified {
+  .at-meta .at-meta-verified {
     min-block-size: var(--at-h-pill-s);
     padding-block: var(--at-s-1);
     padding-inline: var(--at-s-2) var(--at-s-3);
@@ -319,8 +323,7 @@
   .at-tool-area > h2,
   .at-cp .at-md h2:not(.at-kicker),
   .at-cp .at-prose > h2,
-  .at-cp section > h2:not(.at-kicker),
-  .at-cp .at-related-links > h2 {
+  .at-cp section > h2:not(.at-kicker) {
     margin: 0;
     color: var(--at-ink);
     font: var(--at-type-h2);
@@ -354,10 +357,6 @@
     content-visibility: visible;
     contain-intrinsic-size: none;
     font: var(--at-type-body);
-  }
-
-  .at-art[data-variant="guide"] .at-prose {
-    max-inline-size: none;
   }
 
   .at-cp .at-md {
@@ -414,10 +413,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .at-art[data-variant="guide"] .at-lead {
-    color: var(--at-ink);
-  }
-
   .at-cp .at-lead code {
     padding-inline: var(--at-s-1);
     border-radius: var(--at-r-xs);
@@ -449,8 +444,19 @@
     font: var(--at-type-small);
   }
 
+  .at-facts li {
+    align-items: center;
+  }
+
   .at-facts span {
     color: var(--at-ink-2);
+  }
+
+  .at-logo-in {
+    display: inline-block;
+    flex-shrink: 0;
+    margin-inline-end: var(--at-s-2);
+    vertical-align: -0.2em;
   }
 
   .at-facts strong {
@@ -496,14 +502,14 @@
     color: var(--at-muted);
   }
 
-  .at-cp :is(.at-md, .at-note, .at-author, .at-related-links > div) a {
+  .at-cp :is(.at-md, .at-note, .at-author) a {
     color: var(--at-accent-text);
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 4px;
   }
 
-  .at-cp :is(.at-md, .at-note, .at-author, .at-related-links > div) a:hover {
+  .at-cp :is(.at-md, .at-note, .at-author) a:hover {
     text-decoration-thickness: 2px;
   }
 
@@ -534,10 +540,7 @@
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
     margin-block-start: calc(var(--at-s-1) / 2);
-    fill: none;
-    stroke: var(--at-ink-2);
-    stroke-width: 1.8;
-    stroke-linecap: round;
+    color: var(--at-ink-2);
   }
 
   .at-note > div {
@@ -552,6 +555,62 @@
     color: var(--at-ink);
     font: var(--at-type-body);
     text-wrap: pretty;
+  }
+
+  .at-toc-m {
+    grid-area: contents;
+    min-inline-size: 0;
+    border: var(--at-border) solid var(--at-line);
+    border-radius: var(--at-r-lg);
+    background: var(--at-surface);
+  }
+
+  .at-toc-m > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--at-s-3);
+    min-block-size: var(--at-h-control);
+    padding-inline: var(--at-s-4);
+    color: var(--at-ink);
+    font: var(--at-type-ui);
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .at-toc-m > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .at-toc-m > summary > svg {
+    transition: rotate var(--at-d-slide) var(--at-ease);
+  }
+
+  .at-toc-m[open] > summary > svg {
+    rotate: 180deg;
+  }
+
+  .at-toc-m > ol {
+    margin: 0;
+    padding-block: 0 var(--at-s-2);
+    padding-inline: var(--at-s-4);
+    list-style: none;
+  }
+
+  .at-toc-m a {
+    display: flex;
+    align-items: center;
+    min-block-size: var(--at-h-control);
+    border-block-start: var(--at-border) solid var(--at-line);
+    color: var(--at-ink-2);
+    font: var(--at-type-small);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .at-toc-m a:hover {
+    color: var(--at-ink);
   }
 
   .at-cp .at-related-sec,
@@ -600,11 +659,7 @@
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
     flex-shrink: 0;
-    fill: none;
-    stroke: var(--at-muted);
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    color: var(--at-muted);
     transition: transform var(--at-d-slide) var(--at-ease);
   }
 
@@ -624,50 +679,6 @@
   }
 
   .at-cp .at-start .at-button-glyph {
-    color: var(--at-accent);
-  }
-
-  .at-cp .at-related-links {
-    display: flex;
-    flex-direction: column;
-    gap: var(--at-s-3);
-    margin: 0;
-  }
-
-  .at-cp .at-related-links > div {
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: var(--at-s-6);
-  }
-
-  .at-cp .at-related-links > div > a {
-    display: inline-flex;
-    align-items: center;
-    min-block-size: var(--at-h-control);
-    padding: 0;
-    border: 0;
-    background: none;
-    font: var(--at-type-body);
-  }
-
-  .at-cp .at-start-pill {
-    display: inline-flex;
-    align-self: flex-start;
-    align-items: center;
-    gap: var(--at-s-2);
-    min-block-size: var(--at-h-control);
-    padding-block: 0;
-    padding-inline: var(--at-s-4);
-    border: var(--at-border) solid color-mix(in srgb, var(--at-accent) 45%, transparent);
-    border-radius: var(--at-r-pill);
-    background: color-mix(in srgb, var(--at-accent) 14%, transparent);
-    color: var(--at-ink);
-    font: var(--at-type-ui);
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .at-start-pill .at-button-glyph {
     color: var(--at-accent);
   }
 
@@ -724,17 +735,13 @@
     border-radius: var(--at-r-pill);
   }
 
-  .at-art[data-variant="guide"] .at-faq-icon > span {
+  .at-cp .at-faq-icon > span {
     border-color: transparent;
   }
 
   .at-faq-icon svg {
     inline-size: var(--at-icon-sm);
     block-size: var(--at-icon-sm);
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
     transition: transform var(--at-d-slide) var(--at-ease);
   }
 
@@ -817,21 +824,9 @@
       margin-block-start: var(--at-s-2);
     }
 
-    .at-art {
-      row-gap: var(--at-s-10);
-    }
-
-    .at-art[data-tool-at="after"] {
-      row-gap: var(--at-section);
-    }
-
     .at-tool-card > .at-tool-embed {
       padding-block: var(--at-s-6);
       padding-inline: var(--at-s-8);
-    }
-
-    .at-art[data-variant="article"] .at-tool-card > .at-tool-embed {
-      padding-inline: var(--at-s-6);
     }
   }
 
@@ -851,21 +846,21 @@
 
   @media (width >= 1024px) {
     .at-art {
+      --at-gap-article: var(--at-section);
+
       grid-template-columns: minmax(0, var(--at-col-toc)) minmax(0, var(--at-col-main)) minmax(0, 1fr);
-      grid-template-areas: "toc head ." "toc tool tool" "toc body rail";
+      grid-template-areas: "toc head ." "toc body rail" "toc tool tool" "toc tail .";
       column-gap: var(--at-s-10);
       max-inline-size: calc(var(--at-col-toc) + var(--at-col-main) + var(--at-col-rail) + 2 * var(--at-s-10));
       margin-inline: auto;
     }
 
-    .at-art[data-variant="guide"] {
-      row-gap: var(--at-s-12);
-      --at-gap-article: var(--at-section);
+    .at-art[data-tool="first"] {
+      grid-template-areas: "toc head ." "toc tool tool" "toc body rail" "toc tail .";
     }
 
-    .at-art[data-tool-at="after"] {
-      grid-template-areas: "toc head ." "toc body rail" "toc tool tool" "toc tail .";
-      row-gap: var(--at-section);
+    .at-toc-m {
+      display: none;
     }
 
     .at-toc {
@@ -876,10 +871,6 @@
       align-self: start;
       gap: var(--at-s-6);
       min-inline-size: 0;
-    }
-
-    .at-art[data-variant="article"] .at-toc {
-      padding-block-start: var(--at-s-12);
     }
 
     .at-toc-list {
@@ -928,16 +919,12 @@
       display: flex;
       flex-direction: column;
       gap: var(--at-s-2);
-      padding: var(--at-s-5);
+      padding: var(--at-s-4);
       border: var(--at-border) solid var(--at-line);
       border-radius: var(--at-r-lg);
       background: var(--at-surface);
       color: var(--at-ink);
       text-decoration: none;
-    }
-
-    .at-art[data-variant="guide"] .at-toc-card {
-      padding: var(--at-s-4);
     }
 
     .at-cp .at-pill-bare {
@@ -966,10 +953,6 @@
 
     .at-tool-card > .at-tool-embed {
       padding: var(--at-s-8);
-    }
-
-    .at-art[data-variant="article"] .at-tool-card > .at-tool-embed {
-      padding-inline: var(--at-s-8);
     }
   }
 

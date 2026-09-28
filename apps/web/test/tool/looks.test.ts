@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { formatHex, interpolate, wcagContrast, wcagLuminance } from 'culori';
+import { wcagContrast, wcagLuminance } from 'culori';
 import { describe, expect, it } from 'vitest';
 import { darkOf, fitLamp, lampOk, ON_DARK, WORST_DARK, WORST_LIGHT } from '../../src/tool/packs/themes/fit.js';
 import {
@@ -16,56 +16,15 @@ import {
   PRESETS,
   presetLook,
 } from '../../src/tool/packs/themes/looks.js';
+import { block, DARK, lampVars, mix, paletteVars, THEMES, VARIANTS } from './theme-vars.js';
 
 // Every colour theme × lamp × light/dark/OLED is checked with culori (WCAG 2.2 AA): text 4.5:1 on the page and on
 // cards, UI (rings, focus, input borders) 3:1, labels on lamp-filled buttons 4.5:1, and text stays AA over the
 // patterns (ink at their strongest alpha) and the aurora glow (lamp at 8 %). docs/05 §1, DESIGN.md §2.
+// colour-pairs.test.ts checks every other text and UI pair the tool paints.
 
 const WEB = path.join(import.meta.dirname, '../..');
-const TOKENS = readFileSync(path.join(WEB, 'src/styles/tokens.css'), 'utf8');
-const THEMES = readFileSync(path.join(WEB, 'public/assets/themes.css'), 'utf8');
 
-type TVars = Record<string, string>;
-
-function block(css: string, selector: string): TVars {
-  for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/gu)) {
-    const sel = (m[1] ?? '').replace(/\s+/gu, ' ').trim();
-    if (sel !== selector) continue;
-    const vars: TVars = {};
-    for (const d of (m[2] ?? '').matchAll(/(--at-[\w-]+)\s*:\s*([^;]+);/gu))
-      vars[d[1] as string] = (d[2] as string).trim();
-    return vars;
-  }
-  throw new Error(`no rule for ${selector}`);
-}
-
-const DARK = '[data-theme="dark"], [data-theme="oled"]';
-const VARIANTS = ['light', 'dark', 'oled'] as const;
-
-function paletteVars(id: string, v: (typeof VARIANTS)[number]): TVars {
-  const base = {
-    light: block(TOKENS, ':root, [data-theme="light"]'),
-    dark: block(TOKENS, '[data-theme="dark"]'),
-    oled: block(TOKENS, '[data-theme="oled"]'),
-  }[v];
-  if (id === 'clear-night') return base;
-  const own =
-    v === 'light'
-      ? block(THEMES, `[data-palette="${id}"][data-theme="light"]`)
-      : block(THEMES, `[data-palette="${id}"]:is(${DARK})`);
-  const oled = v === 'oled' ? block(THEMES, '[data-palette][data-theme="oled"]') : {};
-  return { ...base, ...own, ...oled };
-}
-
-function lampVars(id: string, v: (typeof VARIANTS)[number]): TVars {
-  if (id === 'aqua') return {};
-  const light = v === 'light';
-  if (['violet', 'mint', 'sky'].includes(id))
-    return block(TOKENS, light ? `[data-accent="${id}"]` : `[data-accent="${id}"]:is(${DARK})`);
-  return block(THEMES, light ? `[data-theme][data-accent="${id}"]` : `[data-accent="${id}"]:is(${DARK})`);
-}
-
-const mix = (a: string, b: string, t: number) => formatHex(interpolate([a, b], 'rgb')(t)) ?? a;
 const PATTERN_ALPHA = Number(/--at-pat-a:\s*([\d.]+);/u.exec(THEMES)?.[1]);
 
 const CASES = PALETTES.flatMap(([palette]) =>

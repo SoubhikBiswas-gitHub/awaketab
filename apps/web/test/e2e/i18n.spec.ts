@@ -225,7 +225,13 @@ async function findClipping(page: Page): Promise<{ scrollWidth: number; clips: I
     };
     for (const el of document.body.querySelectorAll('*')) {
       // .at-skip is the visually hidden skip link; it is only laid out while focused.
-      if (el.closest('dialog:not([open]), [hidden], template, script, style, .sr-only, .at-skip:not(:focus)')) continue;
+      // The footer's keyword band is decorative (aria-hidden) and scrolls past the edges by design.
+      if (
+        el.closest(
+          'dialog:not([open]), [hidden], template, script, style, .sr-only, .at-skip:not(:focus), .at-foot-band',
+        )
+      )
+        continue;
       const rect = el.getBoundingClientRect();
       if (rect.width <= 1 || rect.height <= 1) continue;
       const style = getComputedStyle(el);

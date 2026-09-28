@@ -1,5 +1,7 @@
 ---
+import Brand from '../icons/Brand.astro';
 import { inline } from '../../lib/article';
+import { rowBrands } from '../../lib/brands';
 
 interface Props {
   rows: Array<{
@@ -22,7 +24,12 @@ const { rows } = Astro.props;
         </li>
       ) : (
         <li>
-          <strong set:html={inline(row.title)} />
+          <strong>
+            {rowBrands(row.title).map((logo) => (
+              <Brand logo={logo} class="at-logo-in" />
+            ))}
+            <Fragment set:html={inline(row.title)} />
+          </strong>
           {row.text && <span set:html={inline(row.text)} />}
           {row.link && <a href={row.link.href}>{row.link.label}</a>}
         </li>

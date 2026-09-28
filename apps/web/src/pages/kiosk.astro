@@ -12,6 +12,7 @@ import { CHECKOUT_LINKS } from '../lib/checkout';
 import { PLAN_PRICES } from '../lib/license';
 import { kioskUrl } from '../tool/embed/snippet';
 import { kioskHints, urlParts } from '../lib/kiosk-page';
+import Icon from '../components/icons/Icon.astro';
 
 const site = Astro.site?.toString().replace(/\/$/u, '') ?? 'https://awaketab.com';
 const ogImage = '/og/kiosk-en.png';
@@ -51,7 +52,7 @@ const rows: Array<[string, string, string, TMark, string, TMark]> = [
   ['Rating or upgrade prompts', '', 'Can appear', 'i', 'Never', 'y'],
   ['Licence check', '#lic=', 'Not needed', 'n', 'On the device, works offline', 'y'],
 ];
-const GLYPH: Record<TMark, string> = { y: 'M5 12.5l4.5 4.5L19 7.5', n: 'M7 12h10', i: 'M12 9a3 3 0 1 1 0 6a3 3 0 1 1 0-6z' };
+const GLYPH: Record<TMark, string> = { y: 'check-circle', n: 'minus-circle', i: 'circle-half' };
 const RC = 2 * Math.PI * 112;
 ---
 
@@ -141,7 +142,7 @@ const RC = 2 * Math.PI * 112;
           <div class="at-k-screen" data-kiosk-screen data-mode="message" data-ktheme="dark" data-msg-size="l" data-on style={`--at-kp-c: ${RC.toFixed(1)}`}>
             <div class="at-k-aura"></div>
             <div class="at-k-top">
-              <span class="at-k-logo"><svg viewBox="0 0 24 24" width="16" height="16"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 16l5-5 4 4 3-3 6 6"></path></svg>Your logo</span>
+              <span class="at-k-logo"><Icon name="image" size={16} tone="ink" />Your logo</span>
               <span class="at-k-pill" data-k-pillwrap data-lock="held"><svg viewBox="0 0 12 12" width="12" height="12"><path d="M6 1.5a4.5 4.5 0 1 1 0 9a4.5 4.5 0 1 1 0-9z"></path></svg><span data-k-pill>Screen awake</span></span>
             </div>
             <div class="at-k-view at-k-message">
@@ -187,7 +188,7 @@ const RC = 2 * Math.PI * 112;
         <div class="at-k-well">
           <code aria-labelledby="k-url-l" data-kiosk-url>{urlParts(initial).map((p) => <span data-part={p.kind}>{p.text}</span>)}</code>
           <button class="at-button at-button-primary at-button-sm at-pg-copy" type="button" data-kiosk-copy aria-label="Copy the kiosk link">
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"></rect><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"></path></svg>
+            <Icon name="copy" size={16} tone="ink" />
             <span class="at-pg-copy-idle">{t('tool.share.copy')}</span><span class="at-pg-copy-done">Copied</span>
           </button>
         </div>
@@ -218,11 +219,11 @@ const RC = 2 * Math.PI * 112;
                 {param && <code class="at-k-param">{param}</code>}
               </span>
               <span role="cell" class={`at-k-cell at-k-${fk}`}>
-                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d={GLYPH[fk]} /></svg>
+                <Icon name={GLYPH[fk]} size={16} tone="ink" />
                 {free}
               </span>
               <span role="cell" class={`at-k-cell at-k-${lk}`}>
-                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d={GLYPH[lk]} /></svg>
+                <Icon name={GLYPH[lk]} size={16} tone="ink" />
                 {lic}
               </span>
             </div>
@@ -238,7 +239,7 @@ const RC = 2 * Math.PI * 112;
         </div>
         <div class="at-card at-k-price">
           <div class="at-k-amount"><span id="kiosk-one">${PLAN_PRICES.biz_kiosk_site}</span><span>one-time · 1 site</span></div>
-          <a class="at-button at-button-primary at-button-lg" href={CHECKOUT_LINKS.biz_kiosk_site} rel="noopener" aria-describedby="kiosk-one">Buy for one site</a>
+          <a class="at-button at-button-primary" href={CHECKOUT_LINKS.biz_kiosk_site} rel="noopener" aria-describedby="kiosk-one">Buy for one site</a>
         </div>
         <div class="at-card at-k-price">
           <div class="at-k-amount"><span id="kiosk-five">${PLAN_PRICES.biz_kiosk_5}</span><span>one-time · 5 sites</span></div>
@@ -248,7 +249,7 @@ const RC = 2 * Math.PI * 112;
     </section>
 
     <div class="at-pg-note" role="note">
-      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.01"></path></svg>
+      <Icon name="info" size={20} tone="ink" />
       <div class="at-pg-stack-8">
         <span class="at-pg-kicker">Honest limit</span>
         <p>
@@ -260,9 +261,9 @@ const RC = 2 * Math.PI * 112;
     </div>
 
     <nav class="at-pg-related" aria-label="Related">
-      <a class="at-pg-chiplink" href="/for/kiosk">Kiosk setup guide<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-      <a class="at-pg-chiplink" href="/embed">Embed widget<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-      <a class="at-pg-chiplink" href="/terms">Licence terms<svg class="at-pg-arrow" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      <a class="at-pg-chiplink" href="/for/kiosk">Kiosk setup guide<Icon name="arrow-right" size={16} class="at-pg-arrow" /></a>
+      <a class="at-pg-chiplink" href="/embed">Embed widget<Icon name="arrow-right" size={16} class="at-pg-arrow" /></a>
+      <a class="at-pg-chiplink" href="/terms">Licence terms<Icon name="arrow-right" size={16} class="at-pg-arrow" /></a>
     </nav>
   </main>
   <script>

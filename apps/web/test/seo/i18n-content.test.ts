@@ -164,7 +164,7 @@ describe('translated top-10 content pages (E6-T06)', () => {
           const href = match[1] ?? '';
           if (/^\/(?:api|og|icons)\//u.test(href) || /\.(?:webmanifest|svg|js|png)$/u.test(href)) continue;
           // Self-hosted font preloads (D-R26) must point at a file that ships.
-          if (href.startsWith('/fonts/')) {
+          if (href.startsWith('/fonts/') || /^\/_astro\/[^/]+\.css$/u.test(href)) {
             await expect(stat(path.join(distPath, href)), `${pathname} -> ${href}`).resolves.toBeTruthy();
             continue;
           }
