@@ -157,6 +157,10 @@ describe('summarise', () => {
     expect(sum.todayMinutes).toBe(10);
     // 3 Aug + 2 Aug + 30 Jul + 28 Jul; 27 Jul is the 8th day back and 4 Aug is the future.
     expect(sum.weekMinutes).toBe(100);
+    // The Week bars: seven local days, oldest first, today last.
+    expect(sum.days).toHaveLength(7);
+    expect(sum.days.at(-1)?.minutes).toBe(10);
+    expect(sum.days.reduce((n, d) => n + d.minutes, 0)).toBe(100);
     expect(sum.streakDays).toBe(3);
     expect(sum.sessions).toBe(6);
     expect(sum.totalMinutes).toBe(249);

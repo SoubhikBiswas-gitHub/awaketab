@@ -1689,5 +1689,21 @@
   "settings.reset.ask": "Tous les réglages d’ici reviennent à leur valeur par défaut. Vos notes, statistiques et Pro restent.",
   "settings.reset.yes": "Réinitialiser les réglages",
   "settings.reset.no": "Les garder",
-  "settings.reset.done": "Les réglages sont revenus à leurs valeurs par défaut."
+  "settings.reset.done": "Les réglages sont revenus à leurs valeurs par défaut.",
+  "tool.share.look.waits": "Attend un appui pour démarrer.",
+  "tool.share.look.starts": "Garde l'écran allumé dès l'ouverture.",
+  "stats.view.week": "Semaine",
+  "stats.days.aria": "Temps d'éveil sur chacun des 7 derniers jours : {length} au total.",
+  "tool.shortcuts.group.session": "Session",
+  "tool.shortcuts.group.screen": "Écran",
+  "tool.shortcuts.group.tools": "Outils",
+  "pro.sheet.amount": "12 $",
+  "pro.sheet.per": "par an",
+  "pro.sheet.looks": "Plus de thèmes, de lampes et de fonds",
+  "pro.sheet.mixer": "Un mélangeur de sons",
+  "pro.sheet.notes": "Plus de notes",
+  "pro.sheet.pomodoro": "Un Pomodoro qui se répète",
+  "pro.sheet.message": "Mode message",
+  "pro.sheet.stats": "12 semaines de statistiques",
+  "pro.sheet.free": "Garder l'écran allumé reste gratuit, sans publicité sur l'écran allumé."
 }

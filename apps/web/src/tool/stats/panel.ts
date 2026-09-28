@@ -124,6 +124,21 @@ export function openStats(ctx: IToolCtx, opener?: Element | null): void {
   if (locked) locked.hidden = history;
   const grid = q('[data-stats-heatmap]');
   if (grid) renderHeatmap(grid, stats.days, { history });
+  // Week view: one bar per day for the last 7 days, today last; heights are shares of the busiest day.
+  const bars = q('[data-stats-days]');
+  const top = Math.max(1, ...sum.days.map((d) => d.minutes));
+  const day = dtf({ weekday: 'short', day: 'numeric', month: 'short' });
+  const narrow = dtf({ weekday: 'narrow' });
+  bars?.replaceChildren(
+    ...sum.days.map(({ date, minutes }) => {
+      const bar = document.createElement('span');
+      bar.style.setProperty('--v', (minutes / top).toFixed(3));
+      bar.title = t('stats.heat.cell', { date: day.format(date), length: mins(minutes) });
+      bar.textContent = narrow.format(date);
+      return bar;
+    }),
+  );
+  bars?.setAttribute('aria-label', t('stats.days.aria', { length: mins(sum.weekMinutes) }));
   // Export is a Pro action: free users see the Pro tag and go to /pro; the PiP window and the embed never show it.
   const exportBtn = q('[data-stats-export]');
   if (exportBtn) exportBtn.hidden = ctx.params.isPip || ctx.root.classList.contains('at-tool-embed');

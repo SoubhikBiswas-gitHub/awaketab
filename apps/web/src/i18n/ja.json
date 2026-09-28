@@ -1689,5 +1689,21 @@
   "settings.reset.ask": "ここの設定はすべて初期値に戻ります。メモ、統計、Pro はそのままです。",
   "settings.reset.yes": "設定をリセット",
   "settings.reset.no": "そのままにする",
-  "settings.reset.done": "設定を初期値に戻しました。"
+  "settings.reset.done": "設定を初期値に戻しました。",
+  "tool.share.look.waits": "タップするまで待ちます。",
+  "tool.share.look.starts": "開いたらすぐ画面をオンに保ちます。",
+  "stats.view.week": "週",
+  "stats.days.aria": "直近7日間の毎日の画面オン時間：合計{length}。",
+  "tool.shortcuts.group.session": "セッション",
+  "tool.shortcuts.group.screen": "画面",
+  "tool.shortcuts.group.tools": "ツール",
+  "pro.sheet.amount": "12ドル",
+  "pro.sheet.per": "／年",
+  "pro.sheet.looks": "テーマ、ランプ、背景の追加",
+  "pro.sheet.mixer": "サウンドミキサー",
+  "pro.sheet.notes": "メモの追加",
+  "pro.sheet.pomodoro": "繰り返すポモドーロ",
+  "pro.sheet.message": "メッセージモード",
+  "pro.sheet.stats": "12週間の統計",
+  "pro.sheet.free": "画面をオンに保つ機能は無料のまま。画面オン中に広告は出ません。"
 }

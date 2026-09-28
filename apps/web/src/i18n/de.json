@@ -1689,5 +1689,21 @@
   "settings.reset.ask": "Alle Einstellungen hier gehen auf ihren Standard zurück. Notizen, Statistik und Pro bleiben.",
   "settings.reset.yes": "Einstellungen zurücksetzen",
   "settings.reset.no": "Behalten",
-  "settings.reset.done": "Die Einstellungen sind wieder auf Standard."
+  "settings.reset.done": "Die Einstellungen sind wieder auf Standard.",
+  "tool.share.look.waits": "Wartet auf einen Tipp zum Starten.",
+  "tool.share.look.starts": "Hält den Bildschirm an, sobald der Link öffnet.",
+  "stats.view.week": "Woche",
+  "stats.days.aria": "Wachzeit an jedem der letzten 7 Tage: insgesamt {length}.",
+  "tool.shortcuts.group.session": "Sitzung",
+  "tool.shortcuts.group.screen": "Bildschirm",
+  "tool.shortcuts.group.tools": "Werkzeuge",
+  "pro.sheet.amount": "12 $",
+  "pro.sheet.per": "im Jahr",
+  "pro.sheet.looks": "Mehr Themen, Lampen und Hintergründe",
+  "pro.sheet.mixer": "Einen Klangmixer",
+  "pro.sheet.notes": "Mehr Notizen",
+  "pro.sheet.pomodoro": "Einen wiederholten Pomodoro",
+  "pro.sheet.message": "Nachrichtenmodus",
+  "pro.sheet.stats": "12 Wochen Statistik",
+  "pro.sheet.free": "Den Bildschirm wach zu halten bleibt kostenlos, ohne Werbung auf dem wachen Bildschirm."
 }

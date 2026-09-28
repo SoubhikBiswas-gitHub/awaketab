@@ -1719,5 +1719,21 @@
   "settings.reset.ask": "Every setting here goes back to its default. Your notes, stats and Pro stay.",
   "settings.reset.yes": "Reset settings",
   "settings.reset.no": "Keep them",
-  "settings.reset.done": "Settings are back to their defaults."
+  "settings.reset.done": "Settings are back to their defaults.",
+  "tool.share.look.waits": "Waits for a tap to start.",
+  "tool.share.look.starts": "Starts keeping the screen awake as it opens.",
+  "stats.view.week": "Week",
+  "stats.days.aria": "Time awake on each of the last 7 days: {length} in all.",
+  "tool.shortcuts.group.session": "Session",
+  "tool.shortcuts.group.screen": "Screen",
+  "tool.shortcuts.group.tools": "Tools",
+  "pro.sheet.amount": "$12",
+  "pro.sheet.per": "a year",
+  "pro.sheet.looks": "More themes, lamps and backgrounds",
+  "pro.sheet.mixer": "A sound mixer",
+  "pro.sheet.notes": "More notes",
+  "pro.sheet.pomodoro": "A repeating Pomodoro",
+  "pro.sheet.message": "Message mode",
+  "pro.sheet.stats": "12 weeks of stats",
+  "pro.sheet.free": "Keeping the screen awake stays free, with no ads on the awake screen."
 }

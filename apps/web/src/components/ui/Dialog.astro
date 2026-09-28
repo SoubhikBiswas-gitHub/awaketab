@@ -34,7 +34,10 @@ const {
   ...rest
 } = Astro.props;
 const Body = body;
-const hasDescription = description !== undefined || Astro.slots.has('description');
+// Sheet and Drawer forward their slots inside expressions, so a slot can exist and still be empty.
+const footer = Astro.slots.has('footer') ? (await Astro.slots.render('footer')).trim() : '';
+const described = Astro.slots.has('description') ? (await Astro.slots.render('description')).trim() : '';
+const hasDescription = !!description || described !== '';
 const descriptionId = `${titleId}-d`;
 // Light dismiss where the browser supports it; the controllers close on a backdrop click everywhere else.
 const native = { closedby: 'any' } as Record<string, string>;
@@ -56,13 +59,13 @@ const native = { closedby: 'any' } as Record<string, string>;
     <div class="at-dialog-bar">
       <div class="at-dialog-titles">
         <h2 class="at-dialog-title" id={titleId}>{title}</h2>
-        {hasDescription && <p class="at-dialog-description" id={descriptionId}>{description}<slot name="description" /></p>}
+        {hasDescription && <p class="at-dialog-description" id={descriptionId}>{description}<Fragment set:html={described} /></p>}
       </div>
       <button class="at-icon-button at-dialog-close" type="button" data-dialog-close aria-label={closeLabel} {...closeAttrs}>
-        <Icon name="x" size={24} />
+        <Icon name="x" size={20} tone="ink" />
       </button>
     </div>
   </div>
   <Body class:list={['at-dialog-body', bodyClass]}><slot /></Body>
-  {Astro.slots.has('footer') && <div class="at-dialog-footer"><slot name="footer" /></div>}
+  {footer && <div class="at-dialog-footer"><Fragment set:html={footer} /></div>}
 </dialog>

@@ -31,6 +31,7 @@
         "functions/**/*.ts",
         "test/**/*.ts"
       ],
+      "ignore": ["src/components/icons/BrandIcon.astro"],
       "ignoreDependencies": [
         "@iconify-json/logos",
         "@phosphor-icons/core",

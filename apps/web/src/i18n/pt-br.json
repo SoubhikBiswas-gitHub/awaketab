@@ -1689,5 +1689,21 @@
   "settings.reset.ask": "Todas as configurações daqui voltam ao padrão. Suas notas, estatísticas e o Pro ficam.",
   "settings.reset.yes": "Redefinir configurações",
   "settings.reset.no": "Manter",
-  "settings.reset.done": "As configurações voltaram ao padrão."
+  "settings.reset.done": "As configurações voltaram ao padrão.",
+  "tool.share.look.waits": "Espera um toque para começar.",
+  "tool.share.look.starts": "Mantém a tela ligada assim que abre.",
+  "stats.view.week": "Semana",
+  "stats.days.aria": "Tempo com a tela ligada em cada um dos últimos 7 dias: {length} no total.",
+  "tool.shortcuts.group.session": "Sessão",
+  "tool.shortcuts.group.screen": "Tela",
+  "tool.shortcuts.group.tools": "Ferramentas",
+  "pro.sheet.amount": "US$ 12",
+  "pro.sheet.per": "por ano",
+  "pro.sheet.looks": "Mais temas, lâmpadas e fundos",
+  "pro.sheet.mixer": "Um mixer de sons",
+  "pro.sheet.notes": "Mais notas",
+  "pro.sheet.pomodoro": "Um Pomodoro que se repete",
+  "pro.sheet.message": "Modo mensagem",
+  "pro.sheet.stats": "12 semanas de estatísticas",
+  "pro.sheet.free": "Manter a tela ligada continua grátis, sem anúncios na tela ligada."
 }

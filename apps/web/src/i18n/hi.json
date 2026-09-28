@@ -1689,5 +1689,21 @@
   "settings.reset.ask": "यहाँ की हर सेटिंग अपने डिफ़ॉल्ट पर लौट जाएगी। आपके नोट्स, आँकड़े और Pro बने रहेंगे।",
   "settings.reset.yes": "सेटिंग रीसेट करें",
   "settings.reset.no": "रहने दें",
-  "settings.reset.done": "सेटिंग अपने डिफ़ॉल्ट पर लौट आई हैं।"
+  "settings.reset.done": "सेटिंग अपने डिफ़ॉल्ट पर लौट आई हैं।",
+  "tool.share.look.waits": "शुरू करने के लिए एक टैप का इंतज़ार करता है।",
+  "tool.share.look.starts": "खुलते ही स्क्रीन को ऑन रखना शुरू करता है।",
+  "stats.view.week": "हफ़्ता",
+  "stats.days.aria": "पिछले 7 दिनों में हर दिन स्क्रीन ऑन रहने का समय: कुल {length}।",
+  "tool.shortcuts.group.session": "सेशन",
+  "tool.shortcuts.group.screen": "स्क्रीन",
+  "tool.shortcuts.group.tools": "टूल",
+  "pro.sheet.amount": "$12",
+  "pro.sheet.per": "प्रति वर्ष",
+  "pro.sheet.looks": "और थीम, लैंप और बैकग्राउंड",
+  "pro.sheet.mixer": "साउंड मिक्सर",
+  "pro.sheet.notes": "और नोट्स",
+  "pro.sheet.pomodoro": "दोहराने वाला पोमोडोरो",
+  "pro.sheet.message": "मैसेज मोड",
+  "pro.sheet.stats": "12 हफ़्तों के आँकड़े",
+  "pro.sheet.free": "स्क्रीन को ऑन रखना मुफ़्त रहेगा, ऑन स्क्रीन पर कोई विज्ञापन नहीं।"
 }
