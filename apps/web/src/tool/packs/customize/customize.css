@@ -34,7 +34,7 @@
 }
 
 .at-cz-tab:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 0;
 }
 
@@ -55,7 +55,7 @@
   padding-inline: var(--at-card-pad);
   overflow-y: auto;
   overscroll-behavior: contain;
-  border-block-start: 1px solid var(--at-line);
+  border-block-start: var(--at-border) solid var(--at-line);
 }
 
 .at-cz-pane {
@@ -114,7 +114,7 @@
   gap: var(--at-gap-item);
   padding-block: var(--at-s-3);
   padding-inline: var(--at-s-4) var(--at-s-3);
-  border: 1px solid color-mix(in srgb, var(--at-accent) 32%, transparent);
+  border: var(--at-border) solid color-mix(in srgb, var(--at-accent) 32%, transparent);
   border-radius: var(--at-r-lg);
   background: color-mix(in srgb, var(--at-accent) 7%, var(--at-surface));
 }

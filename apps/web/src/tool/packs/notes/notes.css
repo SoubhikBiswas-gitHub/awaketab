@@ -162,7 +162,7 @@
   min-inline-size: 15rem;
   max-inline-size: min(20rem, 100vw - 2 * var(--at-s-4));
   padding: var(--at-s-2);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
   box-shadow: var(--at-shadow-float);
@@ -196,7 +196,7 @@
 }
 
 .at-notes-mi:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: -2px;
 }
 
@@ -205,8 +205,8 @@
   inline-size: 10px;
   block-size: 6px;
   margin-inline-start: auto;
-  border-block-end: 2px solid var(--at-accent-text);
-  border-inline-start: 2px solid var(--at-accent-text);
+  border-block-end: var(--at-ring) solid var(--at-accent-text);
+  border-inline-start: var(--at-ring) solid var(--at-accent-text);
   transform: translateY(-2px) rotate(-45deg);
 }
 
@@ -223,7 +223,7 @@
   margin-block-start: var(--at-s-1);
   padding-block: var(--at-s-2) var(--at-s-1);
   padding-inline: var(--at-s-3);
-  border-block-start: 1px solid var(--at-line);
+  border-block-start: var(--at-border) solid var(--at-line);
   color: var(--at-muted);
   font: var(--at-type-caption);
   font-variant-numeric: tabular-nums;
@@ -248,7 +248,7 @@
   gap: var(--at-s-2) var(--at-s-3);
   padding-block: var(--at-s-3);
   padding-inline: var(--at-s-4);
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-sunken);
   color: var(--at-ink-2);
@@ -318,7 +318,7 @@
   flex-direction: column;
   gap: var(--at-s-2);
   padding: var(--at-s-4);
-  border: 1px solid var(--at-lamp-line);
+  border: var(--at-border) solid var(--at-lamp-line);
   border-radius: var(--at-r-lg);
   background: color-mix(in srgb, var(--at-accent) 7%, var(--at-surface));
 }
@@ -528,7 +528,7 @@
   inline-size: 24px;
   block-size: 24px;
   margin: 0;
-  border: 1px solid var(--at-input-border);
+  border: var(--at-border) solid var(--at-input-border);
   border-radius: var(--at-r-sm);
   background: var(--at-surface);
   cursor: pointer;
@@ -546,8 +546,8 @@
   content: "";
   inline-size: 12px;
   block-size: 7px;
-  border-block-end: 2px solid var(--at-on-accent);
-  border-inline-start: 2px solid var(--at-on-accent);
+  border-block-end: var(--at-ring) solid var(--at-on-accent);
+  border-inline-start: var(--at-ring) solid var(--at-on-accent);
   clip-path: inset(0 100% 0 0);
   transform: translateY(-1px) rotate(-45deg);
   transition: clip-path var(--at-d-slow) var(--at-ease) 60ms;
@@ -563,7 +563,7 @@
 }
 
 .at-notes-doc input[type="checkbox"]:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 3px;
 }
 
@@ -724,7 +724,7 @@
 .at-notes-slash {
   position: absolute;
   z-index: 6;
-  border: 1px solid var(--at-line);
+  border: var(--at-border) solid var(--at-line);
   border-radius: var(--at-r-lg);
   background: var(--at-surface);
   box-shadow: var(--at-shadow-float);
@@ -743,7 +743,7 @@
   inline-size: var(--at-h-control);
   block-size: var(--at-h-control);
   padding: 0;
-  border: 1px solid transparent;
+  border: var(--at-border) solid transparent;
   border-radius: var(--at-r-md);
   background: transparent;
   color: var(--at-ink-2);
@@ -770,7 +770,7 @@
 }
 
 .at-notes-tool:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: -2px;
 }
 
@@ -872,7 +872,7 @@
   block-size: var(--at-h-input);
   padding-block: 0;
   padding-inline: var(--at-s-10) var(--at-s-3);
-  border: 1px solid var(--at-input-border);
+  border: var(--at-border) solid var(--at-input-border);
   border-radius: var(--at-r-sm);
   background: var(--at-sunken);
   color: var(--at-ink);
@@ -885,7 +885,7 @@
 }
 
 .at-notes-q:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 3px;
 }
 
@@ -931,7 +931,7 @@
 }
 
 .at-notes-pick:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: -2px;
 }
 
@@ -1044,7 +1044,7 @@
   block-size: var(--at-h-button);
   padding-block: 0;
   padding-inline: var(--at-s-4) var(--at-s-5);
-  border: 1px solid var(--at-line-strong);
+  border: var(--at-border) solid var(--at-line-strong);
   border-radius: var(--at-r-pill);
   background: var(--at-surface);
   color: var(--at-ink);
@@ -1063,7 +1063,7 @@
 }
 
 .at-notes-mic:focus-visible {
-  outline: 2px solid var(--at-focus);
+  outline: var(--at-ring) solid var(--at-focus);
   outline-offset: 3px;
 }
 
@@ -1309,7 +1309,7 @@
 
   .at-notes-side {
     flex: 0 0 16rem;
-    border-inline-end: 1px solid var(--at-line);
+    border-inline-end: var(--at-border) solid var(--at-line);
     background: var(--at-sunken);
     animation: at-nt-fade var(--at-d-slide) var(--at-ease) both;
   }
@@ -1419,7 +1419,7 @@
 
   .at-notes-opt[aria-selected="true"],
   .at-notes-pick[aria-current="true"] {
-    outline: 2px solid Highlight;
+    outline: var(--at-ring) solid Highlight;
   }
 
   .at-notes-mic[data-on] {

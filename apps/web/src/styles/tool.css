@@ -32,7 +32,7 @@
     block-size: var(--at-tl-sponsor-h);
     padding: var(--at-s-3);
     overflow: hidden;
-    border: 1px solid var(--border);
+    border: var(--at-border) solid var(--border);
     border-radius: var(--at-r-md);
     background: var(--card);
     font: var(--at-type-small);
@@ -53,7 +53,7 @@
 
   @media (forced-colors: active) {
     .at-sponsor {
-      border: 1px solid CanvasText;
+      border: var(--at-border) solid CanvasText;
     }
   }
 }
@@ -617,7 +617,7 @@
   flex-direction: column;
   gap: var(--at-gap-tight);
   padding: var(--at-card-pad);
-  border: 1px solid color-mix(in srgb, var(--c) 32%, transparent);
+  border: var(--at-border) solid color-mix(in srgb, var(--c) 32%, transparent);
   border-radius: var(--at-r-lg);
   background: color-mix(in srgb, var(--c) 8%, transparent);
   color: var(--at-ink-2);
@@ -1381,6 +1381,6 @@
   .at-ask,
   .at-slot,
   .at-switch {
-    border: 1px solid CanvasText;
+    border: var(--at-border) solid CanvasText;
   }
 }

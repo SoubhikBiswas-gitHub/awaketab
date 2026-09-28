@@ -479,7 +479,7 @@
     inset-block: 22%;
     inset-inline: 34%;
     /* stylelint-disable-next-line declaration-property-value-allowed-list -- illustration stroke */
-    border: 2px solid var(--at-hy-a);
+    border: var(--at-ring) solid var(--at-hy-a);
     border-inline-start-color: transparent;
     border-radius: 50%;
     content: "";
@@ -615,7 +615,7 @@
     inline-size: var(--at-s-2);
     block-size: var(--at-s-2);
     /* stylelint-disable-next-line declaration-property-value-allowed-list -- illustration stroke */
-    border: 2px solid var(--at-surface);
+    border: var(--at-ring) solid var(--at-surface);
     border-radius: 50%;
     background: var(--at-ink);
     content: "";
@@ -745,7 +745,7 @@
     inline-size: var(--at-s-2);
     block-size: var(--at-s-2);
     /* stylelint-disable-next-line declaration-property-value-allowed-list -- illustration stroke */
-    border: 2px solid var(--at-surface);
+    border: var(--at-ring) solid var(--at-surface);
     border-radius: 50%;
     background: var(--at-ink);
     content: "";
@@ -861,7 +861,7 @@
     inline-size: var(--at-s-3);
     block-size: var(--at-s-3);
     /* stylelint-disable-next-line declaration-property-value-allowed-list -- illustration stroke */
-    border: 2px solid var(--at-accent);
+    border: var(--at-ring) solid var(--at-accent);
     border-radius: 50%;
     background: var(--at-surface);
     translate: -50% -50%;

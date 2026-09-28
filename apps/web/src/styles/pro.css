@@ -528,7 +528,7 @@
   }
 
   .at-pro-swatch:has(:focus-visible) {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 
@@ -562,7 +562,7 @@
   }
 
   .at-pro-cmp-wrap:focus-visible {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 
@@ -951,7 +951,7 @@
   }
 
   .at-pro-faq-list summary:focus-visible {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
   }
 

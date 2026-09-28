@@ -84,7 +84,7 @@
   }
 
   .at-cp :is(a, summary, .at-table):focus-visible {
-    outline: 2px solid var(--at-focus);
+    outline: var(--at-ring) solid var(--at-focus);
     outline-offset: 3px;
     border-radius: var(--at-r-xs);
   }
