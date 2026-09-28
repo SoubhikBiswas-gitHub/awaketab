@@ -159,6 +159,8 @@ const englishHref = translations.en;
 // One template for every family (docs/06 §24): head, contents, body, honest limit, tool, questions, related, author.
 const family = t(`content.family.${kind}`);
 const toolCopy = kind === 'guides' ? 'skip' : 'try';
+// Use cases and device guides put the tool right after the head: people land there to start it.
+const toolFirst = kind === 'for' || kind === 'on';
 const relatedTitle = kind === 'for' ? t('content.related.for') : t('content.related');
 // Device pages show the system and browser they are about beside the family label, as their hub card does.
 const headLogos = kind === 'on' ? deviceLogos(enSlug, data.browsers, data.os) : [];
@@ -186,15 +188,17 @@ const tableCss = parts.some(
   ? minifyCss(tableSheet)
   : '';
 
-// "On this page": the page's own sections, then the template's blocks in page order.
+// "On this page": the page's own sections and the template's blocks, in page order.
+const toolEntry = { href: '#s-tool', label: data.toc?.['s-tool'] ?? t(`content.${toolCopy}.title`) };
 const toc: Array<{ href: string; label: string }> = [
+  ...(toolFirst ? [toolEntry] : []),
   ...parts.flatMap((part) =>
     part.kind === 'section' && part.id && part.title
       ? [{ href: `#${part.id}`, label: data.toc?.[part.id] ?? part.title }]
       : [],
   ),
   { href: '#s-limit', label: t('content.limit') },
-  { href: '#s-tool', label: data.toc?.['s-tool'] ?? t(`content.${toolCopy}.title`) },
+  ...(toolFirst ? [] : [toolEntry]),
   { href: '#faq', label: t('content.faq') },
   ...(related.length > 0 ? [{ href: '#s-related', label: relatedTitle }] : []),
 ];
@@ -213,6 +217,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
   alternates={alternates}
   localeLinks={translations}
   family={kind}
+  toolFirst={toolFirst}
   schema={articleSchema({
     canonical,
     title: data.h1,
@@ -421,20 +426,21 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
         </ul>
       )
     }
-    <details class="at-toc-m">
-      <summary>
-        <span>{t('content.toc')}</span>
-        <Icon name="caret-down" size={16} tone="ink" />
-      </summary>
-      <ol>
-        {toc.map((item) => (
-          <li>
-            <a href={item.href}>{item.label}</a>
-          </li>
-        ))}
-      </ol>
-    </details>
   </Fragment>
+
+  <details slot="contents" class="at-toc-m">
+    <summary>
+      <span>{t('content.toc')}</span>
+      <Icon name="caret-down" size={16} tone="ink" />
+    </summary>
+    <ol>
+      {toc.map((item) => (
+        <li>
+          <a href={item.href}>{item.label}</a>
+        </li>
+      ))}
+    </ol>
+  </details>
 
   <Fragment slot="intro"
     ><ArticleParts

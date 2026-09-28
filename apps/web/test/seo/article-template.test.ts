@@ -9,22 +9,30 @@ const dist = process.env.AT_DIST
   : new URL('../../dist/', import.meta.url);
 const FAMILIES = ['for', 'on', 'vs', 'guides', 'learn'] as const;
 
-// Template blocks in page order; `false` marks one a family may leave out.
-const ORDER: ReadonlyArray<readonly [string, RegExp, boolean]> = [
-  ['breadcrumbs', /<nav class="at-crumbs"/u, true],
-  ['family kicker', /<p class="at-family">/u, true],
-  ['h1', /<h1\b/u, true],
-  ['lead', /<p class="at-lead">/u, false],
-  ['meta row', /<div class="at-meta">/u, true],
-  ['phone contents', /<details class="at-toc-m">/u, false],
-  ['desktop contents', /<nav class="at-toc/u, true],
-  ['body', /<div class="at-body">/u, true],
-  ['honest limit', /<aside id="s-limit"/u, true],
-  ['tool', /<section id="s-tool"/u, true],
-  ['questions', /<section class="at-faq-sec"/u, true],
-  ['related', /<section id="s-related"/u, false],
-  ['author', /<div class="at-author">/u, true],
+// Template blocks in page order; `false` marks one a family may leave out. Use cases and device guides put the
+// tool right after the head, the other families after the body.
+const block = (name: string, re: RegExp, required: boolean): readonly [string, RegExp, boolean] => [name, re, required];
+const HEAD = [
+  block('breadcrumbs', /<nav class="at-crumbs"/u, true),
+  block('family kicker', /<p class="at-family">/u, true),
+  block('h1', /<h1\b/u, true),
+  block('lead', /<p class="at-lead">/u, false),
+  block('meta row', /<div class="at-meta">/u, true),
+  block('desktop contents', /<nav class="at-toc/u, true),
 ];
+const TOOL = block('tool', /<section id="s-tool"/u, true);
+const BODY = [
+  block('phone contents', /<details class="at-toc-m">/u, true),
+  block('body', /<div class="at-body">/u, true),
+  block('honest limit', /<aside id="s-limit"/u, true),
+];
+const TAIL = [
+  block('questions', /<section class="at-faq-sec"/u, true),
+  block('related', /<section id="s-related"/u, false),
+  block('author', /<div class="at-author">/u, true),
+];
+const orderFor = (family: string): ReadonlyArray<readonly [string, RegExp, boolean]> =>
+  family === 'for' || family === 'on' ? [...HEAD, TOOL, ...BODY, ...TAIL] : [...HEAD, ...BODY, TOOL, ...TAIL];
 
 async function articles(): Promise<Array<[string, string]>> {
   const out: Array<[string, string]> = [];
@@ -44,12 +52,12 @@ describe('one article order (docs/06 §24)', () => {
     expect(pages.length).toBeGreaterThanOrEqual(47);
   });
 
-  it('renders the template blocks in one order on every page, leaving out only the optional ones', () => {
+  it("renders the template blocks in the family's order, leaving out only the optional ones", () => {
     const bad: string[] = [];
     for (const [route, html] of pages) {
       const body = main(html);
       let last = -1;
-      for (const [name, re, required] of ORDER) {
+      for (const [name, re, required] of orderFor(route.split('/')[1] ?? '')) {
         const at = re.exec(body)?.index ?? -1;
         if (at < 0) {
           if (required) bad.push(`${route}: no ${name}`);

@@ -227,5 +227,5 @@ The owner delegated all open questions to the lead ("you take the decision"). Pr
 
 ## Owner requests (29 Sep 2026)
 
-- **One article pattern.** Every content page follows one order (docs/06 §24), so the tool moves below the body and the honest limit on `/for`, `/on` and `/vs` too. Decided: the first step or the lead is still in the first screen, and the side rail's tool card links down to the tool, which keeps §11's "the reader can act within the first screen".
+- **One article pattern.** Every content page follows one order (docs/06 §24). Decided (coordinator, 29 Sep 2026): on `/for` and `/on` the tool comes right after the lead and meta row, before the contents and body, because people land there to start it; on `/vs`, `/guides` and `/learn` it follows the body and honest limit, where the reading is the point and the side rail's tool card links down to it.
 - **Brand logos.** Real full-colour SVG Logos wherever a browser or system is named. Decided: the macOS and iOS entries are wordmarks that would repeat the text beside them and shrink to 4 px tall at tag size, so Apple systems use the Apple mark; Samsung Internet has no logo in the set and uses the Phosphor `browser` icon; ChromeOS uses the Chrome logo.

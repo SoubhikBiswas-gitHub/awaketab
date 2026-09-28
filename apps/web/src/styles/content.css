@@ -136,9 +136,13 @@
   .at-art {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "head" "body" "tool" "tail";
+    grid-template-areas: "head" "contents" "body" "tool" "tail";
     row-gap: var(--at-section);
     align-items: start;
+  }
+
+  .at-art[data-tool="first"] {
+    grid-template-areas: "head" "tool" "contents" "body" "tail";
   }
 
   .at-head {
@@ -554,6 +558,8 @@
   }
 
   .at-toc-m {
+    grid-area: contents;
+    min-inline-size: 0;
     border: var(--at-border) solid var(--at-line);
     border-radius: var(--at-r-lg);
     background: var(--at-surface);
@@ -847,6 +853,10 @@
       column-gap: var(--at-s-10);
       max-inline-size: calc(var(--at-col-toc) + var(--at-col-main) + var(--at-col-rail) + 2 * var(--at-s-10));
       margin-inline: auto;
+    }
+
+    .at-art[data-tool="first"] {
+      grid-template-areas: "toc head ." "toc tool tool" "toc body rail" "toc tail .";
     }
 
     .at-toc-m {

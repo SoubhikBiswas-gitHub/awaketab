@@ -94,17 +94,18 @@ describe('structured article blocks (docs/06 §22)', () => {
     }
   });
 
-  it('builds /for/cooking section by section in the one article order (docs/06 §24)', async () => {
+  it('builds /for/cooking section by section in the use-case order, tool first (docs/06 §24)', async () => {
     const html = await built('/for/cooking');
     const body = html.slice(html.indexOf('class="at-body"'));
+    const main = html.slice(html.indexOf('<main'));
     // The embedded tool's own sheet headings (`at-*-h`) are not article sections.
-    const ids = [...body.matchAll(/<h2 id="([^"]+)"/gu)].map((m) => m[1]).filter((id) => !id?.startsWith('at-'));
+    const ids = [...main.matchAll(/<h2 id="([^"]+)"/gu)].map((m) => m[1]).filter((id) => !id?.startsWith('at-'));
     expect(ids).toEqual([
+      'h-tool',
       'set-it-up-in-30-seconds',
       'what-to-expect-while-you-cook',
       'before-a-long-cook',
       'h-limit',
-      'h-tool',
       'faq',
       'h-related',
     ]);

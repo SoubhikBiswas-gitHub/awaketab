@@ -21,6 +21,7 @@ interface Props {
   alternates?: Array<{ locale: TLocale; href: string }> | undefined;
   localeLinks?: Partial<Record<TLocale, string>> | undefined;
   family: string;
+  toolFirst?: boolean;
 }
 
 const {
@@ -35,6 +36,7 @@ const {
   alternates,
   localeLinks,
   family,
+  toolFirst = false,
 } = Astro.props;
 // Ads render only here, gated by PUBLIC_ADS_ENABLED (docs/00 §8.3, docs/09 §3.1).
 const showAds = shouldRenderAdSlots();
@@ -56,9 +58,11 @@ const showAds = shouldRenderAdSlots();
   <slot name="styles" slot="head" />
   {showAds && <style is:inline slot="head" set:html={minifyCss(adSheet)} />}
   <main class="at-cp">
-    <article class="at-art" data-family={family}>
+    <article class="at-art" data-family={family} data-tool={toolFirst ? 'first' : 'after'}>
       <div class="at-head"><slot name="head" /></div>
       <slot name="toc" />
+      {toolFirst && <slot name="tool" />}
+      <slot name="contents" />
       <div class="at-body">
         <div class="at-prose">
           <slot name="intro" />
@@ -68,7 +72,7 @@ const showAds = shouldRenderAdSlots();
         <slot name="after" />
         <div class="at-prose"><slot name="limit" /></div>
       </div>
-      <slot name="tool" />
+      {!toolFirst && <slot name="tool" />}
       <div class="at-prose at-tail"><slot name="tail" /></div>
       {showAds && <AdSlot kind="rail" />}
     </article>
