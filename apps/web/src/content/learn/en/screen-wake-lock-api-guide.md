@@ -225,4 +225,3 @@ Before the API, libraries kept screens on by playing a tiny silent video in a lo
 
 It keeps the display on while the page is visible. It can't hold from a hidden tab, stop a laptop sleeping when the lid closes, or change an operating system rule such as a work sign-in lock. It sends no input, so it doesn't change a chat app's Away timer. On desktop Chrome or Edge, an extension with the `power` permission, such as [AwakeTab for Chrome](/extension), can keep the screen on from a hidden tab; a web page can't.
 
-::limit inline

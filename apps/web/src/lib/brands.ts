@@ -39,7 +39,17 @@ const SYSTEM: Record<string, IBrandMark> = {
 };
 
 export const browserMark = (id: string): IBrandMark | undefined => BROWSER[id];
-export const systemMark = (id: string): IBrandMark | undefined => SYSTEM[id];
+const systemMark = (id: string): IBrandMark | undefined => SYSTEM[id];
+
+// A device page shows its one system, then its one browser; a browser page shows that browser alone. The Home
+// Screen app is Apple's, not Safari's.
+export function deviceLogos(slug: string, browsers: readonly string[], os: readonly string[]): Array<TBrand | null> {
+  if (slug === 'ios-home-screen') return ['apple'];
+  const system = os.length === 1 ? systemMark(os[0] ?? '')?.logo : undefined;
+  const browser = browsers.length === 1 ? (browserMark(browsers[0] ?? '')?.logo ?? null) : undefined;
+  const logos = [system, browser].filter((logo) => logo !== undefined);
+  return [...new Set(logos.length > 0 ? logos : [systemMark(os[0] ?? '')?.logo ?? null])];
+}
 
 // Longer names come first, so "ChromeOS" is matched before "Chrome".
 const WORDS: Array<[RegExp, TBrand | null]> = [

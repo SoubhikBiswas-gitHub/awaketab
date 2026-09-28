@@ -97,4 +97,3 @@ updated: 2026-09-27
 
 真机测试结果还没有记录，记录后会发布在[我们如何测试](/learn/how-we-tested)。如果你的浏览器不在表中，最可靠的判断方式是打开 AwakeTab，点按开始后看状态标签：显示“屏幕保持常亮”，就说明浏览器确实持有了锁；想在 iPhone 上使用，可参考 [iPhone Safari 屏幕常亮](/zh/on/iphone-safari)。
 
-::limit inline

@@ -20,9 +20,7 @@ interface Props {
   schema: TSchemaNode;
   alternates?: Array<{ locale: TLocale; href: string }> | undefined;
   localeLinks?: Partial<Record<TLocale, string>> | undefined;
-  toolAt?: 'top' | 'after';
-  variant?: 'article' | 'guide';
-  notesAfterTool?: boolean;
+  family: string;
 }
 
 const {
@@ -36,9 +34,7 @@ const {
   schema,
   alternates,
   localeLinks,
-  toolAt = 'top',
-  variant = 'article',
-  notesAfterTool = false,
+  family,
 } = Astro.props;
 // Ads render only here, gated by PUBLIC_ADS_ENABLED (docs/00 §8.3, docs/09 §3.1).
 const showAds = shouldRenderAdSlots();
@@ -60,29 +56,20 @@ const showAds = shouldRenderAdSlots();
   <slot name="styles" slot="head" />
   {showAds && <style is:inline slot="head" set:html={minifyCss(adSheet)} />}
   <main class="at-cp">
-    <article class="at-art" data-tool-at={toolAt} data-variant={variant}>
+    <article class="at-art" data-family={family}>
       <div class="at-head"><slot name="head" /></div>
-      {toolAt === 'top' && <slot name="tool" />}
       <slot name="toc" />
       <div class="at-body">
         <div class="at-prose">
           <slot name="intro" />
           {showAds && <AdSlot kind="inline" />}
           <slot />
-          {!notesAfterTool && <slot name="notes" />}
-          {toolAt === 'top' && <slot name="tail" />}
         </div>
         <slot name="after" />
+        <div class="at-prose"><slot name="limit" /></div>
       </div>
-      {toolAt === 'after' && <slot name="tool" />}
-      {
-        toolAt === 'after' && (
-          <div class="at-prose at-tail">
-            {notesAfterTool && <slot name="notes" />}
-            <slot name="tail" />
-          </div>
-        )
-      }
+      <slot name="tool" />
+      <div class="at-prose at-tail"><slot name="tail" /></div>
       {showAds && <AdSlot kind="rail" />}
     </article>
   </main>

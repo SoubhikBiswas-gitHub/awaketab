@@ -170,17 +170,7 @@
     inline-size: var(--at-icon-md);
     block-size: var(--at-icon-md);
     margin-block-start: calc(var(--at-s-1) / 2);
-  }
-
-  .at-alldone path {
-    fill: none;
-    stroke: var(--at-accent);
-    stroke-width: 4.5;
-    stroke-linecap: round;
-  }
-
-  .at-alldone circle {
-    fill: var(--at-accent);
+    color: var(--at-accent-text);
   }
 
   .at-reset {

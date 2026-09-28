@@ -21,7 +21,8 @@ import {
 import { articleCss, minifyCss } from '../lib/article-css';
 import tableSheet from '../styles/article/table.css?raw';
 import { HUBS } from '../lib/hubs';
-import { rowBrands } from '../lib/brands';
+import { readingMinutes } from '../lib/docs-hub';
+import { deviceLogos, rowBrands } from '../lib/brands';
 import {
   contentIndex,
   pageAlternates,
@@ -79,13 +80,22 @@ const hubCrumb = HUBS[kind].crumb;
 // Locale homes are the one page URL with a trailing slash, `/es/` (`es/index.html`, docs/14 §2.1).
 const homeHref = english ? '/' : `/${locale}/`;
 const published = data.published.toISOString().slice(0, 10);
-const verified = data.lastVerified
-  ? new Intl.DateTimeFormat(english ? 'en-GB' : meta.htmlLang, {
-      dateStyle: 'long',
-      timeZone: 'UTC',
-      numberingSystem: 'latn',
-    }).format(data.lastVerified)
-  : null;
+// Full dates everywhere ("Saturday, 26 September 2026"); other locales use their own full style.
+const fullDate = (date: Date): string => {
+  if (!english)
+    return new Intl.DateTimeFormat(meta.htmlLang, { dateStyle: 'full', timeZone: 'UTC', numberingSystem: 'latn' }).format(
+      date,
+    );
+  const part = Object.fromEntries(
+    new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+      .formatToParts(date)
+      .map((p) => [p.type, p.value]),
+  );
+  return `${part.weekday ?? ''}, ${part.day ?? ''} ${part.month ?? ''} ${part.year ?? ''}`;
+};
+const verified = data.lastVerified ? fullDate(data.lastVerified) : null;
+const updated = verified ? null : fullDate(data.updated ?? data.published);
+const minutes = readingMinutes(entry.body, data);
 const stale =
   data.lastVerified !== undefined && Date.now() - data.lastVerified.getTime() > 180 * 86_400_000;
 // Locale pages start the session on the locale home (the tool routes are not duplicated per locale),
@@ -146,25 +156,18 @@ const related: IRelatedLink[] = data.related.map((href) => {
 });
 const englishHref = translations.en;
 
-const variant = kind === 'for' ? 'article' : 'guide';
-const toolAt = kind === 'guides' || kind === 'learn' ? 'after' : 'top';
+// One template for every family (docs/06 §24): head, contents, body, honest limit, tool, questions, related, author.
+const family = t(`content.family.${kind}`);
 const toolCopy = kind === 'guides' ? 'skip' : 'try';
+const relatedTitle = kind === 'for' ? t('content.related.for') : t('content.related');
+// Device pages show the system and browser they are about beside the family label, as their hub card does.
+const headLogos = kind === 'on' ? deviceLogos(enSlug, data.browsers, data.os) : [];
 
 // Body: the rendered Markdown cut into sections and page-level markers (lib/article.ts).
 const parts: TArticlePart[] = splitArticle(entry.rendered?.html ?? '');
 const adAt = parts.findIndex((part) => part.kind === 'ad');
 const before = adAt < 0 ? parts : parts.slice(0, adAt);
 const after = adAt < 0 ? [] : parts.slice(adAt + 1);
-const limitPlaced =
-  parts.some((part) => part.kind === 'limit') ||
-  parts.some(
-    (p) =>
-      p.kind === 'section' &&
-      p.parts.some((b) => b.kind === 'block' && b.name === 'limit'),
-  );
-// /guides: the honest limit and FAQ follow the tool with the related links (GuideGuides); /learn keeps its FAQ in
-// the body (GuideLearn). Everywhere else they close the body.
-const notesAfterTool = kind === 'guides';
 
 const stepVariant = data.steps?.some((st) => st.shot)
   ? 'shots'
@@ -183,43 +186,18 @@ const tableCss = parts.some(
   ? minifyCss(tableSheet)
   : '';
 
-// "On this page": the page's own sections and template sections in page order.
-const sectionToc = (
-  list: TArticlePart[],
-): Array<{ href: string; label: string }> =>
-  list.flatMap((part) => {
-    if (part.kind === 'limit')
-      return [{ href: '#s-limit', label: t('content.limit') }];
-    if (part.kind === 'section' && part.id && part.title)
-      return [
-        { href: `#${part.id}`, label: data.toc?.[part.id] ?? part.title },
-      ];
-    return [];
-  });
-const limitEntry = limitPlaced
-  ? []
-  : [{ href: '#s-limit', label: t('content.limit') }];
-const toolEntry =
-  toolAt === 'after'
-    ? [
-        {
-          href: '#s-tool',
-          label: data.toc?.['s-tool'] ?? t(`content.${toolCopy}.title`),
-        },
-      ]
-    : [];
-const faqEntry = [{ href: '#faq', label: t('content.faq') }];
-const toc = notesAfterTool
-  ? [...sectionToc(parts), ...toolEntry, ...limitEntry, ...faqEntry]
-  : [
-      ...sectionToc(parts),
-      ...limitEntry,
-      ...(variant === 'article'
-        ? [{ href: '#s-related', label: t('content.related.for') }]
-        : []),
-      ...faqEntry,
-      ...toolEntry,
-    ];
+// "On this page": the page's own sections, then the template's blocks in page order.
+const toc: Array<{ href: string; label: string }> = [
+  ...parts.flatMap((part) =>
+    part.kind === 'section' && part.id && part.title
+      ? [{ href: `#${part.id}`, label: data.toc?.[part.id] ?? part.title }]
+      : [],
+  ),
+  { href: '#s-limit', label: t('content.limit') },
+  { href: '#s-tool', label: data.toc?.['s-tool'] ?? t(`content.${toolCopy}.title`) },
+  { href: '#faq', label: t('content.faq') },
+  ...(related.length > 0 ? [{ href: '#s-related', label: relatedTitle }] : []),
+];
 const author = 'Soubhik Biswas';
 const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
 ---
@@ -234,9 +212,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
   ogImageAlt={data.h1}
   alternates={alternates}
   localeLinks={translations}
-  toolAt={toolAt}
-  variant={variant}
-  notesAfterTool={notesAfterTool}
+  family={kind}
   schema={articleSchema({
     canonical,
     title: data.h1,
@@ -304,7 +280,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
             </li>
           ))}
         </ol>
-        <a class="at-jump-tool" href="#tool">
+        <a class="at-jump-tool" href="#s-tool">
           {t('content.jumpTool')} <Icon name="arrow-down" size={16} />
         </a>
       </nav>
@@ -321,7 +297,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
             </a>
           ))}
         </div>
-        <a class="at-toc-card" href="#tool" data-tool-mirror>
+        <a class="at-toc-card" href="#s-tool" data-tool-mirror>
           <span class="at-pill at-pill-bare" data-lock="idle" data-mirror-pill>
             <svg
               class="at-pill-glyph"
@@ -348,7 +324,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
             00:00
           </span>
           <span class="at-toc-back">
-            {t('content.backToTool')} <Icon name="arrow-up" size={16} />
+            {t('content.jumpTool')} <Icon name="arrow-down" size={16} />
           </span>
         </a>
       </nav>
@@ -372,12 +348,14 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
         }
       </ol>
     </nav>
+    <p class="at-family">
+      {headLogos.map((logo) => (
+        <Brand logo={logo} size={24} />
+      ))}
+      <span class="at-kicker">{family}</span>
+    </p>
     <h1 class="at-h1-page">{data.h1}</h1>
-    {
-      variant === 'article' && data.lead && (
-        <p class="at-lead" set:html={inline(data.lead)} />
-      )
-    }
+    {data.lead && <p class="at-lead" set:html={inline(data.lead)} />}
     <div class="at-meta">
       {
         verified && (
@@ -387,6 +365,23 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
           </span>
         )
       }
+      {
+        updated && (
+          <span class="at-meta-verified">
+            <Icon name="calendar-check" size={16} />
+            {t('content.updated', { date: updated })}
+          </span>
+        )
+      }
+      {
+        minutes !== null && (
+          <span class="at-meta-read">
+            <Icon name="clock" size={16} />
+            {t('content.readTime', { n: minutes })}
+          </span>
+        )
+      }
+      <span class="at-meta-by">{t('content.byline', { name: author })}</span>
       {
         stale && (
           <span class="at-meta-stale">
@@ -410,13 +405,7 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
           </p>
         )
       }
-      <span class="at-meta-by">{t('content.byline', { name: author })}</span>
     </div>
-    {
-      variant === 'guide' && data.lead && (
-        <p class="at-lead" set:html={inline(data.lead)} />
-      )
-    }
     {
       data.facts && (
         <ul class="at-facts">
@@ -432,23 +421,20 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
         </ul>
       )
     }
+    <details class="at-toc-m">
+      <summary>
+        <span>{t('content.toc')}</span>
+        <Icon name="caret-down" size={16} tone="ink" />
+      </summary>
+      <ol>
+        {toc.map((item) => (
+          <li>
+            <a href={item.href}>{item.label}</a>
+          </li>
+        ))}
+      </ol>
+    </details>
   </Fragment>
-
-  {
-    toolAt === 'after' ? (
-      <section slot="tool" id="s-tool" class="at-tool-area" aria-labelledby="h-tool">
-        <h2 id="h-tool">{t(`content.${toolCopy}.title`)}</h2>
-        <p set:html={inline(toolLine)} />
-        <div id="tool" class="at-tool-card">
-          <ToolIsland embed heading={data.h1} autostart="0" preset={data.preset} mode={data.mode} locale={locale} />
-        </div>
-      </section>
-    ) : (
-      <div slot="tool" id="tool" class="at-tool-card">
-        <ToolIsland embed heading={data.h1} autostart="0" preset={data.preset} mode={data.mode} locale={locale} />
-      </div>
-    )
-  }
 
   <Fragment slot="intro"
     ><ArticleParts
@@ -460,39 +446,22 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
     /></Fragment
   >
   <ArticleParts list={after} data={data} t={t} id={entry.id} kind={kind} />
+  <slot name="after" slot="after" />
 
-  <Fragment slot="notes">
-    {
-      !limitPlaced && (
-        <Limit text={data.honestLimit} label={t('content.limit')} />
-      )
-    }
+  <Limit slot="limit" text={data.honestLimit} label={t('content.limit')} />
 
-    {
-      variant === 'article' && (
-        <section
-          id="s-related"
-          class="at-related-sec"
-          aria-labelledby="h-related"
-        >
-          <h2 id="h-related">{t('content.related.for')}</h2>
-          <ul class="at-rows">
-            {related.map((link) => (
-              <li>
-                <a class="at-link-row" href={link.href} hreflang={link.lang} lang={link.lang}>
-                  <span>{link.label}</span>
-                  <Icon name="arrow-right" size={20} class="at-go" />
-                </a>
-              </li>
-            ))}
-          </ul>
-          <Button class="at-start" href={startHref} glyph>
-            {startLabel}
-          </Button>
-        </section>
-      )
-    }
+  <section slot="tool" id="s-tool" class="at-tool-area" aria-labelledby="h-tool">
+    <h2 id="h-tool">{t(`content.${toolCopy}.title`)}</h2>
+    <p set:html={inline(toolLine)} />
+    <div id="tool" class="at-tool-card">
+      <ToolIsland embed heading={data.h1} autostart="0" preset={data.preset} mode={data.mode} locale={locale} />
+    </div>
+    <Button class="at-start" href={startHref} glyph>
+      {startLabel}
+    </Button>
+  </section>
 
+  <Fragment slot="tail">
     <section class="at-faq-sec" aria-labelledby="faq">
       <h2 id="faq">{t('content.faq')}</h2>
       <div class="at-faq">
@@ -513,30 +482,22 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
         }
       </div>
     </section>
-  </Fragment>
 
-  <Fragment slot="tail">
     {
-      variant === 'guide' && (
-        <nav class="at-related-links" aria-labelledby="h-related">
-          <h2 id="h-related">{t('content.related')}</h2>
-          {kind !== 'learn' && (
-            <a class="at-start-pill" href={startHref}>
-              <svg class="at-button-glyph" viewBox="0 0 48 48" width="20" height="20" aria-hidden="true" focusable="false">
-                <path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
-                <circle cx="24" cy="9" r="4.6" fill="currentColor" />
-              </svg>
-              {startLabel}
-            </a>
-          )}
-          <div>
+      related.length > 0 && (
+        <section id="s-related" class="at-related-sec" aria-labelledby="h-related">
+          <h2 id="h-related">{relatedTitle}</h2>
+          <ul class="at-rows">
             {related.map((link) => (
-              <a href={link.href} hreflang={link.lang} lang={link.lang}>
-                {link.label}
-              </a>
+              <li>
+                <a class="at-link-row" href={link.href} hreflang={link.lang} lang={link.lang}>
+                  <span>{link.label}</span>
+                  <Icon name="arrow-right" size={20} class="at-go" />
+                </a>
+              </li>
             ))}
-          </div>
-        </nav>
+          </ul>
+        </section>
       )
     }
 
@@ -546,12 +507,10 @@ const toolLine = data.toolNote ?? t(`content.${toolCopy}.body`);
         <p class="at-author-name">{author}</p>
         <p class="at-author-role">
           {t('content.author.role')}
-          {variant === 'article' && verified && <>{t('content.verified', { date: verified })}.</>}
+          {verified && <>{t('content.verified', { date: verified })}.</>}
           <a href="/about">{t('content.author.about')}</a>
         </p>
       </div>
     </div>
   </Fragment>
-
-  <slot name="after" slot="after" />
 </ContentLayout>

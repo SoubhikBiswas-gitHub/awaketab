@@ -50,7 +50,7 @@
 
   .at-brand-cell > svg {
     flex-shrink: 0;
-    margin-block-start: 0.2em;
+    margin-block-start: calc(var(--at-s-1) / 2);
   }
 
   .at-cp .at-md tr:last-child > td {

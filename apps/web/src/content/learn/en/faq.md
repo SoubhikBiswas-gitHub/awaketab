@@ -145,4 +145,3 @@ Notes stay in this browser on this device, in its own storage (IndexedDB). They 
 
 Ready to try it? [Open AwakeTab](/), pick a duration and watch the pill.
 
-::limit inline

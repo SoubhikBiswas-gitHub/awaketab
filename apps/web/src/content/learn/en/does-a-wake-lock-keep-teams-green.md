@@ -132,4 +132,3 @@ Mouse jigglers exist to change presence, and some employers treat that as miscon
 
 It keeps a report, a dashboard or your slides on screen while you read or talk, without changing settings or needing admin rights. Your IT team's sign-in and lock rules still apply. The guide to [keeping a work laptop display awake](/for/work-laptop) walks through the setup, and what to do when your organisation's lock rule is shorter than your reading.
 
-::limit inline

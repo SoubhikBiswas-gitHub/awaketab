@@ -86,8 +86,6 @@ The pill at the top of the tool tells you what the browser is doing:
 
 ::pills
 
-::limit
-
 ## Before a long cook
 
 ::checklist

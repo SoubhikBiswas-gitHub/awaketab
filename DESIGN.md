@@ -360,6 +360,7 @@ Where §11.5 gives a weight range (caption and small 400–500, ui 500–600), t
 - **Two-column tool:** from 1024 the face column and the control column; the control column never goes below 400 px, and the face scales to the space left (see the 1024 board).
 - **Dock (phone):** status and content on top; length block, 20 px gap, actions at the bottom, 20 px from the bottom edge.
 - **Sheets and panels:** bottom sheet on phone; from 600 a side sheet, a centred dialog or a card docked in place (§6 dialogs, sheets and drawers); inline panel wherever a modal is not needed; padding `--at-card-pad`, 20 px below the last button.
+- **Article:** one order on every content page (docs/06 §24): breadcrumbs → family kicker → h1 → lead → meta row (full date with weekday, reading time, author) → "On this page" (side rail from 1024, collapsible above the body below it) → body → honest limit → tool → questions → related rows → author card. Callouts are only `Note` (lightbulb, lamp) and `Limit` (info, ink); a family may leave a block out, never move or restyle one. A browser or system named in a tag, row header, fact chip or table's first column shows its real logo before the name.
 - **Text:** `max-inline-size: var(--at-measure)` for paragraphs; `text-wrap: balance` on headings, `pretty` on paragraphs; long words and URLs break (`overflow-wrap: anywhere`) and never push the page wider.
 
 ### 12.8 Gates

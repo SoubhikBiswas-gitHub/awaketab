@@ -10,10 +10,10 @@ const BLOCKS = [
   'code',
   'note',
   'lifecycle',
-  'limit',
 ] as const;
 export type TBlockName = (typeof BLOCKS)[number];
-const PAGE_MARKERS = ['ad', 'limit'] as const;
+// The honest limit is no longer placed by hand: the template puts it after the body on every page.
+const PAGE_MARKERS = ['ad'] as const;
 type TPageMarker = (typeof PAGE_MARKERS)[number];
 
 type TSectionPart = { kind: 'html'; html: string } | { kind: 'block'; name: TBlockName; arg: string };
@@ -86,8 +86,7 @@ export function splitArticle(html: string): TArticlePart[] {
       continue;
     }
     const name = token.name ?? '';
-    // `limit` alone is page-level; `limit inline` keeps the note inside the section before it (GuideLearn).
-    if ((PAGE_MARKERS as readonly string[]).includes(name) && token.arg !== 'inline') {
+    if ((PAGE_MARKERS as readonly string[]).includes(name)) {
       parts.push({ kind: name as TPageMarker });
       current = null;
       continue;

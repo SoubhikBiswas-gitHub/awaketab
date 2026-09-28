@@ -124,10 +124,7 @@ const { steps, variant, t, done } = Astro.props;
       </ol>
       {done && (
         <div class="at-alldone" role="status" data-all-done hidden>
-          <svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true" focusable="false">
-            <path d="M32.8 11.4A16 16 0 1 1 15.2 11.4" />
-            <circle cx="24" cy="9" r="4.6" />
-          </svg>
+          <Icon name="check-circle" size={20} />
           <span>{done}</span>
         </div>
       )}

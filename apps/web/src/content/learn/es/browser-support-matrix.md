@@ -94,4 +94,3 @@ Todas las filas comparten las mismas reglas de la plataforma.
 
 ::rows rules
 
-::limit inline

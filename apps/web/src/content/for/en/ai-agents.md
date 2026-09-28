@@ -113,8 +113,6 @@ On a Mac, run `pmset -g assertions` in Terminal and look for a PreventUserIdleDi
 
 Closing a laptop lid sleeps it, whatever any tab or command asks. The one exception is a Mac running closed with its charger and an external monitor connected (clamshell mode); our guide to [Mac sleep with the lid closed](/guides/mac-prevent-sleep-lid-closed) explains the trade-offs. For a remote machine you reach over SSH, set sleep on that machine, not in your local browser.
 
-::limit
-
 ## Before a long run
 
 ::checklist

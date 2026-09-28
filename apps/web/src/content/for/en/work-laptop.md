@@ -112,8 +112,6 @@ An administrator can switch off the browser's wake-lock permission by policy. Th
 
 The optional extension, [AwakeTab for Chrome](/extension), asks for the power, storage and alarms permissions, plus notifications only if the user turns them on. It has no access to sites unless a user adds one for auto-start. Your usual extension allow and block lists apply to it like any other.
 
-::limit
-
 ## Before you rely on it at work
 
 ::checklist

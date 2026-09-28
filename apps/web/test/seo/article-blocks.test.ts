@@ -29,7 +29,7 @@ const FAMILY_BLOCKS: Record<TFamily, readonly string[]> = {
   on: ['at-steps-shots', 'class="at-grid at-mx"', 'class="at-rl"', 'class="at-facts"'],
   vs: ['class="at-grid at-cmp"', 'class="at-picks"'],
   guides: ['at-steps-track', 'data-progress', 'id="s-tool"'],
-  learn: ['class="at-rl"', 'id="h-limit-in"', 'id="s-tool"'],
+  learn: ['class="at-rl"', 'id="s-limit"', 'id="s-tool"'],
 };
 
 async function htmlFiles(directory: URL): Promise<URL[]> {
@@ -94,17 +94,19 @@ describe('structured article blocks (docs/06 §22)', () => {
     }
   });
 
-  it('builds /for/cooking section by section like the ContentArticle board', async () => {
+  it('builds /for/cooking section by section in the one article order (docs/06 §24)', async () => {
     const html = await built('/for/cooking');
     const body = html.slice(html.indexOf('class="at-body"'));
-    const ids = [...body.matchAll(/<h2 id="([^"]+)"/gu)].map((m) => m[1]);
+    // The embedded tool's own sheet headings (`at-*-h`) are not article sections.
+    const ids = [...body.matchAll(/<h2 id="([^"]+)"/gu)].map((m) => m[1]).filter((id) => !id?.startsWith('at-'));
     expect(ids).toEqual([
       'set-it-up-in-30-seconds',
       'what-to-expect-while-you-cook',
-      'h-limit',
       'before-a-long-cook',
-      'h-related',
+      'h-limit',
+      'h-tool',
       'faq',
+      'h-related',
     ]);
     const lead = html.indexOf('class="at-lead"');
     expect(lead).toBeGreaterThan(html.indexOf('<h1'));

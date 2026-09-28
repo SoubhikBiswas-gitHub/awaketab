@@ -141,4 +141,3 @@ A web page can hold the screen only while it is visible. If you need the display
 
 This page explains the tool. The rules it cannot change, from a closed lid to your chat status, are on [Honest limits: what AwakeTab cannot do](/learn/honest-limits). Which browser versions support the wake lock is on [Wake lock browser support matrix](/learn/browser-support-matrix), and the questions people ask most are answered in [AwakeTab FAQ: the questions we are asked most](/learn/faq).
 
-::limit inline

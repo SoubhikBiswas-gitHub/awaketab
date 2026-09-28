@@ -3,7 +3,7 @@ import Brand from '../icons/Brand.astro';
 import Icon from '../icons/Icon.astro';
 import { t } from '../../i18n/load';
 import { supportTags } from '../../lib/device-support';
-import { browserMark, systemMark, type TBrand } from '../../lib/brands';
+import { deviceLogos } from '../../lib/brands';
 
 interface IDeviceCard {
   slug: string;
@@ -19,14 +19,6 @@ interface Props {
 }
 
 const { cards } = Astro.props;
-// The system a device page is about, then its one browser; a browser page shows that browser alone.
-const heroLogos = (browsers: readonly string[], os: readonly string[]): Array<TBrand | null> => {
-  const system = os.length === 1 ? [systemMark(os[0] ?? '')?.logo] : [];
-  const browser = browsers.length === 1 ? [browserMark(browsers[0] ?? '')?.logo ?? null] : [];
-  const logos = [...system, ...browser].filter((logo) => logo !== undefined);
-  return [...new Set(logos.length > 0 ? logos : [systemMark(os[0] ?? '')?.logo ?? null])];
-};
-const HOME_SCREEN: Array<TBrand | null> = ['apple'];
 ---
 
 <ul class="at-gal at-gal-dev">
@@ -39,7 +31,7 @@ const HOME_SCREEN: Array<TBrand | null> = ['apple'];
           <a class="at-gal-link" href={card.href}>
             <span class="at-gal-top">
               <span class="at-gal-logos" aria-hidden="true" data-tilt-z>
-                {(card.slug === 'ios-home-screen' ? HOME_SCREEN : heroLogos(card.browsers, card.os)).map((logo) => (
+                {deviceLogos(card.slug, card.browsers, card.os).map((logo) => (
                   <Brand logo={logo} size={32} />
                 ))}
               </span>
