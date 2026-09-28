@@ -137,18 +137,6 @@ function openLengths(ctx: IToolCtx): void {
   root.querySelector<HTMLElement>('.at-bar [aria-pressed="true"], .at-bar button')?.focus();
 }
 
-export type TCustomizeTab = 'face' | 'look' | 'sound';
-
-// One entry point for every way into Customize (header button, face name, lamp dot, the live sound icon).
-export function openCustomize(ctx: IToolCtx, tab?: TCustomizeTab, opener?: Element | null): void {
-  if (tab === 'sound') void sound(ctx, 'open', opener);
-  else if (tab === 'face')
-    void import('../packs/faces/index.js').then((m) => {
-      m.faceAct(ctx, 'faces', opener);
-    });
-  else openSettings(ctx, opener);
-}
-
 export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
   // Panels and sheets style from the on-demand sheet; they open once it is in.
   void moreCss().then(() => {
