@@ -11,6 +11,7 @@ import SponsorCard from './SponsorCard.astro';
 import Button from './shell/Button.astro';
 import Dialog from './ui/Dialog.astro';
 import Sheet from './ui/Sheet.astro';
+import Icon from './icons/Icon.astro';
 import StatusPill from './shell/StatusPill.astro';
 import type { IToolReady } from '../lib/tool-ready';
 import { FACE_GROUPS, FACE_ORDER } from '../tool/packs/faces/order';
@@ -94,23 +95,23 @@ const shortcuts = [
 
 // Notes drawer: toolbar commands with their Tiptap shortcut (the Mod key is added on the client) and 24 px icons.
 const NOTE_TOOLS = [
-  ['h', 'Alt+2', 'Control+Alt+2 Meta+Alt+2'],
-  ['b', 'B', 'Control+B Meta+B'],
-  ['i', 'I', 'Control+I Meta+I'],
-  ['ul', 'Shift+8', 'Control+Shift+8 Meta+Shift+8'],
-  ['ol', 'Shift+7', 'Control+Shift+7 Meta+Shift+7'],
-  ['task', 'Shift+9', 'Control+Shift+9 Meta+Shift+9'],
+  ['b', 'B', 'Control+B Meta+B', 'text-b'],
+  ['i', 'I', 'Control+I Meta+I', 'text-italic'],
+  ['s', 'Shift+S', 'Control+Shift+S Meta+Shift+S', 'text-strikethrough'],
+  ['h', 'Alt+2', 'Control+Alt+2 Meta+Alt+2', 'text-h'],
+  ['ul', 'Shift+8', 'Control+Shift+8 Meta+Shift+8', 'list-bullets'],
+  ['task', 'Shift+9', 'Control+Shift+9 Meta+Shift+9', 'list-checks'],
+] as const;
+// The "/" menu: block, icon, its Markdown shortcut, and English search words (the label is searched too).
+const NOTE_BLOCKS = [
+  ['h', 'text-h', '#', 'heading title h1 h2'],
+  ['task', 'list-checks', '[ ]', 'checklist todo to-do task check box'],
+  ['ul', 'list-bullets', '-', 'bullet list unordered ul'],
+  ['ol', 'list-numbers', '1.', 'numbered list ordered ol number'],
+  ['quote', 'quotes', '>', 'quote blockquote citation'],
+  ['hr', 'minus', '---', 'divider rule line separator hr'],
 ] as const;
 const NOTE_ICON = {
-  h: 'M6 5v14M16 5v14M6 12h10M19.5 19h-2.5c0-2.5 3-2.5 3-4.5a1.5 1.5 0 0 0-3-.3',
-  b: 'M7 5h5.5a3.5 3.5 0 0 1 0 7H7zM7 12h6.5a3.5 3.5 0 0 1 0 7H7z',
-  i: 'M10.5 5H18M6 19h7.5M14.5 5l-5 14',
-  ul: 'M9.5 6.5H20M9.5 12H20M9.5 17.5H20M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01',
-  ol: 'M10 6.5h10M10 12h10M10 17.5h10M4 4.5l1.5-.8V9M3.8 14.3a1.4 1.4 0 1 1 2.3 1.1L3.8 18h2.6',
-  task: 'M3.8 6.8l1.6 1.6 3-3.2M3.8 16.3l1.6 1.6 3-3.2M11.5 7H20M11.5 16.5H20',
-  mic: 'M12 3.5a3 3 0 0 0-3 3V11a3 3 0 0 0 6 0V6.5a3 3 0 0 0-3-3zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21',
-  list: 'M8.5 6.5H20M8.5 12H20M8.5 17.5H20M4 6.5h.01M4 12h.01M4 17.5h.01',
-  save: 'M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14',
   pad: 'M6.5 3.5h8l3 3v14h-11zM14.5 3.5v3h3M9 11h6M9 14.5h6M9 18h3.5',
 } as const;
 
@@ -2023,155 +2024,231 @@ const eight = ready.chip === 'custom';
       class="at-notes"
       bodyClass="at-notes-body"
     >
-      <div class="at-notes-bar">
-        <p class="at-notes-live" aria-hidden="true">
-          <span class="at-notes-bead" />
-          <span data-notes-live />
-        </p>
-        <div class="at-notes-nav">
-          <button
-            class="at-button at-button-sm at-button-quiet"
-            type="button"
-            data-notes-all
-            aria-expanded="false"
-            aria-controls="at-notes-list"
-            hidden
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-              <path d={NOTE_ICON.list} />
-            </svg>
-            {t('notes.all')}
-            <span class="at-notes-count" data-notes-count />
-          </button>
-          <button class="at-button at-button-sm" type="button" data-notes-new>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            {t('notes.new')}
-            <span class="at-tag" data-notes-pro-tag>{t('pro.badge')}</span>
-          </button>
-        </div>
-      </div>
-      <p class="at-caption at-notes-pv" data-notes-pv hidden>
-        <span class="at-notes-pv-dot" aria-hidden="true" />
-        {t('notes.pro.previewing')}
-      </p>
-      <section class="at-notes-panel" data-notes-pro aria-labelledby="at-notes-pro-h" hidden>
-        <h3 class="at-notes-panel-h" id="at-notes-pro-h">{t('notes.pro.title')}</h3>
-        <p>{t('notes.pro.body')}</p>
-        <p class="at-caption">{t('notes.pro.keep')}</p>
-        <div class="at-notes-row">
-          <button class="at-button at-button-sm" type="button" data-notes-try>{t('notes.pro.try')}</button>
-          <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-see>{t('pro.see')}</button>
-          <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-pro-close>{t('notes.pro.later')}</button>
-        </div>
-      </section>
-      <section class="at-notes-list" id="at-notes-list" data-notes-list aria-label={t('notes.all')} hidden>
-        <input class="at-input" type="search" data-notes-search placeholder={t('notes.search')} aria-label={t('notes.search')} />
-        <ul class="at-notes-items" data-notes-items />
-        <p class="at-caption" data-notes-none hidden>{t('notes.none')}</p>
-      </section>
-      <div class="at-notes-pad" data-notes-pad>
-        <p class="at-notes-ro" data-notes-ro role="note" hidden>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-            <rect x="5" y="11" width="14" height="10" rx="2" />
-            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
-          </svg>
-          <span>{t('notes.readonly')}</span>
-        </p>
-        <input
-          class="at-notes-title"
-          type="text"
-          maxlength="120"
-          data-notes-title
-          placeholder={t('notes.untitled')}
-          aria-label={t('notes.titleLabel')}
-          hidden
-        />
-        <div class="at-notes-tools" role="toolbar" aria-label={t('notes.toolbar')} aria-controls="at-notes-ed">
-          {
-            NOTE_TOOLS.map(([cmd, keys, aria], i) => (
-              <button
-                class="at-notes-tool"
-                type="button"
-                data-cmd={cmd}
-                data-keys={keys}
-                aria-pressed="false"
-                aria-label={t(`notes.tool.${cmd}`)}
-                aria-keyshortcuts={aria}
-                tabindex={i === 0 ? '0' : '-1'}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d={NOTE_ICON[cmd]} />
-                </svg>
+      <div class="at-notes-panes" data-notes-panes>
+        <nav class="at-notes-side" id="at-notes-list" data-notes-list aria-label={t('notes.all')} hidden>
+          <div class="at-notes-side-top">
+            <label class="at-notes-search">
+              <Icon name="magnifying-glass" size={16} tone="ink" />
+              <input class="at-notes-q" type="search" data-notes-search placeholder={t('notes.search')} aria-label={t('notes.search')} />
+            </label>
+            <button class="at-icon-button at-notes-add" type="button" data-notes-new data-notes-add aria-label={t('notes.new')}>
+              <Icon name="plus" size={20} />
+            </button>
+          </div>
+          <ul class="at-notes-items" data-notes-items />
+          <p class="at-caption at-notes-none" data-notes-none hidden>{t('notes.none')}</p>
+        </nav>
+        <section class="at-notes-main" data-notes-main>
+          <div class="at-notes-head">
+            <button class="at-icon-button at-notes-all" type="button" data-notes-all aria-expanded="false" aria-controls="at-notes-list" aria-label={t('notes.all')} hidden>
+              <Icon name="sidebar-simple" size={20} />
+              <span class="at-notes-count" data-notes-count />
+            </button>
+            <p class="at-notes-name" data-notes-name />
+            <p class="at-notes-state" data-notes-state />
+            <div class="at-notes-menuwrap">
+              <button class="at-icon-button" type="button" data-notes-more aria-haspopup="menu" aria-expanded="false" aria-controls="at-notes-menu" aria-label={t('notes.more')}>
+                <Icon name="dots-three" size={20} tone="ink" />
               </button>
-            ))
-          }
-          <span class="at-notes-sep" aria-hidden="true" />
-          <button class="at-notes-tool at-notes-mic" type="button" data-notes-mic aria-pressed="false" aria-label={t('tool.notes.voice.start')} tabindex="-1" hidden>
-            <span class="at-notes-ring" aria-hidden="true" />
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d={NOTE_ICON.mic} />
-            </svg>
-          </button>
-        </div>
-        <section class="at-notes-panel" data-notes-consent aria-labelledby="at-notes-voice-h" hidden>
-          <h3 class="at-notes-panel-h" id="at-notes-voice-h">{t('notes.voice.title')}</h3>
-          <p>{t('notes.voice.notice')}</p>
-          <p class="at-caption">{t('notes.voice.local')}</p>
-          <div class="at-notes-row">
-            <button class="at-button at-button-sm at-button-stop" type="button" data-notes-consent-ok>{t('notes.voice.ok')}</button>
-            <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-consent-no>{t('notes.voice.no')}</button>
+              <div class="at-notes-pop" data-notes-menu hidden>
+                <div class="at-notes-menu" id="at-notes-menu" role="menu" aria-label={t('notes.more')}>
+                  <button class="at-notes-mi" type="button" role="menuitem" data-notes-new data-notes-new-menu>
+                    <Icon name="plus" size={20} class="at-notes-if-pro" />
+                    <Icon name="sparkle" size={20} class="at-notes-if-free" />
+                    <span class="at-notes-if-pro">{t('notes.new')}</span>
+                    <span class="at-notes-if-free">{t('notes.pro.title')}</span>
+                  </button>
+                  <button class="at-notes-mi at-notes-if-pro" type="button" role="menuitemcheckbox" aria-checked="false" data-notes-pin>
+                    <Icon name="push-pin" size={20} />
+                    {t('notes.pinNote')}
+                  </button>
+                  <span class="at-notes-msep" role="separator" />
+                  <button class="at-notes-mi" type="button" role="menuitem" data-notes-copy>
+                    <Icon name="copy" size={20} />
+                    {t('notes.copy')}
+                  </button>
+                  <button class="at-notes-mi" type="button" role="menuitem" data-notes-export="md">
+                    <Icon name="file-md" size={20} />
+                    {t('notes.export.mdAria')}
+                  </button>
+                  <button class="at-notes-mi" type="button" role="menuitem" data-notes-export="txt">
+                    <Icon name="file-txt" size={20} />
+                    {t('notes.export.txtAria')}
+                  </button>
+                  <span class="at-notes-msep" role="separator" />
+                  <button class="at-notes-mi" type="button" role="menuitem" data-notes-clear>
+                    <Icon name="eraser" size={20} tone="ink" />
+                    <span data-notes-clear-label>{t('tool.notes.clearNote')}</span>
+                  </button>
+                </div>
+                <p class="at-notes-meta" data-notes-meta />
+              </div>
+            </div>
+          </div>
+          <p class="at-notes-strip" data-notes-pv hidden>
+            <span class="at-notes-dot" aria-hidden="true" />
+            <span>{t('notes.pro.previewing')}</span>
+          </p>
+          <p class="at-notes-strip" data-notes-ro role="note" hidden>
+            <Icon name="lock-simple" size={20} tone="ink" />
+            <span>{t('notes.readonly')}</span>
+          </p>
+          <div class="at-notes-strip at-notes-fail" data-notes-fail hidden>
+            <Icon name="warning" size={20} tone="state" />
+            <p>{t('tool.notes.saveFail')}</p>
+            <div class="at-notes-row">
+              <button class="at-button at-button-sm" type="button" data-notes-copy>{t('notes.copy')}</button>
+              <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-export="md">{t('notes.export.md')}</button>
+            </div>
+          </div>
+          <div class="at-notes-strip at-notes-confirm" data-notes-confirm role="group" aria-labelledby="at-notes-confirm-q" hidden>
+            <p id="at-notes-confirm-q" data-notes-confirm-q />
+            <div class="at-notes-row">
+              <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-confirm-no>{t('notes.keep')}</button>
+              <button class="at-button at-button-sm at-button-stop" type="button" data-notes-confirm-yes />
+            </div>
+          </div>
+          <p class="at-notes-strip at-notes-undone" data-notes-undone hidden>
+            <Icon name="check-circle" size={20} />
+            <span data-notes-undone-text />
+            <button class="at-textlink at-notes-undo" type="button" data-notes-undo>{t('notes.undo')}</button>
+          </p>
+          <section class="at-notes-panel" data-notes-pro aria-labelledby="at-notes-pro-h" hidden>
+            <h3 class="at-notes-panel-h" id="at-notes-pro-h">
+              <Icon name="sparkle" size={20} />
+              {t('notes.pro.title')}
+            </h3>
+            <p>{t('notes.pro.body')}</p>
+            <p class="at-caption">{t('notes.pro.keep')}</p>
+            <div class="at-notes-row">
+              <button class="at-button at-button-sm at-button-stop" type="button" data-notes-try>{t('notes.pro.try')}</button>
+              <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-see>{t('pro.see')}</button>
+              <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-pro-close>{t('notes.pro.later')}</button>
+            </div>
+          </section>
+          <div class="at-notes-page" data-notes-pad>
+            <div class="at-notes-ed" id="at-notes-ed" data-notes-editor />
+            <div class="at-notes-start" data-notes-start hidden>
+              <svg class="at-notes-art" width="96" height="72" viewBox="0 0 96 72" aria-hidden="true">
+                <rect class="at-na-back" x="30" y="9" width="50" height="56" rx="8" transform="rotate(7 55 37)" />
+                <rect class="at-na-page" x="14" y="7" width="54" height="60" rx="8" />
+                <rect class="at-na-box at-na-on" x="23" y="17" width="10" height="10" rx="3" />
+                <path class="at-na-tick" d="M25.4 22.2l2.2 2.2 3.6-4" pathLength="1" />
+                <path class="at-na-line" d="M38 22h21" />
+                <rect class="at-na-box" x="23" y="32" width="10" height="10" rx="3" />
+                <path class="at-na-line" d="M38 37h17" />
+                <rect class="at-na-box" x="23" y="47" width="10" height="10" rx="3" />
+                <path class="at-na-line" d="M38 52h12" />
+                <path class="at-na-spark" d="M82 5l1.5 4.2 4.2 1.5-4.2 1.5L82 16.4l-1.5-4.2-4.2-1.5 4.2-1.5z" />
+              </svg>
+              <p class="at-notes-start-h">{t('notes.start.title')}</p>
+              <div class="at-notes-starters">
+                <button class="at-chip" type="button" data-notes-tpl="todo">
+                  <Icon name="list-checks" size={20} />
+                  {t('notes.start.todo')}
+                </button>
+                <button class="at-chip" type="button" data-notes-tpl="meeting">
+                  <Icon name="users-three" size={20} />
+                  {t('notes.start.meeting')}
+                </button>
+                <button class="at-chip" type="button" data-notes-tpl="ideas">
+                  <Icon name="lightbulb" size={20} />
+                  {t('notes.start.ideas')}
+                </button>
+              </div>
+              <p class="at-caption at-notes-private">
+                <Icon name="shield-check" size={16} />
+                {t('notes.help.private')}
+              </p>
+            </div>
           </div>
         </section>
-        <p class="at-notes-listen" data-notes-listen hidden>
-          <span class="at-notes-listen-i" aria-hidden="true" />
-          <span data-notes-listen-text />
-        </p>
-        <div class="at-notes-paper">
-          <div class="at-notes-ed" id="at-notes-ed" data-notes-editor />
-          <p class="at-notes-interim" data-notes-interim aria-hidden="true" />
-        </div>
       </div>
-      <ul class="at-caption at-notes-help">
-        <li>{t('notes.help.private')}</li>
-        <li>{t('notes.help.md')}</li>
-        <li data-notes-novoice hidden>{t('notes.help.novoice')}</li>
-      </ul>
+      <div class="at-notes-bubble" role="toolbar" aria-label={t('notes.toolbar')} data-notes-bubble hidden>
+        {
+          NOTE_TOOLS.map(([cmd, keys, aria, icon], i) => (
+            <button
+              class="at-notes-tool"
+              type="button"
+              data-cmd={cmd}
+              data-keys={keys}
+              aria-pressed="false"
+              aria-label={t(`notes.tool.${cmd}`)}
+              aria-keyshortcuts={aria}
+              tabindex={i === 0 ? '0' : '-1'}
+            >
+              <Icon name={icon} size={20} tone="ink" />
+            </button>
+          ))
+        }
+      </div>
+      <div class="at-notes-slash" data-notes-slash hidden>
+        <p class="at-notes-slash-h" aria-hidden="true">{t('notes.blocks')}</p>
+        <ul class="at-notes-slash-list" id="at-notes-slash-list" role="listbox" aria-label={t('notes.blocks')}>
+          {
+            NOTE_BLOCKS.map(([id, icon, hint, keys]) => (
+              <li class="at-notes-opt" id={`at-notes-b-${id}`} role="option" aria-selected="false" data-block={id} data-k={keys}>
+                <Icon name={icon} size={20} />
+                <span>{t(`notes.block.${id}`)}</span>
+                <kbd class="at-kbd at-notes-md" aria-hidden="true">{hint}</kbd>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="at-caption at-notes-slash-none" data-notes-slash-none hidden>{t('notes.block.none')}</p>
+      </div>
+      <template data-notes-tpl-html="todo">
+        <h1>{t('notes.start.todo')}</h1>
+        <ul data-type="taskList"><li data-type="taskItem" data-checked="false"><p></p></li></ul>
+      </template>
+      <template data-notes-tpl-html="meeting">
+        <h1>{t('notes.start.meeting')}</h1>
+        <h2>{t('notes.tpl.agenda')}</h2>
+        <ul><li><p></p></li></ul>
+        <h2>{t('notes.tpl.actions')}</h2>
+        <ul data-type="taskList"><li data-type="taskItem" data-checked="false"><p></p></li></ul>
+      </template>
+      <template data-notes-tpl-html="ideas">
+        <h1>{t('notes.start.ideas')}</h1>
+        <ul><li><p></p></li></ul>
+      </template>
+      <template data-notes-pin-icon><Icon name="push-pin" size={20} /></template>
       <Fragment slot="footer">
         <div class="at-notes-foot">
-          <p class="at-caption at-notes-meta">
-            <span data-notes-words />
-            <span class="at-notes-state" data-notes-state />
-            <button class="at-textlink at-notes-undo" type="button" data-notes-undo hidden>{t('notes.undo')}</button>
+          <section class="at-notes-panel at-notes-consent" data-notes-consent aria-labelledby="at-notes-voice-h" hidden>
+            <h3 class="at-notes-panel-h" id="at-notes-voice-h">
+              <Icon name="microphone" size={20} />
+              {t('notes.voice.title')}
+            </h3>
+            <p>{t('notes.voice.notice')}</p>
+            <p class="at-caption">{t('notes.voice.local')}</p>
+            <div class="at-notes-row">
+              <button class="at-button at-button-sm at-button-stop" type="button" data-notes-consent-ok>{t('notes.voice.ok')}</button>
+              <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-consent-no>{t('notes.voice.no')}</button>
+            </div>
+          </section>
+          <p class="at-notes-listen" data-notes-novoice role="note" hidden>
+            <Icon name="info" size={16} tone="ink" />
+            <span>{t('notes.help.novoice')}</span>
           </p>
+          <p class="at-notes-listen" data-notes-listen hidden>
+            <span class="at-notes-listen-i" aria-hidden="true" />
+            <span data-notes-listen-text />
+          </p>
+          <div class="at-notes-dock">
+            <p class="at-notes-live" aria-hidden="true">
+              <span class="at-notes-bead" />
+              <span data-notes-live />
+            </p>
+            <button class="at-notes-mic" type="button" data-notes-mic aria-label={t('tool.notes.voice.start')}>
+              <span class="at-notes-ring" aria-hidden="true" />
+              <Icon name="microphone" size={20} class="at-notes-mic-i" />
+              <span class="at-notes-wave" aria-hidden="true"><i /><i /><i /><i /><i /></span>
+              <span class="at-notes-mic-off" aria-hidden="true">{t('notes.voice.dictate')}</span>
+              <span class="at-notes-mic-on" aria-hidden="true">{t('notes.voice.stopShort')}</span>
+            </button>
+          </div>
           <span class="sr-only" role="status" data-notes-said />
-          <div class="at-notes-row" data-notes-acts>
-            <button class="at-button at-button-sm" type="button" data-notes-copy>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M9 9h10.5v10.5H9zM15 9V4.5H4.5V15H9" />
-              </svg>
-              {t('notes.copy')}
-            </button>
-            <button class="at-button at-button-sm" type="button" data-notes-export="md" aria-label={t('notes.export.mdAria')}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d={NOTE_ICON.save} />
-              </svg>
-              .md
-            </button>
-            <button class="at-button at-button-sm" type="button" data-notes-export="txt" aria-label={t('notes.export.txtAria')}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d={NOTE_ICON.save} />
-              </svg>
-              .txt
-            </button>
-            <button class="at-button at-button-sm at-button-quiet at-notes-clear" type="button" data-notes-clear>{t('tool.notes.clear')}</button>
-          </div>
-          <div class="at-notes-row at-notes-confirm" data-notes-confirm role="group" aria-labelledby="at-notes-confirm-q" hidden>
-            <p id="at-notes-confirm-q" data-notes-confirm-q />
-            <button class="at-button at-button-sm at-button-quiet" type="button" data-notes-confirm-no>{t('notes.keep')}</button>
-            <button class="at-button at-button-sm at-button-stop" type="button" data-notes-confirm-yes />
-          </div>
         </div>
       </Fragment>
     </Sheet>

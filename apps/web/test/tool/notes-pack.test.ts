@@ -1,7 +1,7 @@
 import type { JSONContent } from '@tiptap/core';
 import { describe, expect, it } from 'vitest';
 import { canEdit, listNotes, newNote, noteName, parseNotes } from '../../src/tool/packs/notes/data.js';
-import { countWords, plainText, toMarkdown, toText } from '../../src/tool/packs/notes/text.js';
+import { countWords, dayLabel, plainText, toMarkdown, toText } from '../../src/tool/packs/notes/text.js';
 import { speechLang } from '../../src/tool/packs/notes/voice.js';
 
 const p = (...content: JSONContent[]): JSONContent => ({ type: 'paragraph', content });
@@ -70,6 +70,12 @@ describe('notes text export', () => {
     expect(toText(doc)).not.toContain('**');
   });
 
+  it('writes a divider as a Markdown rule in both formats', () => {
+    const ruled: JSONContent = { type: 'doc', content: [p(txt('Above')), { type: 'horizontalRule' }, p(txt('Below'))] };
+    expect(toMarkdown(ruled)).toBe('Above\n\n---\n\nBelow');
+    expect(toText(ruled)).toBe('Above\n\n---\n\nBelow');
+  });
+
   it('counts words, CJK included', () => {
     expect(plainText(doc).split('\n')).toContain('Buy fresh basil today');
     expect(countWords('Buy fresh basil today', 'en')).toBe(4);
@@ -124,5 +130,17 @@ describe('dictation language', () => {
     expect(speechLang('de', 'en-US')).toBe('de-DE');
     expect(speechLang('pt-br', 'pt-PT')).toBe('pt-BR');
     expect(speechLang('ja', 'ja')).toBe('ja');
+  });
+});
+
+describe('note dates', () => {
+  it('says Today and Yesterday, a weekday within the week, then the date', () => {
+    const now = new Date(2026, 8, 29, 9, 0).getTime();
+    expect(dayLabel(new Date(2026, 8, 29, 0, 3).getTime(), now, 'en')).toBe('Today');
+    expect(dayLabel(new Date(2026, 8, 28, 22, 0).getTime(), now, 'en')).toBe('Yesterday');
+    expect(dayLabel(new Date(2026, 8, 26, 12, 0).getTime(), now, 'en')).toBe('Saturday');
+    expect(dayLabel(new Date(2026, 8, 20, 12, 0).getTime(), now, 'en')).toBe('20 September');
+    expect(dayLabel(new Date(2025, 11, 31, 12, 0).getTime(), now, 'en')).toBe('31 December 2025');
+    expect(dayLabel(new Date(2026, 8, 29, 8, 0).getTime(), now, 'de')).toBe('Heute');
   });
 });

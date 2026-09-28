@@ -74,6 +74,8 @@ function block(node: JSONContent, md: boolean): string {
     case 'orderedList':
     case 'taskList':
       return list(node, md);
+    case 'horizontalRule':
+      return '---';
     case 'blockquote':
       return (node.content ?? [])
         .map((c) => block(c, md))
@@ -122,4 +124,18 @@ export function countWords(text: string, lang: string): number {
     return n;
   }
   return text.split(/\s+/u).filter(Boolean).length;
+}
+
+// The day part of a note's date: "Today", "Yesterday", a weekday within the week, then the date.
+export function dayLabel(ms: number, now: number, lang: string): string {
+  const day = (x: number) => new Date(x).setHours(0, 0, 0, 0);
+  const d = Math.round((day(ms) - day(now)) / 86_400_000);
+  if (d === 0 || d === -1) {
+    const word = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' }).format(d, 'day');
+    return word.charAt(0).toLocaleUpperCase(lang) + word.slice(1);
+  }
+  const same = new Date(ms).getFullYear() === new Date(now).getFullYear();
+  const o: Intl.DateTimeFormatOptions =
+    d > -7 && d < 0 ? { weekday: 'long' } : { day: 'numeric', month: 'long', ...(same ? {} : { year: 'numeric' }) };
+  return new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : lang, o).format(ms);
 }
