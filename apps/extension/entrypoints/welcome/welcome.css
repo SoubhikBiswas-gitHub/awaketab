@@ -12,13 +12,13 @@
   --at-ext-dot-glow: 0 0 10px;
   --at-ext-mock-h: 400px;
   --at-ext-mock-h-phone: 440px;
-  --at-ext-window-shadow: 0 40px 90px -50px rgb(14 23 38 / 35%);
-  --at-ext-bar: #e9eef5;
-  --at-ext-bar-line: #d5dde8;
-  --at-ext-bar-field: #fff;
-  --at-ext-bar-ghost: #c7d0dc;
-  --at-ext-bar-hover: #dde4ee;
-  --at-ext-bar-panel: #fff;
+  --at-ext-window-shadow: 0 40px 90px -50px color-mix(in srgb, var(--at-shadow-color) 35%, transparent);
+  --at-ext-bar: light-dark(var(--at-raised), var(--at-surface));
+  --at-ext-bar-line: var(--at-line-strong);
+  --at-ext-bar-field: light-dark(var(--at-surface), var(--at-sunken));
+  --at-ext-bar-ghost: var(--at-line-strong);
+  --at-ext-bar-hover: color-mix(in srgb, var(--at-ink) 6%, var(--at-ext-bar));
+  --at-ext-bar-panel: var(--at-surface);
   --at-ext-dot: 11px;
   --at-ext-mock-field: 34px;
   --at-ext-avatar: 22px;
@@ -26,18 +26,19 @@
   --at-ext-badge-y: -3px;
   --at-ext-badge-h: 15px;
   --at-ext-badge-cut: 1.5px;
-  --at-ext-badge-system: #2b3a67;
+  --at-ext-badge-system: var(--at-badge-system);
   --at-ext-mark-offset: -9px;
   --at-ext-lines-top: 92px;
   --at-ext-menu-end: 18px;
   --at-ext-menu-w: 330px;
+  /* stylelint-disable-next-line declaration-property-value-disallowed-list -- the app icon's own art */
   --at-ext-app-icon: linear-gradient(160deg, #16213a 0%, #0b0f17 100%);
   --at-ext-app-icon-size: 28px;
   --at-ext-ghost-w: 120px;
   --at-ext-ghost-h: 10px;
   --at-ext-pointer-top: 150px;
   --at-ext-pointer-end: 22px;
-  --at-ext-pointer-shadow: drop-shadow(0 4px 8px rgb(0 0 0 / 35%));
+  --at-ext-pointer-shadow: drop-shadow(0 4px 8px color-mix(in srgb, var(--at-shadow-color) 35%, transparent));
   --at-ext-mock-foot: 22px;
   --at-ext-mock-note: 330px;
   --at-ext-num: 36px;
@@ -49,17 +50,21 @@
   --at-ext-notif-icon: 30px;
   --at-ext-notif-action: 28px;
   --at-ext-level-head: 720px;
-  --at-ext-bezel: #9aa7b8;
+  --at-ext-bezel: var(--at-line-strong);
   --at-ext-bezel-w: 5px;
   --at-ext-laptop-w: 180px;
   --at-ext-laptop-h: 132px;
   --at-ext-screen-x: 14px;
   --at-ext-screen-w: 152px;
   --at-ext-screen-h: 100px;
-  --at-ext-screen-on: radial-gradient(90% 90% at 50% 40%, #fff 0%, #e6f2f4 100%);
+  --at-ext-screen-on: radial-gradient(
+    90% 90% at 50% 40%,
+    var(--at-lift) 0%,
+    color-mix(in srgb, var(--at-accent) 10%, var(--at-surface)) 100%
+  );
   --at-ext-screen-glow: 0 0 36px -6px;
-  --at-ext-screen-off: #2a3342;
-  --at-ext-screen-off-ink: #8e9aae;
+  --at-ext-screen-off: var(--at-bezel);
+  --at-ext-screen-off-ink: var(--at-bezel-ink);
   --at-ext-base-top: 102px;
   --at-ext-base-r: 3px 3px 10px 10px;
   --at-ext-cpu-top: 122px;
@@ -72,30 +77,12 @@
 
 [data-theme="dark"],
 [data-theme="oled"] {
-  --at-ext-window-shadow: 0 40px 90px -50px rgb(0 0 0 / 90%);
-  --at-ext-bar: #1b2335;
-  --at-ext-bar-line: #2a3550;
-  --at-ext-bar-field: #0f1522;
-  --at-ext-bar-ghost: #33405c;
-  --at-ext-bar-hover: #26324b;
-  --at-ext-bar-panel: #1b2335;
-  --at-ext-bezel: #2e3a52;
-  --at-ext-screen-on: radial-gradient(90% 90% at 50% 40%, #16304a 0%, #0d1726 100%);
-  --at-ext-screen-off: #05070b;
+  --at-ext-window-shadow: 0 40px 90px -50px color-mix(in srgb, var(--at-shadow-color) 90%, transparent);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --at-ext-window-shadow: 0 40px 90px -50px rgb(0 0 0 / 90%);
-    --at-ext-bar: #1b2335;
-    --at-ext-bar-line: #2a3550;
-    --at-ext-bar-field: #0f1522;
-    --at-ext-bar-ghost: #33405c;
-    --at-ext-bar-hover: #26324b;
-    --at-ext-bar-panel: #1b2335;
-    --at-ext-bezel: #2e3a52;
-    --at-ext-screen-on: radial-gradient(90% 90% at 50% 40%, #16304a 0%, #0d1726 100%);
-    --at-ext-screen-off: #05070b;
+    --at-ext-window-shadow: 0 40px 90px -50px color-mix(in srgb, var(--at-shadow-color) 90%, transparent);
   }
 }
 
@@ -286,7 +273,7 @@
 [data-pinned-state] .wl-step {
   border-color: color-mix(in srgb, var(--at-accent) 50%, transparent);
   background: color-mix(in srgb, var(--at-accent) 16%, transparent);
-  color: var(--at-accent-text);
+  color: var(--at-ink);
 }
 
 .wl-mock {
@@ -377,7 +364,7 @@
   block-size: var(--at-ext-badge-h);
   padding-inline: var(--at-s-1);
   border-radius: var(--at-r-sm);
-  background: var(--at-lamp-aqua-light);
+  background: var(--at-badge-screen);
   box-shadow: 0 0 0 var(--at-ext-badge-cut) var(--bar);
   font: var(--at-type-ext-badge-sm);
   color: var(--at-ext-badge-ink);
@@ -722,7 +709,7 @@
   block-size: var(--at-s-5);
   padding-inline: calc(var(--at-s-3) / 2);
   border-radius: var(--at-r-sm);
-  background: var(--at-lamp-aqua-light);
+  background: var(--at-badge-screen);
   box-shadow: 0 0 0 var(--at-ext-art-badge-cut) var(--at-surface);
   font: var(--at-type-ext-badge-md);
   color: var(--at-ext-badge-ink);
@@ -921,15 +908,16 @@
   padding-inline: var(--at-s-2);
   border-radius: var(--at-r-pill);
   font: var(--at-type-kicker);
-  color: var(--at-ext-badge-ink);
 }
 
 .wl-badgetag-screen {
-  background: var(--at-lamp-aqua-light);
+  background: var(--at-badge-screen);
+  color: var(--at-ext-badge-ink);
 }
 
 .wl-badgetag-system {
   background: var(--at-ext-badge-system);
+  color: var(--at-ext-badge-ink);
 }
 
 .wl-ink {

@@ -27,6 +27,28 @@ const COLOUR_FILES = [
   'apps/web/src/styles/tool*.css',
   'apps/web/src/tool/packs/**/*.css',
   'apps/web/public/assets/faces.css',
+// docs/05 §1: the content, marketing and extension stylesheets take every colour from a var(--at-*) token. A mask
+// reads alpha only, so it may name #000; drawings that keep fixed colours opt out in marked blocks.
+const RAW_COLOUR = /#[0-9a-f]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(/iu;
+const COLOUR_SHEETS = [
+  '**/styles/content.css',
+  '**/styles/article/*.css',
+  '**/styles/hub.css',
+  '**/styles/hub-gallery.css',
+  '**/styles/pick-gallery.css',
+  '**/styles/docs-hub.css',
+  '**/styles/pages.css',
+  '**/styles/pro.css',
+  '**/styles/extension-page.css',
+  '**/styles/home.css',
+  '**/styles/home-*.css',
+  '**/styles/tilt.css',
+  '**/styles/icon-motion.css',
+  '**/styles/page-404.css',
+  '**/styles/embed.css',
+  '**/styles/device-matrix.css',
+  'apps/extension/src/styles/base.css',
+  'apps/extension/entrypoints/*/*.css',
 ];
 
 export default {
@@ -122,6 +144,18 @@ export default {
           },
           {
             message: (prop, value) => `${prop}: ${value} is not a token; use var(--at-*) (DESIGN.md §12)`,
+          },
+        ],
+      },
+    },
+    {
+      files: COLOUR_SHEETS,
+      rules: {
+        'color-named': 'never',
+        'declaration-property-value-disallowed-list': [
+          { '/^(?!(?:-webkit-)?mask(?:-image)?$|--[\\w-]*mask$)/': [RAW_COLOUR] },
+          {
+            message: (prop, value) => `${prop}: ${value} is a raw colour; use a var(--at-*) colour token (docs/05 §1)`,
           },
         ],
       },

@@ -47,8 +47,10 @@ Additional tokens (from the design critique, 27 Sep 2026):
 | `--at-on-tone` | `#0A0E16` | `#FFFFFF` | Text and icons on a solid good, warn or bad fill |
 | `--at-horizon-ink` | `#F6F2EA` | `#F6F2EA` | Digits on the Horizon sky and water |
 | `--at-halo` | lamp 18 % → 0, radial 50 % 26 % | lamp 10 % → 0 | The single status halo behind pill/face on every surface |
+| `--at-shadow-color` | `#000` | `#0E1726` | Drop shadows, mixed with transparent (`color-mix(in srgb, var(--at-shadow-color) 25%, transparent)`) |
+| `--at-bezel` | `#05070B` | `#1A2230` | Device glass and bezels in drawings, dark in both themes; `--at-bezel-ink` `#8E9AAE` is text on it |
 
-Extension toolbar badge (Chrome draws it; white text): Screen level `#087B87` (5.0:1), System level `#2B3A67` (11:1). Replaces the amber display badge in docs/00 `BADGE_COLORS` and docs/10, because amber means paused.
+Extension toolbar badge (Chrome draws it; white text): Screen level `#087B87` (5.0:1), System level `#2B3A67` (11:1); tokens `--at-badge-screen`, `--at-badge-system`, `--at-badge-ink` for every drawing of it. Replaces the amber display badge in docs/00 `BADGE_COLORS` and docs/10, because amber means paused.
 
 Night mode (OLED, red digits): `--at-night-ink #FF5A3C`, `--at-night-ink-2 #E8563C`, `--at-night-muted #A89690`, `--at-night-line #3A2E2A`; ground `--at-night-ground #000`, cards `--at-night-surface #0A0A0A`. Scrim is always `rgba(4,7,12,.55)`. Success (a finished cook timer, success toasts) is `--at-good`, never a lamp. Every colour in the tool and shell comes from a token; `test/tool/colour-pairs.test.ts` checks each pair for AA in every theme, colour theme and lamp.
 
@@ -88,7 +90,7 @@ The logo bead in the header takes the current tone, so the brand mark is itself 
 
 ### 2.4 Theme layer (colour themes, backgrounds, presets)
 
-A colour theme re-maps the same tokens; it never adds names. `html[data-palette="<id>"]` with `data-theme` sets the neutrals and tones of §2.1 (`ground`, `surface`, `line`, `line-strong`, `ink`, `ink-2`, `muted`, `track`, `tick`, `raised`, `sunken`, `input-border`, `warn`, `bad`, `good`, `lift`, `ground-end`), so the shadcn aliases, the ambient ground and every component follow. Each theme has light and dark; OLED keeps the theme's inks on pure black. The lamp, night mode and the Horizon art are not re-mapped.
+A colour theme re-maps the same tokens; it never adds names. `html[data-palette="<id>"]` with `data-theme` sets the neutrals and tones of §2.1 (`ground`, `surface`, `line`, `line-strong`, `ink`, `ink-2`, `muted`, `track`, `tick`, `raised`, `sunken`, `input-border`, `warn`, `bad`, `good`, `lift`, `ground-end`, `shadow-color`, `bezel`), so the shadcn aliases, the ambient ground and every component follow. Each theme has light and dark; OLED keeps the theme's inks on pure black. The lamp, night mode and the Horizon art are not re-mapped.
 
 | Theme | Character | Light ground · ink | Dark ground · ink | Gate |
 |---|---|---|---|---|

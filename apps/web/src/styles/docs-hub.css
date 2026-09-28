@@ -62,7 +62,7 @@
     block-size: var(--at-s-10);
     border-radius: var(--at-r-md);
     background: color-mix(in srgb, var(--at-accent) 12%, transparent);
-    color: var(--at-accent-text);
+    color: var(--at-accent);
   }
 
   .at-docs-icon {

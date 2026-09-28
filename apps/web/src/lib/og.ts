@@ -15,6 +15,9 @@ export interface IOgInput {
   fonts: IOgFont[];
 }
 
+// Clear Night light tokens from tokens.css; page-colours.test.ts keeps them equal.
+const COLOURS = { ground: '#F2F6FA', ink: '#0E1726', muted: '#5B6779', track: '#E3E9F1', lamp: '#087B87' };
+
 const FULL_WIDTH = /[\u1100-\u115F\u2E80-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFF60\uFFE0-\uFFE6]/u;
 
 function titleFontSize(title: string): number {
@@ -36,8 +39,8 @@ export async function renderOgPng(input: IOgInput): Promise<Uint8Array> {
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '72px',
-        background: '#FAF7F2',
-        color: '#14161C',
+        background: COLOURS.ground,
+        color: COLOURS.ink,
         fontFamily: input.fonts.map((font) => font.name).join(', '),
       },
       children: [
@@ -49,7 +52,7 @@ export async function renderOgPng(input: IOgInput): Promise<Uint8Array> {
               {
                 type: 'div',
                 props: {
-                  style: { color: '#5B6475', fontSize: '28px', fontWeight: 700, letterSpacing: '0.04em' },
+                  style: { color: COLOURS.muted, fontSize: '28px', fontWeight: 700, letterSpacing: '0.04em' },
                   children: input.eyebrow,
                 },
               },
@@ -69,7 +72,7 @@ export async function renderOgPng(input: IOgInput): Promise<Uint8Array> {
               {
                 type: 'div',
                 props: {
-                  style: { color: '#5B6475', fontSize: '28px' },
+                  style: { color: COLOURS.muted, fontSize: '28px' },
                   children: input.footer ?? `awaketab.com · ${input.locale}`,
                 },
               },
@@ -85,10 +88,10 @@ export async function renderOgPng(input: IOgInput): Promise<Uint8Array> {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              border: '18px solid #D9DDE5',
-              borderTopColor: '#4A68FF',
+              border: `18px solid ${COLOURS.track}`,
+              borderTopColor: COLOURS.lamp,
               borderRadius: '999px',
-              color: '#4A68FF',
+              color: COLOURS.lamp,
               fontSize: '72px',
               fontWeight: 700,
             },
