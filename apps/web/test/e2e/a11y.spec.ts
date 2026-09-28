@@ -106,7 +106,8 @@ async function openTool(page: Page, url: string): Promise<void> {
 
 // The stored last custom length is one minute (useTheme below), so Custom + the lamp button runs a 1-minute session.
 async function customMinute(page: Page): Promise<void> {
-  await page.getByRole('button', { name: 'Custom length' }).click();
+  await page.locator('#awaketab-tool .at-len-more').click();
+  await page.locator('#at-lenmore [data-preset="custom"]').click();
   // The panel opens once the lazy actions chunk has selected the custom length; start only after that.
   await expect(page.locator('.at-lp-custom')).toBeVisible();
   await page.locator('#awaketab-tool .at-cta').click();
@@ -185,7 +186,8 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     name: 'custom panel',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.getByRole('button', { name: 'Custom length' }).click();
+      await page.locator('#awaketab-tool .at-len-more').click();
+      await page.locator('#at-lenmore [data-preset="custom"]').click();
       await expect(page.locator('.at-lp-custom')).toBeVisible();
     },
   },
@@ -193,7 +195,8 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     name: 'until panel',
     open: async (page) => {
       await openTool(page, '/?autostart=0');
-      await page.getByRole('button', { name: 'Until a time' }).click();
+      await page.locator('#awaketab-tool .at-len-more').click();
+      await page.locator('#at-lenmore [data-preset="until"]').click();
       await expect(page.locator('.at-lp-until [data-slot="0"]')).toContainText(/\d/u);
     },
   },

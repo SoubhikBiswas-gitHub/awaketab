@@ -207,13 +207,23 @@
     border: var(--at-border) solid var(--at-line);
     border-radius: var(--at-r-sm);
     background: var(--at-surface);
+    visibility: hidden;
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--at-d-slow) var(--at-ease);
+    transition:
+      opacity var(--at-d-slow) var(--at-ease),
+      visibility var(--at-d-slow) allow-discrete;
   }
 
   .at-hclock:hover .at-date {
+    visibility: visible;
     opacity: 1;
+  }
+}
+
+@media (width < 600px) {
+  .at-hclock .at-date {
+    display: none;
   }
 }
 

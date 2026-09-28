@@ -461,9 +461,13 @@ test.describe('layout stability', { tag: '@stability' }, () => {
               .slice(0, 40)
               .map((f) => `  ${String(f.t)} ms ${JSON.stringify({ ...f, t: undefined })}`)
               .join('\n');
+            // Once the lock is granted the length row folds into "Until you stop · Change" by design, so the
+            // preset is only held still until then.
+            const granted = frames.findIndex((f) => f.pill === 'Screen awake');
             for (const key of ['face', 'digits', 'tab', 'preset'] as const) {
-              const seen = [...new Set(frames.map((f) => f[key]))];
-              expect.soft(seen, `${key} changed after first paint on ${path}:\n${log}`).toEqual([last[key]]);
+              const span = key === 'preset' && granted > 0 ? frames.slice(0, granted) : frames;
+              const seen = [...new Set(span.map((f) => f[key]))];
+              expect.soft(seen, `${key} changed after first paint on ${path}:\n${log}`).toEqual([span.at(-1)?.[key]]);
             }
             // The pill may wait for the browser's answer on a route that starts on load (it never guesses),
             // but once shown its text never changes and it never hides again.
