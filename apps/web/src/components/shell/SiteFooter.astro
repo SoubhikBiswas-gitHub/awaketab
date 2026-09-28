@@ -1,6 +1,7 @@
 ---
 import { createT } from '../../i18n/load';
 import { localePath, type TLocale } from '../../i18n/locales';
+import { VERSION } from '../../lib/version';
 import LangSwitch from './LangSwitch.astro';
 import '../../styles/footer.css';
 
@@ -96,6 +97,7 @@ const columns: Array<{ title: string; items: ILink[] }> = [
       </a>
       <p class="at-foot-promise">{t('footer.promise')}</p>
       <p class="at-foot-license">{t('footer.license')}</p>
+      <p class="at-foot-license" data-version>{t('footer.version', { version: VERSION })}</p>
     </div>
     <nav class="at-foot-map" aria-label={t('footer.nav')}>
       {

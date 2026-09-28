@@ -15,28 +15,33 @@ export function watchUpdates(
     location.reload();
   },
 ): () => void {
-  let offered = false;
+  // 0: not said yet · 1: told to reload when the session is done · 2: Reload offered.
+  let said = 0;
   let reloading = false;
   const offer = () => {
     // A first install also passes through waiting; only a worker replacing an active one is an update.
-    if (offered || !reg.waiting || !reg.active || sessionBusy(sessionStatus())) return;
-    offered = true;
+    const busy = sessionBusy(sessionStatus());
+    if (said > 1 || (busy && said) || !reg.waiting || !reg.active) return;
+    said = busy ? 1 : 2;
+    // A running session is never reloaded: it hears once, calmly, and gets the Reload button when it ends.
     pushToast(store, {
       kind: 'info',
-      text: t('tool.toast.update'),
-      sticky: true,
+      text: t(busy ? 'tool.toast.update.later' : 'tool.toast.update.ready'),
+      sticky: !busy,
       id: 'sw',
-      action: {
-        label: t('tool.toast.update.action'),
-        onClick: () => {
-          sw.addEventListener('controllerchange', () => {
-            if (reloading) return;
-            reloading = true;
-            reload();
-          });
-          reg.waiting?.postMessage('SKIP_WAITING');
+      ...(!busy && {
+        action: {
+          label: t('tool.toast.update.action'),
+          onClick: () => {
+            sw.addEventListener('controllerchange', () => {
+              if (reloading) return;
+              reloading = true;
+              reload();
+            });
+            reg.waiting?.postMessage('SKIP_WAITING');
+          },
         },
-      },
+      }),
     });
   };
   reg.addEventListener('updatefound', () => {

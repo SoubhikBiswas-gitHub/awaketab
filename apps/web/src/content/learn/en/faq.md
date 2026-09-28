@@ -1,6 +1,6 @@
 ---
 title: "Questions about AwakeTab, answered — AwakeTab"
-description: "Straight answers about AwakeTab: hidden tabs, closed lids, Teams status, iPhone Auto-Lock, the video fallback, battery use, price and your data."
+description: "Straight answers about AwakeTab: hidden tabs, closed lids, Teams status, iPhone Auto-Lock, faces, sounds, notes, battery, price and your data."
 h1: "AwakeTab FAQ: the questions we are asked most"
 crumb: "FAQ"
 intent: "awaketab faq"
@@ -22,6 +22,7 @@ toc:
   getting-started: "Getting started"
   tabs-windows-and-the-lid: "Tabs, windows and the lid"
   status-sleep-and-phones: "Status, sleep and phones"
+  faces-looks-and-sounds: "Faces, looks and sounds"
   the-video-fallback-and-battery: "Fallback and battery"
   price-and-privacy: "Price and privacy"
 rows:
@@ -29,7 +30,11 @@ rows:
     - title: "Every length"
       text: "15 minutes to 4 hours, until you stop it, until a clock time, or a custom length up to seven days."
     - title: "Every face and mode"
-      text: "All four clock faces and every ambient mode: Standard, Clock, Focus, Minimal, Night and Cook."
+      text: "All twelve clock faces and every ambient mode but Message: Standard, Clock, Focus, Breathe, Minimal, Night and Cook."
+    - title: "Colours"
+      text: "The Clear Night, Paper and Nord themes, four lamps, three backgrounds and three presets."
+    - title: "Sounds, notes and focus"
+      text: "Seven focus sounds, five end sounds, one note, a Pomodoro, an intention and a second time zone."
     - title: "Stats and install"
       text: "Seven days of stats, and an offline install in eight languages."
     - title: "The extension"
@@ -95,6 +100,24 @@ The screen is the guarantee. Idle system sleep is a separate policy the page can
 ### Why does my iPhone lock the screen anyway?
 
 Low Power Mode forces a 30-second Auto-Lock. Turn it off in Settings, then Battery. Safari needs iOS 16.4 or later, and a Home Screen web app needs iOS 18.4. Below those versions, AwakeTab offers the video fallback. [Keep your iPhone screen on in Safari](/on/iphone-safari) has the full steps.
+
+## Faces, looks and sounds
+
+### How do I change the clock face?
+
+Tap the face name above the clock to open the gallery, use its arrows, swipe sideways on the clock, or press `C` (`Shift+C` goes back). All twelve faces are free, and each one loads only when you pick it. With reduced motion turned on, faces update without flipping, rolling or sweeping.
+
+### Can I change the colours and the background?
+
+Yes, in **Settings → Appearance**. Clear Night, Paper and Nord, the Aqua, Violet, Amber and Teal lamps, the Grain, Dots and Grid backgrounds and three presets are free. Pro adds six more themes, eight more lamps and a colour of your own, five more backgrounds and five more presets. Every theme has a light and a dark version and stays readable with every lamp.
+
+### Can I try a Pro item before paying?
+
+Yes. Any Pro theme, lamp, background or preset, the sound mixer, more notes, the repeating Pomodoro and a shared Message link can each be tried for five minutes, as often as you like. A small bar counts down, a notice comes at one minute, and then the tool goes back to your last free choice. A preview is never saved and never touches the wake lock or the timer, and notes you write in one are never deleted.
+
+### Do focus sounds keep the screen awake?
+
+No. Sound never keeps the screen awake; the pill is still the only sign that it is. Open **Sounds** from the sound button in the header or press `S`. The noises, rain, café, fireplace and lo-fi loop are made live in your browser, and nothing plays or downloads until you ask. If your browser needs a tap first, the panel says "Tap to start sound". Pro adds a mixer to layer several sounds.
 
 ## The video fallback and battery
 

@@ -55,10 +55,13 @@ function create(ctx: IToolCtx) {
   let ticking = false;
   let asked = false;
   let turn = 0;
+  // A five-minute Pro preview keeps its mix and track in memory only; nothing of it reaches storage.
+  let pv: Partial<TFocus> | null = null;
 
   const settings = () => store.get().settings;
-  const focus = () => readFocus(settings());
-  const pro = () => hasFeature(ctx, 'sounds.custom');
+  const focus = (): TFocus => ({ ...readFocus(settings()), ...pv });
+  const owned = () => hasFeature(ctx, 'sounds.custom');
+  const pro = () => !!pv || owned();
   const raw = () => ctx.audio() ?? own;
   const live = () => state === 'playing' || state === 'loading';
   const mixing = (f: TFocus) => pro() && Object.keys(f.mix).length > 0;
@@ -78,6 +81,18 @@ function create(ctx: IToolCtx) {
 
   const save = (patch: Partial<TFocus>) => {
     const cur = settings();
+    if (pv) {
+      const rest: Partial<TFocus> = { ...patch };
+      if (patch.mix) {
+        pv.mix = patch.mix;
+        delete rest.mix;
+      }
+      if (patch.kind && trackOf(patch.kind)) {
+        pv.kind = patch.kind;
+        delete rest.kind;
+      } else if (patch.kind) delete pv.kind;
+      patch = rest;
+    }
     const next: ISettings = { ...cur, focusSound: { ...readFocus(cur), ...patch } };
     ctx.storage.writeSettings(next);
     store.set({ settings: next });
@@ -118,6 +133,9 @@ function create(ctx: IToolCtx) {
     const q = (sel: string) => box.querySelector<HTMLElement>(sel);
     box.dataset.state = state;
     box.toggleAttribute('data-pro', pro());
+    box.toggleAttribute('data-pv', !!pv);
+    const see = q('[data-snd-see]');
+    if (see) see.hidden = !!liveSession(store.get());
     put(q('[data-snd-title]'), title(f));
     put(q('[data-snd-sub]'), sub(f));
     const tg = q('[data-snd="toggle"]');
@@ -292,6 +310,36 @@ function create(ctx: IToolCtx) {
     paint();
   };
 
+  function tryPro(): void {
+    void import('../themes/preview.js').then((m) => {
+      m.startPreview(ctx, {
+        kind: 'sound',
+        id: 'mixer',
+        label: t('tool.sound.mix.proName'),
+        back: t('tool.sound.mix.proBack'),
+        apply: () => {
+          pv = {};
+          paint();
+          box?.querySelector<HTMLElement>('input[data-snd-mix]')?.focus();
+        },
+        revert: () => {
+          pv = null;
+          if (live()) void (isGen(focus().kind) ? play() : pause());
+          paint();
+        },
+      });
+      if (stopPv) return;
+      stopPv = m.onPreview(() => {
+        put(box?.querySelector('[data-snd-pv]'), pv ? m.previewLine() : '');
+        if (!pv) {
+          stopPv?.();
+          stopPv = undefined;
+        }
+      });
+    });
+  }
+  let stopPv: (() => void) | undefined;
+
   function syncTick(): void {
     const s = store.get();
     const on = s.settings.tick && liveSession(s)?.status === 'active' && document.visibilityState === 'visible';
@@ -315,6 +363,7 @@ function create(ctx: IToolCtx) {
     if (sndKind ?? sndTrack) choose(sndKind ?? sndTrack ?? '');
     else if (snd === 'toggle') void (live() ? pause() : play());
     else if (snd === 'next' || snd === 'prev') step(snd === 'next' ? 1 : -1);
+    else if (snd === 'try') tryPro();
   });
   dlg?.querySelector('[data-snd="settings"]')?.addEventListener('click', () => {
     openSettings(ctx);

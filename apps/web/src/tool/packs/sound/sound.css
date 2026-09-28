@@ -284,6 +284,32 @@
   display: none;
 }
 
+.at-snd-lock-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--at-s-2);
+}
+
+.at-snd-pv {
+  display: flex;
+  align-items: center;
+  gap: var(--at-s-2);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.at-snd-pv::before {
+  inline-size: var(--at-s-2);
+  block-size: var(--at-s-2);
+  border-radius: var(--at-r-pill);
+  background: var(--at-accent);
+  content: "";
+}
+
+.at-snd:not([data-pv]) .at-snd-pv {
+  display: none;
+}
+
 .at-snd-now line:nth-child(1),
 .at-snd-btn path:nth-child(1) {
   --at-snd-d: 1.3s;

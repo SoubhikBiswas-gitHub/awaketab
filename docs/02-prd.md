@@ -191,7 +191,7 @@ Each flow lists the visible steps and the state or event changes that must occur
 | `toast.lowpower` | FR-ENGINE-11 | iPhone Low Power Mode caps Auto-Lock at 30 s and can override the wake lock. Turn it off in Settings › Battery while you need the screen on. | Learn more |
 | `toast.clock_jump` | tick gap > 2 min while `held` | Your device slept for {duration}. The countdown kept real time. | — |
 | `toast.long_session` | 24 h in `held`/`fallback` | Running for {duration}. To reduce burn-in, try Night or Minimal mode — they shift pixels for you. | Switch mode |
-| `toast.update_ready` | new service worker waiting | AwakeTab updated. Reload when your session ends to get the new version. | Reload now · Later |
+| `toast.update_ready` | new service worker waiting | A new version of AwakeTab is ready. (during a session: … Reload when you're done.) | Reload (only when no session runs) |
 | `toast.share.copied` | FR-UI-12 | Link copied: {url} | — |
 | `prompt.rating` | FR-UI-11 | Five sessions in. How is AwakeTab working for you? | ★ 1–5 · Not now · Don't ask again |
 | `toast.pip.unsupported` | `P` without Document PiP | The floating window needs Chrome or Edge 116 or newer. Press F for fullscreen instead. | — |

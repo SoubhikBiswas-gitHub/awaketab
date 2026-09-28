@@ -79,7 +79,7 @@ describe('F-07 · /changelog renders Markdown and orders by date', () => {
     expect(cards).not.toContain('# 2026-09');
   });
 
-  it('pins the 1.0 launch entry first, then newest date first', async () => {
+  it('pins the newest release first, then newest date first', async () => {
     // Entries only: the shared footer (B2) carries the language switcher's own "Language" heading.
     const html = (await page('/changelog')).split('<footer')[0] ?? '';
     // B6 (board PageChangelog): the release is a card with an h2; the other entries are h3 under an h2 per date.
@@ -94,7 +94,7 @@ describe('F-07 · /changelog renders Markdown and orders by date', () => {
     const headings = [...html.matchAll(/<h2[^>]*><time datetime="(\d{4}-\d{2}-\d{2})">/gu)].map((m) => m[1] ?? '');
     expect(headings.length).toBeGreaterThanOrEqual(4);
     for (const day of headings) expect(dates).toContain(day);
-    expect(titles[0]).toBe('1.0 launch');
+    expect(titles[0]).toBe('AwakeTab 1.1: make it yours');
     expect(dates.length).toBe(titles.length);
     expect(dates.length).toBeGreaterThanOrEqual(14);
     // The release card is pinned on top (changelog.astro); the entries after it run newest first.

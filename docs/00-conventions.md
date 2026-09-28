@@ -871,7 +871,7 @@ Accepted on 2026-09-28. Rules and reasons: `05-frontend-spec.md` §1.2 (fonts) a
 | `styled(mount)` | `src/tool/ui/more-css.ts`: runs `mount` once `tool-more.css` has loaded and returns its unsubscribe; used by `toast-view.ts` and `banners.ts`. `moreCss()` gates `act()`, `open()`, `help()` and the language banner |
 | `<html data-swap>` | Set by `boot.js` for two frames on every theme apply; `base.css` turns transitions off under it, except `.at-seg-ind` |
 | `<html style="scrollbar-gutter:stable">` | Set by `BaseLayout` on every non-bare page |
-| Late-sheet gates | `.at-hm-open` is `visibility: hidden` in `shell.css` until `header-menus.css` loads; `:where(.at-hb > *)` is `visibility: hidden` in `tool-full.css` until `home.css` (`.at-hb-sec`), `home-extension.css` (`.at-hx`) or `home-levels.css` (`.at-hl`) loads |
+| Late-sheet gates | `.at-hm-open` is `visibility: hidden` in `shell.css` until `header-menus.css` loads; `:where(.at-hb > *)` is `visibility: hidden` in `tool-full.css` until `home.css` (`.at-hb-sec`), `home-extension.css` (`.at-hx`) `home-levels.css` (`.at-hl`) or `home-yours.css` (`.at-hy`) loads |
 | Fonts | Geist `font-display: optional`; Geist Mono and Space Grotesk `swap`; "Geist Fallback" 105.8 / 94.99 / 27.88 % (also in the extension's `base.css`) |
 | Removed classes | `.at-panel` and `.at-scrim` (never used in markup; `--at-scrim` stays) |
 
@@ -986,6 +986,22 @@ Accepted on 2026-09-28. Spec: `05-frontend-spec.md` §3.14, §3.35; storage: `08
 | Libraries | None. `Intl` gives the zone list, offsets and generic names, the session engine's timestamps already give drift-free phases, and `shortcuts.ts` already maps single keys, so `dayjs`, `easytimer.js` and `hotkeys-js` would only add bytes |
 | Markup hooks | Dock `[data-act="intention"]` · Settings `section[data-focus-tools]` · `.at-lines[data-lines]` (`.is-float` from 1024 px) with `[data-intent-edit]`, `[data-intent-form]`, `[data-intent-clear]`, `[data-world]` · Focus `[data-focus-pause]`, `[data-focus-intention]`, stage `data-paused` · Breathe `.at-br[data-breathe][data-step][data-still]`, `[data-breath]` |
 | i18n keys | `ambient.mode.breathe` · `ambient.breathe.*` · `ambient.focus.` `blockAuto`, `introAuto`, `on`, `paused`, `pausedNote`, `pause`, `resume`, `pausedSaid`, `resumedSaid`, `cycleRound`, `nextRound`, `skipRound` · `tool.intention.*` · `tool.world.*` · `tool.shortcuts.focus`, `.breathe`, `.intention` · `settings.focus` and `settings.focus.*` |
+
+### 13.28 The version on show, update prompts and the release surfaces
+
+Accepted on 2026-09-28. Specs: `05-frontend-spec.md` §3.31 and §4.2 (home), §3.34 (mixer preview) and §8 (update flow). The seven lock states, the pill copy, storage keys, routes and budgets do not change: the version is static HTML, the tool's update prompt stays in `pwa.ts` (a few bytes in the lazy `extras` chunk), the banner script runs only on pages with the site header, and every new stylesheet is a page sheet linked where it is used.
+
+| Identifier | Decision |
+|---|---|
+| `__AT_VERSION__` | `define` in `astro.config.mjs` from `versionDefines()` in `scripts/build-version.mjs`: `{ date, commit }`, the build date as `YYYY.MM.DD` (UTC) and the first 7 characters of `CF_PAGES_COMMIT_SHA` (the same variable `/api/health` reports), else `git rev-parse HEAD`, else `dev`. Read only through `VERSION` in `src/lib/version.ts` ("2026.09.28 · 1a2b3c4") |
+| Version on show | `footer.version` ("Version {version}") in `SiteFooter.astro` under the licence line and at the bottom of the Settings sheet (`p[data-version]`), with `footer.whatsNew` ("What's new") to `/changelog` in the Settings links. Build-time text, no request |
+| Tool update toast | `pwa.ts` `watchUpdates`, toast id `sw`: `tool.toast.update.ready` sticky with `tool.toast.update.action` (Reload) when no session is `active`/`paused`; during one, `tool.toast.update.later` once, not sticky, no button, then the Reload toast when it ends. `tool.toast.update` is renamed `tool.toast.update.later` (same meaning, translations kept) |
+| Site update banner | `components/shell/UpdateBanner.astro` (only where `BaseLayout` renders the header): `template#at-update` (`.at-upd`, `[data-update-reload]`, `[data-update-close]`, strings `update.banner`, `update.close`) and `lib/update-banner.ts` `watchSiteUpdates()`; skipped on a page with `.at-island`. Sheet `styles/update-banner.css`, linked only when the banner shows |
+| Mixer preview | `[data-snd="try"]` in the Sounds sheet's Pro card, `[data-snd-see]` (hidden while a session runs), `[data-snd-pv]` countdown line, `.at-snd[data-pv]`; `startPreview` kind `sound`, id `mixer`, labels `tool.sound.mix.proName`, `tool.sound.mix.proBack`; button `tool.sound.mix.try` |
+| Home "Make it yours" | `components/home/HomeYours.astro`, `#home-yours`, classes `.at-hy-*`, sheet `styles/home-yours.css`; strings `page.home.yours.*`. Choose your level adds `page.home.levels.web.g5`, `.pro.g5`, `.pro.g6` |
+| /pro | Comparison groups `web` · `looks` · `focus` · `ext` · `ads` (`page.pro.cmp.g.looks`, `.g.focus`, rows `page.pro.cmp.r.` `themes`, `patterns`, `presets`, `preview`, `sounds`, `mixer`, `library`, `notes`, `tools`, `pomo`); "What Pro adds" items `looks` · `sound` · `notes` · `pomo` · `msg` · `stats` · `pip` · `sched` · `ads` (`page.pro.get.lamps.*` removed); `/pro/activate` adds `page.pro.activate.ok.u7` |
+| /extension | FAQ adds `page.extension.faq.q5` / `a5`: the faces, sounds, notes and focus tools are in the web app, not the extension |
+| Changelog release | `changelog/2026-09-release-1.1.md` (`release: '1.1'`), pinned as the release card above the dated entries |
 
 ## 14. Writing conventions for these docs
 

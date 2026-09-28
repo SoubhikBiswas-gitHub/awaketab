@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import { bootInline, BOOT_FILE, facesHref, themesHref } from './scripts/boot-inline.mjs';
+import { versionDefines } from './scripts/build-version.mjs';
 import { polarDefines } from './scripts/polar-server.mjs';
 
 // Libraries each feature pack owns; they never enter the tool's own chunks.
@@ -69,6 +70,7 @@ export default defineConfig({
     // F-06: PUBLIC_POLAR_SERVER picks CHECKOUT_LINKS and whether the bundles trust the dev licence key.
     define: {
       ...polarDefines(),
+      ...versionDefines(),
       __AT_THEMES__: JSON.stringify(themesHref()),
       __AT_FACES__: JSON.stringify(facesHref()),
     },

@@ -22,6 +22,7 @@ toc:
   how-does-a-session-work: "How a session works"
   what-do-the-seven-states-mean: "The seven states"
   what-happens-when-you-switch-tabs-or-apps: "Switching tabs or apps"
+  what-else-can-the-screen-show: "Faces, sounds and notes"
   where-do-your-settings-and-data-go: "Your settings and data"
   when-is-the-extension-the-better-fit: "The extension"
   what-does-this-page-not-cover: "Limits"
@@ -53,7 +54,11 @@ pills:
 rows:
   data:
     - title: "Settings"
-      text: "Theme, colour, clock face, sound and your default duration are saved in this browser's storage. Clear the site's data and they are gone."
+      text: "Theme, colours, background, clock face, sounds, focus tools and your default duration are saved in this browser's storage. Clear the site's data and they are gone."
+    - title: "Notes"
+      text: "Kept in this browser's own storage (IndexedDB) and never uploaded. Voice typing goes through the browser's speech service; AwakeTab itself sends nothing."
+    - title: "Pro previews"
+      text: "A five-minute preview of a Pro item is never saved. A reload ends it and brings back your own choice."
     - title: "The current session"
       text: "Saved in this browser so a reload can offer to carry on where you left off."
     - title: "Your stats"
@@ -113,6 +118,14 @@ Only two states run the timer: "Screen awake" and "Awake via video fallback". In
 Browsers release a wake lock the moment its page is hidden. Switching tabs, minimising the window, changing apps on a phone and locking the phone all count as hidden. That is a rule every browser follows, not a setting AwakeTab can change.
 
 AwakeTab does not hide this. The pill turns to "Paused — tab hidden", the countdown stops moving, and the end time stays where it was. When you come back, AwakeTab asks again and the pill returns to "Screen awake" once the browser agrees. A window that is visible but not focused keeps its lock, so AwakeTab can sit beside the document you are reading.
+
+## What else can the screen show?
+
+The wake lock is the core, and everything else sits around it without touching it. Twelve clock faces show the same session: Ring, Bold, Horizon and Tide; Flip, Nixie, LCD and LED; and Rolling, Analog, Rings and Words. Switch with the face name above the clock, a sideways swipe on the clock or `C`. **Settings → Appearance** adds colour themes, lamps, backgrounds and presets, each with a light and a dark version.
+
+**Sounds** (`S`) plays brown, pink or white noise, rain, a café, a fireplace or a lo-fi loop, all made live in the browser, and an end sound marks the finish. The notepad (`N`) keeps notes and checklists beside the clock. Focus mode (`T`) runs a Pomodoro with pause and skip, and you can add an intention (`I`), a breathing guide (`B`) and a second time zone.
+
+Each of these loads only the first time you use it, so the tool stays small. None of them changes the pill: sound never keeps the screen awake, and no face or theme hides a paused or blocked state. Pro items can be tried for five minutes, and a preview never touches the lock or the timer.
 
 ## Where do your settings and data go?
 

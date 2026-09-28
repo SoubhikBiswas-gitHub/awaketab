@@ -15,6 +15,7 @@ import StatusPill from './shell/StatusPill.astro';
 import type { IToolReady } from '../lib/tool-ready';
 import { FACE_GROUPS, FACE_ORDER } from '../tool/packs/faces/order';
 import { TRACKS } from '../tool/packs/sound/tracks';
+import { VERSION } from '../lib/version';
 
 interface Props {
   locale?: TLocale;
@@ -1652,8 +1653,10 @@ const eight = ready.chip === 'custom';
       >
       <a class="at-textlink" href="/pro" data-open-pro>{t('settings.pro')}</a>
       <a class="at-textlink" href="/pro/manage">{t('settings.pro.manage')}</a>
+      <a class="at-textlink" href="/changelog" target="_blank" rel="noopener">{t('footer.whatsNew')}</a>
     </div>
     <Button data-settings-reset>{t('settings.reset')}</Button>
+    <p class="at-caption" data-version>{t('footer.version', { version: VERSION })}</p>
   </div>
 </Sheet>
 
@@ -1858,8 +1861,12 @@ const eight = ready.chip === 'custom';
     <p class="at-caption">{t('tool.sound.mix.help')}</p>
     <div class="at-snd-lock">
       <p>{t('tool.sound.mix.locked')}</p>
-      <a class="at-button at-button-sm" href="/pro">{t('pro.see')}</a>
+      <div class="at-snd-lock-row">
+        <button class="at-button at-button-sm" type="button" data-snd="try">{t('tool.sound.mix.try')}</button>
+        <a class="at-button at-button-sm at-button-quiet" href="/pro" data-snd-see>{t('pro.see')}</a>
+      </div>
     </div>
+    <p class="at-caption at-snd-pv" data-snd-pv aria-hidden="true"></p>
     <ul class="at-snd-mix" aria-labelledby="snd-k-mix">
       {
         gens.map((g) => (

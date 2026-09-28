@@ -1,0 +1,64 @@
+.at-upd {
+  position: fixed;
+  z-index: 60;
+  inset-block-end: max(var(--at-s-4), env(safe-area-inset-bottom));
+  inset-inline: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--at-s-3);
+  inline-size: min(100% - 2 * var(--at-gutter), 30rem);
+  min-block-size: var(--at-h-primary);
+  margin-inline: auto;
+  padding-block: var(--at-s-1);
+  padding-inline: var(--at-s-4) var(--at-s-1);
+  border: 1px solid var(--at-line);
+  border-radius: var(--at-r-lg);
+  background: var(--at-surface);
+  box-shadow: var(--at-elev);
+  color: var(--at-ink);
+  animation: at-upd-in 0.7s var(--at-ease) both;
+}
+
+.at-upd-dot {
+  flex-shrink: 0;
+  inline-size: var(--at-s-2);
+  block-size: var(--at-s-2);
+  border-radius: var(--at-r-pill);
+  background: var(--at-accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--at-accent) 18%, transparent);
+}
+
+.at-upd-text {
+  flex: 1;
+  min-inline-size: 0;
+  margin: 0;
+  font: var(--at-type-small);
+  text-wrap: pretty;
+}
+
+.at-upd .at-button {
+  flex-shrink: 0;
+}
+
+.at-upd-x {
+  flex-shrink: 0;
+}
+
+@keyframes at-upd-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .at-upd {
+    animation: none;
+  }
+}
+
+@media print {
+  .at-upd {
+    display: none;
+  }
+}
