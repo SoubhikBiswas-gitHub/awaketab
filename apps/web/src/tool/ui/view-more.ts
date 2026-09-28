@@ -31,7 +31,6 @@ export function more({
   return [
     {
       untilLong: u ? chip : t('tool.preset.until'),
-      untilShort: u ? t('tool.chip.untilAt', { time: at }) : t('tool.preset.until'),
       custom: c ? chipW : t('tool.preset.custom'),
       more: t(u ? 'tool.chip.moreUntil' : c ? 'tool.chip.moreCustom' : 'tool.chip.more'),
       customWords: cw,

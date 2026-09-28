@@ -4,6 +4,7 @@ import { createT } from '../i18n/load';
 import { localePath, type TLocale } from '../i18n/locales';
 import ToolPanel from './ToolPanel.astro';
 import SiteHeader from './shell/SiteHeader.astro';
+import Icon from './icons/Icon.astro';
 import { POLAR_PORTAL_URL } from '../lib/pro-common';
 import { toolReady } from '../lib/tool-ready';
 import { stripLocale } from '../tool/params';
@@ -60,10 +61,7 @@ const cardKicker =
 
 // Icons (DESIGN.md §11.4: 20 px, stroke 1.8, round caps), drawn as on the canvas boards (Main, Extras).
 const ICON = {
-  stats: 'M5 20V11M12 20V5M19 20v-7',
   settings: 'M4 7h10M18 7h2M4 17h4M12 17h8',
-  share: 'M12 3.5v11M8 7.5l4-4 4 4M5.5 12v6.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V12',
-  install: 'M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14',
   grace: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 7.5V12l3 2',
   lapsed: 'M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 11v5.5M12 7.6v.3',
   arrow: 'M5 12h14M13 6l6 6-6 6',
@@ -75,6 +73,17 @@ const lapses = [
   ['lapsed', 'ended', '/pro'],
 ] as const;
 const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
+// The More menu: every secondary tool action with its label, the hook the island already routes, and its key.
+const more: Array<[string, string, Record<string, string | boolean>, string, string]> = [
+  ['share-network', t('tool.share.title'), { 'data-open-share': true, 'aria-haspopup': 'dialog' }, '', ''],
+  ['picture-in-picture', t('tool.header.pip'), { 'data-open-pip': true }, 'P', 'at-phone-hide'],
+  ['note-pencil', t('tool.notes.open'), { 'data-open-notes': true, 'aria-haspopup': 'dialog' }, 'N', 'at-desk-hide'],
+  ['target', t('tool.intention.open'), { 'data-act': 'intention' }, 'I', 'at-desk-hide'],
+  ['chart-bar', t('stats.title'), { 'data-open-stats': true, 'aria-haspopup': 'dialog' }, '', ''],
+  ['keyboard', t('tool.header.shortcuts'), { 'data-open-shortcuts': true, 'aria-haspopup': 'dialog' }, '?', ''],
+  ['gear-six', t('tool.header.settings'), { 'data-open-settings': true, 'aria-haspopup': 'dialog' }, '', ''],
+  ['download-simple', t('tool.header.installApp'), { 'data-install': true, hidden: true }, '', ''],
+];
 ---
 
 {
@@ -171,208 +180,70 @@ const lapseFalls = ['lamp', 'message', 'stats', 'ads'] as const;
           })}
         </section>
         <SiteHeader locale={locale} tool>
-          <p class="at-dateline at-dateline-hdr" aria-hidden="true">
-            <time class="at-date" data-t="date" />
+          <p class="at-hclock">
+            <span class="sr-only">{t('tool.header.clock')}</span>
             <time class="at-now" data-t="now" />
+            <time class="at-date" data-t="date" />
           </p>
           <span class="at-tag at-pro-badge" data-pro-badge hidden>
             {t('pro.badge')}
           </span>
-          <span class="at-install-slot">
-          <button
-            class="at-icon-button at-phone-only"
-            type="button"
-            data-install
-            hidden
-            aria-label={t('tool.header.install')}
-            title={t('tool.header.install')}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d={ICON.install} />
-            </svg>
-          </button>
-          <button
-            class="at-install-btn at-phone-hide"
-            type="button"
-            data-install
-            hidden
-            aria-label={t('tool.header.install')}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d={ICON.install} />
-            </svg>
-            {t('pwa.install.short')}
-          </button>
-          </span>
-          <button
-            class="at-icon-button at-phone-hide"
-            type="button"
-            data-open-share
-            aria-label={t('tool.header.share')}
-            title={t('tool.header.share')}
-            aria-haspopup="dialog"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d={ICON.share} />
-            </svg>
-          </button>
-          <button
-            class="at-icon-button at-phone-hide"
-            type="button"
-            data-open-shortcuts
-            aria-label={t('tool.header.shortcuts')}
-            title={t('tool.header.shortcuts')}
-            aria-haspopup="dialog"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <>
-                <rect x="2.5" y="6" width="19" height="12" rx="2.5" />
-                <path d="M6.5 10h1M10.5 10h1M14.5 10h1M17.5 10h.5M7.5 14h9" />
-              </>
-            </svg>
-          </button>
-          <button
-            class="at-icon-button at-phone-hide"
-            type="button"
-            data-open-pip
-            aria-label={t('tool.header.pip')}
-            title={t('tool.header.pip')}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <>
-                <rect x="2.5" y="5" width="19" height="14" rx="2.5" />
-                <rect x="12" y="11" width="6.5" height="5" rx="1.5" />
-              </>
-            </svg>
-          </button>
           <button
             class="at-icon-button at-snd-btn"
             type="button"
-            data-act="sound"
+            data-act="customize"
+            data-tab="sound"
             aria-label={t('tool.header.sound')}
             title={t('tool.header.sound')}
             aria-haspopup="dialog"
             aria-keyshortcuts="S"
           >
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <>
-                <path d="M5 10v4" />
-                <path d="M9.5 6v12" />
-                <path d="M14 8.5v7" />
-                <path d="M18.5 11v2" />
-              </>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <path d="M5 10v4" />
+              <path d="M9.5 6v12" />
+              <path d="M14 8.5v7" />
+              <path d="M18.5 11v2" />
             </svg>
+          </button>
+          <button class="at-hbtn at-cz-btn" type="button" data-act="customize" aria-haspopup="dialog" aria-label={t('tool.header.customize')}>
+            <Icon name="sparkle" />
+            <span class="at-hbtn-t">{t('tool.header.customize')}</span>
           </button>
           <button
-            class="at-icon-button at-phone-hide"
+            class="at-icon-button at-more-btn"
             type="button"
-            data-open-stats
-            aria-label={t('stats.title')}
-            aria-haspopup="dialog"
+            popovertarget="at-more"
+            data-more-open
+            style="anchor-name:--at-more, --at-hm-menu"
+            aria-label={t('tool.header.more')}
+            title={t('tool.header.more')}
           >
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <path d={ICON.stats} />
-            </svg>
+            <Icon name="dots-three-circle" tone="ink" size={24} />
           </button>
-          <button
-            class="at-icon-button"
-            type="button"
-            data-open-settings
-            aria-label={t('tool.header.settings')}
-            aria-haspopup="dialog"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              aria-hidden="true"
-            >
-              <>
-                <path d={ICON.settings} />
-                <circle cx="16" cy="7" r="2" />
-                <circle cx="10" cy="17" r="2" />
-              </>
-            </svg>
-          </button>
+          <div class="at-more" id="at-more" popover data-more style="position-anchor:--at-more">
+            <ul class="at-more-list" role="list">
+              {more.map(([icon, label, attrs, kbd, cls]) => (
+                <li class={cls}>
+                  <button class="at-more-row" type="button" popovertarget="at-more" popovertargetaction="hide" {...attrs}>
+                    <Icon name={icon} />
+                    <span class="at-more-t">{label}</span>
+                    {kbd && <kbd class="at-kbd at-kbd-hint" aria-hidden="true">{kbd}</kbd>}
+                  </button>
+                </li>
+              ))}
+              <li class="at-more-sep" role="separator" />
+              <li>
+                <button class="at-more-row" type="button" popovertarget="at-hm-menu">
+                  <Icon name="compass" />
+                  <span class="at-more-t">{t('tool.header.site')}</span>
+                </button>
+              </li>
+            </ul>
+          </div>
         </SiteHeader>
         <main class="at-main">
           <slot name="top" />
           <div class="at-first">
-            <p class="at-dateline">
-              <time class="at-date" data-t="date" />
-              <time class="at-now" data-t="now" />
-            </p>
             <ToolPanel locale={locale} until={until} untilAt={untilAt} ready={ready} />
           </div>
           <div class="at-below">

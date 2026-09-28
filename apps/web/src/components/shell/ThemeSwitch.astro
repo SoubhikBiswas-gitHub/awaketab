@@ -5,10 +5,9 @@ import Icon from '../icons/Icon.astro';
 
 interface Props {
   locale: TLocale;
-  compact?: boolean;
 }
 
-const { locale, compact = false } = Astro.props;
+const { locale } = Astro.props;
 const t = createT(locale);
 const ICONS = { light: 'sun', dark: 'moon', auto: 'circle-half' } as const;
 const themes = [
@@ -29,17 +28,3 @@ const themes = [
     ))
   }
 </div>
-{
-  compact && (
-    <button class="at-icon-button at-theme-cycle" type="button" data-theme-cycle>
-      <span class="sr-only">{t('settings.theme')}: </span>
-      {themes.map(([value, label]) => (
-        <span class="sr-only" data-v={value}>{label}. </span>
-      ))}
-      <span class="sr-only">{t('header.theme.change')}</span>
-      {themes.map(([value]) => (
-        <span class="at-theme-cycle-i" data-v={value}><Icon name={ICONS[value]} size={20} /></span>
-      ))}
-    </button>
-  )
-}

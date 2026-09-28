@@ -173,7 +173,6 @@ export function mountView(ctx: IToolCtx): () => void {
       fn: t(`tool.face.${settings.face}`),
       date: dateLong(now),
       now: nowT,
-      nowShows: t('settings.clock.now', { time: nowT }),
       announce,
     };
     const aria: Record<string, string> = {

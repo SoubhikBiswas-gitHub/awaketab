@@ -38,7 +38,9 @@ test('journey 3 until panel asks "tomorrow?" for a time that has passed', async 
   await page.clock.install({ time: new Date('2026-09-27T21:30:00') });
   await page.goto('/?autostart=0');
   await page.locator('#awaketab-tool[data-booted]').waitFor();
-  await page.getByRole('button', { name: 'Until a time' }).click();
+  // Until… sits in the ⋯ menu at the end of the length row.
+  await page.locator('#awaketab-tool .at-len-more').click();
+  await page.locator('#at-lenmore').getByRole('button', { name: 'Until a time' }).click();
   // An inline panel replaces the length block, never a modal (DESIGN.md §6).
   const panel = page.locator('.at-lp-until');
   await expect(panel).toBeVisible();
@@ -137,7 +139,7 @@ test('the first paint is the settled tool: the island changes nothing on screen 
         pill: text('[data-pill-text]'),
         face: text('.at-face-ring .at-face-text'),
         cta: text('.at-cta [data-t="cta"]'),
-        date: text('.at-first [data-t="date"]'),
+        date: text('#awaketab-tool header [data-t="date"]'),
         pressed: text('[data-chips] [aria-pressed="true"]'),
       };
     });
@@ -167,7 +169,8 @@ test('a toast on a content page has a 44 px close button', async ({ page }) => {
   await page.locator('#awaketab-tool[data-booted]').waitFor();
   await page.locator('#awaketab-tool .at-cta').click();
   await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake');
-  // Changing the length while running switches at once and says so in a toast.
+  // Changing the length while running switches at once and says so in a toast (Change unfolds the row).
+  await page.locator('#awaketab-tool [data-act="change"]').click();
   await page.locator('#awaketab-tool [data-chips] [data-preset="p60"]').click();
   const close = page.locator('[data-toasts] .at-toast-x').first();
   await expect(close).toBeVisible();
@@ -276,7 +279,8 @@ test("journey 6 timer end chimes, flashes the title and shows the time's-up card
   await page.locator('#awaketab-tool[data-booted]').waitFor();
   // A pointerdown on the island primes the AudioContext (docs/04 §10).
   await page.locator('#awaketab-tool h1').click();
-  await page.getByRole('button', { name: 'Custom length' }).click();
+  await page.locator('#awaketab-tool .at-len-more').click();
+  await page.locator('#at-lenmore').getByRole('button', { name: 'Custom length' }).click();
   await expect(page.locator('.at-lp-custom')).toBeVisible();
   await page.locator('#awaketab-tool .at-cta').click();
   await expect(page.locator('[data-pill-text]')).toHaveText('Screen awake');

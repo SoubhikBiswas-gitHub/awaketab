@@ -220,7 +220,8 @@ test('journey 4 (keyboard): hide → Paused, show → Screen awake again, focus 
   const keys = keysFor(browserName);
   await open(page, '/');
   await expect(pill(page)).toHaveText('Screen awake');
-  await tabTo(page, keys, '#awaketab-tool [data-chips] [data-preset="p30"]');
+  // While a session runs the length row is folded into one line; its Change button is the focusable control there.
+  await tabTo(page, keys, '#awaketab-tool [data-act="change"]');
   await page.evaluate(() =>
     (window as Window & { __at: { setVisibility: (s: string) => void } }).__at.setVisibility('hidden'),
   );
@@ -230,7 +231,7 @@ test('journey 4 (keyboard): hide → Paused, show → Screen awake again, focus 
   );
   await expect(pill(page)).toHaveText('Screen awake');
   await expect(page.locator('[data-toasts]')).toContainText('Screen awake again');
-  expect(await focusedMatches(page, '[data-preset="p30"]')).toBe(true);
+  expect(await focusedMatches(page, '[data-act="change"]')).toBe(true);
   await expectVisibleFocus(page);
 });
 
@@ -260,7 +261,10 @@ test.describe("journey 6 (keyboard): custom timer end → the time's-up card", (
     await page.clock.install();
     await open(page, '/?autostart=0');
     await expect(pill(page)).toHaveText('Ready');
-    await tabTo(page, keys, '#awaketab-tool [data-chips] [data-preset="custom"]');
+    // Until… and Custom… sit in the ⋯ menu at the end of the length row.
+    await tabTo(page, keys, '#awaketab-tool [data-chips] .at-len-more');
+    await page.keyboard.press('Enter');
+    await tabTo(page, keys, '#at-lenmore [data-preset="custom"]', 4);
     await page.keyboard.press('Enter');
     // The Custom panel opens inline with focus on its first button (the stepper).
     await expect(page.locator('.at-lp-custom')).toBeVisible();
@@ -420,13 +424,16 @@ test('ambient mode (M): controls take focus with a visible ring, Tab stays in th
   expect((await session(page))?.status).toBe('active');
 });
 
-test('settings dialog: every control shows focus, Esc closes and focus returns to the Settings button', async ({
+test('settings dialog: every control shows focus, Esc closes and focus returns to the More button', async ({
   page,
   browserName,
 }) => {
   const keys = keysFor(browserName);
   await open(page, '/?autostart=0');
-  await tabTo(page, keys, '#awaketab-tool header [data-open-settings]');
+  // Settings is a row of the header's More menu.
+  await tabTo(page, keys, '#awaketab-tool header [data-more-open]');
+  await page.keyboard.press('Enter');
+  await tabTo(page, keys, '#at-more [data-open-settings]', 12);
   await page.keyboard.press('Enter');
   const dlg = page.locator('dialog[data-dialog="settings"]');
   await expect(dlg).toBeVisible();
@@ -442,7 +449,7 @@ test('settings dialog: every control shows focus, Esc closes and focus returns t
   }
   await page.keyboard.press('Escape');
   await expect(dlg).toBeHidden();
-  expect(await focusedMatches(page, '#awaketab-tool header [data-open-settings]')).toBe(true);
+  expect(await focusedMatches(page, '#awaketab-tool header [data-more-open]')).toBe(true);
   await expectVisibleFocus(page);
 });
 
@@ -452,13 +459,15 @@ test('stats dialog: opens from the keyboard, Tab reaches Close, Esc closes and r
 }) => {
   const keys = keysFor(browserName);
   await open(page, '/?autostart=0');
-  await tabTo(page, keys, '#awaketab-tool header [data-open-stats]');
+  await tabTo(page, keys, '#awaketab-tool header [data-more-open]');
+  await page.keyboard.press('Enter');
+  await tabTo(page, keys, '#at-more [data-open-stats]', 12);
   await page.keyboard.press('Enter');
   const dlg = page.locator('dialog[data-dialog="stats"]');
   await expect(dlg).toBeVisible();
   await tabTo(page, keys, 'dialog[data-dialog="stats"] [data-dialog-close]', 10);
   await page.keyboard.press('Escape');
   await expect(dlg).toBeHidden();
-  expect(await focusedMatches(page, '#awaketab-tool header [data-open-stats]')).toBe(true);
+  expect(await focusedMatches(page, '#awaketab-tool header [data-more-open]')).toBe(true);
   await expectVisibleFocus(page);
 });

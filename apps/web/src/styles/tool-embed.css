@@ -7,7 +7,7 @@
   padding: 0;
 }
 
-.at-tool-embed .at-tool:not(:has(> .at-tabs-late)) {
+.at-tool-embed .at-tool:not(:has(> #at-tool-parsed)) {
   visibility: hidden;
 }
 
@@ -87,10 +87,6 @@
     row-gap: var(--at-s-6);
   }
 
-  .at-tool-embed .at-choose {
-    display: none;
-  }
-
   .at-tool-embed .at-bar .at-seg-item {
     font: var(--at-type-ui);
     font-weight: 500;
@@ -167,37 +163,5 @@
   .at-tool-embed .at-len .at-chip {
     overflow-wrap: normal;
     white-space: nowrap;
-  }
-}
-
-@media (360px <= width < 600px) {
-  .at-tool-embed .at-len {
-    grid-template-columns: repeat(20, minmax(0, 1fr));
-  }
-
-  .at-tool-embed .at-len .at-chip {
-    grid-column: span 4;
-  }
-
-  .at-tool-embed .at-len :is([data-preset="p240"], [data-preset="pinf"], .at-chip-choose) {
-    grid-column: span 5;
-  }
-
-  .at-tool-embed:not(:lang(en), :lang(zh)) .at-len {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .at-tool-embed:not(:lang(en), :lang(zh))
-    .at-len
-    :is(.at-chip, [data-preset="p240"], [data-preset="pinf"], .at-chip-choose) {
-    grid-column: span 1;
-  }
-
-  .at-tool-embed:not(:lang(en), :lang(zh)) .at-len :is(.at-c-until, .at-c-custom) {
-    display: none;
-  }
-
-  .at-tool-embed:not(:lang(en), :lang(zh)) .at-len .at-c-more {
-    display: inline-flex;
   }
 }

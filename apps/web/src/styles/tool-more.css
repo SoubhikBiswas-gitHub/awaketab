@@ -1928,11 +1928,6 @@
   --dot-ink: var(--at-on-accent);
 }
 
-.at-fc > .at-seg-item:hover {
-  background: var(--at-raised);
-  color: var(--at-ink);
-}
-
 .at-face-opt > svg {
   flex-shrink: 0;
   inline-size: var(--at-icon-md);

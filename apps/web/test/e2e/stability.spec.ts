@@ -297,13 +297,10 @@ function report(moved: IShift[]): string {
 }
 
 async function pickTheme(page: Page, theme: 'light' | 'dark'): Promise<void> {
+  // The tool header has no theme switch any more (it lives in Customize); D steps auto → light → dark → oled.
   const html = page.locator('html');
-  const item = page.locator(`#awaketab-tool header .at-theme-item[data-v="${theme}"]:visible`).first();
-  if ((await item.count()) > 0) await item.click();
-  else {
-    const cycle = page.locator('#awaketab-tool header [data-theme-cycle]');
-    for (let i = 0; i < 4 && (await html.getAttribute('data-theme-pref')) !== theme; i += 1) await cycle.click();
-  }
+  for (let i = 0; i < 4 && (await html.getAttribute('data-theme-pref')) !== theme; i += 1)
+    await page.keyboard.press('d');
   await expect(html).toHaveAttribute('data-theme-pref', theme);
 }
 
@@ -386,14 +383,15 @@ test.describe('layout stability', { tag: '@stability' }, () => {
             ['theme dark', () => pickTheme(page, 'dark')],
             ['theme light', () => pickTheme(page, 'light')],
             [
-              'open the header Menu',
+              'open the site menu from More',
               async () => {
-                await page.locator('#awaketab-tool header button.at-hm-open').click();
+                await page.locator('#awaketab-tool header button[data-more-open]').click();
+                await page.locator('#at-more button[popovertarget="at-hm-menu"]').click();
                 await expect(menu).toBeVisible();
               },
             ],
             [
-              'close the header Menu',
+              'close the site menu',
               async () => {
                 await page.keyboard.press('Escape');
                 await expect(menu).toBeHidden();

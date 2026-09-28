@@ -7,6 +7,7 @@ import {
   type TLocale,
 } from '../i18n/locales';
 import FaceSwitch from './FaceSwitch.astro';
+import Icon from './icons/Icon.astro';
 import SponsorCard from './SponsorCard.astro';
 import Button from './shell/Button.astro';
 import Dialog from './ui/Dialog.astro';
@@ -162,6 +163,12 @@ const b = untilWall ? '' : ready.b;
 const meta = untilWall ? t('tool.meta.endsAt') : ready.meta;
 const cta = untilWall ? t('tool.cta.until', { time: untilAt }) : ready.ctaAria;
 const eight = ready.chip === 'custom';
+// "Ends {time}" is split around the time, which the island fills (the same slot as the face's end time).
+const endsAt = t('tool.len.ends', { time: '\u0000' }).split('\u0000') as [string, string];
+const extend = [
+  ['extend', 'add15'],
+  ['extend30', 'add30'],
+] as const;
 ---
 
 <div class="at-tool" data-panel id="content" tabindex="-1">
@@ -172,10 +179,6 @@ const eight = ready.chip === 'custom';
     set:html={catalogJson}
   />
   <span class="at-sr" role="status" data-t="announce"></span>
-
-  <div class="at-tabs at-tabs-early">
-    <FaceSwitch locale={locale} />
-  </div>
 
   <div class="at-pip-slot" data-pip-slot>
     <div class="at-pillrow">
@@ -202,20 +205,9 @@ const eight = ready.chip === 'custom';
           aria-expanded="false"
           aria-controls="at-why"
           aria-label={t('tool.why.open')}
+          title={t('tool.why.open')}
         >
-          <span class="at-why-text">{t('tool.why.open')}</span>
-          <svg width="20" height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            ><circle cx="12" cy="12" r="9"></circle><path
-              d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6M12 17.2v.1"
-            ></path></svg
-          >
+          <Icon name="info" tone="ink" />
         </button>
       </div>
       <span class="at-deferred" id="at-deferred">
@@ -490,6 +482,10 @@ const eight = ready.chip === 'custom';
     </div>
   </div>
 
+  <div class="at-tabs">
+    <FaceSwitch locale={locale} />
+  </div>
+
   <div class="at-note">
     <div class="at-card-tone at-blocked" role="alert">
       <h2>{t('tool.blocked.title')}</h2>
@@ -609,16 +605,13 @@ const eight = ready.chip === 'custom';
     {
       !embed && (
         <div class="at-dock-tools" role="group" aria-label={t('tool.tools')}>
-          <Button size="sm" variant="quiet" data-open-notes aria-haspopup="dialog" kbd="N" aria-keyshortcuts="N">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d={NOTE_ICON.pad} />
-            </svg>
+          <Button size="sm" variant="quiet" data-open-notes aria-haspopup="dialog" kbd="N" aria-keyshortcuts="N" title={t('tool.notes.key')}>
+            <Icon name="note-pencil" />
             {t('tool.notes.open')}
           </Button>
-          <Button size="sm" variant="quiet" data-act="intention" kbd="I" aria-keyshortcuts="I">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" />
-            </svg>
+          <span class="at-dock-dot" aria-hidden="true" />
+          <Button size="sm" variant="quiet" data-act="intention" kbd="I" aria-keyshortcuts="I" title={t('tool.intention.key')}>
+            <Icon name="target" />
             {t('tool.intention.open')}
           </Button>
         </div>
@@ -638,111 +631,75 @@ const eight = ready.chip === 'custom';
           </a>
         </div>
       ) : (
-        <div
-          class="at-len"
-          data-chips
-          role="group"
-          aria-label={t('tool.presets')}
-        >
+        <div class="at-len" data-chips role="group" aria-label={t('tool.presets')}>
           <div class="at-seg at-bar">
             <span class="at-seg-ind" aria-hidden="true" />
-            {presets.map((id) => (
+            {[...presets, 'pinf' as const].map((id) => (
               <button
                 class="at-seg-item at-chip"
                 type="button"
                 data-preset={id}
-                aria-pressed={(id === ready.chip) ? "true" : "false"}
+                aria-pressed={id === ready.chip ? 'true' : 'false'}
                 aria-label={t(`tool.preset.${id}.sr`)}
               >
                 {t(`tool.preset.${id}`)}
               </button>
             ))}
             <button
-              class="at-seg-item at-chip"
-              type="button"
-              data-preset="pinf"
-              aria-pressed={(ready.chip === 'pinf') ? "true" : "false"}
-              aria-label={t('tool.preset.pinf.sr')}
-            >
-              {t('tool.preset.pinf')}
-            </button>
-          </div>
-          <div class="at-choose">
-            <button
-              class="at-chip at-chip-choose at-c-until"
-              type="button"
-              data-preset="until"
-              aria-pressed="false"
-              data-l="untilAria"
-              aria-label={t('tool.chip.untilAria')}
-            >
-              <>
-                <span data-t="untilLong">{t('tool.preset.until')}</span>
-                <span data-t="untilShort">{t('tool.preset.until')}</span>
-              </>
-            </button>
-            <button
-              class="at-chip at-chip-choose at-c-custom"
-              type="button"
-              data-preset="custom"
-              aria-pressed={(eight) ? "true" : "false"}
-              data-l="customAria"
-              aria-label={t('tool.chip.customAria')}
-            >
-              <span data-t="custom">{eight ? ready.len : t('tool.preset.custom')}</span>
-            </button>
-            <button
-              class="at-chip at-chip-choose at-c-more"
+              class="at-seg-item at-chip at-len-more"
               type="button"
               data-act="more"
-              aria-pressed={(eight) ? "true" : "false"}
+              popovertarget="at-lenmore"
+              style="anchor-name:--at-lenmore"
+              aria-pressed={eight ? 'true' : 'false'}
               data-l="moreAria"
               aria-label={t('tool.chip.moreAria')}
+              title={t('tool.chip.moreAria')}
             >
-              <span data-t="more">{t(eight ? 'tool.chip.moreCustom' : 'tool.chip.more')}</span>
+              <Icon name="dots-three-outline" tone="ink" />
             </button>
+          </div>
+          <div class="at-run" aria-live="off">
+            <p class="at-sum">
+              <span class="at-sum-end">
+                {endsAt[0]}
+                <span data-t="mb" />
+                {endsAt[1]}
+              </span>
+              <span class="at-sum-inf">{t('tool.len.inf')}</span>
+              <span class="at-sum-p" data-t="ma" />
+              <span class="at-sum-sep" aria-hidden="true">·</span>
+              <button class="at-sum-change" type="button" data-act="change" aria-label={t('tool.len.changeAria')}>
+                {t('tool.len.change')}
+              </button>
+            </p>
+            <div class="at-ext" role="group" aria-label={t('tool.extend.label')}>
+              {extend.map(([ms, key]) => (
+                <button class="at-chip at-ext-chip" type="button" data-act={ms} aria-label={t(`tool.extend.${key}.sr`)}>
+                  {t(`tool.extend.${key}`)}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )
     }
 
-    <div class="at-lpanel at-lp-more">
-      <div class="at-lp-head">
-        <span class="at-lp-title" id="at-more-title"
-          >{t('tool.more.title')}</span
-        >
-        <button
-          class="at-icon-button"
-          type="button"
-          data-act="close"
-          aria-label={close}
-          ><svg width="20" height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            aria-hidden="true"><path d={X}></path></svg
-          ></button
-        >
-      </div>
-      <div class="at-lp-two" role="group" aria-labelledby="at-more-title">
-        <button
-          class="at-chip at-chip-choose at-c-until"
-          type="button"
-          data-preset="until"
-          aria-pressed="false"
-          ><span data-t="untilLong">{t('tool.preset.until')}</span></button
-        >
-        <button
-          class="at-chip at-chip-choose at-c-custom"
-          type="button"
-          data-preset="custom"
-          aria-pressed={(eight) ? "true" : "false"}
-          ><span data-t="custom">{eight ? ready.len : t('tool.preset.custom')}</span></button
-        >
-      </div>
-    </div>
+    {
+      !untilWall && (
+        <div class="at-lenmore" id="at-lenmore" popover style="position-anchor:--at-lenmore">
+          <button class="at-more-row" type="button" data-preset="until" popovertarget="at-lenmore" popovertargetaction="hide" aria-pressed="false" data-l="untilAria" aria-label={t('tool.chip.untilAria')} aria-keyshortcuts="U">
+            <Icon name="clock" />
+            <span class="at-more-t" data-t="untilLong">{t('tool.preset.until')}</span>
+            <kbd class="at-kbd at-kbd-hint" aria-hidden="true">U</kbd>
+          </button>
+          <button class="at-more-row" type="button" data-preset="custom" popovertarget="at-lenmore" popovertargetaction="hide" aria-pressed={eight ? 'true' : 'false'} data-l="customAria" aria-label={t('tool.chip.customAria')}>
+            <Icon name="timer" />
+            <span class="at-more-t" data-t="custom">{eight ? ready.len : t('tool.preset.custom')}</span>
+          </button>
+        </div>
+      )
+    }
 
     <div class="at-lpanel at-lp-until">
       <div class="at-lp-head">
@@ -1083,16 +1040,14 @@ const eight = ready.chip === 'custom';
     </div>
 
     <div class="at-acts at-acts-run">
-      <Button size="lg" class="at-extend" data-act="extend"
-        >{t('tool.extend.add15')}</Button
-      >
-      <Button
-        variant="stop"
-        data-stop
-        data-act="stop"
-        kbd="Space"
-        aria-keyshortcuts="Space">{t('tool.ring.stop')}</Button
-      >
+      {extend.map(([ms, key]) => (
+        <Button class="at-extend" data-act={ms} aria-label={t(`tool.extend.${key}.sr`)}>
+          {t(`tool.extend.${key}`)}
+        </Button>
+      ))}
+      <Button class="at-stop" data-stop data-act="stop" kbd="Space" aria-keyshortcuts="Space">
+        {t('tool.ring.stop')}
+      </Button>
     </div>
 
     <div class="at-ask" role="group" aria-labelledby="at-ask-title">
@@ -1157,9 +1112,6 @@ const eight = ready.chip === 'custom';
     }
   </div>
 
-  <div class="at-tabs at-tabs-late" id="at-tabs-late">
-    <FaceSwitch locale={locale} />
-  </div>
   <span id="at-tool-parsed" hidden></span>
 
   <div class="at-banner at-lang-banner" data-lang-suggest hidden>
