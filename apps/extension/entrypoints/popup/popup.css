@@ -835,7 +835,7 @@ body {
   block-size: var(--at-s-4);
   padding-inline: var(--at-s-1);
   border-radius: var(--at-r-xs);
-  background: var(--at-lamp-aqua-light);
+  background: var(--at-badge-screen);
   font: var(--at-type-kicker);
   color: var(--at-ext-badge-ink);
 }

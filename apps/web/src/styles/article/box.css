@@ -9,7 +9,6 @@
     margin-block-start: var(--at-border);
     border: var(--at-border) solid var(--at-line-strong);
     border-radius: var(--at-r-sm);
-    color: var(--at-on-accent);
     transition:
       background-color var(--at-d-slide) var(--at-ease),
       border-color var(--at-d-slide) var(--at-ease);
@@ -29,6 +28,7 @@
   :is(.at-check input:checked + .at-box, .at-done[aria-checked="true"] .at-box) {
     border-color: var(--at-accent);
     background: var(--at-accent);
+    color: var(--at-on-accent);
   }
 
   :is(.at-check input:checked + .at-box, .at-done[aria-checked="true"] .at-box) svg {

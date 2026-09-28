@@ -60,8 +60,8 @@
     --at-pg-embed-aura-top: 420px;
     --at-pg-embed-intro: 760px;
     --at-pg-scenario: 380px;
-    --at-pg-shadow-hero: 0 30px 60px -40px rgb(14 23 38 / 25%);
-    --at-pg-shadow-popup: 0 40px 80px -36px rgb(14 23 38 / 35%);
+    --at-pg-shadow-hero: 0 30px 60px -40px color-mix(in srgb, var(--at-shadow-color) 25%, transparent);
+    --at-pg-shadow-popup: 0 40px 80px -36px color-mix(in srgb, var(--at-shadow-color) 35%, transparent);
     --at-pg-log-h: 240px;
     --at-pg-log-time: 96px;
     --at-pg-code-h: 511px;
@@ -75,18 +75,18 @@
     --at-pg-dl-term: 190px;
     --at-pg-cl-max: 880px;
     --at-pg-cl-date: 210px;
-    --at-pg-violet: light-dark(#5a47cf, #a594ff);
+    --at-pg-violet: light-dark(var(--at-lamp-violet-light), var(--at-lamp-violet-dark));
   }
 
   :root:is([data-theme="dark"], [data-theme="oled"]) {
-    --at-pg-shadow-hero: 0 40px 80px -48px rgb(0 0 0 / 80%);
-    --at-pg-shadow-popup: 0 40px 80px -30px rgb(0 0 0 / 80%);
+    --at-pg-shadow-hero: 0 40px 80px -48px color-mix(in srgb, var(--at-shadow-color) 80%, transparent);
+    --at-pg-shadow-popup: 0 40px 80px -30px color-mix(in srgb, var(--at-shadow-color) 80%, transparent);
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme]) {
-      --at-pg-shadow-hero: 0 40px 80px -48px rgb(0 0 0 / 80%);
-      --at-pg-shadow-popup: 0 40px 80px -30px rgb(0 0 0 / 80%);
+      --at-pg-shadow-hero: 0 40px 80px -48px color-mix(in srgb, var(--at-shadow-color) 80%, transparent);
+      --at-pg-shadow-popup: 0 40px 80px -30px color-mix(in srgb, var(--at-shadow-color) 80%, transparent);
     }
   }
 
@@ -1952,19 +1952,19 @@
   }
 
   .at-lap-frame {
-    fill: light-dark(#cfd8e3, #1e2638);
+    fill: light-dark(var(--at-tick), var(--at-line));
   }
 
   .at-lap-notch {
-    fill: light-dark(#b7c3d1, #2a3550);
+    fill: var(--at-line-strong);
   }
 
   .at-lap-screen {
-    fill: light-dark(#1a2230, #05070b);
+    fill: var(--at-bezel);
   }
 
   .at-lap-glow {
-    fill: light-dark(#fff, #13203a);
+    fill: var(--at-lift);
     transition: opacity var(--at-d-slide) var(--at-ease);
   }
 
@@ -2059,8 +2059,8 @@
     padding-block: 0;
     padding-inline: var(--at-s-1);
     border-radius: var(--at-r-xs);
-    background: var(--at-accent);
-    color: var(--at-on-accent);
+    background: var(--at-badge-screen);
+    color: var(--at-badge-ink);
     font: var(--at-pg-type-badge);
   }
 
@@ -2375,16 +2375,17 @@
     color: var(--at-accent-text);
   }
 
+  /* stylelint-disable declaration-property-value-disallowed-list -- the kiosk preview paints the theme picked in its form, not the page's */
   /* stylelint-disable declaration-property-value-allowed-list -- illustration geometry in container units */
   .at-k-bezel {
     position: relative;
     max-inline-size: 680px;
     padding: var(--at-s-3);
     border-radius: var(--at-r-lg);
-    background: #05070b;
+    background: var(--at-bezel);
     box-shadow:
-      0 34px 70px -34px rgb(3 6 12 / 70%),
-      inset 0 0 0 1px rgb(255 255 255 / 7%);
+      0 34px 70px -34px color-mix(in srgb, var(--at-shadow-color) 70%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--at-bezel-ink) 12%, transparent);
     container-type: inline-size;
   }
 
@@ -2436,8 +2437,8 @@
 
   .at-k-screen[data-mode="night"] {
     --kp-bg: #000;
-    --kp-lamp: #a89690;
-    --kp-muted: #a89690;
+    --kp-lamp: var(--at-night-muted);
+    --kp-muted: var(--at-night-muted);
   }
 
   .at-k-aura {
@@ -2516,7 +2517,7 @@
   }
 
   .at-k-screen[data-mode="night"] .at-k-pill {
-    color: #a89690;
+    color: var(--at-night-muted);
   }
 
   .at-k-pill > svg {
@@ -2618,11 +2619,11 @@
   }
 
   .at-k-night .at-k-bigclock {
-    color: #ff5a3c;
+    color: var(--at-night-digit);
   }
 
   .at-k-night .at-k-bigclock > span:last-child {
-    color: #e8563c;
+    color: var(--at-night-ink-2);
   }
 
   .at-k-date {
@@ -2630,7 +2631,7 @@
   }
 
   .at-k-dim {
-    color: #a89690;
+    color: var(--at-night-muted);
     font: var(--at-pg-type-kp-15);
   }
 
@@ -2746,6 +2747,7 @@
     display: none;
   }
   /* stylelint-enable declaration-property-value-allowed-list */
+  /* stylelint-enable declaration-property-value-disallowed-list */
 
   .at-k-table {
     --at-pg-cols: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr);
@@ -3558,6 +3560,7 @@
     font: var(--at-pg-type-mono-code);
   }
 
+  /* stylelint-disable declaration-property-value-disallowed-list -- the host page is someone else's site, in its own colours */
   /* stylelint-disable declaration-property-value-allowed-list -- host-page mock in the host's own sizes */
   .at-host {
     order: 1;
@@ -3809,6 +3812,7 @@
     }
   }
   /* stylelint-enable declaration-property-value-allowed-list */
+  /* stylelint-enable declaration-property-value-disallowed-list */
 
   @media (width >= 600px) {
     .at-page {

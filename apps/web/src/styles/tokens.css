@@ -157,6 +157,8 @@
   --at-lift: #fff;
   --at-ground-end: #eef3f8;
   --at-elev: 0 1px 2px rgb(14 23 38 / 6%);
+  --at-shadow-color: #0e1726;
+  --at-bezel: #1a2230;
 }
 
 [data-theme="dark"] {
@@ -184,6 +186,8 @@
   --at-lift: #13203a;
   --at-ground-end: #0a0e16;
   --at-elev: none;
+  --at-shadow-color: #000;
+  --at-bezel: #05070b;
 }
 
 [data-theme="oled"] {
@@ -211,6 +215,8 @@
   --at-lift: #000;
   --at-ground-end: #000;
   --at-elev: none;
+  --at-shadow-color: #000;
+  --at-bezel: #05070b;
 }
 
 :root {
@@ -251,6 +257,10 @@
   --at-night-muted: #a89690;
   --at-night-line: #3a2e2a;
   --at-scrim: rgb(4 7 12 / 55%);
+  --at-bezel-ink: #8e9aae;
+  --at-badge-screen: #087b87;
+  --at-badge-system: #2b3a67;
+  --at-badge-ink: #fff;
   --at-t-xs: 0.75rem;
   --at-t-sm: 0.875rem;
   --at-t-md: 1rem;
@@ -399,6 +409,8 @@
     --at-lift: #13203a;
     --at-ground-end: #0a0e16;
     --at-elev: none;
+    --at-shadow-color: #000;
+    --at-bezel: #05070b;
   }
 }
 

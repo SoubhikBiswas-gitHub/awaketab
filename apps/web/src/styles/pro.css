@@ -58,7 +58,7 @@
 @property --at-pro-lamp {
   syntax: "<color>";
   inherits: true;
-  initial-value: #087b87;
+  initial-value: transparent;
 }
 
 :root:has(.at-pro-page) {
@@ -2228,12 +2228,7 @@
   .at-button.at-pro-confirm-remove:hover {
     border-color: transparent;
     background: var(--at-bad);
-    color: var(--at-surface);
-  }
-
-  :root:is([data-theme="dark"], [data-theme="oled"])
-    :is(.at-button.at-pro-confirm-remove, .at-button.at-pro-confirm-remove:hover) {
-    color: var(--at-ground);
+    color: light-dark(var(--at-surface), var(--at-ground));
   }
 
   .at-pro-dev-act .at-button:disabled,
