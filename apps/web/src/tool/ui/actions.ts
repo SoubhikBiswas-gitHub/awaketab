@@ -136,7 +136,7 @@ export function act(ctx: IToolCtx, name: string, el: HTMLElement): void {
     else if (name === 'add15' || name === 'add30' || name === 'add60')
       extendAsk(ctx, { add15: 15, add30: 30, add60: 60 }[name] * 60_000);
     else if (name === 'askStop') finishAsk(ctx);
-    else if (name === 'battSettings') openSettings(ctx, el);
+    else if (name === 'battSettings') openSettings(ctx, el, 'device');
     else if (name === 'sound') void sound(ctx, 'open', el);
     else if (name.startsWith('face'))
       void import('../packs/faces/index.js').then((m) => {
@@ -226,6 +226,13 @@ export function openShare(ctx: IToolCtx, opener?: Element | null): void {
 }
 
 export { toggleFullscreen } from '../fullscreen.js';
+
+// Face, look and sound choices. Until the Customize sheet lands, Sound opens the Sounds sheet and the rest opens the
+// looks panel at the top of Settings.
+export function openCustomize(ctx: IToolCtx, tab: 'face' | 'look' | 'sound' = 'look', opener?: Element | null): void {
+  if (tab === 'sound') void sound(ctx, 'open', opener);
+  else openSettings(ctx, opener, 'look');
+}
 
 export function help(ctx: IToolCtx, show?: boolean, opener?: Element | null): void {
   const dlg = ctx.root.querySelector<HTMLDialogElement>('[data-dialog="shortcuts"]');

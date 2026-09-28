@@ -35,8 +35,6 @@ afterAll(() => {
   if (radioValue) Object.defineProperty(RadioNodeList.prototype, 'value', radioValue);
 });
 
-const MODES = ['standard', 'clock', 'focus', 'breathe', 'minimal', 'night', 'message', 'cook'];
-
 // Mirrors the settings form in src/components/ToolPanel.astro (names, types, defaults and checked states).
 const SETTINGS_HTML = `
   <dialog data-dialog="settings">
@@ -47,12 +45,9 @@ const SETTINGS_HTML = `
         <label><input type="radio" name="theme" value="dark" /> Dark</label>
         <label><input type="radio" name="theme" value="oled" /> OLED</label>
       </fieldset>
-      <div data-appearance></div>
+      <div data-looks hidden><div data-appearance></div></div>
       <fieldset>${['ring', 'bold', 'horizon', 'tide'].map((v) => `<label><input type="radio" name="face" value="${v}" ${v === 'ring' ? 'checked' : ''} /></label>`).join('')}</fieldset>
-      <select name="defaultPreset">
-        ${['p15', 'p30', 'p45', 'p60', 'p120', 'p240', 'pinf'].map((p) => `<option value="${p}">${p}</option>`).join('')}
-      </select>
-      <fieldset>${['chime', 'bell', 'soft', 'digital', 'birds', 'none'].map((v) => `<label><input type="radio" name="sound" value="${v}" ${v === 'chime' ? 'checked' : ''} /></label>`).join('')}</fieldset>
+      <select name="sound">${['chime', 'bell', 'soft', 'digital', 'birds', 'none'].map((v) => `<option value="${v}" ${v === 'chime' ? 'selected' : ''}>${v}</option>`).join('')}</select>
       <input type="range" name="soundVolume" min="0" max="100" step="5" value="60" />
       <label data-vibrate-row hidden><input type="checkbox" name="vibrate" checked /> Vibrate</label>
       <label><input type="checkbox" name="tick" /> Tick</label>
@@ -68,17 +63,22 @@ const SETTINGS_HTML = `
       </div>
       <p data-battery-unavailable hidden></p>
       <fieldset>
-        <select name="ambientMode">${MODES.map((m) => `<option value="${m}">${m}</option>`).join('')}</select>
-        <input name="ambientMessage" maxlength="80" autocomplete="off" />
-        <p data-message-gate></p>
         <label><input type="checkbox" name="showSeconds" /> Seconds</label>
         <select name="clock24h"><option value="auto">Auto</option><option value="24">24 h</option><option value="12">12 h</option></select>
       </fieldset>
       <label><input type="checkbox" name="telemetry" checked /> Telemetry</label>
       <label><input type="checkbox" name="keyboardShortcuts" checked /> Shortcuts</label>
       <label><input type="checkbox" name="keyboardHints" checked /> Hints</label>
+      <label><input type="checkbox" name="reduceMotion" /> Reduce motion</label>
+      <details data-sg="timer"><summary>Timer</summary></details>
+      <details data-sg="device"><summary>Device</summary></details>
       <button type="button" data-dialog-close>Close</button>
-      <button type="button" data-settings-reset>Reset</button>
+      <details class="at-sg-reset">
+        <summary data-settings-reset>Reset</summary>
+        <button type="button" data-reset="yes">Reset settings</button>
+        <button type="button" data-reset="no">Keep them</button>
+      </details>
+      <p data-reset-done></p>
     </form>
   </dialog>`;
 
@@ -109,30 +109,28 @@ const STORED: ISettings = {
   telemetry: false,
   keyboardShortcuts: false,
   keyboardHints: false,
+  reduceMotion: 'on',
 };
-
-const ALL = { packs: true, message: true };
-const NONE = { packs: false, message: false };
 
 describe('fillSettings → readSettings', () => {
   it('round-trips every stored value (regression: opening Settings reset theme to the form default)', () => {
     const f = form();
     fillSettings(f, STORED);
-    expect(readSettings(f, STORED, ALL)).toEqual(STORED);
+    expect(readSettings(f, STORED)).toEqual(STORED);
   });
 
   it('round-trips the defaults', () => {
     const f = form();
     fillSettings(f, STORED);
     fillSettings(f, DEFAULT_SETTINGS);
-    expect(readSettings(f, DEFAULT_SETTINGS, ALL)).toEqual(DEFAULT_SETTINGS);
+    expect(readSettings(f, DEFAULT_SETTINGS)).toEqual(DEFAULT_SETTINGS);
   });
 
   it('keeps the other stored values when a single field changes', () => {
     const f = form();
     fillSettings(f, STORED);
     input(f, 'keyboardHints').checked = true;
-    expect(readSettings(f, STORED, NONE)).toEqual({
+    expect(readSettings(f, STORED)).toEqual({
       ...STORED,
       keyboardHints: true,
     });
@@ -143,7 +141,7 @@ describe('fillSettings → readSettings', () => {
     for (const clock24h of [null, true, false]) {
       const s = { ...STORED, ambient: { ...STORED.ambient, clock24h } };
       fillSettings(f, s);
-      expect(readSettings(f, s, ALL).ambient.clock24h).toBe(clock24h);
+      expect(readSettings(f, s).ambient.clock24h).toBe(clock24h);
     }
   });
 });
@@ -154,42 +152,23 @@ describe('end sound, vibrate and tick', () => {
     for (const id of ['chime', 'bell', 'soft', 'digital', 'birds', 'none'] as const) {
       const s: ISettings = { ...STORED, sound: { id, volume: 0.45 }, vibrate: false, tick: true };
       fillSettings(f, s);
-      expect(readSettings(f, s, ALL), id).toEqual(s);
+      expect(readSettings(f, s), id).toEqual(s);
     }
   });
 
-  it('keeps a stored sound no radio offers only while nothing is picked', () => {
+  it('keeps a stored sound the list does not offer only while nothing is picked', () => {
     const f = form();
-    for (const r of f.querySelectorAll<HTMLInputElement>('input[name="sound"]')) r.checked = false;
+    (f.elements.namedItem('sound') as HTMLSelectElement).selectedIndex = -1;
     const cur: ISettings = { ...STORED, sound: { id: 'custom:x', volume: 0.5 } };
-    expect(readSettings(f, cur, ALL).sound.id).toBe('custom:x');
+    expect(readSettings(f, cur).sound.id).toBe('custom:x');
   });
 });
 
-describe('readSettings gates', () => {
-  it('never stores Message mode without ambient.message (a locked mode is only previewed)', () => {
-    const f = form();
-    fillSettings(f, STORED);
-    (f.elements.namedItem('ambientMode') as HTMLSelectElement).value = 'message';
-    expect(readSettings(f, STORED, NONE).ambient.mode).toBe('clock');
-    expect(readSettings(f, STORED, { packs: false, message: true }).ambient.mode).toBe('message');
-  });
-
+describe('readSettings guards', () => {
   it('leaves the lamp to the Appearance gallery (the stored hex is kept)', () => {
     const f = form();
     fillSettings(f, STORED);
-    expect(readSettings(f, { ...STORED, accent: '#B1452F' }, NONE).accent).toBe('#B1452F');
-  });
-
-  it('ignores the ambient message without ambient.message and sanitises it with it', () => {
-    const f = form();
-    const cur = { ...STORED, ambient: { ...STORED.ambient, message: 'Saved' } };
-    fillSettings(f, cur);
-    input(f, 'ambientMessage').value = '  Back‮   soon\u0007  ';
-    expect(readSettings(f, cur, NONE).ambient.message).toBe('Saved');
-    expect(readSettings(f, cur, { packs: false, message: true }).ambient.message).toBe('Back soon');
-    input(f, 'ambientMessage').value = 'x'.repeat(200);
-    expect(readSettings(f, cur, ALL).ambient.message).toHaveLength(80);
+    expect(readSettings(f, { ...STORED, accent: '#B1452F' }).accent).toBe('#B1452F');
   });
 
   it('clamps the battery threshold to 5–30 %', () => {
@@ -207,7 +186,7 @@ describe('readSettings gates', () => {
       ['abc', STORED.battery.threshold],
     ] as const) {
       field.value = raw;
-      expect(readSettings(f, STORED, ALL).battery.threshold, raw).toBe(expected);
+      expect(readSettings(f, STORED).battery.threshold, raw).toBe(expected);
     }
   });
 
@@ -215,30 +194,28 @@ describe('readSettings gates', () => {
     const f = form();
     fillSettings(f, STORED);
     input(f, 'notifications').disabled = true;
-    expect(readSettings(f, STORED, ALL).notifications).toBe(true);
-    expect(readSettings(f, { ...STORED, notifications: false }, ALL).notifications).toBe(false);
+    expect(readSettings(f, STORED).notifications).toBe(true);
+    expect(readSettings(f, { ...STORED, notifications: false }).notifications).toBe(false);
     input(f, 'notifications').disabled = false;
     input(f, 'notifications').checked = false;
-    expect(readSettings(f, STORED, ALL).notifications).toBe(false);
+    expect(readSettings(f, STORED).notifications).toBe(false);
   });
 
-  it('falls back to the stored value for an unknown theme or mode', () => {
+  it('falls back to the stored theme when none is picked, and never touches the ambient mode or message', () => {
     const f = form();
     fillSettings(f, STORED);
     const theme = [...f.querySelectorAll<HTMLInputElement>('input[name="theme"]')];
     for (const r of theme) r.checked = false;
-    const mode = f.elements.namedItem('ambientMode') as HTMLSelectElement;
-    mode.innerHTML += '<option value="disco">disco</option>';
-    mode.value = 'disco';
-    const next = readSettings(f, STORED, ALL);
+    const next = readSettings(f, STORED);
     expect(next.theme).toBe('oled');
     expect(next.ambient.mode).toBe('clock');
+    expect(next.ambient.message).toBe('Back at 3');
   });
 });
 
 describe('openSettings', () => {
   afterEach(() => {
-    for (const k of ['theme', 'accent', 'palette', 'pattern', 'preview'])
+    for (const k of ['theme', 'accent', 'palette', 'pattern', 'preview', 'motion'])
       document.documentElement.removeAttribute(`data-${k}`);
   });
 
@@ -247,7 +224,7 @@ describe('openSettings', () => {
       html: SETTINGS_HTML,
       settings: STORED,
     });
-    openSettings(ctx);
+    openSettings(ctx, undefined, 'look');
     await dialogSettled();
     const dialog = root.querySelector<HTMLDialogElement>('[data-dialog="settings"]') as HTMLDialogElement;
     // The sheet waits (briefly) for the themes pack's Appearance gallery.
@@ -268,6 +245,7 @@ describe('openSettings', () => {
     hints.checked = true;
     hints.dispatchEvent(new Event('change', { bubbles: true }));
     expect(storage.settings()).toEqual({ ...STORED, keyboardHints: true });
+    expect(document.documentElement.dataset.motion).toBe('reduce');
     expect(store.get().settings.theme).toBe('oled');
     expect(document.documentElement.dataset.theme).toBe('oled');
     expect(document.documentElement.dataset.accent).toBe('violet');
@@ -318,5 +296,30 @@ describe('openSettings', () => {
     expect(dialog.open).toBe(false);
     expect(document.documentElement.dataset.accent).toBe('amber');
     expect(document.documentElement.dataset.palette).toBe('paper');
+  });
+
+  it('opens the group it is asked for, and Reset asks inline before it resets', async () => {
+    const { ctx, root, storage } = makeCtx({ html: SETTINGS_HTML, settings: STORED });
+    openSettings(ctx, undefined, 'device');
+    const dialog = root.querySelector<HTMLDialogElement>('[data-dialog="settings"]') as HTMLDialogElement;
+    await vi.waitFor(() => {
+      expect(dialog.open).toBe(true);
+    });
+    const open = (g: string) => root.querySelector<HTMLDetailsElement>(`[data-sg="${g}"]`)?.open;
+    expect(open('device')).toBe(true);
+    expect(open('timer')).toBe(false);
+    expect(root.querySelector<HTMLElement>('[data-looks]')?.hidden).toBe(true);
+
+    const box = root.querySelector<HTMLDetailsElement>('.at-sg-reset') as HTMLDetailsElement;
+    box.open = true;
+    root.querySelector<HTMLButtonElement>('[data-reset="no"]')?.click();
+    expect(box.open).toBe(false);
+    expect(storage.settings()).toEqual(STORED);
+    box.open = true;
+    root.querySelector<HTMLButtonElement>('[data-reset="yes"]')?.click();
+    expect(box.open).toBe(false);
+    expect(storage.settings()).toEqual(DEFAULT_SETTINGS);
+    expect(root.querySelector('[data-reset-done]')?.textContent).toBe(en['settings.reset.done']);
+    expect(document.documentElement.hasAttribute('data-motion')).toBe(false);
   });
 });

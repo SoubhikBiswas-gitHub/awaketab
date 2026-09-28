@@ -1,6 +1,7 @@
 import type { ISettings } from '@awaketab/core';
 import type { IToolCtx } from '../../ctx.js';
 import type * as TPreviewMod from '../themes/preview.js';
+import { hm } from '../../format.js';
 import { t } from '../../i18n.js';
 import { breathOf } from './breathe.js';
 import { mountLines } from './lines.js';
@@ -36,15 +37,18 @@ function stepper(key: keyof IFocusConfig): HTMLElement {
   );
 }
 
-// Settings → Focus tools (docs/05 §3.35): the intention, a second time zone, the Pomodoro timer and breathing.
-// It is built once in the SSR section `[data-focus-tools]` and refreshed from the store on every open.
-export function mountPanel(ctx: IToolCtx, host: HTMLElement): void {
-  const box = host.querySelector<HTMLElement>('.at-fx-set') ?? build(ctx, host);
+// Settings → Focus (docs/05 §3.18, §3.35): the Pomodoro timer, breathing and the intention in `[data-focus-tools]`, the
+// second time zone in Clock's `[data-fx-zone]`, and the Focus and Clock group lines. Built once, refreshed on every open.
+export function mountPanel(ctx: IToolCtx, form: HTMLElement): void {
+  const box = form.querySelector<HTMLElement>('.at-fx-set') ?? build(ctx, form);
   (box as HTMLElement & { refresh?: () => void }).refresh?.();
 }
 
-function build(ctx: IToolCtx, host: HTMLElement): HTMLElement {
+function build(ctx: IToolCtx, form: HTMLElement): HTMLElement {
   const { store } = ctx;
+  const host = form.querySelector<HTMLElement>('[data-focus-tools]') ?? form;
+  const line = form.querySelector('[data-sg-now="focus"]');
+  const zoneLine = form.querySelector('[data-sg-zone]');
   const box = el('div', { class: 'at-fx-set' });
   const settings = () => store.get().settings;
 
@@ -146,18 +150,22 @@ function build(ctx: IToolCtx, host: HTMLElement): HTMLElement {
     el('span', { class: 'at-caption' }, t('settings.focus.breatheHelp')),
   );
 
-  box.append(aim, zone, steps, auto, breathe);
+  box.append(steps, auto, breathe, aim);
+  (form.querySelector('[data-fx-zone]') ?? box).append(zone);
   host.append(box);
   // The lines under the clock follow whatever is typed here.
   mountLines(ctx);
 
   let preview: TPreview | undefined;
+  const shows = form.querySelector('[data-t="nowShows"]');
   const paintNow = () => {
     const s = settings();
     const z = validZone(s.worldClock) ? s.worldClock : null;
     now.hidden = !z;
+    const at = Date.now();
+    if (shows) shows.textContent = t('settings.clock.now', { time: hm(at, s.ambient.clock24h, s.ambient.showSeconds) });
+    if (zoneLine) zoneLine.textContent = z ? ` · ${cityOf(z)} ${diffText(diffMin(z, at))}` : '';
     if (z) {
-      const at = Date.now();
       nowText.textContent = t('settings.focus.zoneNow', {
         city: cityOf(z),
         time: zoneTime(z, at, s.ambient.clock24h),
@@ -183,6 +191,8 @@ function build(ctx: IToolCtx, host: HTMLElement): HTMLElement {
     const pro = isPro(ctx);
     autoTag.hidden = pro;
     autoSw.checked = autoOn(ctx);
+    if (line)
+      line.textContent = `${t('settings.sum.focus', { work: c.workMin, rest: c.breakMin, cycles: c.cycles, long: c.longMin })} · ${t(autoSw.checked ? 'settings.sum.autoOn' : 'settings.sum.autoOff')}`;
     const live = autoPreviewing() && preview?.activePreview()?.kind === 'pomodoro';
     autoCap.textContent = live
       ? (preview?.previewLine() ?? '')
@@ -193,7 +203,18 @@ function build(ctx: IToolCtx, host: HTMLElement): HTMLElement {
     for (const x of breath.querySelectorAll<HTMLElement>('[data-fx-breath]'))
       x.setAttribute('aria-pressed', String(x.dataset.fxBreath === b));
   };
-  (box as HTMLElement & { refresh?: () => void }).refresh = refresh;
+  // The clock lines tick once a second while the sheet is open, and stop when it closes.
+  let clock = 0;
+  (box as HTMLElement & { refresh?: () => void }).refresh = () => {
+    refresh();
+    clock ||= window.setInterval(() => {
+      if (host.closest('dialog')?.open) paintNow();
+      else {
+        window.clearInterval(clock);
+        clock = 0;
+      }
+    }, 1000);
+  };
 
   aimIn.addEventListener('input', () => {
     save(ctx, { intention: cleanIntention(aimIn.value) });

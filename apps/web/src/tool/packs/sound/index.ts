@@ -366,7 +366,7 @@ function create(ctx: IToolCtx) {
     else if (snd === 'try') tryPro();
   });
   dlg?.querySelector('[data-snd="settings"]')?.addEventListener('click', () => {
-    openSettings(ctx);
+    openSettings(ctx, undefined, 'timer');
   });
   box?.addEventListener('input', (e) => {
     const n = e.target;

@@ -135,6 +135,8 @@ const SURFACES: Array<{ name: string; open: (page: Page, theme: TTheme) => Promi
     open: async (page) => {
       await openTool(page, '/?autostart=0');
       await page.locator('#awaketab-tool header [data-open-settings]').click();
+      // Pro lives in the Device and privacy group of Settings.
+      await page.locator('dialog[data-dialog="settings"] [data-sg="device"] > summary').click();
       await page.locator('dialog[data-dialog="settings"] [data-open-pro]').click();
       await expect(page.locator('dialog[data-dialog="pro"]')).toBeVisible();
     },

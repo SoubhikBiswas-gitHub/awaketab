@@ -54,6 +54,7 @@ test.describe('no cookies on tool routes', () => {
     await expect(page.locator('dialog[data-ambient]')).toBeVisible();
     await page.keyboard.press('Escape');
     await page.locator('#awaketab-tool header [data-open-settings]').click();
+    await page.locator('dialog[data-dialog="settings"] [data-sg="clock"] > summary').click();
     await page.locator('dialog[data-dialog="settings"] input[name="showSeconds"]').check();
     await page.keyboard.press('Escape');
     await page.keyboard.press('Escape');

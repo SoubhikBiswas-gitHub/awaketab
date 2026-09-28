@@ -31,7 +31,10 @@
         "functions/**/*.ts",
         "test/**/*.ts"
       ],
+      "ignore": ["src/components/icons/BrandIcon.astro"],
       "ignoreDependencies": [
+        "@iconify-json/logos",
+        "@phosphor-icons/core",
         "@fontsource/inter",
         "@fontsource/noto-sans-devanagari",
         "@fontsource/noto-sans-jp",

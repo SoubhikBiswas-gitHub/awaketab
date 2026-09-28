@@ -361,24 +361,28 @@ Dynamic import; opened from the header ("Stats"). Reads `at.v1.stats`. Shows: To
 
 ### 3.18 `SettingsSheet`
 
-Bottom sheet (mobile) / right panel 360 px (≥ md), native `<dialog>`, title "Settings". Every field is a setting in `at.v1.settings` (schema owned by `08-data-storage.md`; names below are the canonical field list from `00-conventions.md` §6):
+"How it behaves." Bottom sheet on phones, side sheet from 600 (the shared `Sheet`, §3.30), title "Settings" with the description `settings.lead`. Every field is a setting in `at.v1.settings` (schema owned by `08-data-storage.md`; names from `00-conventions.md` §6). Taste (face, theme, colour theme, lamp, background, sounds) lives in Customize; behaviour lives here.
 
-| Field | Control | Values / copy |
+**Layout.** One row "Looks and sounds" (sparkle icon, "Face, colours and sounds are in Customize.", a caret) opens Customize, then four native `<details>` groups sharing `name="at-settings"`, so only one is open at a time. Each summary is a 72 px row: a 44 px icon tile (Phosphor duotone, the fill layer in the lamp), the group name (`--at-type-ui` 600) and a one-line summary of the current values (`--at-type-small`, ink-2), a caret at the end that turns when open. Rows are separated by 1 px `line`; the open body stacks its controls 20 apart with 24 below the last one. Inside a group: switches and selects sit label left, control right, with one caption line under the label when needed; segmented bars and sliders take the full width under their label. The footer keeps the phone-only Stats, Share and Shortcuts links, What's new and the version.
+
+| Group | Summary (live) | Fields |
 |---|---|---|
-| `theme` | segmented | Auto · Light · Dark · OLED (`auto`/`light`/`dark`/`oled`) |
-| `accent`, `palette`, `pattern` | Appearance gallery (themes pack) | Presets row, Colour theme, Lamp colour and Background tiles with live minis drawn from the real tokens; Pro items preview for 5 minutes (§1.1a–§1.1d) |
-| `defaultPreset` | select | one of the preset IDs, default `p30` |
-| `sound` | radio tiles + slider + Play | "End sound": Chime (default) · Bell · Soft · Digital · Birds · None, all free; "End sound volume" 0–100 % (§3.34) |
-| `vibrate` · `tick` | switches | "Vibrate at the end" (only where `navigator.vibrate` exists) · "Tick-tock while a session runs" (off by default) |
-| `notifications` | switch | "Notify me when a session ends" → requests permission on enable (never otherwise); disabled with `settings.notifications.unavailable` where the API is absent (iOS outside the installed app), and a "blocked" note when permission is denied |
-| `endBehaviour` | segmented | "Ask to extend" (`prompt_extend`, default) · "Just stop" (`stop`) |
-| `battery` | switch + slider | "Stop automatically on low battery" · threshold 5–30 %, default 15 % (Chromium only; hidden elsewhere with note) |
-| `ambient` | group | default mode, message (editable only with `ambient.message`), clock seconds on/off, 12/24 h override (Auto · 24 h · 12 h) |
-| `locale` | select | 8 launch locales; changes the UI strings immediately and links to the localized URL |
-| `telemetry` | switch | "Send anonymous usage events" default on; explains exactly what is sent (link `/privacy`) |
-| `keyboardHints` | switch | "Show keyboard hints on buttons" |
+| Timer (`hourglass-medium`) | end behaviour · end sound · notifications ("Ask to extend · Chime · No notification") | `endBehaviour` segmented "Ask to extend" · "Just stop"; `sound` select (Chime, Bell, Soft, Digital, Birds, None) + Play; "End sound volume" 0–100 %; `vibrate` (only where `navigator.vibrate` exists); `tick`; `notifications` (asks permission when turned on, disabled with a reason where the API is missing, a "blocked" note when denied) |
+| Clock (`clock`) | format · seconds · second time zone · language ("Follow language · No seconds · London +4:30 · English") | `ambient.clock24h` segmented Follow language · 12-hour · 24-hour with "Now shows 10:42 PM" (ticks while open); `ambient.showSeconds`; `worldClock` search (extras pack, §3.35); `locale` list (links to the localized URL) |
+| Focus (`target`) | "25 / 5 × 4 · long break 15 min · Auto‑cycle off" | `ambient.focus` steppers (focus, break, cycles), `pomodoro.longBreakMin`, `pomodoro.autoCycle` (Pro, or a 5-minute preview), `breathe`, `intention` (all from the extras pack, §3.35) |
+| Device and privacy (`shield-check`) | battery stop · shortcuts · usage data ("Battery stop off · Shortcuts on · Usage data on"; battery drops out where the API is missing) | `battery.autoStop` + threshold 5–30 % (Chromium only; a note elsewhere); `keyboardShortcuts` with the key help; `keyboardHints`; `reduceMotion` ("Reduce motion": `on` stills every animation on this device through `<html data-motion="reduce">`, off = `system`, the OS setting always applies); `telemetry` with what is sent; Notepad (kept on this device, Open notes); Pro (See what's in Pro, Manage devices); Reset |
 
-Changes apply immediately (no Save button) and persist on `change`. "Reset to defaults" at the bottom with a two-step confirm inline ("Reset? Yes, reset"). A "Pro" row shows plan and "Manage devices" → `/pro/manage`. Styling: native `<dialog>` with the `Dialog` look from `tool.css` (panel geometry per this section, not Radix Sheet); rows use the `Label` and `Input` classes; the plan row carries a `Badge` `secondary`.
+**Live summaries without script.** Each summary part is a set of spans, one per value, shown by `.at-settings:has(<field>:checked)` rules; the form's own state drives them, so a change reads at once and costs no JS. Only the numeric lines (Focus, the time zone, "Now shows") are written by the extras pack, which the sheet already waits for (400 ms at most). Before it arrives Focus reads "Pomodoro lengths, breathing and your intention".
+
+**Motion.** A group opens by growing its `::details-content` from 0 to `auto` (`interpolate-size: allow-keywords`, `--at-d-slide`, `--at-ease`) while its body rises 8 px and fades in (`--at-d-rise`); the caret turns 180°. Browsers without `::details-content` open at once. Under `prefers-reduced-motion` or Reduce motion everything is instant. This height change happens inside the sheet's own scroll box, so the page never shifts.
+
+**Keyboard.** Every summary is a native disclosure: Tab reaches it, Enter or Space toggles it, and focus shows the 2 px ring. Segmented bars are radio groups (arrow keys move and select); the time zone search is a combobox (arrows, Enter, Esc).
+
+**Reset.** "Reset to defaults" is itself a `<details>`: it opens an inline panel ("Every setting here goes back to its default. Your notes, stats and Pro stay.") with "Reset settings" (the strong neutral, never red) and "Keep them". A reset fills the form with `DEFAULT_SETTINGS`, closes the panel, returns focus to the summary and says "Settings are back to their defaults." in a status line.
+
+**Opening at a group.** `openSettings(ctx, opener, group)` opens one group: the battery notice's "Battery settings" opens Device and privacy, the Sounds sheet's end-sound link opens Timer. Changes apply immediately (no Save button) and persist on `change`.
+
+Not here, on purpose: a default length (the tool is pre-rendered with its route's length, so a stored default would change the first frame; routes such as `/30m` cover it) and a search field (four named groups with their values on show already make every control one tap away).
 
 ### 3.19 `ShortcutsOverlay`
 

@@ -1003,6 +1003,21 @@ Accepted on 2026-09-28. Specs: `05-frontend-spec.md` §3.31 and §4.2 (home), §
 | /extension | FAQ adds `page.extension.faq.q5` / `a5`: the faces, sounds, notes and focus tools are in the web app, not the extension |
 | Changelog release | `changelog/2026-09-release-1.1.md` (`release: '1.1'`), pinned as the release card above the dated entries |
 
+### 13.29 The Settings sheet in four groups
+
+Accepted on 2026-09-29. Spec: `05-frontend-spec.md` §3.18. The seven lock states, the pill copy, storage keys (`reduceMotion` was already in `at.v1.settings`), routes and budgets do not change: the groups are native `<details>`, their value lines are CSS over the form's own state, and the few lines that need numbers (Focus, the second time zone, "Now shows") are written by the lazy `extras` pack.
+
+| Identifier | Decision |
+|---|---|
+| Groups | `details.at-sg[name="at-settings"][data-sg]` with `data-sg` = `timer` · `clock` · `focus` · `device`; one open at a time through the shared `name`. Summary `.at-sg-sum` holds `.at-sg-ico` (Phosphor duotone `hourglass-medium`, `clock`, `target`, `shield-check`), `.at-sg-title`, `.at-sg-now` and `.at-sg-chev`; the body is `.at-sg-body` |
+| Value lines | `.at-sg-now` spans `[data-v="<slot>-<value>"]`, shown by `.at-settings:has(...)` rules in `tool-more.css`: `end-ask` · `end-stop` · `snd-<id>` · `nt-on` · `nt-off` · `fmt-auto` · `fmt-12` · `fmt-24` · `sec-on` · `sec-off` · `bt-on` · `bt-off` · `ks-on` · `ks-off` · `us-on` · `us-off`; the battery caption uses `bh-on` · `bh-off`. `[data-sg-now="focus"]` and `[data-sg-zone]` are written by `packs/extras/panel.ts` |
+| Hosts | `[data-focus-tools]` (Focus body) and `[data-fx-zone]` (Clock body) for the extras pack; `mountPanel(ctx, form)` takes the settings form |
+| Looks row | `button.at-sg-door[data-act="customize"][data-tab="look"]` calls `openCustomize(ctx, tab, opener)` in `ui/actions.ts`. Until the Customize sheet exists, `'sound'` opens the Sounds sheet and the rest reveals `[data-looks]`, the old appearance fields, under the row |
+| `openSettings` | `openSettings(ctx, opener?, group?)`: `group` opens that group (`battSettings` → `device`, the Sounds sheet's end-sound link → `timer`) or `look` for the looks panel |
+| Reset | `details.at-sg-reset` with `summary[data-settings-reset]`, `.at-sg-confirm`, `[data-reset="yes"]` · `[data-reset="no"]` and a `p[data-reset-done][role=status]` |
+| Reduce motion | switch `name="reduceMotion"` (`on` or `system`); `<html data-motion="reduce">` painted by `boot.js` and set by `settings.ts`; `tool.css` turns every transition and animation off under it, as under `prefers-reduced-motion` |
+| i18n keys | `settings.lead` · `settings.looks` · `settings.looks.help` · `settings.g.timer` · `settings.g.clock` · `settings.g.focus` · `settings.g.device` · `settings.sum.*` (`silent`, `notifyOn`, `notifyOff`, `secondsOn`, `secondsOff`, `focus`, `autoOn`, `autoOff`, `focusIdle`, `battOn`, `battOff`, `keysOn`, `keysOff`, `usageOn`, `usageOff`) · `settings.hints.help` · `settings.motion` · `settings.motion.help` · `settings.pro.help` · `settings.reset.ask` · `settings.reset.yes` · `settings.reset.no` · `settings.reset.done`. Removed: `settings.reset.confirm`, `settings.time`, `settings.privacy` |
+
 ## 14. Writing conventions for these docs
 
 - Requirements are testable sentences with "must/should/may"; every FR has at least one acceptance criterion in Given/When/Then form.
