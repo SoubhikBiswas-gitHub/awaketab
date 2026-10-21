@@ -76,7 +76,12 @@ describe('Cloudflare generated rules', () => {
       '/sitemap-index.xml',
       '/_astro/x.js',
     ];
-    for (const host of ['awaketab.pages.dev', '3f2a9c1b.awaketab.pages.dev', 'm6-engagement.awaketab.pages.dev']) {
+    for (const host of [
+      'play.awaketab.com',
+      'awaketab.pages.dev',
+      '3f2a9c1b.awaketab.pages.dev',
+      'm6-engagement.awaketab.pages.dev',
+    ]) {
       for (const pathname of PAGES) {
         expect(headerTools.resolveHeaders(text, pathname, host).get('x-robots-tag'), `${host}${pathname}`).toMatch(
           /^noindex(, noindex)?$/u,
@@ -94,7 +99,7 @@ describe('Cloudflare generated rules', () => {
     }
     // Last in the file, so a path rule's `! X-Robots-Tag` (the /embed landing page) cannot detach them.
     const routes = headerTools.parseHeaderRules(text).map((rule) => rule.route);
-    expect(routes.slice(-2)).toEqual([...headerTools.PREVIEW_HOST_RULES]);
+    expect(routes.slice(-headerTools.PREVIEW_HOST_RULES.length)).toEqual([...headerTools.PREVIEW_HOST_RULES]);
   });
 
   it('ships the generated rules as public/_headers (what Cloudflare actually reads)', async () => {

@@ -840,7 +840,7 @@
     inset-block: auto var(--at-kb);
     inset-inline: 0;
     flex-direction: column;
-    inline-size: 100%;
+    inline-size: 100vi;
     max-inline-size: none;
     max-block-size: calc(100dvh - var(--at-kb) - var(--at-s-12));
     margin: 0;

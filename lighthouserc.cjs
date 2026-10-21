@@ -1,8 +1,9 @@
 const LOCAL = 'http://127.0.0.1:4321';
 const base = (process.env.LHCI_BASE_URL || LOCAL).replace(/\/+$/u, '');
 const remote = base !== LOCAL;
-// Every *.pages.dev host, the production alias included, sends `X-Robots-Tag: noindex` (docs/14 §1).
-const noindexHost = remote && /\.pages\.dev$/u.test(new URL(base).hostname);
+// Play and every *.pages.dev host send `X-Robots-Tag: noindex` (docs/14 §1).
+const noindexHost =
+  remote && (new URL(base).hostname === 'play.awaketab.com' || /\.pages\.dev$/u.test(new URL(base).hostname));
 
 // docs/19 §E: /, /30m, one /for page, one /guides page, /es/.
 const PATHS = ['/', '/30m', '/for/cooking', '/guides/lock-screen-vs-sleep', '/es/'];

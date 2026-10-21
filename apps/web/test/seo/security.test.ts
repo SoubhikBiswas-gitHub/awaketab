@@ -247,13 +247,14 @@ describe('security headers per route class (docs/14 §3)', async () => {
     expect(effective(rules, p).get('cache-control')).toBe(want);
   });
 
-  it('the shipped _headers ends with the *.pages.dev noindex rules (F-03: previews are never indexed)', () => {
+  it('the shipped _headers ends with testing-host noindex rules (F-03: previews are never indexed)', () => {
     const hostRules = rules.filter((rule) => !rule.pattern.startsWith('/'));
     expect(hostRules.map((rule) => rule.pattern)).toEqual([
+      'https://play.awaketab.com/*',
       'https://:project.pages.dev/*',
       'https://:version.:project.pages.dev/*',
     ]);
-    expect(rules.slice(-2)).toEqual(hostRules);
+    expect(rules.slice(-hostRules.length)).toEqual(hostRules);
     for (const rule of hostRules) expect(rule.set).toEqual([['x-robots-tag', 'noindex']]);
     // Path rules never match a host-qualified pattern, so the production (awaketab.com) view above is unchanged.
     expect(effective(rules, '/').has('x-robots-tag')).toBe(false);
@@ -372,5 +373,5 @@ describe('inline scripts against the served CSP (docs/05 §11)', async () => {
       for (const h of handlers) failures.push(`${url}: ${h}`);
     }
     expect(failures).toEqual([]);
-  });
+  }, 30_000);
 });

@@ -184,7 +184,8 @@ test('rating prompt after the 5th counted session, once only', async ({ page }) 
     await page.locator('#awaketab-tool .at-cta').click();
     await expect(pillText(page)).toHaveText('Screen awake');
     // runFor (not fastForward) fires every 1 s tick, so awakeSeconds reaches the 5-minute counting floor.
-    await page.clock.runFor(5 * 60_000 + 3000);
+    // Inspect the completion while its toast is still visible, before advancing through its dismissal timer.
+    await page.clock.runFor(5 * 60_000 + 100);
     await expect(toasts(page)).toContainText('Session complete');
   };
 

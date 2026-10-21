@@ -49,7 +49,11 @@ const contentRoutes = [
   ...LOCALES.flatMap((locale) => CONTENT_FAMILIES.map((family) => `/${locale}/${family}/*`)),
 ];
 
-export const PREVIEW_HOST_RULES = ['https://:project.pages.dev/*', 'https://:version.:project.pages.dev/*'];
+export const PREVIEW_HOST_RULES = [
+  'https://play.awaketab.com/*',
+  'https://:project.pages.dev/*',
+  'https://:version.:project.pages.dev/*',
+];
 
 // Routes are the URLs Pages serves with a 200 (scripts/served.mjs): `/embed`, `/pip`, `/for/cooking` — never
 // `/embed/`, which Pages 308-redirects to `/embed` because the build writes `embed.html` (docs/14 §2.1).

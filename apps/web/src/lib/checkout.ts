@@ -1,5 +1,7 @@
 import type { TPlanId } from '@awaketab/core';
 
+declare const __AT_PAYMENTS_ENABLED__: boolean | undefined;
+
 declare const __AT_POLAR_SERVER__: string | undefined;
 
 export type TPolarServer = 'sandbox' | 'production';
@@ -41,4 +43,8 @@ export const POLAR_SERVER: TPolarServer = toPolarServer(
   typeof __AT_POLAR_SERVER__ === 'undefined' ? undefined : __AT_POLAR_SERVER__,
 );
 
-export const CHECKOUT_LINKS: Readonly<Record<TPlanId, string>> = checkoutLinks(POLAR_SERVER);
+export const PAYMENTS_ENABLED = typeof __AT_PAYMENTS_ENABLED__ === 'undefined' || __AT_PAYMENTS_ENABLED__;
+
+export const CHECKOUT_LINKS: Readonly<Record<TPlanId, string>> = PAYMENTS_ENABLED
+  ? checkoutLinks(POLAR_SERVER)
+  : { pro_yearly: '', pro_lifetime: '', biz_embed_site_yearly: '', biz_kiosk_site: '', biz_kiosk_5: '' };

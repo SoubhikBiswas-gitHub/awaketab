@@ -8,7 +8,7 @@ import Button from '../../components/shell/Button.astro';
 import ProRefund from '../../components/pro/ProRefund.astro';
 import { t } from '../../i18n/load';
 import { articleSchema } from '../../lib/seo';
-import { CHECKOUT_LINKS } from '../../lib/checkout';
+import { CHECKOUT_LINKS, PAYMENTS_ENABLED } from '../../lib/checkout';
 import { PLAN_PRICES, PRO_LAUNCH_END } from '../../lib/license';
 import { POLAR_PORTAL_URL, usd } from '../../lib/pro-common';
 import '../../styles/pro.css';
@@ -57,6 +57,7 @@ const ICONS = { laptop: 'laptop', tablet: 'device-tablet', phone: 'device-mobile
           <div class="at-pro-act-head">
             <h1 id="manage-title" class="at-pro-h1">{t('page.pro.manage.h1')}</h1>
             <p class="at-pro-lead at-pro-man-lead">{t('page.pro.manage.lead')}</p>
+            {!PAYMENTS_ENABLED && <p class="at-pro-body" role="status">Purchases open soon. You can use the free tool now.</p>}
           </div>
           <div class="at-pro-meter-wrap" data-meter>
             <div class="at-pro-meter-head">
@@ -88,10 +89,10 @@ const ICONS = { laptop: 'laptop', tablet: 'device-tablet', phone: 'device-mobile
             <Button variant="secondary" href="mailto:support@awaketab.com">{l('grace.secondary')}</Button>
           </div>
           <div class="at-pro-lapse-actions" data-for-state="lapsed">
-            <Button variant="primary" href={CHECKOUT_LINKS.pro_yearly} glyph={false} data-plan="pro_yearly">
+            <Button variant="primary" href={CHECKOUT_LINKS.pro_yearly || undefined} disabled={!PAYMENTS_ENABLED} glyph={false} data-plan="pro_yearly">
               {l('ended.primary', { price: usd(PLAN_PRICES.pro_yearly) })}
             </Button>
-            <Button variant="secondary" href={CHECKOUT_LINKS.pro_lifetime} data-plan="pro_lifetime">
+            <Button variant="secondary" href={CHECKOUT_LINKS.pro_lifetime || undefined} disabled={!PAYMENTS_ENABLED} data-plan="pro_lifetime">
               <span data-launch-only>{l('ended.secondary', { price: usd(PLAN_PRICES.pro_lifetime_launch) })}</span>
               <span data-after-only>{l('ended.secondary', { price: usd(PLAN_PRICES.pro_lifetime) })}</span>
             </Button>
