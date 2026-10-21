@@ -15,7 +15,7 @@ import {
 
 import { checkoutProblems, devPublicKey, distProblems, keyProblems, runCheck } from './check-keys.mts';
 import { generateProdKeyPair, instructions, nextVer } from './keys-prod.mts';
-import { polarDefines, polarServer } from './polar-server.mjs';
+import { paymentsEnabled, polarDefines, polarServer } from './polar-server.mjs';
 
 const REPO = path.resolve(import.meta.dirname, '../../..');
 const temps: string[] = [];
@@ -55,9 +55,31 @@ describe('PUBLIC_POLAR_SERVER at build time (scripts/polar-server.mjs)', () => {
     expect(() => polarServer({ PUBLIC_POLAR_SERVER: 'prod' })).toThrow(/sandbox" or "production/u);
     expect(polarDefines({ PUBLIC_POLAR_SERVER: 'production' })).toEqual({
       __AT_POLAR_SERVER__: '"production"',
+      __AT_PAYMENTS_ENABLED__: 'true',
       __AT_LICENSE_DEV_KEY__: 'false',
     });
-    expect(polarDefines({})).toEqual({ __AT_POLAR_SERVER__: '"sandbox"', __AT_LICENSE_DEV_KEY__: 'true' });
+    expect(polarDefines({})).toEqual({
+      __AT_POLAR_SERVER__: '"sandbox"',
+      __AT_PAYMENTS_ENABLED__: 'true',
+      __AT_LICENSE_DEV_KEY__: 'true',
+    });
+  });
+});
+
+describe('purchases can stay closed for the free launch', () => {
+  it('requires an explicit off switch and keeps production key checks', async () => {
+    expect(paymentsEnabled({})).toBe(true);
+    expect(paymentsEnabled({ PUBLIC_PAYMENTS_ENABLED: '0' })).toBe(false);
+    expect(() => paymentsEnabled({ PUBLIC_PAYMENTS_ENABLED: 'yes' })).toThrow();
+    const free = await runCheck([], { PUBLIC_POLAR_SERVER: 'production', PUBLIC_PAYMENTS_ENABLED: '0' });
+    expect(free.ok).toBe(true);
+    expect(free.lines.join(' ')).not.toContain('WARNING');
+    const dev = await devPublicKey();
+    const dir = await tempDir();
+    await writeFile(path.join(dir, 'app.js'), JSON.stringify(dev));
+    expect(
+      (await runCheck(['--dist', dir], { PUBLIC_POLAR_SERVER: 'production', PUBLIC_PAYMENTS_ENABLED: '0' })).ok,
+    ).toBe(false);
   });
 });
 

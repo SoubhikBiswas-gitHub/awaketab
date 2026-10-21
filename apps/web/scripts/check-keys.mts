@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url';
 
 import { PRODUCTION_LICENSE_PUBLIC_KEYS } from '../../../packages/core/src/license.ts';
 import { CHECKOUT_LINKS_PRODUCTION, CHECKOUT_PLACEHOLDER } from '../src/lib/checkout.ts';
-import { polarServer } from './polar-server.mjs';
+import { paymentsEnabled, polarServer } from './polar-server.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const DEV_VARS = path.join(ROOT, '.dev.vars.example');
@@ -137,7 +137,10 @@ export async function runCheck(
   const problems =
     dists.length > 0
       ? (await Promise.all(dists.map((dir) => distProblems(dir, dev, PRODUCTION_LICENSE_PUBLIC_KEYS)))).flat()
-      : [...keyProblems(PRODUCTION_LICENSE_PUBLIC_KEYS, dev), ...checkoutProblems(CHECKOUT_LINKS_PRODUCTION)];
+      : [
+          ...keyProblems(PRODUCTION_LICENSE_PUBLIC_KEYS, dev),
+          ...(paymentsEnabled(env) ? checkoutProblems(CHECKOUT_LINKS_PRODUCTION) : []),
+        ];
   const waive = env.AT_ALLOW_MISSING_PRODUCTION_KEY === '1';
   const errors = problems.filter((p) => !(waive && p.waivable));
   const warnings = problems.filter((p) => waive && p.waivable);

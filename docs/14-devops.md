@@ -34,7 +34,9 @@ Cloudflare Preview must use the `LICENSES_PREVIEW` KV namespace via binding `LIC
 
 First associate `play.awaketab.com` with the Pages project, then change its proxied Cloudflare DNS CNAME target to `play.awaketab.pages.dev` so it follows the testing branch. Keep the orange-cloud proxy enabled: external DNS or an unproxied CNAME sends custom aliases to production. A CNAME targeting `awaketab.pages.dev` follows production instead. Preserve this distinction whenever changing DNS. `noindex` prevents indexing but does not require visitors to sign in.
 
-Production payments are a separate launch prerequisite: replace every placeholder in `CHECKOUT_LINKS_PRODUCTION`, configure production Polar secrets and webhooks, and set `PUBLIC_POLAR_SERVER=production` only when those checks pass.
+The initial production release keeps purchases closed with `PUBLIC_PAYMENTS_ENABLED=0` and uses `PUBLIC_POLAR_SERVER=production`. This removes checkout URLs, disables purchase buttons and retains the production licence-key checks. Preview can keep sandbox purchases enabled with `PUBLIC_PAYMENTS_ENABLED=1`.
+
+Before enabling production purchases with `PUBLIC_PAYMENTS_ENABLED=1`: replace every placeholder in `CHECKOUT_LINKS_PRODUCTION`, configure production Polar secrets and webhooks, and set `PUBLIC_POLAR_SERVER=production` only when those checks pass.
 
 ## 2. Cloudflare setup (one-time)
 

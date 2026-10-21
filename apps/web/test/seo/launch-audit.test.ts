@@ -152,6 +152,10 @@ describe('F-06 / N-03 · Polar server and licence keys in the bundle', () => {
 
   async function mode(): Promise<'sandbox' | 'production'> {
     const pro = await page('/pro');
+    if (pro.includes('data-payments="off"')) {
+      expect(pro).toContain('data-polar-server="production"');
+      return 'production';
+    }
     const links = [...pro.matchAll(/href="(https:\/\/[^"]*polar\.sh[^"]*)"/gu)].map((m) => m[1] ?? '');
     expect(links.length).toBeGreaterThanOrEqual(2);
     // Sandbox checkout links live on sandbox-api.polar.sh (real links, checkout.ts) or sandbox.polar.sh.
@@ -167,10 +171,14 @@ describe('F-06 / N-03 · Polar server and licence keys in the bundle', () => {
     // shows "Licences open soon" and carries no checkout link at all.
     expect(await page('/embed')).not.toMatch(/href="https:\/\/[^"]*polar\.sh/u);
     for (const route of ['pro', 'kiosk']) {
-      const links = [...(await page(`/${route}`)).matchAll(/href="(https:\/\/[^"]*polar\.sh[^"]*)"/gu)].map(
-        (m) => m[1] ?? '',
-      );
-      expect(links.length, route).toBeGreaterThan(0);
+      const html = await page(`/${route}`);
+      const links = [...html.matchAll(/href="(https:\/\/[^"]*polar\.sh[^"]*)"/gu)].map((m) => m[1] ?? '');
+      if ((await page('/pro')).includes('data-payments="off"')) {
+        expect(links, route).toEqual([]);
+        expect(html).toContain('Purchases open soon.');
+        expect([...html.matchAll(/<button[^>]*disabled/gu)].length).toBeGreaterThanOrEqual(2);
+        expect(html).not.toContain('PROPOSED-REPLACE');
+      } else expect(links.length, route).toBeGreaterThan(0);
       for (const href of links) expect(href.includes('sandbox'), `${route}: ${href}`).toBe(want === 'sandbox');
     }
   });

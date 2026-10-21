@@ -6,7 +6,7 @@ import ProRefund from '../components/pro/ProRefund.astro';
 import ProLampRing from '../components/pro/ProLampRing.astro';
 import { t } from '../i18n/load';
 import { articleSchema } from '../lib/seo';
-import { CHECKOUT_LINKS } from '../lib/checkout';
+import { CHECKOUT_LINKS, PAYMENTS_ENABLED, POLAR_SERVER } from '../lib/checkout';
 import { PLAN_PRICES, PRO_LAUNCH_END } from '../lib/license';
 import { LAMPS, usd } from '../lib/pro-common';
 import '../styles/pro.css';
@@ -129,7 +129,7 @@ const faq = [1, 5, 2, 3, 6, 7].map((n, i) => ({ i, q: p(`faq.q${n}`), a: p(`faq.
     ],
   })}
 >
-  <div class="at-pro at-pro-page" data-pro-root data-launch={launch ? 'on' : 'off'} data-launch-end={String(PRO_LAUNCH_END)}>
+  <div class="at-pro at-pro-page" data-pro-root data-polar-server={POLAR_SERVER} data-payments={PAYMENTS_ENABLED ? "on" : "off"} data-launch={launch ? 'on' : 'off'} data-launch-end={String(PRO_LAUNCH_END)}>
     <div class="at-pro-aura" aria-hidden="true"></div>
     <main id="top" class="at-pro-main">
       <section class="at-pro-hero" aria-labelledby="pro-h1">
@@ -137,6 +137,7 @@ const faq = [1, 5, 2, 3, 6, 7].map((n, i) => ({ i, q: p(`faq.q${n}`), a: p(`faq.
           <p class="at-pro-kicker">{p('kicker')}</p>
           <h1 id="pro-h1" class="at-pro-h1">{p('hero.title')}</h1>
           <p class="at-pro-lead at-pro-hero-lead">{p('hero.value')}</p>
+          {!PAYMENTS_ENABLED && <p class="at-pro-body" role="status">Purchases open soon. You can use the free tool now.</p>}
           <p class="at-pro-hero-price at-pro-num">
             <span data-launch-only>{p('hero.price.launch', { yearly, once: lifeLaunch })}</span>
             <span data-after-only>{p('hero.price', { yearly, once: lifeFull })}</span>
@@ -295,7 +296,7 @@ const faq = [1, 5, 2, 3, 6, 7].map((n, i) => ({ i, q: p(`faq.q${n}`), a: p(`faq.
               <li>{p('plans.renew')}</li>
               <li>{p('plans.cancel')}</li>
             </ul>
-            <Button variant="secondary" href={CHECKOUT_LINKS.pro_yearly} data-plan="pro_yearly" aria-describedby="plan-yearly" class="at-pro-wide">
+            <Button variant="secondary" href={CHECKOUT_LINKS.pro_yearly || undefined} disabled={!PAYMENTS_ENABLED} data-plan="pro_yearly" aria-describedby="plan-yearly" class="at-pro-wide">
               {p('plans.cta.yearly')}
             </Button>
           </article>
@@ -317,7 +318,7 @@ const faq = [1, 5, 2, 3, 6, 7].map((n, i) => ({ i, q: p(`faq.q${n}`), a: p(`faq.
               <li data-launch-only>{p('plans.launch.value')}</li>
               <li data-after-only>{p('plans.after.value')}</li>
             </ul>
-            <Button variant="primary" href={CHECKOUT_LINKS.pro_lifetime} data-plan="pro_lifetime" aria-describedby="plan-lifetime" class="at-pro-wide">
+            <Button variant="primary" href={CHECKOUT_LINKS.pro_lifetime || undefined} disabled={!PAYMENTS_ENABLED} data-plan="pro_lifetime" aria-describedby="plan-lifetime" class="at-pro-wide">
               {p('plans.cta.lifetime')}
             </Button>
           </article>
@@ -415,8 +416,8 @@ const faq = [1, 5, 2, 3, 6, 7].map((n, i) => ({ i, q: p(`faq.q${n}`), a: p(`faq.
           </p>
         </div>
         <div class="at-pro-end-actions">
-          <Button variant="primary" href={CHECKOUT_LINKS.pro_lifetime} data-plan="pro_lifetime">{p('plans.cta.lifetime')}</Button>
-          <Button variant="secondary" href={CHECKOUT_LINKS.pro_yearly} data-plan="pro_yearly">{p('plans.cta.yearly')}</Button>
+          <Button variant="primary" href={CHECKOUT_LINKS.pro_lifetime || undefined} disabled={!PAYMENTS_ENABLED} data-plan="pro_lifetime">{p('plans.cta.lifetime')}</Button>
+          <Button variant="secondary" href={CHECKOUT_LINKS.pro_yearly || undefined} disabled={!PAYMENTS_ENABLED} data-plan="pro_yearly">{p('plans.cta.yearly')}</Button>
         </div>
         <p class="at-pro-caption">{p('end.note')} <a class="at-pro-inline-link" href="/pro/activate">{t('pro.activate')}</a></p>
       </section>
