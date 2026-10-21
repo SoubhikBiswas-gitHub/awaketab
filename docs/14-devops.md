@@ -32,7 +32,7 @@ Preview deployments send `X-Robots-Tag: noindex` from two host-keyed `_headers` 
 
 Cloudflare Preview must use the `LICENSES_PREVIEW` KV namespace via binding `LICENSES`, the `awaketab_events_preview` dataset via binding `EVENTS`, sandbox Polar credentials, `PUBLIC_POLAR_SERVER=sandbox`, `PUBLIC_ADS_ENABLED=0` and `PUBLIC_SPONSOR_ENABLED=0`. Keep the production and Preview secrets separate. `PUBLIC_SITE_URL=https://awaketab.com` keeps canonical URLs and the existing SEO build checks consistent; the testing hostname is excluded from indexing by a host-specific header rule.
 
-First associate `play.awaketab.com` with the Pages project, then change its Cloudflare DNS CNAME target to `codex-play.awaketab.pages.dev` so it follows the testing branch. A CNAME targeting `awaketab.pages.dev` follows production instead. Preserve this distinction whenever changing DNS. `noindex` prevents indexing but does not require visitors to sign in.
+First associate `play.awaketab.com` with the Pages project, then change its proxied Cloudflare DNS CNAME target to `codex-play.awaketab.pages.dev` so it follows the testing branch. Keep the orange-cloud proxy enabled: external DNS or an unproxied CNAME sends custom aliases to production. A CNAME targeting `awaketab.pages.dev` follows production instead. Preserve this distinction whenever changing DNS. `noindex` prevents indexing but does not require visitors to sign in.
 
 Production payments are a separate launch prerequisite: replace every placeholder in `CHECKOUT_LINKS_PRODUCTION`, configure production Polar secrets and webhooks, and set `PUBLIC_POLAR_SERVER=production` only when those checks pass.
 
