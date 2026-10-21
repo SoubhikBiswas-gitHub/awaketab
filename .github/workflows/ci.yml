@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, codex/play]
+    branches: [main, play]
   pull_request:
 
 permissions:
