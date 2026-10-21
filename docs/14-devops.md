@@ -13,12 +13,28 @@ Related docs: `03-architecture.md` (config, security model) · `08-data-storage.
 | Env | URL | Source | Data |
 |---|---|---|---|
 | Local | `http://localhost:4321` (Astro) + `wrangler pages dev` for `/api/*` | working tree | local KV (Miniflare), Polar sandbox, `PUBLIC_ADS_ENABLED=0` |
+| Play | `https://play.awaketab.com` | `codex/play` preview branch | Preview bindings, Polar sandbox, ads off, `noindex` header |
 | Preview | `https://<branch>.awaketab.pages.dev` | every PR | KV `LICENSES_PREVIEW`, AE dataset `awaketab_events_preview`, Polar sandbox, ads off, `noindex` header |
 | Production | `https://awaketab.com` | `main` | KV `LICENSES`, AE `awaketab_events`, Polar production |
 
 Preview deployments send `X-Robots-Tag: noindex` from two host-keyed `_headers` rules, `https://:project.pages.dev/*` and `https://:version.:project.pages.dev/*` (`PREVIEW_HOST_RULES` in `scripts/headers.mjs`, last in the file so no path rule can detach them). They cover per-commit previews, branch aliases and the `awaketab.pages.dev` production alias, and cost nothing per request. `awaketab.com` is unaffected. Pages never applies `_headers` to Functions responses, so `functions/api/_middleware.ts` marks every `/api/*` response `noindex` itself. (The earlier plan, a root `functions/_middleware.ts` keyed on `CF_PAGES_BRANCH`, was dropped at M9, F-03: a root middleware makes every static file a Functions invocation.)
 
 ---
+
+### Testing changes on Play before production
+
+`codex/play` is the persistent testing branch. GitHub CI runs on pushes to this branch and on pull requests. Cloudflare Pages builds non-production branches using its Preview configuration; `main` remains the production branch.
+
+1. Start work on `codex/play` or open a feature pull request into it. Push changes and wait for GitHub CI and the Cloudflare preview deployment to pass.
+2. Test the timer, settings, embedding, API health and sandbox checkout on `https://play.awaketab.com`. The fallback branch URL is `https://codex-play.awaketab.pages.dev`.
+3. After testing, open a pull request from `codex/play` into `main`. Review the checks and deploy to production only after approval. Do not push untested changes directly to `main`.
+4. After merging, update the testing branch from `main` before starting the next change.
+
+Cloudflare Preview must use the `LICENSES_PREVIEW` KV namespace via binding `LICENSES`, the `awaketab_events_preview` dataset via binding `EVENTS`, sandbox Polar credentials, `PUBLIC_POLAR_SERVER=sandbox`, `PUBLIC_ADS_ENABLED=0` and `PUBLIC_SPONSOR_ENABLED=0`. Keep the production and Preview secrets separate. `PUBLIC_SITE_URL=https://awaketab.com` keeps canonical URLs and the existing SEO build checks consistent; the testing hostname is excluded from indexing by a host-specific header rule.
+
+First associate `play.awaketab.com` with the Pages project, then change its Cloudflare DNS CNAME target to `codex-play.awaketab.pages.dev` so it follows the testing branch. A CNAME targeting `awaketab.pages.dev` follows production instead. Preserve this distinction whenever changing DNS. `noindex` prevents indexing but does not require visitors to sign in.
+
+Production payments are a separate launch prerequisite: replace every placeholder in `CHECKOUT_LINKS_PRODUCTION`, configure production Polar secrets and webhooks, and set `PUBLIC_POLAR_SERVER=production` only when those checks pass.
 
 ## 2. Cloudflare setup (one-time)
 

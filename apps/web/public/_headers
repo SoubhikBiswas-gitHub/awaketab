@@ -236,6 +236,9 @@
   Cache-Control: no-store
   X-Robots-Tag: noindex
 
+https://play.awaketab.com/*
+  X-Robots-Tag: noindex
+
 https://:project.pages.dev/*
   X-Robots-Tag: noindex
 
