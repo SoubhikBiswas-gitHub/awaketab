@@ -7,7 +7,7 @@ type TSize = 'sm' | 'md' | 'lg' | 'cook';
 interface Props extends HTMLAttributes<'button'> {
   variant?: TVariant;
   size?: TSize;
-  href?: string;
+  href?: string | undefined;
   kbd?: string;
   glyph?: boolean;
 }
