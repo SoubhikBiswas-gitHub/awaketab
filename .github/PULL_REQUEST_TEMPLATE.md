@@ -1,30 +1,35 @@
-## Summary
+## What changes and why
 
-What changes, and why. Link the issue if there is one.
+Describe the user problem, the change and any tradeoffs.
 
-## How I checked it
+## Linked work
 
-- [ ] `pnpm format`
+Closes #ISSUE_NUMBER
+
+Link owner-approved issues. Production promotion PRs must list every issue delivered by the changes on `play`.
+
+## How to verify
+
+Give reproducible steps, actual results and any checks not run.
+
 - [ ] `pnpm lint`
 - [ ] `pnpm typecheck`
 - [ ] `pnpm test`
 - [ ] `pnpm build`
-- [ ] `pnpm -w test:seo`
+- [ ] `pnpm test:seo`
 - [ ] `pnpm size`
-- [ ] If the extension changed: `pnpm -F extension build` and `pnpm test:e2e:ext`
-- [ ] If UI behaviour changed: `pnpm test:e2e --project=chromium`
+- [ ] `pnpm test:e2e --project=chromium` when browser behavior changes
+- [ ] Tests cover the changed behavior; failures and limitations are explained.
+- [ ] Screenshots or a recording show visible changes on desktop and mobile.
+- [ ] Keyboard access, light/dark themes and reduced motion were checked where relevant.
 
-## Design check (for anything people can see)
+## Release notes and risk
 
-- [ ] Uses the Clear Night `--at-*` tokens and the shell components only: no new colours, fonts, sizes, spacing or radii
-- [ ] Works in light and dark, on a phone and on a desktop, and animations stop with reduced motion
-- [ ] Screenshots in light and dark are attached below
-- [ ] The seven status pill texts are unchanged, or the docs are updated in this pull request
+What should users know? Describe configuration, migrations and rollback steps, or write “Not applicable”.
 
-## Housekeeping
+## Contribution checklist
 
-- [ ] Docs updated if a contract changed (`docs/00-conventions.md` first for identifiers)
-- [ ] Changelog fragment in `changelog/` if users will notice the change
-- [ ] Commit messages and this description are plain English: no internal codes, no AI attribution lines
-
-## Screenshots
+- [ ] My change targets `play`, or this is the owner’s promotion from `play` to `main`.
+- [ ] The issue was approved by `SoubhikBiswas-gitHub` before implementation.
+- [ ] Documentation and tests match the change; no credentials or personal data are included.
+- [ ] I understand that merge and deployment are tracked separately.

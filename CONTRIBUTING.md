@@ -21,26 +21,27 @@ Use `pnpm run setup`, not `pnpm setup`. `pnpm setup` is a built-in pnpm command 
 
 Useful commands:
 
-| Command                       | What it does                                                         |
-| ----------------------------- | -------------------------------------------------------------------- |
-| `pnpm dev`                    | Astro dev server for the website and tool                            |
-| `pnpm -F extension dev`       | The Chrome extension in development mode (WXT)                       |
-| `pnpm format`                 | Prettier over the repository                                         |
-| `pnpm lint`                   | Comment rule, Prettier check, Knip, ESLint and Stylelint             |
-| `pnpm knip`                   | Unused files, exports and dependencies (Knip, `knip.json`)           |
-| `pnpm typecheck`              | TypeScript and `astro check` in every workspace                      |
-| `pnpm test`                   | Unit tests and Pages Functions tests (Vitest)                        |
-| `pnpm build`                  | Builds every package, the site and the extension                     |
-| `pnpm test:seo`               | Checks the built site (run after `pnpm build`)                       |
-| `pnpm size`                   | Bundle size budgets                                                  |
-| `pnpm test:e2e`               | Playwright end-to-end tests for the site (needs a build and Chromium) |
-| `pnpm test:e2e:ext`           | Playwright tests for the extension                                   |
+| Command                 | What it does                                                          |
+| ----------------------- | --------------------------------------------------------------------- |
+| `pnpm dev`              | Astro dev server for the website and tool                             |
+| `pnpm -F extension dev` | The Chrome extension in development mode (WXT)                        |
+| `pnpm format`           | Prettier over the repository                                          |
+| `pnpm lint`             | Comment rule, Prettier check, Knip, ESLint and Stylelint              |
+| `pnpm knip`             | Unused files, exports and dependencies (Knip, `knip.json`)            |
+| `pnpm typecheck`        | TypeScript and `astro check` in every workspace                       |
+| `pnpm test`             | Unit tests and Pages Functions tests (Vitest)                         |
+| `pnpm build`            | Builds every package, the site and the extension                      |
+| `pnpm test:seo`         | Checks the built site (run after `pnpm build`)                        |
+| `pnpm size`             | Bundle size budgets                                                   |
+| `pnpm test:e2e`         | Playwright end-to-end tests for the site (needs a build and Chromium) |
+| `pnpm test:e2e:ext`     | Playwright tests for the extension                                    |
 
 ## Branches and pull requests
 
-- Branch from `main` and name the branch after the change: `fix/pill-after-sleep`, `feat/until-a-time`, `docs/embed-api`, `chore/update-deps`.
+- Use `play` for testing and `main` for production. Contributions target `play`; the owner promotes tested changes through a PR from `play` to `main`. Use descriptive branches in your fork.
 - `main` deploys the website automatically, so it only takes changes through pull requests.
-- Keep a pull request to one topic. Fill in the template: what changed, why, and how you checked it.
+- Only `SoubhikBiswas-gitHub` may approve an issue by applying `approved`. Link approved work in your PR using `Closes #123` or `Tracks: #123`.
+- Keep a pull request to one topic. Fill in the template: what changed, why, and how you checked it. See the [task lifecycle guide](.github/COMMUNITY_WORKFLOW.md).
 - For anything people can see, add screenshots in light and dark.
 - User-visible changes get a short changelog fragment in `changelog/` (copy the front matter of an existing one).
 
@@ -81,19 +82,19 @@ Useful commands:
 
 ## Where the docs live
 
-| Path                                           | What is there                                                             |
-| ---------------------------------------------- | ------------------------------------------------------------------------- |
-| [docs/00-conventions.md](docs/00-conventions.md) | Canonical names, routes, storage keys, budgets and gates. Read it first   |
-| [docs/02-prd.md](docs/02-prd.md)               | Requirements with acceptance criteria                                     |
-| [docs/03-architecture.md](docs/03-architecture.md) | Monorepo, runtime, build and security                                 |
-| [docs/04-engine-spec.md](docs/04-engine-spec.md) | The seven lock states and every transition                              |
-| [docs/05-frontend-spec.md](docs/05-frontend-spec.md) | Components, state to UI mapping, keyboard, accessibility            |
-| [docs/10-extension-spec.md](docs/10-extension-spec.md) | The Chrome extension                                              |
-| [docs/11-embed-spec.md](docs/11-embed-spec.md) | The Cook Mode embed widget                                                |
-| [docs/12-library-spec.md](docs/12-library-spec.md) | The `@awaketab/wake` library                                          |
-| [docs/13-testing-strategy.md](docs/13-testing-strategy.md) | What each test suite proves                                   |
-| [docs/redesign/DECISIONS.md](docs/redesign/DECISIONS.md) | Design decisions of the Clear Night redesign                        |
-| [DESIGN.md](DESIGN.md) and [docs/redesign/CANVASES.md](docs/redesign/CANVASES.md) | The Clear Night design system and links to its 12 design canvases |
+| Path                                                                              | What is there                                                           |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [docs/00-conventions.md](docs/00-conventions.md)                                  | Canonical names, routes, storage keys, budgets and gates. Read it first |
+| [docs/02-prd.md](docs/02-prd.md)                                                  | Requirements with acceptance criteria                                   |
+| [docs/03-architecture.md](docs/03-architecture.md)                                | Monorepo, runtime, build and security                                   |
+| [docs/04-engine-spec.md](docs/04-engine-spec.md)                                  | The seven lock states and every transition                              |
+| [docs/05-frontend-spec.md](docs/05-frontend-spec.md)                              | Components, state to UI mapping, keyboard, accessibility                |
+| [docs/10-extension-spec.md](docs/10-extension-spec.md)                            | The Chrome extension                                                    |
+| [docs/11-embed-spec.md](docs/11-embed-spec.md)                                    | The Cook Mode embed widget                                              |
+| [docs/12-library-spec.md](docs/12-library-spec.md)                                | The `@awaketab/wake` library                                            |
+| [docs/13-testing-strategy.md](docs/13-testing-strategy.md)                        | What each test suite proves                                             |
+| [docs/redesign/DECISIONS.md](docs/redesign/DECISIONS.md)                          | Design decisions of the Clear Night redesign                            |
+| [DESIGN.md](DESIGN.md) and [docs/redesign/CANVASES.md](docs/redesign/CANVASES.md) | The Clear Night design system and links to its 12 design canvases       |
 
 ## Reporting bugs
 
