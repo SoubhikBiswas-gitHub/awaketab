@@ -36,9 +36,9 @@
 
 ## See it in action
 
-![Animated walkthrough of the real tool: Ready, selecting thirty minutes, Screen awake, then stopping back at Ready](.github/readme/session-demo.gif)
+[![Animated walkthrough of AwakeTab: choosing a duration, confirming Screen awake, and stopping the session](.github/readme/session-demo.gif)](.github/readme/awaketab-product-demo.mp4)
 
-**Choose 30 min → Keep awake → confirm Screen awake → Stop.** This lightweight animated walkthrough uses four real browser captures, with shortened pauses between steps. Open the [full-size animation](.github/readme/session-demo.gif) for a closer look.
+**Choose 30 min → Keep awake → confirm Screen awake → Stop.** The animation uses real browser captures, with shortened pauses between steps. [Watch the narrated 18-second product demo](.github/readme/awaketab-product-demo.mp4) with on-screen captions, or read the [WebVTT transcript](.github/readme/awaketab-product-demo.en.vtt). Open the [full-size animation](.github/readme/session-demo.gif) for a closer look.
 
 The tool may request a session as soon as it opens. If it is already running, press **Stop** before choosing another duration. A browser that requires a tap will ask for one.
 
