@@ -24,3 +24,6 @@ apps/extension/.output-test/
 # Output of pnpm kv:backup (encrypted, but never committed)
 kv-backups/
 *.jsonl.enc
+
+# Python workflow caches
+__pycache__/

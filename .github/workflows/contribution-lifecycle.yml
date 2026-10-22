@@ -1,0 +1,43 @@
+name: Contribution lifecycle
+
+on:
+  issues:
+    types: [labeled, unlabeled, reopened, closed]
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review, converted_to_draft, edited, closed]
+  pull_request_review:
+    types: [submitted, dismissed]
+  deployment_status:
+  check_run:
+    types: [created, completed]
+  workflow_run:
+    workflows: [Passlore checks and deployment]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+  actions: read
+  deployments: read
+
+concurrency:
+  group: contribution-lifecycle
+  cancel-in-progress: false
+
+jobs:
+  update:
+    if: github.repository_owner == 'SoubhikBiswas-gitHub'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Update approved tasks from trusted repository code
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROJECTS_TOKEN: ${{ secrets.PROJECTS_TOKEN }}
+          PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
+        run: python3 .github/scripts/project_workflow.py

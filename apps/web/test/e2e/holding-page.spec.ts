@@ -4,7 +4,7 @@ import { installFakeWakeLock } from './fake-wakelock';
 
 test('renders the accessible home tool', async ({ page }) => {
   await installFakeWakeLock(page);
-  await page.goto('/');
+  await page.goto('/?autostart=0');
 
   await expect(page.getByRole('heading', { level: 1, name: 'Keep your screen awake' })).toBeVisible();
   await expect(page).toHaveTitle('Keep Your Screen Awake — AwakeTab');

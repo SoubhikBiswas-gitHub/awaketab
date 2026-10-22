@@ -1,0 +1,35 @@
+name: Documentation improvement
+description: Report unclear setup steps, missing examples or broken documentation.
+title: '[Docs]: '
+labels:
+  - documentation
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: Please search existing issues first. Use examples and remove passwords, tokens and personal data. Only
+        the repository owner can approve work.
+  - type: input
+    id: location
+    attributes:
+      label: Documentation page or file
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: What is missing or confusing?
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: What should the reader be able to do?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested wording or example
+    validations:
+      required: false
