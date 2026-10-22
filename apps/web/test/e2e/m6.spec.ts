@@ -149,6 +149,8 @@ test('stats panel shows today, a 7-row heatmap and the free-tier limits', async 
 });
 
 test('rating prompt after the 5th counted session, once only', async ({ page }) => {
+  // Two five-minute sessions advance hundreds of 1 s timers and can take over 30 s on the hosted runner.
+  test.setTimeout(60_000);
   await page.route('**/api/rating', async (route) => {
     if (route.request().method() !== 'POST') {
       await route.continue();
