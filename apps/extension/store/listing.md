@@ -1,6 +1,6 @@
 # Store listing — AwakeTab: Keep Screen Awake
 
-Source for the Chrome Web Store and Edge Add-ons dashboards (docs/10 §9, docs/17 "Extension submission"). Paste the fields as written. Every claim here is bounded by docs/19 B7 (no background-tab, Teams/Slack or lid-close claims beyond what is stated) and by `apps/web/src/data/support-matrix.json` (`extension`).
+Copy for the first Chrome Web Store release. Use with [the release guide](PUBLISHING.md), [reviewer instructions](reviewer-instructions.md) and [privacy disclosures](privacy-disclosures.md). Store form fields use plain text; preserve paragraph spacing and remove Markdown formatting when pasting. No submission or approval is claimed here.
 
 ## Identity
 
@@ -9,13 +9,14 @@ Source for the Chrome Web Store and Edge Add-ons dashboards (docs/10 §9, docs/1
 | Name (manifest, all locales) | AwakeTab: Keep Screen Awake, in English in every locale (`_locales/*/messages.json` → `ext_name`, generated from `ext.name`) |
 | Edge Add-ons display name | AwakeTab: Keep Screen Awake (Edge reads the name from the same package's manifest) |
 | Store title | AwakeTab: Keep Screen Awake (the manifest name; the store shows it as the title) |
-| Short description (≤ 132) | Keep your screen or computer awake with one click, a timer, or a schedule. Honest status, no tracking, no mouse jiggling. |
+| Short description (manifest, ≤ 132) | Keep your screen (or your whole computer) awake from a click — with an honest status you can trust. |
 | Category | Productivity → Tools |
 | Language | English (the extension UI itself ships en, es, pt-BR, de, fr, ja, zh-CN, hi) |
 | Homepage | https://awaketab.com/extension |
 | Support | support@awaketab.com |
 | Privacy policy URL | https://awaketab.com/privacy#extension |
 | Minimum version | Chrome 116 (manifest `minimum_chrome_version`, from the support matrix) |
+| Price | Free. Pro purchases are unavailable at launch. |
 
 ## Detailed description
 
@@ -26,7 +27,8 @@ AwakeTab keeps your display — or just your computer — awake while Chrome is 
 - The toolbar badge shows ON, SYS or the minutes left. Alt+Shift+A toggles it from any tab.
 - An honest status: the popup says "Screen awake" only after Chrome has accepted the request, and "System awake" when only the computer is kept awake.
 - Optional notification when a timer ends, with +30 min and Stop buttons.
-- With AwakeTab Pro: weekly schedules, and auto-start when Chrome opens or when you visit a site you choose. Your Pro key works on five devices across the web app and the extension.
+
+The keep-awake features above are free and require no account or licence. Pro purchases are not available at launch. Weekly schedules and auto-start are licence-gated extras, not included in the free feature set. The settings include a licence field for activation when Pro becomes available.
 
 What it does not do:
 - It works only while Chrome is running.
@@ -61,7 +63,7 @@ Remote code: none. All scripts are bundled in the package.
 
 ## Images
 
-Generated reproducibly by `pnpm -F extension store:assets` into `store/images/`, drawn from the design canvas board `StoreAssets` (Clear Night, dark). Upload them in this order:
+Generated reproducibly by `pnpm -F extension store:assets` into `store/images/` from `scripts/store-assets.mts`. Upload the first four screenshots for the free launch, followed by the optional promo tile and the store icon:
 
 | File | Size | Screenshot (docs/10 §9) |
 |---|---|---|
@@ -69,10 +71,11 @@ Generated reproducibly by `pnpm -F extension store:assets` into `store/images/`,
 | `screenshot-2-screen-or-system.png` | 1280×800 | Screen or System, side by side |
 | `screenshot-3-toolbar-badge.png` | 1280×800 | The five toolbar badge states |
 | `screenshot-4-lengths.png` | 1280×800 | A 2 h session and an end time past midnight |
-| `screenshot-5-pro-auto-start.png` | 1280×800 | Pro auto-start and the Pro licence |
 | `promo-440x280.png` | 440×280 | Small promotional tile |
 | `public/icon-128.png` | 128×128 | Store icon (also 16/32/48 in the package) |
 
+Keep `screenshot-5-pro-auto-start.png` for a later Pro release. Do not upload it as a free-launch feature screenshot.
+
 ## Package
 
-`pnpm -F extension zip` → `apps/extension/.output/awaketab-chrome-<version>.zip` (sorted entries, fixed timestamps; `pnpm -F extension zip:check` builds twice and compares SHA-256). The same zip goes to Edge Add-ons.
+Use `pnpm -F extension publish:package --current` for the first unpublished version, or `pnpm -F extension publish:package` to choose a later version bump. It validates and builds with purchases disabled, then writes `AwakeTab-v<version>.zip` to the Desktop. It does not submit to a store. See [packaging and recovery](PUBLISHING.md#packaging-and-recovery).

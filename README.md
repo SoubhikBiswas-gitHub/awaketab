@@ -111,6 +111,8 @@ pnpm -F extension build
 
 Open `chrome://extensions` or `edge://extensions`, enable **Developer mode**, choose **Load unpacked**, and select `apps/extension/.output/chrome-mv3`. See [the extension specification](docs/10-extension-spec.md) for behaviour and permissions. There is no Firefox or Safari power-API extension here.
 
+For a validated release ZIP, run `pnpm -F extension publish:package` to choose a version bump. The first unpublished version can use `pnpm -F extension publish:package --current`. The command runs checks and writes a versioned ZIP to your Desktop; purchases stay disabled and store submission is separate. See the [extension release guide](apps/extension/store/PUBLISHING.md).
+
 </details>
 
 <details>
