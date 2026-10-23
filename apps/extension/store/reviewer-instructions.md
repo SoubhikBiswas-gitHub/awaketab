@@ -1,6 +1,6 @@
 # AwakeTab reviewer instructions
 
-Product: AwakeTab: Keep Screen Awake. Candidate version: 1.0.0. Minimum Chrome: 116.
+Product: AwakeTab: Keep Screen Awake. Candidate version: 1.0.1. Minimum Chrome: 116.
 
 The free features need no account, licence, website login or payment. Pro purchases are unavailable in this release. The settings' licence field and locked schedules/auto-start sections are for licence-based functionality; no reviewer credential is needed for the free functionality submitted here.
 

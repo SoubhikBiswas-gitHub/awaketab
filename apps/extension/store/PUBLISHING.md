@@ -1,6 +1,6 @@
 # AwakeTab extension release guide
 
-AwakeTab: Keep Screen Awake is preparing its first Chrome Web Store release at **1.0.0**. This guide records the packaging workflow; the publisher dashboard determines submission, review and publication status.
+AwakeTab: Keep Screen Awake is preparing the **1.0.1** artwork update for its first Chrome Web Store release. Version 1.0.0 was submitted on 2026-10-23; it must not be uploaded again. The existing item ID is `kphiinpjmodhjfojkleoigcgiakahfpk`. This guide records the packaging workflow; the publisher dashboard determines submission, review and publication status.
 
 ## Release scope
 
@@ -46,6 +46,8 @@ On validation failure or Ctrl+C, subprocesses stop before version metadata is re
 - `store/images/screenshot-1-popup.png` through `screenshot-4-lengths.png`: 1280×800 PNG screenshots.
 - `store/images/promo-440x280.png`: optional small promotional tile.
 - `public/icon-128.png`: store icon.
+
+The editable icon source is `public/icon.svg`. It supplies the toolbar PNGs, extension-page marks and store artwork. Regenerate all images with `pnpm -F extension store:assets`; the store canvas uses flat paper backgrounds and keeps the popup controls in their dark product theme. The four free-launch images cover the popup, Screen/System modes, toolbar states and timer lengths.
 
 The fifth screenshot describes Pro auto-start and is excluded from the first free submission. The existing website walkthrough demonstrates the web tool, so do not submit it as an extension demo video.
 

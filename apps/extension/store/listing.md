@@ -67,7 +67,7 @@ Generated reproducibly by `pnpm -F extension store:assets` into `store/images/` 
 
 | File | Size | Screenshot (docs/10 §9) |
 |---|---|---|
-| `screenshot-1-popup.png` | 1280×800 | The popup over a page, held, with the toolbar badge |
+| `screenshot-1-popup.png` | 1280×800 | The active popup with an enlarged toolbar badge |
 | `screenshot-2-screen-or-system.png` | 1280×800 | Screen or System, side by side |
 | `screenshot-3-toolbar-badge.png` | 1280×800 | The five toolbar badge states |
 | `screenshot-4-lengths.png` | 1280×800 | A 2 h session and an end time past midnight |
