@@ -201,13 +201,9 @@ svg {
   overflow: visible;
 }
 
-.at-logo-ring {
-  stroke: var(--at-ink);
-}
-
-.at-logo-bead {
-  fill: var(--ext-tone, var(--at-accent));
-  transition: fill 0.6s var(--ext-ease);
+.at-logo img {
+  display: block;
+  flex-shrink: 0;
 }
 
 .at-logo-sub {

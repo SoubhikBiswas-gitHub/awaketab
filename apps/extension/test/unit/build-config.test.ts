@@ -2,7 +2,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ICON_SIZES, ringPng } from '../../scripts/icons.mjs';
+import { ICON_SIZES, iconPng } from '../../scripts/icons.mjs';
 import { inlineIcons } from '../../scripts/svg-icons.mjs';
 import {
   BG_KEYS,
@@ -173,10 +173,10 @@ describe('fonts (DESIGN.md §3, D-R26)', () => {
 });
 
 describe('icons', () => {
-  it('renders the ring icons byte-identically every time', () => {
+  it('renders the shared store and toolbar mark byte-identically every time', () => {
     for (const size of ICON_SIZES) {
-      const a = ringPng(size);
-      const b = ringPng(size);
+      const a = iconPng(size);
+      const b = iconPng(size);
       expect(a.equals(b)).toBe(true);
       expect(a.readUInt32BE(16)).toBe(size);
       expect(a.subarray(1, 4).toString()).toBe('PNG');

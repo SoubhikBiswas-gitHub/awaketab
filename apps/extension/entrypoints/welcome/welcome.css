@@ -352,11 +352,6 @@
   color: var(--at-accent);
 }
 
-.wl-pinned .at-logo-ring,
-.wl-art-toolbar .at-logo-ring {
-  stroke: var(--bar-ink, var(--at-ink));
-}
-
 .wl-badge {
   position: absolute;
   inset-block-end: var(--at-ext-badge-y);
@@ -857,7 +852,7 @@
   color: var(--at-ext-screen-off-ink);
 }
 
-[data-level="system"] .wl-screen svg {
+[data-level="system"] .wl-screen img {
   opacity: 0.18;
 }
 
