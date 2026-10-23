@@ -14,5 +14,6 @@ changelog/
 docs/
 .claude/
 .cursor/
+.gstack/
 # Astro templates: formatting whitespace changes the rendered page text.
 *.astro

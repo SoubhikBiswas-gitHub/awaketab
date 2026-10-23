@@ -30,6 +30,6 @@ Ordinary network requests expose IP addresses to the first-party hosting service
 
 Public policy: https://awaketab.com/privacy#extension
 
-Account: verify the existing publisher email `soubhik481@gmail.com`, contact verification, 2-Step Verification and trader/legal status. No registration or account verification is claimed by this document.
+Account: verify the signed-in email against the owner's authorized publisher account, contact verification, 2-Step Verification and trader/legal status. No registration or account verification is claimed by this document.
 
 Sources: [Privacy fields](https://developer.chrome.com/docs/webstore/cws-dashboard-privacy), [User data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq).
