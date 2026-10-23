@@ -10,6 +10,7 @@
     "build:test": "node scripts/icons.mjs && AT_EXT_TEST=1 wxt build",
     "zip": "node scripts/icons.mjs && PUBLIC_POLAR_SERVER=production pnpm exec tsx ../web/scripts/check-keys.mts && PUBLIC_POLAR_SERVER=production wxt build && PUBLIC_POLAR_SERVER=production pnpm exec tsx ../web/scripts/check-keys.mts --dist .output/chrome-mv3 && node scripts/zip.mjs",
     "zip:check": "node scripts/reproducible.mjs",
+    "publish:package": "node --import tsx scripts/publish-package.mts",
     "store:assets": "node scripts/icons.mjs && tsx scripts/store-assets.mts",
     "typecheck": "wxt prepare && tsc --noEmit"
   },

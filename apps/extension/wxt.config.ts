@@ -7,6 +7,7 @@ import { awaketabIcons } from './scripts/svg-icons.mjs';
 
 const TEST_BUILD = process.env.AT_EXT_TEST === '1';
 const here = (relative: string) => fileURLToPath(new URL(relative, import.meta.url));
+const { version } = JSON.parse(readFileSync(here('package.json'), 'utf8')) as { version: string };
 
 // FR-EXT-05 / docs/19 B7: the minimum version comes from the one support data file.
 const matrix = JSON.parse(readFileSync(here('../web/src/data/support-matrix.json'), 'utf8')) as {
@@ -24,7 +25,7 @@ export default defineConfig({
     short_name: 'AwakeTab',
     description: '__MSG_ext_description__',
     default_locale: 'en',
-    version: '1.0.0',
+    version,
     minimum_chrome_version: matrix.extension.minimumChromeVersion,
     // docs/10 §2, FR-EXT-03: no host permissions by default; per-site access is requested only for Pro
     // auto-start rules, one site at a time.
